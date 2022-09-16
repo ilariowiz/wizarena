@@ -96,7 +96,6 @@ class Profile extends Component {
 				if (this.props.userMintedNfts.length > 0) {
 					this.props.userMintedNfts.map(i => this.loadStats(i.name))
 				}
-
 			})
 		}
 	}
@@ -130,7 +129,9 @@ class Profile extends Component {
 			this.setState({ tournament }, () => {
 
 				if (!tournament.canSubscribe) {
-					if (tournament.roundEnd) {
+					//round è finito ma torneo no
+					if (!tournament.tournamentEnd) {
+
 						this.loadProfileFights()
 					}
 					else if (tournament.tournamentEnd) {
@@ -143,17 +144,6 @@ class Profile extends Component {
 				this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl)
 
 				this.setState({ loading: false })
-
-				/*
-				this.props.getMontepremi(chainId, gasPrice, gasLimit, networkUrl, (response) => {
-					this.setState({ montepremi: response }, () => {
-						this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, (response) => {
-							this.setState({ buyin: response, loading: false })
-						})
-					})
-				})
-				*/
-
 			})
 		})
 	}
@@ -163,21 +153,34 @@ class Profile extends Component {
 
 		//console.log(nftsStats)
 
+		const tournamentName = tournament.name.split("_")[0]
+		//console.log(tournamentName);
+
 		let profileFights = []
 
 		for (let i = 0; i < nftsStats.length; i++) {
 			const s = nftsStats[i]
-			console.log(s);
+			//console.log(s);
 			const fights = s.stats.fights
 
+			//console.log(fights);
+
 			if (fights.length > 0) {
-				let singleFight = fights.find(i => i.tournament === tournament.name)
-				if (singleFight) {
-					singleFight['name'] = s.name
-					profileFights.push(singleFight)
-				}
+				let fightsPerTournamentName = fights.filter(i => i.tournament.includes(tournamentName))
+				//console.log(fightsPerTournamentName);
+
+				fightsPerTournamentName.map(i => {
+					i['name'] = s.name
+					profileFights.push(i)
+				})
 			}
 		}
+
+		profileFights.sort((a, b) => {
+			if (parseInt(a.tournament[a.tournament.length - 1]) === 0) return 1;
+			if (parseInt(b.tournament[b.tournament.length - 1]) === 0) return -1
+			return parseInt(a.tournament[a.tournament.length - 1]) - parseInt(b.tournament[b.tournament.length - 1])
+		})
 
 		//console.log(profileFights);
 		this.setState({ profileFights })
@@ -331,11 +334,13 @@ class Profile extends Component {
 	renderSingleFight(item, index) {
 		const { userMintedNfts } = this.props
 
-		console.log(userMintedNfts, item);
+		//console.log(userMintedNfts, item);
 
 		const itemInfo = userMintedNfts.find(i => i.name === item.name)
 
 		const isWinner = item.winner === itemInfo.id
+
+		const roundValue = item.tournament[item.tournament.length - 1]
 
 		return (
 			<button
@@ -353,6 +358,10 @@ class Profile extends Component {
 				<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start' }}>
 					<p style={{ color: 'white', fontSize: 18 }}>
 						{item.name}
+					</p>
+
+					<p style={{ color: 'white', fontSize: 17 }}>
+						ROUND {roundValue}
 					</p>
 
 					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 22 }}>
@@ -391,30 +400,132 @@ class Profile extends Component {
 			)
 		}
 
-		if (tournament && !tournament.canSubscribe && tournament.roundEnd) {
+		const tournamentName = tournament.name.split("_")[0]
+		const round = tournament.name.split("_")[1]
 
-			const round = tournament.name.split("_")[1]
-
+		//LE ISCRIZIONI SONO APERTE
+		if (tournament && tournament.canSubscribe) {
 			return (
-				<div style={{ width }}>
+				<div style={{ width, flexDirection: 'column' }}>
 
-					<div style={{ flexDirection: 'column', width: '100%' }}>
-						<p style={{ fontSize: 22, color: 'white', marginBottom: 30 }}>
-							The round {round.replace("r", "")} is over!
-						</p>
+					<div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 30 }}>
 
-						<div style={{ flexDirection: 'column' }}>
-							{profileFights.length > 0 && profileFights.map((item, index) => this.renderSingleFight(item, index))}
+						<div style={{ flexDirection: 'column', width: '100%' }}>
+							<p style={{ fontSize: 18, color: 'white', marginBottom: 20 }}>
+								Registration for the tournament is still open
+							</p>
+
+							<p style={{ fontSize: 17, color: 'white', marginBottom: 20 }}>
+								BUY-IN {buyin || '...'} KDA
+							</p>
 						</div>
+
+						{this.renderInfoTournament(width)}
 					</div>
 
-					{this.renderInfoTournament(width)}
+
+					<div style={{ flexDirection: 'column', width: '100%' }}>
+						<div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
+							{userMintedNfts.map((item, index) => this.renderRowChoise(item, index))}
+						</div>
+					</div>
 				</div>
 			)
 		}
 
+		//SE SIAMO IN ATTESA DEL PRIMO FIGHT
+		if (tournament && !tournament.canSubscribe && !tournament.tournamentEnd && tournament.roundEnded === "0") {
+
+			const roundValue = round.replace("r", "")
+
+			const start = moment(tournament.start.seconds * 1000) //milliseconds
+			let text;
+			if (moment().isBefore(start)) {
+				text = `The round ${roundValue} will start ${start.fromNow()}`
+			}
+			else {
+				text = `The tournament started ${start.fromNow()}`
+			}
+
+			return (
+				<div style={{ width, flexDirection: 'column' }}>
+					<div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 30 }}>
+
+						<div style={{ flexDirection: 'column', width: '100%' }}>
+							<p style={{ fontSize: 18, color: 'white', marginBottom: 20 }}>
+								Registration for the tournament is closed!
+							</p>
+
+							<p style={{ fontSize: 18, color: 'white' }}>
+								{text}
+							</p>
+						</div>
+
+						{this.renderInfoTournament(width)}
+					</div>
+
+					<div style={{ flexDirection: 'column', width: '100%' }}>
+
+						<div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
+							{userMintedNfts.map((item, index) => this.renderRowChoise(item, index))}
+						</div>
+
+						<p style={{ fontSize: 15, color: 'red', marginTop: 10 }}>
+							{error}
+						</p>
+					</div>
+				</div>
+			)
+		}
+
+
+		// SE IL PRIMO FIGHT è STATO FATTO
+		if (tournament && !tournament.canSubscribe && !tournament.tournamentEnd && parseInt(tournament.roundEnded) > 0) {
+
+			const roundValue = round.replace("r", "")
+
+			const start = moment(tournament.start.seconds * 1000) //milliseconds
+			let text;
+			if (moment().isBefore(start)) {
+				text = `The round ${roundValue} will start ${start.fromNow()}`
+			}
+			else {
+				text = `The tournament started ${start.fromNow()}`
+			}
+
+			return (
+				<div style={{ width, flexDirection: 'column' }}>
+					<div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 30 }}>
+
+						<div style={{ flexDirection: 'column', width: '100%' }}>
+							<p style={{ fontSize: 22, color: 'white', marginBottom: 20 }}>
+								The round {tournament.roundEnded} is over!
+							</p>
+
+							<p style={{ fontSize: 18, color: 'white' }}>
+								{text}
+							</p>
+						</div>
+
+						{this.renderInfoTournament(width)}
+					</div>
+
+					<div style={{ flexDirection: 'column', width: '100%' }}>
+
+						<div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
+							{profileFights.length > 0 && profileFights.map((item, index) => this.renderSingleFight(item, index))}
+						</div>
+
+						<p style={{ fontSize: 15, color: 'red', marginTop: 10 }}>
+							{error}
+						</p>
+					</div>
+				</div>
+			)
+		}
+
+		// SE IL TORNEO è finito
 		if (tournament && tournament.tournamentEnd) {
-			const tournamentName = tournament.name.split("_")[0]
 
 			return (
 				<div style={{ width }}>
@@ -451,76 +562,6 @@ class Profile extends Component {
 					</div>
 
 					{this.renderInfoTournament(width)}
-				</div>
-			)
-		}
-
-		if (tournament && !tournament.canSubscribe) {
-			const start = moment(tournament.start.seconds * 1000) //milliseconds
-			let text;
-			if (moment().isBefore(start)) {
-				text = `The tournament will start ${start.fromNow()}`
-			}
-			else {
-				text = `The tournament started ${start.fromNow()}`
-			}
-
-			return (
-				<div style={{ width, flexDirection: 'column' }}>
-					<div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 30 }}>
-
-						<div style={{ flexDirection: 'column', width: '100%' }}>
-							<p style={{ fontSize: 18, color: 'white', marginBottom: 20 }}>
-								Registration for the tournament is closed!
-							</p>
-
-							<p style={{ fontSize: 18, color: 'white' }}>
-								{text}
-							</p>
-						</div>
-
-						{this.renderInfoTournament(width)}
-					</div>
-
-					<div style={{ flexDirection: 'column', width: '100%' }}>
-						<div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
-							{userMintedNfts.map((item, index) => this.renderRowChoise(item, index))}
-						</div>
-
-						<p style={{ fontSize: 15, color: 'red', marginTop: 10 }}>
-							{error}
-						</p>
-					</div>
-				</div>
-			)
-		}
-
-		//LE ISCRIZIONI SONO APERTE
-		if (tournament && tournament.canSubscribe) {
-			return (
-				<div style={{ width, flexDirection: 'column' }}>
-
-					<div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 30 }}>
-
-						<div style={{ flexDirection: 'column', width: '100%' }}>
-							<p style={{ fontSize: 18, color: 'white', marginBottom: 20 }}>
-								Registration for the tournament is still open
-							</p>
-
-							<p style={{ fontSize: 17, color: 'white', marginBottom: 20 }}>
-								BUY-IN {buyin || '...'} KDA
-							</p>
-						</div>
-
-						{this.renderInfoTournament(width)}
-					</div>
-
-
-					<div style={{ flexDirection: 'column', width: '100%' }}>
-						<div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
-							{userMintedNfts.map((item, index) => this.renderRowChoise(item, index))}
-						</div>
-					</div>
 				</div>
 			)
 		}
@@ -793,12 +834,13 @@ const styles = {
 		backgroundColor: '#ffffff15',
 		borderRadius: 2,
 		alignItems: 'center',
-		marginBottom: 20,
 		width: 260,
 		height: 170,
 		display: 'flex',
 		justifyContent: 'flex-start',
-		paddingLeft: 15
+		paddingLeft: 15,
+		marginRight: 20,
+		marginBottom: 20
 	}
 }
 
