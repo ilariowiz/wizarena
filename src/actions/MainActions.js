@@ -656,12 +656,10 @@ export const buyNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, a
 	}
 }
 
-export const subscribeToTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, round, idNft, buyin) => {
+export const subscribeToTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, round, idNft, toPrize, fee) => {
 	return (dispatch) => {
 
-		const halfbuyin = buyin / 2
-
-		const key = `${account.account}_${round}_${idNft}`
+		const key = `${round}_${idNft}`
 
 		let pactCode = `(free.${CONTRACT_NAME}.subscribe-tournament "${key}" "${round}" "${idNft}" "${account.account}")`;
 
@@ -669,12 +667,12 @@ export const subscribeToTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 			Pact.lang.mkCap(`Subscribe`, "Pay the buyin", `coin.TRANSFER`, [
 				account.account,
 				ADMIN_ADDRESS,
-				halfbuyin,
+				fee,
 			]),
 			Pact.lang.mkCap(`Subscribe`, "Pay the buyin", `coin.TRANSFER`, [
 				account.account,
 				"wiz-bank",
-				halfbuyin,
+				toPrize,
 			]),
 			Pact.lang.mkCap(
 				"Verify owner",

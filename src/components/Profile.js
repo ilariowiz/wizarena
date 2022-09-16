@@ -209,12 +209,15 @@ class Profile extends Component {
 	}
 
 	subscribe(idNft) {
-		const { chainId, gasPrice, netId, account, buyin } = this.props
+		const { chainId, gasPrice, netId, account, buyin, feeTournament } = this.props
 		const { tournament } = this.state
 
-		if (!buyin) {
+		if (!buyin || !feeTournament) {
 			return
 		}
+
+		const kdaFee = (buyin * feeTournament) / 100
+		const toPrize = buyin - kdaFee
 
 		const tNumber = tournament.name.split("_")[0]
 
@@ -228,7 +231,8 @@ class Profile extends Component {
 			account,
 			tNumber,
 			idNft,
-			buyin
+			toPrize,
+			kdaFee
 		)
 	}
 
