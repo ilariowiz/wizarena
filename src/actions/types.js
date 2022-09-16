@@ -4,6 +4,7 @@ export const CTA_COLOR = '#07abf3'
 
 export const ADMIN_ADDRESS = 'k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb'
 export const CONTRACT_NAME = 'wiz-arena-test2'
+export const WIZ_BANK = 'wiz-bank2'
 export const ITEMS_PER_BLOCK = 40
 
 

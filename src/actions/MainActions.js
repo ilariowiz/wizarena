@@ -23,7 +23,8 @@ import {
 	SET_REVEAL,
 	LOAD_BUYIN,
 	LOAD_FEE_TOURNAMENT,
-	LOAD_MONTEPREMI
+	LOAD_MONTEPREMI,
+	WIZ_BANK
 } from './types'
 
 
@@ -671,7 +672,7 @@ export const subscribeToTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 			]),
 			Pact.lang.mkCap(`Subscribe`, "Pay the buyin", `coin.TRANSFER`, [
 				account.account,
-				"wiz-bank",
+				WIZ_BANK,
 				toPrize,
 			]),
 			Pact.lang.mkCap(
