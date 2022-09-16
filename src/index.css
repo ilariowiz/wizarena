@@ -1,13 +1,44 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@font-face {
+  font-family: "PerfectDOS";
+  font-weight: 400;
+  src: local('PerfectDOS'), url(./fonts/PerfectDOS.ttf) format('truetype');
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+
+body {
+  font-family: "PerfectDOS", -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  /*-webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; */
+  margin: 0;
+  background-color: #222034;
+}
+
+button {
+  outline: 0 /* ///per levare il bordo blu dal bottone */;
+  font-family: "PerfectDOS", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  padding: 0;
+  -webkit-appearance: none;
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+input {
+  font-family: "PerfectDOS", -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+}
+
+
+div {
+  display: flex;
+}
+
+p {
+  padding: 0;
+  margin: 0;
 }
