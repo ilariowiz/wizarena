@@ -618,7 +618,7 @@ class Nft extends Component {
 							{this.renderStat("HP", stats.stats.hp)}
 							{this.renderStat("DEFENSE", stats.stats.difesa)}
 
-							{this.renderStat("ELEMENT", stats.stats.elemento.toUpperCase())}
+							{this.renderStat("SPELL", stats.stats.elemento.toUpperCase())}
 
 							{this.renderStat("ATTACK", stats.stats.attacco)}
 							{this.renderStat("DAMAGE", stats.stats.danno)}

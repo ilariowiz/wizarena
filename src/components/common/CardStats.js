@@ -5,7 +5,7 @@ const cardStats = (stats, numberOfMedalsForTournament) => {
         <div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
             <div style={{ width: '80%', alignItems: 'center', marginBottom: 7 }}>
                 <p style={styles.statsTitleStyle}>
-                    ELEMENT
+                    SPELL
                 </p>
                 <p style={styles.statsStyle}>
                     {stats.stats.elemento.toUpperCase()}
