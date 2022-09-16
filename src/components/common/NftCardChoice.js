@@ -22,7 +22,7 @@ class NftCardChoice extends Component {
     componentDidMount() {
         const { item, tournament, account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-        //console.log(item, stats, tournament);
+        //console.log(item, tournament);
 
         const idSubscription = `${tournament}_${item.id}`
         this.props.getSubscription(chainId, gasPrice, gasLimit, networkUrl, idSubscription, (response) => {
@@ -33,14 +33,27 @@ class NftCardChoice extends Component {
         })
     }
 
+    calcMedals() {
+        const { stats } = this.props
+
+        const medals = stats.stats.medals
+
+        let tot = 0
+
+        Object.keys(medals).forEach(i => {
+            tot += medals[i]
+        })
+
+        return tot
+    }
+
 	render() {
 		const { item, stats, width, reveal, tournament, canSubscribe } = this.props
         const { isSubscribed } = this.state
 
         //console.log(stats, tournament)
 
-        const medals = stats.stats.medals[tournament]
-        const numberOfMedalsForTournament = medals || '0'
+        const numberOfTotalMedals = this.calcMedals()
 
 		return (
 			<div
@@ -62,7 +75,7 @@ class NftCardChoice extends Component {
 
 					<div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
-                        {cardStats(stats, numberOfMedalsForTournament)}
+                        {cardStats(stats, numberOfTotalMedals)}
 
                         {
                             !isSubscribed && canSubscribe ?
