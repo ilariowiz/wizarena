@@ -24,7 +24,7 @@ class NftCardChoice extends Component {
 
         //console.log(item, stats, tournament);
 
-        const idSubscription = `${account.account}_${tournament}_${item.id}`
+        const idSubscription = `${tournament}_${item.id}`
         this.props.getSubscription(chainId, gasPrice, gasLimit, networkUrl, idSubscription, (response) => {
             //console.log(response)
             if (response && response.address) {
