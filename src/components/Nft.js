@@ -1126,21 +1126,6 @@ const styles = {
 		fontWeight: '500',
 		color: 'white',
 	},
-	btnOffer: {
-		height: 50,
-		backgroundColor: 'transparent',
-		justifyContent: 'center',
-		alignItems: 'center',
-		borderRadius: 2,
-		borderWidth: 2,
-		borderColor: CTA_COLOR,
-		borderStyle: 'solid'
-	},
-	btnOfferText: {
-		fontSize: 21,
-		fontWeight: '500',
-		color: CTA_COLOR,
-	},
 	boxSection: {
 		flexDirection: 'column',
 		borderRadius: 2,
