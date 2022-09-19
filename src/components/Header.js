@@ -70,6 +70,13 @@ class Header extends Component {
 
 								<p
 									className={section === 4 ? btnPressedStyle : btnStyle}
+									onClick={() => this.props.history.replace('/tournament')}
+								>
+									TOURNAMENT
+								</p>
+
+								<p
+									className={section === 5 ? btnPressedStyle : btnStyle}
 									onClick={() => this.props.history.replace('/rules')}
 								>
 									RULES
@@ -93,6 +100,13 @@ class Header extends Component {
 									onClick={() => this.props.history.replace('/me')}
 								>
 									PROFILE
+								</p>
+
+								<p
+									className={btnHeaderNft}
+									onClick={() => this.props.history.replace('/tournament')}
+								>
+									TOURNAMENT
 								</p>
 							</div>
 							:
