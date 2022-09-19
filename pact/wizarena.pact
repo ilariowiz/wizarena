@@ -79,9 +79,9 @@
         (insert counts NFTS_COUNT_KEY {"count": 0})
         (insert volume VOLUME_PURCHASE_COUNT {"count": 0.0})
         (insert values MINT_CHAIN_ID_KEY {"value": "1"})
-        (insert values-tournament BUYIN_KEY {"value": 3.0})
+        (insert values-tournament BUYIN_KEY {"value": 4.0})
         (insert values-tournament FEE_KEY {"value": 7.0})
-        (insert values-tournament FEE_TOURNAMENT_KEY {"value": 50.0})
+        (insert values-tournament FEE_TOURNAMENT_KEY {"value": 20.0})
         (insert max-items MAX_ITEMS_PER_OWNER {"max": 0})
 
         (insert values WIZ_REVEAL {"value": "0"})
@@ -102,6 +102,7 @@
         traits:object
         owner:string
         name:string
+        imageHash:string
     )
 
     (defschema nft-listed-schema
@@ -115,6 +116,7 @@
         @doc "Initial nft creation"
         traits:object
         name:string
+        imageHash:string
     )
 
     (defschema account-minted-schema
@@ -235,7 +237,8 @@
             )
             (insert creation id
                 {"traits": (at "traits" item-list),
-                "name": (at "name" item-list)}
+                "name": (at "name" item-list),
+                "imageHash": (at "imageHash" item-list)}
             )
         )
         (increase-count NFTS_COUNT_KEY)
@@ -299,7 +302,8 @@
                     "created": (at "block-time" (chain-data)),
                     "traits": (at "traits" data),
                     "owner": owner,
-                    "name": (at "name" data)
+                    "name": (at "name" data),
+                    "imageHash": (at "imageHash" data)
                 })
             )
         )
