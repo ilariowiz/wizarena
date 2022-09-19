@@ -9,6 +9,7 @@ import Nft from './components/Nft';
 import Settings from './components/Settings';
 import Fight from './components/Fight'
 import Rules from './components/Rules'
+import Tournament from './components/Tournament'
 
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'
@@ -32,6 +33,7 @@ ReactDOM.render(
             <Route path="/settings" component={Settings} />
             <Route path="/fight/" component={Fight} />
             <Route path="/rules" component={Rules} />
+            <Route path="/tournament" component={Tournament} />
           </Switch>
         </div>
       </BrowserRouter>
