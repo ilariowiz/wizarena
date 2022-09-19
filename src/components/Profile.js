@@ -498,7 +498,7 @@ class Profile extends Component {
 					<div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 30 }}>
 
 						<div style={{ flexDirection: 'column', width: '100%' }}>
-							<p style={{ fontSize: 22, color: 'white', marginBottom: 20 }}>
+							<p style={{ fontSize: 19, color: 'white', marginBottom: 20 }}>
 								The round {tournament.roundEnded} is over!
 							</p>
 
@@ -531,7 +531,7 @@ class Profile extends Component {
 				<div style={{ width }}>
 
 					<div style={{ flexDirection: 'column', width: '100%' }}>
-						<p style={{ fontSize: 22, color: 'white', marginBottom: 30 }}>
+						<p style={{ fontSize: 19, color: 'white', marginBottom: 30 }}>
 							Tournament {tournamentName.replace("t", "")} is over! Congratulations to all participants!
 						</p>
 
@@ -594,22 +594,20 @@ class Profile extends Component {
 		const tname = convertMedalName(tournament.name)
 
 		return (
-			<div style={{ width, flexDirection: 'column' }}>
-				<p style={{ fontSize: 16, color: 'white', marginBottom: 15 }}>
+			<div style={{ width, flexDirection: 'column', marginLeft: 15 }}>
+				<p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
 					{tname.torneo.toUpperCase()}
 				</p>
 
-				<p style={{ fontSize: 16, color: 'white', marginBottom: 15 }}>
+				<p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
 					{tname.round.toUpperCase()}
 				</p>
 
-				{/*
-			 	<p style={{ fontSize: 16, color: 'white', marginBottom: 15 }}>
-			 		Participant {iscritti}
+				<p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
+					NUMBER OF ROUNDS {tournament.nRounds}
 				</p>
-				*/}
 
-				<p style={{ fontSize: 16, color: 'white' }}>
+				<p style={{ fontSize: 18, color: 'white' }}>
 					Total Prize {montepremi || '...'} KDA
 				</p>
 			</div>
