@@ -63,14 +63,14 @@ class Settings extends Component {
                     <div>
                         <button
                             style={{ flexDirection: 'row', display: 'flex' }}
-							onClick={() => window.open("https://twitter.com/WizardArenaKDA", "_blank")}
+							onClick={() => window.open("https://twitter.com/WizardArena", "_blank")}
                         >
 							<AiOutlineTwitter
 								color={CTA_COLOR}
 								size={29}
 							/>
 							<p style={{ fontSize: 18, color: 'white', marginLeft: 10 }}>
-								@WizardArenaKDA
+								@WizardArena
 							</p>
 
                         </button>
