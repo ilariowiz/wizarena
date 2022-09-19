@@ -334,9 +334,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, reveal, montepremi, buyin, feeTournament } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, reveal, montepremi, buyin, feeTournament } = state.mainReducer;
 
-	return { chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, reveal, montepremi, buyin, feeTournament };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, reveal, montepremi, buyin, feeTournament };
 }
 
 export default connect(mapStateToProps, {

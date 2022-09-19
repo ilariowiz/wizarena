@@ -65,7 +65,7 @@ class Rules extends Component {
 			<div style={{ width: '100%' }}>
 				<Header
 					page='home'
-					section={4}
+					section={5}
 					account={account}
 					isMobile={isMobile}
 					history={this.props.history}
