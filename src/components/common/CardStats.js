@@ -1,8 +1,8 @@
 import React from 'react'
 
-const cardStats = (stats, numberOfMedalsForTournament) => {
+const cardStats = (stats, numberOfMedalsForTournament, width) => {
 
-    const widthBody = '90%'
+    const widthBody = width || '90%'
 
     return (
         <div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>

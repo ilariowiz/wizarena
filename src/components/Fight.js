@@ -127,13 +127,13 @@ class Fight extends Component {
                     alt={`#${info.id}`}
                 />
 
-                <div style={{ width: '80%', marginBottom: 10 }}>
+                <div style={{ width: '70%', marginBottom: 10 }}>
                     <p style={{ color: 'white', fontSize: 19 }}>
                         {info.name}
                     </p>
                 </div>
 
-                {cardStats(info, numberOfMedalsForTournament)}
+                {cardStats(info, numberOfMedalsForTournament, '70%')}
             </div>
         )
     }
