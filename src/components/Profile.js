@@ -91,7 +91,7 @@ class Profile extends Component {
 
 		if (account && account.account) {
 			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
-				this.setState({ loading: false })
+				this.setState({ nftsStats: [] })
 
 				if (this.props.userMintedNfts.length > 0) {
 					this.props.userMintedNfts.map(i => this.loadStats(i.name))
@@ -110,7 +110,14 @@ class Profile extends Component {
 			//console.log(data)
 			let stats = Object.assign([], this.state.nftsStats)
 			stats.push(data)
-			this.setState({ nftsStats: stats })
+
+			if (stats.length === this.props.userMintedNfts.length) {
+				this.setState({ nftsStats: stats, loading: false })
+			}
+			else {
+				this.setState({ nftsStats: stats })
+			}
+
 		}
 		else {
 			console.log('no stats');
@@ -570,7 +577,11 @@ class Profile extends Component {
 	renderRowChoise(item, index, modalWidth) {
 		const { nftsStats, tournament } = this.state
 
-		const stats = nftsStats.find(i => i.name === item.name)
+		const stats = nftsStats.length > 0 ? nftsStats.find(i => i.name === item.name) : ''
+
+		if (!stats) {
+			return <div key={index} />
+		}
 
 		return (
 			<NftCardChoice
