@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
+import { collection, getDocs, doc, getDoc, updateDoc } from "firebase/firestore";
+import { firebasedb } from '../Firebase';
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCardChoice.css'
 import cardStats from './CardStats'
+import ModalSpellbook from './ModalSpellbook'
 import {
     getSubscription
 } from '../../actions'
@@ -15,7 +18,8 @@ class NftCardChoice extends Component {
 
         this.state = {
             isSubscribed: false,
-            subscriptionInfo: {}
+            subscriptionInfo: {},
+            showModalSpellbook: false
         }
     }
 
@@ -47,6 +51,21 @@ class NftCardChoice extends Component {
         return tot
     }
 
+    onSubscribe(spellSelected) {
+        const { item } = this.props
+
+        //console.log(spellSelected)
+
+        const key = 'stats.spellSelected'
+
+        const docRef = doc(firebasedb, "stats", `#${item.id}`)
+		updateDoc(docRef, {
+            [key]: spellSelected
+        })
+
+        this.props.onSubscribe()
+    }
+
 	render() {
 		const { item, stats, width, reveal, tournament, canSubscribe } = this.props
         const { isSubscribed } = this.state
@@ -67,7 +86,7 @@ class NftCardChoice extends Component {
 
 				<div style={{ flexDirection: 'column', width, alignItems: 'center' }}>
 
-					<div style={{ width: '80%', justifyContent: 'space-between', alignItems: 'center', marginTop: 5, marginBottom: 10 }}>
+					<div style={{ width: '90%', justifyContent: 'space-between', alignItems: 'center', marginTop: 5, marginBottom: 10 }}>
 						<p style={{ color: 'white', fontSize: 17 }}>
 							{item.name}
 						</p>
@@ -82,7 +101,8 @@ class NftCardChoice extends Component {
                             <button
                                 className='btnSubscribe'
                                 style={styles.btnSubscribe}
-                                onClick={() => this.props.onSubscribe()}
+                                //onClick={() => this.props.onSubscribe()}
+                                onClick={() => this.setState({ showModalSpellbook: true })}
                             >
                                 <p style={{ fontSize: 17, color: 'white' }}>
                                     SUBSCRIBE
@@ -123,6 +143,21 @@ class NftCardChoice extends Component {
                     </div>
 
 				</div>
+
+                {
+                    this.state.showModalSpellbook &&
+                    <ModalSpellbook
+                        showModal={this.state.showModalSpellbook}
+                        onCloseModal={() => this.setState({ showModalSpellbook: false })}
+                        width={this.props.modalWidth}
+                        stats={stats}
+                        onSub={(spellSelected) => {
+                            this.onSubscribe(spellSelected)
+                            this.setState({ showModalSpellbook: false })
+                        }}
+                    />
+                }
+
 			</div>
 		)
 	}
