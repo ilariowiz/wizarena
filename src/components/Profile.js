@@ -37,7 +37,6 @@ class Profile extends Component {
 		let isConnected = this.props.account && this.props.account.account
 
 		this.state = {
-			kadenaPrice: 0,
 			section: 1,
 			loading: true,
 			showModalConnection: false,
@@ -58,8 +57,6 @@ class Profile extends Component {
 		this.props.setNetworkSettings(TEST_NET_ID, "1")
 		this.props.setNetworkUrl(TEST_NET_ID, "1")
 
-		this.loadKadenaPrice()
-
 		setTimeout(() => {
 			this.loadProfile()
 
@@ -73,15 +70,6 @@ class Profile extends Component {
 		this.loadMinted()
 	}
 
-	loadKadenaPrice() {
-		fetch('https://api.coingecko.com/api/v3/simple/price?ids=kadena&vs_currencies=usd')
-  		.then(response => response.json())
-  		.then(data => {
-  			//console.log(data)
-  			this.setState({ kadenaPrice: data.kadena.usd })
-  		});
-	}
-
 	loadMinted() {
 		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
@@ -91,12 +79,16 @@ class Profile extends Component {
 
 		if (account && account.account) {
 			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
-				this.setState({ nftsStats: [] })
-
-				if (this.props.userMintedNfts.length > 0) {
-					this.props.userMintedNfts.map(i => this.loadStats(i.name))
-				}
+				this.preloadStats()
 			})
+		}
+	}
+
+	preloadStats() {
+		this.setState({ nftsStats: [] })
+
+		if (this.props.userMintedNfts.length > 0) {
+			this.props.userMintedNfts.map(i => this.loadStats(i.name))
 		}
 	}
 
@@ -744,12 +736,12 @@ class Profile extends Component {
 					type={this.state.typeModal}
 					mintSuccess={() => {
 						this.props.clearTransaction()
-						this.loadProfile()
+						this.preloadStats()
 						this.loadTournament()
 					}}
 					mintFail={() => {
 						this.props.clearTransaction()
-						this.loadProfile()
+						this.preloadStats()
 						this.loadTournament()
 					}}
 					nameNft={this.state.nameNftSubscribed}
