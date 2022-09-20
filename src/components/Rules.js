@@ -29,7 +29,7 @@ class Rules extends Component {
 
                     <p style={{ fontSize: 18, color: 'white', lineHeight: 1.2 }}>
                     Each wizard is an NFT with an unique combination of traits, and it's also a mighty fighter in the Arena!<br /><br />
-                    Each wizard has this 7 stats: HP, Defense, Element, Spell, Attack, Damage, Spellbook, Resistance, and Weakness. Let's analyze them quickly:<br /><br />
+                    Each wizard has this 9 stats: HP, Defense, Element, Spell, Attack, Damage, Spellbook, Resistance, and Weakness. Let's analyze them quickly:<br /><br />
                     - HP. How much damage your wizard will be able to absorb before losing the battle<br /><br />
                     - Defense. Your dodging bonus to avoid the opponent's wizard spell, opposed by his Attack (and some bonuses or penalties)<br /><br />
                     - Element. Each spell has its own element, it serves to determine what kind of shots your wizard has<br /><br />
