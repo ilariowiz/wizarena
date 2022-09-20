@@ -1,18 +1,21 @@
 import React from 'react'
 
 const cardStats = (stats, numberOfMedalsForTournament) => {
+
+    const widthBody = '90%'
+
     return (
         <div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-            <div style={{ width: '80%', alignItems: 'center', marginBottom: 7 }}>
+            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7 }}>
                 <p style={styles.statsTitleStyle}>
-                    SPELL
+                    ELEMENT
                 </p>
                 <p style={styles.statsStyle}>
                     {stats.stats.elemento.toUpperCase()}
                 </p>
             </div>
 
-            <div style={{ width: '80%', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
+            <div style={{ width: widthBody, justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
                 <div>
                     <p style={styles.statsTitleStyle}>
                         HP
@@ -33,14 +36,23 @@ const cardStats = (stats, numberOfMedalsForTournament) => {
 
             </div>
 
-            <div style={{ width: '80%', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
+            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7 }}>
+                <p style={styles.statsTitleStyle}>
+                    SPELL
+                </p>
+                <p style={styles.statsStyle}>
+                    {stats.stats.spellSelected.name.toUpperCase()}
+                </p>
+            </div>
+
+            <div style={{ width: widthBody, justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
 
                 <div>
                     <p style={styles.statsTitleStyle}>
                         ATK
                     </p>
                     <p style={styles.statsStyle}>
-                        {stats.stats.attacco}
+                        {stats.stats.attacco + stats.stats.spellSelected.atkBase}
                     </p>
                 </div>
 
@@ -49,12 +61,21 @@ const cardStats = (stats, numberOfMedalsForTournament) => {
                         DAMAGE
                     </p>
                     <p style={styles.statsStyle}>
-                        {stats.stats.danno}
+                        {stats.stats.danno + stats.stats.spellSelected.dmgBase}
                     </p>
                 </div>
             </div>
 
-            <div style={{ width: '80%', alignItems: 'center', marginBottom: 7 }}>
+            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7 }}>
+                <p style={styles.statsTitleStyle}>
+                    SPELL PERK
+                </p>
+                <p style={styles.statsStyle}>
+                    {stats.stats.spellSelected.condition.name ? stats.stats.spellSelected.condition.name.toUpperCase() : '-'}
+                </p>
+            </div>
+
+            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7 }}>
                 <p style={styles.statsTitleStyle}>
                     RESISTANCE
                 </p>
@@ -63,7 +84,7 @@ const cardStats = (stats, numberOfMedalsForTournament) => {
                 </p>
             </div>
 
-            <div style={{ width: '80%', alignItems: 'center', marginBottom: 7 }}>
+            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7 }}>
                 <p style={styles.statsTitleStyle}>
                     WEAKNESS
                 </p>
@@ -72,7 +93,7 @@ const cardStats = (stats, numberOfMedalsForTournament) => {
                 </p>
             </div>
 
-            <div style={{ width: '80%', alignItems: 'center', marginBottom: 12 }}>
+            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 12 }}>
                 <p style={styles.statsTitleStyle}>
                     MEDALS
                 </p>
