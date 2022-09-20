@@ -618,10 +618,14 @@ class Nft extends Component {
 							{this.renderStat("HP", stats.stats.hp)}
 							{this.renderStat("DEFENSE", stats.stats.difesa)}
 
-							{this.renderStat("SPELL", stats.stats.elemento.toUpperCase())}
+							{this.renderStat("ELEMENT", stats.stats.elemento.toUpperCase())}
 
-							{this.renderStat("ATTACK", stats.stats.attacco)}
-							{this.renderStat("DAMAGE", stats.stats.danno)}
+							{this.renderStat("SPELL", stats.stats.spellSelected.name.toUpperCase())}
+
+							{this.renderStat("ATTACK", stats.stats.attacco + stats.stats.spellSelected.atkBase)}
+							{this.renderStat("DAMAGE", stats.stats.danno + stats.stats.spellSelected.dmgBase)}
+
+							{this.renderStat("SPELL PERK", stats.stats.spellSelected.condition.name ? stats.stats.spellSelected.condition.name.toUpperCase() : '-')}
 
 							{this.renderStat("RESISTANCE", stats.stats.resistenza.toUpperCase())}
 							{this.renderStat("WEAKNESS", stats.stats.debolezza.toUpperCase())}
