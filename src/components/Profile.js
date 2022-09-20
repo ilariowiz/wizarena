@@ -372,7 +372,7 @@ class Profile extends Component {
 		)
 	}
 
-	renderTournament(width) {
+	renderTournament(width, modalWidth) {
 		const { userMintedNfts, buyin, reveal } = this.props
 		const { tournament, error, profileFights, prize } = this.state
 
@@ -426,7 +426,7 @@ class Profile extends Component {
 
 					<div style={{ flexDirection: 'column', width: '100%' }}>
 						<div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
-							{userMintedNfts.map((item, index) => this.renderRowChoise(item, index))}
+							{userMintedNfts.map((item, index) => this.renderRowChoise(item, index, modalWidth))}
 						</div>
 					</div>
 				</div>
@@ -467,7 +467,7 @@ class Profile extends Component {
 					<div style={{ flexDirection: 'column', width: '100%' }}>
 
 						<div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
-							{userMintedNfts.map((item, index) => this.renderRowChoise(item, index))}
+							{userMintedNfts.map((item, index) => this.renderRowChoise(item, index, modalWidth))}
 						</div>
 
 						<p style={{ fontSize: 15, color: 'red', marginTop: 10 }}>
@@ -567,7 +567,7 @@ class Profile extends Component {
 		}
 	}
 
-	renderRowChoise(item, index) {
+	renderRowChoise(item, index, modalWidth) {
 		const { nftsStats, tournament } = this.state
 
 		const stats = nftsStats.find(i => i.name === item.name)
@@ -581,6 +581,7 @@ class Profile extends Component {
 				tournament={tournament.name.split("_")[0]}
 				canSubscribe={tournament.canSubscribe}
 				onSubscribe={() => this.subscribe(item.id)}
+				modalWidth={modalWidth}
 			/>
 		)
 	}
@@ -721,7 +722,7 @@ class Profile extends Component {
 
 				{
 					section === 2 && !loading ?
-					this.renderTournament(boxW)
+					this.renderTournament(boxW, modalW)
 					:
 					null
 				}
