@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import Media from 'react-media';
 import Header from './Header'
-import getBoxWidth from './common/GetBoxW'
-import { TEST_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
+import { BACKGROUND_COLOR } from '../actions/types'
 
 class Rules extends Component {
     componentDidMount() {

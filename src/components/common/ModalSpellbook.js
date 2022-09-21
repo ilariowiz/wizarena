@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ConnectionWidget from './ConnectionWidget'
 import { IoClose } from 'react-icons/io5'
 import '../../css/Modal.css'
 import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, CTA_COLOR } from '../../actions/types'

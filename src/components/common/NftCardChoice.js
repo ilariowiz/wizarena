@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { collection, getDocs, doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { firebasedb } from '../Firebase';
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCardChoice.css'
@@ -24,7 +24,7 @@ class NftCardChoice extends Component {
     }
 
     componentDidMount() {
-        const { item, tournament, account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+        const { item, tournament, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
         //console.log(item, tournament);
 
@@ -67,7 +67,7 @@ class NftCardChoice extends Component {
     }
 
 	render() {
-		const { item, stats, width, reveal, tournament, canSubscribe } = this.props
+		const { item, stats, width, reveal, canSubscribe } = this.props
         const { isSubscribed } = this.state
 
         //console.log(stats, tournament)

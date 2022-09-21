@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Media from 'react-media';
 import { connect } from 'react-redux'
 import moment from 'moment'
-import { collection, getDocs, doc, getDoc, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import DotLoader from 'react-spinners/DotLoader';
 import NftCard from './common/NftCard'
@@ -135,8 +135,8 @@ class Tournament extends Component {
 	}
 
     renderBody(isMobile) {
-        const { tournament, winners, error } = this.state
-        const { buyin, montepremi, reveal } = this.props
+        const { tournament, winners } = this.state
+        const { buyin, reveal } = this.props
 
         const { boxW } = getBoxWidth(isMobile)
 
@@ -154,7 +154,7 @@ class Tournament extends Component {
             return <div> </div>
         }
 
-        const tournamentName = tournament.name.split("_")[0]
+        //const tournamentName = tournament.name.split("_")[0]
         const roundName = tournament.name.split("_")[1]
         const roundEnded = tournament.roundEnded
 

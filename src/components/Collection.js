@@ -370,7 +370,7 @@ class Collection extends Component {
 					alt='Placeholder'
 				/>
 
-				<p style={{ fontSize: 23, color: 'black', textAlign: 'center' }}>
+				<p style={{ fontSize: 23, color: 'white', textAlign: 'center' }}>
 					The Arena is empty...
 				</p>
 			</div>
@@ -383,7 +383,7 @@ class Collection extends Component {
 
 		//console.log(allNftsIds)
 
-		const { boxW, modalW } = getBoxWidth(isMobile)
+		const { boxW } = getBoxWidth(isMobile)
 
 
 		let nftMinW = 260;

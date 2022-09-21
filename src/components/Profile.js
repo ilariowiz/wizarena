@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from 'react-redux'
-import { collection, getDocs, doc, getDoc, query, where } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import moment from 'moment'
 import Media from 'react-media';
@@ -625,7 +625,7 @@ class Profile extends Component {
 		const unselStyle = { borderBottomWidth: 3, borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderColor: 'transparent', borderStyle: 'solid' }
 		const selectedStyle1 = section === 1 ? selStyle : unselStyle
 		const selectedStyle2 = section === 2 ? selStyle : unselStyle
-		const selectedStyle3 = section === 3 ? selStyle : unselStyle
+		//const selectedStyle3 = section === 3 ? selStyle : unselStyle
 
 		return (
 			<div style={{ width: '100%', alignItems: 'center', marginBottom: 30 }}>
