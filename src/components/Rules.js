@@ -37,7 +37,7 @@ class Rules extends Component {
                     - Damage. The points subtracted from your opponent's HP after the hit<br /><br />
                     - Spellbook. By playing tournament your wizard will gain enough experience to learn new spells to keep in the Spellbook.<br /><br />
                     - Resistance. You can halve the damage you suffer from an element, with the right Resistance!<br /><br />
-                    - Weakness. You can double the damage your opponent suffer from your spells if you choose the right element. But be careful, You have a Weakness too!<br/><br />
+                    - Weakness. You can double the damage your opponent suffer from your spells if you have the right element. But be careful, You have a Weakness too!<br/><br />
                     Each of these stats derives from its traits, we are not going to tell you how the algorithm behind stats creation works, but for istance we can tell you that Devil Skin gives much more HP than Lich Skin, but way less Attack!
                     </p>
 
