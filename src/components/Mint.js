@@ -148,7 +148,7 @@ class Mint extends Component {
 
 		return (
 			<div style={{ flexDirection: 'column', alignItems: 'flex-start', marginBottom: 20, width }}>
-				<p style={{ fontSize: 21, fontWeight: '500', color: 'white', marginBottom: 8 }}>
+				<p style={{ fontSize: 21, color: 'white', marginBottom: 8 }}>
 					How to mint
 				</p>
 
@@ -183,7 +183,7 @@ class Mint extends Component {
 
 				<div style={{ position: 'absolute', height: '100%', width: `${progress}%`, left: 0, backgroundColor: TEXT_SECONDARY_COLOR }} />
 
-				<p style={{ color: 'white', fontSize: 20, fontWeight: '500', zIndex: 100 }}>
+				<p style={{ color: 'white', fontSize: 20, zIndex: 100 }}>
 					{minted.toLocaleString()} / {max.toLocaleString()}
 				</p>
 			</div>
@@ -195,7 +195,7 @@ class Mint extends Component {
 			<div
 				style={Object.assign({}, styles.btnConnect, { width, cursor: 'default' })}
 			>
-				<p style={{ fontSize: 19, color: TEXT_SECONDARY_COLOR, fontWeight: '500' }}>
+				<p style={{ fontSize: 19, color: TEXT_SECONDARY_COLOR }}>
 					Mint not started yet
 				</p>
 			</div>
@@ -209,7 +209,7 @@ class Mint extends Component {
 		if (countMinted && countMinted === 1024) {
 			return (
 				<div style={Object.assign({}, styles.btnConnect, { width, cursor: 'default' })}>
-					<p style={{ fontSize: 19, color: TEXT_SECONDARY_COLOR, fontWeight: '500' }}>
+					<p style={{ fontSize: 19, color: TEXT_SECONDARY_COLOR }}>
 						SOLD OUT
 					</p>
 				</div>
@@ -223,7 +223,7 @@ class Mint extends Component {
 					style={Object.assign({}, styles.btnConnect, { width })}
 					onClick={() => this.setState({ showModalConnection: true })}
 				>
-					<p style={{ fontSize: 19, color: TEXT_SECONDARY_COLOR, fontWeight: '500' }}>
+					<p style={{ fontSize: 19, color: TEXT_SECONDARY_COLOR }}>
 						Connect wallet
 					</p>
 				</button>
@@ -239,7 +239,7 @@ class Mint extends Component {
 						style={Object.assign({}, styles.btnMint, { width })}
 						onClick={() => this.mint()}
 					>
-						<p style={{ fontSize: 19, color: 'white', fontWeight: '500' }}>
+						<p style={{ fontSize: 19, color: 'white' }}>
 							{maxItemsPerWallet <= 0 ? "Max reached" : "MINT 1 Wizard"}
 						</p>
 					</button>
@@ -268,7 +268,7 @@ class Mint extends Component {
 		return (
 			<div style={{ flexDirection: 'column', width: '90%', alignItems: 'flex-start' }}>
 
-				<p style={{ fontSize: 20, fontWeight: '500', color: 'white', marginBottom: 20 }}>
+				<p style={{ fontSize: 20, color: 'white', marginBottom: 20 }}>
 					{title}
 				</p>
 
@@ -277,7 +277,7 @@ class Mint extends Component {
 						Mint Price
 					</p>
 
-					<p style={{ fontSize: 19, fontWeight: '500', color: 'white' }}>
+					<p style={{ fontSize: 19, color: 'white' }}>
 						FREE
 					</p>
 				</div>
@@ -363,7 +363,7 @@ class Mint extends Component {
 								/>
 
 								<div style={{ flexDirection: 'column', justifyContent: 'center' }}>
-									<p style={{ fontSize: 26, color: 'white', fontWeight: '600', lineHeight: 1 }}>Wizards Arena</p>
+									<p style={{ fontSize: 26, color: 'white', lineHeight: 1 }}>Wizards Arena</p>
 									<p style={{ fontSize: 17, color: '#c2c0c0', lineHeight: 1 }}>Supply: 1.024</p>
 								</div>
 							</div>
@@ -385,7 +385,7 @@ class Mint extends Component {
 				</div>
 
 				<div style={{ width, flexDirection: 'column', marginBottom: 30 }}>
-					<p style={{ fontSize: 19, color: 'white', fontWeight: '500', marginBottom: 10 }}>
+					<p style={{ fontSize: 19, color: 'white', marginBottom: 10 }}>
 						Sample Drops
 					</p>
 

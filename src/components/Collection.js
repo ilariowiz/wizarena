@@ -203,7 +203,7 @@ class Collection extends Component {
 	renderBoxHeader(title, subtitle) {
 		return (
 			<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: 30 }}>
-				<p style={{ fontSize: 22, color: 'white', fontWeight: '500' }}>
+				<p style={{ fontSize: 22, color: 'white' }}>
 					{title}
 				</p>
 
@@ -251,7 +251,7 @@ class Collection extends Component {
 					style={{ width: 130, height: 46, backgroundColor: CTA_COLOR, borderRadius: 2, justifyContent: 'center', alignItems: 'center' }}
 					onClick={() => this.searchByName()}
 				>
-					<p style={{ fontSize: 19, color: 'white', fontWeight: '500' }}>
+					<p style={{ fontSize: 19, color: 'white' }}>
 						Search
 					</p>
 				</button>
@@ -347,7 +347,7 @@ class Collection extends Component {
 						}
 					}}
 				>
-					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 22, fontWeight: '500', lineHeight: 1 }}>
+					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 22, lineHeight: 1 }}>
 						{item+1}
 					</p>
 				</button>

@@ -683,7 +683,7 @@ class Profile extends Component {
 						style={styles.btnConnect}
 						onClick={() => this.setState({ showModalConnection: true })}
 					>
-						<p style={{ fontSize: 19, color: TEXT_SECONDARY_COLOR, fontWeight: '500' }}>
+						<p style={{ fontSize: 19, color: TEXT_SECONDARY_COLOR }}>
 							Connect wallet
 						</p>
 					</button>

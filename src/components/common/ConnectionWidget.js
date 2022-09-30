@@ -121,7 +121,7 @@ class ConnectionWidget extends Component {
 						style={styles.btnConnect}
 						onClick={() => this.checkAddress()}
 					>
-						<p style={{ color: 'white', fontSize: 19, fontWeight: '500' }}>
+						<p style={{ color: 'white', fontSize: 19 }}>
 							Connect
 						</p>
 					</button>
@@ -165,7 +165,6 @@ const styles = {
 		WebkitAppearance: 'none',
 		MozAppearance: 'none',
 		appearance: 'none',
-		fontWeight: '500',
 		outline: 'none'
 	},
 	btnConnect: {

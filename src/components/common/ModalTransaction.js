@@ -201,7 +201,7 @@ class ModalTransaction extends Component {
 			<div className={classContainer}>
 				<div style={Object.assign({}, styles.subcontainer, { width })}>
 
-					<p style={{ fontSize: 20, color: 'white', marginBottom: 20, fontWeight: '500' }}>
+					<p style={{ fontSize: 20, color: 'white', marginBottom: 20 }}>
 						{content.title}
 					</p>
 
@@ -216,7 +216,7 @@ class ModalTransaction extends Component {
 							style={styles.btnAction}
 							onClick={content.action}
 						>
-							<p style={{ fontSize: 16, color: 'white', fontWeight: '500' }}>
+							<p style={{ fontSize: 16, color: 'white' }}>
 								{content.buttonText}
 							</p>
 						</button>
