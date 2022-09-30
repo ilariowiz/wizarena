@@ -102,9 +102,6 @@ class Nft extends Component {
 					this.loadHistory(idNft)
 					this.loadStats(idNft)
 					//this.loadFights(idNft)
-					if (parseInt(reveal) > 0) {
-						this.loadRank(idNft)
-					}
 				})
 			}
 			else {
@@ -147,15 +144,6 @@ class Nft extends Component {
 		else {
 			console.log('no stats');
 		}
-	}
-
-	async loadRank(idNft) {
-		const docRef = doc(firebasedb, "ranking", idNft)
-
-		const docSnap = await getDoc(docRef)
-		const data = docSnap.data()
-
-		this.setState({ traitsRank: data.traitsRank })
 	}
 
 	/*
@@ -240,29 +228,29 @@ class Nft extends Component {
 		return /^[0-9]+$/.test(str);
 	}
 
-	renderTraits(key) {
+	renderTraits(item, index) {
 		const { nft } = this.state
 		const { reveal } = this.props
 
-		const trait = nft.traits[key]
-		//console.log(percent)
+		//console.log(nft);
 
 		let percentString;
 		if (parseInt(reveal) > 0) {
-			const section = traits_qty[key.toLowerCase()]
-			const qty = section[trait]
+			//console.log(traits_qty, item.trait_type);
+			const section = traits_qty[item.trait_type.toLowerCase()]
+			const qty = section[item.value]
 
 			percentString = qty * 100 / 1024
 		}
 
 		return (
-			<div style={styles.boxSingleTrait} key={key}>
-				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 15, fontWeight: '500' }}>
-					{key.toUpperCase()}
+			<div style={styles.boxSingleTrait} key={index}>
+				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 15 }}>
+					{item.trait_type.toUpperCase()}
 				</p>
 
 				<p style={{ color: 'white', fontSize: 18 }}>
-					{trait}
+					{item.value}
 				</p>
 
 				{
@@ -428,21 +416,6 @@ class Nft extends Component {
 		)
 	}
 
-	renderRank() {
-		const { traitsRank } = this.state
-
-		return (
-			<div style={{ flexDirection: 'column', marginTop: 5 }}>
-				<p style={{ fontSize: 18, color: 'white' }}>
-					{`Rank ${traitsRank || '...'}`}
-				</p>
-				<p style={{ fontSize: 13, color: '#c2c0c0' }}>
-					The rank does not take into account the stats
-				</p>
-			</div>
-		)
-	}
-
 	renderLeftBoxPriceListed() {
 		const { nft, kadenaPrice } = this.state
 		const { reveal } = this.props
@@ -450,17 +423,10 @@ class Nft extends Component {
 		return (
 			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
 
-				<div style={{ flexDirection: 'column' }}>
-					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 30, fontWeight: '700', lineHeight: 1 }}>
+				<div style={{ flexDirection: 'column', marginBottom: 24 }}>
+					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 30, lineHeight: 1 }}>
 						Wizard {nft.name}
 					</p>
-
-					{
-						parseInt(reveal) > 0 ?
-						this.renderRank()
-						:
-						<div style={{ height: 24 }} />
-					}
 				</div>
 
 				<div style={{ flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-end', marginTop: 15 }}>
@@ -475,7 +441,7 @@ class Nft extends Component {
 							alt={nft.id}
 						/>
 
-						<p style={{ fontSize: 24, color: 'white', fontWeight: '700', lineHeight: 1, marginTop: 2 }}>
+						<p style={{ fontSize: 24, color: 'white', lineHeight: 1, marginTop: 2 }}>
 							{nft.price}
 						</p>
 					</div>
@@ -495,17 +461,10 @@ class Nft extends Component {
 		return (
 			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
 
-				<div style={{ flexDirection: 'column' }}>
-					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 30, fontWeight: '700', lineHeight: 1 }}>
+				<div style={{ flexDirection: 'column', marginBottom: 24 }}>
+					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 30, lineHeight: 1 }}>
 						Wizard {nft.name}
 					</p>
-
-					{
-						parseInt(reveal) > 0 ?
-						this.renderRank()
-						:
-						<div style={{ height: 24 }} />
-					}
 				</div>
 
 				<div style={{ flexDirection: 'column', marginTop: 15 }}>
@@ -536,16 +495,9 @@ class Nft extends Component {
 		return (
 			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
 				<div style={{ flexDirection: 'column' }}>
-					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 30, fontWeight: '700', lineHeight: 1 }}>
+					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 30, lineHeight: 1 }}>
 						Wizard {nft.name}
 					</p>
-
-					{
-						parseInt(reveal) > 0 ?
-						this.renderRank()
-						:
-						null
-					}
 				</div>
 			</div>
 		)
@@ -598,7 +550,7 @@ class Nft extends Component {
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
 				<div style={{ backgroundColor: '#ffffff15', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
-					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, fontWeight: '500', color: 'white' }}>
+					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, color: 'white' }}>
 						Stats
 					</p>
 				</div>
@@ -648,7 +600,7 @@ class Nft extends Component {
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
 				<div style={{ backgroundColor: '#ffffff15', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
-					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, fontWeight: '500', color: 'white' }}>
+					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, color: 'white' }}>
 						Medals
 					</p>
 				</div>
@@ -679,7 +631,7 @@ class Nft extends Component {
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
 				<div style={{ backgroundColor: '#ffffff15', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
-					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, fontWeight: '500', color: 'white' }}>
+					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, color: 'white' }}>
 						Fights
 					</p>
 				</div>
@@ -708,24 +660,33 @@ class Nft extends Component {
 
 		//console.log(reveal)
 
+		let traits = []
+		if (nft && nft.traits) {
+			traits = nft.traits.sort((a, b) => {
+				return a.trait_type.localeCompare(b.trait_type)
+			})
+		}
+
+		//console.log(traits);
+
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
 				<div style={{ backgroundColor: '#ffffff15', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
-					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, fontWeight: '500', color: 'white' }}>
+					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, color: 'white' }}>
 						Properties
 					</p>
 				</div>
 
-				<div style={Object.assign({}, styles.boxTraits, { width })}>
+				<div style={Object.assign({}, styles.boxTraits, { width: width - 20 })}>
 					{
 						!reveal || reveal === '0' ?
 						<p style={{ fontSize: 18, color: 'white', margin: 15 }}>
 							The properties will be visible after the reveal
 						</p>
 						:
-						nft && nft.traits && Object.keys(nft.traits).sort().map((key) => {
-							return this.renderTraits(key)
+						nft && nft.traits && traits.map((item, index) => {
+							return this.renderTraits(item, index)
 						})
 					}
 
@@ -742,7 +703,7 @@ class Nft extends Component {
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
 				<div style={{ backgroundColor: '#ffffff15', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
-					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, fontWeight: '500', color: 'white' }}>
+					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, color: 'white' }}>
 						Item sales
 					</p>
 				</div>
@@ -1127,7 +1088,6 @@ const styles = {
 	},
 	btnBuyText: {
 		fontSize: 21,
-		fontWeight: '500',
 		color: 'white',
 	},
 	boxSection: {
@@ -1171,7 +1131,6 @@ const styles = {
 		WebkitAppearance: 'none',
 		MozAppearance: 'none',
 		appearance: 'none',
-		fontWeight: '500',
 		outline: 'none'
 	},
 	textTitleStat: {
