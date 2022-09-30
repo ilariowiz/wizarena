@@ -38,14 +38,93 @@
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
-(wiz-arena.create-all-wizards [{"name": "#0", "traits": {"Head": "blue", "eyes": "green", "body": "small", "background": "yellow"}},
-{"name": "#1", "traits": {"Head": "yellow", "eyes": "brown", "body": "medium", "background": "blue"}},
-{"name": "#2", "traits": {"Head": "yellow", "eyes": "green", "body": "medium", "background": "pink"}},
-{"name": "#3", "traits": {"Head": "orange", "eyes": "brown", "body": "medium", "background": "black"}},
-{"name": "#4", "traits": {"Head": "red", "eyes": "red", "body": "medium", "background": "red"}},
-{"name": "#5", "traits": {"Head": "red", "eyes": "blue", "body": "large", "background": "darkgrey"}}])
+(wiz-arena.create-all-wizards [{
+        "name": "#0",
+        "edition": 0,
+        "attributes": [
+            {
+                "trait_type": "Background",
+                "value": "Forest"
+            },
+            {
+                "trait_type": "Robe",
+                "value": "Red"
+            },
+            {
+                "trait_type": "Hat",
+                "value": "Yellow"
+            },
+            {
+                "trait_type": "Skin",
+                "value": "Yellow Human"
+            },
+            {
+                "trait_type": "Mouth",
+                "value": "Dot"
+            },
+            {
+                "trait_type": "Eyes",
+                "value": "Basic"
+            },
+            {
+                "trait_type": "Gem",
+                "value": "Sapphire"
+            },
+            {
+                "trait_type": "Staff",
+                "value": "Fire"
+            },
+            {
+                "trait_type": "Spell",
+                "value": "Dark 1"
+            }
+        ],
+        "imageHash": "00002000318031c003c02ff827f423c603c607ee0efe2bc027e027e027e025a0"
+    }, {
+        "name": "#1",
+        "edition": 1,
+        "attributes": [
+            {
+                "trait_type": "Background",
+                "value": "Sky"
+            },
+            {
+                "trait_type": "Robe",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Hat",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Skin",
+                "value": "Brown Human"
+            },
+            {
+                "trait_type": "Mouth",
+                "value": "Scream"
+            },
+            {
+                "trait_type": "Eyes",
+                "value": "Mono"
+            },
+            {
+                "trait_type": "Gem",
+                "value": "Diamond"
+            },
+            {
+                "trait_type": "Staff",
+                "value": "Wood"
+            },
+            {
+                "trait_type": "Spell",
+                "value": "Ice 1"
+            }
+        ],
+        "imageHash": "ffff8fff8e3fcc1fdc1fc007c00fdc3ffc3ff009f003c03fc81fc81fc81fc81f"
+    }])
 
-(expect "first block of nfts loaded" (wiz-arena.get-count "nfts-count-key") 6)
+(expect "first block of nfts loaded" (wiz-arena.get-count "nfts-count-key") 2)
 (commit-tx)
 
 
@@ -128,6 +207,14 @@
 }])
 
 (wiz-arena.list-wizard "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" "0" 10.0)
+
+(commit-tx)
+
+(begin-tx "get nfts listed")
+
+(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+
+(wiz-arena.get-all-on-sale)
 
 (commit-tx)
 

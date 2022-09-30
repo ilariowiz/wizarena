@@ -99,7 +99,7 @@
         @doc "Stores core information about each nft"
         id:string
         created:time
-        traits:object
+        traits:list
         owner:string
         name:string
         imageHash:string
@@ -114,7 +114,7 @@
 
     (defschema creation-schema
         @doc "Initial nft creation"
-        traits:object
+        traits:list
         name:string
         imageHash:string
     )
@@ -236,7 +236,7 @@
                 (wizcount (get-count NFTS_COUNT_KEY))
             )
             (insert creation id
-                {"traits": (at "traits" item-list),
+                {"traits": (at "attributes" item-list),
                 "name": (at "name" item-list),
                 "imageHash": (at "imageHash" item-list)}
             )
@@ -545,7 +545,7 @@
             (enforce (< 0 created-count) "no wizard created")
             (enforce (< minted-count created-count) "all wizard minted")
             (let (
-                    (data (read creation id ['traits 'name]))
+                    (data (read creation id ['traits 'name 'imageHash]))
                 )
                 data
             )
@@ -588,7 +588,7 @@
                     (+ info info-market)
                 )
                 (let (
-                        (info (read nfts (int-to-str 10 id) ['created 'owner 'name 'id]))
+                        (info (read nfts (int-to-str 10 id) ['created 'owner 'name 'id 'imageHash]))
                     )
                     (+ info info-market)
                 )
@@ -604,6 +604,11 @@
     (defun get-volume ()
         @doc "get volume of purchase"
         (at "count" (read volume VOLUME_PURCHASE_COUNT ['count]))
+    )
+
+    (defun get-all-on-sale ()
+        @doc "get wizards on sale"
+        (select nfts-market (where "listed" (= true)))
     )
 
     (defun get-subscription (id:string)
