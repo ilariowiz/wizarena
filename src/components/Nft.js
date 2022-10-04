@@ -417,6 +417,16 @@ class Nft extends Component {
 		)
 	}
 
+	renderName(name, marginBottom) {
+		return (
+			<div style={{ flexDirection: 'column', marginBottom }}>
+				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 30, lineHeight: 1 }}>
+					Wizard {name}
+				</p>
+			</div>
+		)
+	}
+
 	renderLeftBoxPriceListed() {
 		const { nft, kadenaPrice } = this.state
 		const { reveal } = this.props
@@ -424,11 +434,7 @@ class Nft extends Component {
 		return (
 			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
 
-				<div style={{ flexDirection: 'column', marginBottom: 24 }}>
-					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 30, lineHeight: 1 }}>
-						Wizard {nft.name}
-					</p>
-				</div>
+				{this.renderName(nft.name, 24)}
 
 				<div style={{ flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-end', marginTop: 15 }}>
 					<p style={{ color: '#c2c0c0', fontSize: 17, marginBottom: 4 }}>
@@ -462,11 +468,7 @@ class Nft extends Component {
 		return (
 			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
 
-				<div style={{ flexDirection: 'column', marginBottom: 24 }}>
-					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 30, lineHeight: 1 }}>
-						Wizard {nft.name}
-					</p>
-				</div>
+				{this.renderName(nft.name, 24)}
 
 				<div style={{ flexDirection: 'column', marginTop: 15 }}>
 					<p style={{ color: '#c2c0c0', fontSize: 17 }}>
@@ -495,11 +497,7 @@ class Nft extends Component {
 
 		return (
 			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
-				<div style={{ flexDirection: 'column' }}>
-					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 30, lineHeight: 1 }}>
-						Wizard {nft.name}
-					</p>
-				</div>
+				{this.renderName(nft.name, 0)}
 			</div>
 		)
 	}

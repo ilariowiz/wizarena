@@ -881,7 +881,7 @@ export const readFromContract = (cmd, returnError, networkUrl) => {
 			let data = await Pact.fetch.local(cmd, networkUrl);
 
 			if (data && data.result && data.result.status === "success") {
-				//console.log(data.result)
+				console.log(data.result)
 				return data.result.data
 			}
 			else {
