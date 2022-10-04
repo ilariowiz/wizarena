@@ -91,7 +91,7 @@ class Nft extends Component {
 	}
 
 	loadNft(idNft) {
-		const { chainId, gasPrice, gasLimit, networkUrl, reveal } = this.props
+		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
 		this.setState({ loading: true })
 
@@ -139,7 +139,7 @@ class Nft extends Component {
 		const data = docSnap.data()
 
 		if (data) {
-			console.log(data)
+			//console.log(data)
 			this.setState({ stats: data })
 		}
 		else {
@@ -230,7 +230,6 @@ class Nft extends Component {
 	}
 
 	renderTraits(item, index) {
-		const { nft } = this.state
 		const { reveal } = this.props
 
 		//console.log(nft);
@@ -429,7 +428,6 @@ class Nft extends Component {
 
 	renderLeftBoxPriceListed() {
 		const { nft, kadenaPrice } = this.state
-		const { reveal } = this.props
 
 		return (
 			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
@@ -463,7 +461,6 @@ class Nft extends Component {
 
 	renderLeftBoxListing() {
 		const { inputPrice, kadenaPrice, nft } = this.state
-		const { reveal } = this.props
 
 		return (
 			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
@@ -493,7 +490,6 @@ class Nft extends Component {
 
 	renderLeftMakeOffer() {
 		const { nft } = this.state
-		const { reveal } = this.props
 
 		return (
 			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>

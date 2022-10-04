@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import { IoClose } from 'react-icons/io5'
-import { throttle } from 'lodash';
 import Header from './Header'
 import NftCard from './common/NftCard'
 import getBoxWidth from './common/GetBoxW'

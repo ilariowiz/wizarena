@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { doc, getDoc } from "firebase/firestore";
-import { firebasedb } from '../Firebase';
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCard.css'
 
