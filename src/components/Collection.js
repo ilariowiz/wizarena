@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import { IoClose } from 'react-icons/io5'
+import { throttle } from 'lodash';
 import Header from './Header'
 import NftCard from './common/NftCard'
 import getBoxWidth from './common/GetBoxW'
@@ -49,7 +50,17 @@ class Collection extends Component {
 			}
 
 		}, 500)
+
+		//window.addEventListener('resize', this.resize)
 	}
+
+	/*
+	componentWillUnmount() {
+        window.removeEventListener('resize', this.resize)
+    }
+
+    resize = throttle(() => this.forceUpdate(), 50)
+	*/
 
 	loadAll() {
 		const { chainId, gasPrice, gasLimit, networkUrl, nftsBlockId } = this.props

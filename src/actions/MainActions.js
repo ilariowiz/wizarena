@@ -700,7 +700,7 @@ export const subscribeToTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 			networkId: netId
 		}
 
-		console.log("subscribeToTournament", cmd)
+		//console.log("subscribeToTournament", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
@@ -737,7 +737,7 @@ export const withdrawPrize = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 			networkId: netId
 		}
 
-		console.log("withdrawPrize", cmd)
+		//console.log("withdrawPrize", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
@@ -746,7 +746,7 @@ export const withdrawPrize = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 export const signTransaction = (cmdToSign, isXWallet, netId, networkUrl, account, chainId, nftId, callback) => {
 	return async (dispatch) => {
 
-		console.log(cmdToSign, isXWallet)
+		//console.log(cmdToSign, isXWallet)
 
 		dispatch(updateTransactionState("signingCmd", cmdToSign))
 
@@ -817,7 +817,7 @@ export const signTransaction = (cmdToSign, isXWallet, netId, networkUrl, account
 			}
 		}
 
-		console.log(signedCmd)
+		//console.log(signedCmd)
 		dispatch(updateTransactionState("signedCmd", signedCmd))
 
 		let localRes = null
@@ -832,7 +832,7 @@ export const signTransaction = (cmdToSign, isXWallet, netId, networkUrl, account
 		}
 
 		const parsedLocalRes = await parseRes(localRes);
-		console.log(parsedLocalRes);
+		//console.log(parsedLocalRes);
 
 		if (parsedLocalRes && parsedLocalRes.result && parsedLocalRes.result.status === "success") {
 			let data = null
@@ -881,11 +881,11 @@ export const readFromContract = (cmd, returnError, networkUrl) => {
 			let data = await Pact.fetch.local(cmd, networkUrl);
 
 			if (data && data.result && data.result.status === "success") {
-				console.log(data.result)
+				//console.log(data.result)
 				return data.result.data
 			}
 			else {
-				console.log(data)
+				//console.log(data)
 				if (returnError === true) {
 					if (data && data.result) {
 						return data.result
@@ -896,7 +896,7 @@ export const readFromContract = (cmd, returnError, networkUrl) => {
 			}
 		}
 		catch (e) {
-			console.log(e)
+			//console.log(e)
 			console.log("Had trouble fetching data from the blockchain")
 		}
 

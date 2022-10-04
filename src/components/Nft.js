@@ -60,7 +60,7 @@ class Nft extends Component {
 			this.getPathNft()
 			//facciamo il call su reveal solo se è 0, se è 1 è inutile richiamarlo
 
-			this.getRevealNfts()
+			//this.getRevealNfts()
 			if (parseInt(this.props.reveal) < 1) {
 				this.getRevealNfts()
 			}
@@ -69,11 +69,12 @@ class Nft extends Component {
 
 	loadKadenaPrice() {
 		fetch('https://api.coingecko.com/api/v3/simple/price?ids=kadena&vs_currencies=usd')
-  		.then(response => response.json())
-  		.then(data => {
-  			//console.log(data)
-  			this.setState({ kadenaPrice: data.kadena.usd })
-  		});
+		.then(response => response.json())
+		.then(data => {
+			//console.log(data)
+			this.setState({ kadenaPrice: data.kadena.usd })
+		})
+		.catch(error => console.log(error))
 	}
 
 	getRevealNfts() {
@@ -819,6 +820,8 @@ class Nft extends Component {
 		const { nft, loading } = this.state
 		const { account, reveal } = this.props
 
+		//console.log(account);
+
 		let boxW = Math.floor(window.innerWidth * 90 / 100)
 		if (boxW > 1100) boxW = 1100;
 
@@ -859,7 +862,7 @@ class Nft extends Component {
 
 						{
 							// nft non listato ma tu sei owner: SELL
-							!nft.listed && account.account && nft.owner === account.account ?
+							!nft.listed && account && account.account && nft.owner === account.account ?
 							<div style={Object.assign({}, styles.boxRightLarge, { width: boxWidthRight })}>
 								{this.renderLeftBoxListing()}
 
@@ -871,7 +874,7 @@ class Nft extends Component {
 
 						{
 							//non sei il proprietario e l'nft non è listato
-							!nft.listed && !loading && account.account && nft.owner !== account.account ?
+							!nft.listed && !loading && account && account.account && nft.owner !== account.account ?
 							<div style={Object.assign({}, styles.boxRightLarge, { width: boxWidthRight })}>
 
 								{this.renderLeftMakeOffer()}
