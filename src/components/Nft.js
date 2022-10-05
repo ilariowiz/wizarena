@@ -60,8 +60,9 @@ class Nft extends Component {
 			this.getPathNft()
 			//facciamo il call su reveal solo se è 0, se è 1 è inutile richiamarlo
 
+			//console.log(this.props.reveal);
 			//this.getRevealNfts()
-			if (parseInt(this.props.reveal) < 1) {
+			if (parseInt(this.props.reveal) < 1 || !this.props.reveal) {
 				this.getRevealNfts()
 			}
 		}, 500)
@@ -279,6 +280,43 @@ class Nft extends Component {
 				</p>
 				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 22 }}>
 					{numbersOfMedals}
+				</p>
+
+			</div>
+		)
+	}
+
+	renderSpell(item, index) {
+
+		const marginRight = 12
+
+		return (
+			<div key={index} style={{ alignItems: 'flex-end' }}>
+				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
+					NAME
+				</p>
+				<p style={{ color: "white", fontSize: 20, marginRight }}>
+					{item.name}
+				</p>
+				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
+					PERK
+				</p>
+				<p style={{ color: "white", fontSize: 20, marginRight }}>
+					{item.condition.name || "-"}
+				</p>
+
+				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
+					BASE ATK
+				</p>
+				<p style={{ color: "white", fontSize: 20, marginRight }}>
+					{item.atkBase}
+				</p>
+
+				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
+					BASE DMG
+				</p>
+				<p style={{ color: "white", fontSize: 20 }}>
+					{item.dmgBase}
 				</p>
 
 			</div>
@@ -649,6 +687,39 @@ class Nft extends Component {
 		)
 	}
 
+	renderBoxSpellbook(width) {
+		const { stats } = this.state
+		const { reveal } = this.props
+
+		//console.log(stats);
+
+		return (
+			<div style={Object.assign({}, styles.boxSection, { width })}>
+
+				<div style={{ backgroundColor: '#ffffff15', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
+					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, color: 'white' }}>
+						Spellbook
+					</p>
+				</div>
+
+				<div style={Object.assign({}, styles.boxTraits, { width, flexDirection: 'column' })}>
+					{
+						!stats || (stats && stats.stats.spellbook.length === 0) || reveal === "0" ?
+						<p style={{ fontSize: 18, color: 'white', margin: 15 }}>
+							The Spellbook is empty...
+						</p>
+						:
+						stats && stats.stats.spellbook && stats.stats.spellbook.map((item, index) => {
+							return this.renderSpell(item, index)
+						})
+					}
+
+				</div>
+
+			</div>
+		)
+	}
+
 	renderBoxProperties(width) {
 		const { nft } = this.state
 		const { reveal } = this.props
@@ -763,7 +834,7 @@ class Nft extends Component {
 
 						{
 							// nft non listato ma tu sei owner: SELL
-							!nft.listed && account.account && nft.owner === account.account ?
+							!nft.listed && account && account.account && nft.owner === account.account ?
 							<div style={styles.boxRightLarge}>
 								{this.renderLeftBoxListing()}
 
@@ -775,7 +846,7 @@ class Nft extends Component {
 
 						{
 							//non sei il proprietario e l'nft non è listato
-							!nft.listed && !loading && account.account && nft.owner !== account.account ?
+							!nft.listed && !loading && account && account.account && nft.owner !== account.account ?
 							<div style={styles.boxRightLarge}>
 
 								{this.renderLeftMakeOffer()}
@@ -801,7 +872,11 @@ class Nft extends Component {
 
 				{this.renderBoxStats(imageWidth)}
 
+				{this.renderBoxSpellbook(imageWidth)}
+
 				{this.renderBoxMedals(imageWidth)}
+
+				{this.renderBoxFights(imageWidth)}
 
 				{this.renderBoxProperties(imageWidth)}
 
@@ -898,7 +973,11 @@ class Nft extends Component {
 					{this.renderBoxMedals((boxW/2) - 10)}
 				</div>
 
-				{this.renderBoxFights(boxW)}
+				<div style={{ width: boxW, justifyContent: 'space-between' }}>
+					{this.renderBoxSpellbook(boxW/2 - 10)}
+
+					{this.renderBoxFights(boxW/2 - 10)}
+				</div>
 
 				{this.renderBoxProperties(boxW)}
 
