@@ -4,7 +4,7 @@ const getImageUrl = (id, reveal) => {
         return `https://storage.googleapis.com/wizarena/placeholder.png`
     }
 
-    return `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`
+    //return `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`
 }
 
 export default getImageUrl
