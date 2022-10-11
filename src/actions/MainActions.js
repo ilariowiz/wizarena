@@ -85,28 +85,28 @@ export const setConnectedWallet = (account, isXWallet, netId, chainId, callback)
 					//console.log(res)
 
 					if (res.status !== "success") {
-						console.log(`Could not connect to X Wallet`)
+						//console.log(`Could not connect to X Wallet`)
 						error = `Could not connect to X Wallet`
 						dispatch(setIsConnectWallet(false))
 						break connectlabel
 					}
 
 					if (res.account && res.account.account !== account.account) {
-						console.log("Tried to connect to X Wallet but not with the account entered. Make sure you have logged into the right account in X Wallet")
+						//console.log("Tried to connect to X Wallet but not with the account entered. Make sure you have logged into the right account in X Wallet")
 						error = "Tried to connect to X Wallet but not with the account entered. Make sure you have logged into the right account in X Wallet"
 						dispatch(setIsConnectWallet(false))
 						break connectlabel
 					}
 
 					if (res.account && res.account.chainId !== chainId) {
-						console.log(`You need to select chain ${chainId} from X Wallet`)
+						//console.log(`You need to select chain ${chainId} from X Wallet`)
 						error = `You need to select chain ${chainId} from X Wallet`
 						dispatch(setIsConnectWallet(false))
 						break connectlabel
 					}
 				}
 				catch (e) {
-					console.log(e)
+					//console.log(e)
 					dispatch(setIsConnectWallet(false))
 				}
 			}
@@ -149,7 +149,7 @@ export const fetchAccountDetails = (accountName, chainId, gasPrice = DEFAULT_GAS
 			}
 			else {
 				dispatch(clearUser())
-				console.log('error')
+				//console.log('error')
 				if (callback) {
 					callback(response)
 				}
@@ -881,7 +881,7 @@ export const readFromContract = (cmd, returnError, networkUrl) => {
 			let data = await Pact.fetch.local(cmd, networkUrl);
 
 			if (data && data.result && data.result.status === "success") {
-				console.log(data.result)
+				//console.log(data.result)
 				return data.result.data
 			}
 			else {

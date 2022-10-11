@@ -16,7 +16,7 @@ import {
 	setNetworkUrl,
 	readAccountMinted,
 } from '../actions'
-import { TEST_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
+import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
 import '../css/Nft.css'
 
 const logo = require('../assets/wiz_logo_centrale.png')
@@ -46,8 +46,8 @@ class Mint extends Component {
 	componentDidMount() {
 		document.title = "Mint - Wizards Arena"
 
-		this.props.setNetworkSettings(TEST_NET_ID, "1")
-		this.props.setNetworkUrl(TEST_NET_ID, "1")
+		this.props.setNetworkSettings(MAIN_NET_ID, "1")
+		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
 		setTimeout(() => {
 			this.maxItemsPerWallet()

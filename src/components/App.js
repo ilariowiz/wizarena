@@ -6,7 +6,7 @@ import {
 	fetchAccountDetails,
 	getNumberMinted
 } from '../actions'
-import { TEST_NET_ID, BACKGROUND_COLOR } from '../actions/types'
+import { MAIN_NET_ID, BACKGROUND_COLOR } from '../actions/types'
 
 const logo = require('../assets/wiz_logo.png')
 
@@ -24,8 +24,8 @@ class App extends Component {
 	componentDidMount() {
 		document.title = "Wizards Arena"
 
-		this.props.setNetworkSettings(TEST_NET_ID, "1")
-		this.props.setNetworkUrl(TEST_NET_ID, "1")
+		this.props.setNetworkSettings(MAIN_NET_ID, "1")
+		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
 		setTimeout(() => {
 			this.refreshUser()

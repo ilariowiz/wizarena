@@ -9,7 +9,7 @@ import NftCard from './common/NftCard'
 import Header from './Header'
 import getBoxWidth from './common/GetBoxW'
 import convertMedalName from './common/ConvertMedalName'
-import { TEST_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
+import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import {
     getMontepremi,
     getBuyin,
@@ -35,8 +35,8 @@ class Tournament extends Component {
     componentDidMount() {
 		document.title = "Tournament - Wizards Arena"
 
-        this.props.setNetworkSettings(TEST_NET_ID, "1")
-		this.props.setNetworkUrl(TEST_NET_ID, "1")
+        this.props.setNetworkSettings(MAIN_NET_ID, "1")
+		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
         setTimeout(() => {
             this.loadTournament()
@@ -59,7 +59,7 @@ class Tournament extends Component {
         const querySnapshot = await getDocs(collection(firebasedb, "stage"))
 
         querySnapshot.forEach(doc => {
-            console.log(doc.data());
+            //console.log(doc.data());
 			const tournament = doc.data()
             this.setState({ tournament }, async () => {
 
@@ -166,11 +166,11 @@ class Tournament extends Component {
 					<div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 30 }}>
 
 						<div style={{ flexDirection: 'column', width: '100%' }}>
-							<p style={{ fontSize: 18, color: 'white', marginBottom: 20 }}>
+							<p style={{ fontSize: 19, color: 'white', marginBottom: 20 }}>
 								Registration for the tournament is still open
 							</p>
 
-							<p style={{ fontSize: 17, color: 'white', marginBottom: 20 }}>
+							<p style={{ fontSize: 22, color: 'white', marginBottom: 20 }}>
 								BUY-IN {buyin || '...'} KDA
 							</p>
 						</div>

@@ -23,7 +23,7 @@ import {
 	clearTransaction,
 	getReveal
 } from '../actions'
-import { TEST_NET_ID, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, CTA_COLOR, CONTRACT_NAME } from '../actions/types'
+import { MAIN_NET_ID, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, CTA_COLOR, CONTRACT_NAME } from '../actions/types'
 import '../css/Nft.css'
 
 const logoKda = require('../assets/kdalogo2.png')
@@ -52,8 +52,8 @@ class Nft extends Component {
 		//console.log(this.props.account)
 		document.title = `Wizards Arena`
 
-		this.props.setNetworkSettings(TEST_NET_ID, "1")
-		this.props.setNetworkUrl(TEST_NET_ID, "1")
+		this.props.setNetworkSettings(MAIN_NET_ID, "1")
+		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 		this.loadKadenaPrice()
 
 		setTimeout(() => {
@@ -115,14 +115,16 @@ class Nft extends Component {
 	loadHistory(idNft) {
 		const { netId } = this.props
 
-		let url;
+		let url = `https://estats.chainweb.com/txs/events?search=${CONTRACT_NAME}.WIZ_BUY&param=${idNft}&offset=0&limit=20`
 
+		/*
 		if (netId === TEST_NET_ID) {
 			url = `https://estats.chainweb.com/txs/events?search=eighties-bulls.BULL_BUY&param=1305&offset=0&limit=20`
 		}
 		else {
-			url = `https://estats.chainweb.com/txs/events?search=${CONTRACT_NAME}.WIZ_BUY&param=${idNft}&offset=0&limit=20`
+
 		}
+		*/
 
 		fetch(url)
   		.then(response => response.json())
@@ -144,7 +146,7 @@ class Nft extends Component {
 			this.setState({ stats: data })
 		}
 		else {
-			console.log('no stats');
+			//console.log('no stats');
 		}
 	}
 

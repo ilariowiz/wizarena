@@ -26,7 +26,7 @@ import {
 	withdrawPrize,
 	getFeeTournament
 } from '../actions'
-import { TEST_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
+import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import '../css/Nft.css'
 
 
@@ -54,8 +54,8 @@ class Profile extends Component {
 	componentDidMount() {
 		document.title = "Me - Wizards Arena"
 
-		this.props.setNetworkSettings(TEST_NET_ID, "1")
-		this.props.setNetworkUrl(TEST_NET_ID, "1")
+		this.props.setNetworkSettings(MAIN_NET_ID, "1")
+		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
 		setTimeout(() => {
 			this.loadProfile()
@@ -87,8 +87,13 @@ class Profile extends Component {
 	preloadStats() {
 		this.setState({ nftsStats: [] })
 
+		//console.log(this.props.userMintedNfts);
+
 		if (this.props.userMintedNfts.length > 0) {
 			this.props.userMintedNfts.map(i => this.loadStats(i.name))
+		}
+		else {
+			this.setState({ loading: false })
 		}
 	}
 
@@ -123,7 +128,7 @@ class Profile extends Component {
 		const querySnapshot = await getDocs(collection(firebasedb, "stage"))
 
 		querySnapshot.forEach(doc => {
-			console.log(doc.data());
+			//console.log(doc.data());
 			const tournament = doc.data()
 			this.setState({ tournament }, () => {
 
@@ -390,8 +395,8 @@ class Profile extends Component {
 		if (userMintedNfts.length === 0) {
 			return (
 				<div style={{ width, flexDirection: 'column' }}>
-					<p style={{ fontSize: 18, color: 'white', marginBottom: 20 }}>
-						You must first buy a Wizard to participate in the tournament
+					<p style={{ fontSize: 20, color: 'white', marginBottom: 20 }}>
+						You must have a Wizard to participate in the tournament
 					</p>
 
 					{this.renderInfoTournament(width)}

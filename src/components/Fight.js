@@ -7,7 +7,7 @@ import { firebasedb } from './Firebase';
 import Header from './Header'
 import getImageUrl from './common/GetImageUrl'
 import cardStats from './common/CardStats'
-import { TEST_NET_ID, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
+import { MAIN_NET_ID, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import {
     setNetworkSettings,
     setNetworkUrl,
@@ -33,8 +33,8 @@ class Fight extends Component {
     componentDidMount() {
 		document.title = "Fight - Wizards Arena"
 
-        this.props.setNetworkSettings(TEST_NET_ID, "1")
-		this.props.setNetworkUrl(TEST_NET_ID, "1")
+        this.props.setNetworkSettings(MAIN_NET_ID, "1")
+		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
 		setTimeout(() => {
 			this.getPathFight()
@@ -45,7 +45,7 @@ class Fight extends Component {
         const { pathname } = this.props.location;
 		const idFight = pathname.replace('/fight/', '')
 
-        console.log(idFight)
+        //console.log(idFight)
 
         if (idFight.includes('fight')) {
             //errore!

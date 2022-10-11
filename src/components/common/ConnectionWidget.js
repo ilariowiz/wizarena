@@ -97,7 +97,7 @@ class ConnectionWidget extends Component {
 				{
 					this.hasXWallet &&
 					<div style={{ justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 30 }}>
-						<p style={{ fontSize: 16, color: 'white', marginRight: 20 }}>
+						<p style={{ fontSize: 18, color: 'white', marginRight: 20 }}>
 							Use X-Wallet
 						</p>
 

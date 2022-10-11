@@ -1,5 +1,5 @@
-;(namespace "free")
-(define-keyset "wizarena-test-keyset" (read-keyset "wizarena-test-keyset"))
+(namespace "free")
+(define-keyset "wizarena-keyset" (read-keyset "wizarena-keyset"))
 
 (module wiz-arena ADMIN
   "Wizards Arena NFTs"
@@ -17,7 +17,7 @@
     (defconst BUYIN_KEY "buyin-key")
     (defconst FEE_KEY "fee-key")
     (defconst FEE_TOURNAMENT_KEY "fee-tournament-key")
-    (defconst ADMIN_KEYSET (read-keyset "wizarena-test-keyset"))
+    (defconst ADMIN_KEYSET (read-keyset "wizarena-keyset"))
     (defconst ADMIN_ADDRESS "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb")
     (defconst MAX_ITEMS_PER_OWNER "max-items-per-owner")
     (defconst WIZ_BANK:string "wiz-bank" "Account holding prizes")
@@ -140,7 +140,7 @@
     )
 
     (defschema max-items-schema
-        @doc "Max items schema during whitelist mint time"
+        @doc "Max items schema during mint time"
         max:integer
     )
 
@@ -385,7 +385,6 @@
     )
 
     (defun increase-volume-by (key:string amount:decimal)
-        @doc "Increases count of a key in a table by 1"
         (require-capability (PRIVATE))
         (update volume key
             {"count": (+ amount (get-volume))}
