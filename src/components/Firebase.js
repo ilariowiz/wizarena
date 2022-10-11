@@ -3,13 +3,13 @@ import { getFirestore } from 'firebase/firestore';
 //import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDJpS5RrKvHRDaJAXFOSlHIxcWn97yFIr4",
-  authDomain: "wizarena-a32c6.firebaseapp.com",
-  projectId: "wizarena-a32c6",
-  storageBucket: "wizarena-a32c6.appspot.com",
-  messagingSenderId: "886776405520",
-  appId: "1:886776405520:web:219eb72a849c4fcc4cf495",
-  measurementId: "G-LB1W1KS9DJ"
+    apiKey: process.env.REACT_APP_FIREBASE_APIKEY,
+    authDomain: process.env.REACT_APP_FIREBASE_AUTHDOMAIN,
+    projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+    storageBucket: process.env.REACT_APP_FIREBASE_STORAGEBUCKET,
+    messagingSenderId: process.env.REACT_APP_FIREBASE_MSGSENDERID,
+    appId: process.env.REACT_APP_FIREBASE_APPID,
+    measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENTID
 };
 
 
