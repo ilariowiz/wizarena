@@ -52,6 +52,8 @@ class Profile extends Component {
 	}
 
 	componentDidMount() {
+		const { reveal } = this.props
+
 		document.title = "Me - Wizards Arena"
 
 		this.props.setNetworkSettings(MAIN_NET_ID, "1")
@@ -60,7 +62,9 @@ class Profile extends Component {
 		setTimeout(() => {
 			this.loadProfile()
 
-			if (parseInt(this.props.reveal) < 1) {
+			//console.log(this.props.reveal);
+
+			if (parseInt(reveal) < 1 || !reveal) {
 				this.getRevealNfts()
 			}
 		}, 500)
@@ -210,6 +214,7 @@ class Profile extends Component {
 	}
 
 	getRevealNfts() {
+		//console.log("getReveal");
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
 		this.props.getReveal(chainId, gasPrice, gasLimit, networkUrl)

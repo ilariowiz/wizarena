@@ -49,6 +49,7 @@ class Nft extends Component {
 	}
 
 	componentDidMount() {
+		const { reveal } = this.props
 		//console.log(this.props.account)
 		document.title = `Wizards Arena`
 
@@ -61,8 +62,7 @@ class Nft extends Component {
 			//facciamo il call su reveal solo se è 0, se è 1 è inutile richiamarlo
 
 			//console.log(this.props.reveal);
-			//this.getRevealNfts()
-			if (parseInt(this.props.reveal) < 1 || !this.props.reveal) {
+			if (parseInt(reveal) < 1 || !reveal) {
 				this.getRevealNfts()
 			}
 		}, 500)

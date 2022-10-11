@@ -33,6 +33,8 @@ class Tournament extends Component {
 	}
 
     componentDidMount() {
+        const { reveal } = this.props
+
 		document.title = "Tournament - Wizards Arena"
 
         this.props.setNetworkSettings(MAIN_NET_ID, "1")
@@ -41,7 +43,7 @@ class Tournament extends Component {
         setTimeout(() => {
             this.loadTournament()
 
-            if (parseInt(this.props.reveal) < 1) {
+            if (parseInt(reveal) < 1 || !reveal) {
 				this.getRevealNfts()
 			}
         }, 500)
@@ -142,8 +144,8 @@ class Tournament extends Component {
 
         if (parseInt(reveal) === 0) {
 			return (
-				<div style={{ width: boxW, flexDirection: 'column' }}>
-					<p style={{ fontSize: 18, color: 'white' }}>
+				<div style={{ width: boxW, flexDirection: 'column', paddingTop: 50 }}>
+					<p style={{ fontSize: 22, color: 'white' }}>
 						The Tournament page will be available after the reveal
 					</p>
 				</div>

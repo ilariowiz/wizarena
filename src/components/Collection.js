@@ -35,6 +35,8 @@ class Collection extends Component {
 	}
 
 	componentDidMount() {
+		const { reveal } = this.props
+
 		document.title = "Collection - Wizards Arena"
 
 		this.props.setNetworkSettings(MAIN_NET_ID, "1")
@@ -44,7 +46,7 @@ class Collection extends Component {
 			this.loadAll()
 			this.getMarketVolume()
 			//facciamo il call su reveal solo se è 0, se è 1 è inutile richiamarlo
-			if (parseInt(this.props.reveal) < 1) {
+			if (parseInt(reveal) < 1 || !reveal) {
 				this.getRevealNfts()
 			}
 
