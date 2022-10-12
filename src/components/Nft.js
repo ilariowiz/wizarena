@@ -113,7 +113,7 @@ class Nft extends Component {
 	}
 
 	loadHistory(idNft) {
-		const { netId } = this.props
+		//const { netId } = this.props
 
 		let url = `https://estats.chainweb.com/txs/events?search=${CONTRACT_NAME}.WIZ_BUY&param=${idNft}&offset=0&limit=20`
 
