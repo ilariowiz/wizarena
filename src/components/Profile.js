@@ -413,6 +413,13 @@ class Profile extends Component {
 
 		//LE ISCRIZIONI SONO APERTE
 		if (tournament && tournament.canSubscribe) {
+
+			const dateStart = moment(tournament.start.seconds * 1000)
+            //console.log(dateStart);
+
+            const dateStartString = moment(dateStart).format("dddd, MMMM Do YYYY, h:mm:ss a");
+            const dateStartTo = moment().to(dateStart)
+
 			return (
 				<div style={{ width, flexDirection: 'column' }}>
 
@@ -420,7 +427,14 @@ class Profile extends Component {
 
 						<div style={{ flexDirection: 'column', width: '100%' }}>
 							<p style={{ fontSize: 18, color: 'white', marginBottom: 20 }}>
-								Registration for the tournament is still open
+								Registration for the tournament is open. The tournament will start:
+							</p>
+
+							<p style={{ fontSize: 19, color: 'white', marginBottom: 5 }}>
+								{dateStartTo}
+							</p>
+                            <p style={{ fontSize: 16, color: 'white', marginBottom: 20 }}>
+								{dateStartString}
 							</p>
 
 							<p style={{ fontSize: 17, color: 'white', marginBottom: 20 }}>
