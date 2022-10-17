@@ -1,7 +1,6 @@
 import Pact from "pact-lang-api";
 import {
 	CONTRACT_NAME,
-	ADMIN_ADDRESS,
 	LOAD_USER,
 	DEFAULT_GAS_PRICE,
 	MAIN_NET_ID,
@@ -607,8 +606,8 @@ export const delistNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId
 export const buyNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, nft) => {
 	return (dispatch) => {
 
-		let fee = nft.price * 5 / 100;
-		let toSeller = nft.price - fee
+		//let fee = nft.price * 5 / 100;
+		//let toSeller = nft.price - fee
 
 		//console.log("fee",fee)
 		//console.log("toSeller",toSeller)

@@ -47,7 +47,8 @@ class Nft extends Component {
 			loading: true,
 			dataMarketHistory: {},
 			fights: [],
-			traitsRank: undefined
+			traitsRank: undefined,
+			loadingHistory: true
 		}
 	}
 
@@ -104,7 +105,7 @@ class Nft extends Component {
 				document.title = `${response.name} - Wizards Arena`
 				//console.log(response)
 				this.setState({ nft: response, loading: false }, () => {
-					//this.loadHistory(idNft)
+					this.loadHistory(idNft)
 					this.loadStats(idNft)
 					//this.loadFights(idNft)
 				})
@@ -116,26 +117,18 @@ class Nft extends Component {
 	}
 
 	loadHistory(idNft) {
-		//const { netId } = this.props
-
 		let url = `https://estats.chainweb.com/txs/events?search=${CONTRACT_NAME}.WIZ_BUY&param=${idNft}&offset=0&limit=20`
-
-		/*
-		if (netId === TEST_NET_ID) {
-			url = `https://estats.chainweb.com/txs/events?search=eighties-bulls.BULL_BUY&param=1305&offset=0&limit=20`
-		}
-		else {
-
-		}
-		*/
 
 		fetch(url)
   		.then(response => response.json())
   		.then(data => {
   			//console.log(data)
-			this.setState({ nftH: data })
+			this.setState({ nftH: data, loadingHistory: false })
   		})
-		.catch(e => console.log(e))
+		.catch(e => {
+			console.log(e)
+			this.setState({ loadHistory: false })
+		})
 	}
 
 	async loadStats(idNft) {
@@ -847,7 +840,7 @@ class Nft extends Component {
 	}
 
 	renderBoxSales(width) {
-		const { nftH } = this.state
+		const { nftH, loadingHistory } = this.state
 
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
@@ -867,7 +860,7 @@ class Nft extends Component {
 					{
 						nftH && nftH.length === 0 ?
 						<p style={{ fontSize: 18, color: 'white', marginLeft: 15, marginBottom: 15, marginTop: 15 }}>
-							No sales
+							{loadingHistory ? "Loading..." : "No sales"}
 						</p>
 						: null
 					}
