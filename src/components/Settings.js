@@ -63,7 +63,7 @@ class Settings extends Component {
                     <div>
                         <button
                             style={{ flexDirection: 'row', display: 'flex' }}
-							onClick={() => window.open("https://twitter.com/WizardArena", "_blank")}
+							onClick={() => window.open("https://twitter.com/WizardsArena", "_blank")}
                         >
 							<AiOutlineTwitter
 								color={CTA_COLOR}
