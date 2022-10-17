@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
+import Popup from 'reactjs-popup';
 import { AiOutlineReload } from 'react-icons/ai';
 import { AiOutlineShareAlt } from 'react-icons/ai';
 import toast, { Toaster } from 'react-hot-toast';
@@ -13,6 +14,8 @@ import ModalConnectionWidget from './common/ModalConnectionWidget'
 import HistoryItem from './common/HistoryItem'
 import getImageUrl from './common/GetImageUrl'
 import traits_qty from './common/Traits_qty'
+import conditions from './common/Conditions'
+import 'reactjs-popup/dist/index.css';
 import {
 	setNetworkSettings,
 	setNetworkUrl,
@@ -292,6 +295,16 @@ class Nft extends Component {
 
 		const marginRight = 12
 
+		//console.log(item);
+
+		let condDesc;
+		if (item.condition && item.condition.name) {
+			let condInfo = conditions.find(i => i.name === item.condition.name)
+			if (condInfo) {
+				condDesc = `${condInfo.effect} - Chance of success: ${condInfo.pct}%`
+			}
+		}
+
 		return (
 			<div key={index} style={{ alignItems: 'flex-end' }}>
 				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
@@ -303,9 +316,29 @@ class Nft extends Component {
 				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
 					PERK
 				</p>
-				<p style={{ color: "white", fontSize: 20, marginRight }}>
-					{item.condition.name || "-"}
-				</p>
+
+				{
+					item.condition && item.condition.name ?
+					<Popup
+						trigger={open => (
+							<button style={{ color: "white", fontSize: 20, marginRight }}>
+								{item.condition.name}
+							</button>
+						)}
+						position="top center"
+						closeOnDocumentClick
+					>
+						<div style={{ padding: 10, fontSize: 16 }}>
+							{condDesc}
+						</div>
+					</Popup>
+					:
+					<p style={{ color: "white", fontSize: 20, marginRight }}>
+						-
+					</p>
+				}
+
+
 
 				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
 					BASE ATK
@@ -567,6 +600,42 @@ class Nft extends Component {
 	}
 
 	renderStat(title, value) {
+
+		if (title === "SPELL PERK") {
+
+			let condDesc;
+			if (value && value !== "-") {
+				let condInfo = conditions.find(i => i.name.toUpperCase() === value)
+				if (condInfo) {
+					condDesc = `${condInfo.effect} - Chance of success: ${condInfo.pct}%`
+				}
+			}
+
+			return (
+				<div style={{ alignItems: 'flex-end', marginBottom: 5 }}>
+					<p style={styles.textTitleStat}>{title}</p>
+
+					{
+						condDesc ?
+						<Popup
+							trigger={open => (
+								<button style={styles.textValueStat}>{value}</button>
+							)}
+							position="top center"
+							closeOnDocumentClick
+						>
+							<div style={{ padding: 10, fontSize: 16 }}>
+								{condDesc}
+							</div>
+						</Popup>
+						:
+						<p style={styles.textValueStat}>{value}</p>
+					}
+
+				</div>
+			)
+		}
+
 		return (
 			<div style={{ alignItems: 'flex-end', marginBottom: 5 }}>
 				<p style={styles.textTitleStat}>{title}</p>
