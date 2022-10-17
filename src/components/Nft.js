@@ -579,7 +579,7 @@ class Nft extends Component {
 		const { stats } = this.state
 		const { reveal } = this.props
 
-		//console.log(stats)
+		//console.log(reveal)
 
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
@@ -600,7 +600,7 @@ class Nft extends Component {
 					}
 
 					{
-						stats && parseInt(reveal) > 0 ?
+						stats && reveal !== '0' ?
 						<div style={Object.assign({}, styles.boxTraits, { width })}>
 							{this.renderStat("HP", stats.stats.hp)}
 							{this.renderStat("DEFENSE", stats.stats.difesa)}
