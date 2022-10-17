@@ -175,7 +175,7 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 
 				if (callback) {
 					//gli diciamo di leggere tutti gli ids, quindi qui block è response, appunto tutti gli id
-					dispatch(loadBlockNfts(chainId, gasPrice, 5000, networkUrl, response, callback))
+					dispatch(loadBlockNfts(chainId, gasPrice, 150000, networkUrl, response, callback))
 				}
 			}
 		})
@@ -191,7 +191,7 @@ export const loadBlockNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 		}
 
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
-			//console.log(response)
+			console.log(response)
 
 			if (response) {
 
