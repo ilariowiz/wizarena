@@ -408,10 +408,11 @@ class Mint extends Component {
 					type='mint'
 					mintSuccess={() => {
 						this.props.clearTransaction()
-						this.props.history.replace('/me')
+						this.maxItemsPerWallet()
 					}}
 					mintFail={() => {
 						this.props.clearTransaction()
+						this.maxItemsPerWallet()
 					}}
 				/>
 

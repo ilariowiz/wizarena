@@ -147,7 +147,7 @@ class ModalTransaction extends Component {
 				body = ''
 				buttonText = ''
 				if (type === 'mint') {
-					body = "See your new Wizard!"
+					body = "Wizard successfully minted!"
 					buttonText = 'Profile'
 				}
 				else if (type === 'list') {
