@@ -94,11 +94,12 @@ class Mint extends Component {
 			}
 
 			this.minted()
-			/*
-			this.countdownMinted = setInterval(() => {
-				this.minted()
-			}, 15000)
-			*/
+
+			if (stage !== 'early') {
+				this.countdownMinted = setInterval(() => {
+					this.minted()
+				}, 19000)
+			}
 		})
 	}
 
@@ -110,9 +111,12 @@ class Mint extends Component {
 			return
 		}
 
+		//console.log(countMinted);
+
 		if (countMinted >= 1024) {
 			clearInterval(this.countdownMinted)
 			this.countdownMinted = null
+			return
 		}
 
 		this.props.getNumberMinted(chainId, gasPrice, gasLimit, networkUrl)
@@ -203,7 +207,7 @@ class Mint extends Component {
 	}
 
 	renderBtnMint(width) {
-		const { stage, maxItemsPerWallet } = this.state
+		const { maxItemsPerWallet } = this.state
 		const { countMinted, account } = this.props
 
 		if (countMinted && countMinted === 1024) {
