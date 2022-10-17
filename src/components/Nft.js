@@ -101,7 +101,7 @@ class Nft extends Component {
 				document.title = `${response.name} - Wizards Arena`
 				//console.log(response)
 				this.setState({ nft: response, loading: false }, () => {
-					this.loadHistory(idNft)
+					//this.loadHistory(idNft)
 					this.loadStats(idNft)
 					//this.loadFights(idNft)
 				})
@@ -580,6 +580,10 @@ class Nft extends Component {
 		const { reveal } = this.props
 
 		//console.log(reveal)
+		let rev = false
+		if (reveal && parseInt(reveal) > 0) {
+			rev = true
+		}
 
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
@@ -592,7 +596,7 @@ class Nft extends Component {
 
 				<div style={Object.assign({}, styles.boxTraits, { width })}>
 					{
-						!reveal || reveal === '0' ?
+						!rev ?
 						<p style={{ fontSize: 18, color: 'white', margin: 15 }}>
 							The stats will be visible after the reveal
 						</p>
@@ -600,7 +604,7 @@ class Nft extends Component {
 					}
 
 					{
-						stats && reveal !== '0' ?
+						stats && rev ?
 						<div style={Object.assign({}, styles.boxTraits, { width })}>
 							{this.renderStat("HP", stats.stats.hp)}
 							{this.renderStat("DEFENSE", stats.stats.difesa)}
@@ -694,6 +698,10 @@ class Nft extends Component {
 		const { reveal } = this.props
 
 		//console.log(stats);
+		let rev = false
+		if (reveal && parseInt(reveal) > 0) {
+			rev = true
+		}
 
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
@@ -706,7 +714,7 @@ class Nft extends Component {
 
 				<div style={Object.assign({}, styles.boxTraits, { width, flexDirection: 'column' })}>
 					{
-						!stats || (stats && stats.stats.spellbook.length === 0) || reveal === "0" ?
+						!stats || (stats && stats.stats.spellbook.length === 0) || !rev ?
 						<p style={{ fontSize: 18, color: 'white', margin: 15 }}>
 							The Spellbook is empty...
 						</p>
@@ -728,6 +736,11 @@ class Nft extends Component {
 
 		//console.log(reveal)
 
+		let rev = false
+		if (reveal && parseInt(reveal) > 0) {
+			rev = true
+		}
+
 		let traits = []
 		if (nft && nft.traits) {
 			traits = nft.traits.sort((a, b) => {
@@ -748,7 +761,7 @@ class Nft extends Component {
 
 				<div style={Object.assign({}, styles.boxTraits, { width: width - 20 })}>
 					{
-						!reveal || reveal === '0' ?
+						!rev ?
 						<p style={{ fontSize: 18, color: 'white', margin: 15 }}>
 							The properties will be visible after the reveal
 						</p>

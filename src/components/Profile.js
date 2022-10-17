@@ -228,8 +228,8 @@ class Profile extends Component {
 			return
 		}
 
-		const kdaFee = (buyin * feeTournament) / 100
-		const toPrize = buyin - kdaFee
+		//const kdaFee = (buyin * feeTournament) / 100
+		//const toPrize = buyin - kdaFee
 
 		const tNumber = tournament.name.split("_")[0]
 
@@ -243,8 +243,7 @@ class Profile extends Component {
 			account,
 			tNumber,
 			idNft,
-			toPrize,
-			kdaFee
+			buyin
 		)
 	}
 
