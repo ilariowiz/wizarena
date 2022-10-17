@@ -117,13 +117,29 @@ class Nft extends Component {
 	}
 
 	loadHistory(idNft) {
-		let url = `https://estats.chainweb.com/txs/events?search=${CONTRACT_NAME}.WIZ_BUY&param=${idNft}&offset=0&limit=20`
+		let url = `https://estats.chainweb.com/txs/events?search=${CONTRACT_NAME}.WIZ_BUY&param=${idNft}&offset=0&limit=50`
+
+		//console.log(url);
 
 		fetch(url)
   		.then(response => response.json())
   		.then(data => {
   			//console.log(data)
-			this.setState({ nftH: data, loadingHistory: false })
+
+			let filterData = []
+			if (data && data.length > 0) {
+				for (var i = 0; i < data.length; i++) {
+					let d = data[i]
+
+					const id = d.params[0]
+
+					if (id && id === idNft) {
+						filterData.push(d)
+					}
+				}
+			}
+
+			this.setState({ nftH: filterData, loadingHistory: false })
   		})
 		.catch(e => {
 			console.log(e)
