@@ -231,21 +231,26 @@ class Mint extends Component {
 		}
 
 		return (
-			<div style={{ width }}>
-				{
-					stage === 'public' ?
-					<button
-						className='btnH'
-						style={Object.assign({}, styles.btnMint, { width })}
-						onClick={() => this.mint()}
-					>
-						<p style={{ fontSize: 19, color: 'white' }}>
-							{maxItemsPerWallet <= 0 ? "Max reached" : "MINT 1 Wizard"}
-						</p>
-					</button>
-					: null
-				}
+			<div style={{ width, flexDirection: 'column' }}>
+				<div style={{ justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: 20 }}>
+					<p style={{ fontSize: 17, color: '#c2c0c0' }}>
+						You can mint up to
+					</p>
 
+					<p style={{ fontSize: 19, fontWeight: '500', color: 'white' }}>
+						{maxItemsPerWallet}
+					</p>
+				</div>
+
+				<button
+					className='btnH'
+					style={Object.assign({}, styles.btnMint, { width })}
+					onClick={() => this.mint()}
+				>
+					<p style={{ fontSize: 19, color: 'white' }}>
+						{maxItemsPerWallet <= 0 ? "Max reached" : "MINT 1 Wizard"}
+					</p>
+				</button>
 			</div>
 		)
 	}
