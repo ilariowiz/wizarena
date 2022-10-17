@@ -70,7 +70,7 @@ class Settings extends Component {
 								size={29}
 							/>
 							<p style={{ fontSize: 18, color: 'white', marginLeft: 10 }}>
-								@WizardArena
+								@WizardsArena
 							</p>
 
                         </button>
