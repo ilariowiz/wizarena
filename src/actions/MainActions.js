@@ -619,13 +619,15 @@ export const buyNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, a
 			Pact.lang.mkCap(`Buy`, "Pay to buy", `coin.TRANSFER`, [
 				account.account,
 				nft.owner,
-				toSeller,
+				nft.price,
 			]),
+			/*
 			Pact.lang.mkCap(`Fee`, "Marketplace fee", `coin.TRANSFER`, [
 				account.account,
 				ADMIN_ADDRESS,
 				fee,
 			]),
+			*/
 			Pact.lang.mkCap(
 				"Verify your account",
 				"Verify your account",
