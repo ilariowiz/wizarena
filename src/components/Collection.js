@@ -153,7 +153,8 @@ class Collection extends Component {
 		const { allNfts } = this.props
 		const { searchText } = this.state
 
-		const result = allNfts.filter(i => i.name === searchText)
+		let searchTextFinal = searchText.includes("#") ? searchText : `#${searchText}`
+		const result = allNfts.filter(i => i.name === searchTextFinal)
 
 		this.setState({ loading: false, nftsToShow: result, searchedText: searchText })
 	}
