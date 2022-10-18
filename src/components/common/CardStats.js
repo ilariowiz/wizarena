@@ -107,12 +107,12 @@ const cardStats = (stats, numberOfMedalsForTournament, width) => {
 
 const styles = {
     statsTitleStyle: {
-        fontSize: 15,
+        fontSize: 16,
         color: '#c2c0c0',
         marginRight: 8
     },
     statsStyle: {
-        fontSize: 15,
+        fontSize: 16,
         color: 'white'
     },
 }
