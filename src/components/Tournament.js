@@ -109,9 +109,16 @@ class Tournament extends Component {
 
     renderInfoTournament(width) {
 		const { tournament } = this.state
-		const { montepremi } = this.props
+		const { montepremi, buyin, feeTournament } = this.props
 
-		//const iscritti = Math.floor(montepremi / (buyin / 2))
+        let iscritti;
+
+        const aPremio = buyin - (buyin * feeTournament / 100)
+        //console.log(aPremio);
+
+        if (aPremio && montepremi) {
+            iscritti = Math.ceil(montepremi / aPremio)
+        }
 
 		const tname = convertMedalName(tournament.name)
 
@@ -129,8 +136,12 @@ class Tournament extends Component {
 					NUMBER OF ROUNDS {tournament.nRounds}
 				</p>
 
-				<p style={{ fontSize: 18, color: 'white' }}>
+				<p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
 					Total Prize {montepremi || '...'} KDA
+				</p>
+
+                <p style={{ fontSize: 18, color: 'white' }}>
+					Registered Wizards {iscritti || '...'}
 				</p>
 			</div>
 		)
