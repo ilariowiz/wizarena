@@ -3,7 +3,7 @@ const getBoxWidth = (isMobile) => {
 	//if (boxW > 1200) boxW = 1200;
 
 	if (isMobile) {
-		boxW = Math.floor(window.innerWidth * 80 / 100)
+		boxW = Math.floor(window.innerWidth * 90 / 100)
 	}
 
 	let modalW = Math.floor(boxW * 80 / 100)

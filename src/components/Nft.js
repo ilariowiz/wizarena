@@ -315,7 +315,7 @@ class Nft extends Component {
 		}
 
 		return (
-			<div key={index} style={{ alignItems: 'flex-end' }}>
+			<div key={index} style={{ alignItems: 'flex-end', flexWrap: 'wrap' }}>
 				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
 					NAME
 				</p>

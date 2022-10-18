@@ -213,21 +213,21 @@ class Collection extends Component {
 		);
 	}
 
-	renderBoxHeader(title, subtitle) {
+	renderBoxHeader(title, subtitle, isMobile) {
 		return (
 			<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: 30 }}>
-				<p style={{ fontSize: 22, color: 'white' }}>
+				<p style={{ fontSize: isMobile ? 18 : 22, color: 'white', textAlign: 'center' }}>
 					{title}
 				</p>
 
-				<p style={{ fontSize: 19, color: '#c2c0c0' }}>
+				<p style={{ fontSize: isMobile ? 17 : 19, color: '#c2c0c0', textAlign: 'center' }}>
 					{subtitle}
 				</p>
 			</div>
 		)
 	}
 
-	renderHeader() {
+	renderHeader(isMobile) {
 		const { totalCountNfts } = this.props
 		const { floor, uniqueOwners, volume } = this.state
 
@@ -235,13 +235,13 @@ class Collection extends Component {
 
 		return (
 			<div style={{ width: '100%', height: 60, alignItems: 'center', marginTop: 30, marginBottom: 30 }}>
-				{this.renderBoxHeader(items.toLocaleString(), 'items')}
+				{this.renderBoxHeader(items.toLocaleString(), 'items', isMobile)}
 
-				{this.renderBoxHeader(uniqueOwners.toLocaleString(), 'owners')}
+				{this.renderBoxHeader(uniqueOwners.toLocaleString(), 'owners', isMobile)}
 
-				{this.renderBoxHeader(`${floor || '...'} kda`, 'floor price')}
+				{this.renderBoxHeader(`${floor || '...'} kda`, 'floor price', isMobile)}
 
-				{this.renderBoxHeader(`${volume.toLocaleString()} kda`, 'total volume')}
+				{this.renderBoxHeader(`${volume.toLocaleString()} kda`, 'total volume', isMobile)}
 
 			</div>
 		)
@@ -408,7 +408,7 @@ class Collection extends Component {
 		return (
 			<div style={{ flexDirection: 'column', width: boxW }}>
 
-				{this.renderHeader()}
+				{this.renderHeader(isMobile)}
 
 				{this.renderSearchBar()}
 

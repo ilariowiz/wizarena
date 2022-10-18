@@ -46,7 +46,7 @@ class Header extends Component {
 
 						{
 							page === 'home' ?
-							<div style={{ height: 60, alignItems: 'flex-end' }}>
+							<div style={{ height: 60, alignItems: 'flex-end', flexWrap: 'wrap' }}>
 								<p
 									className={section === 1 ? btnPressedStyle : btnStyle}
 									onClick={() => this.props.history.replace('/collection')}
