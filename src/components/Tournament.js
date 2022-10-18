@@ -16,7 +16,8 @@ import {
     getFeeTournament,
     setNetworkSettings,
     setNetworkUrl,
-    getReveal
+    getReveal,
+    getSubscribed
 } from '../actions'
 import '../css/Nft.css'
 
@@ -73,6 +74,9 @@ class Tournament extends Component {
                 const roundEnded = tournament.roundEnded
                 const tournamentName = tournament.name.split("_")[0]
 
+                this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName)
+
+
                 const w1 = `stats.medals.${tournamentName}`
                 const q = query(collection(firebasedb, "stats"), where(w1, "==", parseInt(roundEnded)))
 
@@ -93,7 +97,7 @@ class Tournament extends Component {
         })
     }
 
-    renderRow(item, index) {
+    renderRow(item, index, width) {
         //per ogni row creiamo un array di GameCard
 		return (
             <div style={{ marginBottom: 15 }} key={index}>
@@ -101,7 +105,7 @@ class Tournament extends Component {
                     item={item}
                     key={index}
                     history={this.props.history}
-                    width={260}
+                    width={width}
                 />
             </div>
         )
@@ -147,9 +151,10 @@ class Tournament extends Component {
 		)
 	}
 
+
     renderBody(isMobile) {
         const { tournament, winners } = this.state
-        const { buyin, reveal } = this.props
+        const { buyin, reveal, subscribed } = this.props
 
         const { boxW } = getBoxWidth(isMobile)
 
@@ -216,6 +221,15 @@ class Tournament extends Component {
                             Subscribe your wizards
                         </p>
                     </button>
+
+                    {
+                        subscribed && subscribed.length > 0 &&
+                        <div style={{ marginBottom: 30, flexWrap: 'wrap', marginTop: 30 }}>
+                            {subscribed.map((item, index) => {
+                                return this.renderRow(item, index, 220)
+                            })}
+                        </div>
+                    }
 				</div>
 			)
 		}
@@ -254,6 +268,7 @@ class Tournament extends Component {
 			)
 		}
 
+        // TORNEO CONCLUSO
         let subtitleText = winners.length > 1 ?  `The ${winners.length} winners of ${roundEnded} medals:` : `The winner of ${roundEnded} medals:`
 
         let titleText = tournament.tournamentEnd ?
@@ -281,7 +296,7 @@ class Tournament extends Component {
 
                 <div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
                     {winners.map((item, index) => {
-                        return this.renderRow(item, index);
+                        return this.renderRow(item, index, 260);
                     })}
                 </div>
 
@@ -362,9 +377,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, reveal, montepremi, buyin, feeTournament } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, reveal, montepremi, buyin, feeTournament, subscribed } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, reveal, montepremi, buyin, feeTournament };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, reveal, montepremi, buyin, feeTournament, subscribed };
 }
 
 export default connect(mapStateToProps, {
@@ -373,5 +388,6 @@ export default connect(mapStateToProps, {
     getFeeTournament,
     setNetworkSettings,
     setNetworkUrl,
-    getReveal
+    getReveal,
+    getSubscribed
 })(Tournament)

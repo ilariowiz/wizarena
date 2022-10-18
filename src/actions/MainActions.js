@@ -23,7 +23,8 @@ import {
 	LOAD_BUYIN,
 	LOAD_FEE_TOURNAMENT,
 	LOAD_MONTEPREMI,
-	WIZ_BANK
+	WIZ_BANK,
+	LOAD_SUBSCRIBED
 } from './types'
 
 
@@ -174,14 +175,14 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 
 				if (callback) {
 					//gli diciamo di leggere tutti gli ids, quindi qui block è response, appunto tutti gli id
-					dispatch(loadBlockNfts(chainId, gasPrice, 150000, networkUrl, response, callback))
+					dispatch(loadBlockNfts(chainId, gasPrice, 150000, networkUrl, response, callback, false))
 				}
 			}
 		})
 	}
 }
 
-export const loadBlockNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, block, callback) => {
+export const loadBlockNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, block, callback, isSubscribed) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -200,10 +201,18 @@ export const loadBlockNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 					return a.price - b.price
 				})
 
-				dispatch({
-					type: LOAD_ALL_NFTS,
-					payload: { allNfts: response, nftsBlockId: 0 }
-				})
+
+				if (!isSubscribed) {
+					dispatch({
+						type: LOAD_ALL_NFTS,
+						payload: { allNfts: response, nftsBlockId: 0 }
+					})
+				}
+				else {
+					//console.log(response);
+					dispatch({ type: LOAD_SUBSCRIBED, payload: response })
+				}
+
 
 				if (callback) {
 					callback(response)
@@ -476,6 +485,29 @@ export const getFeeTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
 			dispatch({ type: LOAD_FEE_TOURNAMENT, payload: response })
+		})
+	}
+}
+
+export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 150000, networkUrl, tournament) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-all-subscription-for-tournament "${tournament}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+
+			if (response) {
+				let onlyId = []
+				response.map(i => {
+					onlyId.push(i.idnft)
+				})
+
+				dispatch(loadBlockNfts(chainId, gasLimit, gasLimit, networkUrl, onlyId, undefined, true))
+			}
 		})
 	}
 }

@@ -17,7 +17,8 @@ import {
 	SET_REVEAL,
 	LOAD_BUYIN,
 	LOAD_FEE_TOURNAMENT,
-	LOAD_MONTEPREMI
+	LOAD_MONTEPREMI,
+	LOAD_SUBSCRIBED
 } from '../actions/types'
 
 
@@ -40,7 +41,8 @@ const INITIAL_STATE = {
 	reveal: false,
 	buyin: 0,
 	feeTournament: 0,
-	montepremi: 0
+	montepremi: 0,
+	subscribed: []
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -93,6 +95,8 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, feeTournament: action.payload }
 		case LOAD_MONTEPREMI:
 			return { ...state, montepremi: action.payload }
+		case LOAD_SUBSCRIBED:
+			return { ...state, subscribed: action.payload }
 		case LOGOUT:
 			return { ...state, account: {}, transactionState: {}, showModalTx: false, isConnectWallet: false, isXWallet: false, userMintedNfts: []}
 		default:
