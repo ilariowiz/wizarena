@@ -1,4 +1,4 @@
-(namespace "free")
+;(namespace "free")
 (define-keyset "wizarena-keyset" (read-keyset "wizarena-keyset"))
 
 (module wiz-arena ADMIN
@@ -211,6 +211,13 @@
         \ single char and colon, e.g. 'c:foo', which would return 'c' as type."
         (let ((pfx (take 2 accountId)))
           (if (= ":" (take -1 pfx)) (take 1 pfx) "")))
+
+    (defun enforce-account-exists (account:string)
+        @doc "Enforces that an account exists in the coin table"
+        (let ((coin-account (at "account" (coin.details account))))
+            (enforce (= coin-account account) "account was not found")
+        )
+    )
 
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -450,8 +457,28 @@
         (at "balance" (read prizes address ["balance"]))
     )
 
+    ; (defun withdraw-prize (account:string)
+    ;     (with-capability (ACCOUNT_GUARD account)
+    ;         (with-default-read prizes account
+    ;           {"balance": 0.0}
+    ;           {"balance":= oldbalance }
+    ;           (enforce (> oldbalance 0.0) "you already withdrawn your prize")
+    ;           (install-capability (coin.TRANSFER WIZ_BANK account oldbalance))
+    ;           (coin.transfer WIZ_BANK account oldbalance)
+    ;           (write prizes account {"balance": 0.0})
+    ;           (emit-event (WITHDRAW_PRIZE account oldbalance))
+    ;
+    ;           (with-default-read token-table WIZ_BANK
+    ;             {"balance": 0.0}
+    ;             {"balance":= wizbalance }
+    ;             (update token-table WIZ_BANK {"balance": (- wizbalance oldbalance)})
+    ;           )
+    ;         )
+    ;     )
+    ; )
+
     (defun withdraw-prize (account:string)
-        (with-capability (ACCOUNT_GUARD account)
+        (with-capability (ADMIN)
             (with-default-read prizes account
               {"balance": 0.0}
               {"balance":= oldbalance }
@@ -488,6 +515,19 @@
             (with-capability (OWNER sender id)
                 (update nfts id {"owner": receiver})
             )
+        )
+    )
+
+    (defun transfer-wizard (id:string sender:string receiver:string)
+        @doc "Transfer nft to an account"
+        (enforce-account-exists receiver)
+        (with-capability (OWNER sender id)
+            (let (
+                    (data (get-wizard-fields-for-id (str-to-int id)))
+                )
+                (enforce (= (at "listed" data) false) "A listed wizard cannot be transferred")
+            )
+            (update nfts id {"owner": receiver})
         )
     )
 
