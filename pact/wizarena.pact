@@ -64,6 +64,11 @@
         @event true
     )
 
+    (defcap TOURNAMENT_SUBSCRIPTION (id:string tournament:string)
+        @doc "Emitted event when a Wizard signs up for the tournament"
+        @event true
+    )
+
     (defcap WITHDRAW_PRIZE (winner:string prize:decimal)
         @event true
     )
@@ -430,6 +435,7 @@
                   {"balance":= oldbalance }
                   (update token-table WIZ_BANK {"balance": (+ oldbalance (- buyin feebuyin))})
                 )
+                (emit-event (TOURNAMENT_SUBSCRIPTION id round))
             )
         )
     )
