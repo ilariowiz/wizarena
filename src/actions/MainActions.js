@@ -24,7 +24,8 @@ import {
 	LOAD_FEE_TOURNAMENT,
 	LOAD_MONTEPREMI,
 	WIZ_BANK,
-	LOAD_SUBSCRIBED
+	LOAD_SUBSCRIBED,
+	STORE_FILTERS_STATS
 } from './types'
 
 
@@ -1003,6 +1004,13 @@ export const updateTransactionState = (key, value) => {
 export const clearTransaction = () => {
 	return {
 		type: CLEAR_TRANSACTION_STATE
+	}
+}
+
+export const storeFiltersStats = (filters) => {
+	return {
+		type: STORE_FILTERS_STATS,
+		payload: filters
 	}
 }
 

@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import { connect } from 'react-redux'
 import Media from 'react-media';
+import Popup from 'reactjs-popup';
+import { doc, getDocs, collection, query, where } from "firebase/firestore";
+import { firebasedb } from './Firebase';
 import DotLoader from 'react-spinners/DotLoader';
 import { IoClose } from 'react-icons/io5'
 import Header from './Header'
@@ -13,10 +16,12 @@ import {
 	getPageBlockNfts,
 	setNetworkSettings,
 	setNetworkUrl,
-	getReveal
+	getReveal,
+	storeFiltersStats
 } from '../actions'
 import { MAIN_NET_ID, ITEMS_PER_BLOCK, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
 import '../css/Nft.css'
+import 'reactjs-popup/dist/index.css';
 
 
 class Collection extends Component {
@@ -30,7 +35,7 @@ class Collection extends Component {
 			floor: 0,
 			uniqueOwners: 1,
 			searchText: '',
-			searchedText: ''
+			searchedText: '',
 		}
 	}
 
@@ -64,19 +69,27 @@ class Collection extends Component {
 	*/
 
 	loadAll() {
-		const { chainId, gasPrice, gasLimit, networkUrl, nftsBlockId } = this.props
+		const { chainId, gasPrice, gasLimit, networkUrl, nftsBlockId, statSearched } = this.props
 
 		this.setState({ loading: true })
 
-		this.props.loadAllNftsIds(chainId, gasPrice, gasLimit, networkUrl, (res) => {
+		//è inutile refetchare di nuovo tutto, se ci sono le stat cercate significa che
+		//gli nft sono stati già caricati
+		if (statSearched && statSearched.length > 0) {
+			this.searchByStat()
+		}
+		else {
+			this.props.loadAllNftsIds(chainId, gasPrice, gasLimit, networkUrl, (res) => {
 
-			this.getFloor(res)
-			this.getUniqueOwners(res)
-			this.props.getPageBlockNfts(res, nftsBlockId || 0, (nftsToShow) => {
+				this.getFloor(res)
+				this.getUniqueOwners(res)
 
-				this.setState({ loading: false, nftsToShow })
+				this.props.getPageBlockNfts(res, nftsBlockId || 0, (nftsToShow) => {
+					this.setState({ loading: false, nftsToShow })
+				})
 			})
-		})
+		}
+
 	}
 
 	loadBlock(id) {
@@ -156,6 +169,7 @@ class Collection extends Component {
 		let searchTextFinal = searchText.includes("#") ? searchText : `#${searchText}`
 		const result = allNfts.filter(i => i.name === searchTextFinal)
 
+		this.props.storeFiltersStats([])
 		this.setState({ loading: false, nftsToShow: result, searchedText: searchText })
 	}
 
@@ -164,6 +178,70 @@ class Collection extends Component {
 
 		this.setState({ searchedText: '', searchText: '' })
 		this.loadBlock(nftsBlockId)
+	}
+
+	async searchByStat(stat) {
+		const { nftsBlockId, allNfts, statSearched } = this.props
+
+		this.setState({ loading: true, searchedText: '', searchText: '' })
+
+		let oldStat = Object.assign([], statSearched);
+
+		if (stat) {
+			const oldItem = oldStat.find(i => i.stat === stat.stat)
+			if (oldItem) {
+				if (oldItem.value === stat.value) {
+					const idx = oldStat.findIndex(i => i.stat === stat.stat)
+					oldStat.splice(idx, 1)
+				}
+				else {
+					oldItem.value = stat.value
+				}
+			}
+			else {
+				oldStat.push(stat)
+			}
+		}
+
+		if (oldStat.length > 0) {
+
+			let arrayQuery = []
+			oldStat.map(i => {
+				const key = `stats.${i.stat}`
+				const query = where(key, "==", i.value)
+				arrayQuery.push(query)
+			})
+
+			let q = query(collection(firebasedb, "stats"), ...arrayQuery)
+
+			const querySnapshot = await getDocs(q)
+
+			let newData = []
+			querySnapshot.forEach(doc => {
+				//console.log(doc.data());
+
+				const d = doc.data()
+
+				const item = allNfts.find(i => i.name === d.name)
+				if (item) {
+					newData.push(item)
+				}
+			})
+
+			newData.sort((a, b) => {
+				if (parseInt(a.price) === 0) return 1;
+				if (parseInt(b.price) === 0) return -1
+				return a.price - b.price
+			})
+
+			this.props.storeFiltersStats(oldStat)
+			this.setState({ nftsToShow: newData, loading: false })
+		}
+		else {
+			this.setState({ loading: false })
+			this.props.storeFiltersStats([])
+			this.loadBlock(nftsBlockId)
+		}
 	}
 
 	buildsRow(items, itemsPerRow = 4) {
@@ -234,7 +312,7 @@ class Collection extends Component {
 		let items = totalCountNfts || 0
 
 		return (
-			<div style={{ width: '100%', height: 60, alignItems: 'center', marginTop: 30, marginBottom: 30 }}>
+			<div style={{ width: '100%', height: 60, alignItems: 'center', marginTop: 20, marginBottom: 20 }}>
 				{this.renderBoxHeader(items.toLocaleString(), 'items', isMobile)}
 
 				{this.renderBoxHeader(uniqueOwners.toLocaleString(), 'owners', isMobile)}
@@ -251,10 +329,10 @@ class Collection extends Component {
 		const { searchText } = this.state
 
 		return (
-			<div style={{ width: '100%', height: 60, alignItems: 'center', marginBottom: 30 }}>
+			<div style={{ width: '100%', height: 60, alignItems: 'center', marginBottom: 20 }}>
 				<input
 					style={styles.inputSearch}
-					placeholder='Search by name'
+					placeholder='Search by #'
 					value={searchText}
 					onChange={(e) => this.setState({ searchText: e.target.value })}
 				/>
@@ -280,7 +358,7 @@ class Collection extends Component {
 		}
 
 		return (
-			<div style={{ width: '100%', marginBottom: 30 }}>
+			<div style={{ width: '100%', marginBottom: 20 }}>
 				<div style={{ backgroundColor: '#e5e8eb80', justifyContent: 'center', alignItems: 'center', height: 45, paddingLeft: 20, paddingRight: 20, borderRadius: 2 }}>
 					<p style={{ fontSize: 22, color: 'black', marginRight: 10 }}>
 						{searchedText}
@@ -297,6 +375,69 @@ class Collection extends Component {
 					</button>
 				</div>
 			</div>
+		)
+	}
+
+	renderListStat(item, index, statName) {
+		return (
+			<button
+				key={index}
+				style={{ marginBottom: 15, marginLeft: 10 }}
+				onClick={() => {
+					this.listPopup.close()
+					this.searchByStat({ stat: statName, value: item })
+				}}
+			>
+				<p style={{ fontSize: 19 }}>
+					{item}
+				</p>
+			</button>
+		)
+	}
+
+	renderBoxSearchStat(statName, statDisplay, list) {
+		const { statSearched } = this.props
+
+		//console.log(statSearched);
+
+		const findItem = statSearched && statSearched.length > 0 ? statSearched.find(i => i.stat === statName) : undefined
+
+		let text = statDisplay.toUpperCase()
+		if (findItem) {
+			text = `${statDisplay} = ${findItem.value}`
+		}
+
+		return (
+			<Popup
+				ref={ref => this.listPopup = ref}
+				trigger={
+					<button style={styles.btnStat}>
+						<p style={{ fontSize: 18, color: 'white' }}>{text}</p>
+						{
+							findItem &&
+							<IoClose
+								color='red'
+								size={22}
+								style={{ marginLeft: 5 }}
+								onClick={(e) => {
+									e.stopPropagation()
+									this.searchByStat({ stat: findItem.stat, value: findItem.value })
+								}}
+							/>
+						}
+					</button>
+				}
+				position="bottom left"
+				on="click"
+				closeOnDocumentClick
+				arrow={true}
+			>
+				<div style={{ flexDirection: 'column', paddingTop: 10 }}>
+					{list.map((item, index) => {
+						return this.renderListStat(item, index, statName)
+					})}
+				</div>
+			</Popup>
 		)
 	}
 
@@ -391,11 +532,10 @@ class Collection extends Component {
 	}
 
 	renderBody(isMobile) {
-		const { allNfts, allNftsIds } = this.props
-		const { loading, nftsToShow } = this.state
+		const { allNfts, allNftsIds, statSearched } = this.props
+		const { loading, nftsToShow, searchedText } = this.state
 
 		//console.log(allNftsIds)
-
 		const { boxW } = getBoxWidth(isMobile)
 
 
@@ -404,6 +544,14 @@ class Collection extends Component {
 		//console.log(boxW, nInRow)
 
 		let rows = this.buildsRow(nftsToShow, nInRow)
+
+		let numberOfWiz = allNfts ? allNfts.length : 0;
+		if (searchedText.length > 0) {
+			numberOfWiz = 1
+		}
+		else if (statSearched && statSearched.length > 0) {
+			numberOfWiz = nftsToShow.length
+		}
 
 		return (
 			<div style={{ flexDirection: 'column', width: boxW }}>
@@ -414,6 +562,18 @@ class Collection extends Component {
 
 				{this.renderSearched()}
 
+				<div style={{ flexWrap: 'wrap', marginBottom: 10 }}>
+					{this.renderBoxSearchStat("hp", "HP", [41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61].reverse())}
+					{this.renderBoxSearchStat("difesa", "DEFENSE", [14, 15, 16, 17, 18, 19].reverse())}
+					{this.renderBoxSearchStat("elemento", "ELEMENT", ["Acid", "Dark", "Fire", "Ice", "Thunder", "Wind"])}
+					{this.renderBoxSearchStat("resistenza", "RESISTANCE", ["acid", "dark", "fire", "ice", "thunder", "wind"])}
+					{this.renderBoxSearchStat("debolezza", "WEAKNESS", ["acid", "dark", "fire", "ice", "thunder", "wind"])}
+				</div>
+
+				<p style={{ marginBottom: 15, fontSize: 16, color: 'white' }}>
+					{numberOfWiz} Wizards
+				</p>
+
 				{
 					allNfts && allNfts.length === 0 ?
 					this.renderError()
@@ -421,21 +581,30 @@ class Collection extends Component {
 				}
 
 				{
-					rows.map((itemsPerRow, index) => {
-						return this.renderRow(itemsPerRow, index, nInRow, boxW);
-					})
-				}
-
-				{
 					loading ?
-					<div style={{ width: '100%', height: 45, marginTop: 20, justifyContent: 'center', alignItems: 'center' }}>
+					<div style={{ width: '100%', height: 45, marginTop: 20, marginBottom: 20, justifyContent: 'center', alignItems: 'center' }}>
 						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
 					</div>
 					: null
 				}
 
 				{
-					allNftsIds && allNfts && allNfts.length > 0 ?
+					nftsToShow.length > 0 ?
+					rows.map((itemsPerRow, index) => {
+						return this.renderRow(itemsPerRow, index, nInRow, boxW);
+					})
+					:
+					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+						<img
+							src={getImageUrl(undefined)}
+							style={{ width: 280, height: 280, borderRadius: 2 }}
+							alt='Placeholder'
+						/>
+					</div>
+				}
+
+				{
+					allNftsIds && allNfts && allNfts.length > 0 && nftsToShow.length > 0 ?
 					this.renderPageCounter()
 					: null
 				}
@@ -540,13 +709,25 @@ const styles = {
 		MozAppearance: 'none',
 		appearance: 'none',
 		outline: 'none'
+	},
+	btnStat: {
+		padding: 10,
+		backgroundColor: CTA_COLOR,
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginRight: 10,
+		marginBottom: 10,
+		borderRadius: 2,
+		minWidth: 60,
+		display: 'flex',
+		flexDirection: 'row'
 	}
 }
 
 const mapStateToProps = (state) => {
-	const { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, reveal } = state.mainReducer;
+	const { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, reveal, statSearched } = state.mainReducer;
 
-	return { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, reveal };
+	return { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, reveal, statSearched };
 }
 
 export default connect(mapStateToProps, {
@@ -555,5 +736,6 @@ export default connect(mapStateToProps, {
 	getPageBlockNfts,
 	setNetworkSettings,
 	setNetworkUrl,
-	getReveal
+	getReveal,
+	storeFiltersStats
 })(Collection)

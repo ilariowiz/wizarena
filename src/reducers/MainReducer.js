@@ -18,7 +18,8 @@ import {
 	LOAD_BUYIN,
 	LOAD_FEE_TOURNAMENT,
 	LOAD_MONTEPREMI,
-	LOAD_SUBSCRIBED
+	LOAD_SUBSCRIBED,
+	STORE_FILTERS_STATS
 } from '../actions/types'
 
 
@@ -42,7 +43,8 @@ const INITIAL_STATE = {
 	buyin: 0,
 	feeTournament: 0,
 	montepremi: 0,
-	subscribed: []
+	subscribed: [],
+	statSearched: []
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -97,6 +99,8 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, montepremi: action.payload }
 		case LOAD_SUBSCRIBED:
 			return { ...state, subscribed: action.payload }
+		case STORE_FILTERS_STATS:
+			return { ...state, statSearched: action.payload }
 		case LOGOUT:
 			return { ...state, account: {}, transactionState: {}, showModalTx: false, isConnectWallet: false, isXWallet: false, userMintedNfts: []}
 		default:

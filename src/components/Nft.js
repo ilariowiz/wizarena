@@ -335,7 +335,7 @@ class Nft extends Component {
 							</button>
 						)}
 						position="top center"
-						closeOnDocumentClick
+						on="hover"
 					>
 						<div style={{ padding: 10, fontSize: 16 }}>
 							{condDesc}
@@ -631,7 +631,7 @@ class Nft extends Component {
 								<button style={styles.textValueStat}>{value}</button>
 							)}
 							position="top center"
-							closeOnDocumentClick
+							on="hover"
 						>
 							<div style={{ padding: 10, fontSize: 16 }}>
 								{condDesc}
