@@ -742,6 +742,7 @@ export const subscribeToTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 	}
 }
 
+/*
 export const withdrawPrize = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account) => {
 	return (dispatch) => {
 
@@ -778,6 +779,7 @@ export const withdrawPrize = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
 }
+*/
 
 export const signTransaction = (cmdToSign, isXWallet, netId, networkUrl, account, chainId, nftId, callback) => {
 	return async (dispatch) => {

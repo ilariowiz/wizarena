@@ -23,7 +23,7 @@ import {
 	getBuyin,
 	subscribeToTournament,
 	checkAddressForPrice,
-	withdrawPrize,
+	//withdrawPrize,
 	getFeeTournament
 } from '../actions'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
@@ -247,6 +247,7 @@ class Profile extends Component {
 		)
 	}
 
+	/*
 	withdrawPrize() {
 		const { chainId, gasPrice, netId, account } = this.props
 
@@ -254,6 +255,7 @@ class Profile extends Component {
 
 		this.props.withdrawPrize(chainId, gasPrice, 4000, netId, account)
 	}
+	*/
 
 	buildsRow(items, itemsPerRow = 4) {
 		return items.reduce((rows, item, index) => {
@@ -385,6 +387,8 @@ class Profile extends Component {
 		const { tournament, error, profileFights, prize } = this.state
 
 		//console.log(userMintedNfts, tournament, width)
+		const tournamentName = tournament.name.split("_")[0]
+		const round = tournament.name.split("_")[1]
 
 		if (parseInt(reveal) === 0) {
 			return (
@@ -408,8 +412,7 @@ class Profile extends Component {
 			)
 		}
 
-		const tournamentName = tournament.name.split("_")[0]
-		const round = tournament.name.split("_")[1]
+
 
 		//LE ISCRIZIONI SONO APERTE
 		if (tournament && tournament.canSubscribe) {
@@ -560,19 +563,22 @@ class Profile extends Component {
 						{
 							prize ?
 							<div style={{ flexDirection: 'column' }}>
-								<p style={{ fontSize: 21, color: 'white', marginBottom: 20 }}>
-									You are one of the winners! Collect your prize:
+								<p style={{ fontSize: 20, color: 'white', marginBottom: 20 }}>
+									You are one of the winners!
+								</p>
+								<p style={{ fontSize: 20, color: 'white', marginBottom: 20 }}>
+									The Archmage is sending you the prize...
 								</p>
 
-								<button
-									className="btnH"
+								<div
+									//className="btnH"
 									style={styles.btnWithdraw}
-									onClick={() => this.withdrawPrize()}
+									//onClick={() => this.withdrawPrize()}
 								>
 									<p style={{ fontSize: 17, color: 'white' }}>
-										WITHDRAWS {prize} KDA
+										PRIZE: {prize} KDA
 									</p>
-								</button>
+								</div>
 							</div>
 							:
 							<p style={{ fontSize: 18, color: 'white' }}>
@@ -843,12 +849,15 @@ const styles = {
 		borderStyle: 'solid'
 	},
 	btnWithdraw: {
-		width: 180,
+		width: 200,
 		height: 45,
-		backgroundColor: CTA_COLOR,
+		borderColor: CTA_COLOR,
 		borderRadius: 2,
+		borderWidth: 2,
+		borderStyle: 'solid',
 		justifyContent: 'center',
-		alignItems: 'center'
+		alignItems: 'center',
+		backgroundColor: 'transparent'
 	},
 	btnMenu: {
 		height: 45,
@@ -885,6 +894,6 @@ export default connect(mapStateToProps, {
 	getBuyin,
 	subscribeToTournament,
 	checkAddressForPrice,
-	withdrawPrize,
+	//withdrawPrize,
 	getFeeTournament
 })(Profile)
