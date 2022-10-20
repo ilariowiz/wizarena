@@ -6,7 +6,7 @@ import { TEST_NET_ID, CTA_COLOR } from '../../actions/types'
 
 class HistoryItem extends Component {
 	render() {
-		const { item, index, nftH, netId, isMobile } = this.props
+		const { item, index, nftH, netId, isMobile, isAll } = this.props
 
 		let removeBorder = index + 1 === nftH.length
 
@@ -30,7 +30,20 @@ class HistoryItem extends Component {
 		return (
 			<div style={Object.assign({}, styles.boxSingleHistory, { borderBottomWidth: removeBorder ? 0 : 1 })} key={item.blockHash}>
 
-				<p style={{ fontSize: 17, color: 'white', marginLeft: 20, flex: 1 }}>
+				{
+					isAll ?
+					<button
+						style={{ marginLeft: 20, flex: 0.6, display: 'flex', alignItems: 'flex-start' }}
+						onClick={() => this.props.history.push(`./nft/${params[0]}`)}
+					>
+						<p style={{ fontSize: 17, color: CTA_COLOR }}>
+							#{params[0]}
+						</p>
+					</button>
+					: null
+				}
+
+				<p style={{ fontSize: 17, color: 'white', flex: 0.6, marginLeft: isAll ? 0 : 20 }}>
 					KDA {params[3]}
 				</p>
 
@@ -77,13 +90,15 @@ const styles = {
 	dataRequest: {
 		fontSize: 16,
 		color: CTA_COLOR,
-		flex: 1,
-		cursor: 'pointer'
+		flex: 0.6,
+		cursor: 'pointer',
+		textAlign: 'right'
 	},
 	dataNonRequest: {
 		fontSize: 15,
 		color: 'white',
-		flex: 1,
+		flex: 0.6,
+		textAlign: 'right'
 	}
 }
 
