@@ -24,6 +24,8 @@
 
     (defconst WIZ_REVEAL "wiz-reveal")
 
+    (defconst TOURNAMENT_OPEN "tournament_open")
+
 ; --------------------------------------------------------------------------
 ; Capabilities
 ; --------------------------------------------------------------------------
@@ -410,6 +412,11 @@
     ;round = tournament number
     (defun subscribe-tournament (id:string round:string idnft:string address:string)
         @doc "Subscribe a wizard to tournament"
+        (let (
+                (tournament-open (get-value TOURNAMENT_OPEN))
+            )
+            (enforce (= tournament-open "1") "Tournament registrations are closed")
+        )
         (with-default-read tournaments id
             {"idnft": ""}
             {"idnft":= idnft }
@@ -549,6 +556,15 @@
         @doc "Sets the value for a key to store in a table"
         (with-capability (ADMIN)
             (update values key
+                {"value": value}
+            )
+        )
+    )
+
+    (defun write-new-value(key:string value:string)
+        @doc "Sets the value for a key to store in a table"
+        (with-capability (ADMIN)
+            (write values key
                 {"value": value}
             )
         )
