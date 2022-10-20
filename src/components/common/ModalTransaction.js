@@ -108,6 +108,9 @@ class ModalTransaction extends Component {
 				else if (type === 'withdraw') {
 					body = 'You will collect your prize'
 				}
+				else if (type === 'transfer') {
+					body = `You will transfer ${nameNft} to another wallet`
+				}
 
 				buttonText = 'Open Wallet'
 				action = async () => this.props.signTransaction(transactionState.cmdToConfirm, isXWallet, netId, networkUrl, account, chainId, idNft, () => this.checkTransaction())
@@ -168,6 +171,10 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'withdraw') {
 					body = `Prize successfully withdrawn!`
+					buttonText = 'Close'
+				}
+				else if (type === 'transfer') {
+					body = `Transfer completed successfully`
 					buttonText = 'Close'
 				}
 

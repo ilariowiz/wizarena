@@ -742,6 +742,43 @@ export const subscribeToTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 	}
 }
 
+export const transferNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idNft, account, receiver) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.transfer-wizard "${idNft}" "${account.account}" "${receiver}")`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME}.OWNER`,
+				[account.account, idNft]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("subscribeToTournament", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
 /*
 export const withdrawPrize = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account) => {
 	return (dispatch) => {

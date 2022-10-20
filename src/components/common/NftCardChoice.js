@@ -101,7 +101,6 @@ class NftCardChoice extends Component {
                             <button
                                 className='btnSubscribe'
                                 style={styles.btnSubscribe}
-                                //onClick={() => this.props.onSubscribe()}
                                 onClick={() => this.setState({ showModalSpellbook: true })}
                             >
                                 <p style={{ fontSize: 17, color: 'white' }}>

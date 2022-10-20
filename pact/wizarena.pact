@@ -442,7 +442,7 @@
                   {"balance":= oldbalance }
                   (update token-table WIZ_BANK {"balance": (+ oldbalance (- buyin feebuyin))})
                 )
-                (emit-event (TOURNAMENT_SUBSCRIPTION id round))
+                (emit-event (TOURNAMENT_SUBSCRIPTION idnft round))
             )
         )
     )

@@ -11,6 +11,7 @@ import { firebasedb } from './Firebase';
 import Header from './Header';
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
+import ModalTransfer from './common/ModalTransfer'
 import HistoryItem from './common/HistoryItem'
 import getImageUrl from './common/GetImageUrl'
 import traits_qty from './common/Traits_qty'
@@ -24,7 +25,8 @@ import {
 	listNft,
 	buyNft,
 	clearTransaction,
-	getReveal
+	getReveal,
+	transferNft
 } from '../actions'
 import { MAIN_NET_ID, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, CTA_COLOR, CONTRACT_NAME } from '../actions/types'
 import '../css/Nft.css'
@@ -43,6 +45,7 @@ class Nft extends Component {
 			inputPrice: '',
 			typeModal: '',
 			showModalConnection: false,
+			showModalTransfer: false,
 			kadenaPrice: 0,
 			loading: true,
 			dataMarketHistory: {},
@@ -208,7 +211,7 @@ class Nft extends Component {
 
 	}
 
-	async delist() {
+	delist() {
 		const { nft } = this.state;
 		const { account, chainId, gasPrice, netId } = this.props
 
@@ -217,7 +220,7 @@ class Nft extends Component {
 		})
 	}
 
-	async buy() {
+	buy() {
 		const { nft } = this.state
 		const { account, chainId, gasPrice, netId } = this.props
 
@@ -230,6 +233,15 @@ class Nft extends Component {
 
 		this.setState({ typeModal: 'buy', dataMarketHistory }, () => {
 			this.props.buyNft(chainId, gasPrice, 7000, netId, account, nft)
+		})
+	}
+
+	transfer(receiver) {
+		const { nft } = this.state
+		const { account, chainId, gasPrice, netId } = this.props
+
+		this.setState({ typeModal: 'transfer' }, () => {
+			this.props.transferNft(chainId, gasPrice, 1500, netId, nft.id, account, receiver)
 		})
 	}
 
@@ -483,8 +495,25 @@ class Nft extends Component {
 	}
 
 	renderBtnSell(width, marginRight) {
+		const { nft } = this.state
+		const { account } = this.props
+
 		return (
-			<div style={{ height: '100%', alignItems: 'flex-end' }}>
+			<div style={{ flexDirection: 'column', height: '100%', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+				{
+					!nft.listed && account && account.account && nft.owner === account.account ?
+					<button
+						className="btnH"
+						style={Object.assign({}, styles.btnTransfer, { marginRight })}
+						onClick={() => this.setState({ showModalTransfer: true })}
+					>
+						<p style={{ color: 'white', fontSize: 17 }}>
+							Transfer
+						</p>
+					</button>
+					: null
+				}
+
 				<button
 					className='btnH'
 					style={Object.assign({}, styles.btnBuy, { width, marginRight })}
@@ -1113,7 +1142,7 @@ class Nft extends Component {
 
 	render() {
 		const { showModalTx } = this.props
-		const { inputPrice, nft, typeModal, showModalConnection, loading, error } = this.state
+		const { inputPrice, nft, typeModal, showModalConnection, loading, error, showModalTransfer } = this.state
 
 		let modalW = window.innerWidth * 82 / 100
 		if (modalW > 480) {
@@ -1191,6 +1220,17 @@ class Nft extends Component {
 					width={modalW}
 					showModal={showModalConnection}
 					onCloseModal={() => this.setState({ showModalConnection: false })}
+				/>
+
+				<ModalTransfer
+					width={modalW}
+					showModal={showModalTransfer}
+					onCloseModal={() => this.setState({ showModalTransfer: false })}
+					callback={(receiver) => {
+						this.setState({ showModalTransfer: false }, () => {
+							this.transfer(receiver)
+						})
+					}}
 				/>
 
 			</div>
@@ -1312,6 +1352,18 @@ const styles = {
 		color: 'white',
 		fontSize: 22,
 		marginRight: 24
+	},
+	btnTransfer: {
+		height: 35,
+		justifyContent: 'center',
+		alignItems: 'center',
+		borderWidth: 2,
+		borderColor: CTA_COLOR,
+		borderRadius: 2,
+		borderStyle: 'solid',
+		marginTop: 5,
+		paddingLeft: 11,
+		paddingRight: 11
 	}
 }
 
@@ -1329,5 +1381,6 @@ export default connect(mapStateToProps, {
 	listNft,
 	buyNft,
 	clearTransaction,
-	getReveal
+	getReveal,
+	transferNft
 })(Nft);
