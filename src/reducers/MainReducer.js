@@ -44,7 +44,8 @@ const INITIAL_STATE = {
 	feeTournament: 0,
 	montepremi: 0,
 	subscribed: [],
-	statSearched: []
+	statSearched: [],
+	subscribedSpellGraph: {}
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -97,8 +98,10 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, feeTournament: action.payload }
 		case LOAD_MONTEPREMI:
 			return { ...state, montepremi: action.payload }
-		case LOAD_SUBSCRIBED:
-			return { ...state, subscribed: action.payload }
+		case LOAD_SUBSCRIBED: {
+			const { nfts, subscribedSpellGraph } = action.payload
+			return { ...state, subscribed: nfts, subscribedSpellGraph }
+		}
 		case STORE_FILTERS_STATS:
 			return { ...state, statSearched: action.payload }
 		case LOGOUT:

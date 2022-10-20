@@ -151,6 +151,44 @@ class Tournament extends Component {
 		)
 	}
 
+    renderSingleGraph(color, name) {
+        const { subscribed, subscribedSpellGraph } = this.props
+
+        let number = 0
+        let pct = 0
+
+        if (subscribedSpellGraph[name]) {
+            number = subscribedSpellGraph[name]
+            pct = number / subscribed.length * 100
+        }
+
+        return (
+            <div style={{ alignItems: 'center', marginRight: 10, marginBottom: 10 }}>
+                <div style={{ height: 20, width: 20, borderRadius: 2, backgroundColor: color, marginRight: 8 }} />
+
+                <p style={{ color: 'white', fontSize: 16, marginRight: 8 }}>
+                    {name}
+                </p>
+
+                <p style={{ color: 'white', fontSize: 16 }}>
+                    {number} ({pct.toFixed(1)}%)
+                </p>
+            </div>
+        )
+    }
+
+    renderGraph() {
+        return (
+            <div style={{ marginTop: 25, flexWrap: 'wrap' }}>
+                {this.renderSingleGraph('#88f71e', 'Acid')}
+                {this.renderSingleGraph('#5b30b7', 'Dark')}
+                {this.renderSingleGraph('#cc1919', 'Fire')}
+                {this.renderSingleGraph('#11c8ee', 'Ice')}
+                {this.renderSingleGraph('#e6dc0c', 'Thunder')}
+                {this.renderSingleGraph('#afb9cc', 'Wind')}
+            </div>
+        )
+    }
 
     renderBody(isMobile) {
         const { tournament, winners } = this.state
@@ -224,7 +262,12 @@ class Tournament extends Component {
 
                     {
                         subscribed && subscribed.length > 0 &&
-                        <div style={{ marginBottom: 30, flexWrap: 'wrap', marginTop: 30 }}>
+                        this.renderGraph()
+                    }
+
+                    {
+                        subscribed && subscribed.length > 0 &&
+                        <div style={{ marginBottom: 30, flexWrap: 'wrap', marginTop: 15 }}>
                             {subscribed.map((item, index) => {
                                 return this.renderRow(item, index, 220)
                             })}
@@ -377,9 +420,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, reveal, montepremi, buyin, feeTournament, subscribed } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, reveal, montepremi, buyin, feeTournament, subscribed, subscribedSpellGraph } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, reveal, montepremi, buyin, feeTournament, subscribed };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, reveal, montepremi, buyin, feeTournament, subscribed, subscribedSpellGraph };
 }
 
 export default connect(mapStateToProps, {

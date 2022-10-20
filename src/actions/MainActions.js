@@ -211,7 +211,26 @@ export const loadBlockNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 				}
 				else {
 					//console.log(response);
-					dispatch({ type: LOAD_SUBSCRIBED, payload: response })
+
+					let subscribedSpellGraph = {}
+
+					response.map((item) => {
+						const traits = item.traits
+						const spellTrait = traits.find(i => i.trait_type === "Spell")
+
+						const spellMain = spellTrait.value.split(" ")[0]
+
+						if (!subscribedSpellGraph[spellMain]) {
+							subscribedSpellGraph[spellMain] = 1
+						}
+						else {
+							subscribedSpellGraph[spellMain] += 1
+						}
+					})
+
+					//console.log(subscribedSpellGraph);
+
+					dispatch({ type: LOAD_SUBSCRIBED, payload: { nfts: response, subscribedSpellGraph } })
 				}
 
 
