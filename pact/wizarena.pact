@@ -323,15 +323,15 @@
             )
             (update stats id
                 {"id": id,
-                "attack": (at "attacco" item),
-                "damage": (at "danno" item),
-                "weakness": (at "debolezza" item),
-                "defense": (at "difesa" item),
-                "element": (at "elemento" item),
+                "attack": (at "attack" item),
+                "damage": (at "damage" item),
+                "weakness": (at "weakness" item),
+                "defense": (at "defense" item),
+                "element": (at "element" item),
                 "fights": (at "fights" item),
                 "hp": (at "hp" item),
                 "medals": (at "medals" item),
-                "resistance": (at "resistenza" item),
+                "resistance": (at "resistance" item),
                 "spellSelected": (at "spellSelected" item),
                 "spellbook": (at "spellbook" item)}
             )
