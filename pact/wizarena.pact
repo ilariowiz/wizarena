@@ -306,6 +306,38 @@
         )
     )
 
+    (defun update-stats (objects-list:list)
+        (with-capability (ADMIN)
+            (map
+                (update-stat)
+                objects-list
+            )
+        )
+    )
+
+    (defun update-stat (item:object)
+        (require-capability (ADMIN))
+        (let
+            (
+                (id (at "idnft" item))
+            )
+            (update stats id
+                {"id": id,
+                "attack": (at "attacco" item),
+                "damage": (at "danno" item),
+                "weakness": (at "debolezza" item),
+                "defense": (at "difesa" item),
+                "element": (at "elemento" item),
+                "fights": (at "fights" item),
+                "hp": (at "hp" item),
+                "medals": (at "medals" item),
+                "resistance": (at "resistenza" item),
+                "spellSelected": (at "spellSelected" item),
+                "spellbook": (at "spellbook" item)}
+            )
+        )
+    )
+
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;;;; MINT FUN ;;;;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
