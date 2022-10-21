@@ -458,7 +458,7 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     ;round = tournament number
-    (defun subscribe-tournament (id:string round:string idnft:string address:string)
+    (defun subscribe-tournament (id:string round:string idnft:string address:string spellSelected:object)
         @doc "Subscribe a wizard to tournament"
         (let (
                 (tournament-open (get-value TOURNAMENT_OPEN))
@@ -490,6 +490,9 @@
                   {"balance":= oldbalance }
                   (update token-table WIZ_BANK {"balance": (+ oldbalance (- buyin feebuyin))})
                 )
+                (update stats idnft {
+                  "spellSelected": spellSelected
+                })
                 (emit-event (TOURNAMENT_SUBSCRIPTION idnft round))
             )
         )

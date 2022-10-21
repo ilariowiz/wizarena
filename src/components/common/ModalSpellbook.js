@@ -9,32 +9,32 @@ class ModalSpellbook extends Component {
         super(props)
 
         this.state = {
-            selected: this.props.stats.stats.spellSelected
+            selected: this.props.stats.spellSelected
         }
     }
 
     renderSpell(item, index, width) {
-        const { stats } = this.props.stats
+        const { stats } = this.props
 
         let isSelected = this.state.selected.name === item.name
 
         const btnBg = isSelected ? { backgroundColor: CTA_COLOR } : {}
 
-        const atkBase = stats.attacco
-        const dmgBase = stats.danno
+        const atkBase = stats.attack.int
+        const dmgBase = stats.damage.int
 
-        let atkFinal = atkBase + item.atkBase
-        let dmgFinal = dmgBase + item.dmgBase
+        let atkFinal = atkBase + item.atkBase.int
+        let dmgFinal = dmgBase + item.dmgBase.int
 
         let textPerk = ""
         if (item.condition.name) {
             if (item.condition.effect.includes("malus")) {
                 const info = item.condition.effect.split("_")
 
-                textPerk = `${item.condition.pct}% to inflict -${info[1]} ${info[2].toUpperCase()}`
+                textPerk = `${item.condition.pct.int}% to inflict -${info[1]} ${info[2].toUpperCase()}`
             }
             else {
-                textPerk = `${item.condition.pct}% that the opponent skip the turn`
+                textPerk = `${item.condition.pct.int}% that the opponent skip the turn`
             }
         }
 
@@ -80,7 +80,7 @@ class ModalSpellbook extends Component {
                             <p style={{ color: '#c2c0c0', fontSize: 17, marginRight: 10 }}>
                                 PERK
                             </p>
-                            <p style={{  color: 'white', fontSize: 17 }}>
+                            <p style={{  color: 'white', fontSize: 17, marginRight: 10 }}>
                                 {item.condition.name || "-"}
                             </p>
                         </div>
@@ -105,9 +105,7 @@ class ModalSpellbook extends Component {
 	render() {
 		const { showModal, onCloseModal, width, stats } = this.props;
 
-        //console.log(stats);
-
-        let spellbook = stats.stats.spellbook
+        let spellbook = stats.spellbook
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 

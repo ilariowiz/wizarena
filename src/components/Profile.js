@@ -43,7 +43,6 @@ class Profile extends Component {
 			isConnected,
 			typeModal: 'subscription',
 			tournament: {},
-			nftsStats: [],
 			error: '',
 			nameNftSubscribed: '',
 			profileFights: [],
@@ -83,11 +82,13 @@ class Profile extends Component {
 
 		if (account && account.account) {
 			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
-				this.preloadStats()
+				//this.preloadStats()
+				this.setState({ loading: false })
 			})
 		}
 	}
 
+	/*
 	preloadStats() {
 		this.setState({ nftsStats: [] })
 
@@ -100,6 +101,7 @@ class Profile extends Component {
 			this.setState({ loading: false })
 		}
 	}
+
 
 	async loadStats(nameNft) {
 		const docRef = doc(firebasedb, "stats", nameNft)
@@ -124,6 +126,7 @@ class Profile extends Component {
 			console.log('no stats');
 		}
 	}
+	*/
 
 	async loadTournament() {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
@@ -157,19 +160,18 @@ class Profile extends Component {
 	}
 
 	loadProfileFights() {
-		const { nftsStats, tournament } = this.state
-
-		//console.log(nftsStats)
+		const { userMintedNfts } = this.props
+		const { tournament } = this.state
 
 		const tournamentName = tournament.name.split("_")[0]
 		//console.log(tournamentName);
 
 		let profileFights = []
 
-		for (let i = 0; i < nftsStats.length; i++) {
-			const s = nftsStats[i]
+		for (let i = 0; i < userMintedNfts.length; i++) {
+			const s = userMintedNfts[i]
 			//console.log(s);
-			const fights = s.stats.fights
+			const fights = s.fights
 
 			//console.log(fights);
 
@@ -220,7 +222,7 @@ class Profile extends Component {
 		this.props.getReveal(chainId, gasPrice, gasLimit, networkUrl)
 	}
 
-	subscribe(idNft) {
+	subscribe(idNft, spellSelected) {
 		const { chainId, gasPrice, netId, account, buyin, feeTournament } = this.props
 		const { tournament } = this.state
 
@@ -243,7 +245,8 @@ class Profile extends Component {
 			account,
 			tNumber,
 			idNft,
-			buyin
+			buyin,
+			spellSelected
 		)
 	}
 
@@ -344,8 +347,6 @@ class Profile extends Component {
 	renderSingleFight(item, index) {
 		const { userMintedNfts } = this.props
 
-		//console.log(userMintedNfts, item);
-
 		const itemInfo = userMintedNfts.find(i => i.name === item.name)
 
 		const isWinner = item.winner === itemInfo.id
@@ -386,7 +387,6 @@ class Profile extends Component {
 		const { userMintedNfts, buyin, reveal } = this.props
 		const { tournament, error, profileFights, prize } = this.state
 
-		//console.log(userMintedNfts, tournament, width)
 		const tournamentName = tournament.name.split("_")[0]
 		const round = tournament.name.split("_")[1]
 
@@ -596,23 +596,16 @@ class Profile extends Component {
 	}
 
 	renderRowChoise(item, index, modalWidth) {
-		const { nftsStats, tournament } = this.state
-
-		const stats = nftsStats.length > 0 ? nftsStats.find(i => i.name === item.name) : ''
-
-		if (!stats) {
-			return <div key={index} />
-		}
+		const { tournament } = this.state
 
 		return (
 			<NftCardChoice
 				key={index}
 				item={item}
-				stats={stats}
 				width={230}
 				tournament={tournament.name.split("_")[0]}
 				canSubscribe={tournament.canSubscribe}
-				onSubscribe={() => this.subscribe(item.id)}
+				onSubscribe={(spellSelected) => this.subscribe(item.id, spellSelected)}
 				modalWidth={modalWidth}
 			/>
 		)
@@ -765,12 +758,12 @@ class Profile extends Component {
 					type={this.state.typeModal}
 					mintSuccess={() => {
 						this.props.clearTransaction()
-						this.preloadStats()
+						//this.preloadStats()
 						this.loadTournament()
 					}}
 					mintFail={() => {
 						this.props.clearTransaction()
-						this.preloadStats()
+						//this.preloadStats()
 						this.loadTournament()
 					}}
 					nameNft={this.state.nameNftSubscribed}

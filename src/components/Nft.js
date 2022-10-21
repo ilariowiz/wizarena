@@ -106,10 +106,11 @@ class Nft extends Component {
 		this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, idNft, (response) => {
 			if (response.name) {
 				document.title = `${response.name} - Wizards Arena`
-				//console.log(response)
+				console.log(response)
+
 				this.setState({ nft: response, loading: false }, () => {
 					this.loadHistory(idNft)
-					this.loadStats(idNft)
+					//this.loadStats(idNft)
 					//this.loadFights(idNft)
 				})
 			}
@@ -150,6 +151,7 @@ class Nft extends Component {
 		})
 	}
 
+	/*
 	async loadStats(idNft) {
 		const docRef = doc(firebasedb, "stats", `#${idNft}`)
 
@@ -160,12 +162,9 @@ class Nft extends Component {
 			//console.log(data)
 			this.setState({ stats: data })
 		}
-		else {
-			//console.log('no stats');
-		}
 	}
 
-	/*
+
 	async loadFights(idNft) {
 		const { account } = this.props
 
@@ -293,11 +292,12 @@ class Nft extends Component {
 	}
 
 	renderMedal(item) {
-		const { stats } = this.state
+		const { nft } = this.state
 
-		//console.log(item, stats)
-
-		const numbersOfMedals = stats.stats.medals[item] || '0'
+		let numbersOfMedals = '0' //stats.stats.medals[item] || '0'
+		if (nft.medals[item]) {
+			numbersOfMedals = nft.medals[item].int || nft.medals[item]
+		}
 
 		return (
 			<div style={styles.boxSingleTrait} key={item}>
@@ -365,14 +365,14 @@ class Nft extends Component {
 					BASE ATK
 				</p>
 				<p style={{ color: "white", fontSize: 20, marginRight }}>
-					{item.atkBase}
+					{item.atkBase.int}
 				</p>
 
 				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
 					BASE DMG
 				</p>
 				<p style={{ color: "white", fontSize: 20 }}>
-					{item.dmgBase}
+					{item.dmgBase.int}
 				</p>
 
 			</div>
@@ -683,7 +683,7 @@ class Nft extends Component {
 	}
 
 	renderBoxStats(width) {
-		const { stats } = this.state
+		const { nft } = this.state
 		const { reveal } = this.props
 
 		//console.log(reveal)
@@ -711,22 +711,22 @@ class Nft extends Component {
 					}
 
 					{
-						stats && rev ?
+						nft && nft.hp && rev ?
 						<div style={Object.assign({}, styles.boxTraits, { width })}>
-							{this.renderStat("HP", stats.stats.hp)}
-							{this.renderStat("DEFENSE", stats.stats.difesa)}
+							{this.renderStat("HP", nft.hp.int)}
+							{this.renderStat("DEFENSE", nft.defense.int)}
 
-							{this.renderStat("ELEMENT", stats.stats.elemento.toUpperCase())}
+							{this.renderStat("ELEMENT", nft.element.toUpperCase())}
 
-							{this.renderStat("SPELL", stats.stats.spellSelected.name.toUpperCase())}
+							{this.renderStat("SPELL", nft.spellSelected.name.toUpperCase())}
 
-							{this.renderStat("ATTACK", stats.stats.attacco + stats.stats.spellSelected.atkBase)}
-							{this.renderStat("DAMAGE", stats.stats.danno + stats.stats.spellSelected.dmgBase)}
+							{this.renderStat("ATTACK", nft.attack.int + nft.spellSelected.atkBase.int)}
+							{this.renderStat("DAMAGE", nft.damage.int + nft.spellSelected.dmgBase.int)}
 
-							{this.renderStat("SPELL PERK", stats.stats.spellSelected.condition.name ? stats.stats.spellSelected.condition.name.toUpperCase() : '-')}
+							{this.renderStat("SPELL PERK", nft.spellSelected.condition.name ? nft.spellSelected.condition.name.toUpperCase() : '-')}
 
-							{this.renderStat("RESISTANCE", stats.stats.resistenza.toUpperCase())}
-							{this.renderStat("WEAKNESS", stats.stats.debolezza.toUpperCase())}
+							{this.renderStat("RESISTANCE", nft.resistance.toUpperCase())}
+							{this.renderStat("WEAKNESS", nft.weakness.toUpperCase())}
 
 						</div>
 						: null
@@ -739,7 +739,7 @@ class Nft extends Component {
 	}
 
 	renderBoxMedals(width) {
-		const { stats } = this.state
+		const { nft } = this.state
 		//console.log(reveal)
 
 		return (
@@ -753,12 +753,12 @@ class Nft extends Component {
 
 				<div style={Object.assign({}, styles.boxTraits, { width })}>
 					{
-						!stats || Object.keys(stats.stats.medals).length === 0 ?
+						!nft || !nft.medals || Object.keys(nft.medals).length === 0 ?
 						<p style={{ fontSize: 18, color: 'white', margin: 15 }}>
 							This wizard has not yet won a medal
 						</p>
 						:
-						stats && stats.stats && Object.keys(stats.stats.medals).map((key) => {
+						nft && nft.medals && Object.keys(nft.medals).map((key) => {
 							return this.renderMedal(key)
 						})
 					}
@@ -770,8 +770,7 @@ class Nft extends Component {
 	}
 
 	renderBoxFights(width) {
-		const { stats } = this.state
-		//console.log(stats)
+		const { nft } = this.state
 
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
@@ -784,12 +783,12 @@ class Nft extends Component {
 
 				<div style={Object.assign({}, styles.boxTraits, { width })}>
 					{
-						!stats || (stats && stats.stats.fights.length === 0) ?
+						!nft || !nft.fights || (nft && nft.fights.length === 0) ?
 						<p style={{ fontSize: 18, color: 'white', margin: 15 }}>
 							This wizard hasn't participated in any fight yet
 						</p>
 						:
-						stats && stats.stats.fights && stats.stats.fights.map((item, index) => {
+						nft && nft.fights && nft.fights.map((item, index) => {
 							return this.renderFight(item, index)
 						})
 					}
@@ -801,10 +800,9 @@ class Nft extends Component {
 	}
 
 	renderBoxSpellbook(width) {
-		const { stats } = this.state
+		const { nft } = this.state
 		const { reveal } = this.props
 
-		//console.log(stats);
 		let rev = false
 		if (reveal && parseInt(reveal) > 0) {
 			rev = true
@@ -821,12 +819,12 @@ class Nft extends Component {
 
 				<div style={Object.assign({}, styles.boxTraits, { width, flexDirection: 'column' })}>
 					{
-						!stats || (stats && stats.stats.spellbook.length === 0) || !rev ?
+						!nft || !nft.spellbook || (nft && nft.spellbook.length === 0) || !rev ?
 						<p style={{ fontSize: 18, color: 'white', margin: 15 }}>
 							The Spellbook is empty...
 						</p>
 						:
-						stats && stats.stats.spellbook && stats.stats.spellbook.map((item, index) => {
+						nft && nft.spellbook && nft.spellbook.map((item, index) => {
 							return this.renderSpell(item, index)
 						})
 					}

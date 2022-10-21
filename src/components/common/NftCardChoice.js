@@ -38,14 +38,14 @@ class NftCardChoice extends Component {
     }
 
     calcMedals() {
-        const { stats } = this.props
+        const { item } = this.props
 
-        const medals = stats.stats.medals
+        const medals = item.medals
 
         let tot = 0
 
         Object.keys(medals).forEach(i => {
-            tot += medals[i]
+            tot += medals[i].int
         })
 
         return tot
@@ -63,14 +63,14 @@ class NftCardChoice extends Component {
             [key]: spellSelected
         })
 
-        this.props.onSubscribe()
+        this.props.onSubscribe(spellSelected)
     }
 
 	render() {
-		const { item, stats, width, reveal, canSubscribe } = this.props
+		const { item, width, reveal, canSubscribe } = this.props
         const { isSubscribed } = this.state
 
-        //console.log(stats, tournament)
+        //console.log(tournament)
 
         const numberOfTotalMedals = this.calcMedals()
 
@@ -94,7 +94,7 @@ class NftCardChoice extends Component {
 
 					<div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
-                        {cardStats(stats, numberOfTotalMedals)}
+                        {cardStats(item, numberOfTotalMedals)}
 
                         {
                             !isSubscribed && canSubscribe ?
@@ -149,7 +149,7 @@ class NftCardChoice extends Component {
                         showModal={this.state.showModalSpellbook}
                         onCloseModal={() => this.setState({ showModalSpellbook: false })}
                         width={this.props.modalWidth}
-                        stats={stats}
+                        stats={item}
                         onSub={(spellSelected) => {
                             this.onSubscribe(spellSelected)
                             this.setState({ showModalSpellbook: false })

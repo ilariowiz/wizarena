@@ -301,7 +301,7 @@
   "caps": []
 }])
 
-(wiz-arena.write-new-value "tournament_open" "0")
+(wiz-arena.write-new-value "tournament_open" "1")
 
 (commit-tx)
 
@@ -328,7 +328,13 @@
   ]
 }])
 
-(wiz-arena.subscribe-tournament "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250_t1_0" "t1" "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+(wiz-arena.subscribe-tournament
+    "t1_0"
+    "t1"
+    "0"
+    "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"
+    {"atkBase": 6,"condition": {},"dmgBase": 6,"element": "Dark","name": "Unholy Nova"}
+)
 
 (wiz-arena.get-prize)
 
@@ -344,7 +350,7 @@
   "caps": []
 }])
 
-(wiz-arena.get-subscription "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250_t1_0")
+(wiz-arena.get-subscription "t1_0")
 
 (commit-tx)
 

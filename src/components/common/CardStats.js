@@ -1,6 +1,6 @@
 import React from 'react'
 
-const cardStats = (stats, numberOfMedalsForTournament, width) => {
+const cardStats = (item, numberOfMedalsForTournament, width) => {
 
     const widthBody = width || '90%'
 
@@ -11,7 +11,7 @@ const cardStats = (stats, numberOfMedalsForTournament, width) => {
                     ELEMENT
                 </p>
                 <p style={styles.statsStyle}>
-                    {stats.stats.elemento.toUpperCase()}
+                    {item.element.toUpperCase()}
                 </p>
             </div>
 
@@ -21,7 +21,7 @@ const cardStats = (stats, numberOfMedalsForTournament, width) => {
                         HP
                     </p>
                     <p style={styles.statsStyle}>
-                        {stats.stats.hp}
+                        {item.hp.int}
                     </p>
                 </div>
 
@@ -30,7 +30,7 @@ const cardStats = (stats, numberOfMedalsForTournament, width) => {
                         DEFENSE
                     </p>
                     <p style={styles.statsStyle}>
-                        {stats.stats.difesa}
+                        {item.defense.int}
                     </p>
                 </div>
 
@@ -41,7 +41,7 @@ const cardStats = (stats, numberOfMedalsForTournament, width) => {
                     SPELL
                 </p>
                 <p style={styles.statsStyle}>
-                    {stats.stats.spellSelected.name.toUpperCase()}
+                    {item.spellSelected.name.toUpperCase()}
                 </p>
             </div>
 
@@ -52,7 +52,7 @@ const cardStats = (stats, numberOfMedalsForTournament, width) => {
                         ATK
                     </p>
                     <p style={styles.statsStyle}>
-                        {stats.stats.attacco + stats.stats.spellSelected.atkBase}
+                        {item.attack.int + item.spellSelected.atkBase.int}
                     </p>
                 </div>
 
@@ -61,7 +61,7 @@ const cardStats = (stats, numberOfMedalsForTournament, width) => {
                         DAMAGE
                     </p>
                     <p style={styles.statsStyle}>
-                        {stats.stats.danno + stats.stats.spellSelected.dmgBase}
+                        {item.damage.int + item.spellSelected.dmgBase.int}
                     </p>
                 </div>
             </div>
@@ -71,7 +71,7 @@ const cardStats = (stats, numberOfMedalsForTournament, width) => {
                     SPELL PERK
                 </p>
                 <p style={styles.statsStyle}>
-                    {stats.stats.spellSelected.condition.name ? stats.stats.spellSelected.condition.name.toUpperCase() : '-'}
+                    {item.spellSelected.condition.name ? item.spellSelected.condition.name.toUpperCase() : '-'}
                 </p>
             </div>
 
@@ -80,7 +80,7 @@ const cardStats = (stats, numberOfMedalsForTournament, width) => {
                     RESISTANCE
                 </p>
                 <p style={styles.statsStyle}>
-                    {stats.stats.resistenza.toUpperCase()}
+                    {item.resistance.toUpperCase()}
                 </p>
             </div>
 
@@ -89,7 +89,7 @@ const cardStats = (stats, numberOfMedalsForTournament, width) => {
                     WEAKNESS
                 </p>
                 <p style={styles.statsStyle}>
-                    {stats.stats.debolezza.toUpperCase()}
+                    {item.weakness.toUpperCase()}
                 </p>
             </div>
 
