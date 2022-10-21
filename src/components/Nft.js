@@ -6,8 +6,8 @@ import Popup from 'reactjs-popup';
 import { AiOutlineReload } from 'react-icons/ai';
 import { AiOutlineShareAlt } from 'react-icons/ai';
 import toast, { Toaster } from 'react-hot-toast';
-import { doc, getDoc } from "firebase/firestore";
-import { firebasedb } from './Firebase';
+//import { doc, getDoc } from "firebase/firestore";
+//import { firebasedb } from './Firebase';
 import Header from './Header';
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'

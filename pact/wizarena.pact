@@ -287,7 +287,7 @@
         (require-capability (ADMIN))
         (let
             (
-                (id (at "idnft" item))
+                (id (at "id" item))
             )
             (insert stats id
                 {"id": id,
@@ -319,7 +319,7 @@
         (require-capability (ADMIN))
         (let
             (
-                (id (at "idnft" item))
+                (id (at "id" item))
             )
             (update stats id
                 {"id": id,
