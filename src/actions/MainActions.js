@@ -715,7 +715,7 @@ export const subscribeToTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 
 		const key = `${round}_${idNft}`
 
-		let pactCode = `(free.${CONTRACT_NAME}.subscribe-tournament "${key}" "${round}" "${idNft}" "${account.account}" ${spellSelected})`;
+		let pactCode = `(free.${CONTRACT_NAME}.subscribe-tournament "${key}" "${round}" "${idNft}" "${account.account}" ${JSON.stringify(spellSelected)})`;
 
 		let caps = [
 			Pact.lang.mkCap(`Subscribe`, "Pay the buyin", `coin.TRANSFER`, [
