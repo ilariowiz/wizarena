@@ -127,12 +127,48 @@
 (expect "first block of nfts loaded" (wiz-arena.get-count "nfts-count-key") 2)
 (commit-tx)
 
+(begin-tx "SET  STATS")
+
+(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+
+(wiz-arena.add-stats [{
+    "idnft": "0",
+    "attacco": 3,
+    "danno": 3,
+    "debolezza": "wind",
+    "difesa": 17,
+    "elemento": "Dark",
+    "fights": [],
+    "hp": 51,
+    "medals": {},
+    "resistenza": "ice",
+    "spellSelected": {"atkBase":6, "condition":{}, "dmgBase":6, "element":"Dark","name":"Unholy Nova"},
+    "spellbook":[{"atkBase":6, "condition":{}, "dmgBase":6, "element":"Dark","name":"Unholy Nova"}]
+},
+{
+    "idnft": "1",
+    "attacco": 6,
+    "danno": 6,
+    "debolezza": "ice",
+    "difesa": 15,
+    "elemento": "Fire",
+    "fights": [],
+    "hp": 44,
+    "medals": {},
+    "resistenza": "fire",
+    "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
+    "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}]
+}
+])
+
+(commit-tx)
+
 
 (begin-tx "SET  REVEAL")
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
-(wiz-arena.set-value "wiz-reveal" "0")
+(wiz-arena.set-value "wiz-reveal" "1")
 
 (commit-tx)
 

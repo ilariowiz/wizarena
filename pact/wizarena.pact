@@ -171,6 +171,21 @@
         balance:decimal
     )
 
+    (defschema stats-schema
+        id:string
+        attack:integer
+        damage:integer
+        weakness:string
+        defense:integer
+        element:string
+        fights:list
+        hp:integer
+        medals:object
+        resistance:string
+        spellSelected:object
+        spellbook:list
+    )
+
     (deftable nfts:{nft-main-schema})
     (deftable nfts-market:{nft-listed-schema})
     (deftable creation:{creation-schema})
@@ -183,6 +198,7 @@
     (deftable tournaments:{tournament-sub-schema})
     (deftable values-tournament:{values-tournament-schema})
     (deftable prizes:{prizes-schema})
+    (deftable stats:{stats-schema})
 
  ; --------------------------------------------------------------------------
   ; STATE MODIFYING FUNCTIONS, REQUIRE CAPABILITIES
@@ -256,6 +272,38 @@
             )
         )
         (increase-count NFTS_COUNT_KEY)
+    )
+
+    (defun add-stats (objects-list:list)
+        (with-capability (ADMIN)
+            (map
+                (add-stat)
+                objects-list
+            )
+        )
+    )
+
+    (defun add-stat (item:object)
+        (require-capability (ADMIN))
+        (let
+            (
+                (id (at "idnft" item))
+            )
+            (insert stats id
+                {"id": id,
+                "attack": (at "attacco" item),
+                "damage": (at "danno" item),
+                "weakness": (at "debolezza" item),
+                "defense": (at "difesa" item),
+                "element": (at "elemento" item),
+                "fights": (at "fights" item),
+                "hp": (at "hp" item),
+                "medals": (at "medals" item),
+                "resistance": (at "resistenza" item),
+                "spellSelected": (at "spellSelected" item),
+                "spellbook": (at "spellbook" item)}
+            )
+        )
     )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -640,13 +688,14 @@
         (let (
                 (reveal (get-value WIZ_REVEAL))
                 (info-market (read nfts-market (int-to-str 10 id)))
+                (info-stat (read stats (int-to-str 10 id)))
             )
             (if
                 (!= reveal "0")
                 (let (
                         (info (read nfts (int-to-str 10 id)))
                     )
-                    (+ info info-market)
+                    (+ (+ info info-market) info-stat)
                 )
                 (let (
                         (info (read nfts (int-to-str 10 id) ['created 'owner 'name 'id 'imageHash]))
@@ -712,6 +761,8 @@
     (create-table prizes)
 
     (create-table coin.coin-table)
+
+    (create-table stats)
 
     (initialize)
 
