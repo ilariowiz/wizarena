@@ -233,6 +233,27 @@ class Profile extends Component {
 		//const kdaFee = (buyin * feeTournament) / 100
 		//const toPrize = buyin - kdaFee
 
+		let conditionSpell = {}
+		if (spellSelected.condition.name) {
+			conditionSpell = {
+				effect: spellSelected.condition.effect,
+				name: spellSelected.condition.name,
+				pct: spellSelected.condition.pct.int,
+				element: spellSelected.condition.element
+			}
+		}
+
+		const refactorSpellSelected = {
+			dmgBase: spellSelected.dmgBase.int,
+			name: spellSelected.name,
+			atkBase: spellSelected.atkBase.int,
+			condition: conditionSpell,
+			element: spellSelected.element
+		}
+
+		//console.log(JSON.stringify(refactorSpellSelected));
+		//return
+
 		const tNumber = tournament.name.split("_")[0]
 
 		this.setState({ nameNftSubscribed: `#${idNft}`, typeModal: "subscription" })
@@ -246,7 +267,7 @@ class Profile extends Component {
 			tNumber,
 			idNft,
 			buyin,
-			spellSelected
+			refactorSpellSelected
 		)
 	}
 
@@ -758,12 +779,12 @@ class Profile extends Component {
 					type={this.state.typeModal}
 					mintSuccess={() => {
 						this.props.clearTransaction()
-						//this.preloadStats()
+						this.loadMinted()
 						this.loadTournament()
 					}}
 					mintFail={() => {
 						this.props.clearTransaction()
-						//this.preloadStats()
+						this.loadMinted()
 						this.loadTournament()
 					}}
 					nameNft={this.state.nameNftSubscribed}
