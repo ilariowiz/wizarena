@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from 'react-redux'
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import moment from 'moment'
 import Media from 'react-media';

@@ -113,16 +113,7 @@ class Tournament extends Component {
 
     renderInfoTournament(width) {
 		const { tournament } = this.state
-		const { montepremi, buyin, feeTournament } = this.props
-
-        let iscritti;
-
-        const aPremio = buyin - (buyin * feeTournament / 100)
-        //console.log(aPremio);
-
-        if (aPremio && montepremi) {
-            iscritti = Math.ceil(montepremi / aPremio)
-        }
+		const { montepremi, subscribed } = this.props
 
 		const tname = convertMedalName(tournament.name)
 
@@ -145,7 +136,7 @@ class Tournament extends Component {
 				</p>
 
                 <p style={{ fontSize: 18, color: 'white' }}>
-					Registered Wizards {iscritti || '...'}
+					Registered Wizards {subscribed ? subscribed.length : '...'}
 				</p>
 			</div>
 		)

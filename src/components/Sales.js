@@ -65,7 +65,7 @@ class Sales extends Component {
                 </p>
 
                 {
-					this.state.loading ?
+					loading ?
 					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', paddingTop: 30 }}>
 						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
 					</div>
