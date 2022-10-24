@@ -127,13 +127,13 @@ class Fight extends Component {
                     alt={`#${info.id}`}
                 />
 
-                <div style={{ width: '70%', marginBottom: 10 }}>
+                <div style={{ width: '80%', marginBottom: 10 }}>
                     <p style={{ color: 'white', fontSize: 19 }}>
                         {info.name}
                     </p>
                 </div>
 
-                {cardStats(info, numberOfMedalsForTournament, '70%')}
+                {cardStats(info, numberOfMedalsForTournament, '80%')}
             </div>
         )
     }
@@ -141,12 +141,12 @@ class Fight extends Component {
     renderAction(item, index, boxW) {
         return (
             <div key={index} style={{ width: boxW, marginBottom: 15 }}>
-                <p style={{ fontSize: 16, color: TEXT_SECONDARY_COLOR, marginRight: 10 }}>
+                <p style={{ fontSize: 14, color: TEXT_SECONDARY_COLOR, width: 78, minWidth: 78 }}>
                     turn {index+1}:
                 </p>
 
                 <p style={{ fontSize: 16, color: 'white' }}>
-                    {item}
+                    {item.trim()}
                 </p>
             </div>
         )
@@ -155,7 +155,7 @@ class Fight extends Component {
     renderBody(isMobile) {
         const { u1, u2, actions, winner, error } = this.state
 
-        let boxW = Math.floor(window.innerWidth * 70 / 100)
+        let boxW = Math.floor(window.innerWidth * (isMobile ? 90 : 70) / 100)
 		if (boxW > 1100) boxW = 1100;
 
 		let spaceImage = (boxW / 2) - 40

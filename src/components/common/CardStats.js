@@ -8,7 +8,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
 
     return (
         <div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7 }}>
+            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
                 <p style={styles.statsTitleStyle}>
                     ELEMENT
                 </p>
@@ -17,7 +17,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
                 </p>
             </div>
 
-            <div style={{ width: widthBody, justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
+            <div style={{ width: widthBody, justifyContent: 'space-between', alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
                 <div>
                     <p style={styles.statsTitleStyle}>
                         HP
@@ -27,7 +27,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
                     </p>
                 </div>
 
-                <div>
+                <div style={{ flexWrap: 'wrap' }}>
                     <p style={styles.statsTitleStyle}>
                         DEFENSE
                     </p>
@@ -38,7 +38,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
 
             </div>
 
-            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7 }}>
+            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
                 <p style={styles.statsTitleStyle}>
                     SPELL
                 </p>
@@ -47,7 +47,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
                 </p>
             </div>
 
-            <div style={{ width: widthBody, justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
+            <div style={{ width: widthBody, justifyContent: 'space-between', alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
 
                 <div>
                     <p style={styles.statsTitleStyle}>
@@ -58,7 +58,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
                     </p>
                 </div>
 
-                <div>
+                <div style={{ flexWrap: 'wrap' }}>
                     <p style={styles.statsTitleStyle}>
                         DAMAGE
                     </p>
@@ -68,7 +68,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
                 </div>
             </div>
 
-            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7 }}>
+            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
                 <p style={styles.statsTitleStyle}>
                     SPELL PERK
                 </p>
@@ -77,7 +77,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
                 </p>
             </div>
 
-            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7 }}>
+            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
                 <p style={styles.statsTitleStyle}>
                     RESISTANCE
                 </p>
@@ -86,7 +86,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
                 </p>
             </div>
 
-            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7 }}>
+            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
                 <p style={styles.statsTitleStyle}>
                     WEAKNESS
                 </p>
@@ -95,7 +95,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
                 </p>
             </div>
 
-            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 12 }}>
+            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
                 <p style={styles.statsTitleStyle}>
                     MEDALS
                 </p>
