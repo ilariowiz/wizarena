@@ -2,6 +2,8 @@ import React from 'react'
 
 const cardStats = (item, numberOfMedalsForTournament, width) => {
 
+    //console.log(item);
+
     const widthBody = width || '90%'
 
     return (
@@ -21,7 +23,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
                         HP
                     </p>
                     <p style={styles.statsStyle}>
-                        {item.hp.int}
+                        {item.hp.int || item.hp}
                     </p>
                 </div>
 
@@ -30,7 +32,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
                         DEFENSE
                     </p>
                     <p style={styles.statsStyle}>
-                        {item.defense.int}
+                        {item.defense.int || item.defense}
                     </p>
                 </div>
 
@@ -52,7 +54,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
                         ATK
                     </p>
                     <p style={styles.statsStyle}>
-                        {item.attack.int + item.spellSelected.atkBase.int}
+                        {(item.attack.int || item.attack) + (item.spellSelected.atkBase.int || item.spellSelected.atkBase)}
                     </p>
                 </div>
 
@@ -61,7 +63,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
                         DAMAGE
                     </p>
                     <p style={styles.statsStyle}>
-                        {item.damage.int + item.spellSelected.dmgBase.int}
+                        {(item.damage.int || item.damage) + (item.spellSelected.dmgBase.int || item.spellSelected.dmgBase)}
                     </p>
                 </div>
             </div>

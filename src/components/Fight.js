@@ -112,7 +112,7 @@ class Fight extends Component {
 
     renderSingleNft(info, width) {
         const { tournament } = this.state
-        console.log(info, tournament);
+        //console.log(info, tournament);
 
         let tournamentName = tournament.split("_")[0]
 
