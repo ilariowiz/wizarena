@@ -294,7 +294,10 @@ class Nft extends Component {
 	renderMedal(item) {
 		const { nft } = this.state
 
-		let numbersOfMedals = '0' //stats.stats.medals[item] || '0'
+		//console.log(nft);
+
+		let numbersOfMedals = '0'
+
 		if (nft.medals[item]) {
 			numbersOfMedals = nft.medals[item].int || nft.medals[item]
 		}
