@@ -120,7 +120,7 @@ class Fight extends Component {
         const numberOfMedalsForTournament = medals || '0'
 
         return (
-            <div className="containerChoice" style={{ marginRight: 0 }}>
+            <div className="containerChoice" style={{ marginRight: 0, width, height: '100%' }}>
                 <img
                     style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2, marginBottom: 10 }}
                     src={getImageUrl(info.id, "1")}
