@@ -116,7 +116,11 @@ class Fight extends Component {
 
         let tournamentName = tournament.split("_")[0]
 
-        const medals = info.medals[tournamentName]
+        const tournamentMedals = info.medals[tournamentName]
+        //console.log(tournamentMedals);
+
+        const medals = tournamentMedals.int || tournamentMedals
+        //console.log(medals);
         const numberOfMedalsForTournament = medals || '0'
 
         return (
