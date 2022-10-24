@@ -74,12 +74,28 @@ class Tournament extends Component {
                 const roundEnded = tournament.roundEnded
                 const tournamentName = tournament.name.split("_")[0]
 
-                this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName)
+                this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, (subscribed) => {
 
+                    const roundEndedInt = parseInt(roundEnded)
+                    const winners = []
 
+                    console.log(subscribed);
+                    subscribed.map((item) => {
+                        if (item.medals[tournamentName] && item.medals[tournamentName].int === roundEndedInt) {
+                            winners.push(item)
+                        }
+                    })
+
+                    console.log(winners);
+                    this.setState({ winners, loading: false })
+                })
+
+                /*
                 const w1 = `stats.medals.${tournamentName}`
-                const q = query(collection(firebasedb, "stats"), where(w1, "==", parseInt(roundEnded)))
 
+                //console.log(w1, roundEnded);
+
+                const q = query(collection(firebasedb, "stats"), where(w1, "==", parseInt(roundEnded)))
                 const qSnap2 = await getDocs(q)
 
                 const winners = []
@@ -93,6 +109,7 @@ class Tournament extends Component {
                 })
 
                 this.setState({ winners, loading: false })
+                */
             })
         })
     }
@@ -303,6 +320,8 @@ class Tournament extends Component {
 		}
 
         // TORNEO CONCLUSO
+        console.log(winners);
+
         let subtitleText = winners.length > 1 ?  `The ${winners.length} winners of ${roundEnded} medals:` : `The winner of ${roundEnded} medals:`
 
         let titleText = tournament.tournamentEnd ?

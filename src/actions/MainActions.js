@@ -183,7 +183,7 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 	}
 }
 
-export const loadBlockNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, block, callback, isSubscribed) => {
+export const loadBlockNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, block, callback, isSubscribed, callbackSubscribed) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -229,6 +229,10 @@ export const loadBlockNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 					})
 
 					//console.log(subscribedSpellGraph);
+
+					if (callbackSubscribed) {
+						callbackSubscribed(response)
+					}
 
 					dispatch({ type: LOAD_SUBSCRIBED, payload: { nfts: response, subscribedSpellGraph } })
 				}
@@ -509,7 +513,7 @@ export const getFeeTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit
 	}
 }
 
-export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 150000, networkUrl, tournament) => {
+export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 150000, networkUrl, tournament, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -526,7 +530,7 @@ export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 					onlyId.push(i.idnft)
 				})
 
-				dispatch(loadBlockNfts(chainId, gasLimit, gasLimit, networkUrl, onlyId, undefined, true))
+				dispatch(loadBlockNfts(chainId, gasLimit, gasLimit, networkUrl, onlyId, undefined, true, callback))
 			}
 		})
 	}
