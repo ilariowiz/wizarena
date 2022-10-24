@@ -76,12 +76,12 @@ class Tournament extends Component {
 
                 this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, (subscribed) => {
 
-                    const roundEndedInt = parseInt(roundEnded)
                     const winners = []
 
-                    //console.log(subscribed);
+                    //console.log(roundEndedInt);
                     subscribed.map((item) => {
-                        if (item.medals[tournamentName] && item.medals[tournamentName].int === roundEndedInt) {
+                        //console.log(item);
+                        if (item.medals[tournamentName] && item.medals[tournamentName] === roundEnded) {
                             winners.push(item)
                         }
                     })
