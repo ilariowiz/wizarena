@@ -319,8 +319,18 @@ class Tournament extends Component {
 			)
 		}
 
-        // TORNEO CONCLUSO
+        // TORNEO/ROUND CONCLUSO
         //console.log(winners);
+        const roundValue = roundName.replace("r", "")
+
+        const start = moment(tournament.start.seconds * 1000) //milliseconds
+        let text;
+        if (moment().isBefore(start)) {
+            text = `The round ${roundValue} will start ${start.fromNow()}`
+        }
+        else {
+            text = `The round started ${start.fromNow()}`
+        }
 
         let subtitleText = winners.length > 1 ?  `The ${winners.length} winners of ${roundEnded} medals:` : `The winner of ${roundEnded} medals:`
 
@@ -329,14 +339,24 @@ class Tournament extends Component {
                         :
                         `Partial results of this tournament (round ${roundEnded}/${tournament.nRounds} concluded)`
 
+
+
         return (
             <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
 
                 <div style={{ justifyContent: 'space-between', marginBottom: 30 }}>
+
                     <div style={{ flexDirection: 'column', width: '100%' }}>
-                        <p style={{ fontSize: 20, color: 'white', marginBottom: 15 }}>
+                        <p style={{ fontSize: 20, color: 'white', marginBottom: 25 }}>
                             {titleText}
                         </p>
+
+                        {
+                            !tournament.tournamentEnd &&
+                            <p style={{ fontSize: 18, color: 'white' }}>
+                                {text}
+                            </p>
+                        }
                     </div>
 
                     {this.renderInfoTournament(boxW)}
