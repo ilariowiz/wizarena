@@ -230,9 +230,6 @@ class Profile extends Component {
 			return
 		}
 
-		//const kdaFee = (buyin * feeTournament) / 100
-		//const toPrize = buyin - kdaFee
-
 		let conditionSpell = {}
 		if (spellSelected.condition.name) {
 			conditionSpell = {
