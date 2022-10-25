@@ -338,6 +338,28 @@
         )
     )
 
+    (defun update-spellbooks (objects-list:list)
+        (with-capability (ADMIN)
+            (map
+                (update-spellbook)
+                objects-list
+            )
+        )
+    )
+
+    (defun update-spellbook (item:object)
+        (require-capability (ADMIN))
+        (let
+            (
+                (id (at "id" item))
+            )
+            (update stats id
+                {"id": id,
+                "spellbook": (at "spellbook" item)}
+            )
+        )
+    )
+
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;;;; MINT FUN ;;;;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

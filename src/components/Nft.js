@@ -330,7 +330,7 @@ class Nft extends Component {
 		}
 
 		return (
-			<div key={index} style={{ alignItems: 'flex-end', flexWrap: 'wrap' }}>
+			<div key={index} style={{ alignItems: 'flex-end', flexWrap: 'wrap', marginBottom: 20 }}>
 				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
 					NAME
 				</p>
@@ -400,14 +400,10 @@ class Nft extends Component {
 					this.props.history.replace(`/fight/${item.fightId}`)
 				}}
 			>
-				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 15, marginBottom: 5 }}>
-					TOURNAMENT n. {tournament.replace("t", "")}
+				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginBottom: 5 }}>
+					T. {tournament.replace("t", "")} - R. {round.replace("r", "")}
 				</p>
-				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 15, marginBottom: 5 }}>
-					ROUND n. {round.replace("r", "")}
-				</p>
-
-				<p style={{ color: textWinnerColor, fontSize: 22 }}>
+				<p style={{ color: textWinnerColor, fontSize: 18 }}>
 					{textWinner}
 				</p>
 			</button>
