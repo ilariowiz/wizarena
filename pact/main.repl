@@ -4,7 +4,7 @@
   "wizarena-keyset" : {"keys": ["90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb"], "pred": "keys-all"},
   "george-keyset": {"keys": ["94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd"], "pred":"keys-all"},
   "tim-keyset": {"keys":["9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"], "pred":"keys-all"},
-
+  "wiza-token-keyset" : {"keys": ["90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb"], "pred": "keys-all"},
   'upgrade: false
 })
 
@@ -25,8 +25,11 @@
 ;; load coin module
 (load "root/coin-v5.pact")
 
+(define-namespace 'free (sig-keyset) (sig-keyset))
 ;; load election module
 (load "wizarena.pact")
+
+(load "wiza.pact")
 
 ;; commit the transaction
 (commit-tx)
@@ -38,7 +41,7 @@
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
-(wiz-arena.create-all-wizards [{
+(free.wiz-arena.create-all-wizards [{
         "name": "#0",
         "edition": 0,
         "attributes": [
@@ -124,14 +127,14 @@
         "imageHash": "ffff8fff8e3fcc1fdc1fc007c00fdc3ffc3ff009f003c03fc81fc81fc81fc81f"
     }])
 
-(expect "first block of nfts loaded" (wiz-arena.get-count "nfts-count-key") 2)
+(expect "first block of nfts loaded" (free.wiz-arena.get-count "nfts-count-key") 2)
 (commit-tx)
 
 (begin-tx "SET  STATS")
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
-(wiz-arena.add-stats [{
+(free.wiz-arena.add-stats [{
     "id": "0",
     "attacco": 3,
     "danno": 3,
@@ -168,7 +171,7 @@
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
-(wiz-arena.set-value "wiz-reveal" "1")
+(free.wiz-arena.set-value "wiz-reveal" "1")
 
 (commit-tx)
 
@@ -176,25 +179,25 @@
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
-(wiz-arena.update-stats [{
+(free.wiz-arena.update-stats [{
     "id": "0",
-    "attacco": 13,
-    "danno": 23,
-    "debolezza": "wind",
-    "difesa": 17,
-    "elemento": "Dark",
+    "attack": 13,
+    "damage": 23,
+    "weakness": "wind",
+    "defense": 17,
+    "element": "Dark",
     "fights": [],
     "hp": 51,
     "medals": {},
-    "resistenza": "ice",
+    "resistance": "ice",
     "spellSelected": {"atkBase":6, "condition":{}, "dmgBase":6, "element":"Dark","name":"Unholy Nova"},
-    "spellbook":[{"atkBase":6, "condition":{}, "dmgBase":6, "element":"Dark","name":"Unholy Nova"}]
+    "spellbook":[{"atkBase":6, "condition":{}, "dmgBase":6, "element":"Dark","name":"Unholy Nova"}, {"atkBase":9, "condition":{}, "dmgBase":9, "element":"Dark","name":"Unholy Nova 2"}]
 }])
 
 (commit-tx)
 
 ;;;;;; CREATE TEST ACCOUNTS ;;;;;
-(begin-tx "create test accounts")
+(begin-tx "CREATE TEST accounts")
 
 (coin.create-account "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" (read-keyset "george-keyset"))
 (coin.create-account "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" (read-keyset "tim-keyset"))
@@ -202,7 +205,7 @@
 (commit-tx)
 
 ;;;;; fund account
-(begin-tx "fund accounts")
+(begin-tx "FUND accounts")
 
 (env-sigs [{
   "key": "94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd",
@@ -229,49 +232,49 @@
 (commit-tx)
 
 ;;;;;;;; SET MAX MINT ;;;;;;
-(begin-tx "set max items for mint")
+(begin-tx "SET MAX ITEMS for mint")
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
-(wiz-arena.set-max-items 1)
+(free.wiz-arena.set-max-items 1)
 
 (commit-tx)
 
 ;;; MINT NFT
-(begin-tx "mint nft")
+(begin-tx "MINT nft")
 
 (env-sigs [{
   "key": "94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd",
   "caps": [
-    (wiz-arena.ACCOUNT_GUARD "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd"),
+    (free.wiz-arena.ACCOUNT_GUARD "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd"),
     (coin.GAS)
   ]
 }])
 
-(wiz-arena.get-wizards "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" 1)
+(free.wiz-arena.get-wizards "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" 1)
 
 (commit-tx)
 
 
-(begin-tx "list nft")
+(begin-tx "LIST NFT")
 
 (env-sigs [{
   "key": "94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd",
   "caps": [
-    (wiz-arena.OWNER "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" "0"),
+    (free.wiz-arena.OWNER "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" "0"),
     (coin.GAS)
   ]
 }])
 
-(wiz-arena.list-wizard "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" "0" 10.0)
+(free.wiz-arena.list-wizard "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" "0" 10.0)
 
 (commit-tx)
 
-(begin-tx "get nfts listed")
+(begin-tx "GET NFTS LISTED")
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
-(wiz-arena.get-all-on-sale)
+(free.wiz-arena.get-all-on-sale)
 
 (commit-tx)
 
@@ -281,14 +284,14 @@
   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
   "caps": [
     (coin.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" 10.0),
-    (wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
+    (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
     (coin.GAS)
   ]
 }])
 
-(wiz-arena.buy-wizard "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+(free.wiz-arena.buy-wizard "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
 
-(expect "MARKET VOLUME is 10" (wiz-arena.get-volume) 10.0)
+(expect "MARKET VOLUME is 10" (free.wiz-arena.get-volume) 10.0)
 
 (expect "balance of k:94e is 59.3" (coin.get-balance "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd") 59.3)
 
@@ -296,7 +299,7 @@
 
 (begin-tx "GET DATA NFT")
 
-(wiz-arena.get-wizard-fields-for-ids [0])
+(free.wiz-arena.get-wizard-fields-for-ids [0])
 
 (commit-tx)
 
@@ -306,12 +309,12 @@
 ; (env-sigs [{
 ;   "key": "94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd",
 ;   "caps": [
-;     (wiz-arena.ACCOUNT_GUARD "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd"),
+;     (free.wiz-arena.ACCOUNT_GUARD "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd"),
 ;     (coin.GAS)
 ;   ]
 ; }])
 ;
-; (wiz-arena.get-wizards "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" 2)
+; (free.wiz-arena.get-wizards "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" 2)
 ;
 ; (commit-tx)
 
@@ -322,7 +325,7 @@
   "caps": []
 }])
 
-(wiz-arena.write-new-value "tournament_open" "1")
+(free.wiz-arena.write-new-value "tournament_open" "1")
 
 (commit-tx)
 
@@ -331,7 +334,7 @@
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
-(wiz-arena.get-value "wiz-reveal")
+(free.wiz-arena.get-value "wiz-reveal")
 
 (commit-tx)
 
@@ -342,14 +345,14 @@
 (env-sigs [{
   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
   "caps": [
-    (coin.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" wiz-arena.WIZ_BANK 4.0)
-    (wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
-    (wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0")
+    (coin.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" free.wiz-arena.WIZ_BANK 4.0)
+    (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
+    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0")
     (coin.GAS)
   ]
 }])
 
-(wiz-arena.subscribe-tournament
+(free.wiz-arena.subscribe-tournament
     "t1_0"
     "t1"
     "0"
@@ -357,9 +360,9 @@
     {"atkBase": 6,"condition": {},"dmgBase": 6,"element": "Dark","name": "Unholy Nova"}
 )
 
-(wiz-arena.get-prize)
+(free.wiz-arena.get-prize)
 
-(expect "balance of WIZ_BANK is 3.2" (coin.get-balance wiz-arena.WIZ_BANK) 3.2)
+(expect "balance of WIZ_BANK is 3.2" (coin.get-balance free.wiz-arena.WIZ_BANK) 3.2)
 
 (commit-tx)
 
@@ -371,7 +374,7 @@
   "caps": []
 }])
 
-(wiz-arena.get-subscription "t1_0")
+(free.wiz-arena.get-subscription "t1_0")
 
 (commit-tx)
 
@@ -383,24 +386,24 @@
   "caps": []
 }])
 
-(wiz-arena.set-prizes [{"address": "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "prize": 1.60}, {"address": "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd", "prize": 1.60}])
+(free.wiz-arena.set-prizes [{"address": "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "prize": 1.60}, {"address": "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd", "prize": 1.60}])
 
 (commit-tx)
 
 ;;;;;; TRANSFER WIZARD
-(begin-tx "TRANSFER WIZARD")
-
-(env-sigs [{
-  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-  "caps": [
-    (wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
-    (coin.GAS)
-  ]
-}])
-
-(wiz-arena.transfer-wizard "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb")
-
-(commit-tx)
+; (begin-tx "TRANSFER WIZARD")
+;
+; (env-sigs [{
+;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+;   "caps": [
+;     (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+;     (coin.GAS)
+;   ]
+; }])
+;
+; (free.wiz-arena.transfer-wizard "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb")
+;
+; (commit-tx)
 
 
 
@@ -411,9 +414,9 @@
   "caps": []
 }])
 
-(wiz-arena.withdraw-prize "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+(free.wiz-arena.withdraw-prize "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
 
-(expect "balance of WIZ_BANK is 1.6" (coin.get-balance wiz-arena.WIZ_BANK) 1.6)
+(expect "balance of WIZ_BANK is 1.6" (coin.get-balance free.wiz-arena.WIZ_BANK) 1.6)
 
 (expect "balance of k:9ca8b0 is 37.6" (coin.get-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250") 37.6)
 
@@ -427,10 +430,78 @@
   "caps": []
 }])
 
-(wiz-arena.withdraw-prize "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd")
+(free.wiz-arena.withdraw-prize "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd")
 
-(expect "balance of WIZ_BANK is 0.0" (coin.get-balance wiz-arena.WIZ_BANK) 0.0)
+(expect "balance of WIZ_BANK is 0.0" (coin.get-balance free.wiz-arena.WIZ_BANK) 0.0)
 
 (expect "balance of k:94e is 60.9" (coin.get-balance "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd") 60.9)
+
+(commit-tx)
+
+
+(begin-tx "STAKE")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiza.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiza.stake "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+
+(commit-tx)
+
+(begin-tx "CHECK STAKED")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (coin.GAS)
+  ]
+}])
+
+(free.wiza.check-nft-staked "0")
+
+(commit-tx)
+
+(begin-tx "UNSTAKE")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiza.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiza.unstake "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+
+(commit-tx)
+
+(begin-tx "CHECK BALANCE")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (coin.GAS)
+  ]
+}])
+
+(free.wiza.get-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+
+(commit-tx)
+
+(begin-tx "CHECK TOTAL MINED")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (coin.GAS)
+  ]
+}])
+
+(free.wiza.get-total-mined)
 
 (commit-tx)
