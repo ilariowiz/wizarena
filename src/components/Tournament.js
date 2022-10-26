@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Media from 'react-media';
 import { connect } from 'react-redux'
 import moment from 'moment'
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import DotLoader from 'react-spinners/DotLoader';
 import NftCard from './common/NftCard'
@@ -78,7 +78,6 @@ class Tournament extends Component {
 
                     const winners = []
 
-                    //console.log(roundEndedInt);
                     subscribed.map((item) => {
                         //console.log(item);
                         if (item.medals[tournamentName] && item.medals[tournamentName] === roundEnded) {
@@ -90,26 +89,6 @@ class Tournament extends Component {
                     this.setState({ winners, loading: false })
                 })
 
-                /*
-                const w1 = `stats.medals.${tournamentName}`
-
-                //console.log(w1, roundEnded);
-
-                const q = query(collection(firebasedb, "stats"), where(w1, "==", parseInt(roundEnded)))
-                const qSnap2 = await getDocs(q)
-
-                const winners = []
-
-                qSnap2.forEach(doc2 => {
-                    //console.log(doc2.data());
-                    let dataWinners = doc2.data()
-                    dataWinners['id'] = dataWinners.name.replace("#", "")
-
-                    winners.push(dataWinners)
-                })
-
-                this.setState({ winners, loading: false })
-                */
             })
         })
     }
