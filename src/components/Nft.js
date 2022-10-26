@@ -99,6 +99,21 @@ class Nft extends Component {
 		this.loadNft(idNft)
 	}
 
+	groupFights(array, key) {
+
+		let temp = []
+
+		for (let i = 0; i < array.length; i++) {
+			const fight = array[i]
+
+			if (fight.tournament.includes(key)) {
+				temp.push(fight)
+			}
+		}
+
+		return temp
+	}
+
 	loadNft(idNft) {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
@@ -107,7 +122,17 @@ class Nft extends Component {
 		this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, idNft, (response) => {
 			if (response.name) {
 				document.title = `${response.name} - Wizards Arena`
-				//console.log(response)
+				///console.log(response)
+
+				const tournaments = ["t1", "t2"]
+
+				response['groupedFights'] = {}
+
+				tournaments.map(i => {
+					response['groupedFights'][i] = this.groupFights(response.fights, i)
+				})
+
+				//console.log(response);
 
 				this.setState({ nft: response, loading: false }, () => {
 					this.loadHistory(idNft)
@@ -406,6 +431,31 @@ class Nft extends Component {
 		)
 	}
 
+	renderMainFight(key, index) {
+		const { nft } = this.state
+
+		//console.log(key, index);
+
+		if (nft.groupedFights && nft.groupedFights[key].length > 0) {
+			return (
+				<div style={Object.assign({}, styles.boxSingleTrait, { alignItems: 'flex-start' })} key={index}>
+					<p style={{ fontSize: 18, color: 'white', marginLeft: 6, marginTop: 4 }}>
+						TOURNAMENT n. {key.replace("t","")}
+					</p>
+
+					<div style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
+						{Object.values(nft.groupedFights[key]).map((item, index) => {
+							return this.renderFight(item, index)
+						})}
+					</div>
+				</div>
+			)
+		}
+
+		return <div key={index} />
+
+	}
+
 	renderFight(item, index) {
 		const { nft } = this.state
 
@@ -425,7 +475,7 @@ class Nft extends Component {
 				}}
 			>
 				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginBottom: 5 }}>
-					T. {tournament.replace("t", "")} - R. {round.replace("r", "")}
+					round {round.replace("r", "")}
 				</p>
 				<p style={{ color: textWinnerColor, fontSize: 18 }}>
 					{textWinner}
@@ -795,6 +845,8 @@ class Nft extends Component {
 	renderBoxFights(width) {
 		const { nft } = this.state
 
+		//console.log(nft.groupedFights);
+
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
@@ -811,8 +863,9 @@ class Nft extends Component {
 							This wizard hasn't participated in any fight yet
 						</p>
 						:
-						nft && nft.fights && nft.fights.map((item, index) => {
-							return this.renderFight(item, index)
+						nft && nft.groupedFights && Object.keys(nft.groupedFights).map((key, index) => {
+							//console.log(key, index);
+							return this.renderMainFight(key, index)
 						})
 					}
 
