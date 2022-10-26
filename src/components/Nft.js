@@ -6,8 +6,8 @@ import Popup from 'reactjs-popup';
 import { AiOutlineReload } from 'react-icons/ai';
 import { AiOutlineShareAlt } from 'react-icons/ai';
 import toast, { Toaster } from 'react-hot-toast';
-//import { doc, getDoc } from "firebase/firestore";
-//import { firebasedb } from './Firebase';
+import { getDocs, collection } from "firebase/firestore";
+import { firebasedb } from './Firebase';
 import Header from './Header';
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
@@ -51,7 +51,8 @@ class Nft extends Component {
 			dataMarketHistory: {},
 			fights: [],
 			traitsRank: undefined,
-			loadingHistory: true
+			loadingHistory: true,
+			numbersOfMaxMedalsPerTournament: []
 		}
 	}
 
@@ -110,6 +111,7 @@ class Nft extends Component {
 
 				this.setState({ nft: response, loading: false }, () => {
 					this.loadHistory(idNft)
+					this.loadMaxMedalsPerTournament()
 					//this.loadStats(idNft)
 					//this.loadFights(idNft)
 				})
@@ -149,6 +151,26 @@ class Nft extends Component {
 			console.log(e)
 			this.setState({ loadHistory: false })
 		})
+	}
+
+	async loadMaxMedalsPerTournament() {
+
+		const docSnap = await getDocs(collection(firebasedb, "history_tournament"))
+
+		let numbersOfMaxMedalsPerTournament = []
+
+		docSnap.forEach(doc => {
+			//console.log(doc.id, doc.data());
+
+			const obj = {
+				tournamentName: doc.id,
+				maxMedals: doc.data().maxMedals
+			}
+
+			numbersOfMaxMedalsPerTournament.push(obj)
+		})
+
+		this.setState({ numbersOfMaxMedalsPerTournament })
 	}
 
 	/*
@@ -292,7 +314,7 @@ class Nft extends Component {
 	}
 
 	renderMedal(item) {
-		const { nft } = this.state
+		const { nft, numbersOfMaxMedalsPerTournament } = this.state
 
 		//console.log(nft);
 
@@ -302,13 +324,15 @@ class Nft extends Component {
 			numbersOfMedals = nft.medals[item].int || nft.medals[item]
 		}
 
+		const maxMedals = numbersOfMaxMedalsPerTournament.length > 0 ? numbersOfMaxMedalsPerTournament.find(i => i.tournamentName === item) : '0'
+
 		return (
 			<div style={styles.boxSingleTrait} key={item}>
-				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 15, marginBottom: 5 }}>
-					TOURNAMENT n. {item.replace("t", "")}
+				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 13, marginBottom: 5 }}>
+					TOURNAMENT {item.replace("t", "")}
 				</p>
-				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 22 }}>
-					{numbersOfMedals}
+				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 20 }}>
+					{numbersOfMedals} / {maxMedals.maxMedals}
 				</p>
 
 			</div>
