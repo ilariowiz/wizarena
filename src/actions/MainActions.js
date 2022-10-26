@@ -196,14 +196,14 @@ export const loadBlockNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 
 			if (response) {
 
-				response.sort((a, b) => {
-					if (parseInt(a.price) === 0) return 1;
-					if (parseInt(b.price) === 0) return -1
-					return a.price - b.price
-				})
-
-
 				if (!isSubscribed) {
+
+					response.sort((a, b) => {
+						if (parseInt(a.price) === 0) return 1;
+						if (parseInt(b.price) === 0) return -1
+						return a.price - b.price
+					})
+
 					dispatch({
 						type: LOAD_ALL_NFTS,
 						payload: { allNfts: response, nftsBlockId: 0 }
