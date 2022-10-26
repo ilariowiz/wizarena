@@ -522,13 +522,16 @@ export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 		fetch(url)
   		.then(response => response.json())
   		.then(data => {
-  			console.log(data)
+  			//console.log(data)
 
 			let onlyId = []
 			data.map(i => {
 				onlyId.push(i.params[0])
 			})
 
+			if (onlyId.length > 0) {
+				onlyId = onlyId.filter((v, i, a) => a.indexOf(v) === i);
+			}
 
 			dispatch(loadBlockNfts(chainId, gasLimit, gasLimit, networkUrl, onlyId, undefined, true, callback))
   		})
