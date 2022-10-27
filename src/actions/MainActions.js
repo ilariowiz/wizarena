@@ -742,7 +742,7 @@ export const buyNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, a
 export const subscribeToTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, tournamentName, idNft, buyin, spellSelected) => {
 	return (dispatch) => {
 
-		const key = `${round}_${idNft}`
+		const key = `${tournamentName}_${idNft}`
 
 		let pactCode = `(free.${CONTRACT_NAME}.subscribe-tournament "${key}" "${tournamentName}" "${idNft}" "${account.account}" ${JSON.stringify(spellSelected)})`;
 
