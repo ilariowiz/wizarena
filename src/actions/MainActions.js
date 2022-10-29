@@ -516,13 +516,14 @@ export const getFeeTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit
 export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 150000, networkUrl, tournament, callback) => {
 	return (dispatch) => {
 
+		/*
 		let url = 'https://estats.chainweb.com/txs/events?search=wiz-arena.TOURNAMENT_SUBSCRIPTION&param=t2&offset=0&limit=250'
 
 		//console.log(url);
 		fetch(url)
   		.then(response => response.json())
   		.then(data => {
-  			//console.log(data)
+  			console.log(data)
 
 			let onlyId = []
 			data.map(i => {
@@ -538,8 +539,8 @@ export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 		.catch(e => {
 			console.log(e)
 		})
+		*/
 
-		/*
 		let cmd = {
 			pactCode: `(free.${CONTRACT_NAME}.get-all-subscription-for-tournament "${tournament}")`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
@@ -557,7 +558,7 @@ export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 				dispatch(loadBlockNfts(chainId, gasLimit, gasLimit, networkUrl, onlyId, undefined, true, callback))
 			}
 		})
-		*/
+
 	}
 }
 
