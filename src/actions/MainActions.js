@@ -555,6 +555,10 @@ export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 					onlyId.push(i.idnft)
 				})
 
+				onlyId.sort((a, b) => {
+					return parseInt(a) - parseInt(b)
+				})
+
 				dispatch(loadBlockNfts(chainId, gasLimit, gasLimit, networkUrl, onlyId, undefined, true, callback))
 			}
 		})
