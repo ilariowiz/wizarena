@@ -522,7 +522,7 @@ export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 		fetch(url)
   		.then(response => response.json())
   		.then(data => {
-  			console.log(data)
+  			//console.log(data)
 
 			let onlyId = []
 			data.map(i => {
