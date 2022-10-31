@@ -443,7 +443,7 @@ class Nft extends Component {
 						TOURNAMENT n. {key.replace("t","")}
 					</p>
 
-					<div style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
+					<div style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
 						{Object.values(nft.groupedFights[key]).map((item, index) => {
 							return this.renderFight(item, index)
 						})}
@@ -856,7 +856,7 @@ class Nft extends Component {
 					</p>
 				</div>
 
-				<div style={Object.assign({}, styles.boxTraits, { width })}>
+				<div style={styles.boxTraits}>
 					{
 						!nft || !nft.fights || (nft && nft.fights.length === 0) ?
 						<p style={{ fontSize: 18, color: 'white', margin: 15 }}>
