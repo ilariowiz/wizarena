@@ -6,6 +6,31 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
 
     const widthBody = width || '90%'
 
+    let atkSpell = item.spellSelected.atkBase.int || item.spellSelected.atkBase
+    if (!atkSpell || atkSpell.int === 0) {
+        atkSpell = 0
+    }
+
+    let atkBase = item.attack.int || item.attack
+    if (!atkBase || atkBase.int === 0) {
+        atkBase = 0
+    }
+
+    let dmgSpell = item.spellSelected.dmgBase.int || item.spellSelected.dmgBase
+    if (!dmgSpell || dmgSpell.int === 0) {
+        dmgSpell = 0
+    }
+
+    let dmgBase = item.damage.int || item.damage
+    if (!dmgBase || dmgBase.int === 0) {
+        dmgBase = 0
+    }
+
+    //console.log(dmgBase);
+
+    let atkTotal = atkSpell + atkBase
+    let dmgTotal = dmgSpell + dmgBase
+
     return (
         <div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
             <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
@@ -54,7 +79,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
                         ATK
                     </p>
                     <p style={styles.statsStyle}>
-                        {(item.attack.int || item.attack) + (item.spellSelected.atkBase.int || item.spellSelected.atkBase)}
+                        {atkTotal}
                     </p>
                 </div>
 
@@ -63,7 +88,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
                         DAMAGE
                     </p>
                     <p style={styles.statsStyle}>
-                        {(item.damage.int || item.damage) + (item.spellSelected.dmgBase.int || item.spellSelected.dmgBase)}
+                        {dmgTotal}
                     </p>
                 </div>
             </div>

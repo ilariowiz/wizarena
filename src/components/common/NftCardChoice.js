@@ -45,7 +45,7 @@ class NftCardChoice extends Component {
         let tot = 0
 
         Object.keys(medals).forEach(i => {
-            tot += medals[i].int
+            tot += parseInt(medals[i])
         })
 
         return tot
