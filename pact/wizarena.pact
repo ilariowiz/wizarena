@@ -26,8 +26,6 @@
 
     (defconst TOURNAMENT_OPEN "tournament_open")
 
-    (defconst MAX_WIZARDS_IN_TOURNAMENT "max_wizards_in_tournament")
-    (defconst CURRENT_WIZARDS_IN_TOURNAMENT "current_wizards_in_tournament")
 
 ; --------------------------------------------------------------------------
 ; Capabilities
@@ -98,9 +96,6 @@
 
         (coin.create-account WIZ_BANK (create-module-guard "wiz-holdings"))
         (create-account WIZ_BANK (create-module-guard "wiz-holdings"))
-
-        (insert counts MAX_WIZARDS_IN_TOURNAMENT {"count":1})
-        (insert counts CURRENT_WIZARDS_IN_TOURNAMENT {"count":0})
     )
 
  ; --------------------------------------------------------------------------
@@ -450,11 +445,14 @@
 
     (defun list-wizard (sender:string id:string price:decimal)
         @doc "list a wizard on marketplace"
-        (enforce (> price 0.0) "amount must be greater then 0")
+        (enforce (>= price 1.0) "amount must be equal or greater then 1")
         (let (
                 (data (get-wizard-fields-for-id (str-to-int id)))
+                ;(is-staked (wiza.check-nft-is-staked id))
+                (is-staked false)
             )
             (enforce (= (at "listed" data) false) "this wizard is already listed")
+            (enforce (= is-staked false) "You can't list a staked wizard")
         )
         (with-capability (OWNER sender id)
             (update nfts-market id {"listed": true, "price": price})
@@ -522,11 +520,8 @@
         @doc "Subscribe a wizard to tournament"
         (let (
                 (tournament-open (get-value TOURNAMENT_OPEN))
-                (max-wiz (get-count MAX_WIZARDS_IN_TOURNAMENT))
-                (current-wiz (get-count CURRENT_WIZARDS_IN_TOURNAMENT))
             )
             (enforce (= tournament-open "1") "Tournament registrations are closed")
-            (enforce (< current-wiz max-wiz) "Max subscribers reached.")
         )
         (with-default-read tournaments id
             {"idnft": ""}
@@ -557,9 +552,6 @@
                   "spellSelected": spellSelected
                 })
                 (emit-event (TOURNAMENT_SUBSCRIPTION idnft round))
-                (with-capability (PRIVATE)
-                    (increase-count CURRENT_WIZARDS_IN_TOURNAMENT)
-                )
             )
         )
     )
@@ -631,22 +623,22 @@
     ;;;;;; GENERIC FUN ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    ; free wizard from admin to user
-    (defun transfer:string
-        ( id:string
-          sender:string
-          receiver:string
-          amount:decimal
-        )
-        @doc " Transfer to an account, failing if the account to account does not exist. "
-        (enforce (= 1.0 amount) "Only 1 wizard can be transferred")
-        (enforce (= sender ADMIN_ADDRESS) "Can only send from admin account for now")
-        (with-capability (ADMIN)
-            (with-capability (OWNER sender id)
-                (update nfts id {"owner": receiver})
-            )
-        )
-    )
+    ; ; free wizard from admin to user
+    ; (defun transfer:string
+    ;     ( id:string
+    ;       sender:string
+    ;       receiver:string
+    ;       amount:decimal
+    ;     )
+    ;     @doc " Transfer to an account, failing if the account to account does not exist. "
+    ;     (enforce (= 1.0 amount) "Only 1 wizard can be transferred")
+    ;     (enforce (= sender ADMIN_ADDRESS) "Can only send from admin account for now")
+    ;     (with-capability (ADMIN)
+    ;         (with-capability (OWNER sender id)
+    ;             (update nfts id {"owner": receiver})
+    ;         )
+    ;     )
+    ; )
 
     (defun transfer-wizard (id:string sender:string receiver:string)
         @doc "Transfer nft to an account"
