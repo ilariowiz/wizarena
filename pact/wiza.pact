@@ -385,7 +385,7 @@
 
     (defun unstake (idnft:string sender:string)
         (let (
-                (data (check-nft-staked idnft))
+                (data (get-nft-staked idnft))
             )
             (enforce (= (at "staked" data) true) "Wizard already unstaked")
         )
@@ -471,7 +471,7 @@
     ; helpers functions
     ; --------------------------------------------------------------------------
 
-    (defun check-nft-staked (idnft:string)
+    (defun get-nft-staked (idnft:string)
         (read staked-table idnft)
     )
 
