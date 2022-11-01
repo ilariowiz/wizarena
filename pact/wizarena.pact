@@ -26,6 +26,9 @@
 
     (defconst TOURNAMENT_OPEN "tournament_open")
 
+    (defconst MAX_WIZARDS_IN_TOURNAMENT "max_wizards_in_tournament")
+    (defconst CURRENT_WIZARDS_IN_TOURNAMENT "current_wizards_in_tournament")
+
 ; --------------------------------------------------------------------------
 ; Capabilities
 ; --------------------------------------------------------------------------
@@ -38,7 +41,7 @@
     ;; checks that the transaction owner
     (defcap ACCOUNT_GUARD(account:string)
         @doc "Verifies account meets format and belongs to caller"
-        (enforce (= "k:" (take 2 account)) "For security, only support k: accounts")
+        (enforce (is-principal account) "")
         (enforce-guard (at "guard" (coin.details account)))
     )
 
@@ -95,6 +98,9 @@
 
         (coin.create-account WIZ_BANK (create-module-guard "wiz-holdings"))
         (create-account WIZ_BANK (create-module-guard "wiz-holdings"))
+
+        (insert counts MAX_WIZARDS_IN_TOURNAMENT {"count":1})
+        (insert counts CURRENT_WIZARDS_IN_TOURNAMENT {"count":0})
     )
 
  ; --------------------------------------------------------------------------
@@ -516,8 +522,11 @@
         @doc "Subscribe a wizard to tournament"
         (let (
                 (tournament-open (get-value TOURNAMENT_OPEN))
+                (max-wiz (get-count MAX_WIZARDS_IN_TOURNAMENT))
+                (current-wiz (get-count CURRENT_WIZARDS_IN_TOURNAMENT))
             )
             (enforce (= tournament-open "1") "Tournament registrations are closed")
+            (enforce (< current-wiz max-wiz) "Max subscribers reached.")
         )
         (with-default-read tournaments id
             {"idnft": ""}
@@ -548,6 +557,9 @@
                   "spellSelected": spellSelected
                 })
                 (emit-event (TOURNAMENT_SUBSCRIPTION idnft round))
+                (with-capability (PRIVATE)
+                    (increase-count CURRENT_WIZARDS_IN_TOURNAMENT)
+                )
             )
         )
     )
@@ -654,6 +666,15 @@
         (require-capability (PRIVATE))
         (update counts key
             {"count": (+ 1 (get-count key))}
+        )
+    )
+
+    (defun reset-count(key:string)
+        @doc "Reset count of a key"
+        (with-capability (ADMIN)
+            (update counts key
+                {"count": 0}
+            )
         )
     )
 
