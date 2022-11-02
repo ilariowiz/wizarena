@@ -142,13 +142,24 @@
         (format "TRANSFER exceeded for balance {}" [managed])) newbal)
     )
 
+    (defun create-BANK-guard ()
+        (create-user-guard (require-PRIVATE))
+    )
+
+    (defun require-PRIVATE ()
+        (require-capability (PRIVATE))
+    )
+
 ; --------------------------------------------------------------------------
   ; Initialize
   ; --------------------------------------------------------------------------
   (defun initialize ()
 
-    (coin.create-account WIZA_TOKEN_BANK (create-module-guard "wiza-token-holdings"))
-    (create-account WIZA_TOKEN_BANK (create-module-guard "wiza-token-holdings"))
+    ;(coin.create-account WIZA_TOKEN_BANK (create-module-guard "wiza-token-holdings"))
+    ;(create-account WIZA_TOKEN_BANK (create-module-guard "wiza-token-holdings"))
+
+    (coin.create-account WIZA_TOKEN_BANK (create-BANK-guard))
+    (create-account WIZA_TOKEN_BANK (create-BANK-guard))
 
     (write mined-wiza-table "" {"amount":0.0})
   )
@@ -411,7 +422,7 @@
     (defun mine-from-stake (account:string multiplier:integer stakedTime:time)
         (require-capability (PRIVATE))
         (let (
-                (days (/ (diff-time (add-time (at "block-time" (chain-data)) (days 3.78)) stakedTime) 86400))
+                (days (/ (diff-time (at "block-time" (chain-data)) stakedTime) 86400))
                 (guard (at "guard" (coin.details account)))
             )
             (with-default-read token-table account

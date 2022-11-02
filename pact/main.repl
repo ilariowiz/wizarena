@@ -397,16 +397,16 @@
 (commit-tx)
 
 ;;;; ADD PRIZES
-; (begin-tx "ADD PRIZES")
-;
-; (env-sigs [{
-;   "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb",
-;   "caps": []
-; }])
-;
-; (free.wiz-arena.set-prizes [{"address": "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "prize": 1.60}, {"address": "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd", "prize": 1.60}])
-;
-; (commit-tx)
+(begin-tx "ADD PRIZES")
+
+(env-sigs [{
+  "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb",
+  "caps": []
+}])
+
+(free.wiz-arena.set-prizes [{"address": "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "prize": 1.60}, {"address": "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd", "prize": 1.60}])
+
+(commit-tx)
 
 ;;;;;; TRANSFER WIZARD
 ; (begin-tx "TRANSFER WIZARD")
@@ -425,21 +425,24 @@
 
 
 
-; (begin-tx "WITHDRAW PRIZES")
-;
-; (env-sigs [{
-;   "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb",
-;   "caps": []
-; }])
-;
-; (free.wiz-arena.withdraw-prize "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
-;
-; (expect "balance of WIZ_BANK is 1.6" (coin.get-balance free.wiz-arena.WIZ_BANK) 1.6)
-;
-; (expect "balance of k:9ca8b0 is 37.6" (coin.get-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250") 37.6)
-;
-;
-; (commit-tx)
+(begin-tx "WITHDRAW PRIZES")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+       (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
+       (coin.GAS)
+     ]
+}])
+
+(free.wiz-arena.withdraw-prize "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+
+(expect "balance of WIZ_BANK is 1.6" (coin.get-balance free.wiz-arena.WIZ_BANK) 1.6)
+
+(expect "balance of k:9ca8b0 is 47.6" (coin.get-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250") 47.6)
+
+
+(commit-tx)
 ;
 ; (begin-tx "WITHDRAW PRIZES 2")
 ;
@@ -528,7 +531,7 @@
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
-(free.wiza.reward-users ["k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd"] 120.0)
+(free.wiza.reward-users ["k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd", free.wiza.WIZA_TOKEN_BANK] 120.0)
 
 (commit-tx)
 
@@ -544,5 +547,7 @@
 (free.wiza.get-total-mined)
 
 (free.wiza.check-nft-is-staked "0")
+
+(free.wiza.get-circulating-supply)
 
 (commit-tx)
