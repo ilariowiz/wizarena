@@ -6,7 +6,7 @@ import moment from 'moment'
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
-import NftCard from './common/NftCard'
+import NftCardStake from './common/NftCardStake'
 import NftCardChoice from './common/NftCardChoice'
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
@@ -24,7 +24,10 @@ import {
 	subscribeToTournament,
 	checkAddressForPrice,
 	withdrawPrize,
-	getFeeTournament
+	getFeeTournament,
+	getWizaBalance,
+	stakeNft,
+	unstakeNft
 } from '../actions'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -59,6 +62,7 @@ class Profile extends Component {
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
 		setTimeout(() => {
+
 			this.loadProfile()
 
 			//console.log(this.props.reveal);
@@ -71,6 +75,8 @@ class Profile extends Component {
 
 	loadProfile() {
 		this.loadMinted()
+
+		this.loadWizaBalance()
 	}
 
 	loadMinted() {
@@ -84,6 +90,16 @@ class Profile extends Component {
 			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
 				//this.preloadStats()
 				this.setState({ loading: false })
+			})
+		}
+	}
+
+	loadWizaBalance() {
+		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		if (account && account.account) {
+			this.props.getWizaBalance(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
+				//this.setState({ loading: false })
 			})
 		}
 	}
@@ -268,6 +284,21 @@ class Profile extends Component {
 		)
 	}
 
+	stakeNft(idnft) {
+		const { chainId, gasPrice, netId, account } = this.props
+
+		this.setState({ nameNftSubscribed: `#${idnft}`, typeModal: "stake" })
+
+		this.props.stakeNft(chainId, gasPrice, 6000, netId, idnft, account)
+	}
+
+	unstakeNft(idnft) {
+		const { chainId, gasPrice, netId, account } = this.props
+
+		this.setState({ nameNftSubscribed: `#${idnft}`, typeModal: "unstake" })
+
+		this.props.unstakeNft(chainId, gasPrice, 6000, netId, idnft, account)
+	}
 
 	withdrawPrize() {
 		const { chainId, gasPrice, netId, account } = this.props
@@ -303,11 +334,13 @@ class Profile extends Component {
 		itemsPerRow.map(item => {
 			//console.log(item);
 			array.push(
-				<NftCard
+				<NftCardStake
 					item={item}
 					key={item.id}
 					history={this.props.history}
 					width={singleWidth}
+					onStake={() => this.stakeNft(item.id)}
+					onUnstake={() => this.unstakeNft(item.id)}
 				/>
 			)
 		})
@@ -698,7 +731,7 @@ class Profile extends Component {
 	}
 
 	renderBody(isMobile) {
-		const { account, showModalTx } = this.props
+		const { account, showModalTx, wizaBalance } = this.props
 		const { showModalConnection, isConnected, section, loading } = this.state
 
 		const { boxW, modalW } = getBoxWidth(isMobile)
@@ -746,6 +779,10 @@ class Profile extends Component {
 		return (
 			<div style={{ flexDirection: 'column', width: boxW, marginTop: 30 }}>
 
+				<p style={{ fontSize: 24, color: TEXT_SECONDARY_COLOR, marginBottom: 30 }}>
+					$WIZA balance: {wizaBalance || 0.0}
+				</p>
+
 				{this.renderMenu(isMobile)}
 
 				{
@@ -776,12 +813,12 @@ class Profile extends Component {
 					type={this.state.typeModal}
 					mintSuccess={() => {
 						this.props.clearTransaction()
-						this.loadMinted()
+						this.loadProfile()
 						this.loadTournament()
 					}}
 					mintFail={() => {
 						this.props.clearTransaction()
-						this.loadMinted()
+						this.loadProfile()
 						this.loadTournament()
 					}}
 					nameNft={this.state.nameNftSubscribed}
@@ -890,9 +927,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, reveal, montepremi, buyin, feeTournament } = state.mainReducer;
+	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, reveal, montepremi, buyin, feeTournament, wizaBalance } = state.mainReducer;
 
-	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, reveal, montepremi, buyin, feeTournament };
+	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, reveal, montepremi, buyin, feeTournament, wizaBalance };
 }
 
 export default connect(mapStateToProps, {
@@ -906,5 +943,8 @@ export default connect(mapStateToProps, {
 	subscribeToTournament,
 	checkAddressForPrice,
 	withdrawPrize,
-	getFeeTournament
+	getFeeTournament,
+	getWizaBalance,
+	stakeNft,
+	unstakeNft
 })(Profile)

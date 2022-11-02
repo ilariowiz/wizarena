@@ -111,6 +111,12 @@ class ModalTransaction extends Component {
 				else if (type === 'transfer') {
 					body = `You will transfer ${nameNft} to another wallet`
 				}
+				else if (type === 'stake') {
+					body = `You will stake ${nameNft}. You can unstake it any time. While it is staked you will not be able to sell this wizard but you will still be able to register it for tournaments.`
+				}
+				else if (type === 'unstake') {
+					body = `You will unstake ${nameNft}`
+				}
 
 				buttonText = 'Open Wallet'
 				action = async () => this.props.signTransaction(transactionState.cmdToConfirm, isXWallet, netId, networkUrl, account, chainId, idNft, () => this.checkTransaction())
@@ -175,6 +181,14 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'transfer') {
 					body = `Transfer completed successfully`
+					buttonText = 'Close'
+				}
+				else if (type === 'stake') {
+					body = `Your Wizard ${nameNft} is staked!`
+					buttonText = 'Close'
+				}
+				else if (type === 'unstake') {
+					body = `Your Wizard ${nameNft} is unstaked!`
 					buttonText = 'Close'
 				}
 

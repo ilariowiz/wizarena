@@ -25,7 +25,10 @@ import {
 	LOAD_MONTEPREMI,
 	WIZ_BANK,
 	LOAD_SUBSCRIBED,
-	STORE_FILTERS_STATS
+	STORE_FILTERS_STATS,
+	CONTRACT_NAME_WIZA,
+	WIZA_TOKEN_BANK,
+	SAVE_WIZA_BALANCE
 } from './types'
 
 
@@ -863,6 +866,146 @@ export const withdrawPrize = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 	}
 }
 
+/************************************************************************
+
+WIZA TOKEN FUNCTIONS
+
+*************************************************************************/
+
+export const getWizaBalance = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, address) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_WIZA}.get-user-balance "${address}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+
+			let balance = response
+			if (response.decimal) {
+				balance = response.decimal.substring(0, 6)
+			}
+
+			dispatch({ type: SAVE_WIZA_BALANCE, payload: balance })
+		})
+	}
+}
+
+export const getWizardStakeInfo = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, idnft, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_WIZA}.get-nft-staked "${idnft}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
+export const calculateReward = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, days, multiplier, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_WIZA}.calculate-reward ${days} ${multiplier})`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
+export const stakeNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idNft, account) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME_WIZA}.stake "${idNft}" "${account.account}")`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME_WIZA}.OWNER`,
+				[account.account, idNft]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("subscribeToTournament", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const unstakeNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idNft, account) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME_WIZA}.unstake "${idNft}" "${account.account}")`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME_WIZA}.OWNER`,
+				[account.account, idNft]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("subscribeToTournament", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+/************************************************************************
+
+GENERAL FUNCTIONS
+
+*************************************************************************/
 
 export const signTransaction = (cmdToSign, isXWallet, netId, networkUrl, account, chainId, nftId, callback) => {
 	return async (dispatch) => {
