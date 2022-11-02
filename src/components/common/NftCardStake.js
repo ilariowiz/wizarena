@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import moment from 'moment'
+import DotLoader from 'react-spinners/DotLoader';
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCard.css'
 import '../../css/Nft.css'
@@ -19,7 +20,8 @@ class NftCardStake extends Component {
         this.state = {
             stakeInfo: {},
 			staked: false,
-			unclaimedWiza: 0.0
+			unclaimedWiza: 0.0,
+			loading: true
         }
     }
 
@@ -31,10 +33,10 @@ class NftCardStake extends Component {
             //console.log(response)
 
 			if (response.status === "failure") {
-				this.setState({ staked: false, stakeInfo: {} })
+				this.setState({ staked: false, stakeInfo: {}, loading: false })
 			}
 			else {
-				this.setState({ staked: response.staked, stakeInfo: response })
+				this.setState({ staked: response.staked, stakeInfo: response, loading: false })
 
 				const stakedFromDate = moment(response.timestamp.timep)
 
@@ -79,7 +81,7 @@ class NftCardStake extends Component {
 
 	render() {
 		const { item, history, width, reveal } = this.props
-		const { staked } = this.state
+		const { staked, loading } = this.state
 
 		return (
 			<div
@@ -131,8 +133,18 @@ class NftCardStake extends Component {
 
 				</div>
 
+
 				{
-					!staked ?
+					loading &&
+					<div
+						style={Object.assign({}, styles.btnStake, { width })}
+					>
+						<DotLoader size={25} color='white' />
+					</div>
+				}
+
+				{
+					!staked && !loading &&
 					<button
 						className="btnH"
 						style={Object.assign({}, styles.btnStake, { width })}
@@ -145,7 +157,10 @@ class NftCardStake extends Component {
 							STAKE
 						</p>
 					</button>
-					:
+				}
+
+				{
+					staked && !loading &&
 					<button
 						className="btnH"
 						style={Object.assign({}, styles.btnStake, { width })}
