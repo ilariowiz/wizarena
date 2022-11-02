@@ -329,7 +329,7 @@ class Collection extends Component {
 
 				{this.renderBoxHeader(`${volume.toLocaleString()} kda`, 'total volume', isMobile)}
 
-				{this.renderBoxHeader(`${wizardsStaked}`, 'wizards staked', isMobile)}
+				{this.renderBoxHeader(`${wizardsStaked || 0}`, 'wizards staked', isMobile)}
 
 			</div>
 		)
