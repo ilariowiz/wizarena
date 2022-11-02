@@ -487,7 +487,11 @@
     )
 
     (defun check-nft-is-staked (idnft:string)
-        (at "staked" (read staked-table idnft ['staked]))
+        (with-default-read staked-table idnft
+            {"staked": false}
+            {"staked":= staked}
+            staked
+        )
     )
 
     (defun calculate-reward (days:decimal multiplier:integer)
