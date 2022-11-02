@@ -23,7 +23,7 @@ import {
 	getBuyin,
 	subscribeToTournament,
 	checkAddressForPrice,
-	//withdrawPrize,
+	withdrawPrize,
 	getFeeTournament
 } from '../actions'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
@@ -268,7 +268,7 @@ class Profile extends Component {
 		)
 	}
 
-	/*
+
 	withdrawPrize() {
 		const { chainId, gasPrice, netId, account } = this.props
 
@@ -276,7 +276,7 @@ class Profile extends Component {
 
 		this.props.withdrawPrize(chainId, gasPrice, 4000, netId, account)
 	}
-	*/
+
 
 	buildsRow(items, itemsPerRow = 4) {
 		return items.reduce((rows, item, index) => {
@@ -588,15 +588,15 @@ class Profile extends Component {
 									The Archmage is sending you the prize...
 								</p>
 
-								<div
-									//className="btnH"
+								<button
+									className="btnH"
 									style={styles.btnWithdraw}
-									//onClick={() => this.withdrawPrize()}
+									onClick={() => this.withdrawPrize()}
 								>
 									<p style={{ fontSize: 17, color: 'white' }}>
-										PRIZE: {prize} KDA
+										WITHDRAW PRIZE: {prize} KDA
 									</p>
-								</div>
+								</button>
 							</div>
 							:
 							<p style={{ fontSize: 18, color: 'white' }}>
@@ -905,6 +905,6 @@ export default connect(mapStateToProps, {
 	getBuyin,
 	subscribeToTournament,
 	checkAddressForPrice,
-	//withdrawPrize,
+	withdrawPrize,
 	getFeeTournament
 })(Profile)

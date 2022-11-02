@@ -579,28 +579,8 @@
         (at "balance" (read prizes address ["balance"]))
     )
 
-    ; (defun withdraw-prize (account:string)
-    ;     (with-capability (ACCOUNT_GUARD account)
-    ;         (with-default-read prizes account
-    ;           {"balance": 0.0}
-    ;           {"balance":= oldbalance }
-    ;           (enforce (> oldbalance 0.0) "you already withdrawn your prize")
-    ;           (install-capability (coin.TRANSFER WIZ_BANK account oldbalance))
-    ;           (coin.transfer WIZ_BANK account oldbalance)
-    ;           (write prizes account {"balance": 0.0})
-    ;           (emit-event (WITHDRAW_PRIZE account oldbalance))
-    ;
-    ;           (with-default-read token-table WIZ_BANK
-    ;             {"balance": 0.0}
-    ;             {"balance":= wizbalance }
-    ;             (update token-table WIZ_BANK {"balance": (- wizbalance oldbalance)})
-    ;           )
-    ;         )
-    ;     )
-    ; )
-
     (defun withdraw-prize (account:string)
-        (with-capability (ADMIN)
+        (with-capability (ACCOUNT_GUARD account)
             (with-default-read prizes account
               {"balance": 0.0}
               {"balance":= oldbalance }
@@ -618,6 +598,26 @@
             )
         )
     )
+
+    ; (defun withdraw-prize (account:string)
+    ;     (with-capability (ADMIN)
+    ;         (with-default-read prizes account
+    ;           {"balance": 0.0}
+    ;           {"balance":= oldbalance }
+    ;           (enforce (> oldbalance 0.0) "you already withdrawn your prize")
+    ;           (install-capability (coin.TRANSFER WIZ_BANK account oldbalance))
+    ;           (coin.transfer WIZ_BANK account oldbalance)
+    ;           (write prizes account {"balance": 0.0})
+    ;           (emit-event (WITHDRAW_PRIZE account oldbalance))
+    ;
+    ;           (with-default-read token-table WIZ_BANK
+    ;             {"balance": 0.0}
+    ;             {"balance":= wizbalance }
+    ;             (update token-table WIZ_BANK {"balance": (- wizbalance oldbalance)})
+    ;           )
+    ;         )
+    ;     )
+    ; )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;; GENERIC FUN ;;;;;;;;;
