@@ -46,7 +46,7 @@ class NftCardStake extends Component {
 				const daysPassed = (diffMinsFromStaked / minAday)
 
 				this.props.calculateReward(chainId, gasPrice, gasLimit, networkUrl, daysPassed, response.multiplier.int, (response) => {
-					this.setState({ unclaimedWiza: parseFloat(response.decimal).toFixed(2) })
+					this.setState({ unclaimedWiza: response.decimal.substring(0, 6) })
 				})
 			}
         })
