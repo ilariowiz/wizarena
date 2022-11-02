@@ -191,6 +191,12 @@ class Collection extends Component {
 	async searchByStat(stat) {
 		const { nftsBlockId, allNfts, statSearched } = this.props
 
+		//console.log(allNfts);
+		if (!allNfts || allNfts.length === 0) {
+			return
+		}
+
+
 		this.setState({ loading: true, searchedText: '', searchText: '' })
 
 		let oldStat = Object.assign([], statSearched);
@@ -215,10 +221,14 @@ class Collection extends Component {
 
 			let arrayQuery = []
 			oldStat.map(i => {
-				const key = `stats.${i.stat}`
-				const query = where(key, "==", i.value)
-				arrayQuery.push(query)
+				if (i.stat !== "spellbook") {
+					//const key = `stats.${i.stat}`
+					const query = where(i.stat, "==", i.value)
+					arrayQuery.push(query)
+				}
 			})
+
+			//console.log(oldStat);
 
 			let q = query(collection(firebasedb, "stats"), ...arrayQuery)
 
@@ -236,11 +246,22 @@ class Collection extends Component {
 				}
 			})
 
+			oldStat.map(i => {
+				if (i.stat === "spellbook") {
+					//console.log(newData);
+					newData = newData.filter(n => {
+						return n.spellbook.length === i.value
+					})
+				}
+			})
+
 			newData.sort((a, b) => {
 				if (parseInt(a.price) === 0) return 1;
 				if (parseInt(b.price) === 0) return -1
 				return a.price - b.price
 			})
+
+			//console.log(newData);
 
 			this.props.storeFiltersStats(oldStat)
 			this.setState({ nftsToShow: newData, loading: false })
@@ -555,6 +576,8 @@ class Collection extends Component {
 
 		let rows = this.buildsRow(nftsToShow, nInRow)
 
+		//console.log(rows);
+
 		let numberOfWiz = allNfts ? allNfts.length : 0;
 		if (searchedText.length > 0) {
 			numberOfWiz = 1
@@ -574,10 +597,11 @@ class Collection extends Component {
 
 				<div style={{ flexWrap: 'wrap', marginBottom: 10 }}>
 					{this.renderBoxSearchStat("hp", "HP", [41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61].reverse())}
-					{this.renderBoxSearchStat("difesa", "DEFENSE", [14, 15, 16, 17, 18, 19].reverse())}
-					{this.renderBoxSearchStat("elemento", "ELEMENT", ["Acid", "Dark", "Fire", "Ice", "Thunder", "Wind"])}
-					{this.renderBoxSearchStat("resistenza", "RESISTANCE", ["acid", "dark", "fire", "ice", "thunder", "wind"])}
-					{this.renderBoxSearchStat("debolezza", "WEAKNESS", ["acid", "dark", "fire", "ice", "thunder", "wind"])}
+					{this.renderBoxSearchStat("defense", "DEFENSE", [14, 15, 16, 17, 18, 19].reverse())}
+					{this.renderBoxSearchStat("element", "ELEMENT", ["Acid", "Dark", "Fire", "Ice", "Thunder", "Wind"])}
+					{this.renderBoxSearchStat("resistance", "RESISTANCE", ["acid", "dark", "fire", "ice", "thunder", "wind"])}
+					{this.renderBoxSearchStat("weakness", "WEAKNESS", ["acid", "dark", "fire", "ice", "thunder", "wind"])}
+					{this.renderBoxSearchStat("spellbook", "SPELLBOOK", [1, 2, 3, 4])}
 				</div>
 
 				<p style={{ marginBottom: 15, fontSize: 16, color: 'white' }}>
