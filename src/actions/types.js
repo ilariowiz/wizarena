@@ -7,6 +7,9 @@ export const CONTRACT_NAME = 'wiz-arena'
 export const WIZ_BANK = 'wiz-bank'
 export const ITEMS_PER_BLOCK = 40
 
+export const CONTRACT_NAME_WIZA = 'wiza'
+export const WIZA_TOKEN_BANK = 'wiza-token-bank'
+
 
 export const DEFAULT_GAS_PRICE = 0.00000001;
 export const MAIN_NET_ID = "mainnet01";

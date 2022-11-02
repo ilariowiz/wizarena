@@ -507,6 +507,14 @@
         @doc "get total mined - wiza in bank"
         (- (get-total-mined) (get-balance WIZA_TOKEN_BANK))
     )
+
+    (defun get-user-balance (address:string)
+        (with-default-read token-table address
+            {"balance": 0.0}
+            {"balance":= balance}
+            balance
+        )
+    )
 )
 
 
