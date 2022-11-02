@@ -17,7 +17,8 @@ import {
 	setNetworkSettings,
 	setNetworkUrl,
 	getReveal,
-	storeFiltersStats
+	storeFiltersStats,
+	getWizardsStakedCount
 } from '../actions'
 import { MAIN_NET_ID, ITEMS_PER_BLOCK, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -50,6 +51,7 @@ class Collection extends Component {
 		setTimeout(() => {
 			this.loadAll()
 			this.getMarketVolume()
+			this.getWizardsStakedCount()
 			//facciamo il call su reveal solo se è 0, se è 1 è inutile richiamarlo
 			if (parseInt(reveal) < 1 || !reveal) {
 				this.getRevealNfts()
@@ -108,6 +110,12 @@ class Collection extends Component {
 		this.props.getVolume(chainId, gasPrice, gasLimit, networkUrl, (res) => {
 			this.setState({ volume: res })
 		})
+	}
+
+	getWizardsStakedCount() {
+		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		this.props.getWizardsStakedCount(chainId, gasPrice, gasLimit, networkUrl)
 	}
 
 	getRevealNfts() {
@@ -306,7 +314,7 @@ class Collection extends Component {
 	}
 
 	renderHeader(isMobile) {
-		const { totalCountNfts } = this.props
+		const { totalCountNfts, wizardsStaked } = this.props
 		const { floor, uniqueOwners, volume } = this.state
 
 		let items = totalCountNfts || 0
@@ -320,6 +328,8 @@ class Collection extends Component {
 				{this.renderBoxHeader(`${floor || '...'} kda`, 'floor price', isMobile)}
 
 				{this.renderBoxHeader(`${volume.toLocaleString()} kda`, 'total volume', isMobile)}
+
+				{this.renderBoxHeader(`${wizardsStaked}`, 'wizards staked', isMobile)}
 
 			</div>
 		)
@@ -725,9 +735,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, reveal, statSearched } = state.mainReducer;
+	const { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, reveal, statSearched, wizardsStaked } = state.mainReducer;
 
-	return { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, reveal, statSearched };
+	return { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, reveal, statSearched, wizardsStaked };
 }
 
 export default connect(mapStateToProps, {
@@ -737,5 +747,6 @@ export default connect(mapStateToProps, {
 	setNetworkSettings,
 	setNetworkUrl,
 	getReveal,
-	storeFiltersStats
+	storeFiltersStats,
+	getWizardsStakedCount
 })(Collection)

@@ -20,7 +20,8 @@ import {
 	LOAD_MONTEPREMI,
 	LOAD_SUBSCRIBED,
 	STORE_FILTERS_STATS,
-	SAVE_WIZA_BALANCE
+	SAVE_WIZA_BALANCE,
+	LOAD_WIZARDS_STAKED
 } from '../actions/types'
 
 
@@ -47,7 +48,8 @@ const INITIAL_STATE = {
 	subscribed: [],
 	statSearched: [],
 	subscribedSpellGraph: {},
-	wizaBalance: 0
+	wizaBalance: 0,
+	wizardsStaked: 0
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -108,8 +110,10 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, statSearched: action.payload }
 		case SAVE_WIZA_BALANCE:
 			return { ...state, wizaBalance: action.payload }
+		case LOAD_WIZARDS_STAKED:
+			return { ...state, wizardsStaked: action.payload }
 		case LOGOUT:
-			return { ...state, account: {}, transactionState: {}, showModalTx: false, isConnectWallet: false, isXWallet: false, userMintedNfts: []}
+			return { ...state, account: {}, transactionState: {}, showModalTx: false, isConnectWallet: false, isXWallet: false, userMintedNfts: [], wizaBalance: 0}
 		default:
 			return state
 	}

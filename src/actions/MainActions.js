@@ -28,7 +28,8 @@ import {
 	STORE_FILTERS_STATS,
 	CONTRACT_NAME_WIZA,
 	WIZA_TOKEN_BANK,
-	SAVE_WIZA_BALANCE
+	SAVE_WIZA_BALANCE,
+	LOAD_WIZARDS_STAKED
 } from './types'
 
 
@@ -450,6 +451,21 @@ export const getReveal = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300,
 			if (response) {
 				dispatch({ type: SET_REVEAL, payload: response })
 			}
+		})
+	}
+}
+
+export const getWizardsStakedCount = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 50000, networkUrl) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_WIZA}.wizards-staked-count)`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			dispatch({ type: LOAD_WIZARDS_STAKED, payload: response })
 		})
 	}
 }

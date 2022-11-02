@@ -494,6 +494,10 @@
         )
     )
 
+    (defun wizards-staked-count ()
+        (length (select staked-table (where "staked" (= true))))
+    )
+
     (defun calculate-reward (days:decimal multiplier:integer)
         (* days (* multiplier BASE_MULTIPLIER))
     )

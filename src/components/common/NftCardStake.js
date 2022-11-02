@@ -170,7 +170,7 @@ class NftCardStake extends Component {
 						}}
 					>
 						<p style={{ fontSize: 17, color: 'white' }}>
-							UNSTAKE
+							CLAIM & UNSTAKE
 						</p>
 					</button>
 				}
