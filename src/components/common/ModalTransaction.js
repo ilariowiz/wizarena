@@ -117,6 +117,9 @@ class ModalTransaction extends Component {
 				else if (type === 'unstake') {
 					body = `You will unstake ${nameNft}`
 				}
+				else if (type === 'claim') {
+					body = `You will claim your $WIZA mined by ${nameNft}`
+				}
 
 				buttonText = 'Open Wallet'
 				action = async () => this.props.signTransaction(transactionState.cmdToConfirm, isXWallet, netId, networkUrl, account, chainId, idNft, () => this.checkTransaction())
@@ -189,6 +192,10 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'unstake') {
 					body = `Your Wizard ${nameNft} is unstaked!`
+					buttonText = 'Close'
+				}
+				else if (type === 'claim') {
+					body = `Your $WIZA have been claimed!`
 					buttonText = 'Close'
 				}
 

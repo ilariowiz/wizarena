@@ -30,11 +30,11 @@ class NftCardStake extends Component {
         const { index } = this.props
 
         //per non far partire le connessioni tutte insieme
-        const timer = index * 150
+        const timer = index * 100
 
         setTimeout(() => {
             this.loadInfoStake()
-        }, index)
+        }, timer)
 	}
 
     loadInfoStake() {
@@ -183,18 +183,33 @@ class NftCardStake extends Component {
 
 				{
 					staked && !loading &&
-					<button
-						className="btnH"
-						style={Object.assign({}, styles.btnStake, { width })}
-						onClick={(e) => {
-							e.stopPropagation()
-							this.props.onUnstake()
-						}}
-					>
-						<p style={{ fontSize: 17, color: 'white' }}>
-							CLAIM & UNSTAKE
-						</p>
-					</button>
+                    <div style={{ width, alignItems: 'center', justifyContent: 'space-between' }}>
+                        <button
+                            className="btnH"
+                            style={Object.assign({}, styles.btnStake, { width: (width/2 - 2) })}
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                this.props.onClaim()
+                            }}
+                        >
+                            <p style={{ fontSize: 17, color: 'white' }}>
+                                CLAIM
+                            </p>
+                        </button>
+
+    					<button
+    						className="btnH"
+    						style={Object.assign({}, styles.btnStake, { width: (width/2 - 2) })}
+    						onClick={(e) => {
+    							e.stopPropagation()
+    							this.props.onUnstake()
+    						}}
+    					>
+    						<p style={{ fontSize: 17, color: 'white' }}>
+    							CLAIM & UNSTAKE
+    						</p>
+    					</button>
+                    </div>
 				}
 
 			</div>

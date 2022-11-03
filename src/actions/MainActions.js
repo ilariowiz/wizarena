@@ -1018,6 +1018,43 @@ export const unstakeNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netI
 	}
 }
 
+export const claimWithoutUnstake = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idNft, account) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME_WIZA}.claim-without-unstake "${idNft}" "${account.account}")`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME_WIZA}.OWNER`,
+				[account.account, idNft]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("subscribeToTournament", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
 /************************************************************************
 
 GENERAL FUNCTIONS

@@ -28,7 +28,8 @@ import {
 	getFeeTournament,
 	getWizaBalance,
 	stakeNft,
-	unstakeNft
+	unstakeNft,
+	claimWithoutUnstake
 } from '../actions'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -84,13 +85,10 @@ class Profile extends Component {
 	loadMinted() {
 		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-		//console.log(account, chainId, gasPrice, gasLimit, networkUrl)
-
 		this.setState({ loading: true })
 
 		if (account && account.account) {
 			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
-				//this.preloadStats()
 				this.setState({ loading: false })
 			})
 		}
@@ -291,7 +289,7 @@ class Profile extends Component {
 
 		this.setState({ nameNftSubscribed: `#${idnft}`, typeModal: "stake" })
 
-		this.props.stakeNft(chainId, gasPrice, 6000, netId, idnft, account)
+		this.props.stakeNft(chainId, gasPrice, 4000, netId, idnft, account)
 	}
 
 	unstakeNft(idnft) {
@@ -299,7 +297,15 @@ class Profile extends Component {
 
 		this.setState({ nameNftSubscribed: `#${idnft}`, typeModal: "unstake" })
 
-		this.props.unstakeNft(chainId, gasPrice, 6000, netId, idnft, account)
+		this.props.unstakeNft(chainId, gasPrice, 4000, netId, idnft, account)
+	}
+
+	claimWizaWithoutUnstake(idnft) {
+		const { chainId, gasPrice, netId, account } = this.props
+
+		this.setState({ nameNftSubscribed: `#${idnft}`, typeModal: "claim" })
+
+		this.props.claimWithoutUnstake(chainId, gasPrice, 4000, netId, idnft, account)
 	}
 
 	withdrawPrize() {
@@ -344,6 +350,7 @@ class Profile extends Component {
 					width={singleWidth}
 					onStake={() => this.stakeNft(item.id)}
 					onUnstake={() => this.unstakeNft(item.id)}
+					onClaim={() => this.claimWizaWithoutUnstake(item.id)}
 					onLoadUnclaim={(value) => {
 						this.setState({ unclaimedWizaTotal: this.state.unclaimedWizaTotal + parseFloat(value) })
 					}}
@@ -710,7 +717,11 @@ class Profile extends Component {
 			<div style={{ width: '100%', alignItems: 'center', marginBottom: 30 }}>
 				<button
 					style={Object.assign({}, styles.btnMenu, selectedStyle1, { marginRight: 35 })}
-					onClick={() => this.setState({ section: 1, unclaimedWizaTotal: 0 })}
+					onClick={() => {
+						if (this.state.section !== 1) {
+							this.setState({ section: 1, unclaimedWizaTotal: 0 })
+						}
+					}}
 				>
 					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 1 ? CTA_COLOR : '#21c6e895' }}>
 						YOUR WIZARDS
@@ -828,13 +839,26 @@ class Profile extends Component {
 					type={this.state.typeModal}
 					mintSuccess={() => {
 						this.props.clearTransaction()
-						this.loadProfile()
-						this.loadTournament()
+
+						if (this.state.typeModal === "claim" ||
+							this.state.typeModal === "stake" ||
+							this.state.typeModal === "unstake") {
+							window.location.reload()
+						}
+						else {
+							this.loadTournament()
+						}
 					}}
 					mintFail={() => {
 						this.props.clearTransaction()
-						this.loadProfile()
-						this.loadTournament()
+						if (this.state.typeModal === "claim" ||
+							this.state.typeModal === "stake" ||
+							this.state.typeModal === "unstake") {
+							window.location.reload()
+						}
+						else {
+							this.loadTournament()
+						}
 					}}
 					nameNft={this.state.nameNftSubscribed}
 				/>
@@ -961,5 +985,6 @@ export default connect(mapStateToProps, {
 	getFeeTournament,
 	getWizaBalance,
 	stakeNft,
-	unstakeNft
+	unstakeNft,
+	claimWithoutUnstake
 })(Profile)

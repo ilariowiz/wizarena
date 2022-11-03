@@ -417,6 +417,24 @@
         )
     )
 
+    (defun claim-without-unstake (idnft:string sender:string)
+        (with-capability (OWNER sender idnft)
+            (with-read staked-table idnft
+                {"multiplier":= multiplier,
+                "timestamp":= stakedTime,
+                "account":= account
+                "idnft":=id
+                "staked":=staked}
+                (with-capability (PRIVATE)
+                    (mine-from-stake account multiplier stakedTime)
+                )
+                (update staked-table idnft
+                    {"timestamp": (at "block-time" (chain-data))}
+                )
+            )
+        )
+    )
+
     ;TEST (days (/ (diff-time (add-time (at "block-time" (chain-data)) (days 3.78)) stakedTime) 86400))
     ;PROD (days (/ (diff-time (at "block-time" (chain-data)) stakedTime) 86400))
     (defun mine-from-stake (account:string multiplier:integer stakedTime:time)
