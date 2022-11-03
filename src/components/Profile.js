@@ -710,7 +710,7 @@ class Profile extends Component {
 			<div style={{ width: '100%', alignItems: 'center', marginBottom: 30 }}>
 				<button
 					style={Object.assign({}, styles.btnMenu, selectedStyle1, { marginRight: 35 })}
-					onClick={() => this.setState({ section: 1 })}
+					onClick={() => this.setState({ section: 1, unclaimedWizaTotal: 0 })}
 				>
 					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 1 ? CTA_COLOR : '#21c6e895' }}>
 						YOUR WIZARDS
