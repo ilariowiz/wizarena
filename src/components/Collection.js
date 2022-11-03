@@ -322,7 +322,7 @@ class Collection extends Component {
 
 	renderBoxHeader(title, subtitle, isMobile) {
 		return (
-			<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: 30 }}>
+			<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: 30, marginBottom: 4 }}>
 				<p style={{ fontSize: isMobile ? 18 : 22, color: 'white', textAlign: 'center' }}>
 					{title}
 				</p>
@@ -341,7 +341,7 @@ class Collection extends Component {
 		let items = totalCountNfts || 0
 
 		return (
-			<div style={{ width: '100%', height: 60, alignItems: 'center', marginTop: 20, marginBottom: 20 }}>
+			<div style={{ width: '100%', height: 60, alignItems: 'center', marginTop: 20, marginBottom: 16, flexWrap: 'wrap' }}>
 				{this.renderBoxHeader(items.toLocaleString(), 'items', isMobile)}
 
 				{this.renderBoxHeader(uniqueOwners.toLocaleString(), 'owners', isMobile)}
