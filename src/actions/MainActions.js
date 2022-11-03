@@ -901,7 +901,7 @@ export const getWizaBalance = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit =
 			//console.log(response)
 
 			let balance = response
-			if (response.decimal) {
+			if (response && response.decimal) {
 				balance = _.floor(response.decimal, 4)
 			}
 

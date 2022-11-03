@@ -75,7 +75,13 @@ export default (state = INITIAL_STATE, action) => {
 		}
 		case LOAD_ALL_NFTS: {
 			const { allNfts, nftsBlockId } = action.payload
-			return { ...state, allNfts, nftsBlockId }
+
+			let oldNftsBlockId = state.nftsBlockId
+			if (!oldNftsBlockId) {
+				oldNftsBlockId = nftsBlockId
+			}
+
+			return { ...state, allNfts, nftsBlockId: oldNftsBlockId }
 		}
 		case SET_BLOCK_ID:
 			return { ...state, nftsBlockId: action.payload }

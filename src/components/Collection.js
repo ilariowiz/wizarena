@@ -71,7 +71,7 @@ class Collection extends Component {
 	*/
 
 	loadAll() {
-		const { chainId, gasPrice, gasLimit, networkUrl, nftsBlockId, statSearched } = this.props
+		const { chainId, gasPrice, gasLimit, networkUrl, statSearched, allNfts } = this.props
 
 		this.setState({ loading: true })
 
@@ -81,12 +81,17 @@ class Collection extends Component {
 			this.searchByStat()
 		}
 		else {
+			if (allNfts) {
+				this.loadBlock(this.props.nftsBlockId || 0)
+			}
+
 			this.props.loadAllNftsIds(chainId, gasPrice, gasLimit, networkUrl, (res) => {
 
 				this.getFloor(res)
 				this.getUniqueOwners(res)
 
-				this.props.getPageBlockNfts(res, nftsBlockId || 0, (nftsToShow) => {
+				this.props.getPageBlockNfts(res, this.props.nftsBlockId || 0, (nftsToShow) => {
+					//console.log("loadAllNftsIds completed");
 					this.setState({ loading: false, nftsToShow })
 				})
 			})
@@ -100,7 +105,7 @@ class Collection extends Component {
 		//console.log(allNfts)
 
 		this.props.getPageBlockNfts(allNfts, id, (nftsToShow) => {
-			this.setState({ nftsToShow })
+			this.setState({ nftsToShow, loading: false })
 		})
 	}
 
