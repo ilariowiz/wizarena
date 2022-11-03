@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { collection, getDocs } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import moment from 'moment'
+import _ from 'lodash'
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
@@ -49,7 +50,8 @@ class Profile extends Component {
 			error: '',
 			nameNftSubscribed: '',
 			profileFights: [],
-			prize: undefined
+			prize: undefined,
+			unclaimedWizaTotal: 0
 		}
 	}
 
@@ -331,16 +333,20 @@ class Profile extends Component {
 		let singleWidth = Math.floor((width - (nInRow * 12)) / nInRow)
 		if (singleWidth > 320) singleWidth = 320;
 
-		itemsPerRow.map(item => {
+		itemsPerRow.map((item, idx) => {
 			//console.log(item);
 			array.push(
 				<NftCardStake
 					item={item}
 					key={item.id}
+					index={idx}
 					history={this.props.history}
 					width={singleWidth}
 					onStake={() => this.stakeNft(item.id)}
 					onUnstake={() => this.unstakeNft(item.id)}
+					onLoadUnclaim={(value) => {
+						this.setState({ unclaimedWizaTotal: this.state.unclaimedWizaTotal + parseFloat(value) })
+					}}
 				/>
 			)
 		})
@@ -732,9 +738,14 @@ class Profile extends Component {
 
 	renderBody(isMobile) {
 		const { account, showModalTx, wizaBalance } = this.props
-		const { showModalConnection, isConnected, section, loading } = this.state
+		const { showModalConnection, isConnected, section, loading, unclaimedWizaTotal } = this.state
 
 		const { boxW, modalW } = getBoxWidth(isMobile)
+
+		let unclW = 0;
+		if (unclaimedWizaTotal) {
+			unclW = _.floor(unclaimedWizaTotal, 3)
+		}
 
 		if (!account || !account.account || !isConnected) {
 
@@ -779,8 +790,12 @@ class Profile extends Component {
 		return (
 			<div style={{ flexDirection: 'column', width: boxW, marginTop: 30 }}>
 
-				<p style={{ fontSize: 24, color: TEXT_SECONDARY_COLOR, marginBottom: 30 }}>
+				<p style={{ fontSize: 24, color: TEXT_SECONDARY_COLOR, marginBottom: 10 }}>
 					$WIZA balance: {wizaBalance || 0.0}
+				</p>
+
+				<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR, marginBottom: 30 }}>
+					Unclaimed $WIZA: {unclW || 0.0}
 				</p>
 
 				{this.renderMenu(isMobile)}
