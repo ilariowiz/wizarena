@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import moment from 'moment'
+import _ from 'lodash'
 import DotLoader from 'react-spinners/DotLoader';
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCard.css'
@@ -26,7 +27,18 @@ class NftCardStake extends Component {
     }
 
 	componentDidMount() {
-		const { item, chainId, gasPrice, gasLimit, networkUrl } = this.props
+        const { index } = this.props
+
+        //per non far partire le connessioni tutte insieme
+        const timer = index * 150
+
+        setTimeout(() => {
+            this.loadInfoStake()
+        }, index)
+	}
+
+    loadInfoStake() {
+        const { item, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
         //console.log(item, tournament);
         this.props.getWizardStakeInfo(chainId, gasPrice, gasLimit, networkUrl, item.id, (response) => {
@@ -49,11 +61,20 @@ class NftCardStake extends Component {
 
 				this.props.calculateReward(chainId, gasPrice, gasLimit, networkUrl, daysPassed, response.multiplier.int, (response) => {
 					//console.log(response);
-					this.setState({ unclaimedWiza: response.decimal ? response.decimal.substring(0, 6) : '...' })
+                    if (response.status !== "failure") {
+                        this.setState({ unclaimedWiza: response.decimal ? _.floor(response.decimal, 4) : _.floor(response, 4) })
+                        if (response.decimal) {
+                            this.props.onLoadUnclaim(response.decimal)
+                        }
+                        else {
+                            this.props.onLoadUnclaim(response)
+                        }
+                    }
+
 				})
 			}
         })
-	}
+    }
 
 	renderStaked() {
 		const { unclaimedWiza, stakeInfo } = this.state

@@ -1,4 +1,5 @@
 import Pact from "pact-lang-api";
+import _ from 'lodash'
 import {
 	CONTRACT_NAME,
 	LOAD_USER,
@@ -901,7 +902,7 @@ export const getWizaBalance = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit =
 
 			let balance = response
 			if (response.decimal) {
-				balance = response.decimal.substring(0, 6)
+				balance = _.floor(response.decimal, 4)
 			}
 
 			dispatch({ type: SAVE_WIZA_BALANCE, payload: balance })
