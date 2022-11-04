@@ -5,7 +5,7 @@ import moment from 'moment'
 import { collection, getDocs } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import DotLoader from 'react-spinners/DotLoader';
-import NftCard from './common/NftCard'
+import NftCardTournament from './common/NftCardTournament'
 import Header from './Header'
 import getBoxWidth from './common/GetBoxW'
 import convertMedalName from './common/ConvertMedalName'
@@ -97,7 +97,7 @@ class Tournament extends Component {
         //per ogni row creiamo un array di GameCard
 		return (
             <div style={{ marginBottom: 15 }} key={index}>
-                <NftCard
+                <NftCardTournament
                     item={item}
                     key={index}
                     history={this.props.history}
