@@ -4,7 +4,6 @@ import { IoMedalOutline } from 'react-icons/io5'
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCard.css'
 
-const logoKda = require('../../assets/kdalogo2.png')
 
 class NftCardTournament extends Component {
 	render() {
