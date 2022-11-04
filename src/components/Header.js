@@ -83,13 +83,6 @@ class Header extends Component {
 								>
 									TOURNAMENT
 								</p>
-
-								<p
-									className={section === 5 ? btnPressedStyle : btnStyle}
-									onClick={() => this.props.history.replace('/rules')}
-								>
-									RULES
-								</p>
 							</div>
 							: null
 						}

@@ -131,9 +131,18 @@ class Tournament extends Component {
 					Total Prize {montepremi || '...'} KDA
 				</p>
 
-                <p style={{ fontSize: 18, color: 'white' }}>
+                <p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
 					Registered Wizards {subscribed ? subscribed.length : '...'}
 				</p>
+
+                <button
+                    style={{ width: 100, height: 32, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', borderRadius: 2 }}
+                    onClick={() => this.props.history.push('/rules')}
+                >
+                    <p style={{ fontSize: 17, color: 'white' }}>
+                        Rules
+                    </p>
+                </button>
 			</div>
 		)
 	}
