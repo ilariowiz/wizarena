@@ -341,13 +341,15 @@ class Nft extends Component {
 	renderMedal(item) {
 		const { nft, numbersOfMaxMedalsPerTournament } = this.state
 
-		//console.log(nft);
+		//console.log(numbersOfMaxMedalsPerTournament);
 
 		let numbersOfMedals = '0'
 
 		if (nft.medals[item]) {
 			numbersOfMedals = nft.medals[item].int || nft.medals[item]
 		}
+
+		//console.log(numbersOfMedals);
 
 		const maxMedals = numbersOfMaxMedalsPerTournament.length > 0 ? numbersOfMaxMedalsPerTournament.find(i => i.tournamentName === item) : '0'
 
@@ -813,7 +815,8 @@ class Nft extends Component {
 
 	renderBoxMedals(width) {
 		const { nft } = this.state
-		//console.log(reveal)
+
+		//console.log(nft)
 
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
@@ -831,7 +834,7 @@ class Nft extends Component {
 							This wizard has not yet won a medal
 						</p>
 						:
-						nft && nft.medals && Object.keys(nft.medals).map((key) => {
+						nft && nft.medals && Object.keys(nft.medals).sort().map((key) => {
 							return this.renderMedal(key)
 						})
 					}
