@@ -124,7 +124,7 @@ class Nft extends Component {
 				document.title = `${response.name} - Wizards Arena`
 				///console.log(response)
 
-				const tournaments = ["t1", "t2"]
+				const tournaments = ["t1", "t2", "t3"]
 
 				response['groupedFights'] = {}
 
