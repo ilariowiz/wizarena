@@ -103,6 +103,7 @@
         (let
             (
                 (data (wiz-arena.get-wizard-fields-for-id (str-to-int id)))
+                ;(data (= true))
             )
             (enforce (= (at "owner" data) account) "Account is not owner of the NFT")
             (compose-capability (ACCOUNT_GUARD account))
@@ -375,6 +376,7 @@
     (defun stake (idnft:string sender:string)
         (let (
                 (data (wiz-arena.get-wizard-fields-for-id (str-to-int idnft)))
+                ;(data {"listed": false})
             )
             (enforce (= (at "listed" data) false) "A listed wizard cannot be staked")
             (with-capability (OWNER sender idnft)
@@ -463,19 +465,20 @@
         )
     )
 
-    (defun reward-users (accounts:list amount:decimal)
+    (defun reward-users (accounts:list)
         (with-capability (ADMIN)
             (map
-                (mine-from-reward amount)
+                (mine-from-reward)
                 accounts
             )
         )
     )
 
-    (defun mine-from-reward (amount:decimal account:string)
+    (defun mine-from-reward (reward-data:object)
         (require-capability (ADMIN))
         (let (
-                (guard (at "guard" (coin.details account)))
+                (guard (at "guard" (coin.details (at "account" reward-data))))
+                (account (at "account" reward-data))
             )
             (with-default-read token-table account
               {"balance": 0.0,
@@ -485,6 +488,7 @@
               (let
                   (
                     (total-mined (get-total-mined))
+                    (amount (at "amount" reward-data))
                 )
                 (enforce (<= (+ total-mined amount) MAXIMUM_SUPPLY) "Maximum Supply reached. Can't reward")
                 (write token-table account {
@@ -492,6 +496,28 @@
                     "guard": guard})
                 (write mined-wiza-table "" {"amount": (+ total-mined amount)})
               )
+            )
+        )
+    )
+
+    (defun spend-wiza (amount:decimal account:string)
+        (let (
+                (balance (get-user-balance account))
+            )
+            (enforce (<= amount balance) "You don't have enough WIZA")
+        )
+        (with-capability (DEBIT account)
+            (with-default-read token-table account
+              {"balance": 0.0}
+              {"balance":= oldbalance}
+              (update token-table account {
+                  "balance": (- oldbalance amount)})
+            )
+            (with-default-read token-table WIZA_TOKEN_BANK
+              {"balance": 0.0}
+              {"balance":= oldbalance}
+              (update token-table WIZA_TOKEN_BANK {
+                  "balance": (+ oldbalance amount)})
             )
         )
     )
@@ -546,6 +572,7 @@
     (create-table staked-table)
     (create-table token-table)
     (create-table mined-wiza-table)
+    (create-table coin.coin-table)
 
     (initialize)
 
