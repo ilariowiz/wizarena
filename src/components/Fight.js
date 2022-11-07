@@ -26,7 +26,8 @@ class Fight extends Component {
             winner: undefined,
             u1: undefined,
             u2: undefined,
-            error: ''
+            error: '',
+            showOnlyOne: false
         }
     }
 
@@ -66,8 +67,14 @@ class Fight extends Component {
         const data = docSnap.data()
         this.setState({ actions: data.actions, tournament: data.tournament, winner: data.winner })
 
-        this.loadNft('u1', data.idnft1)
-        this.loadNft('u2', data.idnft2)
+        if (data.actions[0].includes("to show up")) {
+            this.setState({ showOnlyOne: true })
+            this.loadNft('u1', data.idnft1)
+        }
+        else {
+            this.loadNft('u1', data.idnft1)
+            this.loadNft('u2', data.idnft2)
+        }
     }
 
     loadNft(u, idNft) {
@@ -76,6 +83,7 @@ class Fight extends Component {
 		this.setState({ loading: true })
 
 		this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, idNft, (response) => {
+            //console.log(response);
 			if (response.name) {
 				//console.log(response)
 				this.loadStats(u, idNft, response)
@@ -100,9 +108,15 @@ class Fight extends Component {
             //console.log(finalO)
 
 			this.setState({ [u]: finalO }, () => {
-                if (this.state.u1 && this.state.u2) {
+                if (this.state.showOnlyOne) {
                     this.setState({ loading: false })
                 }
+                else {
+                    if (this.state.u1 && this.state.u2) {
+                        this.setState({ loading: false })
+                    }
+                }
+
             })
 		}
 		else {
@@ -160,7 +174,7 @@ class Fight extends Component {
     }
 
     renderBody(isMobile) {
-        const { u1, u2, actions, winner, error } = this.state
+        const { u1, u2, actions, winner, error, showOnlyOne } = this.state
 
         let boxW = Math.floor(window.innerWidth * (isMobile ? 90 : 70) / 100)
 		if (boxW > 1100) boxW = 1100;
@@ -173,6 +187,33 @@ class Fight extends Component {
                     <p style={{ fontSize: 22, color: 'white' }}>
                         {error}
                     </p>
+                </div>
+            )
+        }
+
+        if (showOnlyOne && u1) {
+            return (
+                <div style={{ flexDirection: 'column', width: boxW, marginTop: 30, alignItems: 'center' }}>
+
+                    <div style={{ width: boxW, justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
+
+                        {this.renderSingleNft(u1, spaceImage)}
+                    </div>
+
+                    <p style={{ fontSize: 22, marginBottom: 15, color: TEXT_SECONDARY_COLOR }}>
+                        ACTIONS
+                    </p>
+
+                    {actions && actions.map((item, index) => this.renderAction(item, index, boxW))}
+
+                    <p style={{ fontSize: 22, marginTop: 10, marginBottom: 10, color: TEXT_SECONDARY_COLOR }}>
+                        WINNER
+                    </p>
+
+                    <p style={{ fontSize: 32, color: TEXT_SECONDARY_COLOR, marginBottom: 30  }}>
+                        #{winner}
+                    </p>
+
                 </div>
             )
         }
