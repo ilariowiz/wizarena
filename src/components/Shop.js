@@ -45,7 +45,7 @@ class Rules extends Component {
     }
 
     componentDidMount() {
-		document.title = "Improve - Wizards Arena"
+		document.title = "Magic Shop - Wizards Arena"
 
         this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
