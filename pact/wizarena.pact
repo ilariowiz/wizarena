@@ -468,8 +468,8 @@
         (enforce (>= price 1.0) "amount must be equal or greater then 1")
         (let (
                 (data (get-wizard-fields-for-id (str-to-int id)))
-                (is-staked (wiza.check-nft-is-staked id))
-                ;(is-staked false)
+                ;(is-staked (wiza.check-nft-is-staked id))
+                (is-staked false)
             )
             (enforce (= (at "listed" data) false) "this wizard is already listed")
             (enforce (= is-staked false) "You can't list a staked wizard")
@@ -649,7 +649,7 @@
                     (current-stat (at stat (get-wizard-fields-for-id (str-to-int idnft))))
                     (wiza-cost (calculate-wiza-cost idnft stat))
                 )
-                (free.wiza.spend-wiza wiza-cost account)
+                ;(free.wiza.spend-wiza wiza-cost account)
                 (if
                     (= stat "hp")
                     (update stats idnft {
@@ -918,7 +918,7 @@
     (create-table values-tournament)
     (create-table prizes)
 
-    ;(create-table coin.coin-table)
+    (create-table coin.coin-table)
 
     (create-table stats)
 

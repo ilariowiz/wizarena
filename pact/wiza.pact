@@ -420,6 +420,22 @@
         )
     )
 
+    (defun claim-all (objects:list)
+        (map
+            (claim-all-without-unstake)
+            objects
+        )
+    )
+
+    (defun claim-all-without-unstake (obj:object)
+        (let (
+                (idnft (at "idnft" obj))
+                (sender (at "sender" obj))
+            )
+            (claim-without-unstake idnft sender)
+        )
+    )
+
     (defun claim-without-unstake (idnft:string sender:string)
         (with-capability (OWNER sender idnft)
             (with-read staked-table idnft
@@ -443,7 +459,7 @@
     (defun mine-from-stake (account:string multiplier:integer stakedTime:time)
         (require-capability (PRIVATE))
         (let (
-                (days (/ (diff-time (at "block-time" (chain-data)) stakedTime) 86400))
+                (days (/ (diff-time (add-time (at "block-time" (chain-data)) (days 3.78)) stakedTime) 86400))
                 (guard (at "guard" (coin.details account)))
             )
             (with-default-read token-table account
@@ -573,7 +589,7 @@
     (create-table staked-table)
     (create-table token-table)
     (create-table mined-wiza-table)
-    (create-table coin.coin-table)
+    ;(create-table coin.coin-table)
 
     (initialize)
 
