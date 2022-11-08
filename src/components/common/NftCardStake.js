@@ -50,6 +50,10 @@ class NftCardStake extends Component {
 			else {
 				this.setState({ staked: response.staked, stakeInfo: response, loading: false })
 
+                if (response.staked) {
+                    this.props.onLoadIsStaked(item.id)
+                }
+
 				const stakedFromDate = moment(response.timestamp.timep)
 
 				const diffMinsFromStaked = moment().diff(stakedFromDate, 'minutes')

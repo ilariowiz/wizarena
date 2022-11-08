@@ -29,7 +29,8 @@ import {
 	getWizaBalance,
 	stakeNft,
 	unstakeNft,
-	claimWithoutUnstake
+	claimWithoutUnstake,
+	claimAllWithoutUnstake
 } from '../actions'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -52,7 +53,8 @@ class Profile extends Component {
 			nameNftSubscribed: '',
 			profileFights: [],
 			prize: undefined,
-			unclaimedWizaTotal: 0
+			unclaimedWizaTotal: 0,
+			stakedIds: []
 		}
 	}
 
@@ -316,6 +318,24 @@ class Profile extends Component {
 		this.props.withdrawPrize(chainId, gasPrice, 4000, netId, account)
 	}
 
+	claimAll() {
+		const { chainId, gasPrice, netId, account } = this.props
+		const { stakedIds } = this.state
+
+		this.setState({ typeModal: "claimall" })
+
+		let objects = []
+		stakedIds.map(i => {
+			let obj = {
+				idnft: i,
+				sender: account.account
+			}
+			objects.push(obj)
+		})
+
+		this.props.claimAllWithoutUnstake(chainId, gasPrice, 100000, netId, objects, account)
+	}
+
 
 	buildsRow(items, itemsPerRow = 4) {
 		return items.reduce((rows, item, index) => {
@@ -353,6 +373,15 @@ class Profile extends Component {
 					onClaim={() => this.claimWizaWithoutUnstake(item.id)}
 					onLoadUnclaim={(value) => {
 						this.setState({ unclaimedWizaTotal: this.state.unclaimedWizaTotal + parseFloat(value) })
+					}}
+					onLoadIsStaked={(value) => {
+						let oldState = Object.assign([], this.state.stakedIds)
+						if (!oldState.includes(value)) {
+							oldState.push(value)
+							//console.log(oldState);
+
+							this.setState({ stakedIds: oldState })
+						}
 					}}
 				/>
 			)
@@ -801,13 +830,27 @@ class Profile extends Component {
 		return (
 			<div style={{ flexDirection: 'column', width: boxW, marginTop: 30 }}>
 
-				<p style={{ fontSize: 24, color: TEXT_SECONDARY_COLOR, marginBottom: 10 }}>
-					$WIZA balance: {wizaBalance || 0.0}
-				</p>
+				<div style={{ alignItems: 'center', marginBottom: 30 }}>
+					<div style={{ flexDirection: 'column' }}>
+						<p style={{ fontSize: 24, color: TEXT_SECONDARY_COLOR, marginBottom: 10 }}>
+							$WIZA balance: {wizaBalance || 0.0}
+						</p>
 
-				<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR, marginBottom: 30 }}>
-					Unclaimed $WIZA: {unclW || 0.0}
-				</p>
+						<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
+							Unclaimed $WIZA: {unclW || 0.0}
+						</p>
+					</div>
+
+					<button
+						className="btnH"
+						style={styles.btnClaimAll}
+						onClick={() => this.claimAll()}
+					>
+						<p style={{ fontSize: 17, color: 'white' }}>
+							CLAIM ALL
+						</p>
+					</button>
+				</div>
 
 				{this.renderMenu(isMobile)}
 
@@ -842,7 +885,8 @@ class Profile extends Component {
 
 						if (this.state.typeModal === "claim" ||
 							this.state.typeModal === "stake" ||
-							this.state.typeModal === "unstake") {
+							this.state.typeModal === "unstake" ||
+							this.state.typeModal === "claimall") {
 							window.location.reload()
 						}
 						else {
@@ -853,7 +897,8 @@ class Profile extends Component {
 						this.props.clearTransaction()
 						if (this.state.typeModal === "claim" ||
 							this.state.typeModal === "stake" ||
-							this.state.typeModal === "unstake") {
+							this.state.typeModal === "unstake" ||
+							this.state.typeModal === "claimall") {
 							window.location.reload()
 						}
 						else {
@@ -962,7 +1007,17 @@ const styles = {
 		paddingLeft: 15,
 		marginRight: 20,
 		marginBottom: 20
-	}
+	},
+	btnClaimAll: {
+		width: 170,
+		height: 40,
+		backgroundColor: CTA_COLOR,
+		borderRadius: 2,
+		marginLeft: 30,
+		borderStyle: 'solid',
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
 }
 
 const mapStateToProps = (state) => {
@@ -986,5 +1041,6 @@ export default connect(mapStateToProps, {
 	getWizaBalance,
 	stakeNft,
 	unstakeNft,
-	claimWithoutUnstake
+	claimWithoutUnstake,
+	claimAllWithoutUnstake
 })(Profile)

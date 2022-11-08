@@ -55,12 +55,9 @@ class NftCardChoice extends Component {
         const { item } = this.props
 
         //console.log(spellSelected)
-
-        const key = 'stats.spellSelected'
-
         const docRef = doc(firebasedb, "stats", `#${item.id}`)
 		updateDoc(docRef, {
-            [key]: spellSelected
+            "spellSelected": spellSelected
         })
 
         this.props.onSubscribe(spellSelected)

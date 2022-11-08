@@ -883,6 +883,41 @@ export const withdrawPrize = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 	}
 }
 
+export const buyUpgrade = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft, stat) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.buy-upgrade "${account.account}" "${idnft}" "${stat}")`;
+
+		let cmd = {
+			pactCode,
+			caps: [
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME}.OWNER`,
+          			[account.account, idnft]
+        		),
+				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+			],
+			sender: account.account,
+			gasLimit: 5000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("mintNft", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
 /************************************************************************
 
 WIZA TOKEN FUNCTIONS
@@ -940,6 +975,21 @@ export const calculateReward = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit 
 			if (callback) {
 				callback(response)
 			}
+		})
+	}
+}
+
+export const getUpgradeCost = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 900, networkUrl, idnft, stat) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.calculate-wiza-cost "${idnft}" "${stat}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			console.log(response, stat)
+
 		})
 	}
 }
@@ -1032,6 +1082,57 @@ export const claimWithoutUnstake = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLi
 			),
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 		]
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("subscribeToTournament", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const claimAllWithoutUnstake = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, objects, account) => {
+	return (dispatch) => {
+
+		let onlyId = []
+		objects.map(i => {
+			onlyId.push(i.idnft)
+		})
+
+		let objs = JSON.stringify(objects)
+
+		let pactCode = `(free.${CONTRACT_NAME_WIZA}.claim-all ${objs})`;
+
+		let caps = [
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		onlyId.map(i => {
+			caps.push(
+				Pact.lang.mkCap(
+					"Verify owner",
+					"Verify your are the owner",
+					`free.${CONTRACT_NAME_WIZA}.OWNER`,
+					[account.account, i]
+				)
+			)
+		})
+
+		console.log(caps);
 
 		let cmd = {
 			pactCode,

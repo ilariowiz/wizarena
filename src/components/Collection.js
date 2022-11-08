@@ -346,7 +346,7 @@ class Collection extends Component {
 		let items = totalCountNfts || 0
 
 		return (
-			<div style={{ width: '100%', height: 60, alignItems: 'center', marginTop: 20, marginBottom: 16, flexWrap: 'wrap' }}>
+			<div style={{ width: '100%', height: 60, alignItems: 'center', marginTop: 20, marginBottom: 20, flexWrap: 'wrap' }}>
 				{this.renderBoxHeader(items.toLocaleString(), 'items', isMobile)}
 
 				{this.renderBoxHeader(uniqueOwners.toLocaleString(), 'owners', isMobile)}
@@ -356,6 +356,15 @@ class Collection extends Component {
 				{this.renderBoxHeader(`${volume.toLocaleString()} kda`, 'total volume', isMobile)}
 
 				{this.renderBoxHeader(`${wizardsStaked || 0}`, 'wizards staked', isMobile)}
+
+				{/*<button
+                    style={{ width: 100, height: 32, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', borderRadius: 2 }}
+                    onClick={() => this.props.history.push('/sales')}
+                >
+                    <p style={{ fontSize: 17, color: 'white' }}>
+                        Sales
+                    </p>
+                </button>*/}
 
 			</div>
 		)

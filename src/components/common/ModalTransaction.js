@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
+import { doc, updateDoc, increment } from "firebase/firestore";
+import { firebasedb } from '../Firebase';
 import { IoClose } from 'react-icons/io5'
 import DotLoader from 'react-spinners/DotLoader';
 import Pact from "pact-lang-api";
@@ -27,7 +29,7 @@ class ModalTransaction extends Component {
 	}
 
 	pollForTransaction = async () => {
-		const { transactionState, networkUrl } = this.props
+		const { transactionState, networkUrl, nameNft, statToUpgrade, type } = this.props
 
 
 		const requestKey = transactionState.requestKey
@@ -60,6 +62,14 @@ class ModalTransaction extends Component {
 
 		if (pollRes[requestKey].result.status === "success") {
 			this.props.updateTransactionState("success", 1)
+
+			//chiamato solo per transaction upgrade, serve per far funzionare correttamente i filtri su firebase
+			if (type === "upgrade" && nameNft && statToUpgrade) {
+		        const docRef = doc(firebasedb, "stats", `${nameNft}`)
+				updateDoc(docRef, {
+		            [statToUpgrade]: increment(1)
+		        })
+			}
 		}
 		else {
 			this.props.updateTransactionState("error", `Cannot complete transaction\n${requestKey}`)
@@ -73,7 +83,7 @@ class ModalTransaction extends Component {
 	}
 
 	getContent() {
-		const { transactionState, isXWallet, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft } = this.props
+		const { transactionState, isXWallet, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade } = this.props
 
 		//console.log(isXWallet)
 
@@ -119,6 +129,12 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'claim') {
 					body = `You will claim your $WIZA mined by ${nameNft}`
+				}
+				else if (type === 'claimall') {
+					body = `You will claim your $WIZA mined by all your wizards`
+				}
+				else if (type === 'upgrade') {
+					body = `You will improve the ${statToUpgrade} of ${nameNft}`
 				}
 
 				buttonText = 'Open Wallet'
@@ -194,8 +210,12 @@ class ModalTransaction extends Component {
 					body = `Your Wizard ${nameNft} is unstaked!`
 					buttonText = 'Close'
 				}
-				else if (type === 'claim') {
+				else if (type === 'claim' || type === 'claimall') {
 					body = `Your $WIZA have been claimed!`
+					buttonText = 'Close'
+				}
+				else if (type === 'upgrade') {
+					body = `Your Wizard ${nameNft} is stronger now!`
 					buttonText = 'Close'
 				}
 
