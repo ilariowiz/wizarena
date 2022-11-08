@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { doc, updateDoc, increment } from "firebase/firestore";
+import { doc, updateDoc, setDoc, increment, collection, serverTimestamp } from "firebase/firestore";
 import { firebasedb } from '../Firebase';
 import { IoClose } from 'react-icons/io5'
 import DotLoader from 'react-spinners/DotLoader';
@@ -29,7 +29,7 @@ class ModalTransaction extends Component {
 	}
 
 	pollForTransaction = async () => {
-		const { transactionState, networkUrl, nameNft, statToUpgrade, type } = this.props
+		const { transactionState, networkUrl, nameNft, statToUpgrade, type, wizaCostToUpgrade, account } = this.props
 
 
 		const requestKey = transactionState.requestKey
@@ -69,6 +69,17 @@ class ModalTransaction extends Component {
 				updateDoc(docRef, {
 		            [statToUpgrade]: increment(1)
 		        })
+
+				const docRefHistory = doc(collection(firebasedb, "history_upgrades"))
+				let objHistory = {
+					address: account.account,
+					cost: wizaCostToUpgrade,
+					idnft: nameNft,
+					stat: statToUpgrade,
+					timestamp: serverTimestamp
+				}
+
+				setDoc(docRefHistory, objHistory)
 			}
 		}
 		else {
@@ -83,7 +94,7 @@ class ModalTransaction extends Component {
 	}
 
 	getContent() {
-		const { transactionState, isXWallet, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade } = this.props
+		const { transactionState, isXWallet, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, wizaCostToUpgrade } = this.props
 
 		//console.log(isXWallet)
 

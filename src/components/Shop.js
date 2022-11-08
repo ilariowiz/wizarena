@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { getDocs, query, where, collection, orderBy } from "firebase/firestore";
+import { firebasedb } from './Firebase';
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
@@ -40,7 +42,9 @@ class Rules extends Component {
             typeModal: 'upgrade',
             nameNftToUpgrade: '',
             statToUpgrade: '',
-            wizardSelected: {}
+            wizaCostToUpgrade: 0,
+            wizardSelected: {},
+            historyUpgrades: []
         }
     }
 
@@ -59,6 +63,8 @@ class Rules extends Component {
 		this.loadMinted()
 
 		this.loadWizaBalance()
+
+        this.getHistoryUpgrades()
 	}
 
     loadMinted() {
@@ -81,11 +87,33 @@ class Rules extends Component {
 		}
 	}
 
-    buyStat(stat) {
-        const { account, chainId, gasPrice, gasLimit, networkUrl, netId } = this.props
+    async getHistoryUpgrades() {
+        const { account } = this.props
+
+        const q = query(collection(firebasedb, "history_upgrades"),
+                        where("address", "==", account.account),
+                        orderBy("timestamp", "desc"))
+
+        const querySnap = await getDocs(q)
+        //console.log(querySnap);
+
+        let historyUpgrades = []
+
+        querySnap.forEach(doc => {
+            //console.log(doc.data());
+            historyUpgrades.push(doc.data())
+        })
+
+        //console.log(historyUpgrades);
+
+        this.setState({ historyUpgrades })
+    }
+
+    buyStat(stat, costo) {
+        const { account, chainId, gasPrice, netId } = this.props
         const { wizardSelected } = this.state
 
-        this.setState({ nameNftToUpgrade: wizardSelected.name, statToUpgrade: stat })
+        this.setState({ nameNftToUpgrade: wizardSelected.name, statToUpgrade: stat, wizaCostToUpgrade: costo })
 
         this.props.buyUpgrade(chainId, gasPrice, netId, account, wizardSelected.id, stat)
     }
@@ -191,7 +219,7 @@ class Rules extends Component {
                             return
                         }
 
-                        this.buyStat(key)
+                        this.buyStat(key, costo)
                     }}
                 >
                     <p style={{ fontSize: 17, color: 'white' }}>
@@ -203,8 +231,29 @@ class Rules extends Component {
         )
     }
 
+    renderHistory(item, index) {
+        return (
+            <div key={index} style={styles.rowHistory}>
+                <p style={{ color: 'white', fontSize: 18, marginRight: 10 }}>
+                    -
+                </p>
+                <p style={{ color: 'white', fontSize: 18, marginRight: 20 }}>
+                    {item.idnft}
+                </p>
+
+                <p style={{ color: 'white', fontSize: 18, marginRight: 25 }}>
+                    +1 {item.stat}
+                </p>
+
+                <p style={{ color: 'white', fontSize: 18 }}>
+                    $WIZA {item.cost}
+                </p>
+            </div>
+        )
+    }
+
     renderBody(isMobile) {
-        const { isConnected, showModalConnection, loading, wizardSelected } = this.state
+        const { isConnected, showModalConnection, wizardSelected, historyUpgrades } = this.state
         const { account, showModalTx, wizaBalance, userMintedNfts } = this.props
 
         const { boxW, modalW } = getBoxWidth(isMobile)
@@ -304,6 +353,18 @@ class Rules extends Component {
 
                 </div>
 
+                <p style={{ fontSize: 26, color: 'white', marginBottom: 15 }}>
+                    HISTORY
+                </p>
+
+                {
+                    historyUpgrades.map((item, index) => {
+                        return this.renderHistory(item, index)
+                    })
+                }
+
+                <div style={{ height: 50 }} />
+
 
                 <ModalTransaction
 					showModal={showModalTx}
@@ -319,6 +380,7 @@ class Rules extends Component {
 					}}
 					nameNft={this.state.nameNftToUpgrade}
                     statToUpgrade={this.state.statToUpgrade}
+                    wizaCostToUpgrade={this.state.wizaCostToUpgrade}
 				/>
 
             </div>
@@ -408,6 +470,19 @@ const styles = {
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: CTA_COLOR
+    },
+    rowHistory: {
+        paddingTop: 6,
+        paddingBottom: 12,
+        paddingLeft: 10,
+        borderBottomWidth: 1,
+        borderTopWidth: 0,
+        borderLeftWidth: 0,
+        borderRightWidth: 0,
+        borderColor: 'white',
+        borderStyle: 'solid',
+        marginBottom: 6,
+        alignItems: 'center'
     }
 }
 
