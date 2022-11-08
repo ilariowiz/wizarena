@@ -5,6 +5,7 @@
   "Wizards Arena NFTs"
 
     (use coin)
+    (bless "fLbKA9BVfyJU9F_1ybG8oX0lqYWZjQeWeUBq5PaIGvg")
   ; --------------------------------------------------------------------------
  ; Constants
 ; --------------------------------------------------------------------------
@@ -74,28 +75,6 @@
 
     (defcap WITHDRAW_PRIZE (winner:string prize:decimal)
         @event true
-    )
-
-    ; --------------------------------------------------------------------------
-  ; Can only happen once
-  ; --------------------------------------------------------------------------
-
-    (defun initialize ()
-        @doc "Initialize the contract the first time its loaded "
-        (insert counts MINTED_POST_COUNT_KEY {"count": 0})
-        (insert counts MINTED_COUNT_KEY {"count": 0})
-        (insert counts NFTS_COUNT_KEY {"count": 0})
-        (insert volume VOLUME_PURCHASE_COUNT {"count": 0.0})
-        (insert values MINT_CHAIN_ID_KEY {"value": "1"})
-        (insert values-tournament BUYIN_KEY {"value": 4.0})
-        (insert values-tournament FEE_KEY {"value": 7.0})
-        (insert values-tournament FEE_TOURNAMENT_KEY {"value": 20.0})
-        (insert max-items MAX_ITEMS_PER_OWNER {"max": 0})
-
-        (insert values WIZ_REVEAL {"value": "0"})
-
-        (coin.create-account WIZ_BANK (create-module-guard "wiz-holdings"))
-        (create-account WIZ_BANK (create-module-guard "wiz-holdings"))
     )
 
  ; --------------------------------------------------------------------------
@@ -187,6 +166,10 @@
         spellbook:list
     )
 
+    (defschema upgrade-stat-values-schema
+        value:decimal
+    )
+
     (deftable nfts:{nft-main-schema})
     (deftable nfts-market:{nft-listed-schema})
     (deftable creation:{creation-schema})
@@ -200,6 +183,43 @@
     (deftable values-tournament:{values-tournament-schema})
     (deftable prizes:{prizes-schema})
     (deftable stats:{stats-schema})
+
+    (deftable upgrade-stat-values:{upgrade-stat-values-schema})
+
+    ; --------------------------------------------------------------------------
+  ; Can only happen once
+  ; --------------------------------------------------------------------------
+
+    (defun initialize ()
+        @doc "Initialize the contract the first time its loaded "
+        (insert counts MINTED_POST_COUNT_KEY {"count": 0})
+        (insert counts MINTED_COUNT_KEY {"count": 0})
+        (insert counts NFTS_COUNT_KEY {"count": 0})
+        (insert volume VOLUME_PURCHASE_COUNT {"count": 0.0})
+        (insert values MINT_CHAIN_ID_KEY {"value": "1"})
+        (insert values-tournament BUYIN_KEY {"value": 4.0})
+        (insert values-tournament FEE_KEY {"value": 7.0})
+        (insert values-tournament FEE_TOURNAMENT_KEY {"value": 20.0})
+        (insert max-items MAX_ITEMS_PER_OWNER {"max": 0})
+
+        (insert values WIZ_REVEAL {"value": "0"})
+
+        (coin.create-account WIZ_BANK (create-module-guard "wiz-holdings"))
+        (create-account WIZ_BANK (create-module-guard "wiz-holdings"))
+
+
+    )
+
+    (defun insertValuesUpgrade ()
+        (insert upgrade-stat-values "hp" {"value": 61.0})
+        (insert upgrade-stat-values "defense" {"value": 19.0})
+        (insert upgrade-stat-values "attack" {"value": 9.0})
+        (insert upgrade-stat-values "damage" {"value": 7.0})
+        (insert upgrade-stat-values "hp_base_cost" {"value": 150.0})
+        (insert upgrade-stat-values "defense_base_cost" {"value": 700.0})
+        (insert upgrade-stat-values "attack_base_cost" {"value": 700.0})
+        (insert upgrade-stat-values "damage_base_cost" {"value": 400.0})
+    )
 
  ; --------------------------------------------------------------------------
   ; STATE MODIFYING FUNCTIONS, REQUIRE CAPABILITIES
@@ -292,15 +312,15 @@
             )
             (insert stats id
                 {"id": id,
-                "attack": (at "attacco" item),
-                "damage": (at "danno" item),
-                "weakness": (at "debolezza" item),
-                "defense": (at "difesa" item),
-                "element": (at "elemento" item),
+                "attack": (at "attack" item),
+                "damage": (at "damage" item),
+                "weakness": (at "weakness" item),
+                "defense": (at "defense" item),
+                "element": (at "element" item),
                 "fights": (at "fights" item),
                 "hp": (at "hp" item),
                 "medals": (at "medals" item),
-                "resistance": (at "resistenza" item),
+                "resistance": (at "resistance" item),
                 "spellSelected": (at "spellSelected" item),
                 "spellbook": (at "spellbook" item)}
             )
@@ -620,6 +640,74 @@
     ; )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;; UPGRADE ;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (defun buy-upgrade (account:string idnft:string stat:string)
+        (with-capability (OWNER account idnft)
+            (let (
+                    (current-stat (at stat (get-wizard-fields-for-id (str-to-int idnft))))
+                    (wiza-cost (calculate-wiza-cost idnft stat))
+                )
+                (free.wiza.spend-wiza wiza-cost account)
+                (if
+                    (= stat "hp")
+                    (update stats idnft {
+                        "hp": (+ current-stat 1)
+                    })
+                    ""
+                )
+                (if
+                    (= stat "defense")
+                    (update stats idnft {
+                        "defense": (+ current-stat 1)
+                    })
+                    ""
+                )
+                (if
+                    (= stat "attack")
+                    (update stats idnft {
+                        "attack": (+ current-stat 1)
+                    })
+                    ""
+                )
+                (if
+                    (= stat "damage")
+                    (update stats idnft {
+                        "damage": (+ current-stat 1)
+                    })
+                    ""
+                )
+            )
+        )
+    )
+
+
+    (defun calculate-wiza-cost (idnft:string stat:string)
+        (let (
+                (data (get-wizard-fields-for-id (str-to-int idnft)))
+                (max-value (at "value" (read upgrade-stat-values stat ['value])))
+                (base-cost (at "value" (read upgrade-stat-values (+ stat "_base_cost") ['value])))
+            )
+            (if
+                (= (- max-value (at stat data)) max-value)
+                (let (
+                        (last-part (/ base-cost 100))
+                        (diff (- max-value 1))
+                    )
+                    (ceiling (- base-cost (* (* 100 (/ diff max-value)) last-part )) 2)
+                )
+                (let (
+                        (last-part (/ base-cost 100))
+                        (diff (- max-value (at stat data)))
+                    )
+                    (ceiling (- base-cost (* (* 100 (/ diff max-value)) last-part )) 2)
+                )
+            )
+        )
+    )
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;; GENERIC FUN ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -830,11 +918,13 @@
     (create-table values-tournament)
     (create-table prizes)
 
-    (create-table coin.coin-table)
+    ;(create-table coin.coin-table)
 
     (create-table stats)
 
-    (initialize)
+    (create-table upgrade-stat-values)
 
+    (initialize)
+    (insertValuesUpgrade)
   ]
 )

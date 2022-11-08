@@ -13,6 +13,7 @@
 
     (use coin)
   (implements fungible-v2)
+  (bless "02AduXOtIOqU7-tCI5_EBD8e3b8m9xxXrUnMGzmbEWA")
 
   ; --------------------------------------------------------------------------
  ; Constants

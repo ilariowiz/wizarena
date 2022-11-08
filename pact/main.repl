@@ -140,7 +140,7 @@
 
 (free.wiz-arena.add-stats [{
     "id": "0",
-    "attack": 3,
+    "attack": 1,
     "damage": 3,
     "weakness": "wind",
     "defense": 17,
@@ -185,7 +185,7 @@
 
 (free.wiz-arena.update-stats [{
     "id": "0",
-    "attack": 13,
+    "attack": 1,
     "damage": 23,
     "weakness": "wind",
     "defense": 17,
@@ -570,7 +570,7 @@
 
 (begin-tx "GET UPGRADE COST")
 
-(free.wiz-arena.calculate-wiza-cost "0" "hp")
+(free.wiz-arena.calculate-wiza-cost "0" "attack")
 
 (commit-tx)
 
@@ -585,7 +585,7 @@
   ]
 }])
 
-(free.wiz-arena.buy-upgrade "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "hp")
+(free.wiz-arena.buy-upgrade "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "attack")
 
 (commit-tx)
 
