@@ -610,8 +610,8 @@ class Collection extends Component {
 				{this.renderSearched()}
 
 				<div style={{ flexWrap: 'wrap', marginBottom: 10 }}>
-					{this.renderBoxSearchStat("hp", "HP", [41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63].reverse())}
-					{this.renderBoxSearchStat("defense", "DEFENSE", [14, 15, 16, 17, 18, 19, 20].reverse())}
+					{this.renderBoxSearchStat("hp", "HP", [41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64].reverse())}
+					{this.renderBoxSearchStat("defense", "DEFENSE", [14, 15, 16, 17, 18, 19, 20, 21].reverse())}
 					{this.renderBoxSearchStat("element", "ELEMENT", ["Acid", "Dark", "Fire", "Ice", "Thunder", "Wind"])}
 					{this.renderBoxSearchStat("resistance", "RESISTANCE", ["acid", "dark", "fire", "ice", "thunder", "wind"])}
 					{this.renderBoxSearchStat("weakness", "WEAKNESS", ["acid", "dark", "fire", "ice", "thunder", "wind"])}
