@@ -122,7 +122,7 @@ class ModalTransaction extends Component {
 					body = `You will delist ${nameNft}`
 				}
 				else if (type === 'buy') {
-					body = `You will buy ${nameNft}`
+					body = `You will buy ${nameNft} (you will need KDA on chain 1)`
 				}
 				else if (type === 'subscription') {
 					body = `You will subscribe ${nameNft}`
