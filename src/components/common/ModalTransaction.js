@@ -65,7 +65,8 @@ class ModalTransaction extends Component {
 
 			//chiamato solo per transaction upgrade, serve per far funzionare correttamente i filtri su firebase
 			if (type === "upgrade" && nameNft && statToUpgrade) {
-		        const docRef = doc(firebasedb, "stats", `${nameNft}`)
+
+				const docRef = doc(firebasedb, "stats", `${nameNft}`)
 				updateDoc(docRef, {
 		            [statToUpgrade]: increment(1)
 		        })
@@ -76,7 +77,7 @@ class ModalTransaction extends Component {
 					cost: wizaCostToUpgrade,
 					idnft: nameNft,
 					stat: statToUpgrade,
-					timestamp: serverTimestamp
+					timestamp: serverTimestamp()
 				}
 
 				setDoc(docRefHistory, objHistory)
