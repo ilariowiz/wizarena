@@ -6,7 +6,7 @@ import Popup from 'reactjs-popup';
 import { AiOutlineReload } from 'react-icons/ai';
 import { AiOutlineShareAlt } from 'react-icons/ai';
 import toast, { Toaster } from 'react-hot-toast';
-import { getDocs, collection } from "firebase/firestore";
+import { getDocs, collection, query, where } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Header from './Header';
 import ModalTransaction from './common/ModalTransaction'
@@ -52,7 +52,8 @@ class Nft extends Component {
 			fights: [],
 			traitsRank: undefined,
 			loadingHistory: true,
-			numbersOfMaxMedalsPerTournament: []
+			numbersOfMaxMedalsPerTournament: [],
+			historyUpgrades: []
 		}
 	}
 
@@ -124,7 +125,7 @@ class Nft extends Component {
 				document.title = `${response.name} - Wizards Arena`
 				///console.log(response)
 
-				const tournaments = ["t1", "t2", "t3"]
+				const tournaments = ["t1", "t2", "t3", "t4"]
 
 				response['groupedFights'] = {}
 
@@ -136,6 +137,7 @@ class Nft extends Component {
 
 				this.setState({ nft: response, loading: false }, () => {
 					this.loadHistory(idNft)
+					this.getHistoryUpgrades(idNft)
 					this.loadMaxMedalsPerTournament()
 					//this.loadStats(idNft)
 					//this.loadFights(idNft)
@@ -146,6 +148,36 @@ class Nft extends Component {
 			}
 		})
 	}
+
+	async getHistoryUpgrades(idNft) {
+        const q = query(collection(firebasedb, "history_upgrades"),
+                        where("idnft", "==", `#${idNft}`))
+
+        const querySnap = await getDocs(q)
+        //console.log(querySnap);
+
+        let historyUpgrades = []
+
+        querySnap.forEach(doc => {
+            //console.log(doc.data());
+			const data = doc.data()
+
+			let objectKey = historyUpgrades.find(i => i.stat === data.stat)
+			if (objectKey) {
+				const idx = historyUpgrades.findIndex(i => i.stat === data.stat)
+				if (idx > -1) {
+					objectKey["value"] = objectKey["value"] + 1
+					historyUpgrades[idx] = objectKey
+				}
+			}
+			else {
+				historyUpgrades.push({ stat: data.stat, value: 1 })
+			}
+        })
+
+    	//console.log(historyUpgrades);
+		this.setState({ historyUpgrades })
+    }
 
 	loadHistory(idNft) {
 		let url = `https://estats.chainweb.com/txs/events?search=${CONTRACT_NAME}.WIZ_BUY&param=${idNft}&offset=0&limit=50`
@@ -197,44 +229,6 @@ class Nft extends Component {
 
 		this.setState({ numbersOfMaxMedalsPerTournament })
 	}
-
-	/*
-	async loadStats(idNft) {
-		const docRef = doc(firebasedb, "stats", `#${idNft}`)
-
-		const docSnap = await getDoc(docRef)
-		const data = docSnap.data()
-
-		if (data) {
-			//console.log(data)
-			this.setState({ stats: data })
-		}
-	}
-
-
-	async loadFights(idNft) {
-		const { account } = this.props
-
-		let tournament;
-		const querySnapshot = await getDocs(collection(firebasedb, "stage"))
-		querySnapshot.forEach(doc => {
-			tournament = doc.data()
-		})
-
-		console.log(tournament)
-
-		const whereClause = `${account.account}_${tournament.name}_${idNft}`
-
-		const q = query(collection(firebasedb, "fights"),
-			where("s1", "==", whereClause, "OR", "s2", "==", whereClause),
-		)
-
-		const qSnap = await getDocs(q)
-		qSnap.forEach(doc => {
-			console.log(doc.data());
-		})
-	}
-	*/
 
 	list() {
 		const { nft, inputPrice } = this.state;
@@ -712,6 +706,20 @@ class Nft extends Component {
 		)
 	}
 
+	renderUpgrade(item, index) {
+		return (
+			<div style={{ alignItems: 'center', marginBottom: 5, marginLeft: 5 }} key={index}>
+				<p style={{ fontSize: 18, color: '#8d8b8b', marginRight: 10 }}>
+					{item.stat}
+				</p>
+
+				<p style={{ fontSize: 18, color: 'white' }}>
+					+{item.value}
+				</p>
+			</div>
+		)
+	}
+
 	renderStat(title, value) {
 
 		if (title === "SPELL PERK") {
@@ -758,7 +766,7 @@ class Nft extends Component {
 	}
 
 	renderBoxStats(width) {
-		const { nft } = this.state
+		const { nft, historyUpgrades } = this.state
 		const { reveal } = this.props
 
 		//console.log(reveal)
@@ -807,8 +815,21 @@ class Nft extends Component {
 						: null
 					}
 
-				</div>
+					{
+						historyUpgrades.length > 0 ?
+						<div style={{ paddingLeft: 10, paddingBottom: 10, flexDirection: 'column' }}>
+							<p style={{ fontSize: 19, color: 'white', marginBottom: 5 }}>
+								Upgrades
+							</p>
 
+							{historyUpgrades.map((item, index) => {
+								return this.renderUpgrade(item, index)
+							})}
+						</div>
+						: null
+					}
+
+				</div>
 			</div>
 		)
 	}
