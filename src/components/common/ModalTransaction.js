@@ -116,7 +116,7 @@ class ModalTransaction extends Component {
 					body = `You will mint 1 wizard`
 				}
 				else if (type === 'list') {
-					body = `You will list ${nameNft} for ${inputPrice} KDA`
+					body = `You will list ${nameNft} for ${inputPrice} KDA. Marketplace Fee: 7%`
 				}
 				else if (type === 'delist') {
 					body = `You will delist ${nameNft}`
