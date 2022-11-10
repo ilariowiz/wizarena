@@ -113,6 +113,13 @@ class Header extends Component {
 
 								<p
 									className={btnHeaderNft}
+									onClick={() => this.props.history.replace('/magicshop')}
+								>
+									MAGIC SHOP
+								</p>
+
+								<p
+									className={btnHeaderNft}
 									onClick={() => this.props.history.replace('/tournament')}
 								>
 									TOURNAMENT
