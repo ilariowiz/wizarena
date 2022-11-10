@@ -27,6 +27,7 @@ class NftCardTournament extends Component {
 		return (
 			<div
 				className='container'
+				style={{ borderColor: isMine ? "gold" : "white" }}
 				onClick={() => history.push(`/nft/${item.id}`)}
 			>
 				<img
