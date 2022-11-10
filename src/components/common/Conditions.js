@@ -39,6 +39,26 @@ const conditions = [
         effect: "The opponent cannot move and loses the turn",
         pct: 35
     },
+    {
+        name: "Shock",
+        effect: "The opponent cannot move and loses the turn",
+        pct: 40
+    },
+    {
+        name: "Blind",
+        effect: "The opponent cannot see anything and loses the turn",
+        pct: 45
+    },
+    {
+        name: "Exhaust",
+        effect: "Inflicts a penalty of 2 on the opponent's attack",
+        pct: 40
+    },
+    {
+        name: "Fear",
+        effect: "Inflicts a penalty of 2 on the opponent's attack",
+        pct: 50
+    },
 ]
 
 export default conditions
