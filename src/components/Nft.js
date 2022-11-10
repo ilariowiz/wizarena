@@ -5,6 +5,8 @@ import DotLoader from 'react-spinners/DotLoader';
 import Popup from 'reactjs-popup';
 import { AiOutlineReload } from 'react-icons/ai';
 import { AiOutlineShareAlt } from 'react-icons/ai';
+import { IoEyeOffOutline } from 'react-icons/io5';
+import { IoEyeOutline } from 'react-icons/io5';
 import toast, { Toaster } from 'react-hot-toast';
 import { getDocs, collection, query, where } from "firebase/firestore";
 import { firebasedb } from './Firebase';
@@ -53,7 +55,8 @@ class Nft extends Component {
 			traitsRank: undefined,
 			loadingHistory: true,
 			numbersOfMaxMedalsPerTournament: [],
-			historyUpgrades: []
+			historyUpgrades: [],
+			openFightsSection: []
 		}
 	}
 
@@ -129,18 +132,24 @@ class Nft extends Component {
 
 				response['groupedFights'] = {}
 
+				let openFightsSection = []
+
 				tournaments.map(i => {
-					response['groupedFights'][i] = this.groupFights(response.fights, i)
+					const groupedFight = this.groupFights(response.fights, i)
+					//console.log(groupedFight);
+					if (groupedFight.length > 0) {
+						openFightsSection = [i]
+					}
+
+					response['groupedFights'][i] = groupedFight
 				})
 
-				//console.log(response);
+				//console.log(openFightsSection);
 
-				this.setState({ nft: response, loading: false }, () => {
+				this.setState({ nft: response, loading: false, openFightsSection }, () => {
 					this.loadHistory(idNft)
 					this.getHistoryUpgrades(idNft)
 					this.loadMaxMedalsPerTournament()
-					//this.loadStats(idNft)
-					//this.loadFights(idNft)
 				})
 			}
 			else {
@@ -428,22 +437,64 @@ class Nft extends Component {
 	}
 
 	renderMainFight(key, index) {
-		const { nft } = this.state
+		const { nft, openFightsSection } = this.state
 
 		//console.log(key, index);
 
 		if (nft.groupedFights && nft.groupedFights[key].length > 0) {
 			return (
 				<div style={Object.assign({}, styles.boxSingleTrait, { alignItems: 'flex-start' })} key={index}>
-					<p style={{ fontSize: 18, color: 'white', marginLeft: 6, marginTop: 4 }}>
-						TOURNAMENT n. {key.replace("t","")}
-					</p>
 
-					<div style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
-						{Object.values(nft.groupedFights[key]).map((item, index) => {
-							return this.renderFight(item, index)
-						})}
-					</div>
+					<button
+						style={{ alignItems: 'center', marginTop: 4, marginLeft: 6, marginRight: 6, flexDirection: 'row', display: 'flex' }}
+						onClick={() => {
+							let openFightsSectionCopy = Object.assign([], this.state.openFightsSection)
+
+							if (openFightsSectionCopy.includes(key)) {
+								let idx = openFightsSectionCopy.findIndex(i => i === key)
+								if (idx > -1) {
+									openFightsSectionCopy.splice(idx, 1)
+								}
+							}
+							else {
+								openFightsSectionCopy.push(key)
+							}
+
+							//console.log(openFightsSectionCopy);
+
+							this.setState({ openFightsSection: openFightsSectionCopy })
+						}}
+					>
+						<p style={{ fontSize: 18, color: 'white', marginRight: 15 }}>
+							TOURNAMENT n. {key.replace("t","")}
+						</p>
+
+						{
+							openFightsSection.includes(key) ?
+							<IoEyeOffOutline
+								size={20}
+								color="white"
+							/>
+							:
+							<IoEyeOutline
+								size={20}
+								color="white"
+							/>
+						}
+
+					</button>
+
+					{
+						openFightsSection.includes(key) ?
+						<div style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
+							{Object.values(nft.groupedFights[key]).map((item, index) => {
+								return this.renderFight(item, index)
+							})}
+						</div>
+						: null
+					}
+
+
 				</div>
 			)
 		}
@@ -473,7 +524,7 @@ class Nft extends Component {
 				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginBottom: 5 }}>
 					round {round.replace("r", "")}
 				</p>
-				<p style={{ color: textWinnerColor, fontSize: 18 }}>
+				<p style={{ color: textWinnerColor, fontSize: 17 }}>
 					{textWinner}
 				</p>
 			</button>
