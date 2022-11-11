@@ -1132,7 +1132,7 @@ export const claimAllWithoutUnstake = (chainId, gasPrice = DEFAULT_GAS_PRICE, ga
 			)
 		})
 
-		console.log(caps);
+		//console.log(caps);
 
 		let cmd = {
 			pactCode,
