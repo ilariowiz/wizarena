@@ -58,17 +58,7 @@ class Collection extends Component {
 			}
 
 		}, 500)
-
-		//window.addEventListener('resize', this.resize)
 	}
-
-	/*
-	componentWillUnmount() {
-        window.removeEventListener('resize', this.resize)
-    }
-
-    resize = throttle(() => this.forceUpdate(), 50)
-	*/
 
 	loadAll() {
 		const { chainId, gasPrice, gasLimit, networkUrl, statSearched, allNfts } = this.props
@@ -488,7 +478,6 @@ class Collection extends Component {
 
 	renderPageCounter() {
 		const { allNftsIds, nftsBlockId } = this.props
-
 		//console.log("allNftsIds", allNftsIds, nftsBlockId)
 
 		let subarray = []
@@ -600,6 +589,15 @@ class Collection extends Component {
 			numberOfWiz = nftsToShow.length
 		}
 
+		let showPageCounter = false
+		if (allNftsIds && allNfts && allNfts.length > 0 && nftsToShow.length > 0) {
+			showPageCounter = true
+		}
+
+		if (statSearched && statSearched.length > 0) {
+			showPageCounter = false
+		}
+
 		return (
 			<div style={{ flexDirection: 'column', width: boxW }}>
 
@@ -652,7 +650,7 @@ class Collection extends Component {
 				}
 
 				{
-					allNftsIds && allNfts && allNfts.length > 0 && nftsToShow.length > 0 ?
+					showPageCounter ?
 					this.renderPageCounter()
 					: null
 				}

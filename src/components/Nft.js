@@ -126,7 +126,7 @@ class Nft extends Component {
 		this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, idNft, (response) => {
 			if (response.name) {
 				document.title = `${response.name} - Wizards Arena`
-				///console.log(response)
+				//console.log(response)
 
 				const tournaments = ["t1", "t2", "t3", "t4"]
 
