@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import moment from 'moment'
 import _ from 'lodash'
+import { IoMedalOutline } from 'react-icons/io5'
 import DotLoader from 'react-spinners/DotLoader';
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCard.css'
@@ -146,9 +147,23 @@ class NftCardStake extends Component {
 		)
 	}
 
+    calcMedals() {
+        const { item } = this.props
+
+        let totalMedals = 0
+		if (Object.keys(item.medals).length > 0) {
+			const arrayValueMedals = Object.values(item.medals)
+			arrayValueMedals.map(i => totalMedals = totalMedals + parseInt(i))
+		}
+
+        return totalMedals
+    }
+
 	render() {
 		const { item, history, width, reveal } = this.props
 		const { staked, loading, inBurnQueue } = this.state
+
+        //console.log(item);
 
 		return (
 			<div
@@ -163,10 +178,24 @@ class NftCardStake extends Component {
 
 				<div style={{ justifyContent: 'space-between', width, height: 70, alignItems: 'center' }}>
 
-					<div style={{ width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
+					<div style={{ width: '100%', flexDirection: 'column', justifyContent: 'space-between' }}>
 						<p style={{ color: 'white', fontSize: 18, marginLeft: 10, lineHeight: 1 }}>
 							{item.name}
 						</p>
+
+                        <div style={{ alignItems: 'center', marginLeft: 10, marginTop: 3 }}>
+
+                            <IoMedalOutline
+                                color="white"
+                                size={18}
+                                style={{ marginRight: 8 }}
+                            />
+
+                            <p style={{ color: 'white', fontSize: 19, marginTop: 3, lineHeight: 1 }}>
+                                {this.calcMedals()}
+                            </p>
+                        </div>
+
 					</div>
 
 					{
