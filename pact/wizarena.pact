@@ -5,7 +5,7 @@
   "Wizards Arena NFTs"
 
     (use coin)
-    (bless "fLbKA9BVfyJU9F_1ybG8oX0lqYWZjQeWeUBq5PaIGvg")
+    (bless "UVUwDRd0sl1vnZhXu2UsM8BQQI8usRK30q4MaO8CDhQ")
   ; --------------------------------------------------------------------------
  ; Constants
 ; --------------------------------------------------------------------------
@@ -74,6 +74,10 @@
     )
 
     (defcap WITHDRAW_PRIZE (winner:string prize:decimal)
+        @event true
+    )
+
+    (defcap BURN_NFT (id:string)
         @event true
     )
 
@@ -170,6 +174,14 @@
         value:decimal
     )
 
+    (defschema burning-queue-schema
+        burned:bool
+        confirmBurn:bool
+        idnft:string
+        account:string
+        timestamp:time
+    )
+
     (deftable nfts:{nft-main-schema})
     (deftable nfts-market:{nft-listed-schema})
     (deftable creation:{creation-schema})
@@ -183,8 +195,9 @@
     (deftable values-tournament:{values-tournament-schema})
     (deftable prizes:{prizes-schema})
     (deftable stats:{stats-schema})
-
     (deftable upgrade-stat-values:{upgrade-stat-values-schema})
+
+    (deftable burning-queue-table:{burning-queue-schema})
 
     ; --------------------------------------------------------------------------
   ; Can only happen once
@@ -381,6 +394,51 @@
         )
     )
 
+    (defun update-fights-medals (objects-list:list)
+        (with-capability (ADMIN)
+            (map
+                (update-fight-medal)
+                objects-list
+            )
+        )
+    )
+
+    (defun update-fight-medal (item:object)
+        (require-capability (ADMIN))
+        (let
+            (
+                (id (at "id" item))
+            )
+            (update stats id
+                {"id": id,
+                "fights": (at "fights" item),
+                "medals": (at "medals" item)}
+            )
+        )
+    )
+
+    (defun update-hps (objects-list:list)
+        (with-capability (ADMIN)
+            (map
+                (update-hp)
+                objects-list
+            )
+        )
+    )
+
+    (defun update-hp (item:object)
+        (require-capability (ADMIN))
+        (let
+            (
+                (id (at "id" item))
+            )
+            (update stats id
+                {"id": id,
+                "hp": (at "hp" item)}
+            )
+        )
+    )
+
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;;;; MINT FUN ;;;;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -473,6 +531,7 @@
             )
             (enforce (= (at "listed" data) false) "this wizard is already listed")
             (enforce (= is-staked false) "You can't list a staked wizard")
+            (enforce (= (at "confirmBurn" data) false) "You can't list a wizard in burning queue")
         )
         (with-capability (OWNER sender id)
             (update nfts-market id {"listed": true, "price": price})
@@ -639,9 +698,9 @@
         )
     )
 
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;; UPGRADE ;;;;;;;;;
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     (defun buy-upgrade (account:string idnft:string stat:string)
         (with-capability (OWNER account idnft)
@@ -707,6 +766,77 @@
         )
     )
 
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;; BURN ;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (defun add-to-burning-queue (idnft:string account:string)
+        (let (
+                (data (get-wizard-fields-for-id (str-to-int idnft)))
+                ;(is-staked (wiza.check-nft-is-staked idnft))
+                (is-staked false)
+            )
+            (enforce (= (at "listed" data) false) "You can't burn a listed wizard")
+            (enforce (= is-staked false) "You can't burn a staked wizard")
+        )
+        (with-capability (OWNER account idnft)
+            (write burning-queue-table idnft {
+                "burned":false,
+                "confirmBurn":true,
+                "idnft":idnft,
+                "account":account,
+                "timestamp": (at "block-time" (chain-data))
+            })
+        )
+    )
+
+    (defun remove-from-burning-queue (idnft:string account:string)
+        (with-capability (OWNER account idnft)
+            (update burning-queue-table idnft {
+                "confirmBurn":false
+            })
+        )
+    )
+
+    (defun burn-nft (idnft:string)
+        (with-capability (ADMIN)
+            (update burning-queue-table idnft {
+                "burned":true,
+                "confirmBurn":true,
+                "account": WIZ_BANK
+            })
+            (update nfts idnft {
+              "owner": WIZ_BANK
+            })
+            (update nfts-market idnft {
+              "price": 0.0,
+              "listed": false
+            })
+            (emit-event (BURN_NFT idnft))
+        )
+    )
+
+    (defun get-burning-queue ()
+        (with-capability (ADMIN)
+            (select burning-queue-table (and?
+                (where 'burned (= false))
+                (where 'confirmBurn (= true))
+            ))
+        )
+    )
+
+    (defun get-nft-in-burning-queue (idnft:string)
+        (read burning-queue-table idnft)
+    )
+
+    (defun check-nft-in-burning-queue (idnft:string)
+        (with-default-read burning-queue-table idnft
+            {"confirmBurn":false}
+            {"confirmBurn":=confirmBurn}
+            confirmBurn
+        )
+    )
+
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;; GENERIC FUN ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -734,8 +864,12 @@
         (with-capability (OWNER sender id)
             (let (
                     (data (get-wizard-fields-for-id (str-to-int id)))
+                    ;(is-staked (wiza.check-nft-is-staked id))
+                    (is-staked false)
                 )
                 (enforce (= (at "listed" data) false) "A listed wizard cannot be transferred")
+                (enforce (= is-staked false) "You can't transfer a staked wizard")
+                (enforce (= (at "confirmBurn" data) false) "You can't transfer a wizard in burning queue")
             )
             (update nfts id {"owner": receiver})
         )
@@ -847,13 +981,14 @@
                 (reveal (get-value WIZ_REVEAL))
                 (info-market (read nfts-market (int-to-str 10 id)))
                 (info-stat (read stats (int-to-str 10 id)))
+                (confirmBurn (check-nft-in-burning-queue (int-to-str 10 id)))
             )
             (if
                 (!= reveal "0")
                 (let (
                         (info (read nfts (int-to-str 10 id)))
                     )
-                    (+ (+ info info-market) info-stat)
+                    (+ (+ (+ info info-market) info-stat) {"confirmBurn":confirmBurn})
                 )
                 (let (
                         (info (read nfts (int-to-str 10 id) ['created 'owner 'name 'id 'imageHash]))
@@ -921,8 +1056,9 @@
     (create-table coin.coin-table)
 
     (create-table stats)
-
     (create-table upgrade-stat-values)
+
+    (create-table burning-queue-table)
 
     (initialize)
     (insertValuesUpgrade)

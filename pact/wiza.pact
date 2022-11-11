@@ -13,7 +13,7 @@
 
     (use coin)
   (implements fungible-v2)
-  (bless "02AduXOtIOqU7-tCI5_EBD8e3b8m9xxXrUnMGzmbEWA")
+  (bless "5MpomJ0tqLVEyI-9-cBYOJ6ely_gykMuB7rKi5zblJ8")
 
   ; --------------------------------------------------------------------------
  ; Constants
@@ -380,6 +380,7 @@
                 ;(data {"listed": false})
             )
             (enforce (= (at "listed" data) false) "A listed wizard cannot be staked")
+            (enforce (= (at "confirmBurn" data) false) "You can't stake a wizard in burning queue")
             (with-capability (OWNER sender idnft)
                 (with-default-read staked-table idnft
                     {"staked": false}
