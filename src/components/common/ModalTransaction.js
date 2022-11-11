@@ -145,6 +145,12 @@ class ModalTransaction extends Component {
 				else if (type === 'claimall') {
 					body = `You will claim your $WIZA mined by all your wizards`
 				}
+				else if (type === 'burningon') {
+					body = `You will add Wizard ${nameNft} to the burning queue, twice a week the one with the lowest ranking will be burned and the owner will receive $WIZA in return`
+				}
+				else if (type === 'burningoff') {
+					body = `You will remove ${nameNft} from burning queue`
+				}
 				else if (type === 'upgrade') {
 					body = `You will improve the ${statToUpgrade} of ${nameNft}`
 				}
@@ -220,6 +226,14 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'unstake') {
 					body = `Your Wizard ${nameNft} is unstaked!`
+					buttonText = 'Close'
+				}
+				else if (type === 'burningon') {
+					body = `Your Wizard ${nameNft} has been added to the burning queue!`
+					buttonText = 'Close'
+				}
+				else if (type === 'burningoff') {
+					body = `Your Wizard ${nameNft} has been removed from the burning queue`
 					buttonText = 'Close'
 				}
 				else if (type === 'claim' || type === 'claimall') {

@@ -30,7 +30,9 @@ import {
 	stakeNft,
 	unstakeNft,
 	claimWithoutUnstake,
-	claimAllWithoutUnstake
+	claimAllWithoutUnstake,
+	addNftToBurningQueue,
+	removeNftFromBurningQueue
 } from '../actions'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -336,6 +338,21 @@ class Profile extends Component {
 		this.props.claimAllWithoutUnstake(chainId, gasPrice, 100000, netId, objects, account)
 	}
 
+	addToBurning(id) {
+		const { chainId, gasPrice, netId, account } = this.props
+
+		this.setState({ typeModal: "burningon", nameNftSubscribed: `#${id}` })
+
+		this.props.addNftToBurningQueue(chainId, gasPrice, netId, id, account)
+	}
+
+	removeFromBurning(id) {
+		const { chainId, gasPrice, netId, account } = this.props
+
+		this.setState({ typeModal: "burningoff", nameNftSubscribed: `#${id}` })
+
+		this.props.removeNftFromBurningQueue(chainId, gasPrice, netId, id, account)
+	}
 
 	buildsRow(items, itemsPerRow = 4) {
 		return items.reduce((rows, item, index) => {
@@ -371,6 +388,8 @@ class Profile extends Component {
 					onStake={() => this.stakeNft(item.id)}
 					onUnstake={() => this.unstakeNft(item.id)}
 					onClaim={() => this.claimWizaWithoutUnstake(item.id)}
+					onAddBurning={() => this.addToBurning(item.id)}
+					onRemoveBurning={() => this.removeFromBurning(item.id)}
 					onLoadUnclaim={(value) => {
 						this.setState({ unclaimedWizaTotal: this.state.unclaimedWizaTotal + parseFloat(value) })
 					}}
@@ -883,26 +902,20 @@ class Profile extends Component {
 					mintSuccess={() => {
 						this.props.clearTransaction()
 
-						if (this.state.typeModal === "claim" ||
-							this.state.typeModal === "stake" ||
-							this.state.typeModal === "unstake" ||
-							this.state.typeModal === "claimall") {
-							window.location.reload()
+						if (this.state.typeModal === "subscription") {
+							this.loadTournament()
 						}
 						else {
-							this.loadTournament()
+							window.location.reload()
 						}
 					}}
 					mintFail={() => {
 						this.props.clearTransaction()
-						if (this.state.typeModal === "claim" ||
-							this.state.typeModal === "stake" ||
-							this.state.typeModal === "unstake" ||
-							this.state.typeModal === "claimall") {
-							window.location.reload()
+						if (this.state.typeModal === "subscription") {
+							this.loadTournament()
 						}
 						else {
-							this.loadTournament()
+							window.location.reload()
 						}
 					}}
 					nameNft={this.state.nameNftSubscribed}
@@ -1042,5 +1055,7 @@ export default connect(mapStateToProps, {
 	stakeNft,
 	unstakeNft,
 	claimWithoutUnstake,
-	claimAllWithoutUnstake
+	claimAllWithoutUnstake,
+	addNftToBurningQueue,
+	removeNftFromBurningQueue
 })(Profile)

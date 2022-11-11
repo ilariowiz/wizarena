@@ -586,6 +586,25 @@ export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 	}
 }
 
+export const getInfoNftBurning = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, idnft, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-nft-in-burning-queue "${idnft}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
+
 export const checkAddressForPrice = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, account, callback) => {
 	return (dispatch) => {
 
@@ -600,6 +619,76 @@ export const checkAddressForPrice = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 				callback(response)
 			}
 		})
+	}
+}
+
+export const addNftToBurningQueue = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, idnft, account) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.add-to-burning-queue "${idnft}" "${account.account}")`;
+
+		let cmd = {
+			pactCode,
+			caps: [
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME}.OWNER`,
+          			[account.account, idnft]
+        		),
+				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+			],
+			sender: account.account,
+			gasLimit: 5000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("mintNft", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const removeNftFromBurningQueue = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, idnft, account) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.remove-from-burning-queue "${idnft}" "${account.account}")`;
+
+		let cmd = {
+			pactCode,
+			caps: [
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME}.OWNER`,
+          			[account.account, idnft]
+        		),
+				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+			],
+			sender: account.account,
+			gasLimit: 3000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("mintNft", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
 }
 

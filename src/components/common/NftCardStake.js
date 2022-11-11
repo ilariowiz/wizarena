@@ -8,7 +8,8 @@ import '../../css/NftCard.css'
 import '../../css/Nft.css'
 import {
     getWizardStakeInfo,
-	calculateReward
+	calculateReward,
+    getInfoNftBurning
 } from '../../actions'
 import { CTA_COLOR } from '../../actions/types'
 
@@ -22,25 +23,33 @@ class NftCardStake extends Component {
             stakeInfo: {},
 			staked: false,
 			unclaimedWiza: 0.0,
-			loading: true
+			loading: true,
+            inBurnQueue: this.props.item.confirmBurn,
+            infoBurn: {}
         }
     }
 
 	componentDidMount() {
-        const { index } = this.props
+        const { index, item } = this.props
 
         //per non far partire le connessioni tutte insieme
         const timer = index * 100
 
         setTimeout(() => {
             this.loadInfoStake()
+
+            if (item.confirmBurn) {
+                this.loadInfoBurn()
+            }
+
         }, timer)
 	}
 
     loadInfoStake() {
         const { item, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-        //console.log(item, tournament);
+        //console.log(item);
+
         this.props.getWizardStakeInfo(chainId, gasPrice, gasLimit, networkUrl, item.id, (response) => {
             //console.log(response)
 
@@ -80,7 +89,39 @@ class NftCardStake extends Component {
         })
     }
 
-	renderStaked() {
+    loadInfoBurn() {
+        const { item, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+        this.props.getInfoNftBurning(chainId, gasPrice, gasLimit, networkUrl, item.id, (response) => {
+            //console.log(response);
+            this.setState({ infoBurn: response })
+        })
+    }
+
+    renderBurningTop() {
+        const { infoBurn } = this.state
+
+        if (!infoBurn.confirmBurn) {
+            return <div />
+        }
+
+        const burnedFromDate = moment(infoBurn.timestamp.timep).fromNow()
+
+        return (
+            <div style={{ flexDirection: 'column', width: '100%', marginRight: 10, alignItems: 'flex-end' }}>
+
+				<p style={{ color: 'white', fontSize: 16, lineHeight: 1.2, textAlign: 'end' }}>
+					IN BURNING QUEUE
+				</p>
+
+				<p style={{ color: '#c2c0c0', fontSize: 12, marginBottom: 2, lineHeight: 1 }}>
+					{burnedFromDate}
+				</p>
+			</div>
+        )
+    }
+
+	renderStakedTop() {
 		const { unclaimedWiza, stakeInfo } = this.state
 
 		//console.log(unclaimedWiza);
@@ -107,7 +148,7 @@ class NftCardStake extends Component {
 
 	render() {
 		const { item, history, width, reveal } = this.props
-		const { staked, loading } = this.state
+		const { staked, loading, inBurnQueue } = this.state
 
 		return (
 			<div
@@ -153,12 +194,19 @@ class NftCardStake extends Component {
 
 					{
 						staked ?
-						this.renderStaked()
+						this.renderStakedTop()
 						: null
 					}
 
+                    {
+                        inBurnQueue && !staked ?
+                        this.renderBurningTop()
+                        : null
+                    }
+
 				</div>
 
+                {/********************* PARTE BOTTOM **********************/}
 
 				{
 					loading &&
@@ -170,20 +218,51 @@ class NftCardStake extends Component {
 				}
 
 				{
-					!staked && !loading &&
+					!staked && !inBurnQueue && !loading &&
+                    <div style={{ width, alignItems: 'center', justifyContent: 'space-between' }}>
+                        <button
+                            className="btnH"
+                            style={Object.assign({}, styles.btnStake, { width: (width/2 - 2) })}
+                            onClick={(e) => {
+                                e.stopPropagation()
+                                this.props.onStake()
+                            }}
+                        >
+                            <p style={{ fontSize: 17, color: 'white' }}>
+                                STAKE
+                            </p>
+                        </button>
+
+    					<button
+    						className="btnH"
+    						style={Object.assign({}, styles.btnStake, { width: (width/2 - 2), backgroundColor: "#840fb2" })}
+    						onClick={(e) => {
+    							e.stopPropagation()
+    							this.props.onAddBurning()
+    						}}
+    					>
+    						<p style={{ fontSize: 17, color: 'white' }}>
+    							BURN
+    						</p>
+    					</button>
+                    </div>
+				}
+
+                {
+                    inBurnQueue && !staked && !loading &&
 					<button
 						className="btnH"
-						style={Object.assign({}, styles.btnStake, { width })}
+						style={Object.assign({}, styles.btnStake, { width, backgroundColor: "#840fb2" })}
 						onClick={(e) => {
 							e.stopPropagation()
-							this.props.onStake()
+							this.props.onRemoveBurning()
 						}}
 					>
-						<p style={{ fontSize: 17, color: 'white' }}>
-							STAKE
+						<p style={{ fontSize: 16, color: 'white' }}>
+							REMOVE FROM BURNING QUEUE
 						</p>
 					</button>
-				}
+                }
 
 				{
 					staked && !loading &&
@@ -239,5 +318,6 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
 	getWizardStakeInfo,
-	calculateReward
+	calculateReward,
+    getInfoNftBurning
 })(NftCardStake);
