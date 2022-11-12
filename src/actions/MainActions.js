@@ -251,6 +251,27 @@ export const loadBlockNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 	}
 }
 
+
+export const loadBurningNftInfo = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, block, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-wizard-fields-for-ids [${block}])`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+
+			if (response) {
+				if (callback) {
+					callback(response)
+				}
+			}
+		})
+	}
+}
+
 export const getPageBlockNfts = (res, blockId, callback) => {
 	return (dispatch) => {
 		let block = res.reduce((rows, item, index) => {

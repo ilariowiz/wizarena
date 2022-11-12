@@ -12,6 +12,7 @@ import Rules from './components/Rules'
 import Tournament from './components/Tournament'
 import Sales from './components/Sales'
 import Shop from './components/Shop'
+import BurningQueue from './components/BurningQueue'
 
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'
@@ -38,6 +39,7 @@ ReactDOM.render(
             <Route path="/tournament" component={Tournament} />
             <Route path="/sales" component={Sales} />
             <Route path="/magicshop" component={Shop} />
+            <Route path="/burningqueue" component={BurningQueue} />
           </Switch>
         </div>
       </BrowserRouter>
