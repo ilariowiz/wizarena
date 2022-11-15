@@ -29,7 +29,8 @@ class Tournament extends Component {
 		this.state = {
             tournament: {},
 			winners: [],
-            loading: true
+            loading: true,
+            yourStat: ""
 		}
 	}
 
@@ -57,7 +58,7 @@ class Tournament extends Component {
 	}
 
     async loadTournament() {
-        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+        const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
 
         const querySnapshot = await getDocs(collection(firebasedb, "stage"))
 
@@ -81,9 +82,21 @@ class Tournament extends Component {
                     const winners5 = []
                     const winners6 = []
 
+                    let yourWizards = 0
+                    let winnerWizards = 0
+
                     subscribed.map((item) => {
                         //console.log(item);
+                        if (item.owner === account.account) {
+                            yourWizards++
+                        }
+
                         if (item.medals[tournamentName]) {
+
+                            //se un tuo wiz ha vinto lo stesso numero di medaglie del round appena concluso è ancora in gara per vincere
+                            if (item.medals[tournamentName] === roundEnded && item.owner === account.account) {
+                                winnerWizards++
+                            }
 
                             //se siamo ad un round inferiore al 5
                             if (parseInt(roundEnded) < 5) {
@@ -105,13 +118,22 @@ class Tournament extends Component {
                         }
                     })
 
+                    //console.log(yourWizards , "/", winnerWizards);
+
                     //console.log(winners);
                     winners.push(winners4)
                     winners.push(winners5)
                     winners.push(winners6)
 
+                    let yourStat;
+                    if (roundEnded === "6") {
+                        yourStat = `Your winning Wizards ${winnerWizards} / ${yourWizards}`
+                    }
+                    else {
+                        yourStat = `Your Wizards still in the game ${winnerWizards} / ${yourWizards}`
+                    }
 
-                    this.setState({ winners, loading: false })
+                    this.setState({ winners, yourStat, loading: false })
                 })
 
             })
@@ -335,7 +357,7 @@ class Tournament extends Component {
     }
 
     renderRoundConcluso(boxW) {
-        const { tournament, winners } = this.state
+        const { tournament, winners, yourStat } = this.state
 
         if (!winners || winners.length === 0) {
             return <div />
@@ -401,6 +423,13 @@ class Tournament extends Component {
                     {this.renderInfoTournament(boxW)}
 
                 </div>
+
+                {
+                    yourStat &&
+                    <p style={{ fontSize: 19, color: 'white', marginBottom: 25 }}>
+                        {yourStat}
+                    </p>
+                }
 
                 {
                     subtitleText6 &&
