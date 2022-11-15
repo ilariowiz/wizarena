@@ -28,12 +28,14 @@ import {
 	buyNft,
 	clearTransaction,
 	getReveal,
-	transferNft
+	transferNft,
+	getInfoNftBurning
 } from '../actions'
 import { MAIN_NET_ID, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, CTA_COLOR, CONTRACT_NAME } from '../actions/types'
 import '../css/Nft.css'
 
 const logoKda = require('../assets/kdalogo2.png')
+const burn_overlay = require('../assets/burn_overlay.png')
 
 
 class Nft extends Component {
@@ -56,7 +58,8 @@ class Nft extends Component {
 			loadingHistory: true,
 			numbersOfMaxMedalsPerTournament: [],
 			historyUpgrades: [],
-			openFightsSection: []
+			openFightsSection: [],
+			infoBurn: {}
 		}
 	}
 
@@ -128,7 +131,7 @@ class Nft extends Component {
 				document.title = `${response.name} - Wizards Arena`
 				//console.log(response)
 
-				const tournaments = ["t1", "t2", "t3", "t4"]
+				const tournaments = ["t1", "t2", "t3", "t4", "t5"]
 
 				response['groupedFights'] = {}
 
@@ -150,6 +153,9 @@ class Nft extends Component {
 					this.loadHistory(idNft)
 					this.getHistoryUpgrades(idNft)
 					this.loadMaxMedalsPerTournament()
+					if (response.confirmBurn) {
+						this.loadInfoBurn(idNft)
+					}
 				})
 			}
 			else {
@@ -157,6 +163,15 @@ class Nft extends Component {
 			}
 		})
 	}
+
+	loadInfoBurn(idNft) {
+        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+        this.props.getInfoNftBurning(chainId, gasPrice, gasLimit, networkUrl, idNft, (response) => {
+            //console.log(response);
+            this.setState({ infoBurn: response })
+        })
+    }
 
 	async getHistoryUpgrades(idNft) {
         const q = query(collection(firebasedb, "history_upgrades"),
@@ -720,11 +735,20 @@ class Nft extends Component {
 	}
 
 	renderLeftMakeOffer() {
-		const { nft } = this.state
+		const { nft, infoBurn } = this.state
+
+		const isBurned = infoBurn && infoBurn.burned
 
 		return (
 			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
 				{this.renderName(nft.name, 0)}
+
+				{
+					isBurned &&
+					<p style={{ fontSize: 22, color: "white", marginTop: 10 }}>
+						BURNED
+					</p>
+				}
 			</div>
 		)
 	}
@@ -1066,7 +1090,7 @@ class Nft extends Component {
 	}
 
 	renderBodySmall() {
-		const { nft, loading } = this.state
+		const { nft, loading, infoBurn } = this.state
 		const { account, reveal } = this.props
 
 		let boxW = Math.floor(window.innerWidth * 90 / 100)
@@ -1074,16 +1098,30 @@ class Nft extends Component {
 
 		let boxTopStyle = { width: boxW, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginTop: 25, marginBottom: 25 }
 
+		let showOverlayBurn = infoBurn && infoBurn.burned
+
 		return (
 			<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
 
 				<div style={boxTopStyle}>
 
-					<img
-						style={{ width: imageWidth, height: imageWidth, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
-						src={getImageUrl(nft.id, reveal)}
-						alt={nft.id}
-					/>
+					<div style={{ position: 'relative' }}>
+						<img
+							style={{ width: imageWidth, height: imageWidth, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+							src={getImageUrl(nft.id, reveal)}
+							alt={nft.id}
+						/>
+
+						{
+							showOverlayBurn ?
+							<img
+								style={{ width: imageWidth, height: imageWidth, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', position: 'absolute', top: 0, left: 0 }}
+								src={burn_overlay}
+								alt={nft.id}
+							/>
+							: null
+						}
+					</div>
 
 					<div style={{ flexDirection: 'column', width: imageWidth, height: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }}>
 
@@ -1157,10 +1195,10 @@ class Nft extends Component {
 	}
 
 	renderBodyLarge() {
-		const { nft, loading } = this.state
+		const { nft, loading, infoBurn } = this.state
 		const { account, reveal } = this.props
 
-		//console.log(account);
+		//console.log(nft);
 
 		let boxW = Math.floor(window.innerWidth * 90 / 100)
 		if (boxW > 1100) boxW = 1100;
@@ -1171,16 +1209,30 @@ class Nft extends Component {
 
 		let boxTopStyle = { width: boxW, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 25, marginBottom: 25 }
 
+		let showOverlayBurn = infoBurn && infoBurn.burned
+
 		return (
 			<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
 
 				<div style={boxTopStyle}>
 
-					<img
-						style={{ width: 370, height: 370, borderRadius: 2, marginRight: 30, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
-						src={getImageUrl(nft.id, reveal)}
-						alt={nft.id}
-					/>
+					<div style={{ position: 'relative', marginRight: 30 }}>
+						<img
+							style={{ width: 370, height: 370, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+							src={getImageUrl(nft.id, reveal)}
+							alt={nft.id}
+						/>
+
+						{
+							showOverlayBurn ?
+							<img
+								style={{ width: 370, height: 370, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', position: 'absolute', top: 0, left: 0 }}
+								src={burn_overlay}
+								alt={nft.id}
+							/>
+							: null
+						}
+					</div>
 
 					<div style={{ flexDirection: 'column', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
 
@@ -1531,5 +1583,6 @@ export default connect(mapStateToProps, {
 	buyNft,
 	clearTransaction,
 	getReveal,
-	transferNft
+	transferNft,
+	getInfoNftBurning
 })(Nft);
