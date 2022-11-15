@@ -77,15 +77,40 @@ class Tournament extends Component {
                 this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, (subscribed) => {
 
                     const winners = []
+                    const winners4 = []
+                    const winners5 = []
+                    const winners6 = []
 
                     subscribed.map((item) => {
                         //console.log(item);
-                        if (item.medals[tournamentName] && item.medals[tournamentName] === roundEnded) {
-                            winners.push(item)
+                        if (item.medals[tournamentName]) {
+
+                            //se siamo ad un round inferiore al 5
+                            if (parseInt(roundEnded) < 5) {
+                                if (item.medals[tournamentName] === roundEnded) {
+                                    winners4.push(item)
+                                }
+                            }
+                            else {
+                                if (item.medals[tournamentName] === "4") {
+                                    winners4.push(item)
+                                }
+                                if (item.medals[tournamentName] === "5") {
+                                    winners5.push(item)
+                                }
+                                if (item.medals[tournamentName] === "6") {
+                                    winners6.push(item)
+                                }
+                            }
                         }
                     })
 
                     //console.log(winners);
+                    winners.push(winners4)
+                    winners.push(winners5)
+                    winners.push(winners6)
+
+
                     this.setState({ winners, loading: false })
                 })
 
@@ -187,7 +212,7 @@ class Tournament extends Component {
     }
 
     renderBody(isMobile) {
-        const { tournament, winners } = this.state
+        const { tournament } = this.state
         const { buyin, reveal, subscribed } = this.props
 
         const { boxW } = getBoxWidth(isMobile)
@@ -209,7 +234,6 @@ class Tournament extends Component {
         //console.log(tournament);
 
         const roundName = tournament.name.split("_")[1]
-        const roundEnded = tournament.roundEnded
 
         //LE ISCRIZIONI SONO APERTE
 		if (tournament && tournament.canSubscribe) {
@@ -307,8 +331,20 @@ class Tournament extends Component {
 			)
 		}
 
+        return this.renderRoundConcluso(boxW)
+    }
+
+    renderRoundConcluso(boxW) {
+        const { tournament, winners } = this.state
+
+        if (!winners || winners.length === 0) {
+            return <div />
+        }
+
+        const roundName = tournament.name.split("_")[1]
+        const roundEnded = tournament.roundEnded
+
         // TORNEO/ROUND CONCLUSO
-        //console.log(winners);
         const roundValue = roundName.replace("r", "")
 
         const start = moment(tournament.start.seconds * 1000) //milliseconds
@@ -320,13 +356,28 @@ class Tournament extends Component {
             text = `The round started ${start.fromNow()}`
         }
 
-        let subtitleText = winners.length > 1 ?  `The ${winners.length} winners of ${roundEnded} medals:` : `The winner of ${roundEnded} medals:`
+        //console.log(winners);
+
+        const winners4 = winners[0]
+        const winners5 = winners[1]
+        const winners6 = winners[2]
+
+        let subtitleText4 = ""
+        let subtitleText5 = ""
+        let subtitleText6 = ""
+        if (parseInt(roundEnded) < 5) {
+            subtitleText4 = winners4.length > 1 ?  `The ${winners4.length} winners of ${roundEnded} medals:` : `The winner of ${roundEnded} medals:`
+        }
+        else {
+            subtitleText4 = winners4.length > 1 ? `The ${winners4.length} winners of 4 medals:` : `The winner of 4 medals:`
+            subtitleText5 = winners5.length > 0 ? `The ${winners5.length} winners of 5 medals:` : ""
+            subtitleText6 = winners6.length > 0 ? `The ${winners6.length} winners of 6 medals:` : ""
+        }
 
         let titleText = tournament.tournamentEnd ?
                         "The tournament is over! Let's see who the winners are"
                         :
                         `Partial results of this tournament (round ${roundEnded}/${tournament.nRounds} concluded)`
-
 
 
         return (
@@ -351,12 +402,42 @@ class Tournament extends Component {
 
                 </div>
 
-                <p style={{ fontSize: 20, color: 'white', marginBottom: 15 }}>
-                    {subtitleText}
+                {
+                    subtitleText6 &&
+                    <div style={{ flexDirection: 'column', marginBottom: 40 }}>
+                        <p style={{ fontSize: 24, color: 'white', marginBottom: 15 }}>
+                            {subtitleText6}
+                        </p>
+
+                        <div style={{ flexWrap: 'wrap' }}>
+                            {winners6.map((item, index) => {
+                                return this.renderRow(item, index, 260);
+                            })}
+                        </div>
+                    </div>
+                }
+
+                {
+                    subtitleText5 &&
+                    <div style={{ flexDirection: 'column', marginBottom: 40 }}>
+                        <p style={{ fontSize: 24, color: 'white', marginBottom: 15 }}>
+                            {subtitleText5}
+                        </p>
+
+                        <div style={{ flexWrap: 'wrap' }}>
+                            {winners5.map((item, index) => {
+                                return this.renderRow(item, index, 260);
+                            })}
+                        </div>
+                    </div>
+                }
+
+                <p style={{ fontSize: 24, color: 'white', marginBottom: 15 }}>
+                    {subtitleText4}
                 </p>
 
                 <div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
-                    {winners.map((item, index) => {
+                    {winners4.map((item, index) => {
                         return this.renderRow(item, index, 260);
                     })}
                 </div>
