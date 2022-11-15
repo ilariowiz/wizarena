@@ -12,7 +12,8 @@ import { BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID } from '../actions/
 import {
     setNetworkSettings,
     setNetworkUrl,
-    loadBurningNftInfo
+    loadBurningNftInfo,
+    getBurningQueue
 } from '../actions'
 import '../css/Nft.css'
 
@@ -42,6 +43,17 @@ class BurningQueue extends Component {
     async loadQueue() {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
+        this.props.getBurningQueue(chainId, gasPrice, gasLimit, networkUrl, (response) => {
+
+            response.sort((a, b) => {
+                //console.log(moment(b.timestamp.timep));
+                return moment(b.timestamp.timep) - moment(a.timestamp.timep)
+            })
+
+            this.setState({ queue: response, loading: false })
+        })
+
+        /*
         let q = query(collection(firebasedb, "burning_queue"))
 
         const querySnapshot = await getDocs(q)
@@ -61,6 +73,7 @@ class BurningQueue extends Component {
         //console.log(queue);
 
         this.setState({ queue, loading: false })
+        */
 	}
 
     renderNft(item, index) {
@@ -88,7 +101,7 @@ class BurningQueue extends Component {
                     Burning Queue
                 </p>
                 <p style={{ fontSize: 16, color: '#c2c0c0', marginBottom: 30 }}>
-                    updated once a day
+                    in real time
                 </p>
 
                 {
@@ -173,5 +186,6 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
     setNetworkSettings,
     setNetworkUrl,
-    loadBurningNftInfo
+    loadBurningNftInfo,
+    getBurningQueue
 })(BurningQueue)

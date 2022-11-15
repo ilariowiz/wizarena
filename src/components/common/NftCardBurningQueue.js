@@ -9,7 +9,7 @@ class NftCardBurningQueue extends Component {
 	render() {
 		const { item, history, width, reveal } = this.props
 
-		const from = moment(item.timestamp).fromNow()
+		const from = moment(item.timestamp.timep).fromNow()
 
 		return (
 			<div
