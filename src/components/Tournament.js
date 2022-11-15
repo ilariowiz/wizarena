@@ -404,10 +404,14 @@ class Tournament extends Component {
 
                 {
                     subtitleText6 &&
-                    <div style={{ flexDirection: 'column', marginBottom: 40 }}>
-                        <p style={{ fontSize: 24, color: 'white', marginBottom: 15 }}>
-                            {subtitleText6}
-                        </p>
+                    <div style={{ flexDirection: 'column', marginBottom: 60 }}>
+                        <div
+                            style={Object.assign({}, styles.boxPodio, { borderColor: 'gold' })}
+                        >
+                            <p style={{ fontSize: 20, color: 'white' }}>
+                                {subtitleText6}
+                            </p>
+                        </div>
 
                         <div style={{ flexWrap: 'wrap' }}>
                             {winners6.map((item, index) => {
@@ -419,10 +423,12 @@ class Tournament extends Component {
 
                 {
                     subtitleText5 &&
-                    <div style={{ flexDirection: 'column', marginBottom: 40 }}>
-                        <p style={{ fontSize: 24, color: 'white', marginBottom: 15 }}>
-                            {subtitleText5}
-                        </p>
+                    <div style={{ flexDirection: 'column', marginBottom: 60 }}>
+                        <div style={Object.assign({}, styles.boxPodio, { borderColor: 'silver' })}>
+                            <p style={{ fontSize: 20, color: 'white' }}>
+                                {subtitleText5}
+                            </p>
+                        </div>
 
                         <div style={{ flexWrap: 'wrap' }}>
                             {winners5.map((item, index) => {
@@ -432,9 +438,11 @@ class Tournament extends Component {
                     </div>
                 }
 
-                <p style={{ fontSize: 24, color: 'white', marginBottom: 15 }}>
-                    {subtitleText4}
-                </p>
+                <div style={Object.assign({}, styles.boxPodio, { borderColor: '#CD7F32' })}>
+                    <p style={{ fontSize: 20, color: 'white' }}>
+                        {subtitleText4}
+                    </p>
+                </div>
 
                 <div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
                     {winners4.map((item, index) => {
@@ -516,6 +524,14 @@ const styles = {
 		alignItems: 'center',
 		borderRadius: 2,
 	},
+    boxPodio: {
+        padding: 10,
+        borderWidth: 2,
+        borderRadius: 2,
+        borderStyle: 'solid',
+        marginBottom: 15,
+        width: "fit-content"
+    }
 }
 
 const mapStateToProps = (state) => {
