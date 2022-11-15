@@ -216,6 +216,7 @@
         (insert max-items MAX_ITEMS_PER_OWNER {"max": 0})
 
         (insert values WIZ_REVEAL {"value": "0"})
+        (insert values TOURNAMENT_OPEN {"value": "0"})
 
         (coin.create-account WIZ_BANK (create-module-guard "wiz-holdings"))
         (create-account WIZ_BANK (create-module-guard "wiz-holdings"))
@@ -526,7 +527,7 @@
         (enforce (>= price 1.0) "amount must be equal or greater then 1")
         (let (
                 (data (get-wizard-fields-for-id (str-to-int id)))
-                ;(is-staked (wiza.check-nft-is-staked id))
+                ;(is-staked (free.wiza.check-nft-is-staked id))
                 (is-staked false)
             )
             (enforce (= (at "listed" data) false) "this wizard is already listed")
@@ -635,68 +636,97 @@
         )
     )
 
-    (defun set-prizes (winners:list)
+    (defun send-prizes (winners:list)
         (with-capability (ADMIN)
             (map
-                (set-prize)
+                (send-prize)
                 winners
             )
         )
     )
 
-    (defun set-prize (item:object)
+    (defun send-prize (item:object)
         (require-capability (ADMIN))
 
-        (with-default-read prizes (at "address" item)
-          {"balance": 0.0}
-          {"balance":= oldbalance }
-          (write prizes (at "address" item) {"balance": (+ oldbalance (at "prize" item))})
-        )
-    )
-
-    (defun check-address-for-prize (address:string)
-        (at "balance" (read prizes address ["balance"]))
-    )
-
-    (defun withdraw-prize (account:string)
-        (with-capability (ACCOUNT_GUARD account)
-            (with-default-read prizes account
-              {"balance": 0.0}
-              {"balance":= oldbalance }
-              (enforce (> oldbalance 0.0) "you already withdrawn your prize")
-              (install-capability (coin.TRANSFER WIZ_BANK account oldbalance))
-              (coin.transfer WIZ_BANK account oldbalance)
-              (write prizes account {"balance": 0.0})
-              (emit-event (WITHDRAW_PRIZE account oldbalance))
-
-              (with-default-read token-table WIZ_BANK
-                {"balance": 0.0}
-                {"balance":= wizbalance }
-                (update token-table WIZ_BANK {"balance": (- wizbalance oldbalance)})
-              )
+        (let (
+              (address (at "address" item))
+              (prize (at "prize" item))
             )
-        )
-    )
+            (enforce (> prize 0.0) "prize must be greater than 0")
+            (install-capability (coin.TRANSFER WIZ_BANK address prize))
+            (coin.transfer WIZ_BANK address prize)
 
-    (defun force-withdraw-prize (account:string)
-        (with-capability (ADMIN)
-            (with-default-read prizes account
+            (with-default-read token-table WIZ_BANK
               {"balance": 0.0}
-              {"balance":= oldbalance }
-              (enforce (> oldbalance 0.0) "you already withdrawn your prize")
-              (install-capability (coin.TRANSFER WIZ_BANK account oldbalance))
-              (coin.transfer WIZ_BANK account oldbalance)
-              (write prizes account {"balance": 0.0})
-              (emit-event (WITHDRAW_PRIZE account oldbalance))
-
-              (with-default-read token-table WIZ_BANK
-                {"balance": 0.0}
-                {"balance":= wizbalance }
-                (update token-table WIZ_BANK {"balance": (- wizbalance oldbalance)})
-              )
+              {"balance":= wizbalance }
+              (update token-table WIZ_BANK {"balance": (- wizbalance prize)})
             )
+            (emit-event (WITHDRAW_PRIZE address prize))
         )
     )
+
+    ; (defun set-prizes (winners:list)
+    ;     (with-capability (ADMIN)
+    ;         (map
+    ;             (set-prize)
+    ;             winners
+    ;         )
+    ;     )
+    ; )
+    ;
+    ; (defun set-prize (item:object)
+    ;     (require-capability (ADMIN))
+    ;
+    ;     (with-default-read prizes (at "address" item)
+    ;       {"balance": 0.0}
+    ;       {"balance":= oldbalance }
+    ;       (write prizes (at "address" item) {"balance": (+ oldbalance (at "prize" item))})
+    ;     )
+    ; )
+
+    ; (defun check-address-for-prize (address:string)
+    ;     (at "balance" (read prizes address ["balance"]))
+    ; )
+
+    ; (defun withdraw-prize (account:string)
+    ;     (with-capability (ACCOUNT_GUARD account)
+    ;         (with-default-read prizes account
+    ;           {"balance": 0.0}
+    ;           {"balance":= oldbalance }
+    ;           (enforce (> oldbalance 0.0) "you already withdrawn your prize")
+    ;           (install-capability (coin.TRANSFER WIZ_BANK account oldbalance))
+    ;           (coin.transfer WIZ_BANK account oldbalance)
+    ;           (write prizes account {"balance": 0.0})
+    ;           (emit-event (WITHDRAW_PRIZE account oldbalance))
+    ;
+    ;           (with-default-read token-table WIZ_BANK
+    ;             {"balance": 0.0}
+    ;             {"balance":= wizbalance }
+    ;             (update token-table WIZ_BANK {"balance": (- wizbalance oldbalance)})
+    ;           )
+    ;         )
+    ;     )
+    ; )
+
+    ; (defun force-withdraw-prize (account:string)
+    ;     (with-capability (ADMIN)
+    ;         (with-default-read prizes account
+    ;           {"balance": 0.0}
+    ;           {"balance":= oldbalance }
+    ;           (enforce (> oldbalance 0.0) "you already withdrawn your prize")
+    ;           (install-capability (coin.TRANSFER WIZ_BANK account oldbalance))
+    ;           (coin.transfer WIZ_BANK account oldbalance)
+    ;           (write prizes account {"balance": 0.0})
+    ;           (emit-event (WITHDRAW_PRIZE account oldbalance))
+    ;
+    ;           (with-default-read token-table WIZ_BANK
+    ;             {"balance": 0.0}
+    ;             {"balance":= wizbalance }
+    ;             (update token-table WIZ_BANK {"balance": (- wizbalance oldbalance)})
+    ;           )
+    ;         )
+    ;     )
+    ; )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;; UPGRADE ;;;;;;;;;
@@ -773,7 +803,7 @@
     (defun add-to-burning-queue (idnft:string account:string)
         (let (
                 (data (get-wizard-fields-for-id (str-to-int idnft)))
-                ;(is-staked (wiza.check-nft-is-staked idnft))
+                ;(is-staked (free.wiza.check-nft-is-staked idnft))
                 (is-staked false)
             )
             (enforce (= (at "listed" data) false) "You can't burn a listed wizard")
@@ -817,12 +847,10 @@
     )
 
     (defun get-burning-queue ()
-        (with-capability (ADMIN)
-            (select burning-queue-table (and?
-                (where 'burned (= false))
-                (where 'confirmBurn (= true))
-            ))
-        )
+        (select burning-queue-table (and?
+            (where 'burned (= false))
+            (where 'confirmBurn (= true))
+        ))
     )
 
     (defun get-nft-in-burning-queue (idnft:string)
@@ -864,7 +892,7 @@
         (with-capability (OWNER sender id)
             (let (
                     (data (get-wizard-fields-for-id (str-to-int id)))
-                    ;(is-staked (wiza.check-nft-is-staked id))
+                    ;(is-staked (free.wiza.check-nft-is-staked id))
                     (is-staked false)
                 )
                 (enforce (= (at "listed" data) false) "A listed wizard cannot be transferred")
@@ -883,14 +911,14 @@
         )
     )
 
-    (defun reset-count(key:string)
-        @doc "Reset count of a key"
-        (with-capability (ADMIN)
-            (update counts key
-                {"count": 0}
-            )
-        )
-    )
+    ; (defun reset-count(key:string)
+    ;     @doc "Reset count of a key"
+    ;     (with-capability (ADMIN)
+    ;         (update counts key
+    ;             {"count": 0}
+    ;         )
+    ;     )
+    ; )
 
     (defun set-value(key:string value:string)
         @doc "Sets the value for a key to store in a table"
@@ -901,14 +929,14 @@
         )
     )
 
-    (defun write-new-value(key:string value:string)
-        @doc "Sets the value for a key to store in a table"
-        (with-capability (ADMIN)
-            (write values key
-                {"value": value}
-            )
-        )
-    )
+    ; (defun write-new-value(key:string value:string)
+    ;     @doc "Sets the value for a key to store in a table"
+    ;     (with-capability (ADMIN)
+    ;         (write values key
+    ;             {"value": value}
+    ;         )
+    ;     )
+    ; )
 
     (defun set-value-tournament(key:string value:decimal)
         @doc "Set values for tournament"
