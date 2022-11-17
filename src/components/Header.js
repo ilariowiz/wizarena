@@ -63,7 +63,7 @@ class Header extends Component {
 		const { showPanel } = this.state
 		const { isMobile, circulatingSupply, account, netId, isXWallet } = this.props
 
-		const panelWidth = isMobile ? boxW : boxW * 60 / 100
+		const panelWidth = isMobile ? "100%" : boxW * 60 / 100
 
 		return (
 			<div style={styles.panelShadow}>
