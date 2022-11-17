@@ -7,9 +7,9 @@ import '../../css/NftCard.css'
 
 class NftCardBurningQueue extends Component {
 	render() {
-		const { item, history, width, reveal } = this.props
+		const { item, history, width, reveal, isBurned } = this.props
 
-		const from = moment(item.timestamp.timep).fromNow()
+		const from = !isBurned ? moment(item.timestamp.timep).fromNow() : ""
 
 		return (
 			<div
@@ -29,15 +29,31 @@ class NftCardBurningQueue extends Component {
 							#{item.idnft}
 						</p>
 
-						<div style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
-							<p style={{ color: 'white', fontSize: 16, marginRight: 10, lineHeight: 1 }}>
-								IN QUEUE
-							</p>
+						{
+							!isBurned &&
+							<div style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+								<p style={{ color: 'white', fontSize: 16, marginRight: 10, lineHeight: 1 }}>
+									IN QUEUE
+								</p>
 
-							<p style={{ color: '#c2c0c0', fontSize: 14, marginRight: 10, lineHeight: 1 }}>
-								{from}
-							</p>
-						</div>
+								<p style={{ color: '#c2c0c0', fontSize: 14, marginRight: 10, lineHeight: 1 }}>
+									{from}
+								</p>
+							</div>
+						}
+
+						{
+							item.rank &&
+							<div style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
+								<p style={{ color: 'white', fontSize: 16, marginRight: 10, lineHeight: 1 }}>
+									RANK
+								</p>
+
+								<p style={{ color: '#c2c0c0', fontSize: 14, marginRight: 10, lineHeight: 1 }}>
+									{item.rank}
+								</p>
+							</div>
+						}
 
 					</div>
 

@@ -24,7 +24,8 @@ class BurningQueue extends Component {
 
         this.state = {
             loading: true,
-            queue: []
+            queue: [],
+            burned: []
         }
     }
 
@@ -36,6 +37,7 @@ class BurningQueue extends Component {
 
         setTimeout(() => {
             this.loadQueue()
+            this.loadBurned()
         }, 500)
 
 	}
@@ -53,30 +55,32 @@ class BurningQueue extends Component {
             this.setState({ queue: response, loading: false })
         })
 
-        /*
-        let q = query(collection(firebasedb, "burning_queue"))
+
+	}
+
+    async loadBurned() {
+        let q = query(collection(firebasedb, "nft_burned"))
 
         const querySnapshot = await getDocs(q)
 
-        let queue = []
-
+        let burned = []
         querySnapshot.forEach(doc => {
             //console.log(doc.data());
             const d = doc.data()
-            queue = JSON.parse(d.queue)
+
+            burned.push(d)
         })
 
-        queue.sort((a, b) => {
-            return moment(b.timestamp) - moment(a.timestamp)
+        //console.log(burned[0].timestamp);
+        burned.sort((a ,b) => {
+            return moment(b.timestamp.seconds * 1000) - moment(a.timestamp.seconds * 1000)
         })
+        //console.log(burned);
 
-        //console.log(queue);
+        this.setState({ burned })
+    }
 
-        this.setState({ queue, loading: false })
-        */
-	}
-
-    renderNft(item, index) {
+    renderNft(item, index, isBurned) {
 
         return (
             <div style={{ marginBottom: 15 }} key={index}>
@@ -85,13 +89,14 @@ class BurningQueue extends Component {
                     key={index}
                     history={this.props.history}
                     width={260}
+                    isBurned={isBurned}
                 />
             </div>
 		)
     }
 
     renderBody(isMobile) {
-        const { loading, queue } = this.state
+        const { loading, queue, burned } = this.state
 
         const { boxW } = getBoxWidth(isMobile)
 
@@ -112,9 +117,19 @@ class BurningQueue extends Component {
 					: null
 				}
 
-                <div style={{ width: '100%', flexWrap: 'wrap' }}>
+                <div style={{ width: '100%', flexWrap: 'wrap', marginBottom: 50 }}>
                     {queue.map((item, index) => {
-                        return this.renderNft(item, index)
+                        return this.renderNft(item, index, false)
+                    })}
+                </div>
+
+                <p style={{ fontSize: 28, color: 'white', marginBottom: 30 }}>
+                    Burned NFTs
+                </p>
+
+                <div style={{ width: '100%', flexWrap: 'wrap', marginBottom: 50 }}>
+                    {burned.map((item, index) => {
+                        return this.renderNft(item, index, true)
                     })}
                 </div>
             </div>
