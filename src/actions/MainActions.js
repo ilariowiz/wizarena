@@ -30,7 +30,8 @@ import {
 	CONTRACT_NAME_WIZA,
 	WIZA_TOKEN_BANK,
 	SAVE_WIZA_BALANCE,
-	LOAD_WIZARDS_STAKED
+	LOAD_WIZARDS_STAKED,
+	STORE_CIRCULATING_SUPPLY
 } from './types'
 
 
@@ -1068,6 +1069,21 @@ export const getWizaBalance = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit =
 			}
 
 			dispatch({ type: SAVE_WIZA_BALANCE, payload: balance })
+		})
+	}
+}
+
+export const getCirculatingSupply = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 50000, networkUrl) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_WIZA}.get-total-mined)`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			dispatch({ type: STORE_CIRCULATING_SUPPLY, payload: _.floor(response.decimal, 2) })
 		})
 	}
 }

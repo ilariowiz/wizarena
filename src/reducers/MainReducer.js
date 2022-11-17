@@ -21,7 +21,8 @@ import {
 	LOAD_SUBSCRIBED,
 	STORE_FILTERS_STATS,
 	SAVE_WIZA_BALANCE,
-	LOAD_WIZARDS_STAKED
+	LOAD_WIZARDS_STAKED,
+	STORE_CIRCULATING_SUPPLY
 } from '../actions/types'
 
 
@@ -49,7 +50,8 @@ const INITIAL_STATE = {
 	statSearched: [],
 	subscribedSpellGraph: {},
 	wizaBalance: 0,
-	wizardsStaked: 0
+	wizardsStaked: 0,
+	circulatingSupply: 0,
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -118,6 +120,8 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, wizaBalance: action.payload }
 		case LOAD_WIZARDS_STAKED:
 			return { ...state, wizardsStaked: action.payload }
+		case STORE_CIRCULATING_SUPPLY:
+			return { ...state, circulatingSupply: action.payload }
 		case LOGOUT:
 			return { ...state, account: {}, transactionState: {}, showModalTx: false, isConnectWallet: false, isXWallet: false, userMintedNfts: [], wizaBalance: 0}
 		default:

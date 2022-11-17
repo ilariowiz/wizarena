@@ -77,3 +77,13 @@
 	z-index: 120;
 	justify-content: center;
 }
+
+
+.slide-panel-container {
+	position: fixed;
+	width: 0;
+	height: 100%;
+	top: 0;
+	right: 0;
+	transition: 0.5s;
+}
