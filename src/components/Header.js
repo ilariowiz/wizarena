@@ -66,13 +66,12 @@ class Header extends Component {
 		const panelWidth = isMobile ? boxW : boxW * 60 / 100
 
 		return (
-			<div
-				className="slide-panel-container"
-				style={Object.assign({}, styles.panelShadow, { width: showPanel ? "100%" : 0 })}
-				onClick={() => this.setState({ showPanel: false })}
-			>
+			<div style={styles.panelShadow}>
 
-				<div style={Object.assign({}, styles.panel, { width: showPanel ? panelWidth : 0 })}>
+				<div
+					className={showPanel ? "slide-panel-container-on" : "slide-panel-container-off"}
+					style={Object.assign({}, styles.panel, { width: showPanel ? panelWidth : 0 })}
+				>
 
 					<div style={styles.headerPanel}>
 
@@ -369,6 +368,12 @@ class Header extends Component {
 
 					</div>
 
+					<div
+						className={this.state.showPanel ? "bg-slide-on" : "bg-slide-off"}
+						onClick={() => this.setState({ showPanel: false })}
+						style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#00000090' }}
+					/>
+
 					{this.renderSlidePanel(boxW)}
 				</div>
 			</div>
@@ -378,8 +383,8 @@ class Header extends Component {
 
 const styles = {
 	panelShadow: {
-		backgroundColor: "#00000090",
-		justifyContent: 'flex-end'
+		justifyContent: 'flex-end',
+		position: 'absolute'
 	},
 	panel: {
 		backgroundColor: BACKGROUND_COLOR,

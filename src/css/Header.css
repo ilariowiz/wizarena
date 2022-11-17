@@ -78,12 +78,33 @@
 	justify-content: center;
 }
 
+.slide-panel-container-off {
+	visibility: hidden;
+	opacity: 0;
+	transition: visibility 0s, opacity 0.5s linear;
+}
 
-.slide-panel-container {
+.slide-panel-container-on {
 	position: fixed;
 	width: 0;
 	height: 100%;
 	top: 0;
 	right: 0;
-	transition: 0.5s;
+	transition: 0.3s;
+	opacity: 1;
+}
+
+.bg-slide-off {
+    visibility: hidden;
+	opacity: 0;
+	transition: visibility 0.5s, opacity 0.5s, width 0s linear;
+	width: 0;
+}
+
+.bg-slide-on {
+    visibility: visible;
+	transition: visibility 0s linear 2s, opacity 0.15s linear;
+	transition-delay: 0s;
+    opacity: 1;
+	width: 100%;
 }
