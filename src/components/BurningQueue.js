@@ -124,7 +124,7 @@ class BurningQueue extends Component {
                 </div>
 
                 <p style={{ fontSize: 28, color: 'white', marginBottom: 30 }}>
-                    Burned NFTs
+                    Burned NFTs ({burned.length})
                 </p>
 
                 <div style={{ width: '100%', flexWrap: 'wrap', marginBottom: 50 }}>
