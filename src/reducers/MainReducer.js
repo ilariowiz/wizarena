@@ -123,7 +123,7 @@ export default (state = INITIAL_STATE, action) => {
 		case STORE_CIRCULATING_SUPPLY:
 			return { ...state, circulatingSupply: action.payload }
 		case LOGOUT:
-			return { ...state, account: {}, transactionState: {}, showModalTx: false, isConnectWallet: false, isXWallet: false, userMintedNfts: [], wizaBalance: 0}
+			return { ...state, account: {}, transactionState: {}, showModalTx: false, isConnectWallet: false, isXWallet: false, userMintedNfts: [], wizaBalance: 0, wizardsStaked: 0}
 		default:
 			return state
 	}
