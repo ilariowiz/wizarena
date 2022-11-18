@@ -83,6 +83,7 @@ class Collection extends Component {
 				this.props.getPageBlockNfts(res, this.props.nftsBlockId || 0, (nftsToShow) => {
 					//console.log("loadAllNftsIds completed");
 					this.setState({ loading: false, nftsToShow })
+
 				})
 			})
 		}
@@ -96,6 +97,7 @@ class Collection extends Component {
 
 		this.props.getPageBlockNfts(allNfts, id, (nftsToShow) => {
 			this.setState({ nftsToShow, loading: false })
+			window.scrollTo({ top: 0, behavior: 'smooth' });
 		})
 	}
 
