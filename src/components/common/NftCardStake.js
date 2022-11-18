@@ -57,6 +57,9 @@ class NftCardStake extends Component {
 			if (response.status === "failure") {
 				this.setState({ staked: false, stakeInfo: {}, loading: false })
 			}
+            else if (response.staked === false) {
+                this.setState({ staked: false, stakeInfo: {}, loading: false })
+            }
 			else {
 				this.setState({ staked: response.staked, stakeInfo: response, loading: false })
 
