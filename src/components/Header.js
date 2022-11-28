@@ -165,7 +165,7 @@ class Header extends Component {
 							</p>
 
 							<p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
-								{circulatingSupply && circulatingSupply.toLocaleString() || '...'}
+								{circulatingSupply ? circulatingSupply.toLocaleString() : '...'}
 							</p>
 							<p style={{ fontSize: 18, color: 'white' }}>
 								({this.getPct()})

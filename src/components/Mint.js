@@ -8,7 +8,6 @@ import ModalConnectionWidget from './common/ModalConnectionWidget'
 import getBoxWidth from './common/GetBoxW'
 import {
 	mintNft,
-	signTransaction,
 	clearTransaction,
 	getNumberMinted,
 	loadMaxItemsPerWallet,
@@ -561,7 +560,6 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
 	mintNft,
-	signTransaction,
 	clearTransaction,
 	getNumberMinted,
 	loadMaxItemsPerWallet,
