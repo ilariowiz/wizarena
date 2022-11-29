@@ -162,6 +162,8 @@ export const connectWalletConnect = (netId, chainId, gasPrice, gasLimit, network
 		  },
 		});
 
+		//console.log(signClient);
+
 		const requiredNamespaces = {
 			kadena: {
 				methods: ["kadena_sign", "kadena_quicksign"],
@@ -174,7 +176,7 @@ export const connectWalletConnect = (netId, chainId, gasPrice, gasLimit, network
 			const pairings = signClient.core.pairing.getPairings()
 			//console.log(pairings);
 			let topic = pairings && pairings.length > 0 && pairings[pairings.length - 1].topic
-			console.log(topic);
+			//console.log(topic);
 
 			const { uri, approval } = await signClient.connect({
 				pairingTopic: topic,
@@ -184,8 +186,9 @@ export const connectWalletConnect = (netId, chainId, gasPrice, gasLimit, network
 			//console.log(uri);
 
 			if (uri) {
-				QRCodeModal.open(uri, () => {
-					console.log("qr code modal closed");
+				QRCodeModal.open(uri, () => {}, {
+					desktopLinks: [],
+            		mobileLinks: [],
 				})
 			}
 
