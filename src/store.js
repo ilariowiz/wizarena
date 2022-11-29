@@ -8,7 +8,7 @@ import reducers from './reducers';
 
 const saveSubsetMain = createFilter(
 	'mainReducer',
-	['account', 'chainId', 'isXWallet', 'reveal']
+	['account', 'chainId', 'isXWallet', 'reveal', 'isQRWalletConnect', 'qrWalletConnectClient']
 )
 
 const persistConfig = {
