@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Media from 'react-media';
-import { getDocs, collection, query, where } from "firebase/firestore";
+import { getDocs, collection, query } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import moment from 'moment'
 import Header from './Header'
