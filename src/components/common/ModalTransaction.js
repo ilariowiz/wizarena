@@ -95,9 +95,7 @@ class ModalTransaction extends Component {
 	}
 
 	getContent() {
-		const { transactionState, isXWallet, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, wizaCostToUpgrade } = this.props
-
-		//console.log(isXWallet)
+		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, wizaCostToUpgrade } = this.props
 
 		//CASO INIZIALE, signingCmd != null in transactionState
 		let title = 'Signing transaction'
@@ -156,7 +154,7 @@ class ModalTransaction extends Component {
 				}
 
 				buttonText = 'Open Wallet'
-				action = async () => this.props.signTransaction(transactionState.cmdToConfirm, isXWallet, netId, networkUrl, account, chainId, idNft, () => this.checkTransaction())
+				action = async () => this.props.signTransaction(transactionState.cmdToConfirm, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, idNft, () => this.checkTransaction())
 				loading = false
 				canCancel = true
 			}
@@ -345,9 +343,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { transactionState, isXWallet, netId, networkUrl, account, chainId, gasPrice, gasLimit } = state.mainReducer
+	const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, gasPrice, gasLimit } = state.mainReducer
 
-	return { transactionState, isXWallet, netId, networkUrl, account, chainId, gasPrice, gasLimit }
+	return { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, gasPrice, gasLimit }
 }
 
 export default connect(mapStateToProps, {

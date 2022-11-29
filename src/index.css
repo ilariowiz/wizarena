@@ -42,3 +42,15 @@ p {
   padding: 0;
   margin: 0;
 }
+
+#walletconnect-wrapper div {
+    display: block;
+}
+
+.walletconnect-modal__header {
+    display: flex !important;
+}
+
+.walletconnect-modal__mobile__toggle {
+    display: flex !important;
+}

@@ -15,10 +15,6 @@ class ModalConnectionWidget extends Component {
 			<div className={classContainer}>
 				<div style={Object.assign({}, styles.subcontainer, { width })}>
 
-					<p style={{ color: 'white', fontSize: 18 }}>
-						Paste your k: wallet
-					</p>
-
 					<ConnectionWidget
 						callback={onCloseModal}
 					/>
@@ -42,7 +38,7 @@ class ModalConnectionWidget extends Component {
 
 const styles = {
 	subcontainer: {
-		height: 300,
+		minHeight: 300,
 		backgroundColor: BACKGROUND_COLOR,
 		borderRadius: 2,
 		borderColor: TEXT_SECONDARY_COLOR,

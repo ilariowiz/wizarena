@@ -1,4 +1,6 @@
 import Pact from "pact-lang-api";
+import SignClient from "@walletconnect/sign-client";
+import QRCodeModal from "@walletconnect/qrcode-modal";
 import _ from 'lodash'
 import {
 	CONTRACT_NAME,
@@ -15,6 +17,8 @@ import {
 	CLEAR_TRANSACTION_STATE,
 	CLEAR_USER,
 	SET_IS_X_WALLET,
+	SET_IS_WALLET_CONNECT_QR,
+	SET_QR_WALLET_CONNECT_CLIENT,
 	LOAD_ALL_NFTS_IDS,
 	SET_BLOCK_ID,
 	COUNT_MINTED,
@@ -75,65 +79,152 @@ export const setIsXwallet = (payload) => {
 	}
 }
 
+export const setIsWalletConnectQR = (payload) => {
+	return {
+		type: SET_IS_WALLET_CONNECT_QR,
+		payload
+	}
+}
 
-export const setConnectedWallet = (account, isXWallet, netId, chainId, callback) => {
+export const setQrWalletConnectClient = (payload) => {
+	return {
+		type: SET_QR_WALLET_CONNECT_CLIENT,
+		payload
+	}
+}
+
+export const connectXWallet = (netId, chainId, gasPrice, gasLimit, networkUrl, callback) => {
 	return async (dispatch) => {
-
 		let error;
+		let res;
 
-		if (account != null) {
-			if (isXWallet) {
+		connectlabel: try {
+			await window.kadena.request({ method: "kda_disconnect", networkId: netId })
 
-				connectlabel: try {
-					await window.kadena.request({ method: "kda_disconnect", networkId: netId })
+			res = await window.kadena.request({ method: "kda_connect", networkId: netId })
 
-					const res = await window.kadena.request({ method: "kda_connect", networkId: netId })
+			//console.log(res)
 
-					//console.log(res)
-
-					if (res.status !== "success") {
-						//console.log(`Could not connect to X Wallet`)
-						error = `Could not connect to X Wallet`
-						dispatch(setIsConnectWallet(false))
-						break connectlabel
-					}
-
-					if (res.account && res.account.account !== account.account) {
-						//console.log("Tried to connect to X Wallet but not with the account entered. Make sure you have logged into the right account in X Wallet")
-						error = "Tried to connect to X Wallet but not with the account entered. Make sure you have logged into the right account in X Wallet"
-						dispatch(setIsConnectWallet(false))
-						break connectlabel
-					}
-
-					if (res.account && res.account.chainId !== chainId) {
-						//console.log(`You need to select chain ${chainId} from X Wallet`)
-						error = `You need to select chain ${chainId} from X Wallet`
-						dispatch(setIsConnectWallet(false))
-						break connectlabel
-					}
-				}
-				catch (e) {
-					//console.log(e)
-					dispatch(setIsConnectWallet(false))
-				}
+			if (res.status !== "success") {
+				//console.log(`Could not connect to X Wallet`)
+				error = `Could not connect to X Wallet`
+				dispatch(setIsConnectWallet(false))
+				break connectlabel
 			}
 
-			//console.log(isXWallet)
-
-			dispatch(setIsXwallet(isXWallet))
+			/*
+			if (res.account && res.account.chainId !== chainId) {
+				//console.log(`You need to select chain ${chainId} from X Wallet`)
+				error = `You need to select chain ${chainId} from X Wallet`
+				dispatch(setIsConnectWallet(false))
+				break connectlabel
+			}
+			*/
 		}
-
-		//console.log(error)
+		catch (e) {
+			//console.log(e)
+			dispatch(setIsConnectWallet(false))
+		}
 
 		if (error) {
-			dispatch(logout(isXWallet, netId))
+			dispatch(logout(true, netId))
 		}
+		else {
+			console.log(res);
+			dispatch(setIsXwallet(true))
 
-		if (callback) {
-			callback(error)
+			dispatch(fetchAccountDetails(res.account.account, chainId, gasPrice, gasLimit, networkUrl, callback))
+
 		}
 	}
 }
+
+export const connectChainweaver = (account, chainId, gasPrice, gasLimit, networkUrl, callback) => {
+	return (dispatch) => {
+		dispatch(setIsXwallet(false))
+		dispatch(setIsWalletConnectQR(false))
+
+		dispatch(fetchAccountDetails(account, chainId, gasPrice, gasLimit, networkUrl, callback))
+	}
+}
+
+
+export const connectWalletConnect = (netId, chainId, gasPrice, gasLimit, networkUrl, callback) => {
+	return async (dispatch) => {
+
+		const signClient = await SignClient.init({
+		  projectId: process.env.REACT_APP_WALLET_CONNECT_ID,
+		  metadata: {
+		    name: "WizardsArena",
+		    description: "Wizards Arena NFTGame",
+		    url: "https://www.wizardsarena.net",
+		    icons: ["https://firebasestorage.googleapis.com/v0/b/raritysniperkda.appspot.com/o/android-chrome-384x384.png?alt=media&token=e5946e6e-ac87-446a-91f4-f6144906ef22"],
+		  },
+		});
+
+		const requiredNamespaces = {
+			kadena: {
+				methods: ["kadena_sign", "kadena_quicksign"],
+				chains: ["kadena:mainnet01", "kadena:testnet04"],
+				events: ["kadena_transaction_updated"]
+			}
+		}
+
+		try {
+			const pairings = signClient.core.pairing.getPairings()
+			//console.log(pairings);
+			let topic = pairings && pairings.length > 0 && pairings[pairings.length - 1].topic
+			console.log(topic);
+
+			const { uri, approval } = await signClient.connect({
+				pairingTopic: topic,
+				requiredNamespaces
+			})
+
+			//console.log(uri);
+
+			if (uri) {
+				QRCodeModal.open(uri, () => {
+					console.log("qr code modal closed");
+				})
+			}
+
+			const session = await approval()
+
+			dispatch(setIsWalletConnectQR(true))
+
+			//console.log(client);
+			dispatch(setQrWalletConnectClient({ pairingTopic: session.topic }))
+
+			const accounts = session.namespaces["kadena"].accounts.map((item) => {
+				//console.log(item);
+				let normalAccountName = item;
+				["mainnet01", "testnet04"].forEach(chain => {
+					normalAccountName = normalAccountName.replace("**", ":").replace(`kadena:${chain}:`, "")
+				})
+				return normalAccountName
+			})
+
+			//console.log(accounts);
+
+			if (accounts && accounts.length > 0) {
+				dispatch(fetchAccountDetails(accounts[0], chainId, gasPrice, gasLimit, networkUrl, callback))
+			}
+
+			QRCodeModal.close()
+
+		}
+		catch(e) {
+			console.log(e);
+			dispatch(logout(false, netId))
+			dispatch(setQrWalletConnectClient(undefined))
+		}
+		finally {
+			QRCodeModal.close()
+		}
+	}
+}
+
 
 
 export const fetchAccountDetails = (accountName, chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, callback) => {
@@ -377,7 +468,8 @@ export const loadUserMintedNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 				})
 
 				//block sono tutti gli oggetti dell'utente
-				dispatch(loadBlockUserMintedNfts(chainId, gasPrice, 10000, networkUrl, block, callback))
+				let userMintedGasLimit = block.length * 270
+				dispatch(loadBlockUserMintedNfts(chainId, gasPrice, userMintedGasLimit, networkUrl, block, callback))
 			}
 		})
 	}
@@ -1305,10 +1397,10 @@ GENERAL FUNCTIONS
 
 *************************************************************************/
 
-export const signTransaction = (cmdToSign, isXWallet, netId, networkUrl, account, chainId, nftId, callback) => {
+export const signTransaction = (cmdToSign, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, nftId, callback) => {
 	return async (dispatch) => {
 
-		//console.log(cmdToSign, isXWallet)
+		//console.log(cmdToSign, isQRWalletConnect, qrWalletConnectClient)
 
 		dispatch(updateTransactionState("signingCmd", cmdToSign))
 
@@ -1338,11 +1430,13 @@ export const signTransaction = (cmdToSign, isXWallet, netId, networkUrl, account
 					dispatch(updateTransactionState("error", `Wrong X Wallet account selected in extension, please select ${account.account}`))
 					return
 				}
+				/*
 				else if (accountConnectedRes && accountConnectedRes.wallet && accountConnectedRes.wallet.chainId !== chainId) {
 					console.log(`Wrong chain selected in X Wallet, please select ${chainId}`)
 					dispatch(updateTransactionState("error", `Wrong chain selected in X Wallet, please select ${chainId}`))
 					return
 				}
+				*/
 
 				xwalletSignRes = await window.kadena.request({
 					method: "kda_requestSign",
@@ -1360,6 +1454,65 @@ export const signTransaction = (cmdToSign, isXWallet, netId, networkUrl, account
 			}
 
 			signedCmd = xwalletSignRes.signedCmd;
+		}
+		else if(isQRWalletConnect) {
+
+			const signClient = await SignClient.init({
+			  projectId: process.env.REACT_APP_WALLET_CONNECT_ID,
+			  metadata: {
+			    name: "WizardsArena",
+			    description: "Wizards Arena NFTGame",
+			    url: "https://www.wizardsarena.net",
+			    icons: ["https://firebasestorage.googleapis.com/v0/b/raritysniperkda.appspot.com/o/android-chrome-384x384.png?alt=media&token=e5946e6e-ac87-446a-91f4-f6144906ef22"],
+			  },
+			});
+
+			//console.log(signClient);
+
+			signClient.on("session_delete", () => {
+				signClient.removeListener("session_delete")
+				dispatch(logout(false, netId))
+				dispatch(setQrWalletConnectClient(undefined))
+			})
+
+			signClient.on("pairing_delete", () => {
+				signClient.removeListener("pairing_delete")
+				dispatch(logout(false, netId))
+				dispatch(setQrWalletConnectClient(undefined))
+			})
+
+			signClient.on("session_expire", () => {
+				signClient.removeListener("session_expire")
+				dispatch(logout(false, netId))
+				dispatch(setQrWalletConnectClient(undefined))
+			})
+
+			signClient.on("pairing_expire", () => {
+				signClient.removeListener("pairing_expire")
+				dispatch(logout(false, netId))
+				dispatch(setQrWalletConnectClient(undefined))
+			})
+
+			try {
+				let topic = qrWalletConnectClient.pairingTopic
+
+				let signRes = await signClient.request({
+					topic,
+					chainId: "kadena:mainnet01",
+					request: {
+						method: "kadena_sign",
+						params: cmdToSign
+					}
+				})
+
+				console.log(signRes);
+
+				signedCmd = signRes.signedCmd
+
+			}
+			catch(e) {
+				console.log(e);
+			}
 		}
 		else {
 			try {
@@ -1435,6 +1588,7 @@ export const signTransaction = (cmdToSign, isXWallet, netId, networkUrl, account
 		}
 	}
 }
+
 
 export const readFromContract = (cmd, returnError, networkUrl) => {
 	return async (dispatch) => {

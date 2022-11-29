@@ -61,7 +61,7 @@ class Header extends Component {
 
 	renderSlidePanel(boxW) {
 		const { showPanel } = this.state
-		const { isMobile, circulatingSupply, account, netId, isXWallet } = this.props
+		const { isMobile, circulatingSupply, account, netId, isXWallet, isQRWalletConnect } = this.props
 
 		const panelWidth = isMobile ? "100%" : boxW * 60 / 100
 
@@ -204,6 +204,13 @@ class Header extends Component {
 									isXWallet &&
 									<p style={{ fontSize: 16, color: 'white', marginBottom: 10 }}>
 										<i>Connected to X-Wallet</i>
+									</p>
+								}
+
+								{
+									isQRWalletConnect &&
+									<p style={{ fontSize: 16, color: 'white', marginBottom: 10 }}>
+										<i>Connected to Wallet Connect</i>
 									</p>
 								}
 
@@ -409,9 +416,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { circulatingSupply, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, netId } = state.mainReducer
+	const { circulatingSupply, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId } = state.mainReducer
 
-	return { circulatingSupply, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, netId }
+	return { circulatingSupply, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId }
 }
 
 export default connect(mapStateToProps, {

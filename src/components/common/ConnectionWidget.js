@@ -3,7 +3,9 @@ import { connect } from 'react-redux'
 import DotLoader from 'react-spinners/DotLoader';
 import {
 	fetchAccountDetails,
-	setConnectedWallet
+	connectXWallet,
+	connectChainweaver,
+	connectWalletConnect
 } from '../../actions'
 import '../../css/ConnectionWidget.css'
 import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
@@ -20,7 +22,8 @@ class ConnectionWidget extends Component {
 			address: '',
 			loading: false,
 			error: '',
-			useXWallet: false
+			useXWallet: false,
+			showInput: false
 		}
 	}
 
@@ -32,7 +35,37 @@ class ConnectionWidget extends Component {
 
 	}
 
-	checkAddress(e) {
+	connectXWallet() {
+		const { netId, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		this.setState({ loading: true })
+
+		this.props.connectXWallet(netId, chainId, gasPrice, gasLimit, networkUrl, (error) => {
+			if (!error) {
+				this.props.callback()
+			}
+			else {
+				this.setState({ error })
+			}
+		})
+	}
+
+	connectWalletConnect() {
+		const { netId, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		this.setState({ loading: true })
+
+		this.props.connectWalletConnect(netId, chainId, gasPrice, gasLimit, networkUrl, (error) => {
+			if (!error) {
+				this.props.callback()
+			}
+			else {
+				this.setState({ error })
+			}
+		})
+	}
+
+	connectChainweaver() {
 		const { address } = this.state;
 
 		if (!address || address.trim().length === 0) {
@@ -45,10 +78,10 @@ class ConnectionWidget extends Component {
 		//console.log(this.props)
 
 		//console.log(accountAddr)
-		this.props.fetchAccountDetails(address, chainId, gasPrice, gasLimit, networkUrl, (error) => {
+		this.props.connectChainweaver(address, chainId, gasPrice, gasLimit, networkUrl, (error) => {
 			if (!error) {
 				//console.log("utente salvato!")
-				this.connectWallet(this.props.account)
+				this.props.callback()
 			}
 			else {
 				console.log(error)
@@ -58,79 +91,84 @@ class ConnectionWidget extends Component {
 		})
 	}
 
-	//serve per connettere X-Wallet nel caso utente abbiamo installato x-wallet e stia usando chrome
-	connectWallet(account) {
-		const { chainId, netId } = this.props
-		const { useXWallet } = this.state
-
-		this.props.setConnectedWallet(account, useXWallet, netId, chainId, (error) => {
-			this.setState({ loading: false }, () => {
-
-				if (!error) {
-					this.props.callback()
-				}
-				else {
-					this.setState({ error })
-				}
-
-			})
-		})
-	}
-
 	render() {
-		const { error, loading, useXWallet } = this.state
+		const { error, loading, showInput } = this.state
 
-		const switchStyle = useXWallet ? "switchbase switchon" : "switchbase switchoff"
+		if (loading) {
+			return (
+				<div style={{ height: 45 }}>
+					<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+				</div>
+			)
+		}
 
 		return (
 			<div
 				style={styles.boxWallet}
 			>
-				<input
-					style={styles.input}
-					type='text'
-					placeholder='Kadena address'
-					value={this.state.address}
-					onChange={(e) => this.setState({ address: e.target.value })}
-				/>
+
+				<button
+					className="btnH xwallet"
+					style={styles.btnOption}
+					onClick={() => {
+						this.setState({ useXWallet: true })
+						this.connectXWallet()
+					}}
+				>
+					<p style={{ fontSize: 18, color: 'black' }}>
+						X-WALLET
+					</p>
+				</button>
+
+				<button
+					className="btnH"
+					style={Object.assign({}, styles.btnOption, { backgroundColor: "#57b5e1" })}
+					onClick={() => this.setState({ showInput: true })}
+				>
+					<p style={{ fontSize: 18, color: 'black' }}>
+						CHAINWEAVER
+					</p>
+				</button>
+
+				<button
+					className="btnH"
+					style={Object.assign({}, styles.btnOption, { backgroundColor: "#3396ff", marginBottom: 0 })}
+					onClick={() => this.connectWalletConnect()}
+				>
+					<p style={{ fontSize: 18, color: 'black' }}>
+						WALLETCONNECT
+					</p>
+				</button>
 
 				{
-					this.hasXWallet &&
-					<div style={{ justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: 30 }}>
-						<p style={{ fontSize: 18, color: 'white', marginRight: 20 }}>
-							Use X-Wallet
-						</p>
+					showInput ?
+					<div style={{ marginTop: 20 }}>
+						<input
+							style={styles.input}
+							type='text'
+							placeholder='Kadena address'
+							value={this.state.address}
+							onChange={(e) => this.setState({ address: e.target.value })}
+						/>
 
-						<div
-							style={styles.boxSwitch}
-							onClick={() => this.setState({ useXWallet: !this.state.useXWallet })}
+						<button
+							className="btnH"
+							style={Object.assign({}, styles.btnOption, { width: 70 })}
+							onClick={() => this.connectChainweaver()}
 						>
-							<div className={switchStyle} />
-						</div>
+							<p style={{ fontSize: 14, color: 'white' }}>
+								CONNECT
+							</p>
+						</button>
 					</div>
+					: null
 				}
 
-				{
-					loading ?
-					<div style={{ height: 45 }}>
-						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
-					</div>
-					:
-					<button
-						className='btnH'
-						style={styles.btnConnect}
-						onClick={() => this.checkAddress()}
-					>
-						<p style={{ color: 'white', fontSize: 19 }}>
-							Connect
-						</p>
-					</button>
-				}
 
 
 				{
 					error && !loading &&
-					<p style={{ color: 'red', fontSize: 14, marginTop: 20 }}>
+					<p style={{ color: 'red', fontSize: 14, marginTop: 10 }}>
 						{error}
 					</p>
 				}
@@ -145,13 +183,12 @@ const styles = {
 	boxWallet: {
 		flexDirection: 'column',
 		backgroundColor: 'transparent',
-		paddingLeft: 12,
-		paddingRight: 12,
+		padding: 12,
 		alignItems: 'center',
 	},
 	input: {
-		width: 240,
-		height: 45,
+		width: 166,
+		height: 40,
 		borderWidth: 1,
 		borderColor: 'lightgrey',
 		borderStyle: 'solid',
@@ -160,8 +197,7 @@ const styles = {
 		color: 'black',
 		paddingLeft: 16,
 		paddingRight: 16,
-		marginBottom: 30,
-		marginTop: 30,
+		marginBottom: 20,
 		WebkitAppearance: 'none',
 		MozAppearance: 'none',
 		appearance: 'none',
@@ -180,6 +216,18 @@ const styles = {
 		borderRadius: 15,
 		position: 'relative',
 		cursor: 'pointer'
+	},
+	btnOption: {
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center',
+		width: 272,
+		height: 44,
+		borderWidth: 2,
+		borderRadius: 2,
+		borderColor: CTA_COLOR,
+		borderStyle: 'solid',
+		marginBottom: 20
 	}
 }
 
@@ -191,5 +239,7 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
 	fetchAccountDetails,
-	setConnectedWallet
+	connectXWallet,
+	connectChainweaver,
+	connectWalletConnect
 })(ConnectionWidget)

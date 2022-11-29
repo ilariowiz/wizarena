@@ -11,6 +11,8 @@ import {
 	UPDATE_TRANSACTION_STATE,
 	CLEAR_TRANSACTION_STATE,
 	SET_IS_X_WALLET,
+	SET_IS_WALLET_CONNECT_QR,
+	SET_QR_WALLET_CONNECT_CLIENT,
 	SET_BLOCK_ID,
 	COUNT_MINTED,
 	LOGOUT,
@@ -36,6 +38,8 @@ const INITIAL_STATE = {
 	showModalTx: false,
 	isConnectWallet: false,
 	isXWallet: '',
+	isQRWalletConnect: '',
+	qrWalletConnectClient: undefined,
 	totalCountNfts: 0,
 	allNfts: [],
 	allNftsIds: [],
@@ -71,6 +75,10 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, isConnectWallet: action.payload }
 		case SET_IS_X_WALLET:
 			return { ...state, isXWallet: action.payload }
+		case SET_IS_WALLET_CONNECT_QR:
+			return { ...state, isQRWalletConnect: action.payload }
+		case SET_QR_WALLET_CONNECT_CLIENT:
+			return { ...state, qrWalletConnectClient: action.payload }
 		case LOAD_ALL_NFTS_IDS: {
 			const { allNftsIds, totalCountNfts } = action.payload
 			return { ...state, allNftsIds, totalCountNfts }
@@ -123,7 +131,7 @@ export default (state = INITIAL_STATE, action) => {
 		case STORE_CIRCULATING_SUPPLY:
 			return { ...state, circulatingSupply: action.payload }
 		case LOGOUT:
-			return { ...state, account: {}, transactionState: {}, showModalTx: false, isConnectWallet: false, isXWallet: false, userMintedNfts: [], wizaBalance: 0, wizardsStaked: 0}
+			return { ...state, account: {}, transactionState: {}, showModalTx: false, isConnectWallet: false, isXWallet: false, isQRWalletConnect: false, userMintedNfts: [], wizaBalance: 0, wizardsStaked: 0}
 		default:
 			return state
 	}
