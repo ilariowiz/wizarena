@@ -521,7 +521,7 @@ class Nft extends Component {
 	renderFight(item, index) {
 		const { nft } = this.state
 
-		let tournament = item.tournament.split("_")[0]
+		//let tournament = item.tournament.split("_")[0]
 		let round = item.tournament.split("_")[1]
 
 		const textWinner = item.winner === nft.id ? "WINNER" : "LOSER"
@@ -1100,6 +1100,9 @@ class Nft extends Component {
 
 		let showOverlayBurn = infoBurn && infoBurn.burned
 
+		let ctaWidth = boxW * 35 / 100
+		if (ctaWidth > 170) ctaWidth = 170
+
 		return (
 			<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
 
@@ -1136,7 +1139,7 @@ class Nft extends Component {
 
 								{this.renderLeftBoxPriceListed()}
 
-								{this.renderBtnBuy(190, 15)}
+								{this.renderBtnBuy(ctaWidth, 15)}
 
 							</div>
 						}
@@ -1147,7 +1150,7 @@ class Nft extends Component {
 							<div style={styles.boxRightLarge}>
 								{this.renderLeftBoxListing()}
 
-								{this.renderBtnSell(190, 15)}
+								{this.renderBtnSell(ctaWidth, 15)}
 
 							</div>
 							: null
@@ -1170,7 +1173,7 @@ class Nft extends Component {
 
 								{this.renderLeftMakeOffer()}
 
-								{this.renderBtnConnect(190, 15)}
+								{this.renderBtnConnect(ctaWidth, 15)}
 							</div>
 							: null
 						}
