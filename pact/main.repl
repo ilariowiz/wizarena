@@ -30,9 +30,12 @@
 (define-namespace 'free (sig-keyset) (sig-keyset))
 ;; load election module
 
+(load "wiza1-interface-v1.pact")
+
 (load "wizarena.pact")
 
 (load "wiza.pact")
+
 
 ;; commit the transaction
 (commit-tx)
@@ -260,19 +263,19 @@
 (commit-tx)
 
 
-; (begin-tx "LIST NFT")
-;
-; (env-sigs [{
-;   "key": "94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd",
-;   "caps": [
-;     (free.wiz-arena.OWNER "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" "0"),
-;     (coin.GAS)
-;   ]
-; }])
-;
-; (free.wiz-arena.list-wizard "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" "0" 10.0)
-;
-; (commit-tx)
+(begin-tx "LIST NFT")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.list-wizard "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" 10.0 free.wiza)
+
+(commit-tx)
 ;
 ; (begin-tx "GET NFTS LISTED")
 ;
@@ -415,12 +418,12 @@
 ; (env-sigs [{
 ;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
 ;   "caps": [
-;     (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+;     (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "1"),
 ;     (coin.GAS)
 ;   ]
 ; }])
 ;
-; (free.wiz-arena.transfer-wizard "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb")
+; (free.wiz-arena.transfer-wizard "1" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb" free.wiza)
 ;
 ; (commit-tx)
 
@@ -468,20 +471,28 @@
 
 (commit-tx)
 
+(begin-tx "WIZA GET DATA")
 
-(begin-tx "STAKE")
+(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
-(env-sigs [{
-  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-  "caps": [
-    (free.wiza.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
-    (coin.GAS)
-  ]
-}])
-
-(free.wiza.stake "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+(free.wiza.get-wizard-data "0")
 
 (commit-tx)
+
+
+; (begin-tx "STAKE")
+;
+; (env-sigs [{
+;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+;   "caps": [
+;     (free.wiza.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+;     (coin.GAS)
+;   ]
+; }])
+;
+; (free.wiza.stake "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+;
+; (commit-tx)
 
 (begin-tx "STAKE")
 
@@ -511,19 +522,19 @@
 (commit-tx)
 
 
-(begin-tx "ADD TO BURN QUEUE")
-
-(env-sigs [{
-  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-  "caps": [
-    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
-    (coin.GAS)
-  ]
-}])
-
-(free.wiz-arena.add-to-burning-queue "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
-
-(commit-tx)
+; (begin-tx "ADD TO BURN QUEUE")
+;
+; (env-sigs [{
+;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+;   "caps": [
+;     (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+;     (coin.GAS)
+;   ]
+; }])
+;
+; (free.wiz-arena.add-to-burning-queue "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+;
+; (commit-tx)
 
 
 
@@ -550,29 +561,29 @@
 
 (commit-tx)
 
-(begin-tx "CHECK IF NFT IS IN BURNIG QUEUE")
-
-(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
-
-(free.wiz-arena.get-nft-in-burning-queue "0")
-
-(commit-tx)
-
-(begin-tx "BURN NFT")
-
-(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
-
-(free.wiz-arena.burn-nft "0")
-
-(commit-tx)
-
-(begin-tx "GET ALL NFTS FROM ACCOUNT")
-
-(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
-
-(free.wiz-arena.wizard-owned-by free.wiz-arena.WIZ_BANK)
-
-(commit-tx)
+; (begin-tx "CHECK IF NFT IS IN BURNIG QUEUE")
+;
+; (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+;
+; (free.wiz-arena.get-nft-in-burning-queue "0")
+;
+; (commit-tx)
+;
+; (begin-tx "BURN NFT")
+;
+; (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+;
+; (free.wiz-arena.burn-nft "0")
+;
+; (commit-tx)
+;
+; (begin-tx "GET ALL NFTS FROM ACCOUNT")
+;
+; (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+;
+; (free.wiz-arena.wizard-owned-by free.wiz-arena.WIZ_BANK)
+;
+; (commit-tx)
 
 
 ; (begin-tx "CLAIM ALL WITHOUT UNSTAKE")
@@ -670,25 +681,25 @@
 ; (commit-tx)
 ;
 ;
-; (begin-tx "BUY UPGRADE")
-;
-; (env-sigs [{
-;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-;   "caps": [
-;     (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
-;     (coin.GAS)
-;   ]
-; }])
-;
-; (free.wiz-arena.buy-upgrade "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "attack")
-;
-; (commit-tx)
+(begin-tx "BUY UPGRADE")
 
-; (begin-tx "GET DATA NFT")
-;
-; (free.wiz-arena.get-wizard-fields-for-ids [0])
-;
-; (commit-tx)
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.buy-upgrade "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "attack" free.wiza)
+
+(commit-tx)
+
+(begin-tx "GET DATA NFT")
+
+(free.wiz-arena.get-wizard-fields-for-ids [0])
+
+(commit-tx)
 ;
 ; (begin-tx "CHECK BALANCE")
 ;

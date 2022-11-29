@@ -761,7 +761,7 @@ export const checkAddressForPrice = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 export const addNftToBurningQueue = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, idnft, account) => {
 	return (dispatch) => {
 
-		let pactCode = `(free.${CONTRACT_NAME}.add-to-burning-queue "${idnft}" "${account.account}")`;
+		let pactCode = `(free.${CONTRACT_NAME}.add-to-burning-queue "${idnft}" "${account.account}" free.wiza)`;
 
 		let cmd = {
 			pactCode,
@@ -866,7 +866,7 @@ export const mintNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, amount, ac
 export const listNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idNft, price, account) => {
 	return (dispatch) => {
 
-		let pactCode = `(free.${CONTRACT_NAME}.list-wizard "${account.account}" "${idNft}" ${price})`;
+		let pactCode = `(free.${CONTRACT_NAME}.list-wizard "${account.account}" "${idNft}" ${price} free.wiza)`;
 
 		let cmd = {
 			pactCode,
@@ -1036,7 +1036,7 @@ export const subscribeToTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 export const transferNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idNft, account, receiver) => {
 	return (dispatch) => {
 
-		let pactCode = `(free.${CONTRACT_NAME}.transfer-wizard "${idNft}" "${account.account}" "${receiver}")`;
+		let pactCode = `(free.${CONTRACT_NAME}.transfer-wizard "${idNft}" "${account.account}" "${receiver}" free.wiza)`;
 
 		let caps = [
 			Pact.lang.mkCap(
@@ -1111,7 +1111,7 @@ export const withdrawPrize = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 export const buyUpgrade = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft, stat) => {
 	return (dispatch) => {
 
-		let pactCode = `(free.${CONTRACT_NAME}.buy-upgrade "${account.account}" "${idnft}" "${stat}")`;
+		let pactCode = `(free.${CONTRACT_NAME}.buy-upgrade "${account.account}" "${idnft}" "${stat}" free.wiza)`;
 
 		let cmd = {
 			pactCode,

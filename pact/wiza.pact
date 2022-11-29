@@ -13,7 +13,7 @@
 
     (use coin)
   (implements fungible-v2)
-  (bless "5MpomJ0tqLVEyI-9-cBYOJ6ely_gykMuB7rKi5zblJ8")
+  (implements wiza1-interface-v1)
 
   ; --------------------------------------------------------------------------
  ; Constants
@@ -103,8 +103,7 @@
         @doc "Enforces that an account owns the nft"
         (let
             (
-                (data (wiz-arena.get-wizard-fields-for-id (str-to-int id)))
-                ;(data (= true))
+                (data (get-wizard-data id))
             )
             (enforce (= (at "owner" data) account) "Account is not owner of the NFT")
             (compose-capability (ACCOUNT_GUARD account))
@@ -376,8 +375,7 @@
 
     (defun stake (idnft:string sender:string)
         (let (
-                (data (wiz-arena.get-wizard-fields-for-id (str-to-int idnft)))
-                ;(data {"listed": false})
+                (data (get-wizard-data idnft))
             )
             (enforce (= (at "listed" data) false) "A listed wizard cannot be staked")
             (enforce (= (at "confirmBurn" data) false) "You can't stake a wizard in burning queue")
@@ -518,7 +516,7 @@
         )
     )
 
-    (defun spend-wiza (amount:decimal account:string)
+    (defun spend-wiza:object (amount:decimal account:string)
         (let (
                 (balance (get-user-balance account))
             )
@@ -543,12 +541,15 @@
     ; --------------------------------------------------------------------------
     ; helpers functions
     ; --------------------------------------------------------------------------
+    (defun get-wizard-data (id:string)
+        (free.wiz-arena.get-wizard-fields-for-id (str-to-int id))
+    )
 
     (defun get-nft-staked (idnft:string)
         (read staked-table idnft)
     )
 
-    (defun check-nft-is-staked (idnft:string)
+    (defun check-nft-is-staked:object (idnft:string)
         (with-default-read staked-table idnft
             {"staked": false}
             {"staked":= staked}

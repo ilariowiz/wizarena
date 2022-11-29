@@ -5,7 +5,7 @@
   "Wizards Arena NFTs"
 
     (use coin)
-    (bless "UVUwDRd0sl1vnZhXu2UsM8BQQI8usRK30q4MaO8CDhQ")
+
   ; --------------------------------------------------------------------------
  ; Constants
 ; --------------------------------------------------------------------------
@@ -360,15 +360,8 @@
                 {"id": id,
                 "attack": (at "attack" item),
                 "damage": (at "damage" item),
-                "weakness": (at "weakness" item),
                 "defense": (at "defense" item),
-                "element": (at "element" item),
-                "fights": (at "fights" item),
-                "hp": (at "hp" item),
-                "medals": (at "medals" item),
-                "resistance": (at "resistance" item),
-                "spellSelected": (at "spellSelected" item),
-                "spellbook": (at "spellbook" item)}
+                "hp": (at "hp" item)}
             )
         )
     )
@@ -522,13 +515,12 @@
     ;;;; MARKTEPLACE FUN ;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun list-wizard (sender:string id:string price:decimal)
+    (defun list-wizard (sender:string id:string price:decimal m:module{wiza1-interface-v1})
         @doc "list a wizard on marketplace"
         (enforce (>= price 1.0) "amount must be equal or greater then 1")
         (let (
                 (data (get-wizard-fields-for-id (str-to-int id)))
-                ;(is-staked (free.wiza.check-nft-is-staked id))
-                (is-staked false)
+                (is-staked (check-is-staked id m))
             )
             (enforce (= (at "listed" data) false) "this wizard is already listed")
             (enforce (= is-staked false) "You can't list a staked wizard")
@@ -600,8 +592,10 @@
         @doc "Subscribe a wizard to tournament"
         (let (
                 (tournament-open (get-value TOURNAMENT_OPEN))
+                (data-wiz (get-wizard-fields-for-id (str-to-int idnft)))
             )
             (enforce (= tournament-open "1") "Tournament registrations are closed")
+            (enforce (= (at "confirmBurn" data-wiz) false) "You can't subscribe a wizard in burning queue")
         )
         (with-default-read tournaments id
             {"idnft": ""}
@@ -647,7 +641,6 @@
 
     (defun send-prize (item:object)
         (require-capability (ADMIN))
-
         (let (
               (address (at "address" item))
               (prize (at "prize" item))
@@ -732,13 +725,13 @@
     ;;;;;; UPGRADE ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun buy-upgrade (account:string idnft:string stat:string)
+    (defun buy-upgrade (account:string idnft:string stat:string m:module{wiza1-interface-v1})
         (with-capability (OWNER account idnft)
             (let (
                     (current-stat (at stat (get-wizard-fields-for-id (str-to-int idnft))))
                     (wiza-cost (calculate-wiza-cost idnft stat))
                 )
-                ;(free.wiza.spend-wiza wiza-cost account)
+                (spend-wiza wiza-cost account m)
                 (if
                     (= stat "hp")
                     (update stats idnft {
@@ -796,15 +789,18 @@
         )
     )
 
+    (defun spend-wiza (amount:decimal account:string m:module{wiza1-interface-v1})
+        (m::spend-wiza amount account)
+    )
+
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;; BURN ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun add-to-burning-queue (idnft:string account:string)
+    (defun add-to-burning-queue (idnft:string account:string m:module{wiza1-interface-v1})
         (let (
                 (data (get-wizard-fields-for-id (str-to-int idnft)))
-                ;(is-staked (free.wiza.check-nft-is-staked idnft))
-                (is-staked false)
+                (is-staked (check-is-staked idnft m))
             )
             (enforce (= (at "listed" data) false) "You can't burn a listed wizard")
             (enforce (= is-staked false) "You can't burn a staked wizard")
@@ -865,6 +861,10 @@
         )
     )
 
+    (defun check-is-staked (idnft:string m:module{wiza1-interface-v1})
+        (m::check-nft-is-staked idnft)
+    )
+
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;; GENERIC FUN ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -886,14 +886,13 @@
     ;     )
     ; )
 
-    (defun transfer-wizard (id:string sender:string receiver:string)
+    (defun transfer-wizard (id:string sender:string receiver:string m:module{wiza1-interface-v1})
         @doc "Transfer nft to an account"
         (enforce-account-exists receiver)
         (with-capability (OWNER sender id)
             (let (
                     (data (get-wizard-fields-for-id (str-to-int id)))
-                    ;(is-staked (free.wiza.check-nft-is-staked id))
-                    (is-staked false)
+                    (is-staked (check-is-staked id m))
                 )
                 (enforce (= (at "listed" data) false) "A listed wizard cannot be transferred")
                 (enforce (= is-staked false) "You can't transfer a staked wizard")
@@ -930,7 +929,6 @@
     )
 
     ; (defun write-new-value(key:string value:string)
-    ;     @doc "Sets the value for a key to store in a table"
     ;     (with-capability (ADMIN)
     ;         (write values key
     ;             {"value": value}
@@ -1003,7 +1001,7 @@
         )
     )
 
-    (defun get-wizard-fields-for-id (id:integer)
+    (defun get-wizard-fields-for-id:object (id:integer)
         @doc "Return the fields for a given id"
         (let (
                 (reveal (get-value WIZ_REVEAL))
