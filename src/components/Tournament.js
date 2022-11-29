@@ -255,6 +255,8 @@ class Tournament extends Component {
 
         //console.log(tournament);
 
+        const wizaPrize = buyin && subscribed && buyin * 60
+
         const roundName = tournament.name.split("_")[1]
 
         //LE ISCRIZIONI SONO APERTE
@@ -286,6 +288,10 @@ class Tournament extends Component {
 							<p style={{ fontSize: 22, color: 'white', marginBottom: 20 }}>
 								BUY-IN {buyin || '...'} KDA
 							</p>
+
+                            <p style={{ fontSize: 17, color: 'white', marginBottom: 15 }}>
+            					Participation reward (for each wizard) {wizaPrize || '...'} $WIZA
+            				</p>
 						</div>
 
 						{this.renderInfoTournament(boxW)}

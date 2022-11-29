@@ -4,7 +4,8 @@
 	cursor: pointer;
 	margin-right: 32px;
 	font-weight: 500;
-	line-height: 1
+	line-height: 1;
+	white-space: nowrap;
 }
 
 .btnMobile {
@@ -13,7 +14,8 @@
 	cursor: pointer;
 	margin-right: 16px;
 	font-weight: 500;
-	line-height: 1
+	line-height: 1;
+	white-space: nowrap;
 }
 
 .btn:hover {
@@ -26,7 +28,8 @@
 	cursor: pointer;
 	margin-right: 32px;
 	font-weight: 700;
-	line-height: 1
+	line-height: 1;
+	white-space: nowrap;
 }
 
 .btnPressedMobile {
@@ -35,7 +38,8 @@
 	cursor: pointer;
 	margin-right: 16px;
 	font-weight: 700;
-	line-height: 1
+	line-height: 1;
+	white-space: nowrap;
 }
 
 .btnPressedBlack {
@@ -44,7 +48,8 @@
 	cursor: pointer;
 	margin-right: 32px;
 	font-weight: 500;
-	line-height: 1
+	line-height: 1;
+	white-space: nowrap;
 }
 
 .btnPressedBlackMobile {
@@ -53,7 +58,8 @@
 	cursor: pointer;
 	margin-right: 16px;
 	font-weight: 500;
-	line-height: 1
+	line-height: 1;
+	white-space: nowrap;
 }
 
 .homeheader {

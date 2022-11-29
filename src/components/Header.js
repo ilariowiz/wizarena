@@ -319,7 +319,7 @@ class Header extends Component {
 
 						{
 							page === 'nft' || page === 'settings' ?
-							<div>
+							<div style={{ height: 60, alignItems: 'flex-end', flexWrap: 'wrap' }}>
 								<p
 									className={btnHeaderNft}
 									onClick={() => this.props.history.replace('/collection')}

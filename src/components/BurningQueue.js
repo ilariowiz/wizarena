@@ -103,7 +103,7 @@ class BurningQueue extends Component {
         return (
             <div style={{ width: boxW, alignItems: 'center', flexDirection: 'column', paddingTop: 30 }}>
                 <p style={{ fontSize: 28, color: 'white', marginBottom: 5 }}>
-                    Burning Queue
+                    Burning Queue ({queue.length})
                 </p>
                 <p style={{ fontSize: 16, color: '#c2c0c0', marginBottom: 30 }}>
                     in real time
