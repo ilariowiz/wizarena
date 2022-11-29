@@ -191,6 +191,7 @@ class Rules extends Component {
                         <img
                             src={img}
                             style={imgStyle}
+                            alt="logo"
                         />
                     </div>
 
