@@ -161,7 +161,7 @@ export const connectWalletConnect = (netId, chainId, gasPrice, gasLimit, network
 		  },
 		});
 
-		console.log(signClient);
+		//console.log(signClient);
 
 		const requiredNamespaces = {
 			kadena: {
@@ -172,15 +172,16 @@ export const connectWalletConnect = (netId, chainId, gasPrice, gasLimit, network
 		}
 
 		try {
+
 			/*
 			const pairings = signClient.core.pairing.getPairings()
 			//console.log(pairings);
 			let topic = pairings && pairings.length > 0 && pairings[pairings.length - 1].topic
-			//console.log(topic);
+			console.log(topic);
 			*/
 
 			const { uri, approval } = await signClient.connect({
-				//pairingTopic: topic || "",
+				//pairingTopic: topic,
 				requiredNamespaces
 			})
 
@@ -194,10 +195,10 @@ export const connectWalletConnect = (netId, chainId, gasPrice, gasLimit, network
 			}
 
 			const session = await approval()
+			//console.log(session);
 
 			dispatch(setIsWalletConnectQR(true))
 
-			//console.log(client);
 			dispatch(setQrWalletConnectClient({ pairingTopic: session.topic }))
 
 			const accounts = session.namespaces["kadena"].accounts.map((item) => {
