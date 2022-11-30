@@ -373,6 +373,23 @@
     ; WIZA functions
     ; --------------------------------------------------------------------------
 
+    (defun stake-all (objects:list)
+        (map
+            (nft-to-stake)
+            objects
+        )
+    )
+
+    (defun nft-to-stake (obj:object)
+        (let (
+                (idnft (at "idnft" obj))
+                (sender (at "sender" obj))
+            )
+            (stake idnft sender)
+        )
+    )
+
+
     (defun stake (idnft:string sender:string)
         (let (
                 (data (get-wizard-data idnft))
@@ -393,6 +410,22 @@
                     "staked": true}
                 )
             )
+        )
+    )
+
+    (defun claim-all-unstake-all (objects:list)
+        (map
+            (claim-all-and-unstake)
+            objects
+        )
+    )
+
+    (defun claim-all-and-unstake (obj:object)
+        (let (
+                (idnft (at "idnft" obj))
+                (sender (at "sender" obj))
+            )
+            (unstake idnft sender)
         )
     )
 

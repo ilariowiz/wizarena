@@ -31,6 +31,8 @@ import {
 	unstakeNft,
 	claimWithoutUnstake,
 	claimAllWithoutUnstake,
+	claimAllAndUnstakeAll,
+	stakeAll,
 	addNftToBurningQueue,
 	removeNftFromBurningQueue
 } from '../actions'
@@ -56,7 +58,8 @@ class Profile extends Component {
 			profileFights: [],
 			prize: undefined,
 			unclaimedWizaTotal: 0,
-			stakedIds: []
+			stakedIds: [],
+			notStakedIds: []
 		}
 	}
 
@@ -312,6 +315,7 @@ class Profile extends Component {
 		this.props.claimWithoutUnstake(chainId, gasPrice, 4000, netId, idnft, account)
 	}
 
+
 	withdrawPrize() {
 		const { chainId, gasPrice, netId, account } = this.props
 
@@ -320,9 +324,14 @@ class Profile extends Component {
 		this.props.withdrawPrize(chainId, gasPrice, 4000, netId, account)
 	}
 
+
 	claimAll() {
 		const { chainId, gasPrice, netId, account } = this.props
 		const { stakedIds } = this.state
+
+		if (stakedIds.length === 0) {
+			return
+		}
 
 		this.setState({ typeModal: "claimall" })
 
@@ -335,7 +344,63 @@ class Profile extends Component {
 			objects.push(obj)
 		})
 
-		this.props.claimAllWithoutUnstake(chainId, gasPrice, 100000, netId, objects, account)
+		let gasLimit = objects.length * 2000
+		if (gasLimit > 180000) {
+			gasLimit = 180000
+		}
+		this.props.claimAllWithoutUnstake(chainId, gasPrice, gasLimit, netId, objects, account)
+	}
+
+	unstakeAndClaimAll() {
+		const { chainId, gasPrice, netId, account } = this.props
+		const { stakedIds } = this.state
+
+		if (stakedIds.length === 0) {
+			return
+		}
+
+		this.setState({ typeModal: "unstakeandclaimall" })
+
+		let objects = []
+		stakedIds.map(i => {
+			let obj = {
+				idnft: i,
+				sender: account.account
+			}
+			objects.push(obj)
+		})
+
+		let gasLimit = objects.length * 2000
+		if (gasLimit > 180000) {
+			gasLimit = 180000
+		}
+		this.props.claimAllAndUnstakeAll(chainId, gasPrice, gasLimit, netId, objects, account)
+	}
+
+	stakeAll() {
+		const { chainId, gasPrice, netId, account } = this.props
+		const { notStakedIds } = this.state
+
+		if (notStakedIds.length === 0) {
+			return
+		}
+
+		this.setState({ typeModal: "stakeall" })
+
+		let objects = []
+		notStakedIds.map(i => {
+			let obj = {
+				idnft: i,
+				sender: account.account
+			}
+			objects.push(obj)
+		})
+
+		let gasLimit = objects.length * 2000
+		if (gasLimit > 180000) {
+			gasLimit = 180000
+		}
+		this.props.stakeAll(chainId, gasPrice, gasLimit, netId, objects, account)
 	}
 
 	addToBurning(id) {
@@ -400,6 +465,15 @@ class Profile extends Component {
 							//console.log(oldState);
 
 							this.setState({ stakedIds: oldState })
+						}
+					}}
+					onLoadNotStaked={(value) => {
+						let oldState = Object.assign([], this.state.notStakedIds)
+						if (!oldState.includes(value)) {
+							oldState.push(value)
+							//console.log(oldState);
+
+							this.setState({ notStakedIds: oldState })
 						}
 					}}
 				/>
@@ -859,7 +933,9 @@ class Profile extends Component {
 							Unclaimed $WIZA: {unclW || 0.0}
 						</p>
 					</div>
+				</div>
 
+				<div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 15 }}>
 					<button
 						className="btnH"
 						style={styles.btnClaimAll}
@@ -869,6 +945,27 @@ class Profile extends Component {
 							CLAIM ALL
 						</p>
 					</button>
+
+					<button
+						className="btnH"
+						style={styles.btnClaimAll}
+						onClick={() => this.unstakeAndClaimAll()}
+					>
+						<p style={{ fontSize: 17, color: 'white' }}>
+							UNSTAKE & CLAIM ALL
+						</p>
+					</button>
+
+					<button
+						className="btnH"
+						style={styles.btnClaimAll}
+						onClick={() => this.stakeAll()}
+					>
+						<p style={{ fontSize: 17, color: 'white' }}>
+							STAKE ALL
+						</p>
+					</button>
+
 				</div>
 
 				{this.renderMenu(isMobile)}
@@ -1022,11 +1119,12 @@ const styles = {
 		marginBottom: 20
 	},
 	btnClaimAll: {
-		width: 170,
+		width: 200,
 		height: 40,
 		backgroundColor: CTA_COLOR,
 		borderRadius: 2,
-		marginLeft: 30,
+		marginRight: 15,
+		marginBottom: 15,
 		borderStyle: 'solid',
 		justifyContent: 'center',
 		alignItems: 'center',
@@ -1056,6 +1154,8 @@ export default connect(mapStateToProps, {
 	unstakeNft,
 	claimWithoutUnstake,
 	claimAllWithoutUnstake,
+	claimAllAndUnstakeAll,
+	stakeAll,
 	addNftToBurningQueue,
 	removeNftFromBurningQueue
 })(Profile)

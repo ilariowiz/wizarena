@@ -129,7 +129,7 @@ export const connectXWallet = (netId, chainId, gasPrice, gasLimit, networkUrl, c
 			dispatch(logout(true, netId))
 		}
 		else {
-			console.log(res);
+			//console.log(res);
 			dispatch(setIsXwallet(true))
 
 			dispatch(fetchAccountDetails(res.account.account, chainId, gasPrice, gasLimit, networkUrl, callback))
@@ -1356,6 +1356,108 @@ export const claimAllWithoutUnstake = (chainId, gasPrice = DEFAULT_GAS_PRICE, ga
 		let objs = JSON.stringify(objects)
 
 		let pactCode = `(free.${CONTRACT_NAME_WIZA}.claim-all ${objs})`;
+
+		let caps = [
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		onlyId.map(i => {
+			caps.push(
+				Pact.lang.mkCap(
+					"Verify owner",
+					"Verify your are the owner",
+					`free.${CONTRACT_NAME_WIZA}.OWNER`,
+					[account.account, i]
+				)
+			)
+		})
+
+		//console.log(caps);
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("subscribeToTournament", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const claimAllAndUnstakeAll = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, objects, account) => {
+	return (dispatch) => {
+
+		let onlyId = []
+		objects.map(i => {
+			onlyId.push(i.idnft)
+		})
+
+		let objs = JSON.stringify(objects)
+
+		let pactCode = `(free.${CONTRACT_NAME_WIZA}.claim-all-unstake-all ${objs})`;
+
+		let caps = [
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		onlyId.map(i => {
+			caps.push(
+				Pact.lang.mkCap(
+					"Verify owner",
+					"Verify your are the owner",
+					`free.${CONTRACT_NAME_WIZA}.OWNER`,
+					[account.account, i]
+				)
+			)
+		})
+
+		//console.log(caps);
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("subscribeToTournament", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const stakeAll = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, objects, account) => {
+	return (dispatch) => {
+
+		let onlyId = []
+		objects.map(i => {
+			onlyId.push(i.idnft)
+		})
+
+		let objs = JSON.stringify(objects)
+
+		let pactCode = `(free.${CONTRACT_NAME_WIZA}.stake-all ${objs})`;
 
 		let caps = [
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),

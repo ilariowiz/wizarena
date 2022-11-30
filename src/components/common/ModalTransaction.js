@@ -38,7 +38,7 @@ class ModalTransaction extends Component {
 		let pollRes = null
 
 		while (time_spent_polling_s < 240) {
-			await this.wait(POLL_INTERVAL_S * 1000)
+			await this.wait(POLL_INTERVAL_S * 2000)
 
 			try {
 				pollRes = await Pact.fetch.poll(
@@ -143,6 +143,12 @@ class ModalTransaction extends Component {
 				else if (type === 'claimall') {
 					body = `You will claim your $WIZA mined by all your wizards`
 				}
+				else if (type === 'unstakeandclaimall') {
+					body = `You will unstake and claim your $WIZA mined by all your wizards`
+				}
+				else if (type === 'stakeall') {
+					body = `You will stake all your wizards that aren't listed or in burning queue`
+				}
 				else if (type === 'burningon') {
 					body = `You will add Wizard ${nameNft} to the burning queue, twice a week the one with the lowest ranking will be burned and the owner will receive $WIZA in return`
 				}
@@ -222,6 +228,10 @@ class ModalTransaction extends Component {
 					body = `Your Wizard ${nameNft} is staked!`
 					buttonText = 'Close'
 				}
+				else if (type === 'stakeall') {
+					body = `Your Wizards are staked!`
+					buttonText = 'Close'
+				}
 				else if (type === 'unstake') {
 					body = `Your Wizard ${nameNft} is unstaked!`
 					buttonText = 'Close'
@@ -234,7 +244,7 @@ class ModalTransaction extends Component {
 					body = `Your Wizard ${nameNft} has been removed from the burning queue`
 					buttonText = 'Close'
 				}
-				else if (type === 'claim' || type === 'claimall') {
+				else if (type === 'claim' || type === 'claimall' || type === "unstakeandclaimall") {
 					body = `Your $WIZA have been claimed!`
 					buttonText = 'Close'
 				}

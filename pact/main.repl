@@ -493,8 +493,23 @@
 ; (free.wiza.stake "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
 ;
 ; (commit-tx)
+;
+; (begin-tx "STAKE")
+;
+; (env-sigs [{
+;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+;   "caps": [
+;     (free.wiza.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "1"),
+;     (coin.GAS)
+;   ]
+; }])
+;
+; (free.wiza.stake "1" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+;
+; (commit-tx)
 
-(begin-tx "STAKE")
+
+(begin-tx "STAKE ALL")
 
 (env-sigs [{
   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
@@ -504,7 +519,7 @@
   ]
 }])
 
-(free.wiza.stake "1" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+(free.wiza.stake-all [{"idnft":"1", "sender":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"}])
 
 (commit-tx)
 
@@ -518,6 +533,20 @@
 }])
 
 (free.wiza.check-nft-is-staked "0")
+
+(commit-tx)
+
+(begin-tx "CLAIM ALL AND UNSTAKE ALL")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiza.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "1"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiza.claim-all-unstake-all [{"idnft":"1", "sender":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"}])
 
 (commit-tx)
 

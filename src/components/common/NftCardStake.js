@@ -56,9 +56,21 @@ class NftCardStake extends Component {
 
 			if (response.status === "failure") {
 				this.setState({ staked: false, stakeInfo: {}, loading: false })
+
+                //aggiungiamo ai non staked solo quelli non listati e non in burning queue
+                //in modo che se dobbiamo fare stake all, sono già filtrati
+                if (!item.listed && !item.confirmBurn) {
+                    this.props.onLoadNotStaked(item.id)
+                }
 			}
             else if (response.staked === false) {
                 this.setState({ staked: false, stakeInfo: {}, loading: false })
+
+                //aggiungiamo ai non staked solo quelli non listati e non in burning queue
+                //in modo che se dobbiamo fare stake all, sono già filtrati
+                if (!item.listed && !item.confirmBurn) {
+                    this.props.onLoadNotStaked(item.id)
+                }
             }
 			else {
 				this.setState({ staked: response.staked, stakeInfo: response, loading: false })
