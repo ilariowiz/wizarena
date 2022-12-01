@@ -218,36 +218,54 @@ class Collection extends Component {
 
 			let arrayQuery = []
 			oldStat.map(i => {
-				if (i.stat !== "spellbook") {
+				if (i.stat !== "spellbook" && i.stat !== "level") {
 					//const key = `stats.${i.stat}`
 					const query = where(i.stat, "==", i.value)
 					arrayQuery.push(query)
 				}
 			})
 
-			//console.log(oldStat);
-
-			let q = query(collection(firebasedb, "stats"), ...arrayQuery)
-
-			const querySnapshot = await getDocs(q)
+			//console.log(arrayQuery);
 
 			let newData = []
-			querySnapshot.forEach(doc => {
-				//console.log(doc.data());
 
-				const d = doc.data()
+			if (arrayQuery.length > 0) {
+				let q = query(collection(firebasedb, "stats"), ...arrayQuery)
 
-				const item = allNfts.find(i => i.name === d.name)
-				if (item) {
-					newData.push(item)
-				}
-			})
+				const querySnapshot = await getDocs(q)
+
+
+				querySnapshot.forEach(doc => {
+					//console.log(doc.data());
+
+					const d = doc.data()
+
+					const item = allNfts.find(i => i.name === d.name)
+					if (item) {
+						newData.push(item)
+					}
+				})
+			}
+			else {
+				newData = Object.assign([], allNfts)
+			}
 
 			oldStat.map(i => {
 				if (i.stat === "spellbook") {
 					//console.log(newData);
 					newData = newData.filter(n => {
 						return n.spellbook.length === i.value
+					})
+				}
+
+				if (i.stat === "level") {
+					//console.log(newData);
+					const rangeLevels = i.value.split(" - ")
+					const minLevel = rangeLevels[0]
+					const maxLevel = rangeLevels[1]
+
+					newData = newData.filter(n => {
+						return n.level >= parseInt(minLevel) && n.level <= parseInt(maxLevel)
 					})
 				}
 			})
@@ -619,6 +637,7 @@ class Collection extends Component {
 					{this.renderBoxSearchStat("resistance", "RESISTANCE", ["acid", "dark", "fire", "ice", "thunder", "wind"])}
 					{this.renderBoxSearchStat("weakness", "WEAKNESS", ["acid", "dark", "fire", "ice", "thunder", "wind"])}
 					{this.renderBoxSearchStat("spellbook", "SPELLBOOK", [1, 2, 3, 4])}
+					{this.renderBoxSearchStat("level", "LEVEL", ["100 - 150", "151 - 200", "201 - 250", "251 - 300"])}
 				</div>
 
 				<p style={{ marginBottom: 15, fontSize: 16, color: 'white' }}>
