@@ -637,7 +637,7 @@ class Collection extends Component {
 					{this.renderBoxSearchStat("resistance", "RESISTANCE", ["acid", "dark", "fire", "ice", "thunder", "wind"])}
 					{this.renderBoxSearchStat("weakness", "WEAKNESS", ["acid", "dark", "fire", "ice", "thunder", "wind"])}
 					{this.renderBoxSearchStat("spellbook", "SPELLBOOK", [1, 2, 3, 4])}
-					{this.renderBoxSearchStat("level", "LEVEL", ["100 - 150", "151 - 200", "201 - 250", "251 - 300"])}
+					{this.renderBoxSearchStat("level", "LEVEL", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 300"])}
 				</div>
 
 				<p style={{ marginBottom: 15, fontSize: 16, color: 'white' }}>
