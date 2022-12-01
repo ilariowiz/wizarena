@@ -729,6 +729,19 @@
 (free.wiz-arena.get-wizard-fields-for-ids [0])
 
 (commit-tx)
+
+
+(begin-tx "CALCULATE LEVEL")
+
+(free.wiz-arena.calculate-level "0")
+
+(commit-tx)
+
+(begin-tx "CALCULATE NEW LEVEL")
+
+(free.wiz-arena.calculate-new-level "0" "attack")
+
+(commit-tx)
 ;
 ; (begin-tx "CHECK BALANCE")
 ;

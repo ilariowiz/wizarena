@@ -27,6 +27,7 @@
 
     (defconst TOURNAMENT_OPEN "tournament_open")
 
+    (defconst LEVEL_CAP 300)
 
 ; --------------------------------------------------------------------------
 ; Capabilities
@@ -730,36 +731,36 @@
             (let (
                     (current-stat (at stat (get-wizard-fields-for-id (str-to-int idnft))))
                     (wiza-cost (calculate-wiza-cost idnft stat))
+                    (new-level (calculate-new-level idnft stat))
                 )
+                (enforce (> LEVEL_CAP new-level) "Wizard's level cannot exceed the level cap")
                 (spend-wiza wiza-cost account m)
-                (if
-                    (= stat "hp")
-                    (update stats idnft {
-                        "hp": (+ current-stat 1)
-                    })
-                    ""
-                )
-                (if
-                    (= stat "defense")
-                    (update stats idnft {
-                        "defense": (+ current-stat 1)
-                    })
-                    ""
-                )
-                (if
-                    (= stat "attack")
-                    (update stats idnft {
-                        "attack": (+ current-stat 1)
-                    })
-                    ""
-                )
-                (if
-                    (= stat "damage")
-                    (update stats idnft {
-                        "damage": (+ current-stat 1)
-                    })
-                    ""
-                )
+                (cond
+                    (
+                        (= stat "hp")
+                        (update stats idnft {
+                            "hp": (+ current-stat 1)
+                        })
+                    )
+                    (
+                        (= stat "defense")
+                        (update stats idnft {
+                            "defense": (+ current-stat 1)
+                        })
+                    )
+                    (
+                        (= stat "attack")
+                        (update stats idnft {
+                            "attack": (+ current-stat 1)
+                        })
+                    )
+                    (
+                        (= stat "damage")
+                        (update stats idnft {
+                            "damage": (+ current-stat 1)
+                        })
+                    )
+                "")
             )
         )
     )
@@ -785,6 +786,53 @@
                     )
                     (ceiling (- base-cost (* (* 100 (/ diff max-value)) last-part )) 2)
                 )
+            )
+        )
+    )
+
+    (defun calculate-level (idnft:string)
+        (let (
+                (data (get-wizard-fields-for-id (str-to-int idnft)))
+            )
+            (let (
+                    (hp (at "hp" data))
+                    (def (at "defense" data))
+                    (atk (at "attack" data))
+                    (dmg (at "damage" data))
+                )
+                (round(+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* dmg 2.67)))
+            )
+        )
+    )
+
+    (defun calculate-new-level (idnft:string stat:string)
+        (let (
+                (data (get-wizard-fields-for-id (str-to-int idnft)))
+            )
+            (let (
+                    (hp (at "hp" data))
+                    (def (at "defense" data))
+                    (atk (at "attack" data))
+                    (dmg (at "damage" data))
+                )
+                (cond
+                    (
+                        (= stat "hp")
+                        (round (+ (+ (+ (+ hp 1) (* def 4.67)) (* atk 4.67)) (* dmg 2.67)))
+                    )
+                    (
+                        (= stat "defense")
+                        (round (+ (+ (+ hp (* (+ def 1) 4.67)) (* atk 4.67)) (* dmg 2.67)))
+                    )
+                    (
+                        (= stat "attack")
+                        (round (+ (+ (+ hp (* def 4.67)) (* (+ atk 1) 4.67)) (* dmg 2.67)))
+                    )
+                    (
+                        (= stat "damage")
+                        (round (+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* (+ dmg 1) 2.67)))
+                    )
+                "")
             )
         )
     )
@@ -928,13 +976,13 @@
         )
     )
 
-    ; (defun write-new-value(key:string value:string)
-    ;     (with-capability (ADMIN)
-    ;         (write values key
-    ;             {"value": value}
-    ;         )
-    ;     )
-    ; )
+    (defun write-new-value(key:string value:string)
+        (with-capability (ADMIN)
+            (write values key
+                {"value": value}
+            )
+        )
+    )
 
     (defun set-value-tournament(key:string value:decimal)
         @doc "Set values for tournament"
