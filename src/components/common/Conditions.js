@@ -35,9 +35,19 @@ const conditions = [
         pct: 40
     },
     {
+        name: "Slow 2",
+        effect: "Inflicts a penalty of 3 on the opponent's attack",
+        pct: 90
+    },
+    {
         name: "Paralyze",
         effect: "The opponent cannot move and loses the turn",
         pct: 35
+    },
+    {
+        name: "Paralyze 2",
+        effect: "The opponent cannot move and loses the turn",
+        pct: 40
     },
     {
         name: "Shock",
@@ -47,17 +57,17 @@ const conditions = [
     {
         name: "Blind",
         effect: "The opponent cannot see anything and loses the turn",
-        pct: 45
+        pct: 50
     },
     {
         name: "Exhaust",
-        effect: "Inflicts a penalty of 2 on the opponent's attack",
-        pct: 40
+        effect: "Inflicts a penalty of 4 on the opponent's attack",
+        pct: 60
     },
     {
         name: "Fear",
-        effect: "Inflicts a penalty of 2 on the opponent's attack",
-        pct: 50
+        effect: "Inflicts a penalty of 4 on the opponent's attack",
+        pct: 55
     },
 ]
 
