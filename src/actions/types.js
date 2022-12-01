@@ -2,6 +2,9 @@ export const BACKGROUND_COLOR = "#222034"//"#25252c"
 export const TEXT_SECONDARY_COLOR = '#21c6e8'
 export const CTA_COLOR = '#07abf3'
 
+export const MIN_LEVEL = 122
+export const MAX_LEVEL = 300
+
 export const ADMIN_ADDRESS = 'k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb'
 export const CONTRACT_NAME = 'wiz-arena'
 export const WIZ_BANK = 'wiz-bank'

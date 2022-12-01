@@ -18,6 +18,7 @@ import HistoryItem from './common/HistoryItem'
 import getImageUrl from './common/GetImageUrl'
 import traits_qty from './common/Traits_qty'
 import conditions from './common/Conditions'
+import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import 'reactjs-popup/dist/index.css';
 import {
 	setNetworkSettings,
@@ -59,7 +60,8 @@ class Nft extends Component {
 			numbersOfMaxMedalsPerTournament: [],
 			historyUpgrades: [],
 			openFightsSection: [],
-			infoBurn: {}
+			infoBurn: {},
+			level: 0
 		}
 	}
 
@@ -131,7 +133,7 @@ class Nft extends Component {
 				document.title = `${response.name} - Wizards Arena`
 				//console.log(response)
 
-				const tournaments = ["t1", "t2", "t3", "t4", "t5"]
+				const tournaments = ["t1", "t2", "t3", "t4", "t5", "t6"]
 
 				response['groupedFights'] = {}
 
@@ -149,7 +151,9 @@ class Nft extends Component {
 
 				//console.log(openFightsSection);
 
-				this.setState({ nft: response, loading: false, openFightsSection }, () => {
+				const level = calcLevelWizard(response)
+
+				this.setState({ nft: response, level, loading: false, openFightsSection }, () => {
 					this.loadHistory(idNft)
 					this.getHistoryUpgrades(idNft)
 					this.loadMaxMedalsPerTournament()
@@ -783,8 +787,8 @@ class Nft extends Component {
 
 	renderUpgrade(item, index) {
 		return (
-			<div style={{ alignItems: 'center', marginBottom: 5, marginLeft: 5 }} key={index}>
-				<p style={{ fontSize: 18, color: '#8d8b8b', marginRight: 10 }}>
+			<div style={{ alignItems: 'center', marginBottom: 8, marginRight: 15 }} key={index}>
+				<p style={{ fontSize: 18, color: '#8d8b8b', marginRight: 5 }}>
 					{item.stat}
 				</p>
 
@@ -841,7 +845,7 @@ class Nft extends Component {
 	}
 
 	renderBoxStats(width) {
-		const { nft, historyUpgrades } = this.state
+		const { nft, historyUpgrades, level } = this.state
 		const { reveal } = this.props
 
 		//console.log(reveal)
@@ -871,6 +875,16 @@ class Nft extends Component {
 					{
 						nft && nft.hp && rev ?
 						<div style={Object.assign({}, styles.boxTraits, { width })}>
+
+							<div style={{ width: '100%', alignItems: 'center', marginBottom: 8 }}>
+								<p style={{ fontSize: 19, color: 'white', marginRight: 10 }}>
+									LEVEL
+								</p>
+								<p style={{ fontSize: 26, color: getColorTextBasedOnLevel(level) }}>
+									{level}
+								</p>
+							</div>
+
 							{this.renderStat("HP", nft.hp.int)}
 							{this.renderStat("DEFENSE", nft.defense.int)}
 
@@ -897,9 +911,11 @@ class Nft extends Component {
 								Upgrades
 							</p>
 
-							{historyUpgrades.map((item, index) => {
-								return this.renderUpgrade(item, index)
-							})}
+							<div style={{ flexWrap: 'wrap', alignItems: 'center' }}>
+								{historyUpgrades.map((item, index) => {
+									return this.renderUpgrade(item, index)
+								})}
+							</div>
 						</div>
 						: null
 					}

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import getImageUrl from './GetImageUrl'
+import { getColorTextBasedOnLevel } from './CalcLevelWizard'
 import '../../css/NftCard.css'
 
 const logoKda = require('../../assets/kdalogo2.png')
@@ -22,10 +23,23 @@ class NftCard extends Component {
 
 				<div style={{ justifyContent: 'space-between', width, height: 55, alignItems: 'center' }}>
 
-					<div style={{ width: '100%', justifyContent: 'space-between', alignItems: 'center', marginTop: 5 }}>
+					<div style={{ width: '100%', justifyContent: 'space-between', flexDirection: 'column', marginTop: 5 }}>
 						<p style={{ color: 'white', fontSize: 19, marginLeft: 10, lineHeight: 1 }}>
 							{item.name}
 						</p>
+
+						{
+							item.level &&
+							<div style={{ alignItems: 'center', marginLeft: 10 }}>
+								<p style={{ color: "#c2c0c0", fontSize: 14, marginRight: 10 }}>
+									LEVEL
+								</p>
+
+								<p style={{ color: getColorTextBasedOnLevel(item.level), fontSize: 17 }}>
+									{item.level}
+								</p>
+							</div>
+						}
 					</div>
 
 					{

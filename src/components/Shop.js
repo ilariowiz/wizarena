@@ -9,6 +9,7 @@ import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import NftCardShop from './common/NftCardShop'
 import calcUpgradeCost from './common/CalcUpgradeCost'
+import { calcLevelWizardAfterUpgrade, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import {
@@ -20,7 +21,7 @@ import {
     getUpgradeCost,
     buyUpgrade
 } from '../actions'
-import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
+import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, MAX_LEVEL } from '../actions/types'
 import '../css/Nft.css'
 import '../css/Shop.css'
 
@@ -151,15 +152,24 @@ class Rules extends Component {
 	}
 
     renderShopCard(key) {
+        const { wizardSelected } = this.state
         //const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-        const costo = calcUpgradeCost(this.state.wizardSelected, key)
+        //console.log(wizardSelected);
+        const costo = calcUpgradeCost(wizardSelected, key)
 
         /*
         if (this.state.wizardSelected && this.state.wizardSelected.hp) {
             this.props.getUpgradeCost(chainId, gasPrice, gasLimit, networkUrl, this.state.wizardSelected.id, key)
         }
         */
+
+        const newLevel = calcLevelWizardAfterUpgrade(wizardSelected, key)
+        let colorTextLevel = getColorTextBasedOnLevel(newLevel)
+        if (newLevel > MAX_LEVEL) {
+            colorTextLevel = "red"
+        }
+
 
         let img;
         let imgStyle;
@@ -206,17 +216,24 @@ class Rules extends Component {
                     <p style={{ fontSize: 17, color: 'white' }}>
                         $WIZA
                     </p>
-                    <p style={{ fontSize: 21, color: 'white', marginBottom: 20 }}>
+                    <p style={{ fontSize: 21, color: 'white', marginBottom: 15 }}>
                         {costo}
+                    </p>
+
+                    <p style={{ fontSize: 17, color: 'white' }}>
+                        NEW LEVEL
+                    </p>
+                    <p style={{ fontSize: 21, color: colorTextLevel, marginBottom: 20 }}>
+                        {newLevel}
                     </p>
                 </div>
 
                 <button
                     className='btnH'
-                    style={styles.btnChoose}
+                    style={Object.assign({}, styles.btnChoose, { opacity: newLevel > MAX_LEVEL ? 0.5 : 1 })}
                     onClick={() => {
 
-                        if (!this.state.wizardSelected.name) {
+                        if (!this.state.wizardSelected.name || newLevel > MAX_LEVEL) {
                             return
                         }
 
@@ -339,8 +356,12 @@ class Rules extends Component {
                     IMPROVE
                 </p>
 
-                <p style={{ fontSize: 18, color: "white", marginBottom: 25 }}>
+                <p style={{ fontSize: 18, color: "white", marginBottom: 15 }}>
 					$WIZA balance: {wizaBalance || 0.0}
+				</p>
+
+                <p style={{ fontSize: 18, color: "white", marginBottom: 25 }}>
+					LEVEL CAP: {MAX_LEVEL}
 				</p>
 
                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>

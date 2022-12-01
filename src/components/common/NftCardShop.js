@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import getImageUrl from './GetImageUrl'
 import '../../css/Nft.css'
 import cardStatsShop from './CardStatsShop'
+import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
 import {
     getSubscription
 } from '../../actions'
@@ -30,6 +31,8 @@ class NftCardShop extends Component {
 
         const numberOfTotalMedals = this.calcMedals()
 
+        const level = calcLevelWizard(item)
+
 		return (
 			<div
 				className='containerChoice'
@@ -49,6 +52,15 @@ class NftCardShop extends Component {
 					</div>
 
 					<div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+
+                        <div style={{ width: '90%', alignItems: 'center', marginBottom: 8 }}>
+                            <p style={{ color: '#c2c0c0', fontSize: 16, marginRight: 10 }}>
+                                LEVEL
+                            </p>
+                            <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 18 }}>
+                                {level}
+                            </p>
+                        </div>
 
                         {cardStatsShop(item, numberOfTotalMedals)}
 

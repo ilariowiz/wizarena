@@ -9,6 +9,7 @@ import NftCardTournament from './common/NftCardTournament'
 import Header from './Header'
 import getBoxWidth from './common/GetBoxW'
 import convertMedalName from './common/ConvertMedalName'
+import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import {
     getMontepremi,
@@ -30,7 +31,8 @@ class Tournament extends Component {
             tournament: {},
 			winners: [],
             loading: true,
-            yourStat: ""
+            yourStat: "",
+            avgLevel: 0
 		}
 	}
 
@@ -133,11 +135,25 @@ class Tournament extends Component {
                         yourStat = `Your Wizards still in the game ${winnerWizards} / ${yourWizards}`
                     }
 
-                    this.setState({ winners, yourStat, loading: false })
+                    const avgLevel = this.calcAvgLevel(subscribed)
+                    //console.log(avgLevel);
+
+                    this.setState({ winners, yourStat, avgLevel, loading: false })
                 })
 
             })
         })
+    }
+
+    calcAvgLevel(array) {
+        let sum = 0
+        array.map(i => {
+            if (i.level) {
+                sum += i.level
+            }
+        })
+
+        return Math.round(sum / array.length)
     }
 
     renderRow(item, index, width) {
@@ -221,14 +237,31 @@ class Tournament extends Component {
     }
 
     renderGraph() {
+        const { avgLevel } = this.state
+
         return (
-            <div style={{ marginTop: 25, flexWrap: 'wrap' }}>
-                {this.renderSingleGraph('#88f71e', 'Acid')}
-                {this.renderSingleGraph('#5b30b7', 'Dark')}
-                {this.renderSingleGraph('#cc1919', 'Fire')}
-                {this.renderSingleGraph('#11c8ee', 'Ice')}
-                {this.renderSingleGraph('#e6dc0c', 'Thunder')}
-                {this.renderSingleGraph('#afb9cc', 'Wind')}
+            <div style={{ flexDirection: 'column', marginTop: 25 }}>
+
+                {
+                    avgLevel &&
+                    <div style={{ marginBottom: 15, alignItems: 'center' }}>
+                        <p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
+                            AVERAGE LEVEL
+                        </p>
+                        <p style={{ fontSize: 22, color: getColorTextBasedOnLevel(avgLevel) }}>
+                            {avgLevel}
+                        </p>
+                    </div>
+                }
+
+                <div style={{ flexWrap: 'wrap' }}>
+                    {this.renderSingleGraph('#88f71e', 'Acid')}
+                    {this.renderSingleGraph('#5b30b7', 'Dark')}
+                    {this.renderSingleGraph('#cc1919', 'Fire')}
+                    {this.renderSingleGraph('#11c8ee', 'Ice')}
+                    {this.renderSingleGraph('#e6dc0c', 'Thunder')}
+                    {this.renderSingleGraph('#afb9cc', 'Wind')}
+                </div>
             </div>
         )
     }

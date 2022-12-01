@@ -1,6 +1,7 @@
 import Pact from "pact-lang-api";
 import SignClient from "@walletconnect/sign-client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
+import { calcLevelWizard } from '../components/common/CalcLevelWizard'
 import _ from 'lodash'
 import {
 	CONTRACT_NAME,
@@ -297,15 +298,19 @@ export const loadBlockNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 			//console.log(response)
 
 			if (response) {
+				//console.log(response);
+				response.map(i => {
+					const level = calcLevelWizard(i)
+					i.level = level
+				})
+
+				response.sort((a, b) => {
+					if (parseInt(a.price) === 0) return 1;
+					if (parseInt(b.price) === 0) return -1
+					return a.price - b.price
+				})
 
 				if (!isSubscribed) {
-
-					response.sort((a, b) => {
-						if (parseInt(a.price) === 0) return 1;
-						if (parseInt(b.price) === 0) return -1
-						return a.price - b.price
-					})
-
 					dispatch({
 						type: LOAD_ALL_NFTS,
 						payload: { allNfts: response, nftsBlockId: 0 }
@@ -347,7 +352,6 @@ export const loadBlockNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 		})
 	}
 }
-
 
 export const loadBurningNftInfo = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, block, callback) => {
 	return (dispatch) => {

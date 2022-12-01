@@ -5,6 +5,7 @@ import { firebasedb } from '../Firebase';
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCardChoice.css'
 import cardStats from './CardStats'
+import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
 import ModalSpellbook from './ModalSpellbook'
 import {
     getSubscription
@@ -71,6 +72,8 @@ class NftCardChoice extends Component {
 
         const numberOfTotalMedals = this.calcMedals()
 
+        const level = calcLevelWizard(item)
+
 		return (
 			<div
 				className='containerChoice'
@@ -90,6 +93,15 @@ class NftCardChoice extends Component {
 					</div>
 
 					<div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+
+                        <div style={{ width: '90%', alignItems: 'center', marginBottom: 8 }}>
+                            <p style={{ color: '#c2c0c0', fontSize: 16, marginRight: 10 }}>
+                                LEVEL
+                            </p>
+                            <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 18 }}>
+                                {level}
+                            </p>
+                        </div>
 
                         {cardStats(item, numberOfTotalMedals)}
 

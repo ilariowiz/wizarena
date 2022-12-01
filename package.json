@@ -24,6 +24,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.3",
     "pact-lang-api": "^4.3.3",
+    "rainbowvis.js": "^1.1.1",
     "react": "^16.8.4",
     "react-dom": "16.8.4",
     "react-hot-toast": "^2.2.0",
