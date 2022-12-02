@@ -151,6 +151,26 @@
         (require-capability (PRIVATE))
     )
 
+    (defcap STAKE_NFT (id:string owner:string multiplier:integer)
+        @event true
+    )
+
+    (defcap UNSTAKE_NFT (id:string owner:string)
+        @event true
+    )
+
+    (defcap WIZA_REWARD_FROM_STAKE (account:string amount:decimal)
+        @event true
+    )
+
+    (defcap WIZA_REWARD_GENERAL (account:string amount:decimal)
+        @event true
+    )
+
+    (defcap SPEND_WIZA (account:string amount:decimal)
+        @event true
+    )
+
 ; --------------------------------------------------------------------------
   ; Initialize
   ; --------------------------------------------------------------------------
@@ -409,6 +429,7 @@
                     "multiplier": (length(at "spellbook" data)),
                     "staked": true}
                 )
+                (emit-event (STAKE_NFT idnft sender (length(at "spellbook" data))))
             )
         )
     )
@@ -449,6 +470,7 @@
                     (mine-from-stake account multiplier stakedTime)
                 )
             )
+            (emit-event (UNSTAKE_NFT idnft sender))
         )
     )
 
@@ -509,6 +531,7 @@
                     "balance": (+ oldbalance reward),
                     "guard": guard})
                 (write mined-wiza-table "" {"amount": (+ total-mined reward)})
+                (emit-event (WIZA_REWARD_FROM_STAKE account reward))
               )
             )
         )
@@ -544,6 +567,7 @@
                     "balance": (+ oldbalance amount),
                     "guard": guard})
                 (write mined-wiza-table "" {"amount": (+ total-mined amount)})
+                (emit-event (WIZA_REWARD_GENERAL account amount))
               )
             )
         )
@@ -568,6 +592,7 @@
               (update token-table WIZA_TOKEN_BANK {
                   "balance": (+ oldbalance amount)})
             )
+            (emit-event (SPEND_WIZA account amount))
         )
     )
 
