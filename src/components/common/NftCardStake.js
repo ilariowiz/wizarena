@@ -55,7 +55,7 @@ class NftCardStake extends Component {
     loadInfoStake() {
         const { item, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-        console.log(item);
+        //console.log(item);
 
         this.props.getWizardStakeInfo(chainId, gasPrice, gasLimit, networkUrl, item.id, (response) => {
             //console.log(response)
