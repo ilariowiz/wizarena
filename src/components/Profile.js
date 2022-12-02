@@ -34,7 +34,8 @@ import {
 	claimAllAndUnstakeAll,
 	stakeAll,
 	addNftToBurningQueue,
-	removeNftFromBurningQueue
+	removeNftFromBurningQueue,
+	delistNft
 } from '../actions'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -419,6 +420,14 @@ class Profile extends Component {
 		this.props.removeNftFromBurningQueue(chainId, gasPrice, netId, id, account)
 	}
 
+	delist(id) {
+		const { account, chainId, gasPrice, netId } = this.props
+
+		this.setState({ typeModal: 'delist', nameNftSubscribed: `#${id}` }, () => {
+			this.props.delistNft(chainId, gasPrice, 700, netId, account, id)
+		})
+	}
+
 	buildsRow(items, itemsPerRow = 4) {
 		return items.reduce((rows, item, index) => {
 			//console.log(index);
@@ -455,6 +464,7 @@ class Profile extends Component {
 					onClaim={() => this.claimWizaWithoutUnstake(item.id)}
 					onAddBurning={() => this.addToBurning(item.id)}
 					onRemoveBurning={() => this.removeFromBurning(item.id)}
+					onDelist={() => this.delist(item.id)}
 					onLoadUnclaim={(value) => {
 						this.setState({ unclaimedWizaTotal: this.state.unclaimedWizaTotal + parseFloat(value) })
 					}}
@@ -1157,5 +1167,6 @@ export default connect(mapStateToProps, {
 	claimAllAndUnstakeAll,
 	stakeAll,
 	addNftToBurningQueue,
-	removeNftFromBurningQueue
+	removeNftFromBurningQueue,
+	delistNft
 })(Profile)

@@ -37,7 +37,13 @@ class NftCardStake extends Component {
         const timer = index * 100
 
         setTimeout(() => {
-            this.loadInfoStake()
+
+            if (!item.listed) {
+                this.loadInfoStake()
+            }
+            else {
+                this.setState({ loading: false })
+            }
 
             if (item.confirmBurn) {
                 this.loadInfoBurn()
@@ -49,7 +55,7 @@ class NftCardStake extends Component {
     loadInfoStake() {
         const { item, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-        //console.log(item);
+        console.log(item);
 
         this.props.getWizardStakeInfo(chainId, gasPrice, gasLimit, networkUrl, item.id, (response) => {
             //console.log(response)
@@ -261,8 +267,24 @@ class NftCardStake extends Component {
 					</div>
 				}
 
+                {
+                    item.listed && !loading &&
+                    <button
+						className="btnH"
+						style={Object.assign({}, styles.btnStake, { width })}
+						onClick={(e) => {
+							e.stopPropagation()
+							this.props.onDelist()
+						}}
+					>
+						<p style={{ fontSize: 17, color: 'white' }}>
+							DELIST
+						</p>
+					</button>
+                }
+
 				{
-					!staked && !inBurnQueue && !loading &&
+					!staked && !inBurnQueue && !item.listed && !loading &&
                     <div style={{ width, alignItems: 'center', justifyContent: 'space-between' }}>
                         <button
                             className="btnH"
@@ -293,7 +315,7 @@ class NftCardStake extends Component {
 				}
 
                 {
-                    inBurnQueue && !staked && !loading &&
+                    inBurnQueue && !staked && !item.listed && !loading &&
 					<button
 						className="btnH"
 						style={Object.assign({}, styles.btnStake, { width, backgroundColor: "#840fb2" })}
@@ -309,7 +331,7 @@ class NftCardStake extends Component {
                 }
 
 				{
-					staked && !loading &&
+					staked && !item.listed && !loading &&
                     <div style={{ width, alignItems: 'center', justifyContent: 'space-between' }}>
                         <button
                             className="btnH"
