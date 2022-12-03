@@ -288,7 +288,7 @@ class Tournament extends Component {
 
         //console.log(tournament);
 
-        const wizaPrize = buyin && subscribed && buyin * 60
+        const wizaPrize = buyin && subscribed && buyin * 45
 
         const roundName = tournament.name.split("_")[1]
 
