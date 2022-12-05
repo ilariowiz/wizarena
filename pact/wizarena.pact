@@ -15,12 +15,13 @@
     (defconst NFTS_COUNT_KEY "nfts-count-key")
     (defconst VOLUME_PURCHASE_COUNT "volume_purchase_count")
     (defconst MINT_CHAIN_ID_KEY "mint-chain-id-key")
+    (defconst PRICE_KEY "price-key")
     (defconst BUYIN_KEY "buyin-key")
     (defconst FEE_KEY "fee-key")
     (defconst FEE_TOURNAMENT_KEY "fee-tournament-key")
     (defconst ADMIN_KEYSET "free.wizarena-keyset")
     (defconst ADMIN_ADDRESS "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb")
-    (defconst MAX_ITEMS_PER_OWNER "max-items-per-owner")
+    ;(defconst MAX_ITEMS_PER_OWNER "max-items-per-owner")
     (defconst WIZ_BANK:string "wiz-bank" "Account holding prizes")
 
     (defconst WIZ_REVEAL "wiz-reveal")
@@ -28,6 +29,8 @@
     (defconst TOURNAMENT_OPEN "tournament_open")
 
     (defconst LEVEL_CAP 300)
+
+    (defconst MINT_PHASE "mint-phase")
 
 ; --------------------------------------------------------------------------
 ; Capabilities
@@ -111,10 +114,10 @@
         imageHash:string
     )
 
-    (defschema account-minted-schema
-        @doc "keeps track of how many nfts an account has minted"
-        minted:integer
-    )
+    ; (defschema account-minted-schema
+    ;     @doc "keeps track of how many nfts an account has minted"
+    ;     minted:integer
+    ; )
 
     (defschema counts-schema
         @doc "Basic schema used for counting things"
@@ -131,10 +134,10 @@
         value:string
     )
 
-    (defschema max-items-schema
-        @doc "Max items schema during mint time"
-        max:integer
-    )
+    ; (defschema max-items-schema
+    ;     @doc "Max items schema during mint time"
+    ;     max:integer
+    ; )
 
     (defschema token-schema
         balance:decimal
@@ -183,22 +186,49 @@
         timestamp:time
     )
 
+    (defschema free-mint-list-schema
+        amount:integer
+    )
+
+    (defschema wl-mint-schema
+        amount:integer
+    )
+
+    (defschema account-free-minted-clerics-schema
+        @doc "keeps track of how many clerics an account has minted for free"
+        minted:integer
+    )
+
+    (defschema account-minted-clerics-schema
+        @doc "keeps track of how many clerics an account has minted"
+        minted:integer
+    )
+
+    (defschema price-schema
+        @doc "Prices schema"
+        price:decimal
+    )
+
     (deftable nfts:{nft-main-schema})
     (deftable nfts-market:{nft-listed-schema})
     (deftable creation:{creation-schema})
-    (deftable account-minted:{account-minted-schema})
     (deftable counts:{counts-schema})
     (deftable values:{values-schema})
     (deftable volume:{volume-schema})
-    (deftable max-items:{max-items-schema})
+    ;(deftable max-items:{max-items-schema})
     (deftable token-table:{token-schema})
     (deftable tournaments:{tournament-sub-schema})
     (deftable values-tournament:{values-tournament-schema})
     (deftable prizes:{prizes-schema})
     (deftable stats:{stats-schema})
     (deftable upgrade-stat-values:{upgrade-stat-values-schema})
-
     (deftable burning-queue-table:{burning-queue-schema})
+
+    (deftable free-mint-table:{free-mint-list-schema})
+    (deftable wl-mint-table:{wl-mint-schema})
+    (deftable account-free-minted-clerics:{account-free-minted-clerics-schema})
+    (deftable account-minted-clerics:{account-minted-clerics-schema})
+    (deftable price:{price-schema})
 
     ; --------------------------------------------------------------------------
   ; Can only happen once
@@ -214,7 +244,7 @@
         (insert values-tournament BUYIN_KEY {"value": 4.0})
         (insert values-tournament FEE_KEY {"value": 7.0})
         (insert values-tournament FEE_TOURNAMENT_KEY {"value": 20.0})
-        (insert max-items MAX_ITEMS_PER_OWNER {"max": 0})
+        ;(insert max-items MAX_ITEMS_PER_OWNER {"max": 0})
 
         (insert values WIZ_REVEAL {"value": "0"})
         (insert values TOURNAMENT_OPEN {"value": "0"})
@@ -222,7 +252,8 @@
         (coin.create-account WIZ_BANK (create-module-guard "wiz-holdings"))
         (create-account WIZ_BANK (create-module-guard "wiz-holdings"))
 
-
+        (insert values MINT_PHASE {"value": "-1"})
+        (insert price PRICE_KEY {"price": 10.0})
     )
 
     (defun insertValuesUpgrade ()
@@ -435,48 +466,84 @@
     )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ;;;;;;;; MINT FUN ;;;;;;;;;;;;
+    ;;;;;;;; MINT CLERICS FUN ;;;;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun set-max-items(max:integer)
-        @doc "Set the max items per address"
-        (with-capability (ADMIN)
-            (update max-items MAX_ITEMS_PER_OWNER {"max": max})
-        )
-    )
-
-    (defun get-wizards (owner:string amount:integer)
+    (defun get-clerics (owner:string amount:integer)
         @doc "Mint part 1"
         (enforce (>= amount 1) "Must mint at least 1 wizard")
         (let (
                 (wiz-minted (get-count MINTED_COUNT_KEY))
                 (wiz-created (get-count NFTS_COUNT_KEY))
-                (max-items (get-max-items))
+                (mint-phase (get-value MINT_PHASE))
+                (max-per-mint-phase (get-max-items-clerics owner (get-value MINT_PHASE)))
+                (mint-price (get-mint-price))
+                (minted (get-minted (get-value MINT_PHASE) owner))
             )
-            (enforce (> max-items 0) "Too early to mint")
+            (enforce (!= mint-phase "-1") "Too early to mint")
             (enforce (<= (+ wiz-minted amount) wiz-created) "Tried to mint more wiz then available! Please reduce the amount")
-            (with-default-read account-minted owner
-                {"minted": 0}
-                {"minted":= minted }
-                (enforce (>= (- max-items amount) minted) "Exceed max mint per wallet")
+            (enforce (>= (- max-per-mint-phase amount) minted) "Exceed max mint per wallet")
+            ; se è fase 1 o 2, fase 0 = free mint
+            (if
+                (!= mint-phase "0")
+                [
+                  (install-capability (coin.TRANSFER owner ADMIN_ADDRESS (* mint-price amount)))
+                  (coin.transfer owner ADMIN_ADDRESS (* mint-price amount))
+                ]
+                "Admin address"
             )
-        )
-        (with-default-read account-minted owner
-          {"minted": 0}
-          {"minted":= minted }
-          (write account-minted owner {"minted": (+ minted amount)})
-        )
-        (with-capability (ACCOUNT_GUARD owner)
-            (with-capability (PRIVATE)
-                (map
-                    (get-wizard owner)
-                    (make-list amount 1)
+            ;l'update su quanti ne hai mintati lo facciamo solo nella fase 1 ovvero WL, perché nella prima fase free, minti tutti quelli che hai
+            ; in public non importa quanti ne hai
+            (if
+                (= mint-phase "0")
+                (with-default-read account-free-minted-clerics owner
+                  {"minted": 0}
+                  {"minted":= minted }
+                  (write account-free-minted-clerics owner {"minted": (+ minted amount)})
+                )
+                ""
+            )
+            (if
+                (= mint-phase "1")
+                (with-default-read account-minted-clerics owner
+                  {"minted": 0}
+                  {"minted":= minted }
+                  (write account-minted-clerics owner {"minted": (+ minted amount)})
+                )
+                ""
+            )
+            (with-capability (ACCOUNT_GUARD owner)
+                (with-capability (PRIVATE)
+                    (increase-volume-by VOLUME_PURCHASE_COUNT (* mint-price amount))
+                    (if
+                        ; if during WL you mint 9 NFT, the tenth is free
+                        (= mint-phase "1")
+                        (with-default-read account-minted-clerics owner
+                          {"minted": 0}
+                          {"minted":= minted }
+                          (if
+                              (= minted 9)
+                              (map
+                                  (get-cleric owner)
+                                  (make-list (+ amount 1) 1)
+                              )
+                              (map
+                                  (get-cleric owner)
+                                  (make-list amount 1)
+                              )
+                          )
+                        )
+                        (map
+                            (get-cleric owner)
+                            (make-list amount 1)
+                        )
+                    )
                 )
             )
         )
     )
 
-    (defun get-wizard (owner:string number:integer)
+    (defun get-cleric (owner:string number:integer)
         @doc "Mint part 2"
         (enforce (= number 1) "Number enforced to be 1 to avoid confusion but allow mapping to work")
         (require-capability (PRIVATE))
@@ -487,7 +554,7 @@
             (let (
                     (data (get-latest-wizard-data id))
                 )
-                (mint-wizard id {
+                (mint-cleric id {
                     "id": id,
                     "created": (at "block-time" (chain-data)),
                     "traits": (at "traits" data),
@@ -500,7 +567,7 @@
         (increase-count MINTED_COUNT_KEY)
     )
 
-    (defun mint-wizard (id:string data:object)
+    (defun mint-cleric (id:string data:object)
         @doc "Mint part 3"
         (require-capability (PRIVATE))
         (insert nfts id data)
@@ -511,6 +578,164 @@
         })
         (increase-count MINTED_POST_COUNT_KEY)
     )
+
+    (defun get-max-items-clerics (address:string phase:string)
+        (cond
+            (
+                (= phase "0")
+                (at "amount" (read free-mint-table address ['amount]))
+            )
+            (
+                (= phase "1")
+                (at "amount" (read wl-mint-table address ['amount]))
+            )
+            (
+                (= phase "2")
+                200
+            )
+        "")
+    )
+
+    (defun get-minted (phase:string owner:string)
+        (cond
+            (
+                (= phase "0")
+                (with-default-read account-free-minted-clerics owner
+                    {"minted": 0}
+                    {"minted":= minted }
+                    minted
+                )
+            )
+            (
+                (= phase "1")
+                (with-default-read account-minted-clerics owner
+                    {"minted": 0}
+                    {"minted":= minted }
+                    minted
+                )
+            )
+            (
+                (= phase "2")
+                0
+            )
+        "")
+    )
+
+    (defun add-users-free-mint (accounts:list)
+        (with-capability (ADMIN)
+            (map
+                (add-user-free-mint)
+                accounts
+            )
+        )
+    )
+
+    (defun add-user-free-mint (data:object)
+        (require-capability (ADMIN))
+        (let (
+                (address (at "address" data))
+                (amount (at "amount" data))
+            )
+            (write free-mint-table address { "amount": amount })
+        )
+    )
+
+    (defun add-users-wl-mint (accounts:list)
+        (with-capability (ADMIN)
+            (map
+                (add-user-wl-mint)
+                accounts
+            )
+        )
+    )
+
+    (defun add-user-wl-mint (data:object)
+        (require-capability (ADMIN))
+        (let (
+                (address (at "address" data))
+                (amount (at "amount" data))
+            )
+            (write wl-mint-table address { "amount": amount })
+        )
+    )
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;; MINT FUN ;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    ; (defun set-max-items(max:integer)
+    ;     @doc "Set the max items per address"
+    ;     (with-capability (ADMIN)
+    ;         (update max-items MAX_ITEMS_PER_OWNER {"max": max})
+    ;     )
+    ; )
+    ;
+    ; (defun get-wizards (owner:string amount:integer)
+    ;     @doc "Mint part 1"
+    ;     (enforce (>= amount 1) "Must mint at least 1 wizard")
+    ;     (let (
+    ;             (wiz-minted (get-count MINTED_COUNT_KEY))
+    ;             (wiz-created (get-count NFTS_COUNT_KEY))
+    ;             (max-items (get-max-items))
+    ;         )
+    ;         (enforce (> max-items 0) "Too early to mint")
+    ;         (enforce (<= (+ wiz-minted amount) wiz-created) "Tried to mint more wiz then available! Please reduce the amount")
+    ;         (with-default-read account-minted owner
+    ;             {"minted": 0}
+    ;             {"minted":= minted }
+    ;             (enforce (>= (- max-items amount) minted) "Exceed max mint per wallet")
+    ;         )
+    ;     )
+    ;     (with-default-read account-minted owner
+    ;       {"minted": 0}
+    ;       {"minted":= minted }
+    ;       (write account-minted owner {"minted": (+ minted amount)})
+    ;     )
+    ;     (with-capability (ACCOUNT_GUARD owner)
+    ;         (with-capability (PRIVATE)
+    ;             (map
+    ;                 (get-wizard owner)
+    ;                 (make-list amount 1)
+    ;             )
+    ;         )
+    ;     )
+    ; )
+    ;
+    ; (defun get-wizard (owner:string number:integer)
+    ;     @doc "Mint part 2"
+    ;     (enforce (= number 1) "Number enforced to be 1 to avoid confusion but allow mapping to work")
+    ;     (require-capability (PRIVATE))
+    ;     (require-capability (ACCOUNT_GUARD owner))
+    ;     (let (
+    ;             (id (id-for-new-wizard))
+    ;         )
+    ;         (let (
+    ;                 (data (get-latest-wizard-data id))
+    ;             )
+    ;             (mint-wizard id {
+    ;                 "id": id,
+    ;                 "created": (at "block-time" (chain-data)),
+    ;                 "traits": (at "traits" data),
+    ;                 "owner": owner,
+    ;                 "name": (at "name" data),
+    ;                 "imageHash": (at "imageHash" data)
+    ;             })
+    ;         )
+    ;     )
+    ;     (increase-count MINTED_COUNT_KEY)
+    ; )
+    ;
+    ; (defun mint-wizard (id:string data:object)
+    ;     @doc "Mint part 3"
+    ;     (require-capability (PRIVATE))
+    ;     (insert nfts id data)
+    ;     (insert nfts-market id {
+    ;         "id": id,
+    ;         "price": 0.0,
+    ;         "listed": false
+    ;     })
+    ;     (increase-count MINTED_POST_COUNT_KEY)
+    ; )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;; MARKTEPLACE FUN ;;;;
@@ -1007,9 +1232,9 @@
         (at "value" (read values key ['value]))
     )
 
-    (defun get-max-items()
-        (at "max" (read max-items MAX_ITEMS_PER_OWNER ["max"]))
-    )
+    ; (defun get-max-items()
+    ;     (at "max" (read max-items MAX_ITEMS_PER_OWNER ["max"]))
+    ; )
 
     (defun get-latest-wizard-data (id:string)
         (require-capability (PRIVATE))
@@ -1032,9 +1257,9 @@
         (int-to-str 10 (get-count MINTED_POST_COUNT_KEY))
     )
 
-    (defun read-account-minted (address:string)
-        (at "minted" (read account-minted address ['minted]))
-    )
+    ; (defun read-account-minted (address:string)
+    ;     (at "minted" (read account-minted address ['minted]))
+    ; )
 
     (defun wizard-owned-by (owner:string)
         @doc "all ids wizard from owner"
@@ -1052,13 +1277,13 @@
     (defun get-wizard-fields-for-id:object (id:integer)
         @doc "Return the fields for a given id"
         (let (
-                (reveal (get-value WIZ_REVEAL))
                 (info-market (read nfts-market (int-to-str 10 id)))
                 (info-stat (read stats (int-to-str 10 id)))
                 (confirmBurn (check-nft-in-burning-queue (int-to-str 10 id)))
             )
+            ; per fare il reveal vediamo quale id ha la richeista, se è più di 1023 allora è un cleric
             (if
-                (!= reveal "0")
+                (< id 1)
                 (let (
                         (info (read nfts (int-to-str 10 id)))
                     )
@@ -1067,7 +1292,7 @@
                 (let (
                         (info (read nfts (int-to-str 10 id) ['created 'owner 'name 'id 'imageHash]))
                     )
-                    (+ info info-market)
+                    (+ (+ info info-market) {"confirmBurn":confirmBurn})
                 )
             )
         )
@@ -1102,6 +1327,10 @@
         (at "balance" (read token-table WIZ_BANK ['balance]))
     )
 
+    (defun get-mint-price()
+        (at "price" (read price PRICE_KEY ["price"]))
+    )
+
     ;;;;;; GENERIC HELPER FUNCTIONS ;;;;;;;;;;
 
     (defun curr-chain-id ()
@@ -1117,11 +1346,11 @@
     (create-table nfts)
     (create-table nfts-market)
     (create-table creation)
-    (create-table account-minted)
+    ;(create-table account-minted)
     (create-table counts)
     (create-table values)
     (create-table volume)
-    (create-table max-items)
+    ;(create-table max-items)
     (create-table token-table)
     (create-table tournaments)
     (create-table values-tournament)
@@ -1131,8 +1360,13 @@
 
     (create-table stats)
     (create-table upgrade-stat-values)
-
     (create-table burning-queue-table)
+
+    (create-table free-mint-table)
+    (create-table wl-mint-table)
+    (create-table account-free-minted-clerics)
+    (create-table account-minted-clerics)
+    (create-table price)
 
     (initialize)
     (insertValuesUpgrade)

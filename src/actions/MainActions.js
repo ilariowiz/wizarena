@@ -5,6 +5,7 @@ import { calcLevelWizard } from '../components/common/CalcLevelWizard'
 import _ from 'lodash'
 import {
 	CONTRACT_NAME,
+	ADMIN_ADDRESS,
 	LOAD_USER,
 	DEFAULT_GAS_PRICE,
 	MAIN_NET_ID,
@@ -440,11 +441,11 @@ export const getNumberMinted = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit 
 	}
 }
 
-export const readAccountMinted = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, address, callback) => {
+export const readAccountMinted = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, address, phase, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME}.read-account-minted "${address}")`,
+			pactCode: `(free.${CONTRACT_NAME}.get-minted "${phase}" "${address}")`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
@@ -538,11 +539,11 @@ export const loadSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 	}
 }
 
-export const loadMaxItemsPerWallet = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, callback) => {
+export const loadMaxItemsPerWallet = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, account, phase, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME}.get-max-items)`,
+			pactCode: `(free.${CONTRACT_NAME}.get-max-items-clerics "${account.account}" "${phase}")`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
@@ -551,8 +552,23 @@ export const loadMaxItemsPerWallet = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 			if (callback) {
 				callback(response)
 			}
+		})
+	}
+}
 
-			dispatch({ type: 'fake' })
+export const getMintPhase = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-value "mint-phase")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (callback) {
+				callback(response)
+			}
 		})
 	}
 }
@@ -791,7 +807,7 @@ export const addNftToBurningQueue = (chainId, gasPrice = DEFAULT_GAS_PRICE, netI
 			networkId: netId
 		}
 
-		//console.log("mintNft", cmd)
+		//console.log("addNftToBurningQueue", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
@@ -826,30 +842,44 @@ export const removeNftFromBurningQueue = (chainId, gasPrice = DEFAULT_GAS_PRICE,
 			networkId: netId
 		}
 
-		//console.log("mintNft", cmd)
+		//console.log("removeNftFromBurningQueue", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
 }
 
-export const mintNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, amount, account) => {
+export const mintNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, amount, account, stage) => {
 	return (dispatch) => {
 
-		let pactCode = `(free.${CONTRACT_NAME}.get-wizards "${account.account}" ${amount})`;
+		const mintPrice = 10.0
+
+		let pactCode = `(free.${CONTRACT_NAME}.get-clerics "${account.account}" ${amount})`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify your account",
+				"Verify your account",
+				`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
+				[account.account]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		if (stage !== "free") {
+			caps.push(
+				Pact.lang.mkCap(`Mint`, "Pay to mint", `coin.TRANSFER`, [
+					account.account,
+					ADMIN_ADDRESS,
+					mintPrice * amount,
+				])
+			)
+		}
 
 		let cmd = {
 			pactCode,
-			caps: [
-				Pact.lang.mkCap(
-          			"Verify your account",
-          			"Verify your account",
-          			`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
-          			[account.account]
-        		),
-				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
-			],
+			caps,
 			sender: account.account,
-			gasLimit: 2500,
+			gasLimit: 2500 * amount,
 			gasPrice,
 			chainId,
 			ttl: 600,
@@ -1141,7 +1171,7 @@ export const buyUpgrade = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account
 			networkId: netId
 		}
 
-		//console.log("mintNft", cmd)
+		//console.log("buyUpgrade", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}

@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { connect } from 'react-redux'
 import DotLoader from 'react-spinners/DotLoader';
 import Media from 'react-media';
+import { AiOutlinePlus } from 'react-icons/ai'
+import { AiOutlineMinus } from 'react-icons/ai'
 import Header from './Header'
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
@@ -14,15 +16,16 @@ import {
 	setNetworkSettings,
 	setNetworkUrl,
 	readAccountMinted,
+	getMintPhase,
 } from '../actions'
-import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
+import { MAIN_NET_ID, TEST_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
 import '../css/Nft.css'
 
 const logo = require('../assets/wiz_logo_centrale.png')
-const sample1 = require('../assets/sneak1.png')
-const sample2 = require('../assets/sneak2.png')
-const sample3 = require('../assets/sneak3.png')
-const sample4 = require('../assets/sneak4.png')
+const sample1 = require('../assets/sneak5.png')
+const sample2 = require('../assets/sneak6.png')
+const sample3 = require('../assets/sneak7.png')
+const sample4 = require('../assets/sneak8.png')
 
 
 class Mint extends Component {
@@ -37,7 +40,7 @@ class Mint extends Component {
 			stage: 'early',
 			countdownDuration: undefined,
 			error: '',
-			maxItemsPerWallet: 0,
+			maxItemsPerWallet: -1,
 			loading: true
 		}
 	}
@@ -49,47 +52,75 @@ class Mint extends Component {
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
 		setTimeout(() => {
-			this.maxItemsPerWallet()
+			this.getMintPhase()
 		}, 500)
 	}
 
 	//metodo chiamato prima di fare il calcolo tra quelli che hai mintato e i max,
 	//quindi come risposta avremo: 0 all'inizio, 5 durante WL, > 5 durante public
-	calcStage(maxItemsPerWallet) {
-		let stage = 'public';
+	calcStage(phase) {
+		let stage = 'early';
 
-		if (maxItemsPerWallet === 0) {
+		if (phase === "-1") {
 			stage = 'early'
+		}
+		else if (phase === "0") {
+			stage = "free"
+		}
+		else if (phase === "1") {
+			stage = "wl"
+		}
+		else if (phase === "2") {
+			stage = "public"
 		}
 
 		//console.log(stage)
 		return stage
 	}
 
-	maxItemsPerWallet() {
+	getMintPhase() {
 		const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
 
-		this.props.loadMaxItemsPerWallet(chainId, gasPrice, gasLimit, networkUrl, (res) => {
-
-			const stage = this.calcStage(res)
+		this.props.getMintPhase(chainId, gasPrice, gasLimit, networkUrl, (response) => {
+			const stage = this.calcStage(response)
 			this.setState({ stage })
 
-			//ci interessa sapere quanti ne ha mintati, solo durante la wl che c'è un numero massimo di mint
-			//altrimenti non ci interessa saperlo perché il numero sarà molto alto
-			if (account && account.account) {
-				this.props.readAccountMinted(chainId, gasPrice, gasLimit, networkUrl, account.account, (minted) => {
-					//console.log(minted)
-
-					if (minted.status && minted.status === "failure") {
-						this.setState({ maxItemsPerWallet: res, loading: false })
-					}
-					else {
-						this.setState({ maxItemsPerWallet: res - minted, loading: false })
-					}
-				})
+			if (response !== "-1" && account.account) {
+				this.maxItemsPerWallet(response)
 			}
 			else {
-				this.setState({ maxItemsPerWallet: res, loading: false })
+				this.setState({ loading: false })
+			}
+		})
+	}
+
+	maxItemsPerWallet(phase) {
+		const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
+		const { stage } = this.state
+
+		this.props.loadMaxItemsPerWallet(chainId, gasPrice, gasLimit, networkUrl, account, phase, (res) => {
+			//ci interessa sapere quanti ne ha mintati, solo durante la wl che c'è un numero massimo di mint
+			//altrimenti non ci interessa saperlo perché il numero sarà molto alto
+			//console.log(res);
+			if (account && account.account) {
+				if (res.status && res.status === "failure") {
+					this.setState({ maxItemsPerWallet: -1, loading: false })
+				}
+				else {
+					this.props.readAccountMinted(chainId, gasPrice, gasLimit, networkUrl, account.account, phase, (minted) => {
+						//console.log(minted)
+
+						if (minted.status && minted.status === "failure") {
+							this.setState({ maxItemsPerWallet: 0, loading: false })
+						}
+						else {
+							this.setState({ maxItemsPerWallet: res - minted, loading: false })
+						}
+					})
+				}
+			}
+			else {
+				this.setState({ maxItemsPerWallet: 0, loading: false })
 			}
 
 			this.minted()
@@ -112,7 +143,7 @@ class Mint extends Component {
 
 		//console.log(countMinted);
 
-		if (countMinted >= 1024) {
+		if (countMinted >= 2048) {
 			clearInterval(this.countdownMinted)
 			this.countdownMinted = null
 			return
@@ -121,21 +152,12 @@ class Mint extends Component {
 		this.props.getNumberMinted(chainId, gasPrice, gasLimit, networkUrl)
 	}
 
-	onlyNumbers(str) {
-		return /^[0-9]+$/.test(str);
-	}
-
 	mint() {
 		const { amount, stage, maxItemsPerWallet } = this.state;
 		const { account, chainId, gasPrice, netId } = this.props
 
-		if (!amount || !this.onlyNumbers(amount) || amount <= 0) {
-			this.setState({ error: 'Please set a valid amount' })
-			return
-		}
-
 		if (amount > maxItemsPerWallet) {
-			this.setState({ error: 'You can\'t mint others Wizards' })
+			this.setState({ error: 'You can\'t mint others Clerics' })
 			return
 		}
 
@@ -144,7 +166,7 @@ class Mint extends Component {
 			return
 		}
 
-		this.props.mintNft(chainId, gasPrice, netId, amount, account)
+		this.props.mintNft(chainId, gasPrice, netId, amount, account, stage)
 	}
 
 	renderHeader(width) {
@@ -177,7 +199,7 @@ class Mint extends Component {
 
 		let minted = countMinted || 0;
 
-		const max = 1024
+		const max = 2048
 
 		const progress = minted / max * 100
 
@@ -206,10 +228,10 @@ class Mint extends Component {
 	}
 
 	renderBtnMint(width) {
-		const { maxItemsPerWallet } = this.state
+		const { maxItemsPerWallet, amount, stage } = this.state
 		const { countMinted, account } = this.props
 
-		if (countMinted && countMinted === 1024) {
+		if (countMinted && countMinted === 2048) {
 			return (
 				<div style={Object.assign({}, styles.btnConnect, { width, cursor: 'default' })}>
 					<p style={{ fontSize: 19, color: TEXT_SECONDARY_COLOR }}>
@@ -236,24 +258,126 @@ class Mint extends Component {
 		return (
 			<div style={{ width, flexDirection: 'column' }}>
 				<div style={{ justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: 20 }}>
-					<p style={{ fontSize: 17, color: '#c2c0c0' }}>
-						You can mint up to
-					</p>
+					{
+						maxItemsPerWallet > -1 && stage !== 'public' &&
+						<div style={{ justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
+							<p style={{ fontSize: 17, color: '#c2c0c0' }}>
+								You can mint up to
+							</p>
 
-					<p style={{ fontSize: 19, fontWeight: '500', color: 'white' }}>
-						{maxItemsPerWallet}
-					</p>
+							<p style={{ fontSize: 19, fontWeight: '500', color: 'white' }}>
+								{maxItemsPerWallet}
+							</p>
+						</div>
+					}
+
+					{
+						maxItemsPerWallet < 0 &&
+						<p style={{ fontSize: 16, color: 'white' }}>
+							Your wallet cannot mint at this stage
+						</p>
+					}
 				</div>
 
-				<button
-					className='btnH'
-					style={Object.assign({}, styles.btnMint, { width })}
-					onClick={() => this.mint()}
-				>
-					<p style={{ fontSize: 19, color: 'white' }}>
-						{maxItemsPerWallet <= 0 ? "Max reached" : "MINT 1 Wizard"}
-					</p>
-				</button>
+				{
+					maxItemsPerWallet === -1 &&
+					<div
+						style={Object.assign({}, styles.btnConnect, { width })}
+					>
+						<p style={{ fontSize: 18, color: 'white' }}>
+							Wait next stage
+						</p>
+					</div>
+				}
+
+				{
+					maxItemsPerWallet === 0 &&
+					<div
+						style={Object.assign({}, styles.btnConnect, { width })}
+					>
+						<p style={{ fontSize: 18, color: 'white' }}>
+							Max reached
+						</p>
+					</div>
+				}
+
+				{
+					maxItemsPerWallet > 0 &&
+					<div style={Object.assign({}, styles.btnMint, { width })}>
+						<button
+							style={{ marginLeft: 20, cursor: 'pointer' }}
+							onClick={() => {
+								if (amount === 1) {
+									return
+								}
+
+								this.setState({ amount: amount - 1 })
+							}}
+						>
+							<AiOutlineMinus
+								color="white"
+								size={24}
+							/>
+						</button>
+
+						<p style={{ fontSize: 22, color: 'white' }}>
+							{amount}
+						</p>
+
+						<button
+							style={{ marginRight: 20, cursor: 'pointer' }}
+							onClick={() => {
+								if (amount === maxItemsPerWallet) {
+									return
+								}
+
+								if (maxItemsPerWallet === 200 && amount === 9) {
+									return
+								}
+
+								this.setState({ amount: amount + 1 })
+							}}
+						>
+							<AiOutlinePlus
+								color="white"
+								size={24}
+							/>
+						</button>
+					</div>
+
+				}
+
+
+
+				{
+					maxItemsPerWallet > 0 &&
+					<button
+						className='btnH'
+						style={Object.assign({}, styles.btnMint, { width, marginBottom: 5 })}
+						onClick={() => this.mint()}
+					>
+						<p style={{ fontSize: 19, color: 'white' }}>
+							{
+								stage === "free" ?
+								`MINT ${amount} Clerics for FREE`
+								:
+								`MINT ${amount} Clerics for ${10 * amount} KDA`
+							}
+						</p>
+					</button>
+				}
+
+				{
+					maxItemsPerWallet > 0 && stage === "public" ?
+					<div style={{ width: '100%', justifyContent: 'center', marginBottom: 20 }}>
+						<p style={{ fontSize: 14, color: 'white' }}>
+							Max 9 per transaction
+						</p>
+					</div>
+					:
+					<div style={{ height: 20 }} />
+				}
+
 			</div>
 		)
 	}
@@ -262,7 +386,7 @@ class Mint extends Component {
 		return (
 			<img
 				src={img}
-				style={{ width, height: width, borderRadius: 2, marginRight: 15 }}
+				style={{ width, height: width, borderRadius: 2, marginRight: 15, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
 				alt='Sample'
 			/>
 		)
@@ -286,7 +410,7 @@ class Mint extends Component {
 					</p>
 
 					<p style={{ fontSize: 19, color: 'white' }}>
-						FREE
+						{stage === "free" ? "FREE" : "10 KDA"}
 					</p>
 				</div>
 
@@ -333,7 +457,7 @@ class Mint extends Component {
 	}
 
 	renderBody(isMobile) {
-		const { showModalConnection, stage } = this.state
+		const { showModalConnection, stage, amount } = this.state
 		const { showModalTx } = this.props
 
 		const { boxW, modalW } = getBoxWidth(isMobile)
@@ -371,7 +495,7 @@ class Mint extends Component {
 								/>
 
 								<div style={{ flexDirection: 'column', justifyContent: 'center' }}>
-									<p style={{ fontSize: 26, color: 'white', lineHeight: 1 }}>Wizards Arena</p>
+									<p style={{ fontSize: 26, color: 'white', lineHeight: 1 }}>Clerics Arena</p>
 									<p style={{ fontSize: 17, color: '#c2c0c0', lineHeight: 1 }}>Supply: 1.024</p>
 								</div>
 							</div>
@@ -411,12 +535,13 @@ class Mint extends Component {
 					type='mint'
 					mintSuccess={() => {
 						this.props.clearTransaction()
-						this.maxItemsPerWallet()
+						this.getMintPhase()
 					}}
 					mintFail={() => {
 						this.props.clearTransaction()
-						this.maxItemsPerWallet()
+						this.getMintPhase()
 					}}
+					amountToMint={amount}
 				/>
 
 				<ModalConnectionWidget
@@ -424,7 +549,7 @@ class Mint extends Component {
 					showModal={showModalConnection}
 					onCloseModal={() => {
 						this.setState({ showModalConnection: false })
-						this.maxItemsPerWallet()
+						this.getMintPhase()
 					}}
 				/>
 			</div>
@@ -498,8 +623,7 @@ const styles = {
 		backgroundColor: CTA_COLOR,
 		borderRadius: 2,
 		alignItems: 'center',
-		justifyContent: 'center',
-		cursor: 'pointer',
+		justifyContent: 'space-between',
 		marginBottom: 20
 	},
 	btnConnect: {
@@ -566,4 +690,5 @@ export default connect(mapStateToProps, {
 	setNetworkSettings,
 	setNetworkUrl,
 	readAccountMinted,
+	getMintPhase
 })(Mint)

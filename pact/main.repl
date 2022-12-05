@@ -131,9 +131,482 @@
             }
         ],
         "imageHash": "ffff8fff8e3fcc1fdc1fc007c00fdc3ffc3ff009f003c03fc81fc81fc81fc81f"
+    },
+    {
+        "name": "#2",
+        "edition": 2,
+        "attributes": [
+            {
+                "trait_type": "Background",
+                "value": "Sky"
+            },
+            {
+                "trait_type": "Robe",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Hat",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Skin",
+                "value": "Brown Human"
+            },
+            {
+                "trait_type": "Mouth",
+                "value": "Scream"
+            },
+            {
+                "trait_type": "Eyes",
+                "value": "Mono"
+            },
+            {
+                "trait_type": "Gem",
+                "value": "Diamond"
+            },
+            {
+                "trait_type": "Staff",
+                "value": "Wood"
+            },
+            {
+                "trait_type": "Spell",
+                "value": "Ice 1"
+            }
+        ],
+        "imageHash": "ffff8fff8e3fcc1fdc1fc007c00fdc3ffc3ff009f003c03fc81fc81fc81fc81f"
+    },
+    {
+        "name": "#3",
+        "edition": 3,
+        "attributes": [
+            {
+                "trait_type": "Background",
+                "value": "Sky"
+            },
+            {
+                "trait_type": "Robe",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Hat",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Skin",
+                "value": "Brown Human"
+            },
+            {
+                "trait_type": "Mouth",
+                "value": "Scream"
+            },
+            {
+                "trait_type": "Eyes",
+                "value": "Mono"
+            },
+            {
+                "trait_type": "Gem",
+                "value": "Diamond"
+            },
+            {
+                "trait_type": "Staff",
+                "value": "Wood"
+            },
+            {
+                "trait_type": "Spell",
+                "value": "Ice 1"
+            }
+        ],
+        "imageHash": "ffff8fff8e3fcc1fdc1fc007c00fdc3ffc3ff009f003c03fc81fc81fc81fc81f"
+    },
+    {
+        "name": "#4",
+        "edition": 4,
+        "attributes": [
+            {
+                "trait_type": "Background",
+                "value": "Sky"
+            },
+            {
+                "trait_type": "Robe",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Hat",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Skin",
+                "value": "Brown Human"
+            },
+            {
+                "trait_type": "Mouth",
+                "value": "Scream"
+            },
+            {
+                "trait_type": "Eyes",
+                "value": "Mono"
+            },
+            {
+                "trait_type": "Gem",
+                "value": "Diamond"
+            },
+            {
+                "trait_type": "Staff",
+                "value": "Wood"
+            },
+            {
+                "trait_type": "Spell",
+                "value": "Ice 1"
+            }
+        ],
+        "imageHash": "ffff8fff8e3fcc1fdc1fc007c00fdc3ffc3ff009f003c03fc81fc81fc81fc81f"
+    },
+    {
+        "name": "#5",
+        "edition": 5,
+        "attributes": [
+            {
+                "trait_type": "Background",
+                "value": "Sky"
+            },
+            {
+                "trait_type": "Robe",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Hat",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Skin",
+                "value": "Brown Human"
+            },
+            {
+                "trait_type": "Mouth",
+                "value": "Scream"
+            },
+            {
+                "trait_type": "Eyes",
+                "value": "Mono"
+            },
+            {
+                "trait_type": "Gem",
+                "value": "Diamond"
+            },
+            {
+                "trait_type": "Staff",
+                "value": "Wood"
+            },
+            {
+                "trait_type": "Spell",
+                "value": "Ice 1"
+            }
+        ],
+        "imageHash": "ffff8fff8e3fcc1fdc1fc007c00fdc3ffc3ff009f003c03fc81fc81fc81fc81f"
+    },
+    {
+        "name": "#6",
+        "edition": 6,
+        "attributes": [
+            {
+                "trait_type": "Background",
+                "value": "Sky"
+            },
+            {
+                "trait_type": "Robe",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Hat",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Skin",
+                "value": "Brown Human"
+            },
+            {
+                "trait_type": "Mouth",
+                "value": "Scream"
+            },
+            {
+                "trait_type": "Eyes",
+                "value": "Mono"
+            },
+            {
+                "trait_type": "Gem",
+                "value": "Diamond"
+            },
+            {
+                "trait_type": "Staff",
+                "value": "Wood"
+            },
+            {
+                "trait_type": "Spell",
+                "value": "Ice 1"
+            }
+        ],
+        "imageHash": "ffff8fff8e3fcc1fdc1fc007c00fdc3ffc3ff009f003c03fc81fc81fc81fc81f"
+    },
+    {
+        "name": "#7",
+        "edition": 7,
+        "attributes": [
+            {
+                "trait_type": "Background",
+                "value": "Sky"
+            },
+            {
+                "trait_type": "Robe",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Hat",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Skin",
+                "value": "Brown Human"
+            },
+            {
+                "trait_type": "Mouth",
+                "value": "Scream"
+            },
+            {
+                "trait_type": "Eyes",
+                "value": "Mono"
+            },
+            {
+                "trait_type": "Gem",
+                "value": "Diamond"
+            },
+            {
+                "trait_type": "Staff",
+                "value": "Wood"
+            },
+            {
+                "trait_type": "Spell",
+                "value": "Ice 1"
+            }
+        ],
+        "imageHash": "ffff8fff8e3fcc1fdc1fc007c00fdc3ffc3ff009f003c03fc81fc81fc81fc81f"
+    },
+    {
+        "name": "#8",
+        "edition": 8,
+        "attributes": [
+            {
+                "trait_type": "Background",
+                "value": "Sky"
+            },
+            {
+                "trait_type": "Robe",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Hat",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Skin",
+                "value": "Brown Human"
+            },
+            {
+                "trait_type": "Mouth",
+                "value": "Scream"
+            },
+            {
+                "trait_type": "Eyes",
+                "value": "Mono"
+            },
+            {
+                "trait_type": "Gem",
+                "value": "Diamond"
+            },
+            {
+                "trait_type": "Staff",
+                "value": "Wood"
+            },
+            {
+                "trait_type": "Spell",
+                "value": "Ice 1"
+            }
+        ],
+        "imageHash": "ffff8fff8e3fcc1fdc1fc007c00fdc3ffc3ff009f003c03fc81fc81fc81fc81f"
+    },
+    {
+        "name": "#9",
+        "edition": 9,
+        "attributes": [
+            {
+                "trait_type": "Background",
+                "value": "Sky"
+            },
+            {
+                "trait_type": "Robe",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Hat",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Skin",
+                "value": "Brown Human"
+            },
+            {
+                "trait_type": "Mouth",
+                "value": "Scream"
+            },
+            {
+                "trait_type": "Eyes",
+                "value": "Mono"
+            },
+            {
+                "trait_type": "Gem",
+                "value": "Diamond"
+            },
+            {
+                "trait_type": "Staff",
+                "value": "Wood"
+            },
+            {
+                "trait_type": "Spell",
+                "value": "Ice 1"
+            }
+        ],
+        "imageHash": "ffff8fff8e3fcc1fdc1fc007c00fdc3ffc3ff009f003c03fc81fc81fc81fc81f"
+    },
+    {
+        "name": "#10",
+        "edition": 10,
+        "attributes": [
+            {
+                "trait_type": "Background",
+                "value": "Sky"
+            },
+            {
+                "trait_type": "Robe",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Hat",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Skin",
+                "value": "Brown Human"
+            },
+            {
+                "trait_type": "Mouth",
+                "value": "Scream"
+            },
+            {
+                "trait_type": "Eyes",
+                "value": "Mono"
+            },
+            {
+                "trait_type": "Gem",
+                "value": "Diamond"
+            },
+            {
+                "trait_type": "Staff",
+                "value": "Wood"
+            },
+            {
+                "trait_type": "Spell",
+                "value": "Ice 1"
+            }
+        ],
+        "imageHash": "ffff8fff8e3fcc1fdc1fc007c00fdc3ffc3ff009f003c03fc81fc81fc81fc81f"
+    },
+    {
+        "name": "#11",
+        "edition": 11,
+        "attributes": [
+            {
+                "trait_type": "Background",
+                "value": "Sky"
+            },
+            {
+                "trait_type": "Robe",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Hat",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Skin",
+                "value": "Brown Human"
+            },
+            {
+                "trait_type": "Mouth",
+                "value": "Scream"
+            },
+            {
+                "trait_type": "Eyes",
+                "value": "Mono"
+            },
+            {
+                "trait_type": "Gem",
+                "value": "Diamond"
+            },
+            {
+                "trait_type": "Staff",
+                "value": "Wood"
+            },
+            {
+                "trait_type": "Spell",
+                "value": "Ice 1"
+            }
+        ],
+        "imageHash": "ffff8fff8e3fcc1fdc1fc007c00fdc3ffc3ff009f003c03fc81fc81fc81fc81f"
+    },
+    {
+        "name": "#12",
+        "edition": 12,
+        "attributes": [
+            {
+                "trait_type": "Background",
+                "value": "Sky"
+            },
+            {
+                "trait_type": "Robe",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Hat",
+                "value": "Green"
+            },
+            {
+                "trait_type": "Skin",
+                "value": "Brown Human"
+            },
+            {
+                "trait_type": "Mouth",
+                "value": "Scream"
+            },
+            {
+                "trait_type": "Eyes",
+                "value": "Mono"
+            },
+            {
+                "trait_type": "Gem",
+                "value": "Diamond"
+            },
+            {
+                "trait_type": "Staff",
+                "value": "Wood"
+            },
+            {
+                "trait_type": "Spell",
+                "value": "Ice 1"
+            }
+        ],
+        "imageHash": "ffff8fff8e3fcc1fdc1fc007c00fdc3ffc3ff009f003c03fc81fc81fc81fc81f"
     }])
 
-(expect "first block of nfts loaded" (free.wiz-arena.get-count "nfts-count-key") 2)
+(expect "first block of nfts loaded" (free.wiz-arena.get-count "nfts-count-key") 13)
 (commit-tx)
 
 (begin-tx "SET  STATS")
@@ -167,40 +640,194 @@
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
     "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}]
+},
+{
+    "id": "2",
+    "attack": 6,
+    "damage": 5,
+    "weakness": "ice",
+    "defense": 17,
+    "element": "Fire",
+    "fights": [],
+    "hp": 77,
+    "medals": {},
+    "resistance": "fire",
+    "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
+    "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}]
+},
+{
+    "id": "3",
+    "attack": 6,
+    "damage": 6,
+    "weakness": "ice",
+    "defense": 21,
+    "element": "Fire",
+    "fights": [],
+    "hp": 54,
+    "medals": {},
+    "resistance": "fire",
+    "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
+    "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}]
+},
+{
+    "id": "4",
+    "attack": 6,
+    "damage": 6,
+    "weakness": "ice",
+    "defense": 21,
+    "element": "Fire",
+    "fights": [],
+    "hp": 54,
+    "medals": {},
+    "resistance": "fire",
+    "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
+    "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}]
+},
+{
+    "id": "5",
+    "attack": 6,
+    "damage": 6,
+    "weakness": "ice",
+    "defense": 21,
+    "element": "Fire",
+    "fights": [],
+    "hp": 54,
+    "medals": {},
+    "resistance": "fire",
+    "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
+    "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}]
+},
+{
+    "id": "6",
+    "attack": 6,
+    "damage": 6,
+    "weakness": "ice",
+    "defense": 21,
+    "element": "Fire",
+    "fights": [],
+    "hp": 54,
+    "medals": {},
+    "resistance": "fire",
+    "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
+    "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}]
+},
+{
+    "id": "7",
+    "attack": 6,
+    "damage": 6,
+    "weakness": "ice",
+    "defense": 21,
+    "element": "Fire",
+    "fights": [],
+    "hp": 54,
+    "medals": {},
+    "resistance": "fire",
+    "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
+    "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}]
+},
+{
+    "id": "8",
+    "attack": 6,
+    "damage": 6,
+    "weakness": "ice",
+    "defense": 21,
+    "element": "Fire",
+    "fights": [],
+    "hp": 54,
+    "medals": {},
+    "resistance": "fire",
+    "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
+    "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}]
+},
+{
+    "id": "9",
+    "attack": 6,
+    "damage": 6,
+    "weakness": "ice",
+    "defense": 21,
+    "element": "Fire",
+    "fights": [],
+    "hp": 54,
+    "medals": {},
+    "resistance": "fire",
+    "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
+    "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}]
+},
+{
+    "id": "10",
+    "attack": 6,
+    "damage": 6,
+    "weakness": "ice",
+    "defense": 21,
+    "element": "Fire",
+    "fights": [],
+    "hp": 54,
+    "medals": {},
+    "resistance": "fire",
+    "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
+    "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}]
+},
+{
+    "id": "11",
+    "attack": 6,
+    "damage": 6,
+    "weakness": "ice",
+    "defense": 21,
+    "element": "Fire",
+    "fights": [],
+    "hp": 54,
+    "medals": {},
+    "resistance": "fire",
+    "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
+    "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}]
+},
+{
+    "id": "12",
+    "attack": 6,
+    "damage": 6,
+    "weakness": "ice",
+    "defense": 21,
+    "element": "Fire",
+    "fights": [],
+    "hp": 54,
+    "medals": {},
+    "resistance": "fire",
+    "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
+    "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}]
 }
 ])
 
 (commit-tx)
 
 
-(begin-tx "SET  REVEAL")
+; (begin-tx "SET  REVEAL")
+;
+; (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+;
+; (free.wiz-arena.set-value "wiz-reveal" "1")
+;
+; (commit-tx)
 
-(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
-
-(free.wiz-arena.set-value "wiz-reveal" "1")
-
-(commit-tx)
-
-(begin-tx "UPDATE STATS")
-
-(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
-
-(free.wiz-arena.update-stats [{
-    "id": "0",
-    "attack": 1,
-    "damage": 23,
-    "weakness": "wind",
-    "defense": 17,
-    "element": "Dark",
-    "fights": [],
-    "hp": 51,
-    "medals": {},
-    "resistance": "ice",
-    "spellSelected": {"atkBase":6, "condition":{}, "dmgBase":6, "element":"Dark","name":"Unholy Nova"},
-    "spellbook":[{"atkBase":6, "condition":{}, "dmgBase":6, "element":"Dark","name":"Unholy Nova"}, {"atkBase":9, "condition":{}, "dmgBase":9, "element":"Dark","name":"Unholy Nova 2"}]
-}])
-
-(commit-tx)
+; (begin-tx "UPDATE STATS")
+;
+; (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+;
+; (free.wiz-arena.update-stats [{
+;     "id": "0",
+;     "attack": 1,
+;     "damage": 23,
+;     "weakness": "wind",
+;     "defense": 17,
+;     "element": "Dark",
+;     "fights": [],
+;     "hp": 51,
+;     "medals": {},
+;     "resistance": "ice",
+;     "spellSelected": {"atkBase":6, "condition":{}, "dmgBase":6, "element":"Dark","name":"Unholy Nova"},
+;     "spellbook":[{"atkBase":6, "condition":{}, "dmgBase":6, "element":"Dark","name":"Unholy Nova"}, {"atkBase":9, "condition":{}, "dmgBase":9, "element":"Dark","name":"Unholy Nova 2"}]
+; }])
+;
+; (commit-tx)
 
 ;;;;;; CREATE TEST ACCOUNTS ;;;;;
 (begin-tx "CREATE TEST accounts")
@@ -220,9 +847,9 @@
   ]
 }])
 
-(coin.coinbase "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" (read-keyset "george-keyset") 50.0)
+(coin.coinbase "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" (read-keyset "george-keyset") 150.0)
 
-(expect "balance of 94ed is 50" (coin.get-balance "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd") 50.0)
+(expect "balance of 94ed is 150" (coin.get-balance "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd") 150.0)
 
 (env-sigs [{
   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
@@ -231,24 +858,29 @@
   ]
 }])
 
-(coin.coinbase "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" (read-keyset "tim-keyset") 50.0)
+(coin.coinbase "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" (read-keyset "tim-keyset") 150.0)
 
-(expect "balance of 9ca8 is 50" (coin.get-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250") 50.0)
+(expect "balance of 9ca8 is 150" (coin.get-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250") 150.0)
 
 (commit-tx)
 
 ;;;;;;;; SET MAX MINT ;;;;;;
-(begin-tx "SET MAX ITEMS for mint")
+(begin-tx "SET MINT ITEMS")
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
-(free.wiz-arena.set-max-items 2)
+(free.wiz-arena.add-users-free-mint [{"address":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "amount": 1}])
+
+(free.wiz-arena.add-users-wl-mint [{"address":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "amount": 9}])
+
 (free.wiz-arena.set-value "tournament_open" "1")
+
+(free.wiz-arena.set-value "mint-phase" "0")
 
 (commit-tx)
 
 ;;; MINT NFT
-(begin-tx "MINT nft")
+(begin-tx "FREE MINT nft")
 
 (env-sigs [{
   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
@@ -258,7 +890,7 @@
   ]
 }])
 
-(free.wiz-arena.get-wizards "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" 1)
+(free.wiz-arena.get-clerics "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" 1)
 
 (commit-tx)
 
@@ -304,23 +936,85 @@
 ;
 ; (commit-tx)
 
-(begin-tx "MINT SECOND nft")
+(begin-tx "SET WL PHASE")
+
+(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+
+(free.wiz-arena.set-value "mint-phase" "1")
+
+(commit-tx)
+
+; (begin-tx "GET MINTED COUNT")
+;
+; (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+;
+; (free.wiz-arena.get-count "minted-count-key")
+;
+; (commit-tx)
+
+
+(begin-tx "MINT 5 nft")
 
 (env-sigs [{
   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
   "caps": [
     (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
+    (coin.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb" 50.0),
     (coin.GAS)
   ]
 }])
 
-(free.wiz-arena.get-wizards "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" 1)
+(free.wiz-arena.get-clerics "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" 5)
 
 (commit-tx)
 
-(begin-tx "GET DATA NFT")
+(begin-tx "MINT 4 nft")
 
-(free.wiz-arena.get-wizard-fields-for-ids [0])
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
+    (coin.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb" 40.0),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.get-clerics "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" 4)
+
+(commit-tx)
+
+(begin-tx "SET PUBLIC PHASE")
+
+(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+
+(free.wiz-arena.set-value "mint-phase" "2")
+
+(commit-tx)
+
+(begin-tx "MINT 2 public nft")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
+    (coin.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb" 20.0),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.get-clerics "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" 2)
+
+(commit-tx)
+
+; (begin-tx "GET DATA NFT")
+;
+; (free.wiz-arena.get-wizard-fields-for-ids [1])
+;
+; (commit-tx)
+
+(begin-tx "GET WIZARDS OWNED BY")
+
+(free.wiz-arena.wizard-owned-by "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
 
 (commit-tx)
 

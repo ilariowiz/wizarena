@@ -95,7 +95,7 @@ class ModalTransaction extends Component {
 	}
 
 	getContent() {
-		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, wizaCostToUpgrade } = this.props
+		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, wizaCostToUpgrade, amountToMint } = this.props
 
 		//CASO INIZIALE, signingCmd != null in transactionState
 		let title = 'Signing transaction'
@@ -111,7 +111,7 @@ class ModalTransaction extends Component {
 				title = 'Review transaction'
 				body = ''
 				if (type === 'mint') {
-					body = `You will mint 1 wizard`
+					body = `You will mint ${amountToMint} wizard`
 				}
 				else if (type === 'list') {
 					body = `You will list ${nameNft} for ${inputPrice} KDA. Marketplace Fee: 7%`
@@ -197,8 +197,8 @@ class ModalTransaction extends Component {
 				body = ''
 				buttonText = ''
 				if (type === 'mint') {
-					body = "Wizard successfully minted!"
-					buttonText = 'Profile'
+					body = "Wizards successfully minted!"
+					buttonText = 'Close'
 				}
 				else if (type === 'list') {
 					body = 'Listing successfully'
