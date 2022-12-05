@@ -11,7 +11,8 @@ class Sales extends Component {
 
         this.state = {
             loading: true,
-            sales: []
+            sales: [],
+            error: ""
         }
     }
 
@@ -33,7 +34,7 @@ class Sales extends Component {
   		})
 		.catch(e => {
 			console.log(e)
-			this.setState({ loading: false })
+			this.setState({ loading: false, error: "Ops... something goes wrong!" })
 		})
 	}
 
@@ -54,7 +55,7 @@ class Sales extends Component {
     }
 
     renderBody(isMobile) {
-        const { loading, sales } = this.state
+        const { loading, sales, error } = this.state
 
         const boxW = Math.floor(window.innerWidth * (isMobile ? 85 : 92) / 100)
 
@@ -77,6 +78,13 @@ class Sales extends Component {
                         return this.renderSale(item, index, isMobile)
                     })}
                 </div>
+
+                {
+                    error &&
+                    <p style={{ fontSize: 17, color: 'white' }}>
+                        {error}
+                    </p>
+                }
             </div>
         )
     }
@@ -88,7 +96,7 @@ class Sales extends Component {
 			<div style={{ width: '100%' }}>
 				<Header
 					page='home'
-					section={2}
+					section={6}
 					account={account}
 					isMobile={isMobile}
 					history={this.props.history}

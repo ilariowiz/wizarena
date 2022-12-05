@@ -277,21 +277,19 @@ class Header extends Component {
 									COLLECTION
 								</p>
 
-								{/*
 								<p
 									className={section === 2 ? btnPressedStyle : btnStyle}
-									onClick={() => this.props.history.replace('/mint')}
+									onClick={() => this.props.history.push('/mint')}
 								>
 									MINT
 								</p>
-								*/}
 
-								<p
+								{/*<p
 									className={section === 2 ? btnPressedStyle : btnStyle}
 									onClick={() => this.props.history.replace('/sales')}
 								>
 									SALES
-								</p>
+								</p>*/}
 
 								<p
 									className={section === 3 ? btnPressedStyle : btnStyle}

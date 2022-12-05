@@ -563,7 +563,7 @@ class Mint extends Component {
 			<div style={{ width: '100%' }}>
 				<Header
 					page='home'
-					section={6}
+					section={2}
 					account={account}
 					isMobile={isMobile}
 					history={this.props.history}

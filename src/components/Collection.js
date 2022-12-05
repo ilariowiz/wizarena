@@ -370,14 +370,25 @@ class Collection extends Component {
 					{this.renderBoxHeader(`${wizardsStaked || 0}`, 'wizards staked', isMobile)}
 				</div>
 
-				<button
-                    style={{ width: 160, height: 38, borderWidth: 2, borderColor: '#840fb2', borderStyle: 'solid', borderRadius: 2 }}
-                    onClick={() => this.props.history.push('/burningqueue')}
-                >
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        Burning Queue
-                    </p>
-                </button>
+				<div style={{ alignItems: 'center' }}>
+					<button
+	                    style={{ width: 160, height: 38, marginRight: 10, borderWidth: 2, borderColor: 'white', borderStyle: 'solid', borderRadius: 2 }}
+	                    onClick={() => this.props.history.push('/sales')}
+	                >
+	                    <p style={{ fontSize: 17, color: 'white' }}>
+	                        Sales
+	                    </p>
+	                </button>
+
+					<button
+	                    style={{ width: 160, height: 38, borderWidth: 2, borderColor: '#840fb2', borderStyle: 'solid', borderRadius: 2 }}
+	                    onClick={() => this.props.history.push('/burningqueue')}
+	                >
+	                    <p style={{ fontSize: 17, color: 'white' }}>
+	                        Burning Queue
+	                    </p>
+	                </button>
+				</div>
 
 			</div>
 		)
