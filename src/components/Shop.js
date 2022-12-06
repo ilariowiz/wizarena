@@ -322,8 +322,12 @@ class Rules extends Component {
         return (
             <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
 
-                <p style={{ fontSize: 22, color: 'white', marginBottom: 15 }}>
+                <p style={{ fontSize: 22, color: 'white', marginBottom: 10 }}>
                     Select the Wizard you want to improve
+                </p>
+
+                <p style={{ fontSize: 17, color: 'white', marginBottom: 15 }}>
+                    ATK and DMG you'll see in each wizard is their base ATK and DMG, it doesn't take into account the selected spell.
                 </p>
 
                 {
