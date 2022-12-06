@@ -200,7 +200,7 @@ class Tournament extends Component {
 
                 <button
                     style={{ width: 100, height: 32, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', borderRadius: 2 }}
-                    onClick={() => this.props.history.push('/rules')}
+                    onClick={() => window.open("https://wizardsarena.gitbook.io/wizards-arena/", "_blank")}
                 >
                     <p style={{ fontSize: 17, color: 'white' }}>
                         Rules
