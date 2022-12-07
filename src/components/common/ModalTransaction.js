@@ -29,7 +29,7 @@ class ModalTransaction extends Component {
 	}
 
 	pollForTransaction = async () => {
-		const { transactionState, networkUrl, nameNft, statToUpgrade, type, wizaCostToUpgrade, account } = this.props
+		const { transactionState, networkUrl, nameNft, statToUpgrade, type, wizaCostToUpgrade, pvpWeek, account } = this.props
 
 
 		const requestKey = transactionState.requestKey
@@ -82,6 +82,11 @@ class ModalTransaction extends Component {
 
 				setDoc(docRefHistory, objHistory)
 			}
+			else if (type === "subscribe_pvp") {
+
+				const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_${nameNft}`)
+				setDoc(docRef, { "lose": 0, "win": 0 })
+			}
 		}
 		else {
 			this.props.updateTransactionState("error", `Cannot complete transaction\n${requestKey}`)
@@ -122,7 +127,7 @@ class ModalTransaction extends Component {
 				else if (type === 'buy') {
 					body = `You will buy ${nameNft} (you will need KDA on chain 1)`
 				}
-				else if (type === 'subscription') {
+				else if (type === 'subscription' || type === 'subscribe_pvp') {
 					body = `You will subscribe ${nameNft}`
 				}
 				else if (type === 'withdraw') {
@@ -214,6 +219,10 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'subscription') {
 					body = `Your Wizard ${nameNft} is enrolled in this tournament!`
+					buttonText = 'Close'
+				}
+				else if (type === 'subscribe_pvp') {
+					body = `Your Wizard ${nameNft} is entered in the PvP arena!`
 					buttonText = 'Close'
 				}
 				else if (type === 'withdraw') {

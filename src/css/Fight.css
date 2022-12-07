@@ -1,0 +1,10 @@
+.hpBar {
+    height: 15px;
+    transition: width 1.1s;
+    background-color: #3b9b63;
+}
+
+.textDesc {
+    font-size: 18px;
+    color: white;
+}

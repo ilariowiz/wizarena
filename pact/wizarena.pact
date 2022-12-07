@@ -24,13 +24,16 @@
     ;(defconst MAX_ITEMS_PER_OWNER "max-items-per-owner")
     (defconst WIZ_BANK:string "wiz-bank" "Account holding prizes")
 
-    (defconst WIZ_REVEAL "wiz-reveal")
+    ;(defconst WIZ_REVEAL "wiz-reveal")
 
     (defconst TOURNAMENT_OPEN "tournament_open")
 
     (defconst LEVEL_CAP 300)
 
     (defconst MINT_PHASE "mint-phase")
+
+    (defconst PVP_OPEN "pvp-open")
+    (defconst PVP_WEEK "pvp-week")
 
 ; --------------------------------------------------------------------------
 ; Capabilities
@@ -209,6 +212,15 @@
         price:decimal
     )
 
+    ;key = pvpweek_idnft
+    (defschema pvp-subscribers-schema
+        @doc "PVP subscribers schema"
+        pvpweek:string
+        idnft:string
+        address:string
+        spellSelected:object
+    )
+
     (deftable nfts:{nft-main-schema})
     (deftable nfts-market:{nft-listed-schema})
     (deftable creation:{creation-schema})
@@ -230,6 +242,8 @@
     (deftable account-minted-clerics:{account-minted-clerics-schema})
     (deftable price:{price-schema})
 
+    (deftable pvp-subscribers:{pvp-subscribers-schema})
+
     ; --------------------------------------------------------------------------
   ; Can only happen once
   ; --------------------------------------------------------------------------
@@ -246,7 +260,7 @@
         (insert values-tournament FEE_TOURNAMENT_KEY {"value": 20.0})
         ;(insert max-items MAX_ITEMS_PER_OWNER {"max": 0})
 
-        (insert values WIZ_REVEAL {"value": "0"})
+        ;(insert values WIZ_REVEAL {"value": "0"})
         (insert values TOURNAMENT_OPEN {"value": "0"})
 
         (coin.create-account WIZ_BANK (create-module-guard "wiz-holdings"))
@@ -254,6 +268,9 @@
 
         (insert values MINT_PHASE {"value": "-1"})
         (insert price PRICE_KEY {"price": 10.0})
+
+        (insert values PVP_OPEN {"value":"0"})
+        (insert values PVP_WEEK {"value":"w1"})
     )
 
     (defun insertValuesUpgrade ()
@@ -884,6 +901,16 @@
         )
     )
 
+    (defun get-subscription (id:string)
+        @doc "Check if id is subscribed for tournament"
+        (read tournaments id)
+    )
+
+    (defun get-all-subscription-for-tournament (idtournament:string)
+        @doc "Get all subscribers for a single tournament"
+        (select tournaments (where "round" (= idtournament)))
+    )
+
     ; (defun set-prizes (winners:list)
     ;     (with-capability (ADMIN)
     ;         (map
@@ -946,6 +973,47 @@
     ;         )
     ;     )
     ; )
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;; PVP ;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    ;id = idweek_idnft
+    (defun subscribe-pvp (id:string week:string idnft:string address:string spellSelected:object)
+        @doc "Subscribe a wizard to pvp arena"
+        (let (
+                (pvp-open (get-value PVP_OPEN))
+                (data-wiz (get-wizard-fields-for-id (str-to-int idnft)))
+            )
+            (enforce (= pvp-open "1") "Pvp week registrations are closed")
+            (enforce (= (at "confirmBurn" data-wiz) false) "You can't subscribe a wizard in burning queue")
+        )
+        (with-default-read pvp-subscribers id
+            {"idnft": ""}
+            {"idnft":= idnft }
+            (enforce (= (length idnft) 0) "Already subscribed to this pvp week")
+        )
+        (with-capability (OWNER address idnft)
+            ;(install-capability (coin.TRANSFER address ADMIN_ADDRESS 1.0))
+            ;(coin.transfer address ADMIN_ADDRESS 1.0)
+            (insert pvp-subscribers id {
+                "pvpweek": week,
+                "idnft": idnft,
+                "address": address,
+                "spellSelected": spellSelected
+            })
+        )
+    )
+
+    (defun get-pvp-subscription (id:string)
+        @doc "Check if id is subscribed for pvp week"
+        (read pvp-subscribers id)
+    )
+
+    (defun get-all-subscription-for-pvpweek (idweek:string)
+        @doc "Get all subscribers for a pvp week"
+        (select pvp-subscribers (where "pvpweek" (= idweek)))
+    )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;; UPGRADE ;;;;;;;;;
@@ -1313,16 +1381,6 @@
         (select nfts-market (where "listed" (= true)))
     )
 
-    (defun get-subscription (id:string)
-        @doc "Check if id is subscribed for tournament"
-        (read tournaments id)
-    )
-
-    (defun get-all-subscription-for-tournament (idtournament:string)
-        @doc "Get all subscribers for a single tournament"
-        (select tournaments (where "round" (= idtournament)))
-    )
-
     (defun get-prize ()
         (at "balance" (read token-table WIZ_BANK ['balance]))
     )
@@ -1367,6 +1425,8 @@
     (create-table account-free-minted-clerics)
     (create-table account-minted-clerics)
     (create-table price)
+
+    (create-table pvp-subscribers)
 
     (initialize)
     (insertValuesUpgrade)

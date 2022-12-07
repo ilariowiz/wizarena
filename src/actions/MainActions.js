@@ -36,7 +36,8 @@ import {
 	WIZA_TOKEN_BANK,
 	SAVE_WIZA_BALANCE,
 	LOAD_WIZARDS_STAKED,
-	STORE_CIRCULATING_SUPPLY
+	STORE_CIRCULATING_SUPPLY,
+	SET_SFIDA
 } from './types'
 
 
@@ -603,6 +604,74 @@ export const getMintPhase = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3
 	}
 }
 
+export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 60000, networkUrl, pvpWeek, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-all-subscription-for-pvpweek "${pvpWeek}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
+export const getPvPweek = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-value "pvp-week")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
+export const getPvPopen = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-value "pvp-open")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
+export const getPvPsubscription = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, id, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-pvp-subscription "${id}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
 export const getVolume = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, callback) => {
 	return (dispatch) => {
 
@@ -1055,6 +1124,52 @@ export const subscribeToTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 	}
 }
 
+export const subscribeToPvPweek = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, pvpWeek, idNft, spellSelected) => {
+	return (dispatch) => {
+
+		const key = `${pvpWeek}_${idNft}`
+
+		let pactCode = `(free.${CONTRACT_NAME}.subscribe-pvp "${key}" "${pvpWeek}" "${idNft}" "${account.account}" ${JSON.stringify(spellSelected)})`;
+
+		let caps = [
+			/*
+			Pact.lang.mkCap(`Subscribe`, "Pay the buyin", `coin.TRANSFER`, [
+				account.account,
+				ADMIN_ADDRESS,
+				1.0,
+			]),
+			*/
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME}.OWNER`,
+				[account.account, idNft]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("subscribeToPvp", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
 export const transferNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idNft, account, receiver) => {
 	return (dispatch) => {
 
@@ -1202,7 +1317,10 @@ export const getCirculatingSupply = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
-			dispatch({ type: STORE_CIRCULATING_SUPPLY, payload: _.floor(response.decimal, 2) })
+			if (response) {
+				dispatch({ type: STORE_CIRCULATING_SUPPLY, payload: _.floor(response.decimal, 2) })
+			}
+
 		})
 	}
 }
@@ -1820,6 +1938,13 @@ export const storeFiltersStats = (filters) => {
 	return {
 		type: STORE_FILTERS_STATS,
 		payload: filters
+	}
+}
+
+export const setSfida = (item) => {
+	return {
+		type: SET_SFIDA,
+		payload: item
 	}
 }
 

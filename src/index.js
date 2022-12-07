@@ -14,6 +14,10 @@ import Sales from './components/Sales'
 import Shop from './components/Shop'
 import BurningQueue from './components/BurningQueue'
 
+import DoFight from './components/DoFight'
+import PvP from './components/PvP'
+
+
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
@@ -40,6 +44,8 @@ ReactDOM.render(
             <Route path="/sales" component={Sales} />
             <Route path="/magicshop" component={Shop} />
             <Route path="/burningqueue" component={BurningQueue} />
+            <Route path="/fightpvp" component={DoFight} />
+            <Route path="/pvp" component={PvP} />
           </Switch>
         </div>
       </BrowserRouter>

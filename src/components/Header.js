@@ -299,6 +299,13 @@ class Header extends Component {
 								</p>
 
 								<p
+									className={section === 7 ? btnPressedStyle : btnStyle}
+									onClick={() => this.props.history.replace('/pvp')}
+								>
+									PVP
+								</p>
+
+								<p
 									className={section === 5 ? btnPressedStyle : btnStyle}
 									onClick={() => this.props.history.replace('/magicshop')}
 								>

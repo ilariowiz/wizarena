@@ -1045,13 +1045,13 @@
 ; (commit-tx)
 
 
-(begin-tx "GET  REVEAL")
-
-(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
-
-(free.wiz-arena.get-value "wiz-reveal")
-
-(commit-tx)
+; (begin-tx "GET  REVEAL")
+;
+; (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+;
+; (free.wiz-arena.get-value "wiz-reveal")
+;
+; (commit-tx)
 
 
 ;;;; SUBSCRIBE TO TOURNAMENT
