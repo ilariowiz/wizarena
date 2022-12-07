@@ -17,6 +17,7 @@ import ModalTransfer from './common/ModalTransfer'
 import HistoryItem from './common/HistoryItem'
 import getImageUrl from './common/GetImageUrl'
 import traits_qty from './common/Traits_qty'
+import traits_qty_clerics from './common/Traits_qty_clerics'
 import conditions from './common/Conditions'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import 'reactjs-popup/dist/index.css';
@@ -315,14 +316,24 @@ class Nft extends Component {
 
 	renderTraits(item, index) {
 		//console.log(nft);
+		const { nft } = this.state
 
 		let percentString;
 		if (parseInt(this.state.nft.id) < REVEAL_CAP) {
-			//console.log(traits_qty, item.trait_type);
-			const section = traits_qty[item.trait_type.toLowerCase()]
-			const qty = section[item.value]
 
-			percentString = qty * 100 / 1024
+			//se id < 1024 prendiamo i tratti dei wizards, altrimenti quelli dei clerics
+			if (nft.id < 1024) {
+				const section = traits_qty[item.trait_type.toLowerCase()]
+				const qty = section[item.value]
+
+				percentString = qty * 100 / 1024
+			}
+			else {
+				const section = traits_qty_clerics[item.trait_type.toLowerCase()]
+				const qty = section[item.value]
+
+				percentString = qty * 100 / 1024
+			}
 		}
 
 		return (
