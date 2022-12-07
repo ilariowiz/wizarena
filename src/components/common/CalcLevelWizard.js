@@ -4,7 +4,7 @@ import { MIN_LEVEL, MAX_LEVEL } from '../../actions/types'
 export const calcLevelWizard = (item) => {
 
     if (!item || !item.hp) {
-        return 0
+        return ""
     }
     //console.log(item);
 
@@ -67,7 +67,7 @@ export const getColorTextBasedOnLevel = (level) => {
     if (!level) {
         return "white"
     }
-    
+
     let rainbow = new Rainbow()
     rainbow.setSpectrum("#fffaf1", "#faf000")
     rainbow.setNumberRange(MIN_LEVEL, MAX_LEVEL)

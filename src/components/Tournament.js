@@ -17,7 +17,6 @@ import {
     getFeeTournament,
     setNetworkSettings,
     setNetworkUrl,
-    getReveal,
     getSubscribed
 } from '../actions'
 import '../css/Nft.css'
@@ -37,8 +36,6 @@ class Tournament extends Component {
 	}
 
     componentDidMount() {
-        const { reveal } = this.props
-
 		document.title = "Tournament - Wizards Arena"
 
         this.props.setNetworkSettings(MAIN_NET_ID, "1")
@@ -46,17 +43,7 @@ class Tournament extends Component {
 
         setTimeout(() => {
             this.loadTournament()
-
-            if (parseInt(reveal) < 1 || !reveal) {
-				this.getRevealNfts()
-			}
         }, 500)
-	}
-
-    getRevealNfts() {
-		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
-
-		this.props.getReveal(chainId, gasPrice, gasLimit, networkUrl)
 	}
 
     async loadTournament() {
@@ -268,19 +255,9 @@ class Tournament extends Component {
 
     renderBody(isMobile) {
         const { tournament } = this.state
-        const { buyin, reveal, subscribed } = this.props
+        const { buyin, subscribed } = this.props
 
         const { boxW } = getBoxWidth(isMobile)
-
-        if (parseInt(reveal) === 0) {
-			return (
-				<div style={{ width: boxW, flexDirection: 'column', paddingTop: 50 }}>
-					<p style={{ fontSize: 22, color: 'white' }}>
-						The Tournament page will be available after the reveal
-					</p>
-				</div>
-			)
-		}
 
         if (!tournament.name) {
             return <div> </div>
@@ -603,9 +580,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, reveal, montepremi, buyin, feeTournament, subscribed, subscribedSpellGraph } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, montepremi, buyin, feeTournament, subscribed, subscribedSpellGraph } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, reveal, montepremi, buyin, feeTournament, subscribed, subscribedSpellGraph };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, montepremi, buyin, feeTournament, subscribed, subscribedSpellGraph };
 }
 
 export default connect(mapStateToProps, {
@@ -614,6 +591,5 @@ export default connect(mapStateToProps, {
     getFeeTournament,
     setNetworkSettings,
     setNetworkUrl,
-    getReveal,
     getSubscribed
 })(Tournament)

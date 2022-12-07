@@ -26,7 +26,7 @@ class NftCardShop extends Component {
     }
 
 	render() {
-		const { item, width, reveal, isSelect } = this.props
+		const { item, width, isSelect } = this.props
         //console.log(tournament)
 
         const numberOfTotalMedals = this.calcMedals()
@@ -39,7 +39,7 @@ class NftCardShop extends Component {
 			>
 				<img
 					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
-					src={getImageUrl(item.id, reveal)}
+					src={getImageUrl(item.id)}
 					alt={`#${item.id}`}
 				/>
 
@@ -118,9 +118,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { reveal, account, chainId, netId, gasPrice, gasLimit, networkUrl } = state.mainReducer
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl } = state.mainReducer
 
-	return { reveal, account, chainId, netId, gasPrice, gasLimit, networkUrl }
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl }
 }
 
 export default connect(mapStateToProps, {

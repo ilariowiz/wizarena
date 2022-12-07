@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux'
 import moment from 'moment'
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCard.css'
@@ -7,7 +6,7 @@ import '../../css/NftCard.css'
 
 class NftCardBurningQueue extends Component {
 	render() {
-		const { item, history, width, reveal, isBurned } = this.props
+		const { item, history, width, isBurned } = this.props
 
 		const from = !isBurned ? moment(item.timestamp.timep).fromNow() : ""
 
@@ -18,7 +17,7 @@ class NftCardBurningQueue extends Component {
 			>
 				<img
 					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
-					src={getImageUrl(item.idnft, reveal)}
+					src={getImageUrl(item.idnft)}
 					alt={`#${item.idnft}`}
 				/>
 
@@ -63,10 +62,4 @@ class NftCardBurningQueue extends Component {
 	}
 }
 
-const mapStateToProps = (state) => {
-	const { reveal } = state.mainReducer
-
-	return { reveal }
-}
-
-export default connect(mapStateToProps)(NftCardBurningQueue);
+export default NftCardBurningQueue;

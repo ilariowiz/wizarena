@@ -8,7 +8,7 @@ import '../../css/NftCard.css'
 
 class NftCardTournament extends Component {
 	render() {
-		const { item, history, width, reveal, account } = this.props
+		const { item, history, width, account } = this.props
 
 		//console.log(item);
 
@@ -35,7 +35,7 @@ class NftCardTournament extends Component {
 			>
 				<img
 					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
-					src={getImageUrl(item.id, reveal)}
+					src={getImageUrl(item.id)}
 					alt={`#${item.id}`}
 				/>
 
@@ -76,9 +76,9 @@ class NftCardTournament extends Component {
 }
 
 const mapStateToProps = (state) => {
-	const { reveal, account } = state.mainReducer
+	const { account } = state.mainReducer
 
-	return { reveal, account }
+	return { account }
 }
 
 export default connect(mapStateToProps)(NftCardTournament);

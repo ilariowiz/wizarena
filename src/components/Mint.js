@@ -18,7 +18,7 @@ import {
 	readAccountMinted,
 	getMintPhase,
 } from '../actions'
-import { MAIN_NET_ID, TEST_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
+import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
 import '../css/Nft.css'
 
 const logo = require('../assets/wiz_logo_centrale.png')

@@ -136,7 +136,7 @@ class Rules extends Component {
     renderRowChoise(item, index, isSelect) {
 
         if (!item.attack) {
-            return <div />
+            return <div key={index} />
         }
 
 		return (

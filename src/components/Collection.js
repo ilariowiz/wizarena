@@ -16,7 +16,6 @@ import {
 	getPageBlockNfts,
 	setNetworkSettings,
 	setNetworkUrl,
-	getReveal,
 	storeFiltersStats,
 	getWizardsStakedCount
 } from '../actions'
@@ -41,8 +40,6 @@ class Collection extends Component {
 	}
 
 	componentDidMount() {
-		const { reveal } = this.props
-
 		document.title = "Collection - Wizards Arena"
 
 		this.props.setNetworkSettings(MAIN_NET_ID, "1")
@@ -52,11 +49,6 @@ class Collection extends Component {
 			this.loadAll()
 			this.getMarketVolume()
 			this.getWizardsStakedCount()
-			//facciamo il call su reveal solo se è 0, se è 1 è inutile richiamarlo
-			if (parseInt(reveal) < 1 || !reveal) {
-				this.getRevealNfts()
-			}
-
 		}, 500)
 	}
 
@@ -113,12 +105,6 @@ class Collection extends Component {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
 		this.props.getWizardsStakedCount(chainId, gasPrice, gasLimit, networkUrl)
-	}
-
-	getRevealNfts() {
-		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
-
-		this.props.getReveal(chainId, gasPrice, gasLimit, networkUrl)
 	}
 
 	getFloor(allNfts) {
@@ -806,9 +792,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, reveal, statSearched, wizardsStaked } = state.mainReducer;
+	const { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, statSearched, wizardsStaked } = state.mainReducer;
 
-	return { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, reveal, statSearched, wizardsStaked };
+	return { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, statSearched, wizardsStaked };
 }
 
 export default connect(mapStateToProps, {
@@ -817,7 +803,6 @@ export default connect(mapStateToProps, {
 	getPageBlockNfts,
 	setNetworkSettings,
 	setNetworkUrl,
-	getReveal,
 	storeFiltersStats,
 	getWizardsStakedCount
 })(Collection)

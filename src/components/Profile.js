@@ -19,7 +19,6 @@ import {
 	clearTransaction,
 	setNetworkSettings,
 	setNetworkUrl,
-	getReveal,
 	getMontepremi,
 	getBuyin,
 	subscribeToTournament,
@@ -65,8 +64,6 @@ class Profile extends Component {
 	}
 
 	componentDidMount() {
-		const { reveal } = this.props
-
 		document.title = "Me - Wizards Arena"
 
 		this.props.setNetworkSettings(MAIN_NET_ID, "1")
@@ -75,12 +72,6 @@ class Profile extends Component {
 		setTimeout(() => {
 
 			this.loadProfile()
-
-			//console.log(this.props.reveal);
-
-			if (parseInt(reveal) < 1 || !reveal) {
-				this.getRevealNfts()
-			}
 		}, 500)
 	}
 
@@ -237,13 +228,6 @@ class Profile extends Component {
 				this.setState({ prize: undefined })
 			}
 		})
-	}
-
-	getRevealNfts() {
-		//console.log("getReveal");
-		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
-
-		this.props.getReveal(chainId, gasPrice, gasLimit, networkUrl)
 	}
 
 	subscribe(idNft, spellSelected) {
@@ -580,21 +564,12 @@ class Profile extends Component {
 	}
 
 	renderTournament(width, modalWidth) {
-		const { userMintedNfts, buyin, reveal } = this.props
+		const { userMintedNfts, buyin } = this.props
 		const { tournament, error, profileFights, prize } = this.state
 
 		const tournamentName = tournament.name.split("_")[0]
 		const round = tournament.name.split("_")[1]
 
-		if (parseInt(reveal) === 0) {
-			return (
-				<div style={{ width, flexDirection: 'column' }}>
-					<p style={{ fontSize: 18, color: 'white' }}>
-						The Tournament page will be available after the reveal
-					</p>
-				</div>
-			)
-		}
 
 		if (userMintedNfts.length === 0) {
 			return (
@@ -856,7 +831,7 @@ class Profile extends Component {
 					}}
 				>
 					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 1 ? CTA_COLOR : '#21c6e895' }}>
-						YOUR WIZARDS
+						MY COLLECTION
 					</p>
 				</button>
 
@@ -1142,9 +1117,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, reveal, montepremi, buyin, feeTournament, wizaBalance } = state.mainReducer;
+	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, montepremi, buyin, feeTournament, wizaBalance } = state.mainReducer;
 
-	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, reveal, montepremi, buyin, feeTournament, wizaBalance };
+	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, montepremi, buyin, feeTournament, wizaBalance };
 }
 
 export default connect(mapStateToProps, {
@@ -1152,7 +1127,6 @@ export default connect(mapStateToProps, {
 	clearTransaction,
 	setNetworkSettings,
 	setNetworkUrl,
-	getReveal,
 	getMontepremi,
 	getBuyin,
 	subscribeToTournament,

@@ -26,7 +26,6 @@ import {
 	COUNT_MINTED,
 	ITEMS_PER_BLOCK,
 	LOGOUT,
-	SET_REVEAL,
 	LOAD_BUYIN,
 	LOAD_FEE_TOURNAMENT,
 	LOAD_MONTEPREMI,
@@ -280,7 +279,7 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 
 				if (callback) {
 					//gli diciamo di leggere tutti gli ids, quindi qui block è response, appunto tutti gli id
-					dispatch(loadBlockNfts(chainId, gasPrice, 150000, networkUrl, response, callback, false))
+					dispatch(loadBlockNfts(chainId, gasPrice, 180000, networkUrl, response, callback, false))
 				}
 			}
 		})
@@ -590,23 +589,6 @@ export const getVolume = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300,
 				}
 
 				dispatch({ type: 'fake' })
-			}
-		})
-	}
-}
-
-export const getReveal = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl) => {
-	return (dispatch) => {
-
-		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME}.get-value "wiz-reveal")`,
-			meta: defaultMeta(chainId, gasPrice, gasLimit)
-		}
-
-		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
-			//console.log(response)
-			if (response) {
-				dispatch({ type: SET_REVEAL, payload: response })
 			}
 		})
 	}

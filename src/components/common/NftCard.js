@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux'
 import getImageUrl from './GetImageUrl'
 import { getColorTextBasedOnLevel } from './CalcLevelWizard'
 import '../../css/NftCard.css'
@@ -8,7 +7,7 @@ const logoKda = require('../../assets/kdalogo2.png')
 
 class NftCard extends Component {
 	render() {
-		const { item, history, width, reveal } = this.props
+		const { item, history, width } = this.props
 
 		return (
 			<div
@@ -17,7 +16,7 @@ class NftCard extends Component {
 			>
 				<img
 					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
-					src={getImageUrl(item.id, reveal)}
+					src={getImageUrl(item.id)}
 					alt={`#${item.id}`}
 				/>
 
@@ -71,10 +70,4 @@ class NftCard extends Component {
 	}
 }
 
-const mapStateToProps = (state) => {
-	const { reveal } = state.mainReducer
-
-	return { reveal }
-}
-
-export default connect(mapStateToProps)(NftCard);
+export default NftCard

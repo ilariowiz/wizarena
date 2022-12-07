@@ -16,7 +16,6 @@ import {
 	SET_BLOCK_ID,
 	COUNT_MINTED,
 	LOGOUT,
-	SET_REVEAL,
 	LOAD_BUYIN,
 	LOAD_FEE_TOURNAMENT,
 	LOAD_MONTEPREMI,
@@ -46,7 +45,6 @@ const INITIAL_STATE = {
 	nftsBlockId: 0,
 	userMintedNfts: [],
 	countMinted: 0,
-	reveal: false,
 	buyin: 0,
 	feeTournament: 0,
 	montepremi: 0,
@@ -110,8 +108,6 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, transactionState: {}, showModalTx: false }
 		case COUNT_MINTED:
 			return { ...state, countMinted: action.payload }
-		case SET_REVEAL:
-			return { ...state, reveal: action.payload }
 		case LOAD_BUYIN:
 			return { ...state, buyin: action.payload }
 		case LOAD_FEE_TOURNAMENT:

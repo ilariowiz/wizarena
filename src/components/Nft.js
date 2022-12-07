@@ -28,11 +28,10 @@ import {
 	listNft,
 	buyNft,
 	clearTransaction,
-	getReveal,
 	transferNft,
 	getInfoNftBurning
 } from '../actions'
-import { MAIN_NET_ID, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, CTA_COLOR, CONTRACT_NAME } from '../actions/types'
+import { MAIN_NET_ID, REVEAL_CAP, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, CTA_COLOR, CONTRACT_NAME } from '../actions/types'
 import '../css/Nft.css'
 
 const logoKda = require('../assets/kdalogo2.png')
@@ -66,7 +65,6 @@ class Nft extends Component {
 	}
 
 	componentDidMount() {
-		const { reveal } = this.props
 		//console.log(this.props.account)
 		document.title = `Wizards Arena`
 
@@ -76,12 +74,6 @@ class Nft extends Component {
 
 		setTimeout(() => {
 			this.getPathNft()
-			//facciamo il call su reveal solo se è 0, se è 1 è inutile richiamarlo
-
-			//console.log(this.props.reveal);
-			if (parseInt(reveal) < 1 || !reveal) {
-				this.getRevealNfts()
-			}
 		}, 500)
 	}
 
@@ -93,12 +85,6 @@ class Nft extends Component {
 			this.setState({ kadenaPrice: data.kadena.usd })
 		})
 		.catch(error => console.log(error))
-	}
-
-	getRevealNfts() {
-		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
-
-		this.props.getReveal(chainId, gasPrice, gasLimit, networkUrl)
 	}
 
 	getPathNft() {
@@ -131,23 +117,26 @@ class Nft extends Component {
 		this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, idNft, (response) => {
 			if (response.name) {
 				document.title = `${response.name} - Wizards Arena`
+
 				//console.log(response)
 
-				const tournaments = ["t1", "t2", "t3", "t4", "t5", "t6"]
+				const tournaments = ["t1", "t2", "t3", "t4", "t5", "t6", "t7"]
 
 				response['groupedFights'] = {}
 
 				let openFightsSection = []
 
-				tournaments.map(i => {
-					const groupedFight = this.groupFights(response.fights, i)
-					//console.log(groupedFight);
-					if (groupedFight.length > 0) {
-						openFightsSection = [i]
-					}
+				if (response.fights) {
+					tournaments.map(i => {
+						const groupedFight = this.groupFights(response.fights, i)
+						//console.log(groupedFight);
+						if (groupedFight.length > 0) {
+							openFightsSection = [i]
+						}
 
-					response['groupedFights'][i] = groupedFight
-				})
+						response['groupedFights'][i] = groupedFight
+					})
+				}
 
 				//console.log(openFightsSection);
 
@@ -325,12 +314,10 @@ class Nft extends Component {
 	}
 
 	renderTraits(item, index) {
-		const { reveal } = this.props
-
 		//console.log(nft);
 
 		let percentString;
-		if (parseInt(reveal) > 0) {
+		if (parseInt(this.state.nft.id) < REVEAL_CAP) {
 			//console.log(traits_qty, item.trait_type);
 			const section = traits_qty[item.trait_type.toLowerCase()]
 			const qty = section[item.value]
@@ -846,11 +833,9 @@ class Nft extends Component {
 
 	renderBoxStats(width) {
 		const { nft, historyUpgrades, level } = this.state
-		const { reveal } = this.props
 
-		//console.log(reveal)
 		let rev = false
-		if (reveal && parseInt(reveal) > 0) {
+		if (parseInt(nft.id) < REVEAL_CAP) {
 			rev = true
 		}
 
@@ -992,10 +977,9 @@ class Nft extends Component {
 
 	renderBoxSpellbook(width) {
 		const { nft } = this.state
-		const { reveal } = this.props
 
 		let rev = false
-		if (reveal && parseInt(reveal) > 0) {
+		if (parseInt(nft.id) < REVEAL_CAP) {
 			rev = true
 		}
 
@@ -1028,12 +1012,9 @@ class Nft extends Component {
 
 	renderBoxProperties(width) {
 		const { nft } = this.state
-		const { reveal } = this.props
-
-		//console.log(reveal)
 
 		let rev = false
-		if (reveal && parseInt(reveal) > 0) {
+		if (parseInt(nft.id) < REVEAL_CAP) {
 			rev = true
 		}
 
@@ -1107,7 +1088,7 @@ class Nft extends Component {
 
 	renderBodySmall() {
 		const { nft, loading, infoBurn } = this.state
-		const { account, reveal } = this.props
+		const { account } = this.props
 
 		let boxW = Math.floor(window.innerWidth * 90 / 100)
 		let imageWidth = boxW > 500 ? 500 : boxW - 30
@@ -1127,7 +1108,7 @@ class Nft extends Component {
 					<div style={{ position: 'relative' }}>
 						<img
 							style={{ width: imageWidth, height: imageWidth, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
-							src={getImageUrl(nft.id, reveal)}
+							src={getImageUrl(nft.id)}
 							alt={nft.id}
 						/>
 
@@ -1215,7 +1196,7 @@ class Nft extends Component {
 
 	renderBodyLarge() {
 		const { nft, loading, infoBurn } = this.state
-		const { account, reveal } = this.props
+		const { account } = this.props
 
 		//console.log(nft);
 
@@ -1238,7 +1219,7 @@ class Nft extends Component {
 					<div style={{ position: 'relative', marginRight: 30 }}>
 						<img
 							style={{ width: 370, height: 370, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
-							src={getImageUrl(nft.id, reveal)}
+							src={getImageUrl(nft.id)}
 							alt={nft.id}
 						/>
 
@@ -1588,9 +1569,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, reveal } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, reveal };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts };
 }
 
 export default connect(mapStateToProps, {
@@ -1601,7 +1582,6 @@ export default connect(mapStateToProps, {
 	listNft,
 	buyNft,
 	clearTransaction,
-	getReveal,
 	transferNft,
 	getInfoNftBurning
 })(Nft);

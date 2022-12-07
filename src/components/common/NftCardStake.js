@@ -38,7 +38,7 @@ class NftCardStake extends Component {
 
         setTimeout(() => {
 
-            if (!item.listed) {
+            if (!item.listed && item.medals) {
                 this.loadInfoStake()
             }
             else {
@@ -172,7 +172,7 @@ class NftCardStake extends Component {
         const { item } = this.props
 
         let totalMedals = 0
-		if (Object.keys(item.medals).length > 0) {
+		if (item.medals && Object.keys(item.medals).length > 0) {
 			const arrayValueMedals = Object.values(item.medals)
 			arrayValueMedals.map(i => totalMedals = totalMedals + parseInt(i))
 		}
@@ -181,7 +181,7 @@ class NftCardStake extends Component {
     }
 
 	render() {
-		const { item, history, width, reveal } = this.props
+		const { item, history, width } = this.props
 		const { staked, loading, inBurnQueue } = this.state
 
         //console.log(item);
@@ -193,7 +193,7 @@ class NftCardStake extends Component {
 			>
 				<img
 					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
-					src={getImageUrl(item.id, reveal)}
+					src={getImageUrl(item.id)}
 					alt={`#${item.id}`}
 				/>
 
@@ -204,19 +204,21 @@ class NftCardStake extends Component {
 							{item.name}
 						</p>
 
-                        <div style={{ alignItems: 'center', marginLeft: 10, marginTop: 3 }}>
+                        {
+                            item.medals &&
+                            <div style={{ alignItems: 'center', marginLeft: 10, marginTop: 3 }}>
 
-                            <IoMedalOutline
-                                color="white"
-                                size={18}
-                                style={{ marginRight: 8 }}
-                            />
+                                <IoMedalOutline
+                                    color="white"
+                                    size={18}
+                                    style={{ marginRight: 8 }}
+                                />
 
-                            <p style={{ color: 'white', fontSize: 19, marginTop: 3, lineHeight: 1 }}>
-                                {this.calcMedals()}
-                            </p>
-                        </div>
-
+                                <p style={{ color: 'white', fontSize: 19, marginTop: 3, lineHeight: 1 }}>
+                                    {this.calcMedals()}
+                                </p>
+                            </div>
+                        }
 					</div>
 
 					{
@@ -283,8 +285,13 @@ class NftCardStake extends Component {
 					</button>
                 }
 
+                {
+                    !item.medals &&
+                    <div style={{ height: 50 }} />
+                }
+
 				{
-					!staked && !inBurnQueue && !item.listed && !loading &&
+					!staked && !inBurnQueue && !item.listed && item.medals && !loading &&
                     <div style={{ width, alignItems: 'center', justifyContent: 'space-between' }}>
                         <button
                             className="btnH"
@@ -315,7 +322,7 @@ class NftCardStake extends Component {
 				}
 
                 {
-                    inBurnQueue && !staked && !item.listed && !loading &&
+                    inBurnQueue && !staked && !item.listed && item.medals && !loading &&
 					<button
 						className="btnH"
 						style={Object.assign({}, styles.btnStake, { width, backgroundColor: "#840fb2" })}
@@ -331,7 +338,7 @@ class NftCardStake extends Component {
                 }
 
 				{
-					staked && !item.listed && !loading &&
+					staked && !item.listed && item.medals && !loading &&
                     <div style={{ width, alignItems: 'center', justifyContent: 'space-between' }}>
                         <button
                             className="btnH"
@@ -377,9 +384,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { reveal, account, chainId, netId, gasPrice, gasLimit, networkUrl } = state.mainReducer
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl } = state.mainReducer
 
-	return { reveal, account, chainId, netId, gasPrice, gasLimit, networkUrl }
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl }
 }
 
 export default connect(mapStateToProps, {
