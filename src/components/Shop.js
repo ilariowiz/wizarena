@@ -30,7 +30,7 @@ const logo_defense = require('../assets/defense_shops.png')
 const logo_atk = require('../assets/attack_shops.png')
 const logo_dmg = require('../assets/damage_shops.png')
 
-class Rules extends Component {
+class Shop extends Component {
     constructor(props) {
         super(props)
 
@@ -526,4 +526,4 @@ export default connect(mapStateToProps, {
 	getWizaBalance,
     getUpgradeCost,
     buyUpgrade
-})(Rules)
+})(Shop)
