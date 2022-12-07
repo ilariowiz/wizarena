@@ -183,7 +183,7 @@ class Mint extends Component {
 					</p>
 
 					<p style={styles.textHow}>
-						2. Paste your k: address with KDA (to pay gas fee) on Chain 1
+						2. Select with which wallet you want to connect
 					</p>
 
 					<p style={styles.textHow}>
