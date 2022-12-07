@@ -277,16 +277,62 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 				//console.log("response post reduce", blocks)
 				dispatch({ type: LOAD_ALL_NFTS_IDS, payload: { totalCountNfts: response.length, allNftsIds: response } })
 
-				if (callback) {
-					//gli diciamo di leggere tutti gli ids, quindi qui block è response, appunto tutti gli id
-					dispatch(loadBlockNfts(chainId, gasPrice, 180000, networkUrl, response, callback, false))
-				}
+				let partsBlock = _.chunk(response, response.length / 2)
+
+				//console.log(partsBlock);
+
+				Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 100000, networkUrl, partsBlock[0]))).then(response1 => {
+					//console.log(response1);
+
+					Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 100000, networkUrl, partsBlock[1]))).then(response2 => {
+						//console.log(response2);
+
+						let final = response1.concat(response2)
+
+						//console.log(final);
+
+						final.map(i => {
+							const level = calcLevelWizard(i)
+							i.level = level
+						})
+
+						final.sort((a, b) => {
+							if (parseInt(a.price) === 0) return 1;
+							if (parseInt(b.price) === 0) return -1
+							return a.price - b.price
+						})
+
+						dispatch({
+							type: LOAD_ALL_NFTS,
+							payload: { allNfts: final, nftsBlockId: 0 }
+						})
+
+						if (callback) {
+							callback(final)
+						}
+					})
+				})
 			}
 		})
 	}
 }
 
-export const loadBlockNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, block, callback, isSubscribed, callbackSubscribed) => {
+export const loadBlockNftsSplit = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, block) => {
+	return async (dispatch) => {
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-wizard-fields-for-ids [${block}])`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		const response = await dispatch(readFromContract(cmd, true, networkUrl))
+		//console.log(response);
+
+		return response
+	}
+}
+
+
+export const loadBlockNftsSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, block, callbackSubscribed) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -310,44 +356,29 @@ export const loadBlockNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 					return a.price - b.price
 				})
 
-				if (!isSubscribed) {
-					dispatch({
-						type: LOAD_ALL_NFTS,
-						payload: { allNfts: response, nftsBlockId: 0 }
-					})
-				}
-				else {
-					//console.log(response);
+				let subscribedSpellGraph = {}
 
-					let subscribedSpellGraph = {}
+				response.map((item) => {
+					const traits = item.traits
+					const spellTrait = traits.find(i => i.trait_type === "Spell")
 
-					response.map((item) => {
-						const traits = item.traits
-						const spellTrait = traits.find(i => i.trait_type === "Spell")
+					const spellMain = spellTrait.value.split(" ")[0]
 
-						const spellMain = spellTrait.value.split(" ")[0]
-
-						if (!subscribedSpellGraph[spellMain]) {
-							subscribedSpellGraph[spellMain] = 1
-						}
-						else {
-							subscribedSpellGraph[spellMain] += 1
-						}
-					})
-
-					//console.log(subscribedSpellGraph);
-
-					if (callbackSubscribed) {
-						callbackSubscribed(response)
+					if (!subscribedSpellGraph[spellMain]) {
+						subscribedSpellGraph[spellMain] = 1
 					}
+					else {
+						subscribedSpellGraph[spellMain] += 1
+					}
+				})
 
-					dispatch({ type: LOAD_SUBSCRIBED, payload: { nfts: response, subscribedSpellGraph } })
+				//console.log(subscribedSpellGraph);
+
+				if (callbackSubscribed) {
+					callbackSubscribed(response)
 				}
 
-
-				if (callback) {
-					callback(response)
-				}
+				dispatch({ type: LOAD_SUBSCRIBED, payload: { nfts: response, subscribedSpellGraph } })
 			}
 		})
 	}
@@ -674,31 +705,6 @@ export const getFeeTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit
 export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 150000, networkUrl, tournament, callback) => {
 	return (dispatch) => {
 
-		/*
-		let url = 'https://estats.chainweb.com/txs/events?search=wiz-arena.TOURNAMENT_SUBSCRIPTION&param=t2&offset=0&limit=250'
-
-		//console.log(url);
-		fetch(url)
-  		.then(response => response.json())
-  		.then(data => {
-  			console.log(data)
-
-			let onlyId = []
-			data.map(i => {
-				onlyId.push(i.params[0])
-			})
-
-			if (onlyId.length > 0) {
-				//onlyId = onlyId.filter((v, i, a) => parseInt(a.indexOf(v)) === parseInt(i));
-			}
-
-			dispatch(loadBlockNfts(chainId, gasLimit, gasLimit, networkUrl, onlyId, undefined, true, callback))
-  		})
-		.catch(e => {
-			console.log(e)
-		})
-		*/
-
 		let cmd = {
 			pactCode: `(free.${CONTRACT_NAME}.get-all-subscription-for-tournament "${tournament}")`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
@@ -717,7 +723,7 @@ export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 					return parseInt(a) - parseInt(b)
 				})
 
-				dispatch(loadBlockNfts(chainId, gasLimit, gasLimit, networkUrl, onlyId, undefined, true, callback))
+				dispatch(loadBlockNftsSubscribed(chainId, gasLimit, gasLimit, networkUrl, onlyId, callback))
 			}
 		})
 
