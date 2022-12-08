@@ -165,13 +165,15 @@ class PvP extends Component {
 
     chooseOpponent(item) {
         const { subscribers, pvpWeek } = this.state
+        const { account } = this.props
 
         this.setState({ loading: true })
 
         //rimuoviamo se stessi
-        let subs = subscribers.filter(i => i.idnft !== item.idnft)
+        let subs = subscribers.filter(i => i.idnft !== item.idnft && i.address !== account.account)
 
         //console.log(subs);
+        //return
 
         if (subs.length === 0) {
             this.setState({ loading: false })

@@ -6,7 +6,6 @@ import { doc, updateDoc, collection, setDoc, increment } from "firebase/firestor
 import { firebasedb } from './Firebase';
 import Rainbow from 'rainbowvis.js'
 import Header from './Header'
-import ModalPvPWinner from './common/ModalPvPWinner';
 import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
 import {
@@ -37,7 +36,6 @@ class DoFight extends Component {
             history: [],
             historyShow: [],
             winner: undefined,
-            showModalWinner: false,
             isEnd: false
         }
 
@@ -382,26 +380,7 @@ class DoFight extends Component {
 
             this.setState({ loading: false, winner: attaccante.name, history: newH }, () => {
 
-                const docRef = doc(firebasedb, "pvp_results", `${sfida.pvpWeek}_#${attaccante.id}`)
-				updateDoc(docRef, {
-		            "win": increment(1)
-		        })
-
-                const docRef2 = doc(firebasedb, "pvp_results", `${sfida.pvpWeek}_#${difensore.id}`)
-				updateDoc(docRef2, {
-		            "lose": increment(1)
-		        })
-
-                const fightObj = {
-                    actions: newH,
-                    idnft1: attaccante.id,
-                    idnft2: difensore.id,
-                    pvpWeek: sfida.pvpWeek,
-                    winner: attaccante.id
-                }
-
-                const fightRef = doc(collection(firebasedb, "fights_pvp"))
-                const newDoc = setDoc(fightRef, fightObj)
+                this.updateFirebase(sfida, attaccante, difensore, newH)
 
                 this.indexShow = 0
 
@@ -416,6 +395,46 @@ class DoFight extends Component {
             })
 
         }
+    }
+
+    async updateFirebase(sfida, attaccante, difensore, history) {
+
+        const docRef = doc(firebasedb, "pvp_results", `${sfida.pvpWeek}_#${attaccante.id}`)
+        try {
+            await updateDoc(docRef, {
+                "win": increment(1)
+            })
+        }
+        catch (error) {
+            await setDoc(docRef, {
+                "win": 1,
+                "lose": 0
+            })
+        }
+
+        const docRef2 = doc(firebasedb, "pvp_results", `${sfida.pvpWeek}_#${difensore.id}`)
+        try {
+            await updateDoc(docRef2, {
+                "lose": increment(1)
+            })
+        }
+        catch (error) {
+            await setDoc(docRef2, {
+                "lose": 1,
+                "win": 0
+            })
+        }
+
+        const fightObj = {
+            actions: history,
+            idnft1: attaccante.id,
+            idnft2: difensore.id,
+            pvpWeek: sfida.pvpWeek,
+            winner: attaccante.id
+        }
+
+        const fightRef = doc(collection(firebasedb, "fights_pvp"))
+        const newDoc = setDoc(fightRef, fightObj)
     }
 
     showFight() {
@@ -628,14 +647,6 @@ class DoFight extends Component {
                         </p>
                     </button>
                 </div>
-
-
-                <ModalPvPWinner
-                    showModal={this.state.showModalWinner}
-                    width={modalW}
-                    winner={this.state.winner}
-                    history={this.props.history}
-                />
             </div>
         )
     }
