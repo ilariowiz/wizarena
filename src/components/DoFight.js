@@ -4,6 +4,7 @@ import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import { doc, updateDoc, collection, setDoc, increment } from "firebase/firestore";
 import { firebasedb } from './Firebase';
+import Rainbow from 'rainbowvis.js'
 import Header from './Header'
 import ModalPvPWinner from './common/ModalPvPWinner';
 import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
@@ -13,7 +14,7 @@ import {
     setNetworkUrl,
     loadSingleNft
 } from '../actions'
-import { BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID } from '../actions/types'
+import { BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID } from '../actions/types'
 
 import "../css/Fight.css"
 
@@ -29,13 +30,15 @@ class DoFight extends Component {
         this.hp2bar = undefined
 
         this.indexShow = 0
+        this.turnTimeout = undefined
 
         this.state = {
             loading: true,
             history: [],
             historyShow: [],
             winner: undefined,
-            showModalWinner: false
+            showModalWinner: false,
+            isEnd: false
         }
 
         this.player1 = {}
@@ -47,7 +50,7 @@ class DoFight extends Component {
 
         const { sfida } = this.props
 
-        console.log(sfida);
+        //console.log(sfida);
 
         this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
@@ -428,18 +431,41 @@ class DoFight extends Component {
         this.setState({ historyShow }, () => {
 
             //console.log(history.length, this.indexShow);
-
             if (history.length > this.indexShow+1) {
                 this.indexShow += 1
-                setTimeout(() => {
+                this.turnTimeout = setTimeout(() => {
                     this.showFight()
-                }, 3000)
+                }, 4000)
             }
             else {
-                this.setState({ showModalWinner: true })
+                this.setState({ isEnd: true })
             }
         })
+    }
 
+    nextTurn() {
+        if (this.turnTimeout) {
+            clearTimeout(this.turnTimeout)
+            this.turnTimeout = undefined
+        }
+
+        this.showFight()
+    }
+
+    getColorHpBar(currentHp, maxHp) {
+        if (!currentHp || !maxHp) {
+            return "#3b9b63"
+        }
+
+        let rainbow = new Rainbow()
+        rainbow.setSpectrum("#9e2b1e", "#3b9b63")
+        rainbow.setNumberRange(0, maxHp)
+
+        const color = rainbow.colourAt(currentHp)
+
+        //console.log(color);
+
+        return `#${color}`
     }
 
 
@@ -453,7 +479,7 @@ class DoFight extends Component {
         return w
     }
 
-    renderBoxHp(width, name, initialHp, currentHp, level, index) {
+    renderBoxHp(width, name, initialHp, currentHp, level, index, isMobile) {
 
         const innerWidth = width - 40
 
@@ -462,17 +488,17 @@ class DoFight extends Component {
         return (
             <div style={Object.assign({}, styles.boxHp, { width })}>
 
-                <div style={{ justifyContent: 'space-between', alignItems: 'center', width: innerWidth }}>
-                    <p style={{ fontSize: 20, color: TEXT_SECONDARY_COLOR }}>
+                <div style={{ justifyContent: 'space-between', alignItems: 'center', width: innerWidth, flexDirection: isMobile ? 'column' : 'row' }}>
+                    <p style={{ fontSize: isMobile ? 15 : 20, color: TEXT_SECONDARY_COLOR }}>
                         Wizard {name}
                     </p>
 
                     <div style={{ alignItems: 'center' }}>
-                        <p style={{ fontSize: 17, color: 'white', marginRight: 8 }}>
+                        <p style={{ fontSize: isMobile ? 15 : 17, color: 'white', marginRight: 8 }}>
                             LEVEL
                         </p>
 
-                        <p style={{ fontSize: 20, color: colorLevel }}>
+                        <p style={{ fontSize: isMobile ? 15 : 20, color: colorLevel }}>
                             {level}
                         </p>
                     </div>
@@ -488,7 +514,7 @@ class DoFight extends Component {
                                 :
                                 this.hp2bar = ref
                         }}
-                        style={{ width: this.calcWidthHp(innerWidth, initialHp, currentHp) }}
+                        style={{ width: this.calcWidthHp(innerWidth, initialHp, currentHp), backgroundColor: this.getColorHpBar(currentHp, initialHp) }}
                     >
                         <p style={{ fontSize: 16, color: 'white', marginLeft: 15 }}>
                             {currentHp < 0 ? 0 : currentHp}/{initialHp}
@@ -517,9 +543,13 @@ class DoFight extends Component {
     }
 
     renderBody(isMobile) {
-        const { historyShow, loading } = this.state
+        const { historyShow, loading, isEnd } = this.state
 
-        const { boxW, modalW } = getBoxWidth(isMobile)
+        let { boxW, modalW } = getBoxWidth(isMobile)
+
+        if (boxW > 1050) {
+            boxW = 1050
+        }
 
         //console.log(historyShow);
 
@@ -528,7 +558,8 @@ class DoFight extends Component {
 
         const widthSide = (boxW / 2) - 20
 
-        const widthImg = widthSide * 60 / 100
+        const pctImg = isMobile ? 90 : 60
+        const widthImg = widthSide * pctImg / 100
 
         if (loading) {
             return (
@@ -545,12 +576,12 @@ class DoFight extends Component {
 
                     <div style={{ width: widthSide, flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between' }}>
 
-                        <div style={{ height: 60 }} />
+                        <div style={{ height: isMobile ? 15 : 60 }} />
 
-                        {this.renderBoxHp(widthSide, this.player2.name, this.player2InitialHp, player2CurrentHp, this.player2.level, 1)}
+                        {this.renderBoxHp(widthSide, this.player2.name, this.player2InitialHp, player2CurrentHp, this.player2.level, 1, isMobile)}
 
                         <img
-        					style={{ width: widthImg, marginTop: 110 }}
+        					style={{ width: widthImg, marginTop: isMobile ? 70 : 110 }}
         					src={`https://storage.googleapis.com/wizarena/wizards_nobg_back/${this.player1.id}.png`}
         					alt={this.player1.id}
         				/>
@@ -559,14 +590,14 @@ class DoFight extends Component {
 
                     <div style={{ width: widthSide, flexDirection: 'column', alignItems: 'center', height: 'fit-content' }}>
                         <img
-        					style={{ width: widthImg , height: widthImg, marginBottom: 110 }}
+        					style={{ width: widthImg , height: widthImg, marginBottom: isMobile ? 70 : 110 }}
                             src={`https://storage.googleapis.com/wizarena/wizards_nobg/${this.player2.id}.png`}
         					alt={this.player2.id}
         				/>
 
-                        {this.renderBoxHp(widthSide, this.player1.name, this.player1InitialHp, player1CurrentHp, this.player1.level, 2)}
+                        {this.renderBoxHp(widthSide, this.player1.name, this.player1InitialHp, player1CurrentHp, this.player1.level, 2, isMobile)}
 
-                        <div style={{ height: 30 }} />
+                        <div style={{ height: isMobile ? 15 : 30 }} />
 
                     </div>
 
@@ -580,6 +611,22 @@ class DoFight extends Component {
                         })
                     }
 
+                    <button
+                        className="btnH"
+                        style={Object.assign({}, styles.btnOverlay, { backgroundColor: isEnd ? CTA_COLOR : BACKGROUND_COLOR })}
+                        onClick={() => {
+                            if (isEnd) {
+                                this.props.history.replace("/pvp")
+                            }
+                            else {
+                                this.nextTurn()
+                            }
+                        }}
+                    >
+                        <p style={{ fontSize: 17, color: 'white' }}>
+                            {isEnd ? "Back to PVP" : "Next Turn"}
+                        </p>
+                    </button>
                 </div>
 
 
@@ -613,22 +660,22 @@ class DoFight extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 767px)"
+					query="(max-width: 600px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 768px)"
+					query="(min-width: 601px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
 				<Media
-					query="(max-width: 767px)"
+					query="(max-width: 600px)"
 					render={() => this.renderBody(true)}
 				/>
 
 				<Media
-					query="(min-width: 768px)"
+					query="(min-width: 601px)"
 					render={() => this.renderBody(false)}
 				/>
 			</div>
@@ -649,7 +696,7 @@ const styles = {
 	},
     boxHp: {
         flexDirection: 'column',
-        height: 70,
+        minHeight: 70,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: BACKGROUND_COLOR,
@@ -662,6 +709,7 @@ const styles = {
         borderBottomRightRadius: 10
     },
     boxDesc: {
+        position: 'relative',
         height: 160,
         borderWidth: 2,
         borderColor: TEXT_SECONDARY_COLOR,
@@ -670,6 +718,17 @@ const styles = {
         padding: 10,
         flexDirection: 'column',
         overflow: 'scroll'
+    },
+    btnOverlay: {
+        position: 'absolute',
+        bottom: 10,
+        right: 10,
+        width: 160,
+        height: 40,
+        borderWidth: 2,
+        borderRadius: 2,
+        borderColor: CTA_COLOR,
+        borderStyle: "solid"
     }
 }
 

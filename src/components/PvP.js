@@ -268,8 +268,12 @@ class PvP extends Component {
                     #{item.idnft}
                 </p>
 
-                <p style={{ fontSize: 22, color: 'white', marginRight: 30, width: 180 }}>
+                <p style={{ fontSize: 22, color: 'white', width: 170 }}>
                     WIN RATE {winRate}%
+                </p>
+
+                <p style={{ fontSize: 17, color: 'white', marginRight: 20, width: 140 }}>
+                    ({item.lose + item.win} fights)
                 </p>
 
                 {
