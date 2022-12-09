@@ -107,23 +107,7 @@ class PvP extends Component {
 
         this.setState({ nameNftToSubscribe: `#${id}` })
 
-        let conditionSpell = {}
-		if (spellSelected.condition.name) {
-			conditionSpell = {
-				effect: spellSelected.condition.effect,
-				name: spellSelected.condition.name,
-				pct: spellSelected.condition.pct.int,
-				element: spellSelected.condition.element
-			}
-		}
-
-		const refactorSpellSelected = {
-			dmgBase: spellSelected.dmgBase.int,
-			name: spellSelected.name,
-			atkBase: spellSelected.atkBase.int,
-			condition: conditionSpell,
-			element: spellSelected.element
-		}
+        let refactorSpellSelected = { name: spellSelected.name }
 
         this.props.subscribeToPvPweek(chainId, gasPrice, 5000, netId, account, pvpWeek, id, refactorSpellSelected)
     }

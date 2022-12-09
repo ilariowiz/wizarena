@@ -393,9 +393,11 @@ class Nft extends Component {
 
 		//console.log(item);
 
+		let spell = allSpells.find(i => i.name === item.name)
+
 		let condDesc;
-		if (item.condition && item.condition.name) {
-			let condInfo = conditions.find(i => i.name === item.condition.name)
+		if (spell.condition && spell.condition.name) {
+			let condInfo = conditions.find(i => i.name === spell.condition.name)
 			if (condInfo) {
 				condDesc = `${condInfo.effect} - Chance of success: ${condInfo.pct}%`
 			}
@@ -407,18 +409,18 @@ class Nft extends Component {
 					NAME
 				</p>
 				<p style={{ color: "white", fontSize: 20, marginRight }}>
-					{item.name}
+					{spell.name}
 				</p>
 				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
 					PERK
 				</p>
 
 				{
-					item.condition && item.condition.name ?
+					spell.condition && spell.condition.name ?
 					<Popup
 						trigger={open => (
 							<button style={{ color: "white", fontSize: 20, marginRight }}>
-								{item.condition.name}
+								{spell.condition.name}
 							</button>
 						)}
 						position="top center"
@@ -440,14 +442,14 @@ class Nft extends Component {
 					BASE ATK
 				</p>
 				<p style={{ color: "white", fontSize: 20, marginRight }}>
-					{item.atkBase.int}
+					{spell.atkBase}
 				</p>
 
 				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
 					BASE DMG
 				</p>
 				<p style={{ color: "white", fontSize: 20 }}>
-					{item.dmgBase.int}
+					{spell.dmgBase}
 				</p>
 
 			</div>

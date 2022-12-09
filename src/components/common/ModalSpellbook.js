@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { IoClose } from 'react-icons/io5'
+import allSpells from './Spells'
 import '../../css/Modal.css'
 import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, CTA_COLOR } from '../../actions/types'
 
@@ -16,25 +17,27 @@ class ModalSpellbook extends Component {
     renderSpell(item, index, width) {
         const { stats } = this.props
 
-        let isSelected = this.state.selected.name === item.name
+        const spell = allSpells.find(i => i.name === item.name)
+
+        let isSelected = this.state.selected.name === spell.name
 
         const btnBg = isSelected ? { backgroundColor: CTA_COLOR } : {}
 
         const atkBase = stats.attack.int
         const dmgBase = stats.damage.int
 
-        let atkFinal = atkBase + item.atkBase.int
-        let dmgFinal = dmgBase + item.dmgBase.int
+        let atkFinal = atkBase + spell.atkBase
+        let dmgFinal = dmgBase + spell.dmgBase
 
         let textPerk = ""
-        if (item.condition.name) {
-            if (item.condition.effect.includes("malus")) {
-                const info = item.condition.effect.split("_")
+        if (spell.condition.name) {
+            if (spell.condition.effect.includes("malus")) {
+                const info = spell.condition.effect.split("_")
 
-                textPerk = `${item.condition.pct.int}% to inflict -${info[1]} ${info[2].toUpperCase()}`
+                textPerk = `${spell.condition.pct}% to inflict -${info[1]} ${info[2].toUpperCase()}`
             }
             else {
-                textPerk = `${item.condition.pct.int}% that the opponent skip the turn`
+                textPerk = `${spell.condition.pct}% that the opponent skip the turn`
             }
         }
 
@@ -42,7 +45,7 @@ class ModalSpellbook extends Component {
             <div style={{ width, justifyContent: 'flex-start', alignItems: 'center', marginBottom: 20 }} key={index}>
                 <button
                     style={Object.assign({}, styles.btnSelect, btnBg)}
-                    onClick={() => this.setState({ selected: item })}
+                    onClick={() => this.setState({ selected: spell })}
                 />
 
                 <div style={{ flexDirection: 'column', justifyContent: 'center', width: '100%' }}>
@@ -53,7 +56,7 @@ class ModalSpellbook extends Component {
                                 NAME
                             </p>
                             <p style={{  color: 'white', fontSize: 17 }}>
-                                {item.name}
+                                {spell.name}
                             </p>
                         </div>
 
@@ -81,12 +84,12 @@ class ModalSpellbook extends Component {
                                 PERK
                             </p>
                             <p style={{  color: 'white', fontSize: 17, marginRight: 10 }}>
-                                {item.condition.name || "-"}
+                                {spell.condition.name || "-"}
                             </p>
                         </div>
 
                         {
-                            item.condition.name ?
+                            spell.condition.name ?
                             <div style={{ justifyContent: 'flex-end' }}>
                                 <p style={{ color: 'white', fontSize: 15 }}>
                                     {textPerk}
