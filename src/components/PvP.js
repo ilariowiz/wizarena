@@ -384,6 +384,20 @@ class PvP extends Component {
                 </div>
 
                 <p style={{ fontSize: 22, color: 'white', marginBottom: 10 }}>
+                    Your Wizards in the arena ({yourSubscribersResults.length})
+                </p>
+
+                <div style={{ flexDirection: 'column', overflow: 'scroll', marginBottom: 30 }}>
+                    {
+                        yourSubscribersResults && yourSubscribersResults.length > 0 &&
+                        yourSubscribersResults.map((item, index) => {
+                            return this.renderRowSub(item, index)
+                        })
+                    }
+
+                </div>
+
+                <p style={{ fontSize: 22, color: 'white', marginBottom: 10 }}>
                     Select the wizard you want to enroll in the PvP Arena
                 </p>
 
@@ -400,20 +414,6 @@ class PvP extends Component {
                         sorted && sorted.length > 0 &&
                         sorted.map((item, index) => {
                             return this.renderRowChoise(item, index, modalW)
-                        })
-                    }
-
-                </div>
-
-                <p style={{ fontSize: 22, color: 'white', marginBottom: 10 }}>
-                    Your Wizards in the arena ({yourSubscribersResults.length})
-                </p>
-
-                <div style={{ flexDirection: 'column', overflow: 'scroll', marginBottom: 30 }}>
-                    {
-                        yourSubscribersResults && yourSubscribersResults.length > 0 &&
-                        yourSubscribersResults.map((item, index) => {
-                            return this.renderRowSub(item, index)
                         })
                     }
 
