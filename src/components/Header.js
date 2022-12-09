@@ -101,7 +101,11 @@ class Header extends Component {
 							</button>
 
 							<button
-								onClick={() => this.setState({ showPanel: false })}
+								onClick={() => {
+									document.body.style.overflow = "auto"
+									document.body.style.height = "auto"
+									this.setState({ showPanel: false })
+								}}
 								style={{ marginRight: 30 }}
 							>
 								<IoClose
@@ -377,7 +381,11 @@ class Header extends Component {
 						}
 
 						<button
-							onClick={() => this.setState({ showPanel: !this.state.showPanel })}
+							onClick={() => {
+								document.body.style.overflow = "hidden"
+								document.body.style.height = "100%"
+								this.setState({ showPanel: !this.state.showPanel })
+							}}
 							style={{ marginRight: isMobile ? 12 : 0, display: 'flex', alignItems: 'flex-end' }}
 						>
 							<IoMenu
@@ -390,7 +398,11 @@ class Header extends Component {
 
 					<div
 						className={this.state.showPanel ? "bg-slide-on" : "bg-slide-off"}
-						onClick={() => this.setState({ showPanel: false })}
+						onClick={() => {
+							document.body.style.overflow = "auto"
+							document.body.style.height = "auto"
+							this.setState({ showPanel: false })
+						}}
 						style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#00000090' }}
 					/>
 
