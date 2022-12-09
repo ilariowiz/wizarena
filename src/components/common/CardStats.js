@@ -1,25 +1,34 @@
 import React from 'react'
+import allSpells from './Spells'
 
 const cardStats = (item, numberOfMedalsForTournament, width) => {
 
     //console.log(item);
 
+    let spellSelected = allSpells.find(i => i.name === item.spellSelected.name)
+
+    //console.log(spellSelected);
+
     const widthBody = width || '90%'
 
-    let atkSpell = item.spellSelected.atkBase.int || item.spellSelected.atkBase
-    if (!atkSpell || atkSpell.int === 0) {
+    let atkSpell = spellSelected.atkBase
+    if (!atkSpell || atkSpell === 0) {
         atkSpell = 0
     }
+
+    ///console.log(atkSpell);
 
     let atkBase = item.attack.int || item.attack
     if (!atkBase || atkBase.int === 0) {
         atkBase = 0
     }
 
-    let dmgSpell = item.spellSelected.dmgBase.int || item.spellSelected.dmgBase
+    let dmgSpell = spellSelected.dmgBase
     if (!dmgSpell || dmgSpell.int === 0) {
         dmgSpell = 0
     }
+
+    //console.log(dmgSpell);
 
     let dmgBase = item.damage.int || item.damage
     if (!dmgBase || dmgBase.int === 0) {

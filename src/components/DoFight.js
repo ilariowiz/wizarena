@@ -8,6 +8,7 @@ import Rainbow from 'rainbowvis.js'
 import Header from './Header'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
+import allSpells from './common/Spells'
 import {
     setNetworkSettings,
     setNetworkUrl,
@@ -67,23 +68,9 @@ class DoFight extends Component {
 
     refactorSpellSelected(spellSelected) {
 
-        let conditionSpell = {}
-		if (spellSelected.condition.name) {
-			conditionSpell = {
-				effect: spellSelected.condition.effect,
-				name: spellSelected.condition.name,
-				pct: spellSelected.condition.pct.int,
-				element: spellSelected.condition.element
-			}
-		}
+        const refactorSpellSelected = allSpells.find(i => i.name === spellSelected.name)
 
-		const refactorSpellSelected = {
-			dmgBase: spellSelected.dmgBase.int,
-			name: spellSelected.name,
-			atkBase: spellSelected.atkBase.int,
-			condition: conditionSpell,
-			element: spellSelected.element
-		}
+        //console.log(refactorSpellSelected);
 
         return refactorSpellSelected
     }

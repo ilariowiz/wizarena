@@ -19,6 +19,7 @@ import getImageUrl from './common/GetImageUrl'
 import traits_qty from './common/Traits_qty'
 import traits_qty_clerics from './common/Traits_qty_clerics'
 import conditions from './common/Conditions'
+import allSpells from './common/Spells'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import 'reactjs-popup/dist/index.css';
 import {
@@ -842,6 +843,17 @@ class Nft extends Component {
 		)
 	}
 
+	refactorSpellSelected(spellSelected) {
+
+		if (!spellSelected) {
+			return { atkBase: 0, dmgBase: 0, name: "", condition: {}}
+		}
+
+        const refactorSpellSelected = allSpells.find(i => i.name === spellSelected.name)
+        //console.log(refactorSpellSelected);
+        return refactorSpellSelected
+    }
+
 	renderBoxStats(width) {
 		const { nft, historyUpgrades, level } = this.state
 
@@ -849,6 +861,8 @@ class Nft extends Component {
 		if (parseInt(nft.id) < REVEAL_CAP) {
 			rev = true
 		}
+
+		const spellSelected = this.refactorSpellSelected(nft.spellSelected)
 
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
@@ -886,12 +900,12 @@ class Nft extends Component {
 
 							{this.renderStat("ELEMENT", nft.element.toUpperCase())}
 
-							{this.renderStat("SPELL", nft.spellSelected.name.toUpperCase())}
+							{this.renderStat("SPELL", spellSelected.name.toUpperCase())}
 
-							{this.renderStat("ATTACK", nft.attack.int + nft.spellSelected.atkBase.int)}
-							{this.renderStat("DAMAGE", nft.damage.int + nft.spellSelected.dmgBase.int)}
+							{this.renderStat("ATTACK", nft.attack.int + spellSelected.atkBase)}
+							{this.renderStat("DAMAGE", nft.damage.int + spellSelected.dmgBase)}
 
-							{this.renderStat("SPELL PERK", nft.spellSelected.condition.name ? nft.spellSelected.condition.name.toUpperCase() : '-')}
+							{this.renderStat("SPELL PERK", spellSelected.condition.name ? spellSelected.condition.name.toUpperCase() : '-')}
 
 							{this.renderStat("RESISTANCE", nft.resistance.toUpperCase())}
 							{this.renderStat("WEAKNESS", nft.weakness.toUpperCase())}

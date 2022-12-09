@@ -20,15 +20,6 @@ const cardStatsShop = (item, numberOfMedalsForTournament, width) => {
     return (
         <div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
-            {/*<div style={{ width: widthBody, alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
-                <p style={styles.statsTitleStyle}>
-                    ELEMENT
-                </p>
-                <p style={styles.statsStyle}>
-                    {item.element.toUpperCase()}
-                </p>
-            </div>*/}
-
             <div style={{ width: widthBody, justifyContent: 'space-between', alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
                 <div>
                     <p style={styles.statsTitleStyle}>
@@ -49,16 +40,6 @@ const cardStatsShop = (item, numberOfMedalsForTournament, width) => {
                 </div>
 
             </div>
-            {/*
-            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
-                <p style={styles.statsTitleStyle}>
-                    SPELL
-                </p>
-                <p style={styles.statsStyle}>
-                    {item.spellSelected.name.toUpperCase()}
-                </p>
-            </div>
-            */}
 
             <div style={{ width: widthBody, justifyContent: 'space-between', alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
 
@@ -80,33 +61,6 @@ const cardStatsShop = (item, numberOfMedalsForTournament, width) => {
                     </p>
                 </div>
             </div>
-
-            {/*<div style={{ width: widthBody, alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
-                <p style={styles.statsTitleStyle}>
-                    SPELL PERK
-                </p>
-                <p style={styles.statsStyle}>
-                    {item.spellSelected.condition.name ? item.spellSelected.condition.name.toUpperCase() : '-'}
-                </p>
-            </div>
-
-            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
-                <p style={styles.statsTitleStyle}>
-                    RESISTANCE
-                </p>
-                <p style={styles.statsStyle}>
-                    {item.resistance.toUpperCase()}
-                </p>
-            </div>
-
-            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
-                <p style={styles.statsTitleStyle}>
-                    WEAKNESS
-                </p>
-                <p style={styles.statsStyle}>
-                    {item.weakness.toUpperCase()}
-                </p>
-            </div>*/}
 
             <div style={{ width: widthBody, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
                 <p style={styles.statsTitleStyle}>
