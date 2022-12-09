@@ -119,12 +119,30 @@ class Header extends Component {
 
 					<div style={{ flexDirection: 'column', paddingLeft: 50, paddingRight: 30 }}>
 
-						<p style={{ fontSize: 24, color: 'white', marginBottom: 20 }}>
-							About $WIZA
+						<p style={{ fontSize: 26, color: 'white', marginBottom: 20 }}>
+							What is Wizards Arena?
 						</p>
 
 						<button
 							onClick={() => window.open("https://wizardsarena.gitbook.io/wizards-arena/", "_blank")}
+							style={{ marginBottom: 5, width: 'fit-content' }}
+						>
+							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
+								Player's Handbook
+							</p>
+						</button>
+
+						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 30 }}>
+							All you need to know about the game
+						</p>
+
+
+						<p style={{ fontSize: 26, color: 'white', marginBottom: 20 }}>
+							About $WIZA
+						</p>
+
+						<button
+							onClick={() => window.open("https://wizardsarena.gitbook.io/wizards-arena/usdwiza", "_blank")}
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
 							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
@@ -163,8 +181,8 @@ class Header extends Component {
 							Read ways to spend WIZA
 						</p>
 
-						<div style={{ alignItems: 'center', marginBottom: 50 }}>
-							<p style={{ fontSize: 18, color: 'white', marginRight: 20 }}>
+						<div style={{ alignItems: 'center', marginBottom: 30 }}>
+							<p style={{ fontSize: 18, color: 'white', marginRight: 20, textDecoration: 'underline' }}>
 								$WIZA mined
 							</p>
 
@@ -176,7 +194,7 @@ class Header extends Component {
 							</p>
 						</div>
 
-						<p style={{ fontSize: 24, color: 'white', marginBottom: 20 }}>
+						<p style={{ fontSize: 26, color: 'white', marginBottom: 20 }}>
 							Tools
 						</p>
 
@@ -189,13 +207,13 @@ class Header extends Component {
 							</p>
 						</button>
 
-						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 30 }}>
+						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 20 }}>
 							Check your Wizard rarity
 						</p>
 
 						{
 							account.account &&
-							<div style={{ flexDirection: 'column', marginTop: 50 }}>
+							<div style={{ flexDirection: 'column', marginTop: 30 }}>
 								<p style={{ fontSize: 21, color: 'white', marginBottom: 10 }}>
 									Wallet address
 								</p>
