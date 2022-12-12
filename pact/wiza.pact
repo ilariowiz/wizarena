@@ -416,6 +416,7 @@
             )
             (enforce (= (at "listed" data) false) "A listed wizard cannot be staked")
             (enforce (= (at "confirmBurn" data) false) "You can't stake a wizard in burning queue")
+            (enforce (contains 'spellbook data) "no spellbook data")
             (with-capability (OWNER sender idnft)
                 (with-default-read staked-table idnft
                     {"staked": false}
