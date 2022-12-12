@@ -6,6 +6,7 @@ import _ from 'lodash'
 import {
 	CONTRACT_NAME,
 	ADMIN_ADDRESS,
+	CLERIC_MINT_ADDRESS,
 	LOAD_USER,
 	DEFAULT_GAS_PRICE,
 	MAIN_NET_ID,

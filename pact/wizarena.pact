@@ -36,6 +36,8 @@
     (defconst PVP_OPEN "pvp-open")
     (defconst PVP_WEEK "pvp-week")
 
+    (defconst ID_REVEAL "id-reveal")
+
 ; --------------------------------------------------------------------------
 ; Capabilities
 ; --------------------------------------------------------------------------
@@ -272,6 +274,8 @@
 
         (insert values PVP_OPEN {"value":"0"})
         (insert values PVP_WEEK {"value":"w1"})
+
+        (insert values ID_REVEAL {"value":"1024"})
     )
 
     (defun insertValuesUpgrade ()
@@ -1355,10 +1359,11 @@
                 (info-market (read nfts-market (int-to-str 10 id)))
                 (info-stat (read stats (int-to-str 10 id)))
                 (confirmBurn (check-nft-in-burning-queue (int-to-str 10 id)))
+                (max-reveal (str-to-int (get-value ID_REVEAL)))
             )
             ; per fare il reveal vediamo quale id ha la richeista, se è più di 1023 allora è un cleric
             (if
-                (< id 1)
+                (< id max-reveal)
                 (let (
                         (info (read nfts (int-to-str 10 id)))
                     )
