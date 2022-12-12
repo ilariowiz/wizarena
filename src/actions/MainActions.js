@@ -38,7 +38,8 @@ import {
 	SAVE_WIZA_BALANCE,
 	LOAD_WIZARDS_STAKED,
 	STORE_CIRCULATING_SUPPLY,
-	SET_SFIDA
+	SET_SFIDA,
+	SET_AVG_LEVEL_PVP
 } from './types'
 
 
@@ -605,7 +606,7 @@ export const getMintPhase = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3
 	}
 }
 
-export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 60000, networkUrl, pvpWeek, callback) => {
+export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 50000, networkUrl, pvpWeek, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -615,10 +616,46 @@ export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
+
+			let onlyId = []
+			response.map(i => {
+				onlyId.push(i.idnft)
+			})
+
 			if (callback) {
 				callback(response)
 			}
+
+			Promise.resolve(dispatch(loadBlockNftsSubscribersPvP(chainId, gasPrice, gasLimit, networkUrl, onlyId))).then(response1 => {
+				//console.log(response1);
+
+				let levels = 0
+				response1.map(i => {
+					const l = calcLevelWizard(i)
+					levels += l
+				})
+
+				const avgLevel = Math.round(levels / response1.length)
+				//console.log(avgLevel);
+
+				dispatch(setAvgLevelPvp(avgLevel))
+			})
+
 		})
+	}
+}
+
+export const loadBlockNftsSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, block) => {
+	return async (dispatch) => {
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-wizard-fields-for-ids [${block}])`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		const response = await dispatch(readFromContract(cmd, true, networkUrl))
+		//console.log(response);
+
+		return response
 	}
 }
 
@@ -1946,6 +1983,13 @@ export const setSfida = (item) => {
 	return {
 		type: SET_SFIDA,
 		payload: item
+	}
+}
+
+export const setAvgLevelPvp = (value) => {
+	return {
+		type: SET_AVG_LEVEL_PVP,
+		payload: value
 	}
 }
 

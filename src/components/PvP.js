@@ -301,7 +301,7 @@ class PvP extends Component {
 
     renderBody(isMobile) {
         const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults } = this.state
-        const { account, showModalTx } = this.props
+        const { account, showModalTx, avgLevelPvP } = this.props
 
         const { boxW, modalW } = getBoxWidth(isMobile)
 
@@ -352,6 +352,7 @@ class PvP extends Component {
             <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
 
                 <div style={{ marginBottom: 30 }}>
+
                     <div style={{  flexDirection: "column" }}>
                         <p style={{ fontSize: 19, color: 'white', marginBottom: 10 }}>
                             PVP OPEN: {pvpOpen ? "YES" : "NO"}
@@ -362,9 +363,18 @@ class PvP extends Component {
                         </p>
                     </div>
 
-                    <p style={{ fontSize: 19, color: 'white', marginLeft: 50 }}>
-                        SUBSCRIBERS {subscribers.length}
-                    </p>
+                    <div style={{  flexDirection: "column", marginLeft: 50 }}>
+                        <p style={{ fontSize: 19, color: 'white', marginBottom: 10 }}>
+                            SUBSCRIBERS {subscribers.length}
+                        </p>
+
+                        {
+                            avgLevelPvP &&
+                            <p style={{ fontSize: 19, color: 'white' }}>
+                                AVG LEVEL {avgLevelPvP}
+                            </p>
+                        }
+                    </div>
                 </div>
 
                 <p style={{ fontSize: 22, color: 'white', marginBottom: 10 }}>
@@ -499,9 +509,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, avgLevelPvP } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, avgLevelPvP };
 }
 
 export default connect(mapStateToProps, {
