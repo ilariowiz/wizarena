@@ -21,6 +21,7 @@
     (defconst FEE_TOURNAMENT_KEY "fee-tournament-key")
     (defconst ADMIN_KEYSET "free.wizarena-keyset")
     (defconst ADMIN_ADDRESS "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb")
+    (defconst CLERIC_MINT_ADDRESS "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
     ;(defconst MAX_ITEMS_PER_OWNER "max-items-per-owner")
     (defconst WIZ_BANK:string "wiz-bank" "Account holding prizes")
 
@@ -504,8 +505,8 @@
             (if
                 (!= mint-phase "0")
                 [
-                  (install-capability (coin.TRANSFER owner ADMIN_ADDRESS (* mint-price amount)))
-                  (coin.transfer owner ADMIN_ADDRESS (* mint-price amount))
+                  (install-capability (coin.TRANSFER owner CLERIC_MINT_ADDRESS (* mint-price amount)))
+                  (coin.transfer owner CLERIC_MINT_ADDRESS (* mint-price amount))
                 ]
                 "Admin address"
             )
@@ -761,6 +762,7 @@
     (defun list-wizard (sender:string id:string price:decimal m:module{wiza1-interface-v1})
         @doc "list a wizard on marketplace"
         (enforce (>= price 1.0) "amount must be equal or greater then 1")
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (let (
                 (data (get-wizard-fields-for-id (str-to-int id)))
                 (is-staked (check-is-staked id m))
@@ -1020,6 +1022,7 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     (defun buy-upgrade (account:string idnft:string stat:string m:module{wiza1-interface-v1})
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (with-capability (OWNER account idnft)
             (let (
                     (current-stat (at stat (get-wizard-fields-for-id (str-to-int idnft))))
@@ -1131,6 +1134,7 @@
     )
 
     (defun spend-wiza (amount:decimal account:string m:module{wiza1-interface-v1})
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (m::spend-wiza amount account)
     )
 
@@ -1139,6 +1143,7 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     (defun add-to-burning-queue (idnft:string account:string m:module{wiza1-interface-v1})
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (let (
                 (data (get-wizard-fields-for-id (str-to-int idnft)))
                 (is-staked (check-is-staked idnft m))
@@ -1203,6 +1208,7 @@
     )
 
     (defun check-is-staked (idnft:string m:module{wiza1-interface-v1})
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (m::check-nft-is-staked idnft)
     )
 
@@ -1230,6 +1236,7 @@
     (defun transfer-wizard (id:string sender:string receiver:string m:module{wiza1-interface-v1})
         @doc "Transfer nft to an account"
         (enforce-account-exists receiver)
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (with-capability (OWNER sender id)
             (let (
                     (data (get-wizard-fields-for-id (str-to-int id)))

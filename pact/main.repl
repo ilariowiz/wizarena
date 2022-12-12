@@ -5,6 +5,7 @@
   "george-keyset": {"keys": ["94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd"], "pred":"keys-all"},
   "tim-keyset": {"keys":["9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"], "pred":"keys-all"},
   "wiza-token-keyset" : {"keys": ["90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb"], "pred": "keys-all"},
+  "wiza-token2-keyset" : {"keys": ["90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb"], "pred": "keys-all"},
   'upgrade: false
 })
 
@@ -32,10 +33,13 @@
 
 (load "wiza1-interface-v1.pact")
 
+;(load "wiza.pact")
+
 (load "wizarena.pact")
 
 (load "wiza.pact")
 
+(load "wiza2.pact")
 
 ;; commit the transaction
 (commit-tx)
@@ -908,6 +912,21 @@
 (free.wiz-arena.list-wizard "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" 10.0 free.wiza)
 
 (commit-tx)
+
+(begin-tx "BUY UPGRADE")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.buy-upgrade "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "attack" free.wiza)
+
+(commit-tx)
+
 ;
 ; (begin-tx "GET NFTS LISTED")
 ;

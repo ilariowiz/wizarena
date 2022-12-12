@@ -926,7 +926,7 @@ export const mintNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, amount, ac
 			caps.push(
 				Pact.lang.mkCap(`Mint`, "Pay to mint", `coin.TRANSFER`, [
 					account.account,
-					ADMIN_ADDRESS,
+					CLERIC_MINT_ADDRESS,
 					mintPrice * amount,
 				])
 			)
