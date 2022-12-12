@@ -11,10 +11,15 @@ const saveSubsetMain = createFilter(
 	['account', 'chainId', 'isXWallet', 'isQRWalletConnect', 'qrWalletConnectClient']
 )
 
+const saveSubsetSales = createFilter(
+	'salesReducer',
+	['sales', 'lastTimeUpdateSales']
+)
+
 const persistConfig = {
 	key: 'root',
 	storage,
-	transforms: [saveSubsetMain]
+	transforms: [saveSubsetMain, saveSubsetSales]
 }
 
 

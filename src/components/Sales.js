@@ -1,9 +1,15 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import Media from 'react-media';
 import Header from './Header'
 import DotLoader from 'react-spinners/DotLoader';
+import moment from 'moment'
 import HistoryItem from './common/HistoryItem'
 import { BACKGROUND_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
+import {
+    setSales
+} from '../actions'
+
 
 class Sales extends Component {
     constructor(props) {
@@ -11,15 +17,29 @@ class Sales extends Component {
 
         this.state = {
             loading: true,
-            sales: [],
             error: ""
         }
     }
 
     componentDidMount() {
+        const { lastTimeUpdateSales } = this.props
+
 		document.title = "Sales - Wizards Arena"
 
-        this.loadSales()
+        let diff = undefined
+        if (lastTimeUpdateSales) {
+            diff = moment().diff(lastTimeUpdateSales, 'minutes')
+        }
+
+        //console.log(lastTimeUpdateSales, diff);
+
+        if (!lastTimeUpdateSales || (diff && diff > 10)) {
+            this.loadSales()
+        }
+        else {
+            this.setState({ loading: false })
+        }
+
 	}
 
     loadSales() {
@@ -30,7 +50,8 @@ class Sales extends Component {
   		.then(response => response.json())
   		.then(data => {
   			//console.log(data)
-            this.setState({ loading: false, sales: data })
+            this.setState({ loading: false })
+            this.props.setSales(data)
   		})
 		.catch(e => {
 			console.log(e)
@@ -39,7 +60,7 @@ class Sales extends Component {
 	}
 
     renderSale(item, index, isMobile) {
-        const { sales } = this.state
+        const { sales } = this.props
 
         return (
 			<HistoryItem
@@ -55,7 +76,8 @@ class Sales extends Component {
     }
 
     renderBody(isMobile) {
-        const { loading, sales, error } = this.state
+        const { loading, error } = this.state
+        const { sales } = this.props
 
         const boxW = Math.floor(window.innerWidth * (isMobile ? 85 : 92) / 100)
 
@@ -145,4 +167,12 @@ const styles = {
 	},
 }
 
-export default Sales
+const mapStateToProps = (state) => {
+    const { sales, lastTimeUpdateSales } = state.salesReducer
+
+    return { sales, lastTimeUpdateSales }
+}
+
+export default connect(mapStateToProps, {
+    setSales
+})(Sales)

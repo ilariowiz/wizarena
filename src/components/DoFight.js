@@ -551,7 +551,7 @@ class DoFight extends Component {
     renderBody(isMobile) {
         const { historyShow, loading, isEnd } = this.state
 
-        let { boxW, modalW } = getBoxWidth(isMobile)
+        let { boxW } = getBoxWidth(isMobile)
 
         if (boxW > 1050) {
             boxW = 1050
