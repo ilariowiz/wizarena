@@ -272,8 +272,6 @@ class Header extends Component {
 
 		const { boxW } = getBoxWidth(isMobile)
 
-		console.log(this.props.location);
-
 		let margin = isMobile ? 12 : 22
 
 		let viewAccountStyle = isMobile ?
@@ -294,12 +292,19 @@ class Header extends Component {
 				<div style={hinside}>
 					<div style={{ alignItems: 'flex-end' }}>
 
-						<img
-							src={logo_img}
-							style={{ height: isMobile ? 30 : 58, borderRadius: 2, marginRight: margin, cursor: 'pointer' }}
-							alt='Wizards'
-							onClick={() => this.props.history.replace('/collection')}
-						/>
+						<a
+							href={`${window.location.protocol}//${window.location.host}/collection`}
+						>
+							<img
+								src={logo_img}
+								style={{ height: isMobile ? 30 : 58, borderRadius: 2, marginRight: margin, cursor: 'pointer' }}
+								alt='Wizards'
+								onClick={(e) => {
+									e.preventDefault()
+									this.props.history.replace('/collection')
+								}}
+							/>
+						</a>
 
 						{
 							page === 'home' ?
