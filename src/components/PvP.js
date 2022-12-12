@@ -11,6 +11,7 @@ import ModalSpellbook from './common/ModalSpellbook'
 import NftCardChoicePvP from './common/NftCardChoicePvP'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
+import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import {
     loadUserMintedNfts,
 	clearTransaction,
@@ -413,9 +414,14 @@ class PvP extends Component {
 
                         {
                             avgLevelPvP &&
-                            <p style={{ fontSize: 19, color: 'white' }}>
-                                AVG LEVEL {avgLevelPvP}
-                            </p>
+                            <div style={{ alignItems: 'center' }}>
+                                <p style={{ fontSize: 19, color: 'white', marginRight: 10 }}>
+                                    AVG LEVEL
+                                </p>
+                                <p style={{ fontSize: 21, color: getColorTextBasedOnLevel(avgLevelPvP) }}>
+                                    {avgLevelPvP}
+                                </p>
+                            </div>
                         }
                     </div>
                 </div>
