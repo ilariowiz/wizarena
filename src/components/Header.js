@@ -126,6 +126,7 @@ class Header extends Component {
 						<a
 							href="https://wizardsarena.gitbook.io/wizards-arena/"
 							target="_blank"
+							rel="noopener noreferrer"
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
 							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
@@ -145,6 +146,7 @@ class Header extends Component {
 						<a
 							href="https://wizardsarena.gitbook.io/wizards-arena/usdwiza"
 							target="_blank"
+							rel="noopener noreferrer"
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
 							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
@@ -159,6 +161,7 @@ class Header extends Component {
 						<a
 							href="https://wizardsarena.gitbook.io/wizards-arena/usdwiza/how-to-mine"
 							target="_blank"
+							rel="noopener noreferrer"
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
 							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
@@ -174,6 +177,7 @@ class Header extends Component {
 						<a
 							href="https://wizardsarena.gitbook.io/wizards-arena/usdwiza/how-to-mine"
 							target="_blank"
+							rel="noopener noreferrer"
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
 							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
@@ -205,6 +209,7 @@ class Header extends Component {
 						<a
 							href="https://www.kaderare.com/collection/WizardsArena"
 							target="_blank"
+							rel="noopener noreferrer"
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
 							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
@@ -266,6 +271,8 @@ class Header extends Component {
 		const { section, account, page, isMobile } = this.props
 
 		const { boxW } = getBoxWidth(isMobile)
+
+		console.log(this.props.location);
 
 		let margin = isMobile ? 12 : 22
 
