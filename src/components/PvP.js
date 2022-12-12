@@ -7,6 +7,7 @@ import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
+import ModalSpellbook from './common/ModalSpellbook'
 import NftCardChoicePvP from './common/NftCardChoicePvP'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
@@ -19,7 +20,8 @@ import {
     getPvPopen,
     subscribeToPvPweek,
     getAllSubscribersPvP,
-    setSfida
+    setSfida,
+    changeSpellPvP
 } from '../actions'
 import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -42,7 +44,9 @@ class PvP extends Component {
             subscribers: [],
             yourSubscribers: [],
             yourSubscribersResults: [],
-            userMintedNfts: []
+            userMintedNfts: [],
+            showModalSpellbook: false,
+            itemChangeSpell: {}
         }
     }
 
@@ -105,11 +109,24 @@ class PvP extends Component {
         const { account, chainId, gasPrice, netId } = this.props
         const { pvpWeek } = this.state
 
-        this.setState({ nameNftToSubscribe: `#${id}` })
+        this.setState({ nameNftToSubscribe: `#${id}`, typeModal: "subscribe_pvp" })
 
         let refactorSpellSelected = { name: spellSelected.name }
 
         this.props.subscribeToPvPweek(chainId, gasPrice, 5000, netId, account, pvpWeek, id, refactorSpellSelected)
+    }
+
+    changeSpell(spellSelected) {
+        const { account, chainId, gasPrice, netId } = this.props
+        const { pvpWeek, itemChangeSpell } = this.state
+
+        //console.log(itemChangeSpell);
+
+        this.setState({ nameNftToSubscribe: `#${itemChangeSpell.id}`, typeModal: "changespell_pvp" })
+
+        let refactorSpellSelected = { name: spellSelected.name }
+
+        this.props.changeSpellPvP(chainId, gasPrice, 5000, netId, account, pvpWeek, itemChangeSpell.id, refactorSpellSelected)
     }
 
     sortById() {
@@ -183,6 +200,16 @@ class PvP extends Component {
         })
     }
 
+    openPopupChangeSpell(id) {
+        const { userMintedNfts } = this.state
+
+        const item = userMintedNfts.find(i => i.id === id)
+
+        //console.log(item);
+
+        this.setState({ showModalSpellbook: true, itemChangeSpell: item })
+    }
+
     calcWinRate(item) {
 
         const lose = item.lose
@@ -218,9 +245,7 @@ class PvP extends Component {
 				modalWidth={modalWidth}
                 isSubscribed={(item) => {
                     let oldState = Object.assign([], this.state.yourSubscribers)
-
                     //console.log(oldState);
-
                     const idx = oldState.findIndex(i => i.idnft === item.idnft)
                     if (idx < 0) {
                         oldState.push(item)
@@ -242,7 +267,7 @@ class PvP extends Component {
         return (
             <div
                 key={index}
-                style={{ marginBottom: 20, alignItems: 'center' }}
+                style={styles.boxSubscribed}
             >
                 <img
                     src={getImageUrl(item.idnft)}
@@ -277,21 +302,39 @@ class PvP extends Component {
 
                 {
                     pvpOpen && !this.state.loading ?
-                    <button
-                        className="btnH"
-                        style={styles.btnPlay}
-                        onClick={() => {
-                            if (this.state.loading) {
-                                return
-                            }
+                    <div style={{ height: '100%', flexDirection: 'column', justifyContent: 'space-around' }}>
+                        <button
+                            className="btnH"
+                            style={styles.btnPlay}
+                            onClick={() => {
+                                if (this.state.loading) {
+                                    return
+                                }
 
-                            this.chooseOpponent(item)
-                        }}
-                    >
-                        <p style={{ fontSize: 17, color: 'white' }}>
-                            FIGHT
-                        </p>
-                    </button>
+                                this.chooseOpponent(item)
+                            }}
+                        >
+                            <p style={{ fontSize: 17, color: 'white' }}>
+                                FIGHT
+                            </p>
+                        </button>
+
+                        <button
+                            className="btnH"
+                            style={styles.btnPlay}
+                            onClick={() => {
+                                if (this.state.loading) {
+                                    return
+                                }
+
+                                this.openPopupChangeSpell(item.idnft)
+                            }}
+                        >
+                            <p style={{ fontSize: 17, color: 'white' }}>
+                                CHANGE SPELL
+                            </p>
+                        </button>
+                    </div>
                     : null
                 }
 
@@ -430,6 +473,21 @@ class PvP extends Component {
                     pvpWeek={this.state.pvpWeek}
 				/>
 
+                {
+                    this.state.showModalSpellbook ?
+                    <ModalSpellbook
+                        showModal={this.state.showModalSpellbook}
+                        onCloseModal={() => this.setState({ showModalSpellbook: false })}
+                        width={modalW}
+                        stats={this.state.itemChangeSpell}
+                        onSub={(spellSelected) => {
+                            this.changeSpell(spellSelected)
+                            this.setState({ showModalSpellbook: false })
+                        }}
+                    />
+                    : null
+                }
+
             </div>
         )
     }
@@ -500,12 +558,23 @@ const styles = {
 	},
     btnPlay: {
         height: 40,
-        width: 200,
+        width: 150,
+        minWidth: 150,
         borderRadius: 2,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: CTA_COLOR
     },
+    boxSubscribed: {
+        marginBottom: 20,
+        alignItems: 'center',
+        width: 'fit-content',
+        padding: 10,
+        borderWidth: 1,
+        borderColor: TEXT_SECONDARY_COLOR,
+        borderStyle: 'solid',
+        borderRadius: 2
+    }
 }
 
 const mapStateToProps = (state) => {
@@ -523,5 +592,6 @@ export default connect(mapStateToProps, {
     getPvPopen,
     subscribeToPvPweek,
     getAllSubscribersPvP,
-    setSfida
+    setSfida,
+    changeSpellPvP
 })(PvP)

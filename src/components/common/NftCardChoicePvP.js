@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { doc, updateDoc } from "firebase/firestore";
-import { firebasedb } from '../Firebase';
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCardChoice.css'
 import cardStats from './CardStats'
@@ -54,14 +52,6 @@ class NftCardChoicePvP extends Component {
     }
 
     onSubscribe(spellSelected) {
-        const { item } = this.props
-
-        //console.log(spellSelected)
-        const docRef = doc(firebasedb, "stats", `#${item.id}`)
-		updateDoc(docRef, {
-            "spellSelected": spellSelected
-        })
-
         this.props.onSubscribe(spellSelected)
     }
 

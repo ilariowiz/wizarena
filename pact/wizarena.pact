@@ -1011,6 +1011,14 @@
         )
     )
 
+    (defun change-spell-pvp (id:string idnft:string address:string spellSelected:object)
+        (with-capability (OWNER address idnft)
+            (update pvp-subscribers id {
+                "spellSelected": spellSelected
+            })
+        )
+    )
+
     (defun get-pvp-subscription (id:string)
         @doc "Check if id is subscribed for pvp week"
         (read pvp-subscribers id)

@@ -163,6 +163,9 @@ class ModalTransaction extends Component {
 				else if (type === 'upgrade') {
 					body = `You will improve the ${statToUpgrade} of ${nameNft}`
 				}
+				else if (type === 'changespell_pvp') {
+					body = `You will change the spell of ${nameNft}`
+				}
 
 				buttonText = 'Open Wallet'
 				action = async () => this.props.signTransaction(transactionState.cmdToConfirm, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, idNft, () => this.checkTransaction())
@@ -259,6 +262,10 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'upgrade') {
 					body = `Your Wizard ${nameNft} is stronger now!`
+					buttonText = 'Close'
+				}
+				else if (type === 'changespell_pvp') {
+					body = `Spell changed!`
 					buttonText = 'Close'
 				}
 

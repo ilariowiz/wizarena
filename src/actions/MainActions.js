@@ -1208,6 +1208,45 @@ export const subscribeToPvPweek = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 	}
 }
 
+export const changeSpellPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, pvpWeek, idNft, spellSelected) => {
+	return (dispatch) => {
+
+		const key = `${pvpWeek}_${idNft}`
+
+		let pactCode = `(free.${CONTRACT_NAME}.change-spell-pvp "${key}" "${idNft}" "${account.account}" ${JSON.stringify(spellSelected)})`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME}.OWNER`,
+				[account.account, idNft]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("changeSpellPvP", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
 export const transferNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idNft, account, receiver) => {
 	return (dispatch) => {
 
