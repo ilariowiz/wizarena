@@ -123,14 +123,15 @@ class Header extends Component {
 							What is Wizards Arena?
 						</p>
 
-						<button
-							onClick={() => window.open("https://wizardsarena.gitbook.io/wizards-arena/", "_blank")}
+						<a
+							href="https://wizardsarena.gitbook.io/wizards-arena/"
+							target="_blank"
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
 							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
 								Player's Handbook
 							</p>
-						</button>
+						</a>
 
 						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 30 }}>
 							All you need to know about the game
@@ -141,41 +142,44 @@ class Header extends Component {
 							About $WIZA
 						</p>
 
-						<button
-							onClick={() => window.open("https://wizardsarena.gitbook.io/wizards-arena/usdwiza", "_blank")}
+						<a
+							href="https://wizardsarena.gitbook.io/wizards-arena/usdwiza"
+							target="_blank"
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
 							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
 								What is $WIZA?
 							</p>
-						</button>
+						</a>
 
 						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 30 }}>
 							All you need to know about WIZA
 						</p>
 
-						<button
-							onClick={() => window.open("https://wizardsarena.gitbook.io/wizards-arena/usdwiza/how-to-mine", "_blank")}
+						<a
+							href="https://wizardsarena.gitbook.io/wizards-arena/usdwiza/how-to-mine"
+							target="_blank"
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
 							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
 								Earn $WIZA
 							</p>
-						</button>
+						</a>
 
 						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 30 }}>
 							Read ways to earn WIZA
 						</p>
 
 
-						<button
-							onClick={() => window.open("https://wizardsarena.gitbook.io/wizards-arena/usdwiza/how-to-mine", "_blank")}
+						<a
+							href="https://wizardsarena.gitbook.io/wizards-arena/usdwiza/how-to-mine"
+							target="_blank"
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
 							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
 								Spend $WIZA
 							</p>
-						</button>
+						</a>
 
 						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 30 }}>
 							Read ways to spend WIZA
@@ -198,14 +202,15 @@ class Header extends Component {
 							Tools
 						</p>
 
-						<button
-							onClick={() => window.open("https://www.kaderare.com/collection/WizardsArena", "_blank")}
+						<a
+							href="https://www.kaderare.com/collection/WizardsArena"
+							target="_blank"
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
 							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
 								KadeRare
 							</p>
-						</button>
+						</a>
 
 						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 20 }}>
 							Check your Wizard rarity
