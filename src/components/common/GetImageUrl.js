@@ -1,10 +1,18 @@
 import {REVEAL_CAP} from '../../actions/types'
 const placeholder = require('../../assets/placeholder.png')
+const placeholder_cleric = require('../../assets/placeholder_cleric.png')
 
 const getImageUrl = (id) => {
 
-    if (parseInt(id) >= REVEAL_CAP || !id) {
-        return placeholder //`https://storage.googleapis.com/wizarena/placeholder.png`
+    //console.log(id);
+
+    if (!id) {
+        return placeholder
+    }
+
+    //i chierici avranno un altro placeholder
+    if (parseInt(id) >= REVEAL_CAP) {
+        return placeholder_cleric
     }
 
     return `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`
