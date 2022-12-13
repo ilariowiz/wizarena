@@ -130,13 +130,14 @@ class PvP extends Component {
         this.props.changeSpellPvP(chainId, gasPrice, 5000, netId, account, pvpWeek, itemChangeSpell.id, refactorSpellSelected)
     }
 
-    sortById() {
-        const { userMintedNfts } = this.state
+    sortById(array) {
+
+        //console.log(array);
 
         let sorted = []
 
-        if (userMintedNfts && userMintedNfts.length > 0) {
-            sorted = userMintedNfts.sort((a, b) => {
+        if (array && array.length > 0) {
+            sorted = array.sort((a, b) => {
                 return parseInt(a.id) - parseInt(b.id)
             })
         }
@@ -276,17 +277,26 @@ class PvP extends Component {
                     alt={item.idnft}
                 />
 
-                <p style={{ fontSize: 22, color: 'white', marginRight: 30, width: 50 }}>
-                    #{item.idnft}
-                </p>
+                <div style={{ flexDirection: 'column' }}>
 
-                <p style={{ fontSize: 22, color: 'white', width: 170 }}>
-                    WIN RATE {winRate}%
-                </p>
+                    <div style={{ alignItems: 'center' }}>
+                        <p style={{ fontSize: 22, color: 'white', marginRight: 30, width: 50 }}>
+                            #{item.idnft}
+                        </p>
 
-                <p style={{ fontSize: 17, color: 'white', marginRight: 20, width: 140 }}>
-                    ({item.lose + item.win} fights)
-                </p>
+                        <p style={{ fontSize: 22, color: 'white', width: 170 }}>
+                            WIN RATE {winRate}%
+                        </p>
+
+                        <p style={{ fontSize: 17, color: 'white', marginRight: 20, width: 140 }}>
+                            ({item.lose + item.win} fights)
+                        </p>
+                    </div>
+
+                    <p style={{ fontSize: 17, color: 'white', marginTop: 8 }}>
+                        Spell selected: {item.spellSelected.name}
+                    </p>
+                </div>
 
                 {
                     this.state.loading ?
@@ -344,7 +354,7 @@ class PvP extends Component {
     }
 
     renderBody(isMobile) {
-        const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults } = this.state
+        const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults, userMintedNfts } = this.state
         const { account, showModalTx, avgLevelPvP } = this.props
 
         const { boxW, modalW } = getBoxWidth(isMobile)
@@ -390,7 +400,9 @@ class PvP extends Component {
 		}
 
 
-        const sorted = this.sortById()
+        const sorted = this.sortById(userMintedNfts)
+
+        const yourSubscribersResultsSorted = this.sortById(yourSubscribersResults)
 
         return (
             <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
@@ -433,7 +445,7 @@ class PvP extends Component {
                 <div style={{ flexDirection: 'column', overflow: 'scroll', marginBottom: 30 }}>
                     {
                         yourSubscribersResults && yourSubscribersResults.length > 0 &&
-                        yourSubscribersResults.map((item, index) => {
+                        yourSubscribersResultsSorted.map((item, index) => {
                             return this.renderRowSub(item, index)
                         })
                     }
