@@ -279,6 +279,7 @@ class NftCardStake extends Component {
 						className="btnH"
 						style={Object.assign({}, styles.btnStake, { width })}
 						onClick={(e) => {
+                            e.preventDefault()
 							e.stopPropagation()
 							this.props.onDelist()
 						}}
@@ -301,6 +302,7 @@ class NftCardStake extends Component {
                             className="btnH"
                             style={Object.assign({}, styles.btnStake, { width: (width/2 - 2) })}
                             onClick={(e) => {
+                                e.preventDefault()
                                 e.stopPropagation()
                                 this.props.onStake()
                             }}
@@ -314,6 +316,7 @@ class NftCardStake extends Component {
     						className="btnH"
     						style={Object.assign({}, styles.btnStake, { width: (width/2 - 2), backgroundColor: "#840fb2" })}
     						onClick={(e) => {
+                                e.preventDefault()
     							e.stopPropagation()
     							this.props.onAddBurning()
     						}}
@@ -331,6 +334,7 @@ class NftCardStake extends Component {
 						className="btnH"
 						style={Object.assign({}, styles.btnStake, { width, backgroundColor: "#840fb2" })}
 						onClick={(e) => {
+                            e.preventDefault()
 							e.stopPropagation()
 							this.props.onRemoveBurning()
 						}}
@@ -348,6 +352,7 @@ class NftCardStake extends Component {
                             className="btnH"
                             style={Object.assign({}, styles.btnStake, { width: (width/2 - 2) })}
                             onClick={(e) => {
+                                e.preventDefault()
                                 e.stopPropagation()
                                 this.props.onClaim()
                             }}
@@ -361,6 +366,7 @@ class NftCardStake extends Component {
     						className="btnH"
     						style={Object.assign({}, styles.btnStake, { width: (width/2 - 2) })}
     						onClick={(e) => {
+                                e.preventDefault()
     							e.stopPropagation()
     							this.props.onUnstake()
     						}}

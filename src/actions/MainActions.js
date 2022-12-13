@@ -532,6 +532,10 @@ export const loadBlockUserMintedNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, g
 			if (response) {
 
 				response.sort((a, b) => {
+	                return parseInt(a.id) - parseInt(b.id)
+	            })
+
+				response.sort((a, b) => {
 					if (parseInt(a.price) === 0) return 1;
 					if (parseInt(b.price) === 0) return -1
 					return a.price - b.price
