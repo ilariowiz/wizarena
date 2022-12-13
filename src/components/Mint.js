@@ -128,7 +128,7 @@ class Mint extends Component {
 			if (stage !== 'early') {
 				this.countdownMinted = setInterval(() => {
 					this.minted()
-				}, 19000)
+				}, 60000)
 			}
 		})
 	}
