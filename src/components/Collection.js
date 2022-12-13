@@ -240,7 +240,7 @@ class Collection extends Component {
 				if (i.stat === "spellbook") {
 					//console.log(newData);
 					newData = newData.filter(n => {
-						return n.spellbook.length === i.value
+						return n.spellbook && n.spellbook.length === i.value
 					})
 				}
 
