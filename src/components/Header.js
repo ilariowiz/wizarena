@@ -309,55 +309,72 @@ class Header extends Component {
 						{
 							page === 'home' ?
 							<div style={{ height: 60, alignItems: 'flex-end', flexWrap: 'wrap' }}>
-								<p
+								<a
+									href={`${window.location.protocol}//${window.location.host}/collection`}
 									className={section === 1 ? btnPressedStyle : btnStyle}
-									onClick={() => this.props.history.replace('/collection')}
+									onClick={(e) => {
+										e.preventDefault()
+										this.props.history.replace('/collection')
+									}}
 								>
 									COLLECTION
-								</p>
+								</a>
 
-								<p
+								<a
+									href={`${window.location.protocol}//${window.location.host}/mint`}
 									className={section === 2 ? btnPressedStyle : btnStyle}
-									onClick={() => this.props.history.push('/mint')}
+									onClick={(e) => {
+										e.preventDefault()
+										this.props.history.replace('/mint')
+									}}
 								>
 									MINT
-								</p>
+								</a>
 
-								{/*<p
-									className={section === 2 ? btnPressedStyle : btnStyle}
-									onClick={() => this.props.history.replace('/sales')}
-								>
-									SALES
-								</p>*/}
-
-								<p
+								<a
+									href={`${window.location.protocol}//${window.location.host}/me`}
 									className={section === 3 ? btnPressedStyle : btnStyle}
-									onClick={() => this.props.history.replace('/me')}
+									onClick={(e) => {
+										e.preventDefault()
+										this.props.history.replace('/me')
+									}}
 								>
 									PROFILE
-								</p>
+								</a>
 
-								<p
+								<a
+									href={`${window.location.protocol}//${window.location.host}/magicshop`}
 									className={section === 5 ? btnPressedStyle : btnStyle}
-									onClick={() => this.props.history.replace('/magicshop')}
+									onClick={(e) => {
+										e.preventDefault()
+										this.props.history.replace('/magicshop')
+									}}
 								>
 									MAGIC SHOP
-								</p>
+								</a>
 
-								<p
+								<a
+									href={`${window.location.protocol}//${window.location.host}/pvp`}
 									className={section === 7 ? btnPressedStyle : btnStyle}
-									onClick={() => this.props.history.replace('/pvp')}
+									onClick={(e) => {
+										e.preventDefault()
+										this.props.history.replace('/pvp')
+									}}
 								>
 									PVP
-								</p>
+								</a>
 
 
-								<p
+								<a
+									href={`${window.location.protocol}//${window.location.host}/tournament`}
 									className={section === 4 ? btnPressedStyle : btnStyle}
-									onClick={() => this.props.history.replace('/tournament')}
+									onClick={(e) => {
+										e.preventDefault()
+										this.props.history.replace('/tournament')
+									}}
 								>
 									TOURNAMENT
-								</p>
+								</a>
 							</div>
 							: null
 						}
@@ -365,47 +382,60 @@ class Header extends Component {
 						{
 							page === 'nft' || page === 'settings' ?
 							<div style={{ height: 60, alignItems: 'flex-end', flexWrap: 'wrap' }}>
-								<p
+								<a
+									href={`${window.location.protocol}//${window.location.host}/collection`}
 									className={btnHeaderNft}
-									onClick={() => this.props.history.replace('/collection')}
+									onClick={(e) => {
+										e.preventDefault()
+										this.props.history.replace('/collection')
+									}}
 								>
 									HOME
-								</p>
+								</a>
 
-								<p
+								<a
+									href={`${window.location.protocol}//${window.location.host}/me`}
 									className={btnHeaderNft}
-									onClick={() => this.props.history.replace('/me')}
+									onClick={(e) => {
+										e.preventDefault()
+										this.props.history.replace('/me')
+									}}
 								>
 									PROFILE
-								</p>
+								</a>
 
-								<p
+								<a
+									href={`${window.location.protocol}//${window.location.host}/magicshop`}
 									className={btnHeaderNft}
-									onClick={() => this.props.history.replace('/pvp')}
-								>
-									PVP
-								</p>
-
-								<p
-									className={btnHeaderNft}
-									onClick={() => this.props.history.replace('/magicshop')}
+									onClick={(e) => {
+										e.preventDefault()
+										this.props.history.replace('/magicshop')
+									}}
 								>
 									MAGIC SHOP
-								</p>
+								</a>
 
-								<p
+								<a
+									href={`${window.location.protocol}//${window.location.host}/pvp`}
 									className={btnHeaderNft}
-									onClick={() => this.props.history.replace('/pvp')}
+									onClick={(e) => {
+										e.preventDefault()
+										this.props.history.replace('/pvp')
+									}}
 								>
 									PVP
-								</p>
+								</a>
 
-								<p
+								<a
+									href={`${window.location.protocol}//${window.location.host}/tournament`}
 									className={btnHeaderNft}
-									onClick={() => this.props.history.replace('/tournament')}
+									onClick={(e) => {
+										e.preventDefault()
+										this.props.history.replace('/tournament')
+									}}
 								>
 									TOURNAMENT
-								</p>
+								</a>
 							</div>
 							:
 							null

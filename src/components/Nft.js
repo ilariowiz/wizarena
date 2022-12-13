@@ -806,10 +806,10 @@ class Nft extends Component {
 			let condDesc;
 			if (value && value !== "-") {
 
-				console.log(value);
+				//console.log(value);
 
 				let spellInfo = allSpells.find(i => i.condition.name && i.condition.name.toUpperCase() === value)
-				console.log(spellInfo);
+				//console.log(spellInfo);
 				if (spellInfo) {
 					let condInfo = conditions.find(i => i.name.toUpperCase() === value)
 					if (condInfo) {
