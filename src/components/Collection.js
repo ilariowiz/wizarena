@@ -357,23 +357,31 @@ class Collection extends Component {
 				</div>
 
 				<div style={{ alignItems: 'center' }}>
-					<button
-	                    style={{ width: 160, height: 38, marginRight: 10, borderWidth: 2, borderColor: 'white', borderStyle: 'solid', borderRadius: 2 }}
-	                    onClick={() => this.props.history.push('/sales')}
+					<a
+						href={`${window.location.protocol}//${window.location.host}/sales`}
+	                    style={styles.btnSales}
+	                    onClick={(e) => {
+							e.preventDefault()
+							this.props.history.push('/sales')
+						}}
 	                >
 	                    <p style={{ fontSize: 17, color: 'white' }}>
 	                        Sales
 	                    </p>
-	                </button>
+	                </a>
 
-					<button
-	                    style={{ width: 160, height: 38, borderWidth: 2, borderColor: '#840fb2', borderStyle: 'solid', borderRadius: 2 }}
-	                    onClick={() => this.props.history.push('/burningqueue')}
+					<a
+						href={`${window.location.protocol}//${window.location.host}/burningqueue`}
+	                    style={styles.btnBurning}
+						onClick={(e) => {
+							e.preventDefault()
+							this.props.history.push('/burningqueue')
+						}}
 	                >
 	                    <p style={{ fontSize: 17, color: 'white' }}>
 	                        Burning Queue
 	                    </p>
-	                </button>
+	                </a>
 				</div>
 
 			</div>
@@ -788,6 +796,29 @@ const styles = {
 		minWidth: 60,
 		display: 'flex',
 		flexDirection: 'row'
+	},
+	btnSales: {
+		width: 160,
+		height: 38,
+		marginRight: 10,
+		borderWidth: 2,
+		borderColor: 'white',
+		borderStyle: 'solid',
+		borderRadius: 2,
+		justifyContent: 'center',
+		alignItems: 'center',
+		display: 'flex'
+	},
+	btnBurning: {
+		width: 160,
+		height: 38,
+		borderWidth: 2,
+		borderColor: '#840fb2',
+		borderStyle: 'solid',
+		borderRadius: 2,
+		justifyContent: 'center',
+		alignItems: 'center',
+		display: 'flex'
 	}
 }
 
