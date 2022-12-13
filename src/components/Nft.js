@@ -533,12 +533,14 @@ class Nft extends Component {
 		const textWinnerColor = textWinner === "WINNER" ? TEXT_SECONDARY_COLOR : "#0587a2"
 
 		return (
-			<button
+			<a
+				href={`${window.location.protocol}//${window.location.host}/fight/${item.fightId}`}
 				className='btnH'
 				style={styles.boxSingleTrait}
 				key={index}
-				onClick={() => {
-					this.props.history.replace(`/fight/${item.fightId}`)
+				onClick={(e) => {
+					e.preventDefault()
+					this.props.history.push(`/fight/${item.fightId}`)
 				}}
 			>
 				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginBottom: 5 }}>
@@ -547,7 +549,7 @@ class Nft extends Component {
 				<p style={{ color: textWinnerColor, fontSize: 17 }}>
 					{textWinner}
 				</p>
-			</button>
+			</a>
 		)
 	}
 

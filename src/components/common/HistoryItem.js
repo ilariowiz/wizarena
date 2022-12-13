@@ -32,14 +32,18 @@ class HistoryItem extends Component {
 
 				{
 					isAll ?
-					<button
-						style={{ marginLeft: 20, flex: 0.6, display: 'flex', alignItems: 'flex-start' }}
-						onClick={() => this.props.history.push(`./nft/${params[0]}`)}
+					<a
+						href={`${window.location.protocol}//${window.location.host}/nft/${params[0]}`}
+						style={{ marginLeft: 20, flex: 0.6, display: 'flex', alignItems: 'flex-start', cursor: 'pointer' }}
+						onClick={(e) => {
+							e.preventDefault()
+							this.props.history.push(`./nft/${params[0]}`)
+						}}
 					>
 						<p style={{ fontSize: 17, color: CTA_COLOR }}>
 							#{params[0]}
 						</p>
-					</button>
+					</a>
 					: null
 				}
 

@@ -28,10 +28,14 @@ class NftCardTournament extends Component {
 		const level = calcLevelWizard(item)
 
 		return (
-			<div
+			<a
+				href={`${window.location.protocol}//${window.location.host}/nft/${item.id}`}
 				className='container'
 				style={{ borderColor: isMine ? "gold" : "white" }}
-				onClick={() => history.push(`/nft/${item.id}`)}
+				onClick={(e) => {
+					e.preventDefault()
+					history.push(`/nft/${item.id}`)
+				}}
 			>
 				<img
 					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
@@ -70,7 +74,7 @@ class NftCardTournament extends Component {
 					</div>
 
 				</div>
-			</div>
+			</a>
 		)
 	}
 }

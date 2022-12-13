@@ -187,9 +187,13 @@ class NftCardStake extends Component {
         //console.log(item);
 
 		return (
-			<div
+			<a
+                href={`${window.location.protocol}//${window.location.host}/nft/${item.id}`}
 				className='container'
-				onClick={() => history.push(`/nft/${item.id}`)}
+				onClick={(e) => {
+                    e.preventDefault()
+                    history.push(`/nft/${item.id}`)
+                }}
 			>
 				<img
 					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
@@ -368,7 +372,7 @@ class NftCardStake extends Component {
                     </div>
 				}
 
-			</div>
+			</a>
 		)
 	}
 }

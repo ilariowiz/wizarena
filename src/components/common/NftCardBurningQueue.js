@@ -11,9 +11,13 @@ class NftCardBurningQueue extends Component {
 		const from = !isBurned ? moment(item.timestamp.timep).fromNow() : ""
 
 		return (
-			<div
+			<a
+				href={`${window.location.protocol}//${window.location.host}/nft/${item.idnft}`}
 				className='container'
-				onClick={() => history.push(`/nft/${item.idnft}`)}
+				onClick={(e) => {
+					e.preventDefault()
+					history.push(`/nft/${item.idnft}`)
+				}}
 			>
 				<img
 					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
@@ -57,7 +61,7 @@ class NftCardBurningQueue extends Component {
 					</div>
 
 				</div>
-			</div>
+			</a>
 		)
 	}
 }

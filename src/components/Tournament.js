@@ -185,14 +185,16 @@ class Tournament extends Component {
 					Registered Wizards {subscribed ? subscribed.length : '...'}
 				</p>
 
-                <button
-                    style={{ width: 100, height: 32, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', borderRadius: 2 }}
-                    onClick={() => window.open("https://wizardsarena.gitbook.io/wizards-arena/", "_blank")}
+                <a
+                    style={styles.btnRules}
+                    href="https://wizardsarena.gitbook.io/wizards-arena/"
+                    target="_blank"
+                    rel="noopener noreferrer"
                 >
                     <p style={{ fontSize: 17, color: 'white' }}>
                         Rules
                     </p>
-                </button>
+                </a>
 			</div>
 		)
 	}
@@ -576,6 +578,17 @@ const styles = {
         borderStyle: 'solid',
         marginBottom: 15,
         width: "fit-content"
+    },
+    btnRules: {
+        width: 100,
+        height: 32,
+        borderWidth: 1,
+        borderColor: 'white',
+        borderStyle: 'solid',
+        borderRadius: 2,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 }
 
