@@ -399,7 +399,7 @@ class Nft extends Component {
 		if (spell.condition && spell.condition.name) {
 			let condInfo = conditions.find(i => i.name === spell.condition.name)
 			if (condInfo) {
-				condDesc = `${condInfo.effect} - Chance of success: ${condInfo.pct}%`
+				condDesc = `${condInfo.effect} - Chance of success: ${spell.condition.pct}%`
 			}
 		}
 
@@ -803,12 +803,18 @@ class Nft extends Component {
 	renderStat(title, value) {
 
 		if (title === "SPELL PERK") {
-
 			let condDesc;
 			if (value && value !== "-") {
-				let condInfo = conditions.find(i => i.name.toUpperCase() === value)
-				if (condInfo) {
-					condDesc = `${condInfo.effect} - Chance of success: ${condInfo.pct}%`
+
+				console.log(value);
+
+				let spellInfo = allSpells.find(i => i.condition.name && i.condition.name.toUpperCase() === value)
+				console.log(spellInfo);
+				if (spellInfo) {
+					let condInfo = conditions.find(i => i.name.toUpperCase() === value)
+					if (condInfo) {
+						condDesc = `${condInfo.effect} - Chance of success: ${spellInfo.condition.pct}%`
+					}
 				}
 			}
 
