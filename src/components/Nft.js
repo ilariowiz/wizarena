@@ -670,10 +670,16 @@ class Nft extends Component {
 	}
 
 	renderName(name, marginBottom) {
+
+		let type = "Wizard"
+		if (parseInt(name.replace("#", "")) >= REVEAL_CAP) {
+			type = "Cleric"
+		}
+
 		return (
 			<div style={{ flexDirection: 'column', marginBottom }}>
 				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 30, lineHeight: 1 }}>
-					Wizard {name}
+					{type} {name}
 				</p>
 			</div>
 		)
