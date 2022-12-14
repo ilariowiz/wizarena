@@ -832,7 +832,7 @@ class Profile extends Component {
 					}}
 				>
 					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 1 ? CTA_COLOR : '#21c6e895' }}>
-						MY COLLECTION ({userMintedNfts && userMintedNfts.length || 0})
+						MY COLLECTION ({(userMintedNfts && userMintedNfts.length) || 0})
 					</p>
 				</button>
 
