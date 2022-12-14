@@ -395,7 +395,7 @@ class Mint extends Component {
 	renderBoxMint() {
 		const { stage, loading, error } = this.state
 
-		let title = stage !== 'early' ? `${stage.toUpperCase()} MINT` : 'EARLY'
+		let title = stage !== 'early' ? `STAGE: ${stage.toUpperCase()} MINT` : 'EARLY'
 
 		return (
 			<div style={{ flexDirection: 'column', width: '90%', alignItems: 'flex-start' }}>
