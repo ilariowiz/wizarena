@@ -813,6 +813,7 @@ class Profile extends Component {
 
 	renderMenu(isMobile) {
 		const { section, loading } = this.state;
+		const { userMintedNfts } = this.props
 
 		const selStyle = { borderBottomWidth: 3, borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderColor: CTA_COLOR, borderStyle: 'solid' }
 		const unselStyle = { borderBottomWidth: 3, borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderColor: 'transparent', borderStyle: 'solid' }
@@ -831,7 +832,7 @@ class Profile extends Component {
 					}}
 				>
 					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 1 ? CTA_COLOR : '#21c6e895' }}>
-						MY COLLECTION
+						MY COLLECTION ({userMintedNfts && userMintedNfts.length || 0})
 					</p>
 				</button>
 
