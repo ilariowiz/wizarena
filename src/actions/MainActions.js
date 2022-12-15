@@ -978,7 +978,7 @@ export const mintNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, amount, ac
 			pactCode,
 			caps,
 			sender: account.account,
-			gasLimit: 3500 * amount,
+			gasLimit: 5000 * amount,
 			gasPrice,
 			chainId,
 			ttl: 600,
