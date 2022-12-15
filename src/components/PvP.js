@@ -130,7 +130,7 @@ class PvP extends Component {
         this.props.changeSpellPvP(chainId, gasPrice, 5000, netId, account, pvpWeek, itemChangeSpell.id, refactorSpellSelected)
     }
 
-    sortById(array) {
+    sortById(array, key) {
 
         //console.log(array);
 
@@ -138,7 +138,7 @@ class PvP extends Component {
 
         if (array && array.length > 0) {
             sorted = array.sort((a, b) => {
-                return parseInt(a.id) - parseInt(b.id)
+                return parseInt(a[key]) - parseInt(b[key])
             })
         }
 
@@ -277,10 +277,10 @@ class PvP extends Component {
                     alt={item.idnft}
                 />
 
-                <div style={{ flexDirection: 'column' }}>
+                <div style={{ flexDirection: 'column', justifyContent: 'space-around', height: '100%' }}>
 
                     <div style={{ alignItems: 'center' }}>
-                        <p style={{ fontSize: 22, color: 'white', marginRight: 30, width: 50 }}>
+                        <p style={{ fontSize: 22, color: 'white', marginRight: 20, width: 50 }}>
                             #{item.idnft}
                         </p>
 
@@ -288,66 +288,67 @@ class PvP extends Component {
                             WIN RATE {winRate}%
                         </p>
 
-                        <p style={{ fontSize: 17, color: 'white', marginRight: 20, width: 140 }}>
+                        <p style={{ fontSize: 17, color: 'white', width: 140 }}>
                             ({item.lose + item.win} fights)
                         </p>
                     </div>
 
-                    <p style={{ fontSize: 17, color: 'white', marginTop: 8 }}>
+                    <p style={{ fontSize: 17, color: 'white' }}>
                         Spell selected: {item.spellSelected.name}
                     </p>
+
+                    {
+                        this.state.loading ?
+                        <div
+                            style={styles.btnPlay}
+                        >
+                            <p style={{ fontSize: 17, color: 'white' }}>
+                                LOADING...
+                            </p>
+                        </div>
+                        :
+                        null
+                    }
+
+                    {
+                        pvpOpen && !this.state.loading ?
+                        <div style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <button
+                                className="btnH"
+                                style={Object.assign({}, styles.btnPlay, { marginRight: 10 })}
+                                onClick={() => {
+                                    if (this.state.loading) {
+                                        return
+                                    }
+
+                                    this.chooseOpponent(item)
+                                }}
+                            >
+                                <p style={{ fontSize: 17, color: 'white' }}>
+                                    FIGHT
+                                </p>
+                            </button>
+
+                            <button
+                                className="btnH"
+                                style={styles.btnPlay}
+                                onClick={() => {
+                                    if (this.state.loading) {
+                                        return
+                                    }
+
+                                    this.openPopupChangeSpell(item.idnft)
+                                }}
+                            >
+                                <p style={{ fontSize: 17, color: 'white' }}>
+                                    CHANGE SPELL
+                                </p>
+                            </button>
+                        </div>
+                        : null
+                    }
+
                 </div>
-
-                {
-                    this.state.loading ?
-                    <div
-                        style={styles.btnPlay}
-                    >
-                        <p style={{ fontSize: 17, color: 'white' }}>
-                            LOADING...
-                        </p>
-                    </div>
-                    :
-                    null
-                }
-
-                {
-                    pvpOpen && !this.state.loading ?
-                    <div style={{ height: '100%', flexDirection: 'column', justifyContent: 'space-around' }}>
-                        <button
-                            className="btnH"
-                            style={styles.btnPlay}
-                            onClick={() => {
-                                if (this.state.loading) {
-                                    return
-                                }
-
-                                this.chooseOpponent(item)
-                            }}
-                        >
-                            <p style={{ fontSize: 17, color: 'white' }}>
-                                FIGHT
-                            </p>
-                        </button>
-
-                        <button
-                            className="btnH"
-                            style={styles.btnPlay}
-                            onClick={() => {
-                                if (this.state.loading) {
-                                    return
-                                }
-
-                                this.openPopupChangeSpell(item.idnft)
-                            }}
-                        >
-                            <p style={{ fontSize: 17, color: 'white' }}>
-                                CHANGE SPELL
-                            </p>
-                        </button>
-                    </div>
-                    : null
-                }
 
             </div>
         )
@@ -400,9 +401,11 @@ class PvP extends Component {
 		}
 
 
-        const sorted = this.sortById(userMintedNfts)
+        const sorted = this.sortById(userMintedNfts, "id")
 
-        const yourSubscribersResultsSorted = this.sortById(yourSubscribersResults)
+        const yourSubscribersResultsSorted = this.sortById(yourSubscribersResults, "idnft")
+
+        //console.log(yourSubscribersResultsSorted);
 
         return (
             <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
@@ -442,7 +445,7 @@ class PvP extends Component {
                     Your Wizards in the arena ({yourSubscribersResults.length})
                 </p>
 
-                <div style={{ flexDirection: 'column', overflow: 'scroll', marginBottom: 30 }}>
+                <div style={{ flexDirection: 'row', overflow: 'scroll', marginBottom: 30, flexWrap: 'wrap' }}>
                     {
                         yourSubscribersResults && yourSubscribersResults.length > 0 &&
                         yourSubscribersResultsSorted.map((item, index) => {
@@ -575,7 +578,7 @@ const styles = {
 		borderStyle: 'solid'
 	},
     btnPlay: {
-        height: 40,
+        height: 35,
         width: 150,
         minWidth: 150,
         borderRadius: 2,
@@ -585,6 +588,7 @@ const styles = {
     },
     boxSubscribed: {
         marginBottom: 20,
+        marginRight: 20,
         alignItems: 'center',
         width: 'fit-content',
         padding: 10,
