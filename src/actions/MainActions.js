@@ -280,14 +280,14 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 				//console.log("response post reduce", blocks)
 				dispatch({ type: LOAD_ALL_NFTS_IDS, payload: { totalCountNfts: response.length, allNftsIds: response } })
 
-				let partsBlock = _.chunk(response, response.length / 2)
+				let partsBlock = _.chunk(response, 1024)
 
 				//console.log(partsBlock);
 
-				Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 100000, networkUrl, partsBlock[0]))).then(response1 => {
+				Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[0]))).then(response1 => {
 					//console.log(response1);
 
-					Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 100000, networkUrl, partsBlock[1]))).then(response2 => {
+					Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[1]))).then(response2 => {
 						//console.log(response2);
 
 						let final = response1.concat(response2)
