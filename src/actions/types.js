@@ -5,7 +5,7 @@ export const CTA_COLOR = '#07abf3'
 export const MIN_LEVEL = 122
 export const MAX_LEVEL = 300
 
-export const REVEAL_CAP = 1367
+export const REVEAL_CAP = 1424
 
 export const ADMIN_ADDRESS = 'k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb'
 export const CLERIC_MINT_ADDRESS = "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"
@@ -65,3 +65,5 @@ export const SET_SFIDA = 'SET_SFIDA'
 export const SET_AVG_LEVEL_PVP = 'SET_AVG_LEVEL_PVP'
 
 export const SAVE_SALES = 'SAVE_SALES'
+
+export const SAVE_RANK = 'SAVE_RANK'
