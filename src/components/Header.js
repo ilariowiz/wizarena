@@ -492,7 +492,8 @@ const styles = {
 	},
 	panel: {
 		backgroundColor: BACKGROUND_COLOR,
-		flexDirection: 'column'
+		flexDirection: 'column',
+		overflow: 'scroll'
 	},
 	headerPanel: {
 		height: 90,
@@ -508,7 +509,8 @@ const styles = {
         borderRadius: 2,
         borderColor: 'red',
         borderWidth: 2,
-        borderStyle: 'solid'
+        borderStyle: 'solid',
+		marginBottom: 40
     }
 }
 
