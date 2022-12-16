@@ -394,6 +394,7 @@ class Mint extends Component {
 
 	renderBoxMint() {
 		const { stage, loading, error } = this.state
+		const { account } = this.props
 
 		let title = stage !== 'early' ? `STAGE: ${stage.toUpperCase()} MINT` : 'EARLY'
 
@@ -433,7 +434,7 @@ class Mint extends Component {
 				}
 
 				{
-					stage !== 'early' ?
+					stage !== 'early' && account.account ?
 					<div style={{ flexDirection: 'column', width: '100%' }}>
 						<p style={{ fontSize: 17, color: '#c2c0c0' }}>
 							Minted
