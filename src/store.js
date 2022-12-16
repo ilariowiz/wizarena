@@ -16,10 +16,15 @@ const saveSubsetSales = createFilter(
 	['sales', 'lastTimeUpdateSales']
 )
 
+const saveSubsetRank = createFilter(
+	'rankReducer',
+	['ranks']
+)
+
 const persistConfig = {
 	key: 'root',
 	storage,
-	transforms: [saveSubsetMain, saveSubsetSales]
+	transforms: [saveSubsetMain, saveSubsetSales, saveSubsetRank]
 }
 
 
