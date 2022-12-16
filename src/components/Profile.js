@@ -330,8 +330,8 @@ class Profile extends Component {
 		})
 
 		let gasLimit = objects.length * 2000
-		if (gasLimit > 180000) {
-			gasLimit = 180000
+		if (gasLimit > 200000) {
+			gasLimit = 200000
 		}
 		this.props.claimAllWithoutUnstake(chainId, gasPrice, gasLimit, netId, objects, account)
 	}
