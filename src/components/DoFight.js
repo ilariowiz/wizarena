@@ -162,6 +162,9 @@ class DoFight extends Component {
         else if (name.includes("Exhaust")) {
             return "is exhausted"
         }
+        else if (name.includes("Fear")) {
+            return "is frightened"
+        }
     }
 
     convertConditionNamePositive(name) {
@@ -191,6 +194,9 @@ class DoFight extends Component {
         }
         else if (name.includes("Exhaust")) {
             return "is no longer exhausted"
+        }
+        else if (name.includes("Fear")) {
+            return "is no longer frightened"
         }
     }
 
