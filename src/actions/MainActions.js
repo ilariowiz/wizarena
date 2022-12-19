@@ -576,6 +576,57 @@ export const loadSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 	}
 }
 
+export const getOffersForNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 60000, networkUrl, id, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-offers-for-id "${id}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (response && callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
+export const getOffersMade = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 60000, networkUrl, account, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-offers-for-buyer "${account.account}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (response && callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
+export const getOffersReceived = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 60000, networkUrl, account, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-offers-for-owner "${account.account}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (response && callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
 export const loadMaxItemsPerWallet = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, account, phase, callback) => {
 	return (dispatch) => {
 
@@ -1122,6 +1173,117 @@ export const buyNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, a
 	}
 }
 
+export const makeOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idNft, account, days, amount) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.make-offer "${idNft}" "${account.account}" ${days} ${_.round(amount).toFixed(1)})`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
+				[account.account]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("makeOffer", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const acceptOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idOffer, idNft, account) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.accept-offer "${idOffer}" free.wiza)`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME}.OWNER`,
+				[account.account, idNft]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("acceptOffer", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const withdrawOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idOffer, account) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.cancel-offer "${idOffer}")`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
+				[account.account]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("withdrawOffer", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
 export const subscribeToTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, tournamentName, idNft, buyin, spellSelected) => {
 	return (dispatch) => {
 
@@ -1454,6 +1616,8 @@ export const getUpgradeCost = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit =
 		})
 	}
 }
+
+
 
 export const stakeNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idNft, account) => {
 	return (dispatch) => {

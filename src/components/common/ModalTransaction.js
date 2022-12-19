@@ -100,7 +100,7 @@ class ModalTransaction extends Component {
 	}
 
 	getContent() {
-		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, wizaCostToUpgrade, amountToMint } = this.props
+		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, wizaCostToUpgrade, amountToMint, offerInfoRecap } = this.props
 
 		//CASO INIZIALE, signingCmd != null in transactionState
 		let title = 'Signing transaction'
@@ -165,6 +165,15 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'changespell_pvp') {
 					body = `You will change the spell of ${nameNft}`
+				}
+				else if (type === 'makeoffer') {
+					body = `You will submit the offer. Remember that the amount of the offer will be locked in the contract for the duration of the offer.`
+				}
+				else if (type === "acceptoffer") {
+					body = offerInfoRecap || "You will accept this offer"
+				}
+				else if (type === "withdrawoffer") {
+					body = 'You will withdraw funds from this offer'
 				}
 
 				buttonText = 'Open Wallet'
@@ -266,6 +275,18 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'changespell_pvp') {
 					body = `Spell changed!`
+					buttonText = 'Close'
+				}
+				else if (type === 'makeoffer') {
+					body = `Offer sent!`
+					buttonText = 'Close'
+				}
+				else if (type === 'acceptoffer') {
+					body = `Offer accepted!`
+					buttonText = 'Close'
+				}
+				else if (type === 'withdrawoffer') {
+					body = 'Funds successfully withdrawn'
 					buttonText = 'Close'
 				}
 

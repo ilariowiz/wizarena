@@ -14,7 +14,9 @@ import Header from './Header';
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import ModalTransfer from './common/ModalTransfer'
+import ModalMakeOffer from './common/ModalMakeOffer'
 import HistoryItem from './common/HistoryItem'
+import OfferItem from './common/OfferItem'
 import getImageUrl from './common/GetImageUrl'
 import traits_qty from './common/Traits_qty'
 import traits_qty_clerics from './common/Traits_qty_clerics'
@@ -31,7 +33,10 @@ import {
 	buyNft,
 	clearTransaction,
 	transferNft,
-	getInfoNftBurning
+	getInfoNftBurning,
+	getOffersForNft,
+	makeOffer,
+	acceptOffer
 } from '../actions'
 import { MAIN_NET_ID, REVEAL_CAP, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, CTA_COLOR, CONTRACT_NAME } from '../actions/types'
 import '../css/Nft.css'
@@ -54,7 +59,6 @@ class Nft extends Component {
 			showModalTransfer: false,
 			kadenaPrice: 0,
 			loading: true,
-			dataMarketHistory: {},
 			fights: [],
 			traitsRank: undefined,
 			loadingHistory: true,
@@ -62,7 +66,11 @@ class Nft extends Component {
 			historyUpgrades: [],
 			openFightsSection: [],
 			infoBurn: {},
-			level: 0
+			level: 0,
+			offers: [],
+			loadingOffers: true,
+			showModalOffer: false,
+			offerInfoRecap: ""
 		}
 	}
 
@@ -148,6 +156,8 @@ class Nft extends Component {
 					this.loadHistory(idNft)
 					this.getHistoryUpgrades(idNft)
 					this.loadMaxMedalsPerTournament()
+
+					this.loadOffers(idNft)
 					if (response.confirmBurn) {
 						this.loadInfoBurn(idNft)
 					}
@@ -165,6 +175,21 @@ class Nft extends Component {
         this.props.getInfoNftBurning(chainId, gasPrice, gasLimit, networkUrl, idNft, (response) => {
             //console.log(response);
             this.setState({ infoBurn: response })
+        })
+    }
+
+	loadOffers(idNft) {
+        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+        this.props.getOffersForNft(chainId, gasPrice, gasLimit, networkUrl, idNft, (response) => {
+            //console.log(response);
+			if (response && response.status !== "failure") {
+				this.setState({ offers: response, loadingOffers: false })
+			}
+			else {
+				this.setState({ loadingOffers: false })
+			}
+
         })
     }
 
@@ -283,14 +308,7 @@ class Nft extends Component {
 		const { nft } = this.state
 		const { account, chainId, gasPrice, netId } = this.props
 
-		const dataMarketHistory = {
-			idNft: nft.id,
-			price: nft.price,
-			from: nft.owner,
-			to: account.account,
-		}
-
-		this.setState({ typeModal: 'buy', dataMarketHistory }, () => {
+		this.setState({ typeModal: 'buy' }, () => {
 			this.props.buyNft(chainId, gasPrice, 7000, netId, account, nft)
 		})
 	}
@@ -301,6 +319,29 @@ class Nft extends Component {
 
 		this.setState({ typeModal: 'transfer' }, () => {
 			this.props.transferNft(chainId, gasPrice, 1500, netId, nft.id, account, receiver)
+		})
+	}
+
+	submitOffer(amount, duration) {
+		const { nft } = this.state
+		const { account, chainId, gasPrice, netId } = this.props
+
+		//console.log(amount, duration);
+
+		this.setState({ typeModal: 'makeoffer', showModalOffer: false }, () => {
+			this.props.makeOffer(chainId, gasPrice, 4000, netId, nft.id, account, duration, amount)
+		})
+	}
+
+	acceptOffer(offer) {
+		const { nft } = this.state
+		const { account, chainId, gasPrice, netId } = this.props
+
+		//console.log(amount, duration);
+		let offerInfoRecap = `You are accepting an offer of ${offer.amount} KDA (minus 7% marketplace fee) for #${nft.id}`
+
+		this.setState({ typeModal: 'acceptoffer', offerInfoRecap }, () => {
+			this.props.acceptOffer(chainId, gasPrice, 4000, netId, offer.id, nft.id, account)
 		})
 	}
 
@@ -567,6 +608,29 @@ class Nft extends Component {
 		)
 	}
 
+	renderOffersItem(item, index, isMobile) {
+		const { account } = this.props
+		const { nft, kadenaPrice } = this.state
+
+		return (
+			<OfferItem
+				item={item}
+				index={index}
+				isOwner={account.account === nft.owner}
+				isBuyer={account.account === item.buyer}
+				showImage={false}
+				kadenaPrice={kadenaPrice}
+				key={item.id}
+				isMobile={isMobile}
+				history={this.props.history}
+				onAcceptOffer={() => this.acceptOffer(item)}
+				onWithdrawOffer={() => {
+					this.setState({ typeModal: 'withdrawoffer' })
+				}}
+			/>
+		)
+	}
+
 	// SE NFT é LISTATO ******************************************
 	// GESTIAMO I CASI: Connect Wallet, Cancel Listing, Buy Now, Make Offer
 	renderBtnBuy(width, marginRight) {
@@ -606,7 +670,18 @@ class Nft extends Component {
 		}
 
 		return (
-			<div style={{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
+			<div style={{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around' }}>
+
+				<button
+					className='btnH'
+					style={Object.assign({}, styles.btnBuy, { width, marginRight })}
+					onClick={() => this.setState({ showModalOffer: true })}
+				>
+					<p style={styles.btnBuyText}>
+						Make offer
+					</p>
+				</button>
+
 				<button
 					className='btnH'
 					style={Object.assign({}, styles.btnBuy, { width, marginRight })}
@@ -614,6 +689,23 @@ class Nft extends Component {
 				>
 					<p style={styles.btnBuyText}>
 						Buy now
+					</p>
+				</button>
+			</div>
+		)
+	}
+
+	renderBtnMakeOffer(width, marginRight) {
+		return (
+			<div style={{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
+
+				<button
+					className='btnH'
+					style={Object.assign({}, styles.btnBuy, { width, marginRight })}
+					onClick={() => this.setState({ showModalOffer: true })}
+				>
+					<p style={styles.btnBuyText}>
+						Make offer
 					</p>
 				</button>
 			</div>
@@ -1095,6 +1187,40 @@ class Nft extends Component {
 		)
 	}
 
+	renderBoxOffers(width) {
+		const { offers, loadingOffers } = this.state
+
+		//console.log(offers);
+
+		return (
+			<div style={Object.assign({}, styles.boxSection, { width })}>
+
+				<div style={{ backgroundColor: '#ffffff15', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
+					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, color: 'white' }}>
+						Item offers
+					</p>
+				</div>
+
+				<div style={Object.assign({}, styles.boxHistory, { width })}>
+
+					{offers.map((item, index) => {
+						return this.renderOffersItem(item, index, false)
+					})}
+
+					{
+						offers && offers.length === 0 ?
+						<p style={{ fontSize: 18, color: 'white', marginLeft: 15, marginBottom: 15, marginTop: 15 }}>
+							{loadingOffers ? "Loading..." : "No offers"}
+						</p>
+						: null
+					}
+
+				</div>
+
+			</div>
+		)
+	}
+
 	renderBoxSales(width) {
 		const { nftH, loadingHistory } = this.state
 
@@ -1200,6 +1326,8 @@ class Nft extends Component {
 							<div style={styles.boxRightLarge}>
 
 								{this.renderLeftMakeOffer()}
+
+								{this.renderBtnMakeOffer(ctaWidth, 15)}
 							</div>
 							: null
 						}
@@ -1229,6 +1357,8 @@ class Nft extends Component {
 				{this.renderBoxFights(imageWidth)}
 
 				{this.renderBoxProperties(imageWidth)}
+
+				{this.renderBoxOffers(imageWidth)}
 
 				{this.renderBoxSales(imageWidth)}
 			</div>
@@ -1311,6 +1441,8 @@ class Nft extends Component {
 							<div style={Object.assign({}, styles.boxRightLarge, { width: boxWidthRight })}>
 
 								{this.renderLeftMakeOffer()}
+
+								{this.renderBtnMakeOffer(ctaWidth, 15)}
 							</div>
 							: null
 						}
@@ -1344,6 +1476,8 @@ class Nft extends Component {
 				</div>
 
 				{this.renderBoxProperties(boxW)}
+
+				{this.renderBoxOffers(boxW)}
 
 				{this.renderBoxSales(boxW)}
 
@@ -1384,7 +1518,7 @@ class Nft extends Component {
 
 	render() {
 		const { showModalTx } = this.props
-		const { inputPrice, nft, typeModal, showModalConnection, loading, error, showModalTransfer } = this.state
+		const { inputPrice, nft, typeModal, showModalConnection, loading, error, showModalTransfer, showModalOffer } = this.state
 
 		let modalW = window.innerWidth * 82 / 100
 		if (modalW > 480) {
@@ -1455,7 +1589,7 @@ class Nft extends Component {
 						this.props.clearTransaction()
 						this.getPathNft()
 					}}
-					dataMarketHistory={this.state.dataMarketHistory}
+					offerInfoRecap={this.state.offerInfoRecap}
 				/>
 
 				<ModalConnectionWidget
@@ -1473,6 +1607,13 @@ class Nft extends Component {
 							this.transfer(receiver)
 						})
 					}}
+				/>
+
+				<ModalMakeOffer
+					width={modalW}
+					showModal={showModalOffer}
+					onCloseModal={() => this.setState({ showModalOffer: false })}
+					submitOffer={(amount, duration) => this.submitOffer(amount, duration)}
 				/>
 
 			</div>
@@ -1624,5 +1765,8 @@ export default connect(mapStateToProps, {
 	buyNft,
 	clearTransaction,
 	transferNft,
-	getInfoNftBurning
+	getInfoNftBurning,
+	getOffersForNft,
+	makeOffer,
+	acceptOffer
 })(Nft);

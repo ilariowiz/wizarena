@@ -38,6 +38,9 @@
 
     (defconst ID_REVEAL "id-reveal")
 
+    (defconst WIZARDS_OFFERS_COUNT_KEY "wizards-offers-count-key")
+    (defconst WIZARDS_OFFERS_BANK:string "wizards-offers-bank" "Account holding offers")
+
 ; --------------------------------------------------------------------------
 ; Capabilities
 ; --------------------------------------------------------------------------
@@ -71,6 +74,14 @@
         (enforce-keyset ADMIN_KEYSET)
         (compose-capability (PRIVATE))
         (compose-capability (ACCOUNT_GUARD ADMIN_ADDRESS))
+    )
+
+    (defun create-BANK-guard ()
+        (create-user-guard (require-PRIVATE))
+    )
+
+    (defun require-PRIVATE ()
+        (require-capability (PRIVATE))
     )
 
     (defcap WIZ_BUY (id:string buyer:string seller:string price:decimal)
@@ -224,6 +235,19 @@
         spellSelected:object
     )
 
+    (defschema offers-schema
+        @doc "schema for offers on marketplace"
+        id:string
+        refnft:string
+        buyer:string
+        owner:string
+        timestamp:time
+        expiresat:time
+        amount:decimal
+        withdrawn:bool
+        status:string
+    )
+
     (deftable nfts:{nft-main-schema})
     (deftable nfts-market:{nft-listed-schema})
     (deftable creation:{creation-schema})
@@ -246,6 +270,8 @@
     (deftable price:{price-schema})
 
     (deftable pvp-subscribers:{pvp-subscribers-schema})
+
+    (deftable offers-table:{offers-schema})
 
     ; --------------------------------------------------------------------------
   ; Can only happen once
@@ -276,6 +302,10 @@
         (insert values PVP_WEEK {"value":"w1"})
 
         (insert values ID_REVEAL {"value":"1024"})
+
+        (insert counts WIZARDS_OFFERS_COUNT_KEY {"count": 0})
+        (coin.create-account WIZARDS_OFFERS_BANK (create-BANK-guard))
+        (create-account WIZARDS_OFFERS_BANK (create-BANK-guard))
     )
 
     (defun insertValuesUpgrade ()
@@ -825,11 +855,156 @@
         )
     )
 
+    (defun make-offer (refnft:string buyer:string duration:integer amount:decimal)
+        @doc "make an offer for a nft"
+        (enforce (> amount 0.0) "Amount must be greater then zero")
+        (enforce (> duration 0) "Duration must be at least 1 day")
+        (let (
+            (currentowner (at "owner" (read nfts refnft ["owner"])))
+            (new-offer-id (int-to-str 10 (get-count WIZARDS_OFFERS_COUNT_KEY)))
+          )
+          (enforce (!= currentowner buyer) "the buyer can't be the owner")
+          (with-capability (ACCOUNT_GUARD buyer)
+            (install-capability (coin.TRANSFER buyer WIZARDS_OFFERS_BANK amount))
+            (coin.transfer buyer WIZARDS_OFFERS_BANK amount)
+            (insert offers-table new-offer-id {
+              "id": new-offer-id,
+              "refnft": refnft,
+              "buyer": buyer,
+              "owner": currentowner,
+              "timestamp": (at "block-time" (chain-data)),
+              "expiresat": (add-time (at "block-time" (chain-data)) (days duration)),
+              "amount": amount,
+              "withdrawn": false,
+              "status": "pending"
+            })
+            (with-default-read token-table WIZARDS_OFFERS_BANK
+              {"balance": 0.0}
+              {"balance":= oldbalance }
+              (update token-table WIZARDS_OFFERS_BANK {"balance": (+ oldbalance amount)})
+            )
+            (with-capability (PRIVATE)
+              (increase-count WIZARDS_OFFERS_COUNT_KEY)
+            )
+          )
+        )
+    )
+
+    (defun cancel-offer (idoffer:string)
+      @doc "cancel offer"
+
+      (with-read offers-table idoffer
+        {
+          "buyer" := buyer,
+          "expiresat" := expiresat,
+          "amount" := amount,
+          "withdrawn" := iswithdrew
+        }
+        ; enforce some rules
+        (with-capability (ACCOUNT_GUARD buyer)
+          (enforce (= iswithdrew false) "Cannot withdraw twice")
+          (enforce (<= expiresat (at "block-time" (chain-data))) "Cannot cancel offer yet.")
+          (with-capability (PRIVATE)
+            (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK buyer amount))
+            (coin.transfer WIZARDS_OFFERS_BANK buyer amount)
+
+            (update offers-table idoffer { "withdrawn": true, "status": "canceled" })
+            (with-default-read token-table WIZARDS_OFFERS_BANK
+              {"balance": 0.0}
+              {"balance":= oldbalance }
+              (update token-table WIZARDS_OFFERS_BANK {"balance": (- oldbalance amount)})
+            )
+          )
+        )
+      )
+    )
+
+    ;only original owner can accept offer, so if he sell then he can't accept offer, cause we check for OWNER cap
+    ; also the new owner can't accept the same offer because he isn't the original owner
+    (defun accept-offer (idoffer:string m:module{wiza1-interface-v1})
+      @doc "Accept an offer"
+      (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+      (with-read offers-table idoffer
+        {
+          "refnft" := refnft,
+          "buyer" := buyer,
+          "owner" := originalowner,
+          "timestamp" := timestamp,
+          "expiresat" := expiresat,
+          "amount" := amount,
+          "withdrawn" := iswithdrew
+        }
+        (let (
+                (data (get-wizard-fields-for-id (str-to-int refnft)))
+                (is-staked (check-is-staked refnft m))
+            )
+            (enforce (= is-staked false) "You can't accept offers if a wizard is staked")
+            (enforce (= (at "confirmBurn" data) false) "You can't accept offers if a wizard is in burning queue")
+            (enforce (= iswithdrew false) "Cannot withdraw twice")
+            (enforce (>= expiresat (at "block-time" (chain-data))) "Offer expired.")
+        )
+        ; enforce some rules
+        (with-capability (OWNER originalowner refnft)
+            (let (
+                (fee (/ (* (get-value-tournament FEE_KEY) amount) 100))
+              )
+              (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK originalowner (- amount fee)))
+              (with-capability (PRIVATE)(coin.transfer WIZARDS_OFFERS_BANK originalowner (- amount fee)))
+
+              (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK ADMIN_ADDRESS fee))
+              (with-capability (PRIVATE)(coin.transfer WIZARDS_OFFERS_BANK ADMIN_ADDRESS fee))
+
+              (update offers-table idoffer { "withdrawn": true, "status": "accepted" })
+
+              (with-default-read token-table WIZARDS_OFFERS_BANK
+                {"balance": 0.0}
+                {"balance":= oldbalance }
+                (update token-table WIZARDS_OFFERS_BANK {"balance": (- oldbalance amount)})
+              )
+              (update nfts refnft {
+                "owner": buyer
+              })
+              (update nfts-market refnft {
+                "price": 0.0,
+                "listed": false
+              })
+
+            )
+            (with-capability (PRIVATE)
+                (emit-event (WIZ_BUY refnft buyer originalowner amount))
+                (increase-volume-by VOLUME_PURCHASE_COUNT amount)
+            )
+        )
+      )
+    )
+
     (defun increase-volume-by (key:string amount:decimal)
         (require-capability (PRIVATE))
         (update volume key
             {"count": (+ amount (get-volume))}
         )
+    )
+
+    (defun get-offers-for-id (id:string)
+      @doc "Get all offers for a single nft"
+      (select offers-table (and?
+                            (where "refnft" (= id))
+                            (where "withdrawn" (= false))
+                            ))
+    )
+
+    (defun get-offers-for-buyer (buyer:string)
+      @doc "Get all offers made by a single buyer"
+      (select offers-table (and?
+                            (where "status" (!= "canceled")) ;se già ritirata non la prendiamo
+                            (where "buyer" (= buyer))))
+    )
+
+    (defun get-offers-for-owner (owner:string)
+      @doc "Get all offers received from owner"
+      (select offers-table (and?
+                            (where "owner" (= owner))
+                            (where "withdrawn" (= false))))
     )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1447,6 +1622,7 @@
     (create-table price)
 
     (create-table pvp-subscribers)
+    (create-table offers-table)
 
     (initialize)
     (insertValuesUpgrade)

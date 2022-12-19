@@ -913,6 +913,52 @@
 
 (commit-tx)
 
+(begin-tx "MAKE OFFER")
+
+(env-sigs [{
+  "key": "94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd",
+  "caps": [
+    (free.wiz-arena.ACCOUNT_GUARD "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.make-offer "0" "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" 1 6.0)
+
+(commit-tx)
+
+(begin-tx "ACCEPT OFFER")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.accept-offer "0" free.wiza)
+
+(expect "balance of 9ca8 is 155.58" (coin.get-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250") 155.58)
+
+(expect "balance of 94ed is 144.0" (coin.get-balance "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd") 144.0)
+
+(commit-tx)
+
+(begin-tx "CANCEL OFFER")
+
+(env-sigs [{
+  "key": "94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd",
+  "caps": [
+    (free.wiz-arena.ACCOUNT_GUARD "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.cancel-offer "0")
+
+(commit-tx)
+
 (begin-tx "BUY UPGRADE")
 
 (env-sigs [{

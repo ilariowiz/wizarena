@@ -7,6 +7,7 @@ import _ from 'lodash'
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
+import OfferItem from './common/OfferItem'
 import NftCardStake from './common/NftCardStake'
 import NftCardChoice from './common/NftCardChoice'
 import ModalTransaction from './common/ModalTransaction'
@@ -34,7 +35,10 @@ import {
 	stakeAll,
 	addNftToBurningQueue,
 	removeNftFromBurningQueue,
-	delistNft
+	delistNft,
+	getOffersMade,
+	getOffersReceived,
+	acceptOffer
 } from '../actions'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -59,7 +63,11 @@ class Profile extends Component {
 			prize: undefined,
 			unclaimedWizaTotal: 0,
 			stakedIds: [],
-			notStakedIds: []
+			notStakedIds: [],
+			offersMade: [],
+			offersReceived: [],
+			offerInfoRecap: "",
+			kadenaPrice: undefined
 		}
 	}
 
@@ -69,15 +77,26 @@ class Profile extends Component {
 		this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
+		this.loadKadenaPrice()
+
 		setTimeout(() => {
 
 			this.loadProfile()
 		}, 500)
 	}
 
+	loadKadenaPrice() {
+		fetch('https://api.coingecko.com/api/v3/simple/price?ids=kadena&vs_currencies=usd')
+		.then(response => response.json())
+		.then(data => {
+			//console.log(data)
+			this.setState({ kadenaPrice: data.kadena.usd })
+		})
+		.catch(error => console.log(error))
+	}
+
 	loadProfile() {
 		this.loadMinted()
-
 		this.loadWizaBalance()
 	}
 
@@ -103,45 +122,25 @@ class Profile extends Component {
 		}
 	}
 
-	/*
-	preloadStats() {
-		this.setState({ nftsStats: [] })
+	loadOffersMade() {
+		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-		//console.log(this.props.userMintedNfts);
-
-		if (this.props.userMintedNfts.length > 0) {
-			this.props.userMintedNfts.map(i => this.loadStats(i.name))
-		}
-		else {
-			this.setState({ loading: false })
+		if (account && account.account) {
+			this.props.getOffersMade(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
+				this.setState({ offersMade: response, loading: false })
+			})
 		}
 	}
 
+	loadOffersReceived() {
+		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-	async loadStats(nameNft) {
-		const docRef = doc(firebasedb, "stats", nameNft)
-
-		const docSnap = await getDoc(docRef)
-		const data = docSnap.data()
-
-		if (data) {
-			//console.log(data)
-			let stats = Object.assign([], this.state.nftsStats)
-			stats.push(data)
-
-			if (stats.length === this.props.userMintedNfts.length) {
-				this.setState({ nftsStats: stats, loading: false })
-			}
-			else {
-				this.setState({ nftsStats: stats })
-			}
-
-		}
-		else {
-			console.log('no stats');
+		if (account && account.account) {
+			this.props.getOffersReceived(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
+				this.setState({ offersReceived: response, loading: false })
+			})
 		}
 	}
-	*/
 
 	async loadTournament() {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
@@ -160,9 +159,11 @@ class Profile extends Component {
 
 						this.loadProfileFights()
 					}
+					/*
 					else if (tournament.tournamentEnd) {
 						this.loadAddressForPrize()
 					}
+					*/
 				}
 
 				this.props.getMontepremi(chainId, gasPrice, gasLimit, networkUrl)
@@ -409,6 +410,17 @@ class Profile extends Component {
 
 		this.setState({ typeModal: 'delist', nameNftSubscribed: `#${id}` }, () => {
 			this.props.delistNft(chainId, gasPrice, 700, netId, account, id)
+		})
+	}
+
+	acceptOffer(offer) {
+		const { account, chainId, gasPrice, netId } = this.props
+
+		//console.log(amount, duration);
+		let offerInfoRecap = `You are accepting an offer of ${offer.amount} KDA (minus 7% marketplace fee) for #${offer.refnft}`
+
+		this.setState({ typeModal: 'acceptoffer', offerInfoRecap }, () => {
+			this.props.acceptOffer(chainId, gasPrice, 4000, netId, offer.id, offer.refnft, account)
 		})
 	}
 
@@ -811,6 +823,34 @@ class Profile extends Component {
 		)
 	}
 
+	renderOffers(width, offers, isMade, isMobile) {
+		const { account } = this.props
+		const { kadenaPrice } = this.state
+
+		return (
+			<div style={{ flexDirection: 'column' }}>
+				{offers.map((item, index) => {
+					return (
+						<OfferItem
+							item={item}
+							index={index}
+							isOwner={!isMade}
+							isBuyer={isMade}
+							showImage={true}
+							kadenaPrice={kadenaPrice}
+							key={item.id}
+							isMobile={isMobile}
+							history={this.props.history}
+							onAcceptOffer={() => this.acceptOffer(item)}
+						/>
+					)
+				})}
+			</div>
+		)
+	}
+
+
+
 	renderMenu(isMobile) {
 		const { section, loading } = this.state;
 		const { userMintedNfts } = this.props
@@ -819,7 +859,8 @@ class Profile extends Component {
 		const unselStyle = { borderBottomWidth: 3, borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderColor: 'transparent', borderStyle: 'solid' }
 		const selectedStyle1 = section === 1 ? selStyle : unselStyle
 		const selectedStyle2 = section === 2 ? selStyle : unselStyle
-		//const selectedStyle3 = section === 3 ? selStyle : unselStyle
+		const selectedStyle3 = section === 3 ? selStyle : unselStyle
+		const selectedStyle4 = section === 4 ? selStyle : unselStyle
 
 		return (
 			<div style={{ width: '100%', alignItems: 'center', marginBottom: 30 }}>
@@ -851,13 +892,45 @@ class Profile extends Component {
 						TOURNAMENT
 					</p>
 				</button>
+
+				<button
+					style={Object.assign({}, styles.btnMenu, selectedStyle3, { marginRight: 35 })}
+					onClick={() => {
+						if (loading) {
+							return
+						}
+
+						this.setState({ section: 3, loading: true, typeModal: "withdrawoffer" })
+						this.loadOffersMade()
+					}}
+				>
+					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 3 ? CTA_COLOR : '#21c6e895' }}>
+						OFFERS MADE
+					</p>
+				</button>
+
+				<button
+					style={Object.assign({}, styles.btnMenu, selectedStyle4, { marginRight: 35 })}
+					onClick={() => {
+						if (loading) {
+							return
+						}
+
+						this.setState({ section: 4, loading: true })
+						this.loadOffersReceived()
+					}}
+				>
+					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 4 ? CTA_COLOR : '#21c6e895' }}>
+						OFFERS RECEIVED
+					</p>
+				</button>
 			</div>
 		)
 	}
 
 	renderBody(isMobile) {
 		const { account, showModalTx, wizaBalance } = this.props
-		const { showModalConnection, isConnected, section, loading, unclaimedWizaTotal } = this.state
+		const { showModalConnection, isConnected, section, loading, unclaimedWizaTotal, offersMade, offersReceived } = this.state
 
 		const { boxW, modalW } = getBoxWidth(isMobile)
 
@@ -978,6 +1051,20 @@ class Profile extends Component {
 					null
 				}
 
+				{
+					section === 3 && !loading && offersMade ?
+					this.renderOffers(boxW, offersMade, true, isMobile)
+					:
+					null
+				}
+
+				{
+					section === 4 && !loading && offersMade ?
+					this.renderOffers(boxW, offersReceived, false, isMobile)
+					:
+					null
+				}
+
 				<ModalTransaction
 					showModal={showModalTx}
 					width={modalW}
@@ -1002,6 +1089,7 @@ class Profile extends Component {
 						}
 					}}
 					nameNft={this.state.nameNftSubscribed}
+					offerInfoRecap={this.state.offerInfoRecap}
 				/>
 
 			</div>
@@ -1143,5 +1231,8 @@ export default connect(mapStateToProps, {
 	stakeAll,
 	addNftToBurningQueue,
 	removeNftFromBurningQueue,
-	delistNft
+	delistNft,
+	getOffersMade,
+	getOffersReceived,
+	acceptOffer
 })(Profile)
