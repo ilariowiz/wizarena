@@ -179,6 +179,20 @@ class Header extends Component {
 							Read ways to earn WIZA
 						</p>
 
+						<a
+							href="https://www.kdswap.exchange/pools/kda/fwi"
+							target="_blank"
+							rel="noopener noreferrer"
+							style={{ marginBottom: 5, width: 'fit-content' }}
+						>
+							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
+								Buy/Sell WIZA
+							</p>
+						</a>
+
+						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 30 }}>
+							KDA/FWI liquidity pool
+						</p>
 
 						<a
 							href="https://wizardsarena.gitbook.io/wizards-arena/usdwiza/how-to-mine"
