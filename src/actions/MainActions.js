@@ -38,6 +38,7 @@ import {
 	SAVE_WIZA_BALANCE,
 	LOAD_WIZARDS_STAKED,
 	STORE_CIRCULATING_SUPPLY,
+	STORE_TOTAL_MINED,
 	SET_SFIDA,
 	SET_AVG_LEVEL_PVP
 } from './types'
@@ -1550,11 +1551,29 @@ export const getWizaBalance = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit =
 	}
 }
 
-export const getCirculatingSupply = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 50000, networkUrl) => {
+export const getTotalMined = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 50000, networkUrl) => {
 	return (dispatch) => {
 
 		let cmd = {
 			pactCode: `(free.${CONTRACT_NAME_WIZA}.get-total-mined)`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (response) {
+				dispatch({ type: STORE_TOTAL_MINED, payload: _.floor(response.decimal, 2) })
+			}
+
+		})
+	}
+}
+
+export const getCirculatingSupply = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 50000, networkUrl) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_WIZA}.get-circulating-supply)`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 

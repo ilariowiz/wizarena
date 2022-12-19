@@ -8,6 +8,7 @@ import { SiTwitter } from 'react-icons/si'
 import getBoxWidth from './common/GetBoxW'
 import '../css/Header.css'
 import {
+	getTotalMined,
 	getCirculatingSupply,
 	setNetworkSettings,
 	setNetworkUrl,
@@ -35,9 +36,16 @@ class Header extends Component {
 
 		if (!circulatingSupply) {
 			setTimeout(() => {
+				this.getMined()
 				this.getSupply()
 			}, 1000)
 		}
+	}
+
+	getMined() {
+		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		this.props.getTotalMined(chainId, gasPrice, gasLimit, networkUrl)
 	}
 
 	getSupply() {
@@ -46,22 +54,20 @@ class Header extends Component {
 		this.props.getCirculatingSupply(chainId, gasPrice, gasLimit, networkUrl)
 	}
 
-	getPct() {
-		const { circulatingSupply } = this.props
-
-		if (!circulatingSupply) {
+	getPct(numb) {
+		if (!numb) {
 			return ''
 		}
 
 		const maxSupply = 13240000
 
-		const pct = circulatingSupply / maxSupply * 100
+		const pct = numb / maxSupply * 100
 		return `${_.floor(pct, 2)}%`
 	}
 
 	renderSlidePanel(boxW) {
 		const { showPanel } = this.state
-		const { isMobile, circulatingSupply, account, netId, isXWallet, isQRWalletConnect } = this.props
+		const { isMobile, circulatingSupply, totalMined, account, netId, isXWallet, isQRWalletConnect } = this.props
 
 		const panelWidth = isMobile ? "100%" : boxW * 60 / 100
 
@@ -189,16 +195,30 @@ class Header extends Component {
 							Read ways to spend WIZA
 						</p>
 
-						<div style={{ alignItems: 'center', marginBottom: 30 }}>
+						<div style={{ alignItems: 'center', marginBottom: 10 }}>
 							<p style={{ fontSize: 18, color: 'white', marginRight: 20, textDecoration: 'underline' }}>
 								$WIZA mined
 							</p>
 
 							<p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
-								{circulatingSupply ? circulatingSupply.toLocaleString() : '...'}
+								{totalMined ? totalMined.toLocaleString() : '...'}
 							</p>
 							<p style={{ fontSize: 18, color: 'white' }}>
-								({this.getPct()})
+								({this.getPct(totalMined)})
+							</p>
+						</div>
+
+						<div style={{ alignItems: 'center', marginBottom: 30 }}>
+							<p style={{ fontSize: 18, color: 'white', marginRight: 20, textDecoration: 'underline' }}>
+								$WIZA circulating
+							</p>
+
+							<p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
+								{circulatingSupply ? circulatingSupply.toLocaleString() : '...'}
+							</p>
+
+							<p style={{ fontSize: 18, color: 'white' }}>
+								({this.getPct(circulatingSupply)})
 							</p>
 						</div>
 
@@ -515,12 +535,13 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { circulatingSupply, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId } = state.mainReducer
+	const { totalMined, circulatingSupply, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId } = state.mainReducer
 
-	return { circulatingSupply, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId }
+	return { totalMined, circulatingSupply, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId }
 }
 
 export default connect(mapStateToProps, {
+	getTotalMined,
 	getCirculatingSupply,
 	setNetworkSettings,
 	setNetworkUrl,

@@ -24,6 +24,7 @@ import {
 	SAVE_WIZA_BALANCE,
 	LOAD_WIZARDS_STAKED,
 	STORE_CIRCULATING_SUPPLY,
+	STORE_TOTAL_MINED,
 	SET_SFIDA,
 	SET_AVG_LEVEL_PVP
 } from '../actions/types'
@@ -128,6 +129,8 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, wizaBalance: action.payload }
 		case LOAD_WIZARDS_STAKED:
 			return { ...state, wizardsStaked: action.payload }
+		case STORE_TOTAL_MINED:
+			return { ...state, totalMined: action.payload }
 		case STORE_CIRCULATING_SUPPLY:
 			return { ...state, circulatingSupply: action.payload }
 		case SET_SFIDA:
