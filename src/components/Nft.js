@@ -902,16 +902,21 @@ class Nft extends Component {
 
 	renderStat(title, value) {
 
+		let fixedValue = value
+		if (value === "PYSCHO") {
+			fixedValue = "PSYCHO"
+		}
+
 		if (title === "SPELL PERK") {
 			let condDesc;
-			if (value && value !== "-") {
+			if (fixedValue && fixedValue !== "-") {
 
-				//console.log(value);
+				//console.log(fixedValue);
 
-				let spellInfo = allSpells.find(i => i.condition.name && i.condition.name.toUpperCase() === value)
+				let spellInfo = allSpells.find(i => i.condition.name && i.condition.name.toUpperCase() === fixedValue)
 				//console.log(spellInfo);
 				if (spellInfo) {
-					let condInfo = conditions.find(i => i.name.toUpperCase() === value)
+					let condInfo = conditions.find(i => i.name.toUpperCase() === fixedValue)
 					if (condInfo) {
 						condDesc = `${condInfo.effect} - Chance of success: ${spellInfo.condition.pct}%`
 					}
@@ -926,7 +931,7 @@ class Nft extends Component {
 						condDesc ?
 						<Popup
 							trigger={open => (
-								<button style={styles.textValueStat}>{value}</button>
+								<button style={styles.textValueStat}>{fixedValue}</button>
 							)}
 							position="top center"
 							on="hover"
@@ -936,7 +941,7 @@ class Nft extends Component {
 							</div>
 						</Popup>
 						:
-						<p style={styles.textValueStat}>{value}</p>
+						<p style={styles.textValueStat}>{fixedValue}</p>
 					}
 
 				</div>
@@ -946,7 +951,7 @@ class Nft extends Component {
 		return (
 			<div style={{ alignItems: 'flex-end', marginBottom: 5 }}>
 				<p style={styles.textTitleStat}>{title}</p>
-				<p style={styles.textValueStat}>{value}</p>
+				<p style={styles.textValueStat}>{fixedValue}</p>
 			</div>
 		)
 	}
