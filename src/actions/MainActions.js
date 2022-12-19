@@ -662,7 +662,7 @@ export const getMintPhase = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3
 	}
 }
 
-export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 50000, networkUrl, pvpWeek, callback) => {
+export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 70000, networkUrl, pvpWeek, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
