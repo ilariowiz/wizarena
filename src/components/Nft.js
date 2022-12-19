@@ -1192,7 +1192,7 @@ class Nft extends Component {
 		)
 	}
 
-	renderBoxOffers(width) {
+	renderBoxOffers(width, isMobile) {
 		const { offers, loadingOffers } = this.state
 
 		//console.log(offers);
@@ -1209,7 +1209,7 @@ class Nft extends Component {
 				<div style={Object.assign({}, styles.boxHistory, { width })}>
 
 					{offers.map((item, index) => {
-						return this.renderOffersItem(item, index, false)
+						return this.renderOffersItem(item, index, isMobile)
 					})}
 
 					{
@@ -1363,7 +1363,7 @@ class Nft extends Component {
 
 				{this.renderBoxProperties(imageWidth)}
 
-				{this.renderBoxOffers(imageWidth)}
+				{this.renderBoxOffers(imageWidth, true)}
 
 				{this.renderBoxSales(imageWidth)}
 			</div>
@@ -1482,7 +1482,7 @@ class Nft extends Component {
 
 				{this.renderBoxProperties(boxW)}
 
-				{this.renderBoxOffers(boxW)}
+				{this.renderBoxOffers(boxW, false)}
 
 				{this.renderBoxSales(boxW)}
 

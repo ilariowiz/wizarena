@@ -90,7 +90,7 @@ class OfferItem extends Component {
 	}
 
 	renderExpiration() {
-		const { item } = this.props
+		const { item, isMobile } = this.props
 
 		const diff = moment().to(this.getExpire())
 
@@ -103,7 +103,7 @@ class OfferItem extends Component {
 		}
 
 		return (
-			<p style={{ fontSize: 17, color: 'white', flex: 1 }}>
+			<p style={{ fontSize: isMobile ? 14 : 17, color: 'white', flex: 1 }}>
 				Expiration {diff}
 			</p>
 		)
@@ -144,13 +144,9 @@ class OfferItem extends Component {
     				}
                 </div>
 
-				{
-					!showImage && !isMobile ?
-					<p style={{ fontSize: 15, color: 'white', flex: 1 }}>
-						From {item.buyer.slice(0, 15)}...
-					</p>
-					: null
-				}
+                <p style={{ fontSize: 15, color: 'white', flex: 1 }}>
+                    From {item.buyer.slice(0, isMobile ? 5 : 15)}...
+                </p>
 
 				{this.renderExpiration()}
 
