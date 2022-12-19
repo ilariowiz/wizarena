@@ -250,6 +250,12 @@ class Tournament extends Component {
                     {this.renderSingleGraph('#11c8ee', 'Ice')}
                     {this.renderSingleGraph('#e6dc0c', 'Thunder')}
                     {this.renderSingleGraph('#afb9cc', 'Wind')}
+                    {this.renderSingleGraph('#503631', 'Earth')}
+                    {this.renderSingleGraph('#840fb2', 'Psycho')}
+                    {this.renderSingleGraph('#b2e5ef', 'Spirit')}
+                    {this.renderSingleGraph('#faf000', 'Sun')}
+                    {this.renderSingleGraph('#4b0082', 'Undead')}
+                    {this.renderSingleGraph('#15a3c7', 'Water')}
                 </div>
             </div>
         )
