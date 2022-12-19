@@ -919,8 +919,6 @@
       )
     )
 
-    ;only original owner can accept offer, so if he sell then he can't accept offer, cause we check for OWNER cap
-    ; also the new owner can't accept the same offer because he isn't the original owner
     (defun accept-offer (idoffer:string m:module{wiza1-interface-v1})
       @doc "Accept an offer"
       (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
@@ -928,7 +926,6 @@
         {
           "refnft" := refnft,
           "buyer" := buyer,
-          "owner" := originalowner,
           "timestamp" := timestamp,
           "expiresat" := expiresat,
           "amount" := amount,
@@ -942,37 +939,37 @@
             (enforce (= (at "confirmBurn" data) false) "You can't accept offers if a wizard is in burning queue")
             (enforce (= iswithdrew false) "Cannot withdraw twice")
             (enforce (>= expiresat (at "block-time" (chain-data))) "Offer expired.")
-        )
-        ; enforce some rules
-        (with-capability (OWNER originalowner refnft)
-            (let (
-                (fee (/ (* (get-value-tournament FEE_KEY) amount) 100))
-              )
-              (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK originalowner (- amount fee)))
-              (with-capability (PRIVATE)(coin.transfer WIZARDS_OFFERS_BANK originalowner (- amount fee)))
 
-              (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK ADMIN_ADDRESS fee))
-              (with-capability (PRIVATE)(coin.transfer WIZARDS_OFFERS_BANK ADMIN_ADDRESS fee))
+            (with-capability (OWNER (at "owner" data) refnft)
+                (let (
+                    (fee (/ (* (get-value-tournament FEE_KEY) amount) 100))
+                  )
+                  (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK (at "owner" data) (- amount fee)))
+                  (with-capability (PRIVATE)(coin.transfer WIZARDS_OFFERS_BANK (at "owner" data) (- amount fee)))
 
-              (update offers-table idoffer { "withdrawn": true, "status": "accepted" })
+                  (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK ADMIN_ADDRESS fee))
+                  (with-capability (PRIVATE)(coin.transfer WIZARDS_OFFERS_BANK ADMIN_ADDRESS fee))
 
-              (with-default-read token-table WIZARDS_OFFERS_BANK
-                {"balance": 0.0}
-                {"balance":= oldbalance }
-                (update token-table WIZARDS_OFFERS_BANK {"balance": (- oldbalance amount)})
-              )
-              (update nfts refnft {
-                "owner": buyer
-              })
-              (update nfts-market refnft {
-                "price": 0.0,
-                "listed": false
-              })
+                  (update offers-table idoffer { "withdrawn": true, "status": "accepted" })
 
-            )
-            (with-capability (PRIVATE)
-                (emit-event (WIZ_BUY refnft buyer originalowner amount))
-                (increase-volume-by VOLUME_PURCHASE_COUNT amount)
+                  (with-default-read token-table WIZARDS_OFFERS_BANK
+                    {"balance": 0.0}
+                    {"balance":= oldbalance }
+                    (update token-table WIZARDS_OFFERS_BANK {"balance": (- oldbalance amount)})
+                  )
+                  (update nfts refnft {
+                    "owner": buyer
+                  })
+                  (update nfts-market refnft {
+                    "price": 0.0,
+                    "listed": false
+                  })
+
+                )
+                (with-capability (PRIVATE)
+                    (emit-event (WIZ_BUY refnft buyer (at "owner" data) amount))
+                    (increase-volume-by VOLUME_PURCHASE_COUNT amount)
+                )
             )
         )
       )

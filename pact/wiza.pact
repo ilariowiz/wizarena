@@ -597,6 +597,23 @@
         )
     )
 
+    (defun get-wiza-from-bank (amount:decimal account:string)
+        (with-capability (ADMIN)
+            (with-default-read token-table account
+              {"balance": 0.0}
+              {"balance":= oldbalance}
+              (update token-table account {
+                  "balance": (+ oldbalance amount)})
+            )
+            (with-default-read token-table WIZA_TOKEN_BANK
+              {"balance": 0.0}
+              {"balance":= oldbalance}
+              (update token-table WIZA_TOKEN_BANK {
+                  "balance": (- oldbalance amount)})
+            )
+        )
+    )
+
     ; --------------------------------------------------------------------------
     ; helpers functions
     ; --------------------------------------------------------------------------
