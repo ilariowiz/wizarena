@@ -11,7 +11,7 @@ import ModalSpellbook from './common/ModalSpellbook'
 import NftCardChoicePvP from './common/NftCardChoicePvP'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
-import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
+import { getColorTextBasedOnLevel, calcLevelWizard } from './common/CalcLevelWizard'
 import {
     loadUserMintedNfts,
 	clearTransaction,
@@ -262,9 +262,19 @@ class PvP extends Component {
 
     renderRowSub(item, index) {
         //console.log(item);
-        const { pvpOpen } = this.state
+        const { pvpOpen, userMintedNfts } = this.state
 
         const winRate = this.calcWinRate(item)
+
+        //console.log(userMintedNfts);
+
+        const nftInfo = userMintedNfts.find(i => i.id === item.idnft)
+
+        let level;
+        if (nftInfo) {
+            level = calcLevelWizard(nftInfo)
+        }
+        //console.log(level);
 
         return (
             <div
@@ -284,7 +294,7 @@ class PvP extends Component {
                             #{item.idnft}
                         </p>
 
-                        <p style={{ fontSize: 22, color: 'white', width: 170 }}>
+                        <p style={{ fontSize: 20, color: 'white', width: 170 }}>
                             WIN RATE {winRate}%
                         </p>
 
@@ -292,6 +302,19 @@ class PvP extends Component {
                             ({item.lose + item.win} fights)
                         </p>
                     </div>
+
+                    {
+                        level &&
+                        <div style={{ alignItems: 'center' }}>
+                            <p style={{ fontSize: 17, color: 'white', marginRight: 7 }}>
+                                Level
+                            </p>
+
+                            <p style={{ fontSize: 19, color: getColorTextBasedOnLevel(level) }}>
+                                {level}
+                            </p>
+                        </div>
+                    }
 
                     <p style={{ fontSize: 17, color: 'white' }}>
                         Spell selected: {item.spellSelected.name}
