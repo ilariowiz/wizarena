@@ -180,7 +180,7 @@ class Header extends Component {
 						</p>
 
 						<a
-							href="https://www.kdswap.exchange/pools/kda/fwi"
+							href="https://www.kdswap.exchange/pools/kda/wiza"
 							target="_blank"
 							rel="noopener noreferrer"
 							style={{ marginBottom: 5, width: 'fit-content' }}
@@ -191,7 +191,7 @@ class Header extends Component {
 						</a>
 
 						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 30 }}>
-							KDA/FWI liquidity pool
+							KDA/WIZA liquidity pool
 						</p>
 
 						<a
