@@ -1332,7 +1332,11 @@ class Nft extends Component {
 
 								{this.renderLeftMakeOffer()}
 
-								{this.renderBtnMakeOffer(ctaWidth, 15)}
+								{
+									!showOverlayBurn ?
+									this.renderBtnMakeOffer(ctaWidth, 15)
+									: null
+								}
 							</div>
 							: null
 						}
@@ -1447,7 +1451,11 @@ class Nft extends Component {
 
 								{this.renderLeftMakeOffer()}
 
-								{this.renderBtnMakeOffer(ctaWidth, 15)}
+								{
+									!showOverlayBurn ?
+									this.renderBtnMakeOffer(ctaWidth, 15)
+									: null
+								}
 							</div>
 							: null
 						}
