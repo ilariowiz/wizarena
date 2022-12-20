@@ -7,6 +7,7 @@ import { AiOutlineReload } from 'react-icons/ai';
 import { AiOutlineShareAlt } from 'react-icons/ai';
 import { IoEyeOffOutline } from 'react-icons/io5';
 import { IoEyeOutline } from 'react-icons/io5';
+import moment from 'moment'
 import toast, { Toaster } from 'react-hot-toast';
 import { getDocs, collection, query, where } from "firebase/firestore";
 import { firebasedb } from './Firebase';
@@ -184,7 +185,20 @@ class Nft extends Component {
         this.props.getOffersForNft(chainId, gasPrice, gasLimit, networkUrl, idNft, (response) => {
             //console.log(response);
 			if (response && response.status !== "failure") {
-				this.setState({ offers: response, loadingOffers: false })
+
+				let offers = []
+
+				response.map(i => {
+					const expiresat = moment(i.expiresat.timep)
+
+					//console.log(expiresat, moment());
+
+					if (expiresat >= moment()) {
+						offers.push(i)
+					}
+				})
+
+				this.setState({ offers, loadingOffers: false })
 			}
 			else {
 				this.setState({ loadingOffers: false })
