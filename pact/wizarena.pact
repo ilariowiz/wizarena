@@ -1213,7 +1213,7 @@
                     (wiza-cost (calculate-wiza-cost idnft stat))
                     (new-level (calculate-new-level idnft stat))
                 )
-                (enforce (> LEVEL_CAP new-level) "Wizard's level cannot exceed the level cap")
+                (enforce (<= new-level LEVEL_CAP) "Wizard's level cannot exceed the level cap")
                 (spend-wiza wiza-cost account m)
                 (cond
                     (
@@ -1258,13 +1258,13 @@
                         (last-part (/ base-cost 100))
                         (diff (- max-value 1))
                     )
-                    (ceiling (- base-cost (* (* 100 (/ diff max-value)) last-part )) 2)
+                    (round (- base-cost (* (* 100 (/ diff max-value)) last-part )) 2)
                 )
                 (let (
                         (last-part (/ base-cost 100))
                         (diff (- max-value (at stat data)))
                     )
-                    (ceiling (- base-cost (* (* 100 (/ diff max-value)) last-part )) 2)
+                    (round (- base-cost (* (* 100 (/ diff max-value)) last-part )) 2)
                 )
             )
         )
