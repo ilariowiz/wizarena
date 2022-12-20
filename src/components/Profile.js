@@ -133,11 +133,20 @@ class Profile extends Component {
 	}
 
 	loadOffersReceived() {
-		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+		const { account, chainId, gasPrice, gasLimit, networkUrl, userMintedNfts } = this.props
 
 		if (account && account.account) {
 			this.props.getOffersReceived(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
-				this.setState({ offersReceived: response, loading: false })
+
+				let ownNft = []
+				response.map(i => {
+					const isYours = userMintedNfts.some(z => z.owner === i.owner)
+					if (isYours) {
+						ownNft.push(i)
+					}
+				})
+
+				this.setState({ offersReceived: ownNft, loading: false })
 			})
 		}
 	}
@@ -842,6 +851,9 @@ class Profile extends Component {
 							isMobile={isMobile}
 							history={this.props.history}
 							onAcceptOffer={() => this.acceptOffer(item)}
+							onWithdrawOffer={() => {
+								this.setState({ typeModal: 'withdrawoffer' })
+							}}
 						/>
 					)
 				})}
@@ -896,7 +908,7 @@ class Profile extends Component {
 				<button
 					style={Object.assign({}, styles.btnMenu, selectedStyle3, { marginRight: 35 })}
 					onClick={() => {
-						if (loading) {
+						if (loading || !userMintedNfts) {
 							return
 						}
 
@@ -912,7 +924,7 @@ class Profile extends Component {
 				<button
 					style={Object.assign({}, styles.btnMenu, selectedStyle4, { marginRight: 35 })}
 					onClick={() => {
-						if (loading) {
+						if (loading || !userMintedNfts) {
 							return
 						}
 
@@ -1059,7 +1071,7 @@ class Profile extends Component {
 				}
 
 				{
-					section === 4 && !loading && offersMade ?
+					section === 4 && !loading && offersReceived ?
 					this.renderOffers(boxW, offersReceived, false, isMobile)
 					:
 					null
