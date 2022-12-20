@@ -138,13 +138,16 @@ class Profile extends Component {
 		if (account && account.account) {
 			this.props.getOffersReceived(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
 
+				//console.log(response);
+				//console.log(userMintedNfts);
+
 				let ownNft = []
-				response.map(i => {
-					const isYours = userMintedNfts.some(z => z.owner === i.owner)
-					if (isYours) {
-						ownNft.push(i)
-					}
+				userMintedNfts.map(z => {
+					const offersForThisNft = response.filter(i => i.refnft === z.id)
+					//console.log(offersForThisNft);
+					ownNft.push(...offersForThisNft)
 				})
+				//console.log(ownNft);
 
 				this.setState({ offersReceived: ownNft, loading: false })
 			})

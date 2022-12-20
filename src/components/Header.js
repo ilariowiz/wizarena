@@ -283,6 +283,8 @@ class Header extends Component {
 								<button
 			                        style={styles.btnLogout}
 			                        onClick={() => {
+										document.body.style.overflow = "auto"
+										document.body.style.height = "auto"
 			                            this.props.logout(isXWallet, netId)
 			                            this.props.history.replace('/collection')
 			                        }}
