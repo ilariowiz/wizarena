@@ -115,7 +115,7 @@ class ConnectionWidget extends Component {
 						this.connectXWallet()
 					}}
 				>
-					<p style={{ fontSize: 18, color: 'black' }}>
+					<p style={{ fontSize: 17, color: 'black' }}>
 						X-WALLET
 					</p>
 				</button>
@@ -125,8 +125,8 @@ class ConnectionWidget extends Component {
 					style={Object.assign({}, styles.btnOption, { backgroundColor: "#57b5e1" })}
 					onClick={() => this.setState({ showInput: true })}
 				>
-					<p style={{ fontSize: 18, color: 'black' }}>
-						CHAINWEAVER
+					<p style={{ fontSize: 17, color: 'black' }}>
+						CHAINWEAVER / ZELCORE
 					</p>
 				</button>
 
@@ -135,7 +135,7 @@ class ConnectionWidget extends Component {
 					style={Object.assign({}, styles.btnOption, { backgroundColor: "#3396ff", marginBottom: 0 })}
 					onClick={() => this.connectWalletConnect()}
 				>
-					<p style={{ fontSize: 18, color: 'black' }}>
+					<p style={{ fontSize: 17, color: 'black' }}>
 						WALLETCONNECT
 					</p>
 				</button>
