@@ -205,7 +205,6 @@ class Collection extends Component {
 			let arrayQuery = []
 			oldStat.map(i => {
 				if (i.stat !== "spellbook" && i.stat !== "level") {
-					//const key = `stats.${i.stat}`
 					const query = where(i.stat, "==", i.value)
 					arrayQuery.push(query)
 				}
