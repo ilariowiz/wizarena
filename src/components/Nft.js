@@ -9,7 +9,7 @@ import { IoEyeOffOutline } from 'react-icons/io5';
 import { IoEyeOutline } from 'react-icons/io5';
 import moment from 'moment'
 import toast, { Toaster } from 'react-hot-toast';
-import { getDocs, collection, query, where } from "firebase/firestore";
+import { getDocs, collection, query, where, doc, getDoc } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Header from './Header';
 import ModalTransaction from './common/ModalTransaction'
@@ -131,7 +131,7 @@ class Nft extends Component {
 
 				//console.log(response)
 
-				const tournaments = ["t1", "t2", "t3", "t4", "t5", "t6", "t7"]
+				const tournaments = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8"]
 
 				response['groupedFights'] = {}
 
@@ -155,7 +155,7 @@ class Nft extends Component {
 
 				this.setState({ nft: response, level, loading: false, openFightsSection }, () => {
 					this.loadHistory(idNft)
-					this.getHistoryUpgrades(idNft)
+					this.getHistoryUpgrades()
 					this.loadMaxMedalsPerTournament()
 
 					this.loadOffers(idNft)
@@ -207,14 +207,47 @@ class Nft extends Component {
         })
     }
 
-	async getHistoryUpgrades(idNft) {
+	async getHistoryUpgrades() {
+		const { nft } = this.state
+
+		console.log(nft);
+
+		const docRef = doc(firebasedb, "base_stats", `${nft.id}`)
+
+		const docSnap = await getDoc(docRef)
+		const data = docSnap.data()
+
+		console.log(data);
+
+		let historyUpgrades = []
+
+		if (nft.hp.int > data.hp) {
+			let difference = nft.hp.int - data.hp
+			historyUpgrades.push({ stat: "hp", value: difference })
+		}
+		if (nft.defense.int > data.defense) {
+			let difference = nft.defense.int - data.defense
+			historyUpgrades.push({ stat: "defense", value: difference })
+		}
+		if (nft.attack.int > data.attack) {
+			let difference = nft.attack.int - data.attack
+			historyUpgrades.push({ stat: "attack", value: difference })
+		}
+		if (nft.damage.int > data.damage) {
+			let difference = nft.damage.int - data.damage
+			historyUpgrades.push({ stat: "damage", value: difference })
+		}
+
+		this.setState({ historyUpgrades })
+
+		/*
         const q = query(collection(firebasedb, "history_upgrades"),
                         where("idnft", "==", `#${idNft}`))
 
         const querySnap = await getDocs(q)
         //console.log(querySnap);
 
-        let historyUpgrades = []
+
 
         querySnap.forEach(doc => {
             //console.log(doc.data());
@@ -235,6 +268,7 @@ class Nft extends Component {
 
     	//console.log(historyUpgrades);
 		this.setState({ historyUpgrades })
+		*/
     }
 
 	loadHistory(idNft) {
