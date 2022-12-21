@@ -239,36 +239,6 @@ class Nft extends Component {
 		}
 
 		this.setState({ historyUpgrades })
-
-		/*
-        const q = query(collection(firebasedb, "history_upgrades"),
-                        where("idnft", "==", `#${idNft}`))
-
-        const querySnap = await getDocs(q)
-        //console.log(querySnap);
-
-
-
-        querySnap.forEach(doc => {
-            //console.log(doc.data());
-			const data = doc.data()
-
-			let objectKey = historyUpgrades.find(i => i.stat === data.stat)
-			if (objectKey) {
-				const idx = historyUpgrades.findIndex(i => i.stat === data.stat)
-				if (idx > -1) {
-					objectKey["value"] = objectKey["value"] + 1
-					historyUpgrades[idx] = objectKey
-				}
-			}
-			else {
-				historyUpgrades.push({ stat: data.stat, value: 1 })
-			}
-        })
-
-    	//console.log(historyUpgrades);
-		this.setState({ historyUpgrades })
-		*/
     }
 
 	loadHistory(idNft) {

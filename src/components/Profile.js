@@ -878,7 +878,7 @@ class Profile extends Component {
 		const selectedStyle4 = section === 4 ? selStyle : unselStyle
 
 		return (
-			<div style={{ width: '100%', alignItems: 'center', marginBottom: 30 }}>
+			<div style={{ width: '100%', alignItems: 'center', marginBottom: 30, flexWrap: 'wrap' }}>
 				<button
 					style={Object.assign({}, styles.btnMenu, selectedStyle1, { marginRight: 35 })}
 					onClick={() => {
