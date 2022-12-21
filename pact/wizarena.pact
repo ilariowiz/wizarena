@@ -102,7 +102,7 @@
         @event true
     )
 
-    (defcap BUY_UPGRADE (id:string stat:string increment:integer)
+    (defcap BUY_UPGRADE (id:string stat:string increment:integer owner:string)
         @event true
     )
 
@@ -1251,7 +1251,7 @@
                                 })
                             )
                         "")
-                        (emit-event (BUY_UPGRADE idnft stat increase))
+                        (emit-event (BUY_UPGRADE idnft stat increase account))
                     )
                 )
             )
