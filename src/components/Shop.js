@@ -48,6 +48,7 @@ class Shop extends Component {
             wizaCostToUpgrade: 0,
             wizardSelected: {},
             historyUpgrades: [],
+            loadingHistoryUpgrades: true,
             increase: { hp: 1, defense: 1, attack: 1, damage: 1}
         }
     }
@@ -68,7 +69,7 @@ class Shop extends Component {
 
 		this.loadWizaBalance()
 
-        //this.getHistoryUpgrades()
+        this.getHistoryUpgrades()
 	}
 
     loadMinted() {
@@ -94,6 +95,7 @@ class Shop extends Component {
     async getHistoryUpgrades() {
         const { account } = this.props
 
+        /*
         const q = query(collection(firebasedb, "history_upgrades"),
                         where("address", "==", account.account),
                         orderBy("timestamp", "desc"))
@@ -107,10 +109,38 @@ class Shop extends Component {
             //console.log(doc.data());
             historyUpgrades.push(doc.data())
         })
+        */
 
-        //console.log(historyUpgrades);
+        let historyUpgrades = []
 
-        this.setState({ historyUpgrades })
+        let url = `https://estats.chainweb.com/txs/events?search=wiz-arena.BUY_UPGRADE&param=${account.account}&limit=50`
+
+		//console.log(url);
+		fetch(url)
+  		.then(response => response.json())
+  		.then(data => {
+  			//console.log(data)
+
+            for (let i = 0; i < data.length; i++) {
+                const u = data[i]
+
+                const obj = {
+                    idnft: u.params[0],
+                    stat: u.params[1],
+                    increment: u.params[2].int,
+                    cost: u.params[3]
+                }
+
+                historyUpgrades.push(obj)
+            }
+
+            //console.log(historyUpgrades);
+
+            this.setState({ historyUpgrades, loadingHistoryUpgrades: false })
+  		})
+		.catch(e => {
+			console.log(e)
+		})
     }
 
     buyStat(stat, costo) {
@@ -338,7 +368,7 @@ class Shop extends Component {
                 </p>
 
                 <p style={{ color: 'white', fontSize: 18, marginRight: 25 }}>
-                    +1 {item.stat}
+                    +{item.increment} {item.stat}
                 </p>
 
                 <p style={{ color: 'white', fontSize: 18 }}>
@@ -465,6 +495,13 @@ class Shop extends Component {
                     historyUpgrades.map((item, index) => {
                         return this.renderHistory(item, index)
                     })
+                }
+
+                {
+                    this.state.loadingHistoryUpgrades &&
+                    <p style={{ fontSize: 15, color: 'white' }}>
+                        Loading...
+                    </p>
                 }
 
                 <div style={{ height: 50 }} />

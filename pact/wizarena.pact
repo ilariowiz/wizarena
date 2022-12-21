@@ -102,7 +102,7 @@
         @event true
     )
 
-    (defcap BUY_UPGRADE (id:string stat:string increment:integer owner:string)
+    (defcap BUY_UPGRADE (id:string stat:string increment:integer wiza-cost:decimal owner:string)
         @event true
     )
 
@@ -1251,7 +1251,7 @@
                                 })
                             )
                         "")
-                        (emit-event (BUY_UPGRADE idnft stat increase account))
+                        (emit-event (BUY_UPGRADE idnft stat increase wiza-cost account))
                     )
                 )
             )
