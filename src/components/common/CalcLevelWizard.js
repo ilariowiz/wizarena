@@ -33,10 +33,10 @@ export const calcLevelWizardAfterUpgrade = (item, stat) => {
         return 0
     }
 
-    let hp = item.hp.int
-    let def = item.defense.int
-    let atk = item.attack.int
-    let dmg = item.damage.int
+    let hp = item.hp
+    let def = item.defense
+    let atk = item.attack
+    let dmg = item.damage
 
     if (stat === "hp") {
         hp += 1

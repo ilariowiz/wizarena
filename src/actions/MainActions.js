@@ -1489,10 +1489,10 @@ export const withdrawPrize = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 	}
 }
 
-export const buyUpgrade = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft, stat) => {
+export const buyUpgrade = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft, stat, increase) => {
 	return (dispatch) => {
 
-		let pactCode = `(free.${CONTRACT_NAME}.buy-upgrade "${account.account}" "${idnft}" "${stat}" free.wiza)`;
+		let pactCode = `(free.${CONTRACT_NAME}.buy-upgrades "${account.account}" "${idnft}" "${stat}" ${increase} free.wiza)`;
 
 		let cmd = {
 			pactCode,
@@ -1506,7 +1506,7 @@ export const buyUpgrade = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
 			sender: account.account,
-			gasLimit: 5000,
+			gasLimit: 10000,
 			gasPrice,
 			chainId,
 			ttl: 600,
@@ -1620,22 +1620,6 @@ export const calculateReward = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit 
 		})
 	}
 }
-
-export const getUpgradeCost = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 900, networkUrl, idnft, stat) => {
-	return (dispatch) => {
-
-		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME}.calculate-wiza-cost "${idnft}" "${stat}")`,
-			meta: defaultMeta(chainId, gasPrice, gasLimit)
-		}
-
-		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
-			console.log(response, stat)
-
-		})
-	}
-}
-
 
 
 export const stakeNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idNft, account) => {
@@ -2058,7 +2042,6 @@ export const signTransaction = (cmdToSign, isXWallet, isQRWalletConnect, qrWalle
 		}
 
 		const parsedLocalRes = await parseRes(localRes);
-		//console.log(parsedLocalRes);
 
 		if (parsedLocalRes && parsedLocalRes.result && parsedLocalRes.result.status === "success") {
 			let data = null

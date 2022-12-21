@@ -102,6 +102,10 @@
         @event true
     )
 
+    (defcap BUY_UPGRADE (id:string stat:string increment:integer)
+        @event true
+    )
+
  ; --------------------------------------------------------------------------
   ; Schema and tables
   ; --------------------------------------------------------------------------
@@ -1205,55 +1209,62 @@
     ;;;;;; UPGRADE ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun buy-upgrade (account:string idnft:string stat:string m:module{wiza1-interface-v1})
+    (defun buy-upgrades (account:string idnft:string stat:string increase:integer m:module{wiza1-interface-v1})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+
         (with-capability (OWNER account idnft)
             (let (
                     (current-stat (at stat (get-wizard-fields-for-id (str-to-int idnft))))
-                    (wiza-cost (calculate-wiza-cost idnft stat))
-                    (new-level (calculate-new-level idnft stat))
+                    (new-level (calculate-new-level-mass idnft stat increase))
                 )
                 (enforce (<= new-level LEVEL_CAP) "Wizard's level cannot exceed the level cap")
-                (spend-wiza wiza-cost account m)
-                (cond
-                    (
-                        (= stat "hp")
-                        (update stats idnft {
-                            "hp": (+ current-stat 1)
-                        })
+                (let (
+                        (array-levels-to (drop -1 (enumerate current-stat (+ current-stat increase))))
                     )
-                    (
-                        (= stat "defense")
-                        (update stats idnft {
-                            "defense": (+ current-stat 1)
-                        })
+                    (let (
+                            (wiza-cost (fold (+) 0 (map (calculate-wiza-cost-from stat) array-levels-to)))
+                        )
+                        (spend-wiza wiza-cost account m)
+                        (cond
+                            (
+                                (= stat "hp")
+                                (update stats idnft {
+                                    "hp": (+ current-stat increase)
+                                })
+                            )
+                            (
+                                (= stat "defense")
+                                (update stats idnft {
+                                    "defense": (+ current-stat increase)
+                                })
+                            )
+                            (
+                                (= stat "attack")
+                                (update stats idnft {
+                                    "attack": (+ current-stat increase)
+                                })
+                            )
+                            (
+                                (= stat "damage")
+                                (update stats idnft {
+                                    "damage": (+ current-stat increase)
+                                })
+                            )
+                        "")
+                        (emit-event (BUY_UPGRADE idnft stat increase))
                     )
-                    (
-                        (= stat "attack")
-                        (update stats idnft {
-                            "attack": (+ current-stat 1)
-                        })
-                    )
-                    (
-                        (= stat "damage")
-                        (update stats idnft {
-                            "damage": (+ current-stat 1)
-                        })
-                    )
-                "")
+                )
             )
         )
     )
 
-
-    (defun calculate-wiza-cost (idnft:string stat:string)
+    (defun calculate-wiza-cost-from (stat:string from:integer)
         (let (
-                (data (get-wizard-fields-for-id (str-to-int idnft)))
                 (max-value (at "value" (read upgrade-stat-values stat ['value])))
                 (base-cost (at "value" (read upgrade-stat-values (+ stat "_base_cost") ['value])))
             )
             (if
-                (= (- max-value (at stat data)) max-value)
+                (= (- max-value from) max-value)
                 (let (
                         (last-part (/ base-cost 100))
                         (diff (- max-value 1))
@@ -1262,7 +1273,7 @@
                 )
                 (let (
                         (last-part (/ base-cost 100))
-                        (diff (- max-value (at stat data)))
+                        (diff (- max-value from))
                     )
                     (round (- base-cost (* (* 100 (/ diff max-value)) last-part )) 2)
                 )
@@ -1270,22 +1281,7 @@
         )
     )
 
-    (defun calculate-level (idnft:string)
-        (let (
-                (data (get-wizard-fields-for-id (str-to-int idnft)))
-            )
-            (let (
-                    (hp (at "hp" data))
-                    (def (at "defense" data))
-                    (atk (at "attack" data))
-                    (dmg (at "damage" data))
-                )
-                (round(+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* dmg 2.67)))
-            )
-        )
-    )
-
-    (defun calculate-new-level (idnft:string stat:string)
+    (defun calculate-new-level-mass (idnft:string stat:string increase:integer)
         (let (
                 (data (get-wizard-fields-for-id (str-to-int idnft)))
             )
@@ -1298,24 +1294,136 @@
                 (cond
                     (
                         (= stat "hp")
-                        (round (+ (+ (+ (+ hp 1) (* def 4.67)) (* atk 4.67)) (* dmg 2.67)))
+                        (round (+ (+ (+ (+ hp increase) (* def 4.67)) (* atk 4.67)) (* dmg 2.67)))
                     )
                     (
                         (= stat "defense")
-                        (round (+ (+ (+ hp (* (+ def 1) 4.67)) (* atk 4.67)) (* dmg 2.67)))
+                        (round (+ (+ (+ hp (* (+ def increase) 4.67)) (* atk 4.67)) (* dmg 2.67)))
                     )
                     (
                         (= stat "attack")
-                        (round (+ (+ (+ hp (* def 4.67)) (* (+ atk 1) 4.67)) (* dmg 2.67)))
+                        (round (+ (+ (+ hp (* def 4.67)) (* (+ atk increase) 4.67)) (* dmg 2.67)))
                     )
                     (
                         (= stat "damage")
-                        (round (+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* (+ dmg 1) 2.67)))
+                        (round (+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* (+ dmg increase) 2.67)))
                     )
                 "")
             )
         )
     )
+
+    ; (defun buy-upgrade (account:string idnft:string stat:string m:module{wiza1-interface-v1})
+    ;     (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+    ;     (with-capability (OWNER account idnft)
+    ;         (let (
+    ;                 (current-stat (at stat (get-wizard-fields-for-id (str-to-int idnft))))
+    ;                 (wiza-cost (calculate-wiza-cost idnft stat))
+    ;                 (new-level (calculate-new-level idnft stat))
+    ;             )
+    ;             (enforce (<= new-level LEVEL_CAP) "Wizard's level cannot exceed the level cap")
+    ;             (spend-wiza wiza-cost account m)
+    ;             (cond
+    ;                 (
+    ;                     (= stat "hp")
+    ;                     (update stats idnft {
+    ;                         "hp": (+ current-stat 1)
+    ;                     })
+    ;                 )
+    ;                 (
+    ;                     (= stat "defense")
+    ;                     (update stats idnft {
+    ;                         "defense": (+ current-stat 1)
+    ;                     })
+    ;                 )
+    ;                 (
+    ;                     (= stat "attack")
+    ;                     (update stats idnft {
+    ;                         "attack": (+ current-stat 1)
+    ;                     })
+    ;                 )
+    ;                 (
+    ;                     (= stat "damage")
+    ;                     (update stats idnft {
+    ;                         "damage": (+ current-stat 1)
+    ;                     })
+    ;                 )
+    ;             "")
+    ;         )
+    ;     )
+    ; )
+
+
+    ; (defun calculate-wiza-cost (idnft:string stat:string)
+    ;     (let (
+    ;             (data (get-wizard-fields-for-id (str-to-int idnft)))
+    ;             (max-value (at "value" (read upgrade-stat-values stat ['value])))
+    ;             (base-cost (at "value" (read upgrade-stat-values (+ stat "_base_cost") ['value])))
+    ;         )
+    ;         (if
+    ;             (= (- max-value (at stat data)) max-value)
+    ;             (let (
+    ;                     (last-part (/ base-cost 100))
+    ;                     (diff (- max-value 1))
+    ;                 )
+    ;                 (round (- base-cost (* (* 100 (/ diff max-value)) last-part )) 2)
+    ;             )
+    ;             (let (
+    ;                     (last-part (/ base-cost 100))
+    ;                     (diff (- max-value (at stat data)))
+    ;                 )
+    ;                 (round (- base-cost (* (* 100 (/ diff max-value)) last-part )) 2)
+    ;             )
+    ;         )
+    ;     )
+    ; )
+
+    ; (defun calculate-level (idnft:string)
+    ;     (let (
+    ;             (data (get-wizard-fields-for-id (str-to-int idnft)))
+    ;         )
+    ;         (let (
+    ;                 (hp (at "hp" data))
+    ;                 (def (at "defense" data))
+    ;                 (atk (at "attack" data))
+    ;                 (dmg (at "damage" data))
+    ;             )
+    ;             (round(+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* dmg 2.67)))
+    ;         )
+    ;     )
+    ; )
+
+    ; (defun calculate-new-level (idnft:string stat:string)
+    ;     (let (
+    ;             (data (get-wizard-fields-for-id (str-to-int idnft)))
+    ;         )
+    ;         (let (
+    ;                 (hp (at "hp" data))
+    ;                 (def (at "defense" data))
+    ;                 (atk (at "attack" data))
+    ;                 (dmg (at "damage" data))
+    ;             )
+    ;             (cond
+    ;                 (
+    ;                     (= stat "hp")
+    ;                     (round (+ (+ (+ (+ hp 1) (* def 4.67)) (* atk 4.67)) (* dmg 2.67)))
+    ;                 )
+    ;                 (
+    ;                     (= stat "defense")
+    ;                     (round (+ (+ (+ hp (* (+ def 1) 4.67)) (* atk 4.67)) (* dmg 2.67)))
+    ;                 )
+    ;                 (
+    ;                     (= stat "attack")
+    ;                     (round (+ (+ (+ hp (* def 4.67)) (* (+ atk 1) 4.67)) (* dmg 2.67)))
+    ;                 )
+    ;                 (
+    ;                     (= stat "damage")
+    ;                     (round (+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* (+ dmg 1) 2.67)))
+    ;                 )
+    ;             "")
+    ;         )
+    ;     )
+    ; )
 
     (defun spend-wiza (amount:decimal account:string m:module{wiza1-interface-v1})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")

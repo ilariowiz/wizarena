@@ -29,7 +29,7 @@ class ModalTransaction extends Component {
 	}
 
 	pollForTransaction = async () => {
-		const { transactionState, networkUrl, nameNft, statToUpgrade, type, wizaCostToUpgrade, pvpWeek, account } = this.props
+		const { transactionState, networkUrl, nameNft, statToUpgrade, howMuchIncrement, type, wizaCostToUpgrade, pvpWeek, account } = this.props
 
 
 		const requestKey = transactionState.requestKey
@@ -64,13 +64,14 @@ class ModalTransaction extends Component {
 			this.props.updateTransactionState("success", 1)
 
 			//chiamato solo per transaction upgrade, serve per far funzionare correttamente i filtri su firebase
-			if (type === "upgrade" && nameNft && statToUpgrade) {
+			if (type === "upgrade" && nameNft && statToUpgrade && howMuchIncrement) {
 
 				const docRef = doc(firebasedb, "stats", `${nameNft}`)
 				updateDoc(docRef, {
-		            [statToUpgrade]: increment(1)
+		            [statToUpgrade]: increment(howMuchIncrement)
 		        })
 
+				/*
 				const docRefHistory = doc(collection(firebasedb, "history_upgrades"))
 				let objHistory = {
 					address: account.account,
@@ -81,6 +82,7 @@ class ModalTransaction extends Component {
 				}
 
 				setDoc(docRefHistory, objHistory)
+				*/
 			}
 			else if (type === "subscribe_pvp") {
 

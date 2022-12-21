@@ -1,11 +1,9 @@
 import _ from 'lodash'
-const calcUpgradeCost = (item, key) => {
+const calcUpgradeCost = (statToUpgrade, key) => {
 
-    if (!item || !item.hp) {
+    if (!statToUpgrade) {
         return 0
     }
-
-    //console.log(item);
 
     const HP_BASE_WIZA = 150
     const DEFENSE_BASE_WIZA = 700
@@ -17,8 +15,6 @@ const calcUpgradeCost = (item, key) => {
     const MAX_ATTACK_VALUE = 9
     const MAX_DAMAGE_VALUE = 7
     //ignoriamo attacco e danno della spell, perché si potrebbe cheatare cambiando con una spell con poco atk e poco dmg
-
-    const statToUpgrade = item[key].int
 
     //console.log("stat to upgrade -", key, statToUpgrade);
 

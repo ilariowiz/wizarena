@@ -617,7 +617,7 @@
 
 (free.wiz-arena.add-stats [{
     "id": "0",
-    "attack": 17,
+    "attack": 7,
     "damage": 17,
     "weakness": "wind",
     "defense": 19,
@@ -988,18 +988,33 @@
 
 (free.wiza.reward-users [{"account":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "amount": 1929.0}, {"account":"k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd", "amount": 890.0}])
 
-(commit-tx)
+; (commit-tx)
+;
+; (begin-tx "GET LEVEL")
+;
+; (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+;
+; (free.wiz-arena.calculate-level "0")
+;
+; (commit-tx)
 
-(begin-tx "GET LEVEL")
+; (begin-tx "GET WIZA COST")
+;
+; (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+;
+; (free.wiz-arena.calculate-wiza-cost "0" "attack")
+;
+; (commit-tx)
+
+(begin-tx "GET WIZA COST MASS")
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
-(free.wiz-arena.calculate-level "0")
+(free.wiz-arena.calculate-wiza-cost-from "attack" 7)
 
 (commit-tx)
 
-
-(begin-tx "BUY UPGRADE")
+(begin-tx "BUY UPGRADES IN MASS")
 
 (env-sigs [{
   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
@@ -1009,31 +1024,38 @@
   ]
 }])
 
-(free.wiz-arena.buy-upgrade "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "attack" free.wiza)
+(free.wiz-arena.buy-upgrades "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "attack" 3 free.wiza)
 
 (commit-tx)
 
-(begin-tx "BUY UPGRADE")
 
-(env-sigs [{
-  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-  "caps": [
-    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
-    (coin.GAS)
-  ]
-}])
+; (begin-tx "BUY UPGRADE")
+;
+; (env-sigs [{
+;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+;   "caps": [
+;     (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+;     (coin.GAS)
+;   ]
+; }])
+;
+; (free.wiz-arena.buy-upgrade "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "attack" free.wiza)
+;
+; (commit-tx)
 
-(free.wiz-arena.buy-upgrade "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "hp" free.wiza)
-
-(commit-tx)
-
-(begin-tx "GET LEVEL")
-
-(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
-
-(free.wiz-arena.calculate-level "0")
-
-(commit-tx)
+; (begin-tx "BUY UPGRADE")
+;
+; (env-sigs [{
+;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+;   "caps": [
+;     (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+;     (coin.GAS)
+;   ]
+; }])
+;
+; (free.wiz-arena.buy-upgrade "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "hp" free.wiza)
+;
+; (commit-tx)
 
 ;
 ; (begin-tx "GET NFTS LISTED")
@@ -1532,19 +1554,19 @@
 ; (commit-tx)
 ;
 ;
-(begin-tx "BUY UPGRADE")
-
-(env-sigs [{
-  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-  "caps": [
-    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
-    (coin.GAS)
-  ]
-}])
-
-(free.wiz-arena.buy-upgrade "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "attack" free.wiza)
-
-(commit-tx)
+; (begin-tx "BUY UPGRADE")
+;
+; (env-sigs [{
+;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+;   "caps": [
+;     (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+;     (coin.GAS)
+;   ]
+; }])
+;
+; (free.wiz-arena.buy-upgrade "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "attack" free.wiza)
+;
+; (commit-tx)
 
 (begin-tx "GET DATA NFT")
 
@@ -1553,17 +1575,6 @@
 (commit-tx)
 
 
-(begin-tx "CALCULATE LEVEL")
-
-(free.wiz-arena.calculate-level "0")
-
-(commit-tx)
-
-(begin-tx "CALCULATE NEW LEVEL")
-
-(free.wiz-arena.calculate-new-level "0" "attack")
-
-(commit-tx)
 ;
 ; (begin-tx "CHECK BALANCE")
 ;

@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { getDocs, query, where, collection, orderBy } from "firebase/firestore";
 import { firebasedb } from './Firebase';
+import { AiOutlinePlus } from 'react-icons/ai'
+import { AiOutlineMinus } from 'react-icons/ai'
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
@@ -18,7 +20,6 @@ import {
 	setNetworkSettings,
 	setNetworkUrl,
 	getWizaBalance,
-    getUpgradeCost,
     buyUpgrade
 } from '../actions'
 import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, MAX_LEVEL } from '../actions/types'
@@ -43,9 +44,11 @@ class Shop extends Component {
             typeModal: 'upgrade',
             nameNftToUpgrade: '',
             statToUpgrade: '',
+            howMuchIncrement: 1,
             wizaCostToUpgrade: 0,
             wizardSelected: {},
-            historyUpgrades: []
+            historyUpgrades: [],
+            increase: { hp: 1, defense: 1, attack: 1, damage: 1}
         }
     }
 
@@ -65,7 +68,7 @@ class Shop extends Component {
 
 		this.loadWizaBalance()
 
-        this.getHistoryUpgrades()
+        //this.getHistoryUpgrades()
 	}
 
     loadMinted() {
@@ -112,11 +115,11 @@ class Shop extends Component {
 
     buyStat(stat, costo) {
         const { account, chainId, gasPrice, netId } = this.props
-        const { wizardSelected } = this.state
+        const { wizardSelected, increase } = this.state
 
-        this.setState({ nameNftToUpgrade: wizardSelected.name, statToUpgrade: stat, wizaCostToUpgrade: costo })
+        this.setState({ nameNftToUpgrade: wizardSelected.name, statToUpgrade: stat, wizaCostToUpgrade: costo, howMuchIncrement: increase[stat] })
 
-        this.props.buyUpgrade(chainId, gasPrice, netId, account, wizardSelected.id, stat)
+        this.props.buyUpgrade(chainId, gasPrice, netId, account, wizardSelected.id, stat, increase[stat])
     }
 
     sortById() {
@@ -152,19 +155,45 @@ class Shop extends Component {
 	}
 
     renderShopCard(key) {
-        const { wizardSelected } = this.state
+        const { wizardSelected, increase } = this.state
         //const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
         //console.log(wizardSelected);
-        const costo = calcUpgradeCost(wizardSelected, key)
 
-        /*
-        if (this.state.wizardSelected && this.state.wizardSelected.hp) {
-            this.props.getUpgradeCost(chainId, gasPrice, gasLimit, networkUrl, this.state.wizardSelected.id, key)
+        const increaseTo = increase[key]
+
+        let statToUpgrade;
+        let costo = 0;
+        let newLevel;
+
+        if (wizardSelected.id) {
+            statToUpgrade = wizardSelected[key].int
+            let arrayLevelsTo = []
+
+            for (let i = 0; i < increaseTo; i++) {
+                arrayLevelsTo.push(statToUpgrade + i)
+            }
+
+            //console.log(arrayLevelsTo);
+            arrayLevelsTo.map(s => {
+                costo += calcUpgradeCost(s, key)
+            })
+
+            //console.log(arrayLevelsTo);
+
+            const copySelected = {
+                hp: wizardSelected.hp.int,
+                defense: wizardSelected.defense.int,
+                attack: wizardSelected.attack.int,
+                damage: wizardSelected.damage.int
+            }
+
+            copySelected[key] = arrayLevelsTo[arrayLevelsTo.length - 1]
+
+            //console.log(copySelected);
+            newLevel = calcLevelWizardAfterUpgrade(copySelected, key)
         }
-        */
 
-        const newLevel = calcLevelWizardAfterUpgrade(wizardSelected, key)
         let colorTextLevel = getColorTextBasedOnLevel(newLevel)
         if (newLevel > MAX_LEVEL) {
             colorTextLevel = "red"
@@ -195,7 +224,7 @@ class Shop extends Component {
                 className="cardShopShadow"
                 style={styles.cardShopStyle}
             >
-                <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
                     <div style={{ width: 58, height: 58, marginBottom: 14, alignItems: 'center', justifyContent: 'center' }}>
                         <img
@@ -205,19 +234,68 @@ class Shop extends Component {
                         />
                     </div>
 
-                    <p style={{ fontSize: 22, color: 'white' }}>
-                        +1
-                    </p>
 
-                    <p style={{ fontSize: 20, color: 'white', marginBottom: 15 }}>
-                        {key.toUpperCase()}
-                    </p>
+                    <div style={{ justifyContent: 'space-between', marginBottom: 15, width: '100%' }}>
+
+                        <button
+                            style={{ marginLeft: 15, cursor: 'pointer', justifyContent: 'center', alignItems: 'center' }}
+                            onClick={() => {
+                                if (!wizardSelected || !wizardSelected.id) {
+                                    return
+                                }
+
+                                const oldState = Object.assign({}, this.state.increase)
+                                if (oldState[key] === 1) {
+                                    return
+                                }
+
+                                oldState[key] -= 1
+
+                                this.setState({ increase: oldState })
+							}}
+                        >
+                            <AiOutlineMinus
+                                color="white"
+                                size={22}
+                            />
+                        </button>
+
+
+                        <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                            <p style={{ fontSize: 22, color: 'white' }}>
+                                +{increase[key]}
+                            </p>
+
+                            <p style={{ fontSize: 20, color: 'white' }}>
+                                {key.toUpperCase()}
+                            </p>
+                        </div>
+
+                        <button
+							style={{ marginRight: 15, cursor: 'pointer', justifyContent: 'center', alignItems: 'center' }}
+							onClick={() => {
+                                if (!wizardSelected || !wizardSelected.id) {
+                                    return
+                                }
+
+                                const oldState = Object.assign({}, this.state.increase)
+                                oldState[key] += 1
+
+                                this.setState({ increase: oldState })
+							}}
+						>
+							<AiOutlinePlus
+								color="white"
+								size={22}
+							/>
+						</button>
+                    </div>
 
                     <p style={{ fontSize: 17, color: 'white' }}>
                         $WIZA
                     </p>
                     <p style={{ fontSize: 21, color: 'white', marginBottom: 15 }}>
-                        {costo}
+                        {costo.toFixed(2)}
                     </p>
 
                     <p style={{ fontSize: 17, color: 'white' }}>
@@ -407,6 +485,7 @@ class Shop extends Component {
 					nameNft={this.state.nameNftToUpgrade}
                     statToUpgrade={this.state.statToUpgrade}
                     wizaCostToUpgrade={this.state.wizaCostToUpgrade}
+                    howMuchIncrement={this.state.howMuchIncrement}
 				/>
 
             </div>
@@ -524,6 +603,5 @@ export default connect(mapStateToProps, {
 	setNetworkSettings,
 	setNetworkUrl,
 	getWizaBalance,
-    getUpgradeCost,
     buyUpgrade
 })(Shop)
