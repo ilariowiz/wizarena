@@ -71,7 +71,8 @@ class Nft extends Component {
 			offers: [],
 			loadingOffers: true,
 			showModalOffer: false,
-			offerInfoRecap: ""
+			offerInfoRecap: "",
+			makeOfferValues: {}
 		}
 	}
 
@@ -346,7 +347,14 @@ class Nft extends Component {
 
 		//console.log(amount, duration);
 
-		this.setState({ typeModal: 'makeoffer', showModalOffer: false }, () => {
+		const makeOfferValues = {
+			id: nft.id,
+			amount,
+			duration,
+			owner: nft.owner
+		}
+
+		this.setState({ typeModal: 'makeoffer', showModalOffer: false, makeOfferValues }, () => {
 			this.props.makeOffer(chainId, gasPrice, 4000, netId, nft.id, account, duration, amount)
 		})
 	}
@@ -1621,6 +1629,7 @@ class Nft extends Component {
 						this.getPathNft()
 					}}
 					offerInfoRecap={this.state.offerInfoRecap}
+					makeOfferValues={this.state.makeOfferValues}
 				/>
 
 				<ModalConnectionWidget
