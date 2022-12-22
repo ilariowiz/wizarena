@@ -487,7 +487,7 @@ class Tournament extends Component {
                 borderColor = 'gold'
             }
 
-            if (s.id === item.s2.id) {
+            if (item.s2 && item.s2.id && s.id === item.s2.id) {
                 is2mine = true
                 borderColor = 'gold'
             }
@@ -511,7 +511,7 @@ class Tournament extends Component {
                         <img
                             style={{ width: widthImage, height: widthImage, borderRadius: 2, borderWidth: 1, borderColor: is1mine ? 'gold' : 'white', borderStyle: 'solid', marginBottom: 4 }}
                             src={getImageUrl(item.s1.id)}
-                            alt={`#${item.s2.id}`}
+                            alt={`#${item.s1.id}`}
                         />
                     </a>
 
@@ -524,26 +524,39 @@ class Tournament extends Component {
                     VS
                 </p>
 
-                <div style={{ flexDirection: 'column', alignItems: 'center' }}>
+                {
+                    item.s2 && item.s2.id ?
+                    <div style={{ flexDirection: 'column', alignItems: 'center' }}>
 
-                    <a
-                        href={`${window.location.protocol}//${window.location.host}/nft/${item.s2.id}`}
-                        onClick={(e) => {
-                            e.preventDefault()
-                            this.props.history.push(`/nft/${item.s2.id}`)
-                        }}
-                    >
-                        <img
-                            style={{ width: widthImage, height: widthImage, borderRadius: 2, borderWidth: 1, borderColor: is2mine ? 'gold' : 'white', borderStyle: 'solid', marginBottom: 4 }}
-                            src={getImageUrl(item.s2.id)}
-                            alt={`#${item.s2.id}`}
-                        />
-                    </a>
+                        <a
+                            href={`${window.location.protocol}//${window.location.host}/nft/${item.s2.id}`}
+                            onClick={(e) => {
+                                e.preventDefault()
+                                this.props.history.push(`/nft/${item.s2.id}`)
+                            }}
+                        >
+                            <img
+                                style={{ width: widthImage, height: widthImage, borderRadius: 2, borderWidth: 1, borderColor: is2mine ? 'gold' : 'white', borderStyle: 'solid', marginBottom: 4 }}
+                                src={getImageUrl(item.s2.id)}
+                                alt={`#${item.s2.id}`}
+                            />
+                        </a>
 
-                    <p style={{ fontSize: 20, color: is2mine ? 'gold' : 'white' }}>
-                        #{item.s2.id}
-                    </p>
-                </div>
+                        <p style={{ fontSize: 20, color: is2mine ? 'gold' : 'white' }}>
+                            #{item.s2.id}
+                        </p>
+                    </div>
+                    :
+                    <div style={{ flexDirection: 'column', alignItems: 'center' }}>
+
+                        <div style={{ width: widthImage, height: widthImage, marginBottom: 4 }}>
+                        </div>
+
+                        <p style={{ fontSize: 16, color: 'white' }}>
+                            Opponent disappeared
+                        </p>
+                    </div>
+                }
             </div>
         )
     }
