@@ -210,14 +210,14 @@ class Nft extends Component {
 	async getHistoryUpgrades() {
 		const { nft } = this.state
 
-		console.log(nft);
+		//console.log(nft);
 
 		const docRef = doc(firebasedb, "base_stats", `${nft.id}`)
 
 		const docSnap = await getDoc(docRef)
 		const data = docSnap.data()
 
-		console.log(data);
+		//console.log(data);
 
 		let historyUpgrades = []
 

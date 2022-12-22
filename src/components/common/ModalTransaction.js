@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { doc, updateDoc, setDoc, increment, collection, serverTimestamp } from "firebase/firestore";
+import { doc, updateDoc, setDoc, increment } from "firebase/firestore";
 import { firebasedb } from '../Firebase';
 import { IoClose } from 'react-icons/io5'
 import DotLoader from 'react-spinners/DotLoader';
@@ -29,7 +29,7 @@ class ModalTransaction extends Component {
 	}
 
 	pollForTransaction = async () => {
-		const { transactionState, networkUrl, nameNft, statToUpgrade, howMuchIncrement, type, wizaCostToUpgrade, pvpWeek, account } = this.props
+		const { transactionState, networkUrl, nameNft, statToUpgrade, howMuchIncrement, type, pvpWeek } = this.props
 
 
 		const requestKey = transactionState.requestKey
@@ -70,19 +70,6 @@ class ModalTransaction extends Component {
 				updateDoc(docRef, {
 		            [statToUpgrade]: increment(howMuchIncrement)
 		        })
-
-				/*
-				const docRefHistory = doc(collection(firebasedb, "history_upgrades"))
-				let objHistory = {
-					address: account.account,
-					cost: wizaCostToUpgrade,
-					idnft: nameNft,
-					stat: statToUpgrade,
-					timestamp: serverTimestamp()
-				}
-
-				setDoc(docRefHistory, objHistory)
-				*/
 			}
 			else if (type === "subscribe_pvp") {
 
@@ -102,7 +89,7 @@ class ModalTransaction extends Component {
 	}
 
 	getContent() {
-		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, wizaCostToUpgrade, amountToMint, offerInfoRecap } = this.props
+		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, amountToMint, offerInfoRecap } = this.props
 
 		//CASO INIZIALE, signingCmd != null in transactionState
 		let title = 'Signing transaction'

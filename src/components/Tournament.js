@@ -2,12 +2,13 @@ import React, { Component } from 'react'
 import Media from 'react-media';
 import { connect } from 'react-redux'
 import moment from 'moment'
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import DotLoader from 'react-spinners/DotLoader';
 import NftCardTournament from './common/NftCardTournament'
 import Header from './Header'
 import getBoxWidth from './common/GetBoxW'
+import getImageUrl from './common/GetImageUrl'
 import convertMedalName from './common/ConvertMedalName'
 import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
@@ -17,7 +18,8 @@ import {
     getFeeTournament,
     setNetworkSettings,
     setNetworkUrl,
-    getSubscribed
+    getSubscribed,
+    loadUserMintedNfts
 } from '../actions'
 import '../css/Nft.css'
 
@@ -31,7 +33,9 @@ class Tournament extends Component {
 			winners: [],
             loading: true,
             yourStat: "",
-            avgLevel: 0
+            avgLevel: 0,
+            matchPair: [],
+            userMinted: []
 		}
 	}
 
@@ -43,7 +47,18 @@ class Tournament extends Component {
 
         setTimeout(() => {
             this.loadTournament()
+            this.loadMinted()
         }, 500)
+	}
+
+    loadMinted() {
+		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		if (account && account.account) {
+			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
+				this.setState({ userMinted: response })
+			})
+		}
 	}
 
     async loadTournament() {
@@ -54,12 +69,27 @@ class Tournament extends Component {
         querySnapshot.forEach(doc => {
             //console.log(doc.data());
 			const tournament = doc.data()
+
+            /*
+            const tournament = {
+                canSubscribe: false,
+                nRounds: 6,
+                name: "t7_r1",
+                roundEnded: "0",
+                showPair: true,
+                start: {seconds: 1671715800, nanoseconds: 843000000},
+                tournamentEnd: false
+            }
+            */
+
             this.setState({ tournament }, async () => {
 
                 this.props.getMontepremi(chainId, gasPrice, gasLimit, networkUrl)
 				this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl)
 				this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl)
 
+
+                this.loadPair(tournament.name)
 
                 const roundEnded = tournament.roundEnded
                 const tournamentName = tournament.name.split("_")[0]
@@ -132,6 +162,19 @@ class Tournament extends Component {
         })
     }
 
+    async loadPair(id) {
+        const docRef = doc(firebasedb, "matching", id)
+
+		const docSnap = await getDoc(docRef)
+		const data = docSnap.data()
+
+        //console.log(data);
+
+        if (data) {
+            this.setState({ matchPair: data.couples })
+        }
+    }
+
     calcAvgLevel(array) {
         let sum = 0
         array.map(i => {
@@ -165,7 +208,8 @@ class Tournament extends Component {
 
 		return (
 			<div style={{ width, flexDirection: 'column', marginLeft: 15 }}>
-				<p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
+
+                <p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
 					{tname.torneo.toUpperCase()}
 				</p>
 
@@ -262,7 +306,7 @@ class Tournament extends Component {
     }
 
     renderBody(isMobile) {
-        const { tournament } = this.state
+        const { tournament, matchPair } = this.state
         const { buyin, subscribed } = this.props
 
         const { boxW } = getBoxWidth(isMobile)
@@ -343,8 +387,8 @@ class Tournament extends Component {
 			)
 		}
 
-        //SE SIAMO IN ATTESA DEL PRIMO FIGHT
-		if (tournament && !tournament.canSubscribe && !tournament.tournamentEnd && tournament.roundEnded === "0") {
+        //SE SIAMO IN ATTESA DEL PRIMO FIGHT E NO PAIR per il primo round
+		if (tournament && !tournament.canSubscribe && !tournament.tournamentEnd && tournament.roundEnded === "0" && !tournament.showPair) {
 
 			const roundValue = roundName.replace("r", "")
 
@@ -373,11 +417,135 @@ class Tournament extends Component {
 
 						{this.renderInfoTournament(boxW)}
 					</div>
+
+                    {
+                        subscribed && subscribed.length > 0 &&
+                        this.renderGraph()
+                    }
+
+                    {
+                        subscribed && subscribed.length > 0 &&
+                        <div style={{ marginBottom: 30, flexWrap: 'wrap', marginTop: 15 }}>
+                            {subscribed.map((item, index) => {
+                                return this.renderRow(item, index, 220)
+                            })}
+                        </div>
+                    }
 				</div>
 			)
 		}
 
+        if (tournament && tournament.showPair && this.state.matchPair.length > 0) {
+            return this.renderMatchPair(boxW)
+        }
+
         return this.renderRoundConcluso(boxW)
+    }
+
+    renderMatchPair(boxW) {
+        const { matchPair, tournament } = this.state
+
+        const roundName = tournament.name.split("_")[1]
+
+        return (
+            <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
+                <div style={{ justifyContent: 'space-between', marginBottom: 30 }}>
+
+                    <div style={{ flexDirection: 'column', width: '100%', justifyContent: 'flex-end' }}>
+                        <p style={{ fontSize: 24, color: 'white' }}>
+                            Pairings of round {roundName.replace("r", "")}
+                        </p>
+                    </div>
+
+                    {this.renderInfoTournament(boxW)}
+
+                </div>
+
+                <div style={{ width: boxW, flexWrap: 'wrap' }}>
+                    {matchPair.map((item, index) => {
+                        return this.renderBoxPair(item, index)
+                    })}
+                </div>
+            </div>
+        )
+    }
+
+    renderBoxPair(item, index) {
+        const { userMinted } = this.state
+
+        //console.log(userMinted);
+
+        let is1mine = false
+        let is2mine = false
+        let borderColor = 'white'
+
+        for (let i = 0; i < userMinted.length; i++) {
+            const s = userMinted[i]
+
+            if (s.id === item.s1.id) {
+                is1mine = true
+                borderColor = 'gold'
+            }
+
+            if (s.id === item.s2.id) {
+                is2mine = true
+                borderColor = 'gold'
+            }
+        }
+
+        const widthImage = 120
+
+        return (
+            <div
+                style={Object.assign({}, styles.boxPair, { borderColor } )}
+                key={index}
+            >
+                <div style={{ flexDirection: 'column', alignItems: 'center', marginRight: 5 }}>
+                    <a
+                        href={`${window.location.protocol}//${window.location.host}/nft/${item.s1.id}`}
+                        onClick={(e) => {
+                            e.preventDefault()
+                            this.props.history.push(`/nft/${item.s1.id}`)
+                        }}
+                    >
+                        <img
+                            style={{ width: widthImage, height: widthImage, borderRadius: 2, borderWidth: 1, borderColor: is1mine ? 'gold' : 'white', borderStyle: 'solid', marginBottom: 4 }}
+                            src={getImageUrl(item.s1.id)}
+                            alt={`#${item.s2.id}`}
+                        />
+                    </a>
+
+                    <p style={{ fontSize: 20, color: is1mine ? 'gold' : 'white' }}>
+                        #{item.s1.id}
+                    </p>
+                </div>
+
+                <p style={{ fontSize: 21, color: 'white', marginRight: 5 }}>
+                    VS
+                </p>
+
+                <div style={{ flexDirection: 'column', alignItems: 'center' }}>
+
+                    <a
+                        href={`${window.location.protocol}//${window.location.host}/nft/${item.s2.id}`}
+                        onClick={(e) => {
+                            e.preventDefault()
+                            this.props.history.push(`/nft/${item.s2.id}`)
+                        }}
+                    >
+                        <img
+                            style={{ width: widthImage, height: widthImage, borderRadius: 2, borderWidth: 1, borderColor: is2mine ? 'gold' : 'white', borderStyle: 'solid', marginBottom: 4 }}
+                            src={getImageUrl(item.s2.id)}
+                            alt={`#${item.s2.id}`}
+                        />
+                    </a>
+
+                    <p style={{ fontSize: 20, color: is2mine ? 'gold' : 'white' }}>
+                        #{item.s2.id}
+                    </p>
+                </div>
+            </div>
+        )
     }
 
     renderRoundConcluso(boxW) {
@@ -595,6 +763,16 @@ const styles = {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    boxPair: {
+        alignItems: 'center',
+        padding: 7,
+        borderWidth: 2,
+        borderColor: 'white',
+        borderStyle: 'solid',
+        borderRadius: 2,
+        marginRight: 15,
+        marginBottom: 15
     }
 }
 
@@ -610,5 +788,6 @@ export default connect(mapStateToProps, {
     getFeeTournament,
     setNetworkSettings,
     setNetworkUrl,
-    getSubscribed
+    getSubscribed,
+    loadUserMintedNfts
 })(Tournament)

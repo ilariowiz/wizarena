@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getDocs, query, where, collection, orderBy } from "firebase/firestore";
-import { firebasedb } from './Firebase';
+//import { getDocs, query, where, collection, orderBy } from "firebase/firestore";
+//import { firebasedb } from './Firebase';
 import { AiOutlinePlus } from 'react-icons/ai'
 import { AiOutlineMinus } from 'react-icons/ai'
 import Media from 'react-media';
