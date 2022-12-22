@@ -67,7 +67,8 @@ class Profile extends Component {
 			offersMade: [],
 			offersReceived: [],
 			offerInfoRecap: "",
-			kadenaPrice: undefined
+			kadenaPrice: undefined,
+			saleValues: {}
 		}
 	}
 
@@ -431,7 +432,9 @@ class Profile extends Component {
 		//console.log(amount, duration);
 		let offerInfoRecap = `You are accepting an offer of ${offer.amount} KDA (minus 7% marketplace fee) for #${offer.refnft}`
 
-		this.setState({ typeModal: 'acceptoffer', offerInfoRecap }, () => {
+		let saleValues = { id: offer.refnft, amount: offer.amount }
+
+		this.setState({ typeModal: 'acceptoffer', offerInfoRecap, saleValues }, () => {
 			this.props.acceptOffer(chainId, gasPrice, 4000, netId, offer.id, offer.refnft, account)
 		})
 	}
@@ -1105,6 +1108,7 @@ class Profile extends Component {
 					}}
 					nameNft={this.state.nameNftSubscribed}
 					offerInfoRecap={this.state.offerInfoRecap}
+					saleValues={this.state.saleValues}
 				/>
 
 			</div>

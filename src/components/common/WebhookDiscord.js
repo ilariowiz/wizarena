@@ -1,4 +1,4 @@
-const sendMessage = (id, amount, expiration, owner) => {
+export const sendMessage = (id, amount, expiration, owner) => {
     const request = new XMLHttpRequest()
 
     request.open("POST", process.env.REACT_APP_DISCORD_WEBHOOK_URL)
@@ -16,4 +16,20 @@ const sendMessage = (id, amount, expiration, owner) => {
     request.send(JSON.stringify(params));
 }
 
-export default sendMessage
+export const sendMessageSales = (id, amount) => {
+    const request = new XMLHttpRequest()
+
+    request.open("POST", process.env.REACT_APP_DISCORD_WEBHOOK_URL_SALES)
+    request.setRequestHeader("Content-type", 'application/json')
+
+
+    const content = `#${id} just sold for ${amount} KDA`
+
+    const params = {
+        username: `#${id}`,
+        avatar_url: `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`,
+        content
+    }
+
+    request.send(JSON.stringify(params));
+}

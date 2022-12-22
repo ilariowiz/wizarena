@@ -72,7 +72,8 @@ class Nft extends Component {
 			loadingOffers: true,
 			showModalOffer: false,
 			offerInfoRecap: "",
-			makeOfferValues: {}
+			makeOfferValues: {},
+			saleValues: {}
 		}
 	}
 
@@ -327,7 +328,9 @@ class Nft extends Component {
 		const { nft } = this.state
 		const { account, chainId, gasPrice, netId } = this.props
 
-		this.setState({ typeModal: 'buy' }, () => {
+		let saleValues = { id: nft.id, amount: nft.price }
+
+		this.setState({ typeModal: 'buy', saleValues }, () => {
 			this.props.buyNft(chainId, gasPrice, 7000, netId, account, nft)
 		})
 	}
@@ -366,7 +369,9 @@ class Nft extends Component {
 		//console.log(amount, duration);
 		let offerInfoRecap = `You are accepting an offer of ${offer.amount} KDA (minus 7% marketplace fee) for #${nft.id}`
 
-		this.setState({ typeModal: 'acceptoffer', offerInfoRecap }, () => {
+		let saleValues = { id: nft.id, amount: offer.amount }
+
+		this.setState({ typeModal: 'acceptoffer', offerInfoRecap, saleValues }, () => {
 			this.props.acceptOffer(chainId, gasPrice, 4000, netId, offer.id, nft.id, account)
 		})
 	}
@@ -1630,6 +1635,7 @@ class Nft extends Component {
 					}}
 					offerInfoRecap={this.state.offerInfoRecap}
 					makeOfferValues={this.state.makeOfferValues}
+					saleValues={this.state.saleValues}
 				/>
 
 				<ModalConnectionWidget
