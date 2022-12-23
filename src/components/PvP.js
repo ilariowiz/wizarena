@@ -441,7 +441,7 @@ class PvP extends Component {
                         </p>
 
                         <p style={{ fontSize: 19, color: 'white' }}>
-                            PVP BUYIN: FREE
+                            PVP BUYIN: 2 KDA
                         </p>
                     </div>
 
@@ -462,6 +462,10 @@ class PvP extends Component {
                             </div>
                         }
                     </div>
+
+                    <p style={{ fontSize: 19, color: 'white', marginLeft: 50 }}>
+                        REWARD: +1 HP and +1 DAMAGE
+                    </p>
                 </div>
 
                 <p style={{ fontSize: 22, color: 'white', marginBottom: 10 }}>

@@ -1176,8 +1176,8 @@
             (enforce (= (length idnft) 0) "Already subscribed to this pvp week")
         )
         (with-capability (OWNER address idnft)
-            ;(install-capability (coin.TRANSFER address ADMIN_ADDRESS 1.0))
-            ;(coin.transfer address ADMIN_ADDRESS 1.0)
+            (install-capability (coin.TRANSFER address CLERIC_MINT_ADDRESS 2.0))
+            (coin.transfer address CLERIC_MINT_ADDRESS 2.0)
             (insert pvp-subscribers id {
                 "pvpweek": week,
                 "idnft": idnft,

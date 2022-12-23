@@ -1337,13 +1337,11 @@ export const subscribeToPvPweek = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 		let pactCode = `(free.${CONTRACT_NAME}.subscribe-pvp "${key}" "${pvpWeek}" "${idNft}" "${account.account}" ${JSON.stringify(spellSelected)})`;
 
 		let caps = [
-			/*
 			Pact.lang.mkCap(`Subscribe`, "Pay the buyin", `coin.TRANSFER`, [
 				account.account,
-				ADMIN_ADDRESS,
-				1.0,
+				CLERIC_MINT_ADDRESS,
+				2.0,
 			]),
-			*/
 			Pact.lang.mkCap(
 				"Verify owner",
 				"Verify your are the owner",
