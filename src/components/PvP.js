@@ -428,7 +428,7 @@ class PvP extends Component {
 
         const yourSubscribersResultsSorted = this.sortById(yourSubscribersResults, "idnft")
 
-        //console.log(yourSubscribersResultsSorted);
+        //console.log(avgLevelPvP, subscribers);
 
         return (
             <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
@@ -451,7 +451,7 @@ class PvP extends Component {
                         </p>
 
                         {
-                            avgLevelPvP &&
+                            avgLevelPvP && subscribers && subscribers.length > 0 ?
                             <div style={{ alignItems: 'center' }}>
                                 <p style={{ fontSize: 19, color: 'white', marginRight: 10 }}>
                                     AVG LEVEL
@@ -460,6 +460,7 @@ class PvP extends Component {
                                     {avgLevelPvP}
                                 </p>
                             </div>
+                            : null
                         }
                     </div>
 
