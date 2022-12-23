@@ -33,3 +33,39 @@ export const sendMessageSales = (id, amount) => {
 
     request.send(JSON.stringify(params));
 }
+
+export const sendMessageListed = (id, amount) => {
+    const request = new XMLHttpRequest()
+
+    request.open("POST", process.env.REACT_APP_DISCORD_WEBHOOK_URL_LISTED)
+    request.setRequestHeader("Content-type", 'application/json')
+
+
+    const content = `#${id} just listed for ${amount} KDA`
+
+    const params = {
+        username: `#${id}`,
+        avatar_url: `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`,
+        content
+    }
+
+    request.send(JSON.stringify(params));
+}
+
+export const sendMessageDelisted = (id) => {
+    const request = new XMLHttpRequest()
+
+    request.open("POST", process.env.REACT_APP_DISCORD_WEBHOOK_URL_LISTED)
+    request.setRequestHeader("Content-type", 'application/json')
+
+
+    const content = `#${id} just delisted`
+
+    const params = {
+        username: `#${id}`,
+        avatar_url: `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`,
+        content
+    }
+
+    request.send(JSON.stringify(params));
+}

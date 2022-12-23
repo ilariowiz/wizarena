@@ -5,7 +5,7 @@ import { firebasedb } from '../Firebase';
 import { IoClose } from 'react-icons/io5'
 import DotLoader from 'react-spinners/DotLoader';
 import Pact from "pact-lang-api";
-import { sendMessage, sendMessageSales } from './WebhookDiscord'
+import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted } from './WebhookDiscord'
 import '../../css/Modal.css'
 import {
 	signTransaction,
@@ -30,7 +30,7 @@ class ModalTransaction extends Component {
 	}
 
 	pollForTransaction = async () => {
-		const { transactionState, networkUrl, nameNft, statToUpgrade, howMuchIncrement, type, pvpWeek, makeOfferValues, saleValues } = this.props
+		const { transactionState, networkUrl, nameNft, idNft, inputPrice, statToUpgrade, howMuchIncrement, type, pvpWeek, makeOfferValues, saleValues } = this.props
 
 
 		const requestKey = transactionState.requestKey
@@ -83,6 +83,12 @@ class ModalTransaction extends Component {
 			}
 			else if (type === "acceptoffer" || type === "buy") {
 				sendMessageSales(saleValues.id, saleValues.amount)
+			}
+			else if (type === "list") {
+				sendMessageListed(idNft, inputPrice)
+			}
+			else if (type === "delist") {
+				sendMessageDelisted(nameNft.replace("#", ""))
 			}
 		}
 		else {
