@@ -495,7 +495,7 @@ class PvP extends Component {
 					: null
 				}
 
-                <div style={{ overflow: 'scroll', marginBottom: 30 }}>
+                <div style={{ flexWrap: 'wrap', marginBottom: 30 }}>
                     {
                         sorted && sorted.length > 0 &&
                         sorted.map((item, index) => {
