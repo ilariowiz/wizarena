@@ -68,3 +68,5 @@ export const SET_AVG_LEVEL_PVP = 'SET_AVG_LEVEL_PVP'
 export const SAVE_SALES = 'SAVE_SALES'
 
 export const SAVE_RANK = 'SAVE_RANK'
+
+export const SET_WIZARD_SELECTED_SHOP = 'SET_WIZARD_SELECTED_SHOP'

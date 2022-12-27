@@ -26,7 +26,8 @@ import {
 	STORE_CIRCULATING_SUPPLY,
 	STORE_TOTAL_MINED,
 	SET_SFIDA,
-	SET_AVG_LEVEL_PVP
+	SET_AVG_LEVEL_PVP,
+	SET_WIZARD_SELECTED_SHOP
 } from '../actions/types'
 
 
@@ -58,7 +59,8 @@ const INITIAL_STATE = {
 	wizardsStaked: 0,
 	circulatingSupply: 0,
 	sfida: {},
-	avgLevelPvP: 0
+	avgLevelPvP: 0,
+	wizardSelectedIdShop: undefined
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -137,6 +139,8 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, sfida: action.payload }
 		case SET_AVG_LEVEL_PVP:
 			return { ...state, avgLevelPvP: action.payload }
+		case SET_WIZARD_SELECTED_SHOP:
+			return { ...state, wizardSelectedIdShop: action.payload }
 		case LOGOUT:
 			return { ...state, account: {}, transactionState: {}, showModalTx: false, isConnectWallet: false, isXWallet: false, isQRWalletConnect: false, userMintedNfts: [], wizaBalance: 0, wizardsStaked: 0, qrWalletConnectClient: undefined}
 		default:

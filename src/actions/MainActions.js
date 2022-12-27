@@ -40,7 +40,8 @@ import {
 	STORE_CIRCULATING_SUPPLY,
 	STORE_TOTAL_MINED,
 	SET_SFIDA,
-	SET_AVG_LEVEL_PVP
+	SET_AVG_LEVEL_PVP,
+	SET_WIZARD_SELECTED_SHOP
 } from './types'
 
 
@@ -2197,6 +2198,13 @@ export const setAvgLevelPvp = (value) => {
 	return {
 		type: SET_AVG_LEVEL_PVP,
 		payload: value
+	}
+}
+
+export const setWizardSelectedShop = (wizardId) => {
+	return {
+		type: SET_WIZARD_SELECTED_SHOP,
+		payload: wizardId
 	}
 }
 

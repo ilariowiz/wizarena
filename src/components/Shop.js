@@ -20,7 +20,8 @@ import {
 	setNetworkSettings,
 	setNetworkUrl,
 	getWizaBalance,
-    buyUpgrade
+    buyUpgrade,
+    setWizardSelectedShop
 } from '../actions'
 import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, MAX_LEVEL } from '../actions/types'
 import '../css/Nft.css'
@@ -46,7 +47,6 @@ class Shop extends Component {
             statToUpgrade: '',
             howMuchIncrement: 1,
             wizaCostToUpgrade: 0,
-            wizardSelected: {},
             historyUpgrades: [],
             loadingHistoryUpgrades: true,
             increase: { hp: 1, defense: 1, attack: 1, damage: 1}
@@ -143,13 +143,32 @@ class Shop extends Component {
 		})
     }
 
+    getWizardSelected() {
+        const { userMintedNfts, wizardSelectedIdShop } = this.props
+
+        //console.log(userMintedNfts, wizardSelectedIdShop);
+        if (!userMintedNfts) {
+            return undefined
+        }
+
+        const wizard = userMintedNfts.find(i => i.id === wizardSelectedIdShop)
+
+        if (wizard) {
+            return wizard
+        }
+
+        return undefined
+    }
+
     buyStat(stat, costo) {
         const { account, chainId, gasPrice, netId } = this.props
-        const { wizardSelected, increase } = this.state
+        const { increase } = this.state
 
-        this.setState({ nameNftToUpgrade: wizardSelected.name, statToUpgrade: stat, wizaCostToUpgrade: costo, howMuchIncrement: increase[stat] })
+        const wizard = this.getWizardSelected()
 
-        this.props.buyUpgrade(chainId, gasPrice, netId, account, wizardSelected.id, stat, increase[stat])
+        this.setState({ nameNftToUpgrade: wizard.name, statToUpgrade: stat, wizaCostToUpgrade: costo, howMuchIncrement: increase[stat] })
+
+        this.props.buyUpgrade(chainId, gasPrice, netId, account, wizard.id, stat, increase[stat])
     }
 
     sortById() {
@@ -178,26 +197,27 @@ class Shop extends Component {
 				item={item}
 				width={200}
                 isSelect={isSelect}
-				onSelect={() => this.setState({ wizardSelected: item })}
-                onChange={() => this.setState({ wizardSelected: {} })}
+				onSelect={() => {
+                    this.props.setWizardSelectedShop(item.id)
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                onChange={() => this.props.setWizardSelectedShop(undefined)}
 			/>
 		)
 	}
 
     renderShopCard(key) {
-        const { wizardSelected, increase } = this.state
-        //const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+        const { increase } = this.state
 
-        //console.log(wizardSelected);
+        const wizard = this.getWizardSelected()
 
         const increaseTo = increase[key]
-
         let statToUpgrade;
         let costo = 0;
         let newLevel;
 
-        if (wizardSelected.id) {
-            statToUpgrade = wizardSelected[key].int
+        if (wizard && wizard.id) {
+            statToUpgrade = wizard[key].int
             let arrayLevelsTo = []
 
             for (let i = 0; i < increaseTo; i++) {
@@ -212,10 +232,10 @@ class Shop extends Component {
             //console.log(arrayLevelsTo);
 
             const copySelected = {
-                hp: wizardSelected.hp.int,
-                defense: wizardSelected.defense.int,
-                attack: wizardSelected.attack.int,
-                damage: wizardSelected.damage.int
+                hp: wizard.hp.int,
+                defense: wizard.defense.int,
+                attack: wizard.attack.int,
+                damage: wizard.damage.int
             }
 
             copySelected[key] = arrayLevelsTo[arrayLevelsTo.length - 1]
@@ -270,7 +290,7 @@ class Shop extends Component {
                         <button
                             style={{ marginLeft: 15, cursor: 'pointer', justifyContent: 'center', alignItems: 'center' }}
                             onClick={() => {
-                                if (!wizardSelected || !wizardSelected.id) {
+                                if (!wizard) {
                                     return
                                 }
 
@@ -304,7 +324,7 @@ class Shop extends Component {
                         <button
 							style={{ marginRight: 15, cursor: 'pointer', justifyContent: 'center', alignItems: 'center' }}
 							onClick={() => {
-                                if (!wizardSelected || !wizardSelected.id) {
+                                if (!wizard) {
                                     return
                                 }
 
@@ -341,7 +361,7 @@ class Shop extends Component {
                     style={Object.assign({}, styles.btnChoose, { opacity: newLevel > MAX_LEVEL ? 0.5 : 1 })}
                     onClick={() => {
 
-                        if (!this.state.wizardSelected.name || newLevel > MAX_LEVEL) {
+                        if (!wizard || newLevel > MAX_LEVEL) {
                             return
                         }
 
@@ -378,11 +398,49 @@ class Shop extends Component {
         )
     }
 
+    renderChoises(width) {
+        const { userMintedNfts } = this.props
+
+        const sorted = this.sortById()
+
+        return (
+            <div style={{ width, flexDirection: 'column', paddingTop: 30 }}>
+                <p style={{ fontSize: 22, color: 'white', marginBottom: 10 }}>
+                    Select the Wizard you want to improve
+                </p>
+
+                <p style={{ fontSize: 17, color: 'white', marginBottom: 15 }}>
+                    ATK and DMG you'll see in each wizard is their base ATK and DMG, it doesn't take into account the selected spell.
+                </p>
+
+                {
+					this.state.loading ?
+					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30, marginBottom: 30 }}>
+						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+					</div>
+					: null
+				}
+
+                <div style={{ flexWrap: 'wrap', marginBottom: 30 }}>
+                    {
+                        userMintedNfts && userMintedNfts.length > 0 &&
+                        sorted.map((item, index) => {
+                            return this.renderRowChoise(item, index, true)
+                        })
+                    }
+
+                </div>
+            </div>
+        )
+    }
+
     renderBody(isMobile) {
-        const { isConnected, showModalConnection, wizardSelected, historyUpgrades } = this.state
-        const { account, showModalTx, wizaBalance, userMintedNfts } = this.props
+        const { isConnected, showModalConnection, historyUpgrades } = this.state
+        const { account, showModalTx, wizaBalance } = this.props
 
         const { boxW, modalW } = getBoxWidth(isMobile)
+
+        const wizard = this.getWizardSelected()
 
         if (!account || !account.account || !isConnected) {
 
@@ -425,67 +483,49 @@ class Shop extends Component {
 		}
 
 
-        const sorted = this.sortById()
+        if (!wizard) {
+            return this.renderChoises(boxW)
+        }
 
         return (
             <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
 
-                <p style={{ fontSize: 22, color: 'white', marginBottom: 10 }}>
-                    Select the Wizard you want to improve
-                </p>
+                <div style={{ flexDirection: isMobile ? 'column' : 'row', marginBottom: 30 }}>
 
-                <p style={{ fontSize: 17, color: 'white', marginBottom: 15 }}>
-                    ATK and DMG you'll see in each wizard is their base ATK and DMG, it doesn't take into account the selected spell.
-                </p>
+                    <div style={{ height: 'fit-content', marginRight: 30 }} className={wizard ? "selectedShow" : "selectedHide"}>
+                        {this.renderRowChoise(wizard, 0, false)}
+                    </div>
 
-                {
-					this.state.loading ?
-					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30, marginBottom: 30 }}>
-						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
-					</div>
-					: null
-				}
 
-                <div style={{ marginBottom: 30 }} className={wizardSelected && wizardSelected.attack ? "selectedShow" : "selectedHide"}>
-                    {this.renderRowChoise(wizardSelected, 0, false)}
-                </div>
+                    <div style={{ flexDirection: 'column' }}>
 
-                {
-                    !wizardSelected || !wizardSelected.attack ?
-                    <div style={{ overflow: 'scroll', marginBottom: 30 }}>
-                        {
-                            userMintedNfts && userMintedNfts.length > 0 &&
-                            sorted.map((item, index) => {
-                                return this.renderRowChoise(item, index, true)
-                            })
-                        }
+                        <p style={{ fontSize: 22, color: "white", marginBottom: 15 }}>
+                            $WIZA balance: {wizaBalance || 0.0}
+                        </p>
+
+                        <p style={{ fontSize: 22, color: "white", marginBottom: 25 }}>
+                            LEVEL CAP: {MAX_LEVEL}
+                        </p>
+
+                        <p style={{ fontSize: 26, color: 'white', marginBottom: 10 }}>
+                            UPGRADES
+                        </p>
+
+                        <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                            {this.renderShopCard("hp")}
+
+                            {this.renderShopCard("defense")}
+
+                            {this.renderShopCard("attack")}
+
+                            {this.renderShopCard("damage")}
+
+                        </div>
 
                     </div>
-                    : null
-                }
-
-                <p style={{ fontSize: 26, color: 'white', marginBottom: 10 }}>
-                    IMPROVE
-                </p>
-
-                <p style={{ fontSize: 18, color: "white", marginBottom: 15 }}>
-					$WIZA balance: {wizaBalance || 0.0}
-				</p>
-
-                <p style={{ fontSize: 18, color: "white", marginBottom: 25 }}>
-					LEVEL CAP: {MAX_LEVEL}
-				</p>
-
-                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                    {this.renderShopCard("hp")}
-
-                    {this.renderShopCard("defense")}
-
-                    {this.renderShopCard("attack")}
-
-                    {this.renderShopCard("damage")}
 
                 </div>
+
 
                 <p style={{ fontSize: 26, color: 'white', marginBottom: 15 }}>
                     HISTORY
@@ -629,9 +669,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, wizaBalance } = state.mainReducer;
+	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, wizaBalance, wizardSelectedIdShop } = state.mainReducer;
 
-	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, wizaBalance };
+	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, wizaBalance, wizardSelectedIdShop };
 }
 
 export default connect(mapStateToProps, {
@@ -640,5 +680,6 @@ export default connect(mapStateToProps, {
 	setNetworkSettings,
 	setNetworkUrl,
 	getWizaBalance,
-    buyUpgrade
+    buyUpgrade,
+    setWizardSelectedShop
 })(Shop)
