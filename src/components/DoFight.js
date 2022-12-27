@@ -379,7 +379,7 @@ class DoFight extends Component {
 
                 setTimeout(() => {
                     this.showFight()
-                }, 2000)
+                }, 600)
             })
         }
         else {
