@@ -597,8 +597,21 @@
         )
     )
 
-    (defun get-wiza-from-bank (amount:decimal account:string)
+    (defun get-wiza-from-bank-bulk (accounts:list)
         (with-capability (ADMIN)
+            (map
+                (get-wiza-from-bank)
+                accounts
+            )
+        )
+    )
+
+    (defun get-wiza-from-bank (reward-data:object)
+        (require-capability (ADMIN))
+        (let (
+                (account (at "account" reward-data))
+                (amount (at "amount" reward-data))
+            )
             (with-default-read token-table account
               {"balance": 0.0}
               {"balance":= oldbalance}
