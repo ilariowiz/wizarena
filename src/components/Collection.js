@@ -180,6 +180,8 @@ class Collection extends Component {
 		}
 
 
+		//console.log(stat);
+
 		this.setState({ loading: true, searchedText: '', searchText: '' })
 
 		let oldStat = Object.assign([], statSearched);
@@ -202,6 +204,76 @@ class Collection extends Component {
 
 		if (oldStat.length > 0) {
 
+			let newData = Object.assign([], allNfts)
+
+			oldStat.map(i => {
+				if (i.stat === "hp") {
+
+					const values = i.value.split(" - ")
+					const minV = parseInt(values[0])
+					const maxV = parseInt(values[1])
+
+					newData = newData.filter(n => {
+						return n.hp && n.hp.int >= minV && n.hp.int <= maxV
+					})
+				}
+
+				if (i.stat === "defense") {
+					const values = i.value.split(" - ")
+					const minV = parseInt(values[0])
+					const maxV = parseInt(values[1])
+
+					newData = newData.filter(n => {
+						return n.defense && n.defense.int >= minV && n.defense.int <= maxV
+					})
+				}
+
+				if (i.stat === "element") {
+					//console.log(newData);
+					newData = newData.filter(n => {
+						return n.element && n.element.toUpperCase() === i.value.toUpperCase()
+					})
+				}
+
+				if (i.stat === "resistance") {
+					//console.log(newData);
+					newData = newData.filter(n => {
+						return n.resistance && n.resistance.toUpperCase() === i.value.toUpperCase()
+					})
+				}
+
+				if (i.stat === "weakness") {
+					//console.log(newData);
+					newData = newData.filter(n => {
+						if (n.weakness && n.weakness.toUpperCase() === i.value.toUpperCase()) {
+							return n
+						}
+						else if (n.weakness && n.weakness.toUpperCase() === "PYSCHO" && i.value.toUpperCase() === "PSYCHO") {
+							return n
+						}
+					})
+				}
+
+				if (i.stat === "spellbook") {
+					//console.log(newData);
+					newData = newData.filter(n => {
+						return n.spellbook && n.spellbook.length === i.value
+					})
+				}
+
+				if (i.stat === "level") {
+					//console.log(newData);
+					const rangeLevels = i.value.split(" - ")
+					const minLevel = rangeLevels[0]
+					const maxLevel = rangeLevels[1]
+
+					newData = newData.filter(n => {
+						return n.level >= parseInt(minLevel) && n.level <= parseInt(maxLevel)
+					})
+				}
+			})
+
+			/*
 			let arrayQuery = []
 			oldStat.map(i => {
 				if (i.stat !== "spellbook" && i.stat !== "level") {
@@ -212,7 +284,7 @@ class Collection extends Component {
 
 			//console.log(arrayQuery);
 
-			let newData = []
+
 
 			if (arrayQuery.length > 0) {
 				let q = query(collection(firebasedb, "stats"), ...arrayQuery)
@@ -254,6 +326,7 @@ class Collection extends Component {
 					})
 				}
 			})
+			*/
 
 			newData.sort((a, b) => {
 				if (parseInt(a.price) === 0) return 1;
@@ -648,13 +721,13 @@ class Collection extends Component {
 				{this.renderSearched()}
 
 				<div style={{ flexWrap: 'wrap', marginBottom: 10 }}>
-					{this.renderBoxSearchStat("hp", "HP", [41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75].reverse())}
-					{this.renderBoxSearchStat("defense", "DEFENSE", [14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24].reverse())}
+					{this.renderBoxSearchStat("hp", "HP", ["40 - 50", "51 - 60", "61 - 65", "66 - 70", "71 - 75", "76 - 80", "81 - 85", "86 - 90", "91 - 95", "96 - 100", "101 - 105"].reverse())}
+					{this.renderBoxSearchStat("defense", "DEFENSE", ["14 - 15", "16 - 17", "18 - 19", "20 - 21", "22 - 23", "24 - 25", "26 - 27", "28 - 29", "30 - 31"].reverse())}
 					{this.renderBoxSearchStat("element", "ELEMENT", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
 					{this.renderBoxSearchStat("resistance", "RESISTANCE", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
 					{this.renderBoxSearchStat("weakness", "WEAKNESS", ["acid", "dark", "earth", "fire", "ice", "pyscho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
 					{this.renderBoxSearchStat("spellbook", "SPELLBOOK", [1, 2, 3, 4])}
-					{this.renderBoxSearchStat("level", "LEVEL", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 300"])}
+					{this.renderBoxSearchStat("level", "LEVEL", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 300"].reverse())}
 				</div>
 
 				<p style={{ marginBottom: 15, fontSize: 16, color: 'white' }}>
