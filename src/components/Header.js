@@ -247,12 +247,27 @@ class Header extends Component {
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
 							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
-								KadeRare
+								KadeRare Wizards
+							</p>
+						</a>
+
+						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 15 }}>
+							Check your Wizard rarity
+						</p>
+
+						<a
+							href="https://www.kaderare.com/collection/ClericsArena"
+							target="_blank"
+							rel="noopener noreferrer"
+							style={{ marginBottom: 5, width: 'fit-content' }}
+						>
+							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
+								KadeRare Clerics
 							</p>
 						</a>
 
 						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 20 }}>
-							Check your Wizard rarity
+							Check your Cleric rarity
 						</p>
 
 						{
