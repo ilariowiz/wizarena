@@ -248,27 +248,11 @@ class Profile extends Component {
 		const { chainId, gasPrice, netId, account, buyin, feeTournament } = this.props
 		const { tournament } = this.state
 
-		if (!buyin || !feeTournament) {
+		if (!buyin || !feeTournament  || !spellSelected || !spellSelected.name) {
 			return
 		}
 
-		let conditionSpell = {}
-		if (spellSelected.condition.name) {
-			conditionSpell = {
-				effect: spellSelected.condition.effect,
-				name: spellSelected.condition.name,
-				pct: spellSelected.condition.pct.int,
-				element: spellSelected.condition.element
-			}
-		}
-
-		const refactorSpellSelected = {
-			dmgBase: spellSelected.dmgBase.int,
-			name: spellSelected.name,
-			atkBase: spellSelected.atkBase.int,
-			condition: conditionSpell,
-			element: spellSelected.element
-		}
+		let refactorSpellSelected = { name: spellSelected.name }
 
 		//console.log(JSON.stringify(refactorSpellSelected));
 		//return

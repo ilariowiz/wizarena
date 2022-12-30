@@ -77,7 +77,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
                     SPELL
                 </p>
                 <p style={styles.statsStyle}>
-                    {item.spellSelected.name.toUpperCase()}
+                    {spellSelected.name.toUpperCase()}
                 </p>
             </div>
 
@@ -107,7 +107,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
                     SPELL PERK
                 </p>
                 <p style={styles.statsStyle}>
-                    {item.spellSelected.condition.name ? item.spellSelected.condition.name.toUpperCase() : '-'}
+                    {spellSelected.condition.name ? spellSelected.condition.name.toUpperCase() : '-'}
                 </p>
             </div>
 
