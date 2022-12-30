@@ -7,6 +7,7 @@ import DotLoader from 'react-spinners/DotLoader';
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCard.css'
 import '../../css/Nft.css'
+import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
 import {
     getWizardStakeInfo,
 	calculateReward,
@@ -185,6 +186,7 @@ class NftCardStake extends Component {
 		const { staked, loading, inBurnQueue } = this.state
 
         //console.log(item);
+        const level = calcLevelWizard(item)
 
 		return (
 			<a
@@ -210,7 +212,7 @@ class NftCardStake extends Component {
 
                         {
                             item.medals &&
-                            <div style={{ alignItems: 'center', marginLeft: 10, marginTop: 3 }}>
+                            <div style={{ alignItems: 'center', marginLeft: 10 }}>
 
                                 <IoMedalOutline
                                     color="white"
@@ -220,6 +222,18 @@ class NftCardStake extends Component {
 
                                 <p style={{ color: 'white', fontSize: 19, marginTop: 3, lineHeight: 1 }}>
                                     {this.calcMedals()}
+                                </p>
+                            </div>
+                        }
+
+                        {
+                            level &&
+                            <div style={{ alignItems: 'center', marginLeft: 10 }}>
+                                <p style={{ color: '#c2c0c0', fontSize: 15, marginRight: 7 }}>
+                                    LEVEL
+                                </p>
+                                <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 18 }}>
+                                    {level}
                                 </p>
                             </div>
                         }
