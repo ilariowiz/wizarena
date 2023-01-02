@@ -988,7 +988,7 @@
 
 (free.wiza.reward-users [{"account":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "amount": 1929.0}, {"account":"k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd", "amount": 890.0}])
 
-; (commit-tx)
+(commit-tx)
 ;
 ; (begin-tx "GET LEVEL")
 ;
@@ -1005,6 +1005,72 @@
 ; (free.wiz-arena.calculate-wiza-cost "0" "attack")
 ;
 ; (commit-tx)
+
+(begin-tx "GET LEVEL")
+
+(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+
+(free.wiz-arena.calculate-level "0")
+
+(commit-tx)
+
+(begin-tx "CHECK BALANCE")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (coin.GAS)
+  ]
+}])
+
+(free.wiza.get-user-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+
+(commit-tx)
+
+
+(begin-tx "BUY POTIONS")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.buy-potions "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "t8_0" "hp" free.wiza)
+
+(commit-tx)
+
+; (begin-tx "BUY POTIONS")
+;
+; (env-sigs [{
+;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+;   "caps": [
+;     (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+;     (coin.GAS)
+;   ]
+; }])
+;
+; (free.wiz-arena.buy-potions "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "t8_0" "hp" free.wiza)
+;
+; (commit-tx)
+
+(begin-tx "GET POTION FOR TOURNAMENT")
+
+(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+
+(free.wiz-arena.get-potion-for-tournament "t8_0")
+
+(commit-tx)
+
+(begin-tx "GET POTIONs MASS")
+
+(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+
+(free.wiz-arena.get-potion-for-tournament-mass ["t8_0"])
+
+(commit-tx)
 
 (begin-tx "GET WIZA COST MASS")
 
@@ -1028,34 +1094,6 @@
 
 (commit-tx)
 
-
-; (begin-tx "BUY UPGRADE")
-;
-; (env-sigs [{
-;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-;   "caps": [
-;     (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
-;     (coin.GAS)
-;   ]
-; }])
-;
-; (free.wiz-arena.buy-upgrade "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "attack" free.wiza)
-;
-; (commit-tx)
-
-; (begin-tx "BUY UPGRADE")
-;
-; (env-sigs [{
-;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-;   "caps": [
-;     (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
-;     (coin.GAS)
-;   ]
-; }])
-;
-; (free.wiz-arena.buy-upgrade "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "hp" free.wiza)
-;
-; (commit-tx)
 
 ;
 ; (begin-tx "GET NFTS LISTED")
@@ -1271,40 +1309,6 @@
 ; (commit-tx)
 
 
-
-; (begin-tx "WITHDRAW PRIZES")
-;
-; (env-sigs [{
-;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-;   "caps": [
-;        (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
-;        (coin.GAS)
-;      ]
-; }])
-;
-; (free.wiz-arena.withdraw-prize "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
-;
-; (expect "balance of WIZ_BANK is 1.6" (coin.get-balance free.wiz-arena.WIZ_BANK) 1.6)
-;
-; (expect "balance of k:9ca8b0 is 47.6" (coin.get-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250") 47.6)
-;
-;
-; (commit-tx)
-;
-; (begin-tx "WITHDRAW PRIZES 2")
-;
-; (env-sigs [{
-;   "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb",
-;   "caps": []
-; }])
-;
-; (free.wiz-arena.withdraw-prize "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd")
-;
-; (expect "balance of WIZ_BANK is 0.0" (coin.get-balance free.wiz-arena.WIZ_BANK) 0.0)
-;
-; (expect "balance of k:94e is 60.9" (coin.get-balance "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd") 60.9)
-;
-; (commit-tx)
 
 
 (begin-tx "WIZA GET DATA")

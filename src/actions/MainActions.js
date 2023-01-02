@@ -663,6 +663,40 @@ export const getMintPhase = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3
 	}
 }
 
+export const getPotionEquippedMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 30000, networkUrl, keys, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-potion-for-tournament-mass [${keys}])`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
+export const getPotionEquipped = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, key, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-potion-for-tournament "${key}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
 export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 70000, networkUrl, pvpWeek, callback) => {
 	return (dispatch) => {
 
@@ -1518,6 +1552,41 @@ export const buyUpgrade = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account
 		}
 
 		//console.log("buyUpgrade", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const buyVial = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft, key, potion) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.buy-potions "${account.account}" "${idnft}" "${key}" "${potion}" free.wiza)`;
+
+		let cmd = {
+			pactCode,
+			caps: [
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME}.OWNER`,
+          			[account.account, idnft]
+        		),
+				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+			],
+			sender: account.account,
+			gasLimit: 3000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("buyVial", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}

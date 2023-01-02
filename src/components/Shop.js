@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-//import { getDocs, query, where, collection, orderBy } from "firebase/firestore";
-//import { firebasedb } from './Firebase';
+import { getDocs, collection } from "firebase/firestore";
+import { firebasedb } from './Firebase';
 import { AiOutlinePlus } from 'react-icons/ai'
 import { AiOutlineMinus } from 'react-icons/ai'
 import Media from 'react-media';
@@ -11,7 +11,7 @@ import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import NftCardShop from './common/NftCardShop'
 import calcUpgradeCost from './common/CalcUpgradeCost'
-import { calcLevelWizardAfterUpgrade, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
+import { calcLevelWizardAfterUpgrade, getColorTextBasedOnLevel, calcLevelWizard } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import {
@@ -21,7 +21,9 @@ import {
 	setNetworkUrl,
 	getWizaBalance,
     buyUpgrade,
-    setWizardSelectedShop
+    setWizardSelectedShop,
+    getPotionEquipped,
+    buyVial
 } from '../actions'
 import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, MAX_LEVEL } from '../actions/types'
 import '../css/Nft.css'
@@ -31,6 +33,12 @@ const potion_hp = require('../assets/potion_hp.png')
 const potion_def = require('../assets/potion_def.png')
 const potion_atk = require('../assets/potion_atk.png')
 const potion_dmg = require('../assets/potion_dmg.png')
+
+const vial_hp = require('../assets/vial_hp.png')
+const vial_def = require('../assets/vial_def.png')
+const vial_atk = require('../assets/vial_atk.png')
+const vial_dmg = require('../assets/vial_dmg.png')
+
 
 class Shop extends Component {
     constructor(props) {
@@ -49,7 +57,10 @@ class Shop extends Component {
             wizaCostToUpgrade: 0,
             historyUpgrades: [],
             loadingHistoryUpgrades: true,
-            increase: { hp: 1, defense: 1, attack: 1, damage: 1}
+            increase: { hp: 1, defense: 1, attack: 1, damage: 1},
+            potionEquipped: "",
+            loadingPotionEquipped: false,
+            tournamentName: ""
         }
     }
 
@@ -61,6 +72,10 @@ class Shop extends Component {
 
         setTimeout(() => {
 			this.loadProfile()
+
+            if (this.props.wizardSelectedIdShop) {
+                this.getPotionEquipped()
+            }
 		}, 500)
 	}
 
@@ -143,6 +158,28 @@ class Shop extends Component {
 		})
     }
 
+    async getPotionEquipped() {
+        const { chainId, gasPrice, gasLimit, networkUrl, wizardSelectedIdShop } = this.props
+
+        this.setState({ loadingPotionEquipped: true })
+
+        const querySnapshot = await getDocs(collection(firebasedb, "stage"))
+
+        querySnapshot.forEach(doc => {
+            //console.log(doc.data());
+			const tournament = doc.data()
+
+            const tournamentName = tournament.name.split("_")[0]
+
+            const key = `${tournamentName}_${wizardSelectedIdShop}`
+
+            this.props.getPotionEquipped(chainId, gasPrice, gasLimit, networkUrl, key, (response) => {
+                //console.log(response);
+                this.setState({ potionEquipped: response.potionEquipped, loadingPotionEquipped: false, tournamentName })
+            })
+        })
+    }
+
     getWizardSelected() {
         const { userMintedNfts, wizardSelectedIdShop } = this.props
 
@@ -166,9 +203,22 @@ class Shop extends Component {
 
         const wizard = this.getWizardSelected()
 
-        this.setState({ nameNftToUpgrade: wizard.name, statToUpgrade: stat, wizaCostToUpgrade: costo, howMuchIncrement: increase[stat] })
+        this.setState({ nameNftToUpgrade: wizard.name, statToUpgrade: stat, wizaCostToUpgrade: costo, howMuchIncrement: increase[stat], typeModal: 'upgrade' })
 
         this.props.buyUpgrade(chainId, gasPrice, netId, account, wizard.id, stat, increase[stat])
+    }
+
+    buyVial(potion, costo) {
+        const { account, chainId, gasPrice, netId } = this.props
+        const { tournamentName } = this.state
+
+        const wizard = this.getWizardSelected()
+
+        const key = `${tournamentName}_${wizard.id}`
+
+        this.setState({ nameNftToUpgrade: wizard.name, statToUpgrade: potion, wizaCostToUpgrade: costo, typeModal: 'buyvial' })
+
+        this.props.buyVial(chainId, gasPrice, netId, account, wizard.id, key, potion)
     }
 
     sortById() {
@@ -200,6 +250,10 @@ class Shop extends Component {
 				onSelect={() => {
                     this.props.setWizardSelectedShop(item.id)
                     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                    setTimeout(() => {
+                        this.getPotionEquipped()
+                    }, 200)
                 }}
                 onChange={() => this.props.setWizardSelectedShop(undefined)}
 			/>
@@ -372,6 +426,126 @@ class Shop extends Component {
         )
     }
 
+    renderVialCard(key, canBuy) {
+        const { loadingPotionEquipped } = this.state
+
+        const wizard = this.getWizardSelected()
+
+        if (!wizard) {
+            return <div />
+        }
+
+        let bonus;
+        let costo = 0;
+        let level = calcLevelWizard(wizard)
+
+        let img;
+        if (key === "hp") {
+            img = vial_hp
+            bonus = 5
+            costo = (level / 2) + 0.01
+        }
+        else if (key === "defense") {
+            img = vial_def
+            bonus = 2
+            costo = level + 0.01
+        }
+        else if (key === "attack") {
+            img = vial_atk
+            bonus = 2
+            costo = level + 0.01
+        }
+        else if (key === "damage") {
+            img = vial_dmg
+            bonus = 3
+            costo = Math.round(level / 1.4) + 0.01
+        }
+
+        return (
+            <div
+                className="cardShopShadow"
+                style={styles.cardVialStyle}
+            >
+                <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+
+                    <div style={{ width: 70, height: 70, marginBottom: 5, alignItems: 'center', justifyContent: 'center' }}>
+                        <img
+                            src={img}
+                            style={{ height: 70 }}
+                            alt="logo"
+                        />
+                    </div>
+
+
+                    <p style={{ fontSize: 22, color: 'white' }}>
+                        +{bonus}
+                    </p>
+
+                    <p style={{ fontSize: 20, color: 'white', marginBottom: 10 }}>
+                        {key.toUpperCase()}
+                    </p>
+
+                    {
+                        canBuy ?
+                        <div style={{ flexDirection: 'column', alignItems: 'center' }}>
+                            <p style={{ fontSize: 17, color: 'white' }}>
+                                $WIZA
+                            </p>
+                            <p style={{ fontSize: 21, color: 'white', marginBottom: 15 }}>
+                                {costo.toFixed(2)}
+                            </p>
+                        </div>
+                        : null
+                    }
+
+                </div>
+
+                {
+                    loadingPotionEquipped ?
+                    <div
+                        className='btnH'
+                        style={styles.btnChoose}
+                    >
+                        <p style={{ fontSize: 15, color: 'white' }}>
+                            LOADING
+                        </p>
+                    </div>
+                    : null
+                }
+
+                {
+                    canBuy && !loadingPotionEquipped ?
+                    <button
+                        className='btnH'
+                        style={styles.btnChoose}
+                        onClick={() => {
+                            this.buyVial(key, costo)
+                        }}
+                    >
+                        <p style={{ fontSize: 17, color: 'white' }}>
+                            BUY VIAL
+                        </p>
+                    </button>
+                    : null
+                }
+
+                {
+                    !canBuy && !loadingPotionEquipped ?
+                    <div
+                        className='btnH'
+                        style={styles.btnChoose}
+                    >
+                        <p style={{ fontSize: 16, color: 'white' }}>
+                            EQUIPPED
+                        </p>
+                    </div>
+                    : null
+                }
+
+            </div>
+        )
+    }
+
     renderHistory(item, index) {
         return (
             <div key={index} style={styles.rowHistory}>
@@ -430,7 +604,7 @@ class Shop extends Component {
     }
 
     renderBody(isMobile) {
-        const { isConnected, showModalConnection, historyUpgrades } = this.state
+        const { isConnected, showModalConnection, historyUpgrades, potionEquipped } = this.state
         const { account, showModalTx, wizaBalance } = this.props
 
         const { boxW, modalW } = getBoxWidth(isMobile)
@@ -506,7 +680,7 @@ class Shop extends Component {
                             UPGRADES
                         </p>
 
-                        <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                        <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
                             {this.renderShopCard("hp")}
 
                             {this.renderShopCard("defense")}
@@ -516,6 +690,45 @@ class Shop extends Component {
                             {this.renderShopCard("damage")}
 
                         </div>
+
+                        {
+                            !potionEquipped ?
+                            <div style={{ flexDirection: 'column' }}>
+                                <p style={{ fontSize: 26, color: 'white', marginBottom: 5 }}>
+                                    VIALS
+                                </p>
+
+                                <p style={{ fontSize: 18, color: 'white', marginBottom: 10 }}>
+                                    In each tournament you will be able to buy one vial to temporarily upgrade your wizard. The bonus will last the whole tournament.
+                                </p>
+
+                                <p style={{ fontSize: 18, color: 'white', marginBottom: 10 }}>
+                                    ATTENTION! Each wizard can have a maximum of one vial
+                                </p>
+
+                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                    {this.renderVialCard("hp", true)}
+
+                                    {this.renderVialCard("defense", true)}
+
+                                    {this.renderVialCard("attack", true)}
+
+                                    {this.renderVialCard("damage", true)}
+
+                                </div>
+                            </div>
+                            :
+                            <div style={{ flexDirection: 'column' }}>
+                                <p style={{ fontSize: 26, color: 'white', marginBottom: 5 }}>
+                                    VIALS
+                                </p>
+
+                                <p style={{ fontSize: 17, color: 'white', marginBottom: 10 }}>
+                                    Vial Equipped
+                                </p>
+                                {this.renderVialCard(potionEquipped, false)}
+                            </div>
+                        }
 
                     </div>
 
@@ -639,6 +852,17 @@ const styles = {
         paddingTop: 5,
         backgroundColor: "#3729af"
     },
+    cardVialStyle: {
+        width: 160,
+        borderRadius: 2,
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 35,
+        marginBottom: 35,
+        paddingTop: 5,
+        backgroundColor: "#3729af"
+    },
     btnChoose: {
         height: 40,
         width: '70%',
@@ -676,5 +900,7 @@ export default connect(mapStateToProps, {
 	setNetworkUrl,
 	getWizaBalance,
     buyUpgrade,
-    setWizardSelectedShop
+    setWizardSelectedShop,
+    getPotionEquipped,
+    buyVial
 })(Shop)

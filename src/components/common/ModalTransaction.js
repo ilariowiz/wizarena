@@ -166,6 +166,9 @@ class ModalTransaction extends Component {
 				else if (type === 'upgrade') {
 					body = `You will improve the ${statToUpgrade} of ${nameNft}`
 				}
+				else if (type === 'buyvial') {
+					body = `You will buy the ${statToUpgrade} vial for the ${nameNft}`
+				}
 				else if (type === 'changespell_pvp') {
 					body = `You will change the spell of ${nameNft}`
 				}
@@ -274,6 +277,10 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'upgrade') {
 					body = `Your Wizard ${nameNft} is stronger now!`
+					buttonText = 'Close'
+				}
+				else if (type === 'buyvial') {
+					body = `Vial bought!`
 					buttonText = 'Close'
 				}
 				else if (type === 'changespell_pvp') {

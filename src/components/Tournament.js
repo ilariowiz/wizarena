@@ -19,7 +19,8 @@ import {
     setNetworkSettings,
     setNetworkUrl,
     getSubscribed,
-    loadUserMintedNfts
+    loadUserMintedNfts,
+    getPotionEquippedMass
 } from '../actions'
 import '../css/Nft.css'
 
@@ -35,7 +36,8 @@ class Tournament extends Component {
             yourStat: "",
             avgLevel: 0,
             matchPair: [],
-            userMinted: []
+            userMinted: [],
+            potionsEquipped: []
 		}
 	}
 
@@ -95,6 +97,10 @@ class Tournament extends Component {
                 const tournamentName = tournament.name.split("_")[0]
 
                 this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, (subscribed) => {
+
+                    //console.log(subscribed);
+
+                    this.getAllPotionsEquipped(subscribed, tournamentName)
 
                     const winners = []
                     const winners4 = []
@@ -162,12 +168,25 @@ class Tournament extends Component {
         })
     }
 
+    getAllPotionsEquipped(subscribers, tournamentName) {
+        const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
+
+        let keys = []
+        subscribers.map(i => {
+            keys.push(`"${tournamentName}_${i.id}"`)
+        })
+
+        this.props.getPotionEquippedMass(chainId, gasPrice, gasLimit, networkUrl, keys, (response) => {
+            //console.log(response);
+            this.setState({ potionsEquipped: response })
+        })
+    }
+
     async loadPair(id) {
         const docRef = doc(firebasedb, "matching", id)
 
 		const docSnap = await getDoc(docRef)
 		const data = docSnap.data()
-
         //console.log(data);
 
         if (data) {
@@ -187,6 +206,8 @@ class Tournament extends Component {
     }
 
     renderRow(item, index, width) {
+        const { potionsEquipped, tournament } = this.state
+
         //per ogni row creiamo un array di GameCard
 		return (
             <div style={{ marginBottom: 15 }} key={index}>
@@ -195,6 +216,8 @@ class Tournament extends Component {
                     key={index}
                     history={this.props.history}
                     width={width}
+                    potionsEquipped={potionsEquipped}
+                    tournamentName={tournament.name.split("_")[0]}
                 />
             </div>
         )
@@ -802,5 +825,6 @@ export default connect(mapStateToProps, {
     setNetworkSettings,
     setNetworkUrl,
     getSubscribed,
-    loadUserMintedNfts
+    loadUserMintedNfts,
+    getPotionEquippedMass
 })(Tournament)
