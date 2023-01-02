@@ -245,12 +245,7 @@ class Collection extends Component {
 				if (i.stat === "weakness") {
 					//console.log(newData);
 					newData = newData.filter(n => {
-						if (n.weakness && n.weakness.toUpperCase() === i.value.toUpperCase()) {
-							return n
-						}
-						else if (n.weakness && n.weakness.toUpperCase() === "PYSCHO" && i.value.toUpperCase() === "PSYCHO") {
-							return n
-						}
+						return n.weakness && n.weakness.toUpperCase() === i.value.toUpperCase()
 					})
 				}
 
@@ -514,12 +509,6 @@ class Collection extends Component {
 	}
 
 	renderListStat(item, index, statName) {
-
-		let textTitle = item
-		if (item === "pyscho") {
-			textTitle = "psycho"
-		}
-
 		return (
 			<button
 				key={index}
@@ -530,7 +519,7 @@ class Collection extends Component {
 				}}
 			>
 				<p style={{ fontSize: 19 }}>
-					{textTitle}
+					{item}
 				</p>
 			</button>
 		)
@@ -548,10 +537,6 @@ class Collection extends Component {
 			//console.log(findItem);
 
 			let v = findItem.value
-			if (findItem.value === "pyscho") {
-				v = "psycho"
-			}
-
 			text = `${statDisplay} = ${v}`
 		}
 
@@ -725,7 +710,7 @@ class Collection extends Component {
 					{this.renderBoxSearchStat("defense", "DEFENSE", ["14 - 15", "16 - 17", "18 - 19", "20 - 21", "22 - 23", "24 - 25", "26 - 27", "28 - 29", "30 - 31"].reverse())}
 					{this.renderBoxSearchStat("element", "ELEMENT", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
 					{this.renderBoxSearchStat("resistance", "RESISTANCE", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
-					{this.renderBoxSearchStat("weakness", "WEAKNESS", ["acid", "dark", "earth", "fire", "ice", "pyscho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
+					{this.renderBoxSearchStat("weakness", "WEAKNESS", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
 					{this.renderBoxSearchStat("spellbook", "SPELLBOOK", [1, 2, 3, 4])}
 					{this.renderBoxSearchStat("level", "LEVEL", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 300"].reverse())}
 				</div>

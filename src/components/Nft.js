@@ -934,9 +934,6 @@ class Nft extends Component {
 	renderStat(title, value) {
 
 		let fixedValue = value
-		if (value === "PYSCHO") {
-			fixedValue = "PSYCHO"
-		}
 
 		if (title === "SPELL PERK") {
 			let condDesc;

@@ -32,6 +32,12 @@ const logo_defense = require('../assets/defense_shops.png')
 const logo_atk = require('../assets/attack_shops.png')
 const logo_dmg = require('../assets/damage_shops.png')
 
+
+const potion_hp = require('../assets/potion_hp.png')
+const potion_def = require('../assets/potion_def.png')
+const potion_atk = require('../assets/potion_atk.png')
+const potion_dmg = require('../assets/potion_dmg.png')
+
 class Shop extends Component {
     constructor(props) {
         super(props)
@@ -251,22 +257,17 @@ class Shop extends Component {
 
 
         let img;
-        let imgStyle;
         if (key === "hp") {
-            img = logo_hp
-            imgStyle = { width: 52, height: 52 }
+            img = potion_hp
         }
         else if (key === "defense") {
-            img = logo_defense
-            imgStyle = { width: 45, height: 45 }
+            img = potion_def
         }
         else if (key === "attack") {
-            img = logo_atk
-            imgStyle = { width: 58, height: 58 }
+            img = potion_atk
         }
         else if (key === "damage") {
-            img = logo_dmg
-            imgStyle = { width: 58, height: 58 }
+            img = potion_dmg
         }
 
         return (
@@ -276,10 +277,10 @@ class Shop extends Component {
             >
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
-                    <div style={{ width: 58, height: 58, marginBottom: 14, alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 100, height: 100, alignItems: 'center', justifyContent: 'center' }}>
                         <img
                             src={img}
-                            style={imgStyle}
+                            style={{ width: 110, height: 110 }}
                             alt="logo"
                         />
                     </div>
@@ -351,7 +352,7 @@ class Shop extends Component {
                     <p style={{ fontSize: 17, color: 'white' }}>
                         NEW LEVEL
                     </p>
-                    <p style={{ fontSize: 21, color: colorTextLevel, marginBottom: 20 }}>
+                    <p style={{ fontSize: 21, color: colorTextLevel, marginBottom: 10 }}>
                         {newLevel}
                     </p>
                 </div>

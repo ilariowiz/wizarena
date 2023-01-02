@@ -286,7 +286,7 @@ class DoFight extends Component {
 
                 let danno = dannoSpell + (Math.floor(Math.random() * 5) - 2)
 
-                if ((attaccante.element.toLowerCase() === difensore.weakness) || (attaccante.element.toLowerCase() === "psycho" && difensore.weakness.toLowerCase() === "pyscho")) {
+                if (attaccante.element.toLowerCase() === difensore.weakness) {
                     danno *= 2
                     hasDebolezza = true
                 }
