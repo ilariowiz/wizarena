@@ -27,12 +27,6 @@ import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, MAX_LEV
 import '../css/Nft.css'
 import '../css/Shop.css'
 
-const logo_hp = require('../assets/hp_shops.png')
-const logo_defense = require('../assets/defense_shops.png')
-const logo_atk = require('../assets/attack_shops.png')
-const logo_dmg = require('../assets/damage_shops.png')
-
-
 const potion_hp = require('../assets/potion_hp.png')
 const potion_def = require('../assets/potion_def.png')
 const potion_atk = require('../assets/potion_atk.png')
