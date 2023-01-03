@@ -99,15 +99,10 @@
     )
 
     ;; checks the owner of the nft
-    (defcap OWNER (account:string id:string)
+    (defcap OWNER (account:string id:string owner:string)
         @doc "Enforces that an account owns the nft"
-        (let
-            (
-                (data (get-wizard-data id))
-            )
-            (enforce (= (at "owner" data) account) "Account is not owner of the NFT")
-            (compose-capability (ACCOUNT_GUARD account))
-        )
+        (enforce (= owner account) "Account is not owner of the NFT")
+        (compose-capability (ACCOUNT_GUARD account))
     )
 
     (defcap DEBIT ( sender:string )
@@ -393,31 +388,32 @@
     ; WIZA functions
     ; --------------------------------------------------------------------------
 
-    (defun stake-all (objects:list)
+    (defun stake-all (objects:list m:module{wizarena-interface-v1})
         (map
-            (nft-to-stake)
+            (nft-to-stake m)
             objects
         )
     )
 
-    (defun nft-to-stake (obj:object)
+    (defun nft-to-stake (m:module{wizarena-interface-v1} obj:object)
         (let (
                 (idnft (at "idnft" obj))
                 (sender (at "sender" obj))
             )
-            (stake idnft sender)
+            (stake idnft sender m)
         )
     )
 
 
-    (defun stake (idnft:string sender:string)
+    (defun stake (idnft:string sender:string m:module{wizarena-interface-v1})
+        (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
         (let (
-                (data (get-wizard-data idnft))
+                (data (get-wizard-data idnft m))
             )
             (enforce (= (at "listed" data) false) "A listed wizard cannot be staked")
             (enforce (= (at "confirmBurn" data) false) "You can't stake a wizard in burning queue")
             (enforce (contains 'spellbook data) "no spellbook data")
-            (with-capability (OWNER sender idnft)
+            (with-capability (OWNER sender idnft (at "owner" data))
                 (with-default-read staked-table idnft
                     {"staked": false}
                     {"staked":= staked}
@@ -435,75 +431,82 @@
         )
     )
 
-    (defun claim-all-unstake-all (objects:list)
+    (defun claim-all-unstake-all (objects:list m:module{wizarena-interface-v1})
         (map
-            (claim-all-and-unstake)
+            (claim-all-and-unstake m)
             objects
         )
     )
 
-    (defun claim-all-and-unstake (obj:object)
+    (defun claim-all-and-unstake (m:module{wizarena-interface-v1} obj:object)
         (let (
                 (idnft (at "idnft" obj))
                 (sender (at "sender" obj))
             )
-            (unstake idnft sender)
+            (unstake idnft sender m)
         )
     )
 
-    (defun unstake (idnft:string sender:string)
+    (defun unstake (idnft:string sender:string m:module{wizarena-interface-v1})
+        (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
         (let (
                 (data (get-nft-staked idnft))
+                (data-wizard (get-wizard-data idnft m))
             )
             (enforce (= (at "staked" data) true) "Wizard already unstaked")
-        )
-        (with-capability (OWNER sender idnft)
-            (with-read staked-table idnft
-                {"multiplier":= multiplier,
-                "timestamp":= stakedTime,
-                "account":= account
-                "idnft":=id
-                "staked":=staked}
-                (update staked-table idnft
-                    {"staked": false}
+            (with-capability (OWNER sender idnft (at "owner" data-wizard))
+                (with-read staked-table idnft
+                    {"multiplier":= multiplier,
+                    "timestamp":= stakedTime,
+                    "account":= account
+                    "idnft":=id
+                    "staked":=staked}
+                    (update staked-table idnft
+                        {"staked": false}
+                    )
+                    (with-capability (PRIVATE)
+                        (mine-from-stake account multiplier stakedTime)
+                    )
                 )
-                (with-capability (PRIVATE)
-                    (mine-from-stake account multiplier stakedTime)
-                )
+                (emit-event (UNSTAKE_NFT idnft sender))
             )
-            (emit-event (UNSTAKE_NFT idnft sender))
         )
     )
 
-    (defun claim-all (objects:list)
+    (defun claim-all (objects:list m:module{wizarena-interface-v1})
         (map
-            (claim-all-without-unstake)
+            (claim-all-without-unstake m)
             objects
         )
     )
 
-    (defun claim-all-without-unstake (obj:object)
+    (defun claim-all-without-unstake (m:module{wizarena-interface-v1} obj:object)
         (let (
                 (idnft (at "idnft" obj))
                 (sender (at "sender" obj))
             )
-            (claim-without-unstake idnft sender)
+            (claim-without-unstake idnft sender m)
         )
     )
 
-    (defun claim-without-unstake (idnft:string sender:string)
-        (with-capability (OWNER sender idnft)
-            (with-read staked-table idnft
-                {"multiplier":= multiplier,
-                "timestamp":= stakedTime,
-                "account":= account
-                "idnft":=id
-                "staked":=staked}
-                (with-capability (PRIVATE)
-                    (mine-from-stake account multiplier stakedTime)
-                )
-                (update staked-table idnft
-                    {"timestamp": (at "block-time" (chain-data))}
+    (defun claim-without-unstake (idnft:string sender:string m:module{wizarena-interface-v1})
+        (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
+        (let (
+                (data (get-wizard-data idnft m))
+            )
+            (with-capability (OWNER sender idnft (at "owner" data))
+                (with-read staked-table idnft
+                    {"multiplier":= multiplier,
+                    "timestamp":= stakedTime,
+                    "account":= account
+                    "idnft":=id
+                    "staked":=staked}
+                    (with-capability (PRIVATE)
+                        (mine-from-stake account multiplier stakedTime)
+                    )
+                    (update staked-table idnft
+                        {"timestamp": (at "block-time" (chain-data))}
+                    )
                 )
             )
         )
@@ -630,8 +633,9 @@
     ; --------------------------------------------------------------------------
     ; helpers functions
     ; --------------------------------------------------------------------------
-    (defun get-wizard-data (id:string)
-        (free.wiz-arena.get-wizard-fields-for-id (str-to-int id))
+    (defun get-wizard-data (id:string m:module{wizarena-interface-v1})
+        (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
+        (m::get-wizard-fields-for-id (str-to-int id))
     )
 
     (defun get-nft-staked (idnft:string)

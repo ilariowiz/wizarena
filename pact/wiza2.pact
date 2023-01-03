@@ -12,6 +12,7 @@
           (<= (length accountId) 256))) ]
 
   (implements wiza1-interface-v1)
+  (implements wizarena-interface-v1)
 
   (defconst ADMIN_KEYSET "free.wiza-token2-keyset")
 
@@ -31,6 +32,10 @@
   )
 
   (defun check-nft-is-staked:object (idnft:string)
+    true
+  )
+
+  (defun get-wizard-fields-for-id:object (id:integer)
     true
   )
 

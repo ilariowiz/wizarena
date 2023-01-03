@@ -1700,7 +1700,7 @@ export const stakeNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId,
 				"Verify owner",
 				"Verify your are the owner",
 				`free.${CONTRACT_NAME_WIZA}.OWNER`,
-				[account.account, idNft, 'free.wiz-arena']
+				[account.account, idNft, account.account]
 			),
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 		]
@@ -1737,7 +1737,7 @@ export const unstakeNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netI
 				"Verify owner",
 				"Verify your are the owner",
 				`free.${CONTRACT_NAME_WIZA}.OWNER`,
-				[account.account, idNft, 'free.wiz-arena']
+				[account.account, idNft, account.account]
 			),
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 		]
@@ -1774,7 +1774,7 @@ export const claimWithoutUnstake = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLi
 				"Verify owner",
 				"Verify your are the owner",
 				`free.${CONTRACT_NAME_WIZA}.OWNER`,
-				[account.account, idNft, 'free.wiz-arena']
+				[account.account, idNft, account.account]
 			),
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 		]
@@ -1823,7 +1823,7 @@ export const claimAllWithoutUnstake = (chainId, gasPrice = DEFAULT_GAS_PRICE, ga
 					"Verify owner",
 					"Verify your are the owner",
 					`free.${CONTRACT_NAME_WIZA}.OWNER`,
-					[account.account, i, 'free.wiz-arena']
+					[account.account, i, account.account]
 				)
 			)
 		})
@@ -1874,7 +1874,7 @@ export const claimAllAndUnstakeAll = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 					"Verify owner",
 					"Verify your are the owner",
 					`free.${CONTRACT_NAME_WIZA}.OWNER`,
-					[account.account, i, 'free.wiz-arena']
+					[account.account, i, account.account]
 				)
 			)
 		})
@@ -1925,7 +1925,7 @@ export const stakeAll = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId,
 					"Verify owner",
 					"Verify your are the owner",
 					`free.${CONTRACT_NAME_WIZA}.OWNER`,
-					[account.account, i, 'free.wiz-arena']
+					[account.account, i, account.account]
 				)
 			)
 		})
