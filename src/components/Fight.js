@@ -7,6 +7,7 @@ import { firebasedb } from './Firebase';
 import Header from './Header'
 import getImageUrl from './common/GetImageUrl'
 import cardStats from './common/CardStats'
+import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import { MAIN_NET_ID, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import {
     setNetworkSettings,
@@ -69,11 +70,28 @@ class Fight extends Component {
 
         if (data.actions[0].includes("to show up")) {
             this.setState({ showOnlyOne: true })
-            this.loadNft('u1', data.idnft1)
+
+            if (data.info1 && data.info1.defense) {
+                this.setState({ u1: data.info1, loading: false })
+            }
+            else {
+                this.loadNft('u1', data.idnft1)
+            }
         }
         else {
-            this.loadNft('u1', data.idnft1)
-            this.loadNft('u2', data.idnft2)
+            if (data.info1 && data.info1.defense) {
+                this.setState({ u1: data.info1 })
+            }
+            else {
+                this.loadNft('u1', data.idnft1)
+            }
+
+            if (data.info2 && data.info2.defense) {
+                this.setState({ u2: data.info2, loading: false })
+            }
+            else {
+                this.loadNft('u2', data.idnft2)
+            }
         }
     }
 
@@ -125,9 +143,10 @@ class Fight extends Component {
 	}
 
     renderSingleNft(info, width) {
-        const { tournament } = this.state
+        //const { tournament } = this.state
         //console.log(info, tournament);
 
+        /*
         let tournamentName = tournament.split("_")[0]
 
         const tournamentMedals = info.medals[tournamentName]
@@ -139,6 +158,18 @@ class Fight extends Component {
         }
         //console.log(medals);
         const numberOfMedalsForTournament = medals || '0'
+        */
+
+        //console.log(info);
+
+        const objLevel = {
+            hp: { int: info.hp },
+            defense: { int: info.defense },
+            attack: { int: info.attack },
+            damage: { int: info.damage },
+        }
+
+        const level = calcLevelWizard(objLevel)
 
         return (
             <div className="containerChoice" style={{ marginRight: 0, width, height: '100%' }}>
@@ -148,13 +179,23 @@ class Fight extends Component {
                     alt={`#${info.id}`}
                 />
 
-                <div style={{ width: '80%', marginBottom: 10 }}>
+                <div style={{ width: '80%', marginBottom: 5 }}>
                     <p style={{ color: 'white', fontSize: 19 }}>
                         {info.name}
                     </p>
                 </div>
 
-                {cardStats(info, numberOfMedalsForTournament, '80%')}
+                <div style={{ width: '80%', marginBottom: 5, alignItems: 'center' }}>
+                    <p style={{ color: '#c2c0c0', fontSize: 16, marginRight: 8 }}>
+                        LEVEL
+                    </p>
+
+                    <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 20 }}>
+                        {level}
+                    </p>
+                </div>
+
+                {cardStats(info, undefined, '80%')}
             </div>
         )
     }
