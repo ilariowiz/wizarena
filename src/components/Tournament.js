@@ -5,6 +5,7 @@ import moment from 'moment'
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import DotLoader from 'react-spinners/DotLoader';
+import Popup from 'reactjs-popup';
 import NftCardTournament from './common/NftCardTournament'
 import Header from './Header'
 import getBoxWidth from './common/GetBoxW'
@@ -335,6 +336,83 @@ class Tournament extends Component {
         )
     }
 
+    renderHeaderLeague() {
+        const { tournament } = this.state
+
+        return (
+            <div style={{ alignItems: 'center', marginBottom: 40 }}>
+
+                <div style={{ flexDirection: 'column' }}>
+
+                    <div style={{ alignItems: 'center', marginBottom: 10 }}>
+                        <p style={{ fontSize: 30, color: 'white', marginRight: 15 }}>
+                            The Twelve League
+                        </p>
+
+                        <p style={{ fontSize: 17, color: 'white', marginTop: 2 }}>
+                            ({tournament.leagueTournament})
+                        </p>
+                    </div>
+
+                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+
+                        <div style={{ alignItems: 'center', marginRight: 20 }}>
+                            <p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
+                                Region:
+                            </p>
+                            <Popup
+        						trigger={open => (
+                                    <p style={{ textDecoration: "underline", fontSize: 20, color: 'white', cursor: 'pointer' }}>
+                                        {tournament.region}
+                                    </p>
+        						)}
+        						position="bottom center"
+        						on="hover"
+        					>
+        						<div style={{ padding: 10 }}>
+        							<p style={{ fontSize: 17, color: 'black', lineHeight: 1.2 }}>
+                                        {tournament.regionDescription}
+                                    </p>
+        						</div>
+        					</Popup>
+                        </div>
+
+                        <div style={{ alignItems: 'center', marginRight: 20 }}>
+                            <p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
+                                Event:
+                            </p>
+                            <Popup
+        						trigger={open => (
+                                    <p style={{ textDecoration: "underline", fontSize: 20, color: 'white', cursor: 'pointer' }}>
+                                        {tournament.event}
+                                    </p>
+        						)}
+        						position="bottom center"
+        						on="hover"
+        					>
+        						<div style={{ padding: 10 }}>
+        							<p style={{ fontSize: 17, color: 'black', lineHeight: 1.2 }}>
+                                        {tournament.eventDescription}
+                                    </p>
+        						</div>
+        					</Popup>
+                        </div>
+                    </div>
+
+                </div>
+
+                {/*<button
+                    className="btnH"
+                    style={{ marginLeft: 20, borderColor: CTA_COLOR, borderWidth: 2, borderStyle: 'solid', borderRadius: 2, width: 150, height: 40 }}
+                >
+                    <p style={{ fontSize: 17, color: CTA_COLOR }}>
+                        RANKING
+                    </p>
+                </button>*/}
+            </div>
+        )
+    }
+
     renderBody(isMobile) {
         const { tournament, matchPair } = this.state
         const { buyin, subscribed } = this.props
@@ -362,6 +440,8 @@ class Tournament extends Component {
 
 			return (
 				<div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
+
+                    {this.renderHeaderLeague()}
 
 					<div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 30 }}>
 
@@ -433,6 +513,9 @@ class Tournament extends Component {
 
 			return (
 				<div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
+
+                    {this.renderHeaderLeague()}
+
 					<div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 30 }}>
 
 						<div style={{ flexDirection: 'column', width: '100%' }}>
@@ -479,6 +562,9 @@ class Tournament extends Component {
 
         return (
             <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
+
+                {this.renderHeaderLeague()}
+
                 <div style={{ justifyContent: 'space-between', marginBottom: 30 }}>
 
                     <div style={{ flexDirection: 'column', width: '100%', justifyContent: 'flex-end' }}>
@@ -640,6 +726,8 @@ class Tournament extends Component {
         return (
             <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
 
+                {this.renderHeaderLeague()}
+                
                 <div style={{ justifyContent: 'space-between', marginBottom: 30 }}>
 
                     <div style={{ flexDirection: 'column', width: '100%' }}>
