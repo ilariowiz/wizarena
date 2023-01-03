@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { IoMedalOutline } from 'react-icons/io5'
 import getImageUrl from './GetImageUrl'
+import calcMedals from './CalcMedals'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
 import '../../css/NftCard.css'
 
@@ -28,15 +29,11 @@ class NftCardTournament extends Component {
 	}
 
 	render() {
-		const { item, history, width, account } = this.props
+		const { item, history, width, account, tournamentSeason } = this.props
 
 		//console.log(item);
 
-		let totalMedals = 0
-		if (Object.keys(item.medals).length > 0) {
-			const arrayValueMedals = Object.values(item.medals)
-			arrayValueMedals.map(i => totalMedals = totalMedals + parseInt(i))
-		}
+		let totalMedals = calcMedals(item)
 
 		//console.log(totalMedals);
 
@@ -107,7 +104,7 @@ class NftCardTournament extends Component {
 							/>
 
 							<p style={{ color: isMine ? "gold" : "white", fontSize: 18, lineHeight: 1 }}>
-								{totalMedals}
+								{totalMedals[tournamentSeason]}
 							</p>
 						</div>
 
