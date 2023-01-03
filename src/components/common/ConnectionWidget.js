@@ -23,7 +23,8 @@ class ConnectionWidget extends Component {
 			loading: false,
 			error: '',
 			useXWallet: false,
-			showInput: false
+			showInput: false,
+			chainweaverInfo: ""
 		}
 	}
 
@@ -72,13 +73,13 @@ class ConnectionWidget extends Component {
 			return
 		}
 
-		this.setState({ loading: true })
+		this.setState({ loading: true, chainweaverInfo: "Check your wallet to verify your identity" })
 
-		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+		const { chainId, gasPrice, gasLimit, networkUrl, netId } = this.props
 		//console.log(this.props)
 
 		//console.log(accountAddr)
-		this.props.connectChainweaver(address, chainId, gasPrice, gasLimit, networkUrl, (error) => {
+		this.props.connectChainweaver(address, chainId, gasPrice, gasLimit, networkUrl, netId, (error) => {
 			if (!error) {
 				//console.log("utente salvato!")
 				this.props.callback()
@@ -86,18 +87,25 @@ class ConnectionWidget extends Component {
 			else {
 				console.log(error)
 				//console.log("address non valido o inesistente")
-				this.setState({ error: 'Invalid or non-existent address', loading: false })
+				this.setState({ error: 'Invalid or non-existent address', loading: false, chainweaverInfo: "" })
 			}
 		})
 	}
 
 	render() {
-		const { error, loading, showInput } = this.state
+		const { error, loading, showInput, chainweaverInfo } = this.state
 
 		if (loading) {
 			return (
-				<div style={{ height: 45 }}>
+				<div style={{ height: 70, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
 					<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+
+					{
+						chainweaverInfo &&
+						<p style={{ fontSize: 18, color: 'white', marginTop: 30 }}>
+							{chainweaverInfo}
+						</p>
+					}
 				</div>
 			)
 		}

@@ -116,15 +116,6 @@ export const connectXWallet = (netId, chainId, gasPrice, gasLimit, networkUrl, c
 				dispatch(setIsConnectWallet(false))
 				break connectlabel
 			}
-
-			/*
-			if (res.account && res.account.chainId !== chainId) {
-				//console.log(`You need to select chain ${chainId} from X Wallet`)
-				error = `You need to select chain ${chainId} from X Wallet`
-				dispatch(setIsConnectWallet(false))
-				break connectlabel
-			}
-			*/
 		}
 		catch (e) {
 			//console.log(e)
@@ -144,12 +135,75 @@ export const connectXWallet = (netId, chainId, gasPrice, gasLimit, networkUrl, c
 	}
 }
 
-export const connectChainweaver = (account, chainId, gasPrice, gasLimit, networkUrl, callback) => {
-	return (dispatch) => {
+export const connectChainweaver = (account, chainId, gasPrice, gasLimit, networkUrl, netId, callback) => {
+	return async (dispatch) => {
 		dispatch(setIsXwallet(false))
 		dispatch(setIsWalletConnectQR(false))
 
-		dispatch(fetchAccountDetails(account, chainId, gasPrice, gasLimit, networkUrl, callback))
+		let pactCode = `(free.${CONTRACT_NAME}.check-your-account "${account}")`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
+				[account]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		let cmdToSign = {
+			pactCode,
+			caps,
+			sender: account,
+			gasLimit: 1000,
+			gasPrice,
+			chainId,
+			type: 'exec',
+			ttl: 600,
+			networkId: netId,
+			signingPubKey: account.replace("k:", "")
+		}
+
+		let signedCmd;
+
+		try {
+			signedCmd = await Pact.wallet.sign(cmdToSign)
+
+			if (!signedCmd) {
+				console.log("Failed to sign the command in the wallet")
+				return
+			}
+
+		} catch(e) {
+			console.log(e)
+			console.log("Failed to sign the command in the wallet")
+			return
+		}
+
+		let localRes = null
+
+		try {
+			localRes = await fetch(`${networkUrl}/api/v1/local`, mkReq(signedCmd));
+		} catch(e) {
+			console.log(e)
+			console.log("Failed to confirm transaction with the network")
+			dispatch(updateTransactionState("error", "Failed to confirm transaction with the network"))
+			return
+		}
+
+		//console.log(localRes);
+
+		const parsedLocalRes = await parseRes(localRes);
+
+		if (parsedLocalRes && parsedLocalRes.result && parsedLocalRes.result.status === "success") {
+			dispatch(fetchAccountDetails(account, chainId, gasPrice, gasLimit, networkUrl, callback))
+		}
+		else {
+			if (callback) {
+				callback("The account could not be verified")
+			}
+		}
 	}
 }
 
