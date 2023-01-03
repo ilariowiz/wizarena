@@ -1693,14 +1693,14 @@ export const calculateReward = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit 
 export const stakeNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idNft, account) => {
 	return (dispatch) => {
 
-		let pactCode = `(free.${CONTRACT_NAME_WIZA}.stake "${idNft}" "${account.account}")`;
+		let pactCode = `(free.${CONTRACT_NAME_WIZA}.stake "${idNft}" "${account.account}" free.wiz-arena)`;
 
 		let caps = [
 			Pact.lang.mkCap(
 				"Verify owner",
 				"Verify your are the owner",
 				`free.${CONTRACT_NAME_WIZA}.OWNER`,
-				[account.account, idNft]
+				[account.account, idNft, 'free.wiz-arena']
 			),
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 		]
@@ -1730,14 +1730,14 @@ export const stakeNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId,
 export const unstakeNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idNft, account) => {
 	return (dispatch) => {
 
-		let pactCode = `(free.${CONTRACT_NAME_WIZA}.unstake "${idNft}" "${account.account}")`;
+		let pactCode = `(free.${CONTRACT_NAME_WIZA}.unstake "${idNft}" "${account.account}" free.wiz-arena)`;
 
 		let caps = [
 			Pact.lang.mkCap(
 				"Verify owner",
 				"Verify your are the owner",
 				`free.${CONTRACT_NAME_WIZA}.OWNER`,
-				[account.account, idNft]
+				[account.account, idNft, 'free.wiz-arena']
 			),
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 		]
@@ -1767,14 +1767,14 @@ export const unstakeNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netI
 export const claimWithoutUnstake = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idNft, account) => {
 	return (dispatch) => {
 
-		let pactCode = `(free.${CONTRACT_NAME_WIZA}.claim-without-unstake "${idNft}" "${account.account}")`;
+		let pactCode = `(free.${CONTRACT_NAME_WIZA}.claim-without-unstake "${idNft}" "${account.account}" free.wiz-arena)`;
 
 		let caps = [
 			Pact.lang.mkCap(
 				"Verify owner",
 				"Verify your are the owner",
 				`free.${CONTRACT_NAME_WIZA}.OWNER`,
-				[account.account, idNft]
+				[account.account, idNft, 'free.wiz-arena']
 			),
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 		]
@@ -1811,7 +1811,7 @@ export const claimAllWithoutUnstake = (chainId, gasPrice = DEFAULT_GAS_PRICE, ga
 
 		let objs = JSON.stringify(objects)
 
-		let pactCode = `(free.${CONTRACT_NAME_WIZA}.claim-all ${objs})`;
+		let pactCode = `(free.${CONTRACT_NAME_WIZA}.claim-all ${objs} free.wiz-arena)`;
 
 		let caps = [
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
@@ -1823,7 +1823,7 @@ export const claimAllWithoutUnstake = (chainId, gasPrice = DEFAULT_GAS_PRICE, ga
 					"Verify owner",
 					"Verify your are the owner",
 					`free.${CONTRACT_NAME_WIZA}.OWNER`,
-					[account.account, i]
+					[account.account, i, 'free.wiz-arena']
 				)
 			)
 		})
@@ -1862,7 +1862,7 @@ export const claimAllAndUnstakeAll = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 
 		let objs = JSON.stringify(objects)
 
-		let pactCode = `(free.${CONTRACT_NAME_WIZA}.claim-all-unstake-all ${objs})`;
+		let pactCode = `(free.${CONTRACT_NAME_WIZA}.claim-all-unstake-all ${objs} free.wiz-arena)`;
 
 		let caps = [
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
@@ -1874,7 +1874,7 @@ export const claimAllAndUnstakeAll = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 					"Verify owner",
 					"Verify your are the owner",
 					`free.${CONTRACT_NAME_WIZA}.OWNER`,
-					[account.account, i]
+					[account.account, i, 'free.wiz-arena']
 				)
 			)
 		})
@@ -1913,7 +1913,7 @@ export const stakeAll = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId,
 
 		let objs = JSON.stringify(objects)
 
-		let pactCode = `(free.${CONTRACT_NAME_WIZA}.stake-all ${objs})`;
+		let pactCode = `(free.${CONTRACT_NAME_WIZA}.stake-all ${objs} free.wiz-arena)`;
 
 		let caps = [
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
@@ -1925,7 +1925,7 @@ export const stakeAll = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId,
 					"Verify owner",
 					"Verify your are the owner",
 					`free.${CONTRACT_NAME_WIZA}.OWNER`,
-					[account.account, i]
+					[account.account, i, 'free.wiz-arena']
 				)
 			)
 		})
