@@ -183,15 +183,18 @@ export const connectChainweaver = (account, chainId, gasPrice, gasLimit, network
 
 		let localRes = null
 
-		try {
-			localRes = await fetch(`${networkUrl}/api/v1/local`, mkReq(signedCmd));
-		} catch(e) {
-			console.log(e)
-			console.log("Failed to confirm transaction with the network")
-			dispatch(updateTransactionState("error", "Failed to confirm transaction with the network"))
-			return
+		if (signedCmd) {
+			try {
+				localRes = await fetch(`${networkUrl}/api/v1/local`, mkReq(signedCmd));
+			} catch(e) {
+				console.log(e)
+				console.log("Failed to confirm transaction with the network")
+				if (callback) {
+					callback("The account could not be verified")
+				}
+				return
+			}
 		}
-
 		//console.log(localRes);
 
 		const parsedLocalRes = await parseRes(localRes);
