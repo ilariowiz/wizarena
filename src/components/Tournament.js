@@ -311,13 +311,19 @@ class Tournament extends Component {
                     </div>
                 }
 
-                <div style={{ flexWrap: 'wrap' }}>
+                <div style={{ flexWrap: 'wrap', alignItems: 'center' }}>
+                    <p style={{ fontSize: 17, color: TEXT_SECONDARY_COLOR, marginBottom: 10, marginRight: 10 }}>
+                        Wizards:
+                    </p>
                     {this.renderSingleGraph('#88f71e', 'Acid')}
                     {this.renderSingleGraph('#5b30b7', 'Dark')}
                     {this.renderSingleGraph('#cc1919', 'Fire')}
                     {this.renderSingleGraph('#11c8ee', 'Ice')}
                     {this.renderSingleGraph('#e6dc0c', 'Thunder')}
                     {this.renderSingleGraph('#afb9cc', 'Wind')}
+                    <p style={{ fontSize: 17, color: TEXT_SECONDARY_COLOR, marginBottom: 10, marginRight: 10 }}>
+                        Clerics:
+                    </p>
                     {this.renderSingleGraph('#503631', 'Earth')}
                     {this.renderSingleGraph('#840fb2', 'Psycho')}
                     {this.renderSingleGraph('#b2e5ef', 'Spirit')}
