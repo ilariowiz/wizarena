@@ -130,7 +130,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
             </div>
 
             {
-                numberOfMedalsForTournament &&
+                numberOfMedalsForTournament !== undefined &&
                 <div style={{ width: widthBody, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
                     <p style={styles.statsTitleStyle}>
                         MEDALS
