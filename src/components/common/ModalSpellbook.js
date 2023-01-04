@@ -48,10 +48,10 @@ class ModalSpellbook extends Component {
                     onClick={() => this.setState({ selected: spell })}
                 />
 
-                <div style={{ flexDirection: 'column', justifyContent: 'center', width: '100%' }}>
+                <div style={{ flexDirection: 'column', justifyContent: 'center', width: width - 50 }}>
 
-                    <div style={{ justifyContent: 'space-between', marginBottom: 6 }}>
-                        <div>
+                    <div style={{ justifyContent: 'space-between', marginBottom: 6, flexWrap: 'wrap' }}>
+                        <div style={{ marginBottom: 5 }}>
                             <p style={{ color: '#c2c0c0', fontSize: 17, marginRight: 10 }}>
                                 NAME
                             </p>
@@ -83,7 +83,7 @@ class ModalSpellbook extends Component {
                             <p style={{ color: '#c2c0c0', fontSize: 17, marginRight: 10 }}>
                                 PERK
                             </p>
-                            <p style={{  color: 'white', fontSize: 17, marginRight: 10 }}>
+                            <p style={{  color: 'white', fontSize: 17, marginRight: 10, whiteSpace: 'nowrap' }}>
                                 {spell.condition.name || "-"}
                             </p>
                         </div>
@@ -169,8 +169,10 @@ const styles = {
 		position: 'relative'
 	},
     btnSelect: {
+        minWidth: 35,
         width: 35,
         height: 32,
+        minHeight: 32,
         borderRadius: 16,
         borderColor: CTA_COLOR,
         borderStyle: 'solid',
