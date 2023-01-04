@@ -130,7 +130,7 @@ class ModalTransaction extends Component {
 				else if (type === 'buy') {
 					body = `You will buy ${nameNft} (you will need KDA on chain 1)`
 				}
-				else if (type === 'subscription' || type === 'subscribe_pvp') {
+				else if (type === 'subscribe_pvp') {
 					body = `You will subscribe ${nameNft}`
 				}
 				else if (type === 'subscriptionmass') {
@@ -236,10 +236,6 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'buy') {
 					body = `You bought ${nameNft}`
-					buttonText = 'Close'
-				}
-				else if (type === 'subscription') {
-					body = `Your Wizard ${nameNft} is enrolled in this tournament!`
 					buttonText = 'Close'
 				}
 				else if (type === 'subscriptionmass') {

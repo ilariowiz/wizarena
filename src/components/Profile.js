@@ -23,7 +23,6 @@ import {
 	setNetworkUrl,
 	getMontepremi,
 	getBuyin,
-	subscribeToTournament,
 	checkAddressForPrice,
 	withdrawPrize,
 	getFeeTournament,
@@ -249,7 +248,7 @@ class Profile extends Component {
 	}
 
 	subscribe(idNft, spellSelected) {
-		const { chainId, gasPrice, netId, account, buyin, feeTournament } = this.props
+		const { account, buyin, feeTournament } = this.props
 		const { tournament } = this.state
 
 		if (!buyin || !feeTournament  || !spellSelected || !spellSelected.name) {
@@ -272,27 +271,10 @@ class Profile extends Component {
 		toSubscribe.push(obj)
 
 		this.setState({ toSubscribe })
-		//return
-		//console.log(JSON.stringify(refactorSpellSelected));
-		return
-
-		this.setState({ nameNftSubscribed: `#${idNft}`, typeModal: "subscription" })
-
-		this.props.subscribeToTournament(
-			chainId,
-			gasPrice,
-			6000,
-			netId,
-			account,
-			tNumber,
-			idNft,
-			buyin,
-			refactorSpellSelected
-		)
 	}
 
 	subscribeMass() {
-		const { chainId, gasPrice, netId, account, buyin, feeTournament } = this.props
+		const { chainId, gasPrice, netId, account, buyin } = this.props
 		const { toSubscribe } = this.state
 
 		const tot = toSubscribe.length * buyin
@@ -861,7 +843,6 @@ class Profile extends Component {
 	}
 
 	renderOffers(width, offers, isMade, isMobile) {
-		const { account } = this.props
 		const { kadenaPrice } = this.state
 
 		return (
@@ -1331,7 +1312,6 @@ export default connect(mapStateToProps, {
 	setNetworkUrl,
 	getMontepremi,
 	getBuyin,
-	subscribeToTournament,
 	checkAddressForPrice,
 	withdrawPrize,
 	getFeeTournament,

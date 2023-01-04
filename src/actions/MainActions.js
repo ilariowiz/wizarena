@@ -1428,50 +1428,6 @@ export const subscribeToTournamentMass = (chainId, gasPrice = DEFAULT_GAS_PRICE,
 	}
 }
 
-export const subscribeToTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, tournamentName, idNft, buyin, spellSelected) => {
-	return (dispatch) => {
-
-		const key = `${tournamentName}_${idNft}`
-
-		let pactCode = `(free.${CONTRACT_NAME}.subscribe-tournament "${key}" "${tournamentName}" "${idNft}" "${account.account}" ${JSON.stringify(spellSelected)})`;
-
-		let caps = [
-			Pact.lang.mkCap(`Subscribe`, "Pay the buyin", `coin.TRANSFER`, [
-				account.account,
-				WIZ_BANK,
-				buyin,
-			]),
-			Pact.lang.mkCap(
-				"Verify owner",
-				"Verify your are the owner",
-				`free.${CONTRACT_NAME}.OWNER`,
-				[account.account, idNft]
-			),
-			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
-		]
-
-		let cmd = {
-			pactCode,
-			caps,
-			sender: account.account,
-			gasLimit,
-			gasPrice,
-			chainId,
-			ttl: 600,
-			envData: {
-				"user-ks": account.guard,
-				account: account.account
-			},
-			signingPubKey: account.guard.keys[0],
-			networkId: netId
-		}
-
-		//console.log("subscribeToTournament", cmd)
-
-		dispatch(updateTransactionState("cmdToConfirm", cmd))
-	}
-}
-
 export const subscribeToPvPweek = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, pvpWeek, idNft, spellSelected) => {
 	return (dispatch) => {
 
@@ -1586,7 +1542,7 @@ export const transferNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, net
 			networkId: netId
 		}
 
-		//console.log("subscribeToTournament", cmd)
+		//console.log("transferNft", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
@@ -1829,7 +1785,7 @@ export const stakeNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId,
 			networkId: netId
 		}
 
-		//console.log("subscribeToTournament", cmd)
+		//console.log("stakeNft", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
@@ -1866,7 +1822,7 @@ export const unstakeNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netI
 			networkId: netId
 		}
 
-		//console.log("subscribeToTournament", cmd)
+		//console.log("unstakeNft", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
@@ -1903,7 +1859,7 @@ export const claimWithoutUnstake = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLi
 			networkId: netId
 		}
 
-		//console.log("subscribeToTournament", cmd)
+		//console.log("claimWithoutUnstake", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
@@ -1954,7 +1910,7 @@ export const claimAllWithoutUnstake = (chainId, gasPrice = DEFAULT_GAS_PRICE, ga
 			networkId: netId
 		}
 
-		//console.log("subscribeToTournament", cmd)
+		//console.log("claimAllWithoutUnstake", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
@@ -2005,7 +1961,7 @@ export const claimAllAndUnstakeAll = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 			networkId: netId
 		}
 
-		//console.log("subscribeToTournament", cmd)
+		//console.log("claimAllAndUnstakeAll", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
@@ -2056,7 +2012,7 @@ export const stakeAll = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId,
 			networkId: netId
 		}
 
-		//console.log("subscribeToTournament", cmd)
+		//console.log("stakeAll", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
