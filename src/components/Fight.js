@@ -195,7 +195,7 @@ class Fight extends Component {
                     </p>
                 </div>
 
-                {cardStats(info, undefined, '80%')}
+                {cardStats(info, undefined, '80%', true)}
             </div>
         )
     }
