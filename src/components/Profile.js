@@ -4,6 +4,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import moment from 'moment'
 import _ from 'lodash'
+import Popup from 'reactjs-popup';
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
@@ -38,10 +39,12 @@ import {
 	delistNft,
 	getOffersMade,
 	getOffersReceived,
-	acceptOffer
+	acceptOffer,
+	subscribeToTournamentMass
 } from '../actions'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import '../css/Nft.css'
+import 'reactjs-popup/dist/index.css';
 
 
 class Profile extends Component {
@@ -68,7 +71,8 @@ class Profile extends Component {
 			offersReceived: [],
 			offerInfoRecap: "",
 			kadenaPrice: undefined,
-			saleValues: {}
+			saleValues: {},
+			toSubscribe: []
 		}
 	}
 
@@ -254,10 +258,23 @@ class Profile extends Component {
 
 		let refactorSpellSelected = { name: spellSelected.name }
 
-		//console.log(JSON.stringify(refactorSpellSelected));
-		//return
-
 		const tNumber = tournament.name.split("_")[0]
+
+		let obj = {
+			spellSelected: refactorSpellSelected,
+			idnft: idNft,
+			id: `${tNumber}_${idNft}`,
+			round: tNumber,
+			address: account.account
+		}
+
+		const toSubscribe = Object.assign([],  this.state.toSubscribe)
+		toSubscribe.push(obj)
+
+		this.setState({ toSubscribe })
+		//return
+		//console.log(JSON.stringify(refactorSpellSelected));
+		return
 
 		this.setState({ nameNftSubscribed: `#${idNft}`, typeModal: "subscription" })
 
@@ -272,6 +289,17 @@ class Profile extends Component {
 			buyin,
 			refactorSpellSelected
 		)
+	}
+
+	subscribeMass() {
+		const { chainId, gasPrice, netId, account, buyin, feeTournament } = this.props
+		const { toSubscribe } = this.state
+
+		const tot = toSubscribe.length * buyin
+
+		this.setState({ nameNftSubscribed: `You will subscribe ${toSubscribe.length} wizards for ${tot} KDA`, typeModal: "subscriptionmass" })
+
+		this.props.subscribeToTournamentMass(chainId, gasPrice, 6000, netId, account, buyin, toSubscribe)
 	}
 
 	stakeNft(idnft) {
@@ -778,7 +806,7 @@ class Profile extends Component {
 	}
 
 	renderRowChoise(item, index, modalWidth) {
-		const { tournament } = this.state
+		const { tournament, toSubscribe } = this.state
 
 		return (
 			<NftCardChoice
@@ -788,7 +816,17 @@ class Profile extends Component {
 				tournament={tournament.name.split("_")[0]}
 				canSubscribe={tournament.canSubscribe}
 				onSubscribe={(spellSelected) => this.subscribe(item.id, spellSelected)}
+				removeFromSubscribers={(idnft) => {
+					let toSubscribe = Object.assign([], this.state.toSubscribe)
+
+					const idx = toSubscribe.findIndex(i => i.idnft === idnft)
+					if (idx > -1) {
+						toSubscribe.splice(idx, 1)
+					}
+					this.setState({ toSubscribe })
+				}}
 				modalWidth={modalWidth}
+				toSubscribe={toSubscribe}
 			/>
 		)
 	}
@@ -924,6 +962,55 @@ class Profile extends Component {
 				>
 					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 4 ? CTA_COLOR : '#21c6e895' }}>
 						OFFERS RECEIVED
+					</p>
+				</button>
+			</div>
+		)
+	}
+
+	renderFooterSubscribe(isMobile) {
+		const { toSubscribe } = this.state
+
+		let temp = []
+		toSubscribe.map(i => {
+			temp.push(
+				<Popup
+					key={i.idnft}
+					trigger={open => (
+						<img
+							style={{ width: 60, height: 60, borderRadius: 2, marginRight: 10, marginBottom: 10, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', cursor: 'pointer' }}
+							src={getImageUrl(i.idnft)}
+							alt={`#${i.idnft}`}
+						/>
+					)}
+					position="top center"
+					on="hover"
+				>
+					<div style={{ padding: 10, fontSize: 16 }}>
+						#{i.idnft} - Spell Selected: {i.spellSelected.name}
+					</div>
+				</Popup>
+			)
+		})
+
+		const styleBox = isMobile ?
+						{ flexDirection: 'column', alignItems: 'center', paddingBottom: 10, width: '100%' }
+						:
+						{ justifyContent: 'space-between', alignItems: 'center', flex: 1 }
+
+		return (
+			<div style={styleBox}>
+				<div style={{ flexWrap: 'wrap', marginLeft: 20 }}>
+					{temp}
+				</div>
+
+				<button
+					className="btnH"
+					style={{ width: 180, height: 40, justifyContent: 'center', alignItems: 'center', borderRadius: 2, backgroundColor: CTA_COLOR, marginRight: 20 }}
+					onClick={() => this.subscribeMass()}
+				>
+					<p style={{ fontSize: 17, color: 'white' }}>
+						SUBSCRIBE
 					</p>
 				</button>
 			</div>
@@ -1067,6 +1154,13 @@ class Profile extends Component {
 					null
 				}
 
+				{
+					section === 2 && this.state.toSubscribe.length > 0 &&
+					<div style={styles.footerSubscribe}>
+						{this.renderFooterSubscribe(isMobile)}
+					</div>
+				}
+
 				<ModalTransaction
 					showModal={showModalTx}
 					width={modalW}
@@ -1206,6 +1300,22 @@ const styles = {
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
+	footerSubscribe: {
+		width: '100%',
+		minHeight: 90,
+		position: 'sticky',
+		bottom: 0,
+		left: 0,
+		backgroundColor: BACKGROUND_COLOR,
+		borderColor: 'white',
+		borderStyle: 'solid',
+		borderRadius: 2,
+		borderTopWidth: 2,
+		borderLeftWidth: 2,
+		borderRightWidth: 2,
+		borderBottomWidth: 0,
+		paddingTop: 10
+	}
 }
 
 const mapStateToProps = (state) => {
@@ -1237,5 +1347,6 @@ export default connect(mapStateToProps, {
 	delistNft,
 	getOffersMade,
 	getOffersReceived,
-	acceptOffer
+	acceptOffer,
+	subscribeToTournamentMass
 })(Profile)

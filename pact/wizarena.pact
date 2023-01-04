@@ -5,7 +5,7 @@
   "Wizards Arena NFTs"
 
     (use coin)
-
+    (implements wizarena-interface-v1)
   ; --------------------------------------------------------------------------
  ; Constants
 ; --------------------------------------------------------------------------
@@ -36,10 +36,14 @@
     (defconst PVP_OPEN "pvp-open")
     (defconst PVP_WEEK "pvp-week")
 
+    (defconst TOURNAMENT_NAME "tournament-name")
+
     (defconst ID_REVEAL "id-reveal")
 
     (defconst WIZARDS_OFFERS_COUNT_KEY "wizards-offers-count-key")
     (defconst WIZARDS_OFFERS_BANK:string "wizards-offers-bank" "Account holding offers")
+
+    (defconst BUYIN_PVP "buyin-pvp")
 
 ; --------------------------------------------------------------------------
 ; Capabilities
@@ -252,6 +256,12 @@
         status:string
     )
 
+    (defschema potions-schema
+        @doc "schema for potion bought"
+        potionEquipped:string
+        potionBought:bool
+    )
+
     (deftable nfts:{nft-main-schema})
     (deftable nfts-market:{nft-listed-schema})
     (deftable creation:{creation-schema})
@@ -277,6 +287,8 @@
 
     (deftable offers-table:{offers-schema})
 
+    (deftable potions-table:{potions-schema})
+
     ; --------------------------------------------------------------------------
   ; Can only happen once
   ; --------------------------------------------------------------------------
@@ -292,6 +304,7 @@
         (insert values-tournament FEE_KEY {"value": 7.0})
         (insert values-tournament FEE_TOURNAMENT_KEY {"value": 20.0})
         ;(insert max-items MAX_ITEMS_PER_OWNER {"max": 0})
+        (insert values-tournament BUYIN_PVP {"value": 200.0})
 
         ;(insert values WIZ_REVEAL {"value": "0"})
         (insert values TOURNAMENT_OPEN {"value": "0"})
@@ -306,6 +319,8 @@
         (insert values PVP_WEEK {"value":"w1"})
 
         (insert values ID_REVEAL {"value":"1024"})
+
+        (insert values TOURNAMENT_NAME {"value": "t9"})
 
         (insert counts WIZARDS_OFFERS_COUNT_KEY {"count": 0})
         (coin.create-account WIZARDS_OFFERS_BANK (create-BANK-guard))
@@ -1012,14 +1027,54 @@
     ;;;;;; TOURNAMENT ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+    (defun subscribe-tournament-mass (subscribers:list address:string)
+        (let (
+                (buyin (* (get-value-tournament BUYIN_KEY) (length subscribers)))
+                (feebuyin (/ (* (* (get-value-tournament BUYIN_KEY) (length subscribers)) (get-value-tournament FEE_TOURNAMENT_KEY)) 100))
+                (tournament-open (get-value TOURNAMENT_OPEN))
+            )
+            (enforce (= tournament-open "1") "Tournament registrations are closed")
+            (with-capability (ACCOUNT_GUARD address)
+                (install-capability (coin.TRANSFER address ADMIN_ADDRESS feebuyin))
+                (coin.transfer address ADMIN_ADDRESS feebuyin)
+                (install-capability (coin.TRANSFER address WIZ_BANK (- buyin feebuyin)))
+                (coin.transfer address WIZ_BANK (- buyin feebuyin))
+                (with-default-read token-table WIZ_BANK
+                  {"balance": 0.0}
+                  {"balance":= oldbalance }
+                  (update token-table WIZ_BANK {"balance": (+ oldbalance (- buyin feebuyin))})
+                )
+            )
+            (map
+                (nft-to-subscribe)
+                subscribers
+            )
+        )
+    )
+
+    (defun nft-to-subscribe (subscriber:object)
+        (let (
+                (id (at "id" subscriber))
+                (round (at "round" subscriber))
+                (idnft (at "idnft" subscriber))
+                (address (at "address" subscriber))
+                (spellSelected (at "spellSelected" subscriber))
+            )
+            (with-capability (OWNER address idnft)
+                (with-capability (PRIVATE)
+                    (subscribe-tournament id round idnft address spellSelected)
+                )
+            )
+        )
+    )
+
     ;round = tournament number
     (defun subscribe-tournament (id:string round:string idnft:string address:string spellSelected:object)
         @doc "Subscribe a wizard to tournament"
+        (require-capability (PRIVATE))
         (let (
-                (tournament-open (get-value TOURNAMENT_OPEN))
                 (data-wiz (get-wizard-fields-for-id (str-to-int idnft)))
             )
-            (enforce (= tournament-open "1") "Tournament registrations are closed")
             (enforce (= (at "confirmBurn" data-wiz) false) "You can't subscribe a wizard in burning queue")
         )
         (with-default-read tournaments id
@@ -1027,32 +1082,15 @@
             {"idnft":= idnft }
             (enforce (= (length idnft) 0) "Already subscribed to this tournament")
         )
-        (let (
-                (buyin (get-value-tournament BUYIN_KEY))
-                (feebuyin (/ (* (get-value-tournament BUYIN_KEY) (get-value-tournament FEE_TOURNAMENT_KEY)) 100))
-            )
-
-            (with-capability (OWNER address idnft)
-                (install-capability (coin.TRANSFER address ADMIN_ADDRESS feebuyin))
-                (coin.transfer address ADMIN_ADDRESS feebuyin)
-                (install-capability (coin.TRANSFER address WIZ_BANK (- buyin feebuyin)))
-                (coin.transfer address WIZ_BANK (- buyin feebuyin))
-                (insert tournaments id {
-                    "round": round,
-                    "idnft": idnft,
-                    "address": address
-                })
-                (with-default-read token-table WIZ_BANK
-                  {"balance": 0.0}
-                  {"balance":= oldbalance }
-                  (update token-table WIZ_BANK {"balance": (+ oldbalance (- buyin feebuyin))})
-                )
-                (update stats idnft {
-                  "spellSelected": spellSelected
-                })
-                (emit-event (TOURNAMENT_SUBSCRIPTION idnft round))
-            )
-        )
+        (insert tournaments id {
+            "round": round,
+            "idnft": idnft,
+            "address": address
+        })
+        (update stats idnft {
+          "spellSelected": spellSelected
+        })
+        (emit-event (TOURNAMENT_SUBSCRIPTION idnft round))
     )
 
     (defun send-prizes (winners:list)
@@ -1093,75 +1131,12 @@
         (select tournaments (where "round" (= idtournament)))
     )
 
-    ; (defun set-prizes (winners:list)
-    ;     (with-capability (ADMIN)
-    ;         (map
-    ;             (set-prize)
-    ;             winners
-    ;         )
-    ;     )
-    ; )
-    ;
-    ; (defun set-prize (item:object)
-    ;     (require-capability (ADMIN))
-    ;
-    ;     (with-default-read prizes (at "address" item)
-    ;       {"balance": 0.0}
-    ;       {"balance":= oldbalance }
-    ;       (write prizes (at "address" item) {"balance": (+ oldbalance (at "prize" item))})
-    ;     )
-    ; )
-
-    ; (defun check-address-for-prize (address:string)
-    ;     (at "balance" (read prizes address ["balance"]))
-    ; )
-
-    ; (defun withdraw-prize (account:string)
-    ;     (with-capability (ACCOUNT_GUARD account)
-    ;         (with-default-read prizes account
-    ;           {"balance": 0.0}
-    ;           {"balance":= oldbalance }
-    ;           (enforce (> oldbalance 0.0) "you already withdrawn your prize")
-    ;           (install-capability (coin.TRANSFER WIZ_BANK account oldbalance))
-    ;           (coin.transfer WIZ_BANK account oldbalance)
-    ;           (write prizes account {"balance": 0.0})
-    ;           (emit-event (WITHDRAW_PRIZE account oldbalance))
-    ;
-    ;           (with-default-read token-table WIZ_BANK
-    ;             {"balance": 0.0}
-    ;             {"balance":= wizbalance }
-    ;             (update token-table WIZ_BANK {"balance": (- wizbalance oldbalance)})
-    ;           )
-    ;         )
-    ;     )
-    ; )
-
-    ; (defun force-withdraw-prize (account:string)
-    ;     (with-capability (ADMIN)
-    ;         (with-default-read prizes account
-    ;           {"balance": 0.0}
-    ;           {"balance":= oldbalance }
-    ;           (enforce (> oldbalance 0.0) "you already withdrawn your prize")
-    ;           (install-capability (coin.TRANSFER WIZ_BANK account oldbalance))
-    ;           (coin.transfer WIZ_BANK account oldbalance)
-    ;           (write prizes account {"balance": 0.0})
-    ;           (emit-event (WITHDRAW_PRIZE account oldbalance))
-    ;
-    ;           (with-default-read token-table WIZ_BANK
-    ;             {"balance": 0.0}
-    ;             {"balance":= wizbalance }
-    ;             (update token-table WIZ_BANK {"balance": (- wizbalance oldbalance)})
-    ;           )
-    ;         )
-    ;     )
-    ; )
-
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;; PVP ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     ;id = idweek_idnft
-    (defun subscribe-pvp (id:string week:string idnft:string address:string spellSelected:object)
+    (defun subscribe-pvp (id:string week:string idnft:string address:string spellSelected:object m:module{wiza1-interface-v1})
         @doc "Subscribe a wizard to pvp arena"
         (let (
                 (pvp-open (get-value PVP_OPEN))
@@ -1176,8 +1151,9 @@
             (enforce (= (length idnft) 0) "Already subscribed to this pvp week")
         )
         (with-capability (OWNER address idnft)
-            (install-capability (coin.TRANSFER address CLERIC_MINT_ADDRESS 2.0))
-            (coin.transfer address CLERIC_MINT_ADDRESS 2.0)
+            ;(install-capability (coin.TRANSFER address CLERIC_MINT_ADDRESS 2.0))
+            ;(coin.transfer address CLERIC_MINT_ADDRESS 2.0)
+            (spend-wiza (get-value BUYIN_PVP) address m)
             (insert pvp-subscribers id {
                 "pvpweek": week,
                 "idnft": idnft,
@@ -1313,117 +1289,78 @@
         )
     )
 
-    ; (defun buy-upgrade (account:string idnft:string stat:string m:module{wiza1-interface-v1})
-    ;     (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
-    ;     (with-capability (OWNER account idnft)
-    ;         (let (
-    ;                 (current-stat (at stat (get-wizard-fields-for-id (str-to-int idnft))))
-    ;                 (wiza-cost (calculate-wiza-cost idnft stat))
-    ;                 (new-level (calculate-new-level idnft stat))
-    ;             )
-    ;             (enforce (<= new-level LEVEL_CAP) "Wizard's level cannot exceed the level cap")
-    ;             (spend-wiza wiza-cost account m)
-    ;             (cond
-    ;                 (
-    ;                     (= stat "hp")
-    ;                     (update stats idnft {
-    ;                         "hp": (+ current-stat 1)
-    ;                     })
-    ;                 )
-    ;                 (
-    ;                     (= stat "defense")
-    ;                     (update stats idnft {
-    ;                         "defense": (+ current-stat 1)
-    ;                     })
-    ;                 )
-    ;                 (
-    ;                     (= stat "attack")
-    ;                     (update stats idnft {
-    ;                         "attack": (+ current-stat 1)
-    ;                     })
-    ;                 )
-    ;                 (
-    ;                     (= stat "damage")
-    ;                     (update stats idnft {
-    ;                         "damage": (+ current-stat 1)
-    ;                     })
-    ;                 )
-    ;             "")
-    ;         )
-    ;     )
-    ; )
+    (defun buy-potions (account:string idnft:string key:string potion:string m:module{wiza1-interface-v1})
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
 
+        (with-capability (OWNER account idnft)
+            (let (
+                    (current-level (calculate-level idnft))
+                    (tournament-open (get-value TOURNAMENT_OPEN))
+                )
+                (enforce (= tournament-open "1") "You can't buy vial now")
+                (with-default-read potions-table key
+                    {"potionEquipped":"",
+                    "potionBought":false}
+                    {"potionEquipped":=potionEquipped,
+                    "potionBought":=potionBought}
+                    (enforce (= potionBought false) "Already bought a potion for this tournament")
+                    (cond
+                        (
+                            (= potion "hp")
+                            (spend-wiza (+ (/ current-level 2) 0.01) account m)
+                        )
+                        (
+                            (= potion "defense")
+                            (spend-wiza (+ current-level 0.01) account m)
+                        )
+                        (
+                            (= potion "attack")
+                            (spend-wiza (+ current-level 0.01) account m)
+                        )
+                        (
+                            (= potion "damage")
+                            (spend-wiza (+ (round(/ current-level 1.4)) 0.01) account m)
+                        )
+                    "")
+                    (write potions-table key {
+                        "potionEquipped": potion,
+                        "potionBought": true
+                    })
+                )
+            )
+        )
+    )
 
-    ; (defun calculate-wiza-cost (idnft:string stat:string)
-    ;     (let (
-    ;             (data (get-wizard-fields-for-id (str-to-int idnft)))
-    ;             (max-value (at "value" (read upgrade-stat-values stat ['value])))
-    ;             (base-cost (at "value" (read upgrade-stat-values (+ stat "_base_cost") ['value])))
-    ;         )
-    ;         (if
-    ;             (= (- max-value (at stat data)) max-value)
-    ;             (let (
-    ;                     (last-part (/ base-cost 100))
-    ;                     (diff (- max-value 1))
-    ;                 )
-    ;                 (round (- base-cost (* (* 100 (/ diff max-value)) last-part )) 2)
-    ;             )
-    ;             (let (
-    ;                     (last-part (/ base-cost 100))
-    ;                     (diff (- max-value (at stat data)))
-    ;                 )
-    ;                 (round (- base-cost (* (* 100 (/ diff max-value)) last-part )) 2)
-    ;             )
-    ;         )
-    ;     )
-    ; )
+    (defun get-potion-for-tournament-mass (keys:list)
+        (map
+            (get-potion-for-tournament)
+            keys
+        )
+    )
 
-    ; (defun calculate-level (idnft:string)
-    ;     (let (
-    ;             (data (get-wizard-fields-for-id (str-to-int idnft)))
-    ;         )
-    ;         (let (
-    ;                 (hp (at "hp" data))
-    ;                 (def (at "defense" data))
-    ;                 (atk (at "attack" data))
-    ;                 (dmg (at "damage" data))
-    ;             )
-    ;             (round(+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* dmg 2.67)))
-    ;         )
-    ;     )
-    ; )
+    ;key = tournamentname_idnft e.g t8_342
+    (defun get-potion-for-tournament (key:string)
+        (with-default-read potions-table key
+            {"potionEquipped": ""}
+            {"potionEquipped":= potionEquipped}
+            {"key":key, "potionEquipped": potionEquipped}
+        )
+    )
 
-    ; (defun calculate-new-level (idnft:string stat:string)
-    ;     (let (
-    ;             (data (get-wizard-fields-for-id (str-to-int idnft)))
-    ;         )
-    ;         (let (
-    ;                 (hp (at "hp" data))
-    ;                 (def (at "defense" data))
-    ;                 (atk (at "attack" data))
-    ;                 (dmg (at "damage" data))
-    ;             )
-    ;             (cond
-    ;                 (
-    ;                     (= stat "hp")
-    ;                     (round (+ (+ (+ (+ hp 1) (* def 4.67)) (* atk 4.67)) (* dmg 2.67)))
-    ;                 )
-    ;                 (
-    ;                     (= stat "defense")
-    ;                     (round (+ (+ (+ hp (* (+ def 1) 4.67)) (* atk 4.67)) (* dmg 2.67)))
-    ;                 )
-    ;                 (
-    ;                     (= stat "attack")
-    ;                     (round (+ (+ (+ hp (* def 4.67)) (* (+ atk 1) 4.67)) (* dmg 2.67)))
-    ;                 )
-    ;                 (
-    ;                     (= stat "damage")
-    ;                     (round (+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* (+ dmg 1) 2.67)))
-    ;                 )
-    ;             "")
-    ;         )
-    ;     )
-    ; )
+    (defun calculate-level (idnft:string)
+        (let (
+                (data (get-wizard-fields-for-id (str-to-int idnft)))
+            )
+            (let (
+                    (hp (at "hp" data))
+                    (def (at "defense" data))
+                    (atk (at "attack" data))
+                    (dmg (at "damage" data))
+                )
+                (round(+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* dmg 2.67)))
+            )
+        )
+    )
 
     (defun spend-wiza (amount:decimal account:string m:module{wiza1-interface-v1})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
@@ -1508,23 +1445,6 @@
     ;;;;;; GENERIC FUN ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    ; ; free wizard from admin to user
-    ; (defun transfer:string
-    ;     ( id:string
-    ;       sender:string
-    ;       receiver:string
-    ;       amount:decimal
-    ;     )
-    ;     @doc " Transfer to an account, failing if the account to account does not exist. "
-    ;     (enforce (= 1.0 amount) "Only 1 wizard can be transferred")
-    ;     (enforce (= sender ADMIN_ADDRESS) "Can only send from admin account for now")
-    ;     (with-capability (ADMIN)
-    ;         (with-capability (OWNER sender id)
-    ;             (update nfts id {"owner": receiver})
-    ;         )
-    ;     )
-    ; )
-
     (defun transfer-wizard (id:string sender:string receiver:string m:module{wiza1-interface-v1})
         @doc "Transfer nft to an account"
         (enforce-account-exists receiver)
@@ -1549,15 +1469,6 @@
             {"count": (+ 1 (get-count key))}
         )
     )
-
-    ; (defun reset-count(key:string)
-    ;     @doc "Reset count of a key"
-    ;     (with-capability (ADMIN)
-    ;         (update counts key
-    ;             {"count": 0}
-    ;         )
-    ;     )
-    ; )
 
     (defun set-value(key:string value:string)
         @doc "Sets the value for a key to store in a table"
@@ -1689,6 +1600,12 @@
         (at "price" (read price PRICE_KEY ["price"]))
     )
 
+    (defun check-your-account (account:string)
+        (with-capability (ACCOUNT_GUARD account)
+            true
+        )
+    )
+
     ;;;;;; GENERIC HELPER FUNCTIONS ;;;;;;;;;;
 
     (defun curr-chain-id ()
@@ -1728,6 +1645,8 @@
 
     (create-table pvp-subscribers)
     (create-table offers-table)
+
+    (create-table potions-table)
 
     (initialize)
     (insertValuesUpgrade)

@@ -65,7 +65,7 @@ class NftCardChoice extends Component {
     }
 
 	render() {
-		const { item, width, canSubscribe } = this.props
+		const { item, width, canSubscribe, toSubscribe } = this.props
         const { isSubscribed } = this.state
 
         //console.log(tournament)
@@ -73,6 +73,8 @@ class NftCardChoice extends Component {
         const numberOfTotalMedals = item.medals ? this.calcMedals() : 0
 
         const level = calcLevelWizard(item)
+
+        const inToSubscribe = toSubscribe.some(i => i.idnft === item.id)
 
 		return (
 			<div
@@ -116,14 +118,14 @@ class NftCardChoice extends Component {
 
 
                         {
-                            !isSubscribed && canSubscribe && level ?
+                            !isSubscribed && canSubscribe && level && !inToSubscribe ?
                             <button
                                 className='btnSubscribe'
                                 style={styles.btnSubscribe}
                                 onClick={() => this.setState({ showModalSpellbook: true })}
                             >
-                                <p style={{ fontSize: 17, color: 'white' }}>
-                                    SUBSCRIBE
+                                <p style={{ fontSize: 16, color: 'white' }}>
+                                    SELECT TO SUBSCRIBE
                                 </p>
                             </button>
                             :
@@ -154,6 +156,20 @@ class NftCardChoice extends Component {
                                     Already subscribed
                                 </p>
                             </div>
+                            : null
+                        }
+
+                        {
+                            inToSubscribe && !isSubscribed && canSubscribe ?
+                            <button
+                                className='btnSubscribe'
+                                style={Object.assign({}, styles.btnSubscribe, { backgroundColor: '#014766'})}
+                                onClick={() => this.props.removeFromSubscribers(item.id)}
+                            >
+                                <p style={{ fontSize: 16, color: 'white' }}>
+                                    REMOVE TO SUBSCRIBERS
+                                </p>
+                            </button>
                             : null
                         }
 

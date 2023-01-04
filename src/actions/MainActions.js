@@ -1377,6 +1377,57 @@ export const withdrawOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 	}
 }
 
+export const subscribeToTournamentMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, buyin, list) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.subscribe-tournament-mass ${JSON.stringify(list)} "${account.account}")`;
+
+		let coinTransferAmount = _.round(buyin*list.length, 1)
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
+				[account.account]
+			),
+			Pact.lang.mkCap(`Subscribe`, "Pay the buyin", `coin.TRANSFER`, [
+				account.account,
+				WIZ_BANK,
+				coinTransferAmount,
+			]),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		//console.log(caps);
+
+		let gasL = 3000 * list.length
+		if (gasL > 180000) {
+			gasL = 180000
+		}
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit: gasL,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("subscribeToTournamentMass", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
 export const subscribeToTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, tournamentName, idNft, buyin, spellSelected) => {
 	return (dispatch) => {
 
@@ -2167,6 +2218,9 @@ export const signTransaction = (cmdToSign, isXWallet, isQRWalletConnect, qrWalle
 		}
 
 		const parsedLocalRes = await parseRes(localRes);
+
+		//console.log(parsedLocalRes);
+		//return
 
 		if (parsedLocalRes && parsedLocalRes.result && parsedLocalRes.result.status === "success") {
 			let data = null

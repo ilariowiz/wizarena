@@ -24,6 +24,7 @@ import {
     getPotionEquippedMass
 } from '../actions'
 import '../css/Nft.css'
+import 'reactjs-popup/dist/index.css';
 
 
 class Tournament extends Component {
@@ -727,7 +728,7 @@ class Tournament extends Component {
             <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
 
                 {this.renderHeaderLeague()}
-                
+
                 <div style={{ justifyContent: 'space-between', marginBottom: 30 }}>
 
                     <div style={{ flexDirection: 'column', width: '100%' }}>
