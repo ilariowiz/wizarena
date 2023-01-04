@@ -1045,14 +1045,17 @@
                   (update token-table WIZ_BANK {"balance": (+ oldbalance (- buyin feebuyin))})
                 )
             )
-            (map
-                (nft-to-subscribe)
-                subscribers
+            (with-capability (PRIVATE)
+                (map
+                    (nft-to-subscribe)
+                    subscribers
+                )
             )
         )
     )
 
     (defun nft-to-subscribe (subscriber:object)
+        (require-capability (PRIVATE))
         (let (
                 (id (at "id" subscriber))
                 (round (at "round" subscriber))
@@ -1061,9 +1064,7 @@
                 (spellSelected (at "spellSelected" subscriber))
             )
             (with-capability (OWNER address idnft)
-                (with-capability (PRIVATE)
-                    (subscribe-tournament id round idnft address spellSelected)
-                )
+                (subscribe-tournament id round idnft address spellSelected)
             )
         )
     )
