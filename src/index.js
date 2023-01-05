@@ -17,6 +17,8 @@ import BurningQueue from './components/BurningQueue'
 import DoFight from './components/DoFight'
 import PvP from './components/PvP'
 
+import League from './components/League'
+
 
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'
@@ -46,6 +48,7 @@ ReactDOM.render(
             <Route path="/burningqueue" component={BurningQueue} />
             <Route path="/fightpvp" component={DoFight} />
             <Route path="/pvp" component={PvP} />
+            <Route path="/league" component={League} />
           </Switch>
         </div>
       </BrowserRouter>

@@ -402,14 +402,19 @@ class Tournament extends Component {
 
                 </div>
 
-                {/*<button
+                <a
                     className="btnH"
-                    style={{ marginLeft: 20, borderColor: CTA_COLOR, borderWidth: 2, borderStyle: 'solid', borderRadius: 2, width: 150, height: 40 }}
+                    href={`${window.location.protocol}//${window.location.host}/league`}
+                    style={styles.btnRanking}
+                    onClick={(e) => {
+                        e.preventDefault()
+                        this.props.history.push(`./league`)
+                    }}
                 >
-                    <p style={{ fontSize: 17, color: CTA_COLOR }}>
+                    <p style={{ fontSize: 17, color: 'white' }}>
                         RANKING
                     </p>
-                </button>*/}
+                </a>
             </div>
         )
     }
@@ -669,7 +674,7 @@ class Tournament extends Component {
                         <div style={{ width: widthImage, height: widthImage, marginBottom: 4 }}>
                         </div>
 
-                        <p style={{ fontSize: 16, color: 'white' }}>
+                        <p style={{ fontSize: 15, color: 'white' }}>
                             Opponent disappeared
                         </p>
                     </div>
@@ -905,6 +910,17 @@ const styles = {
         borderRadius: 2,
         marginRight: 15,
         marginBottom: 15
+    },
+    btnRanking: {
+        marginLeft: 20,
+        borderRadius: 2,
+        width: 150,
+        height: 40,
+        cursor: 'pointer',
+        backgroundColor: CTA_COLOR,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 }
 
