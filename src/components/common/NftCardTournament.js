@@ -80,11 +80,11 @@ class NftCardTournament extends Component {
 				<div style={{ justifyContent: 'space-between', width, height: 65, alignItems: 'center' }}>
 
 					<div style={{ width: '100%', flexDirection: 'column', justifyContent: 'space-between', marginTop: 5 }}>
-						<p style={{ color: isMine ? "gold" : "white", fontSize: 19, marginLeft: 10, lineHeight: 1 }}>
+						<p style={{ color: isMine ? "gold" : "white", fontSize: 19, marginLeft: 10, lineHeight: 1, marginBottom: 4 }}>
 							{item.name}
 						</p>
 
-						<div style={{ alignItems: 'center', marginLeft: 10 }}>
+						<div style={{ alignItems: 'center', marginLeft: 10, height: 28 }}>
 							<p style={{ color: "#c2c0c0", fontSize: 15, marginRight: 10 }}>
 								LEVEL
 							</p>
@@ -109,14 +109,23 @@ class NftCardTournament extends Component {
 						</div>
 
 						<div style={{ width: '100%', alignItems: 'center', justifyContent: 'flex-end', height: 28 }}>
-							<img
-	                            src={imagePotion}
-	                            style={{ width: 24, height: 28 }}
-	                            alt={`Potion Equipped: ${potion ? potion.toUpperCase() : "None"}`}
-	                        />
-							<p style={{ color: 'white', fontSize: 14, lineHeight: 1, marginTop: 2 }}>
-								VIAL
-							</p>
+
+							{
+								potion ?
+								<div style={{ alignItems: 'center' }}>
+									<img
+			                            src={imagePotion}
+			                            style={{ width: 24, height: 28 }}
+			                            alt={`Potion Equipped: ${potion ? potion.toUpperCase() : "None"}`}
+			                        />
+									<p style={{ color: 'white', fontSize: 14, lineHeight: 1, marginTop: 2 }}>
+										VIAL
+									</p>
+								</div>
+								: null
+							}
+
+
 						</div>
 
 					</div>
