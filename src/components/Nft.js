@@ -669,8 +669,13 @@ class Nft extends Component {
 		const { account } = this.props
 
 		if (!account || (account && !account.account)) {
+
+			let style = isMobile ? { height: '100%', flexDirection: 'column', marginLeft: 15, justifyContent: 'flex-end' }
+									:
+									{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }
+
 			return (
-				<div style={{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
+				<div style={style}>
 					<button
 						className='btnH'
 						style={Object.assign({}, styles.btnBuy, { width, marginRight })}
@@ -715,8 +720,12 @@ class Nft extends Component {
 			)
 		}
 
+		let style = isMobile ? { height: '100%', flexDirection: 'column', marginLeft: 15, marginTop: 10, justifyContent: 'space-between' }
+								:
+								{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around' }
+
 		return (
-			<div style={{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around' }}>
+			<div style={style}>
 
 				<button
 					className='btnH'
