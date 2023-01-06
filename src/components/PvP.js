@@ -72,37 +72,46 @@ class PvP extends Component {
 
         this.props.getPvPweek(chainId, gasPrice, gasLimit, networkUrl, (res) => {
             this.setState({ pvpWeek: res })
-            this.loadAllSubscribers(res)
-            this.loadMinted()
+            this.loadInfoPvP(res)
         })
     }
 
-    loadMinted() {
-		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+    loadInfoPvP(week) {
+        const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-		this.setState({ loading: true })
+        this.props.getAllSubscribersPvP(chainId, gasPrice, gasLimit, networkUrl, week, (subs) => {
+            //console.log(subs);
+            this.setState({ subscribers: subs })
 
-		if (account && account.account) {
-			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
-				this.setState({ loading: false, userMintedNfts: response })
-			})
-		}
-	}
+            if (account && account.account) {
+                this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
+
+                    let yourSubs = []
+
+                    subs.map(i => {
+                        const idSub = i.idnft
+
+                        const yourSub = response.find(z => z.id === idSub)
+                        if (yourSub) {
+                            yourSubs.push(yourSub)
+                            this.loadResultsYourSub(yourSub)
+                        }
+                    })
+                    //console.log(yourSubs);
+
+    				this.setState({ loading: false, userMintedNfts: response, yourSubscribers: yourSubs })
+    			})
+            }
+
+
+        })
+    }
 
     loadPvpOpen() {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
         this.props.getPvPopen(chainId, gasPrice, gasLimit, networkUrl, (res) => {
             this.setState({ pvpOpen: res === "1" })
-        })
-    }
-
-    loadAllSubscribers(week) {
-        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
-
-        this.props.getAllSubscribersPvP(chainId, gasPrice, gasLimit, networkUrl, week, (res) => {
-            //console.log(res);
-            this.setState({ subscribers: res })
         })
     }
 
@@ -148,10 +157,18 @@ class PvP extends Component {
     async loadResultsYourSub(item) {
         const { pvpWeek } = this.state
 
-        const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_#${item.idnft}`)
+        //console.log(item);
+
+        const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_#${item.id}`)
 
 		const docSnap = await getDoc(docRef)
-		const data = docSnap.data()
+		let data = docSnap.data()
+
+        if (!data) {
+            data = { win: 0, lose: 0 }
+        }
+
+        //console.log(data);
 
         const finalData = {...data, ...item}
 
@@ -173,7 +190,7 @@ class PvP extends Component {
         this.setState({ loading: true })
 
         //rimuoviamo se stessi
-        let subs = subscribers.filter(i => i.idnft !== item.idnft && i.address !== account.account)
+        let subs = subscribers.filter(i => i.idnft !== item.id && i.address !== account.account)
 
         //console.log(subs);
         //return
@@ -245,17 +262,7 @@ class PvP extends Component {
 				canSubscribe={pvpOpen}
 				onSubscribe={(spellSelected) => this.subscribe(item.id, spellSelected)}
 				modalWidth={modalWidth}
-                isSubscribed={(item) => {
-                    let oldState = Object.assign([], this.state.yourSubscribers)
-                    //console.log(oldState);
-                    const idx = oldState.findIndex(i => i.idnft === item.idnft)
-                    if (idx < 0) {
-                        oldState.push(item)
-                        //console.log(item);
-                        this.loadResultsYourSub(item)
-                        this.setState({ yourSubscribers: oldState })
-                    }
-                }}
+                index={index}
 			/>
 		)
 	}
@@ -268,7 +275,7 @@ class PvP extends Component {
 
         //console.log(userMintedNfts);
 
-        const nftInfo = userMintedNfts.find(i => i.id === item.idnft)
+        const nftInfo = userMintedNfts.find(i => i.id === item.id)
 
         let level;
         if (nftInfo) {
@@ -282,16 +289,16 @@ class PvP extends Component {
                 style={styles.boxSubscribed}
             >
                 <img
-                    src={getImageUrl(item.idnft)}
+                    src={getImageUrl(item.id)}
                     style={{ width: 140, height: 140, borderRadius: 2, borderColor: 'white', borderWidth: 1, borderStyle: 'solid', marginRight: 10 }}
-                    alt={item.idnft}
+                    alt={item.id}
                 />
 
                 <div style={{ flexDirection: 'column', justifyContent: 'space-around', height: '100%' }}>
 
                     <div style={{ alignItems: 'center' }}>
                         <p style={{ fontSize: 22, color: 'white', marginRight: 20, width: 50 }}>
-                            #{item.idnft}
+                            #{item.id}
                         </p>
 
                         <p style={{ fontSize: 20, color: 'white', width: 170 }}>
@@ -360,7 +367,7 @@ class PvP extends Component {
                                         return
                                     }
 
-                                    this.openPopupChangeSpell(item.idnft)
+                                    this.openPopupChangeSpell(item.id)
                                 }}
                             >
                                 <p style={{ fontSize: 17, color: 'white' }}>
