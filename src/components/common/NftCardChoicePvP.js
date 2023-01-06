@@ -16,6 +16,7 @@ class NftCardChoicePvP extends Component {
         super(props)
 
         this.state = {
+            loading: true,
             isSubscribed: false,
             subscriptionInfo: {},
             showModalSpellbook: false
@@ -23,18 +24,21 @@ class NftCardChoicePvP extends Component {
     }
 
     componentDidMount() {
-        const { item, pvpWeek, chainId, gasPrice, gasLimit, networkUrl } = this.props
+        const { item, pvpWeek, chainId, gasPrice, gasLimit, networkUrl, index } = this.props
 
         //console.log(item, tournament);
 
-        const idSubscription = `${pvpWeek}_${item.id}`
-        this.props.getPvPsubscription(chainId, gasPrice, gasLimit, networkUrl, idSubscription, (response) => {
-            //console.log(response)
-            if (response && response.idnft) {
-                this.props.isSubscribed(response)
-                this.setState({ subscriptionInfo: response, isSubscribed: true })
-            }
-        })
+        setTimeout(() => {
+            const idSubscription = `${pvpWeek}_${item.id}`
+            this.props.getPvPsubscription(chainId, gasPrice, gasLimit, networkUrl, idSubscription, (response) => {
+                //console.log(response)
+                if (response && response.idnft) {
+                    this.setState({ subscriptionInfo: response, isSubscribed: true, loading: false })
+                } else {
+                    this.setState({ loading: false })
+                }
+            })
+        }, index*30)
     }
 
     calcMedals() {
@@ -57,11 +61,11 @@ class NftCardChoicePvP extends Component {
 
 	render() {
 		const { item, width, canSubscribe } = this.props
-        const { isSubscribed } = this.state
+        const { isSubscribed, loading } = this.state
 
         //console.log(tournament)
 
-        const numberOfTotalMedals = item.medals ? this.calcMedals() : 0
+        //const numberOfTotalMedals = item.medals ? this.calcMedals() : 0
 
         const level = calcLevelWizard(item)
 
@@ -100,14 +104,26 @@ class NftCardChoicePvP extends Component {
 
                         {
                             item.hp ?
-                            cardStats(item, numberOfTotalMedals)
+                            cardStats(item, undefined)
                             :
                             null
                         }
 
+                        {
+                            loading ?
+                            <div
+                                style={Object.assign({}, styles.btnSubscribe, { backgroundColor: '#014766'})}
+                            >
+                                <p style={{ fontSize: 17, color: 'white' }}>
+                                    LOADING
+                                </p>
+                            </div>
+                            : null
+                        }
+
 
                         {
-                            !isSubscribed && canSubscribe && level ?
+                            !isSubscribed && canSubscribe && level && !loading ?
                             <button
                                 className='btnSubscribe'
                                 style={styles.btnSubscribe}
@@ -123,7 +139,7 @@ class NftCardChoicePvP extends Component {
                         }
 
                         {
-                            !isSubscribed && !canSubscribe ?
+                            !isSubscribed && !canSubscribe && !loading ?
                             <div
                                 style={Object.assign({}, styles.btnSubscribe, { backgroundColor: '#014766'})}
                             >
@@ -137,7 +153,7 @@ class NftCardChoicePvP extends Component {
                         }
 
                         {
-                            isSubscribed ?
+                            isSubscribed && !loading ?
                             <div
                                 style={Object.assign({}, styles.btnSubscribe, { backgroundColor: '#014766'})}
                             >
