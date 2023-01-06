@@ -664,7 +664,7 @@ class Nft extends Component {
 
 	// SE NFT é LISTATO ******************************************
 	// GESTIAMO I CASI: Connect Wallet, Cancel Listing, Buy Now, Make Offer
-	renderBtnBuy(width, marginRight) {
+	renderBtnBuy(width, marginRight, isMobile) {
 		const { nft } = this.state;
 		const { account } = this.props
 
@@ -685,8 +685,23 @@ class Nft extends Component {
 		}
 
 		if (nft.owner === account.account) {
+
+			let style = isMobile ? { height: '100%', flexDirection: 'column', marginLeft: 15, justifyContent: 'flex-end' }
+									:
+									{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }
+
 			return (
-				<div style={{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
+				<div style={style}>
+					<button
+						className='btnH'
+						style={Object.assign({}, styles.btnBuy, { width, marginRight, marginBottom: 20 })}
+						onClick={() => this.list()}
+					>
+						<p style={styles.btnBuyText}>
+							Update price
+						</p>
+					</button>
+
 					<button
 						className='btnH'
 						style={Object.assign({}, styles.btnBuy, { width, marginRight })}
@@ -726,9 +741,14 @@ class Nft extends Component {
 		)
 	}
 
-	renderBtnMakeOffer(width, marginRight) {
+	renderBtnMakeOffer(width, marginRight, isMobile) {
+
+		let style = isMobile ? { height: '100%', flexDirection: 'column', marginLeft: 15, justifyContent: 'flex-end' }
+								:
+								{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }
+
 		return (
-			<div style={{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }}>
+			<div style={style}>
 
 				<button
 					className='btnH'
@@ -743,15 +763,20 @@ class Nft extends Component {
 		)
 	}
 
-	renderBtnConnect(width, marginRight) {
+	renderBtnConnect(width, marginRight, isMobile) {
+
+		let style = isMobile ? { marginLeft: 15 }
+								:
+								{ alignItems: 'center', justifyContent: 'center', marginRight }
+
 		return (
-			<div style={{ alignItems: 'center', justifyContent: 'center', marginRight }}>
+			<div style={style}>
 				<button
 					className='btnH'
 					style={Object.assign({}, styles.btnBuy, { width })}
 					onClick={() => this.setState({ showModalConnection: true })}
 				>
-					<p style={Object.assign({}, styles.btnBuyText, { fontSize: 19 })}>
+					<p style={Object.assign({}, styles.btnBuyText, { fontSize: 18 })}>
 						Connect wallet
 					</p>
 				</button>
@@ -759,12 +784,16 @@ class Nft extends Component {
 		)
 	}
 
-	renderBtnSell(width, marginRight) {
+	renderBtnSell(width, marginRight, isMobile) {
 		const { nft } = this.state
 		const { account } = this.props
 
+		let style = isMobile ? { flexDirection: 'column', height: '100%', marginLeft: 15, marginTop: 10, justifyContent: 'space-between' }
+								:
+								{ flexDirection: 'column', height: '100%', alignItems: 'flex-end', justifyContent: 'space-between' }
+
 		return (
-			<div style={{ flexDirection: 'column', height: '100%', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+			<div style={style}>
 				{
 					!nft.listed && account && account.account && nft.owner === account.account ?
 					<button
@@ -808,8 +837,8 @@ class Nft extends Component {
 		)
 	}
 
-	renderLeftBoxPriceListed() {
-		const { nft, kadenaPrice } = this.state
+	renderLeftBoxPriceListed(isOwner) {
+		const { nft, kadenaPrice, inputPrice } = this.state
 
 		return (
 			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
@@ -837,6 +866,22 @@ class Nft extends Component {
 						(${(kadenaPrice * nft.price).toFixed(2)})
 					</p>
 				</div>
+
+				{
+					isOwner &&
+					<div style={{ flexDirection: 'column', marginTop: 15 }}>
+						<p style={{ color: '#c2c0c0', fontSize: 17 }}>
+							Update price
+						</p>
+
+						<input
+							style={styles.inputPrice}
+							placeholder='KDA'
+							value={inputPrice}
+							onChange={(e) => this.setState({ inputPrice: e.target.value })}
+						/>
+					</div>
+				}
 			</div>
 		)
 	}
@@ -1297,7 +1342,7 @@ class Nft extends Component {
 
 		let showOverlayBurn = infoBurn && infoBurn.burned
 
-		let ctaWidth = boxW * 35 / 100
+		let ctaWidth = boxW * 50 / 100
 		if (ctaWidth > 170) ctaWidth = 170
 
 		return (
@@ -1332,11 +1377,13 @@ class Nft extends Component {
 						{
 								//nft listato, in renderbtn buy gestiamo tutti i casi, anche account non connesso
 							nft.listed &&
-							<div style={styles.boxRightLarge}>
+							<div style={styles.boxRightMobile}>
 
-								{this.renderLeftBoxPriceListed()}
+								{this.renderLeftBoxPriceListed(nft.owner === account.account)}
 
-								{this.renderBtnBuy(ctaWidth, 15)}
+								<div style={{ height: 15 }} />
+
+								{this.renderBtnBuy(ctaWidth, 15, true)}
 
 							</div>
 						}
@@ -1344,10 +1391,12 @@ class Nft extends Component {
 						{
 							// nft non listato ma tu sei owner: SELL
 							!nft.listed && account && account.account && nft.owner === account.account ?
-							<div style={styles.boxRightLarge}>
+							<div style={styles.boxRightMobile}>
 								{this.renderLeftBoxListing()}
 
-								{this.renderBtnSell(ctaWidth, 15)}
+								<div style={{ height: 15 }} />
+
+								{this.renderBtnSell(ctaWidth, 15, true)}
 
 							</div>
 							: null
@@ -1356,13 +1405,15 @@ class Nft extends Component {
 						{
 							//non sei il proprietario e l'nft non è listato
 							!nft.listed && !loading && account && account.account && nft.owner !== account.account ?
-							<div style={styles.boxRightLarge}>
+							<div style={styles.boxRightMobile}>
 
 								{this.renderLeftMakeOffer()}
 
+								<div style={{ height: 15 }} />
+
 								{
 									!showOverlayBurn ?
-									this.renderBtnMakeOffer(ctaWidth, 15)
+									this.renderBtnMakeOffer(ctaWidth, 15, true)
 									: null
 								}
 							</div>
@@ -1372,11 +1423,13 @@ class Nft extends Component {
 						{
 							//nft non listato ma account non connesso CONNECT WALLET
 							 !nft.listed && !loading && (!account || (account && !account.account)) ?
-							<div style={styles.boxRightLarge}>
+							<div style={styles.boxRightMobile}>
 
 								{this.renderLeftMakeOffer()}
 
-								{this.renderBtnConnect(ctaWidth, 15)}
+								<div style={{ height: 15 }} />
+
+								{this.renderBtnConnect(ctaWidth, 15, true)}
 							</div>
 							: null
 						}
@@ -1453,7 +1506,7 @@ class Nft extends Component {
 							nft.listed &&
 							<div style={Object.assign({}, styles.boxRightLarge, { width: boxWidthRight })}>
 
-								{this.renderLeftBoxPriceListed()}
+								{this.renderLeftBoxPriceListed(nft.owner === account.account)}
 
 								{this.renderBtnBuy(ctaWidth, 15)}
 
@@ -1471,6 +1524,7 @@ class Nft extends Component {
 							</div>
 							: null
 						}
+
 
 						{
 							//non sei il proprietario e l'nft non è listato
@@ -1708,6 +1762,15 @@ const styles = {
 		paddingBottom: 16,
 		backgroundColor: '#ffffff15'
 	},
+	boxRightMobile: {
+		width: '100%',
+		flexDirection: 'column',
+		justifyContent: 'space-between',
+		borderRadius: 2,
+		paddingTop: 16,
+		paddingBottom: 16,
+		backgroundColor: '#ffffff15'
+	},
 	boxPrice: {
 		borderRadius: 2,
 		paddingTop: 16,
@@ -1781,6 +1844,7 @@ const styles = {
 	},
 	btnTransfer: {
 		height: 35,
+		maxWidth: 154,
 		justifyContent: 'center',
 		alignItems: 'center',
 		borderWidth: 2,
