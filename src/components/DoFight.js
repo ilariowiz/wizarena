@@ -49,7 +49,7 @@ class DoFight extends Component {
 
         const { sfida } = this.props
 
-        //console.log(sfida);
+        console.log(sfida);
 
         this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
@@ -62,7 +62,7 @@ class DoFight extends Component {
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
         setTimeout(() => {
-            this.loadNft(sfida.player1.idnft, true)
+            this.loadNft(sfida.player1.id, true)
         }, 500)
     }
 
@@ -423,8 +423,14 @@ class DoFight extends Component {
             idnft1: attaccante.id,
             idnft2: difensore.id,
             pvpWeek: sfida.pvpWeek,
-            winner: attaccante.id
+            winner: attaccante.id,
+            info1: attaccante,
+            info2: difensore,
+            hp1: this.player1InitialHp,
+            hp2: this.player2InitialHp
         }
+
+        //console.log(fightObj);
 
         const fightRef = doc(collection(firebasedb, "fights_pvp"))
         const newDoc = setDoc(fightRef, fightObj)
