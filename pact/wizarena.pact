@@ -110,6 +110,14 @@
         @event true
     )
 
+    (defcap MAKE_OFFER (id:string from:string amount:decimal duration:integer)
+        @event true
+    )
+
+    (defcap WITHDRAW_OFFER (idoffer:string from:string amount:decimal)
+        @event true
+    )
+
  ; --------------------------------------------------------------------------
   ; Schema and tables
   ; --------------------------------------------------------------------------
@@ -820,7 +828,6 @@
                 (data (get-wizard-fields-for-id (str-to-int id)))
                 (is-staked (check-is-staked id m))
             )
-            (enforce (= (at "listed" data) false) "this wizard is already listed")
             (enforce (= is-staked false) "You can't list a staked wizard")
             (enforce (= (at "confirmBurn" data) false) "You can't list a wizard in burning queue")
         )
@@ -905,6 +912,7 @@
             (with-capability (PRIVATE)
               (increase-count WIZARDS_OFFERS_COUNT_KEY)
             )
+            (emit-event (MAKE_OFFER refnft buyer amount duration))
           )
         )
     )
@@ -934,6 +942,7 @@
               (update token-table WIZARDS_OFFERS_BANK {"balance": (- oldbalance amount)})
             )
           )
+          (emit-event (WITHDRAW_OFFER idoffer buyer amount))
         )
       )
     )
