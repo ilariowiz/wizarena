@@ -91,8 +91,10 @@ class PvP extends Component {
                     subs.map(i => {
                         const idSub = i.idnft
 
-                        const yourSub = response.find(z => z.id === idSub)
+                        let yourSub = response.find(z => z.id === idSub)
                         if (yourSub) {
+                            yourSub["spellSelected"] = i.spellSelected
+                            //console.log(yourSub, i);
                             yourSubs.push(yourSub)
                             this.loadResultsYourSub(yourSub)
                         }
