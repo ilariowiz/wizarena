@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import moment from 'moment'
 import getImageUrl from './GetImageUrl'
+import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
 import '../../css/NftCard.css'
 import {
-	setRank
+	setRank,
+	loadSingleNft
 } from '../../actions'
 
 
@@ -13,12 +15,17 @@ class NftCardBurningQueue extends Component {
 		super(props)
 
 		this.state = {
-			rank: undefined
+			rank: undefined,
+			itemInfo: undefined
 		}
 	}
 
 	componentDidMount() {
-		const { item, isBurned, ranks } = this.props
+		const { item, isBurned, ranks, index } = this.props
+
+		setTimeout(() => {
+			this.loadNftId()
+		}, index*15)
 
 		//se non è burned
 		if (!isBurned) {
@@ -34,8 +41,24 @@ class NftCardBurningQueue extends Component {
 		}
 	}
 
+	loadNftId() {
+		const { chainId, gasPrice, gasLimit, networkUrl, item } = this.props
+
+		this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, item.idnft, (response) => {
+			if (response.name) {
+				this.setState({ itemInfo: response })
+			}
+		})
+	}
+
 	loadRank(id) {
-		fetch(`https://us-central1-raritysniperkda.cloudfunctions.net/app/api/read/WizardsArena/${id}`)
+
+		let collection = "WizardsArena"
+		if (parseInt(id) > 1023 && parseInt(id) <= 2047) {
+			collection = "ClericsArena"
+		}
+
+		fetch(`https://us-central1-raritysniperkda.cloudfunctions.net/app/api/read/${collection}/${id}`)
 		.then(response => response.json())
 		.then(data => {
 			//console.log(data)
@@ -47,9 +70,12 @@ class NftCardBurningQueue extends Component {
 
 	render() {
 		const { item, history, width, isBurned } = this.props
-		const { rank } = this.state
+		const { rank, itemInfo } = this.state
 
 		const from = !isBurned ? moment(item.timestamp.timep).fromNow() : ""
+
+		const level = itemInfo ? calcLevelWizard(itemInfo) : undefined
+		//console.log(item);
 
 		return (
 			<a
@@ -66,9 +92,9 @@ class NftCardBurningQueue extends Component {
 					alt={`#${item.idnft}`}
 				/>
 
-				<div style={{ justifyContent: 'space-between', width, height: 55, alignItems: 'center' }}>
+				<div style={{ justifyContent: 'space-between', width, height: 70, alignItems: 'center' }}>
 
-					<div style={{ width: '100%', justifyContent: 'space-between', alignItems: 'center', marginTop: 5 }}>
+					<div style={{ width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
 
 						<div style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
 							<p style={{ color: 'white', fontSize: 19, marginLeft: 10, lineHeight: 1, marginBottom: 4 }}>
@@ -77,9 +103,28 @@ class NftCardBurningQueue extends Component {
 
 							{
 								rank && !isBurned &&
-								<p style={{ color: '#c2c0c0', fontSize: 14, marginLeft: 10, lineHeight: 1 }}>
-									Rank {rank}
-								</p>
+								<div style={{ alignItems: 'center', marginLeft: 10, marginBottom: 4 }}>
+									<p style={{ color: '#c2c0c0', fontSize: 15, marginRight: 10, marginTop: 1, lineHeight: 1 }}>
+										Rank
+									</p>
+
+									<p style={{ color: "white", fontSize: 16, lineHeight: 1 }}>
+										{rank}
+									</p>
+								</div>
+							}
+
+							{
+								level &&
+								<div style={{ alignItems: 'center', marginLeft: 10 }}>
+									<p style={{ color: '#c2c0c0', fontSize: 15, marginRight: 10, marginTop: 1, lineHeight: 1 }}>
+										Level
+									</p>
+
+									<p style={{ color: getColorTextBasedOnLevel(level), fontSize: 16, lineHeight: 1 }}>
+										{level}
+									</p>
+								</div>
 							}
 						</div>
 
@@ -119,11 +164,13 @@ class NftCardBurningQueue extends Component {
 }
 
 const mapStateToProps = (state) => {
+	const { chainId, gasPrice, gasLimit, networkUrl } = state.mainReducer
 	const { ranks } = state.rankReducer
 
-	return { ranks }
+	return { ranks, chainId, gasPrice, gasLimit, networkUrl }
 }
 
 export default connect(mapStateToProps, {
-	setRank
+	setRank,
+	loadSingleNft
 })(NftCardBurningQueue);

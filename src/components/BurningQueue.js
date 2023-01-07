@@ -90,6 +90,7 @@ class BurningQueue extends Component {
                     history={this.props.history}
                     width={260}
                     isBurned={isBurned}
+                    index={index}
                 />
             </div>
 		)
