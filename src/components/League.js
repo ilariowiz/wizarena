@@ -128,7 +128,7 @@ class League extends Component {
         )
     }
 
-    renderBox(items, index, boxW) {
+    renderBox(items, index, boxW, isMobile) {
 
         let img;
         let wImg;
@@ -169,10 +169,13 @@ class League extends Component {
 
         //console.log(items);
 
-        return (
-            <div style={Object.assign({}, styles.row, { borderColor })} key={index}>
+        const rowStyle = isMobile ? { flexDirection: 'column' } : { flexDirection: 'row' }
+        const cardsStyle = isMobile ? { justifyContent: 'center', flexWrap: 'wrap' } : { flexWrap: 'wrap', marginRight: 10 }
 
-                <div style={{ marginRight: 10, marginLeft: 10, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        return (
+            <div style={Object.assign({}, styles.row, { borderColor }, rowStyle)} key={index}>
+
+                <div style={{ marginRight: 10, marginLeft: 10, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: isMobile ? 15 : 0 }}>
 
                     <div style={{ width: 90, height: 90, marginBottom: 10, justifyContent: 'center', alignItems: 'center' }}>
                         <img
@@ -190,7 +193,7 @@ class League extends Component {
                     </p>
                 </div>
 
-                <div style={{ flexWrap: 'wrap', marginRight: 10 }}>
+                <div style={cardsStyle}>
                     {items.map((item, index) => {
                         return this.renderSingleCard(item, index, widthNft)
                     })}
@@ -236,7 +239,7 @@ class League extends Component {
 
                 <div style={{ width: '100%', flexDirection: 'column' }}>
                     {ranking.map((items, index) => {
-                        return this.renderBox(items, index, boxW)
+                        return this.renderBox(items, index, boxW, isMobile)
                     })}
                 </div>
 
