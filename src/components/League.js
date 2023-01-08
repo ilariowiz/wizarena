@@ -169,6 +169,10 @@ class League extends Component {
 
         //console.log(items);
 
+        let sortedItems = items.sort((a, b) => {
+            return parseInt(a.id) - parseInt(b.id)
+        })
+
         const rowStyle = isMobile ? { flexDirection: 'column' } : { flexDirection: 'row' }
         const cardsStyle = isMobile ? { justifyContent: 'center', flexWrap: 'wrap' } : { flexWrap: 'wrap', marginRight: 10 }
 
@@ -194,7 +198,7 @@ class League extends Component {
                 </div>
 
                 <div style={cardsStyle}>
-                    {items.map((item, index) => {
+                    {sortedItems.map((item, index) => {
                         return this.renderSingleCard(item, index, widthNft)
                     })}
                 </div>
