@@ -363,9 +363,12 @@ class PvP extends Component {
                             Lose {item.lose}
                         </p>
 
-                        <p style={{ fontSize: 18, color: 'white' }}>
-                            {totalFights}/{item.maxFights || 30} fights
-                        </p>
+                        {
+                            item.maxFights &&
+                            <p style={{ fontSize: 18, color: 'white' }}>
+                                {totalFights}/{item.maxFights} fights
+                            </p>
+                        }
                     </div>
 
                     {
