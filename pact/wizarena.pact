@@ -98,6 +98,11 @@
         @event true
     )
 
+    (defcap PVP_SUBSCRIPTION (idnft:string pvpweek:string wiza:decimal)
+        @doc "Emitted event when a Wizard signs up for the pvp week"
+        @event true
+    )
+
     (defcap WITHDRAW_PRIZE (winner:string prize:decimal)
         @event true
     )
@@ -1174,6 +1179,7 @@
                 "spellSelected": spellSelected,
                 "rounds": (floor wiza)
             })
+            (emit-event (PVP_SUBSCRIPTION idnft week wiza))
         )
     )
 

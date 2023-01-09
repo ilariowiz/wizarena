@@ -1441,7 +1441,7 @@ export const subscribeToPvPweek = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 
 		const key = `${pvpWeek}_${idNft}`
 
-		let pactCode = `(free.${CONTRACT_NAME}.subscribe-pvp "${key}" "${pvpWeek}" "${idNft}" "${account.account}" ${JSON.stringify(spellSelected)} ${wizaAmount} free.wiza)`;
+		let pactCode = `(free.${CONTRACT_NAME}.subscribe-pvp "${key}" "${pvpWeek}" "${idNft}" "${account.account}" ${JSON.stringify(spellSelected)} ${wizaAmount}.0 free.wiza)`;
 
 		let caps = [
 			Pact.lang.mkCap(`Subscribe`, "Pay the buyin", `coin.TRANSFER`, [

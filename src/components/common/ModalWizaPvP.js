@@ -13,11 +13,21 @@ class ModalWizaPvP extends Component {
 		}
 	}
 
+    onlyNumbers(str) {
+		return /^[0-9]+$/.test(str);
+	}
+
     subscribe() {
         const { wizaAmount } = this.state
         const { wizaBalance } = this.props
 
-        if (!wizaAmount || !wizaBalance) {
+        //console.log(wizaAmount);
+
+        if (parseInt(wizaAmount) === 0) {
+            return
+        }
+
+        if (!wizaAmount || !wizaBalance || !this.onlyNumbers(wizaAmount)) {
             return
         }
 
@@ -25,7 +35,7 @@ class ModalWizaPvP extends Component {
             return
         }
 
-        this.props.callback(wizaAmount)
+        this.props.callback(parseInt(wizaAmount))
     }
 
 	render() {
