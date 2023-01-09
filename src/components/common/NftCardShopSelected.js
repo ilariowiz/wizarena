@@ -10,7 +10,7 @@ import {
 import { CTA_COLOR } from '../../actions/types'
 
 
-class NftCardShop extends Component {
+class NftCardShopSelected extends Component {
     calcMedals() {
         const { item } = this.props
 
@@ -26,7 +26,7 @@ class NftCardShop extends Component {
     }
 
 	render() {
-		const { item, width, isSelect } = this.props
+		const { item, width } = this.props
         //console.log(tournament)
 
         const numberOfTotalMedals = this.calcMedals()
@@ -116,4 +116,4 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
     getSubscription
-})(NftCardShop);
+})(NftCardShopSelected);

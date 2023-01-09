@@ -261,15 +261,6 @@ class Shop extends Component {
 				key={index}
 				item={item}
 				width={w}
-                isSelect={true}
-				onSelect={() => {
-                    this.props.setWizardSelectedShop(item.id)
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-
-                    setTimeout(() => {
-                        this.getPotionEquipped()
-                    }, 200)
-                }}
                 onChange={() => this.props.setWizardSelectedShop(undefined)}
 			/>
 		)
