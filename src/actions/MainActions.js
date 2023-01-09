@@ -413,9 +413,7 @@ export const loadBlockNftsSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, g
 				})
 
 				response.sort((a, b) => {
-					if (parseInt(a.price) === 0) return 1;
-					if (parseInt(b.price) === 0) return -1
-					return a.price - b.price
+					return parseInt(a.id) - parseInt(b.id)
 				})
 
 				let subscribedSpellGraph = {}
