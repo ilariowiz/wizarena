@@ -399,10 +399,7 @@ class DoFight extends Component {
             })
         }
         catch (error) {
-            await setDoc(docRef, {
-                "win": 1,
-                "lose": 0
-            })
+            console.log(error);
         }
 
         const docRef2 = doc(firebasedb, "pvp_results", `${sfida.pvpWeek}_#${difensore.id}`)
@@ -412,10 +409,7 @@ class DoFight extends Component {
             })
         }
         catch (error) {
-            await setDoc(docRef2, {
-                "lose": 1,
-                "win": 0
-            })
+            console.log(error);
         }
 
         const fightObj = {

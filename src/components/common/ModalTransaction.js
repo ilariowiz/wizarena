@@ -30,7 +30,7 @@ class ModalTransaction extends Component {
 	}
 
 	pollForTransaction = async () => {
-		const { transactionState, networkUrl, nameNft, idNft, inputPrice, statToUpgrade, howMuchIncrement, type, pvpWeek, makeOfferValues, saleValues } = this.props
+		const { transactionState, networkUrl, nameNft, idNft, inputPrice, statToUpgrade, howMuchIncrement, type, pvpWeek, makeOfferValues, saleValues, wizaAmount } = this.props
 
 
 		const requestKey = transactionState.requestKey
@@ -75,7 +75,7 @@ class ModalTransaction extends Component {
 			else if (type === "subscribe_pvp") {
 
 				const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_${nameNft}`)
-				setDoc(docRef, { "lose": 0, "win": 0 })
+				setDoc(docRef, { "lose": 0, "win": 0, "maxFights": wizaAmount })
 			}
 			else if (type === "makeoffer") {
 				//console.log(makeOfferValues);
@@ -103,7 +103,7 @@ class ModalTransaction extends Component {
 	}
 
 	getContent() {
-		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, amountToMint, offerInfoRecap } = this.props
+		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, amountToMint, offerInfoRecap, wizaAmount } = this.props
 
 		//CASO INIZIALE, signingCmd != null in transactionState
 		let title = 'Signing transaction'
@@ -131,7 +131,7 @@ class ModalTransaction extends Component {
 					body = `You will buy ${nameNft} (you will need KDA on chain 1)`
 				}
 				else if (type === 'subscribe_pvp') {
-					body = `You will subscribe ${nameNft}`
+					body = `You will subscribe ${nameNft} who will be able to do ${wizaAmount} fights`
 				}
 				else if (type === 'subscriptionmass') {
 					body = nameNft

@@ -1,6 +1,8 @@
 import Pact from "pact-lang-api";
 import SignClient from "@walletconnect/sign-client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
+import { getDoc, doc } from "firebase/firestore";
+import { firebasedb } from '../components/Firebase';
 import { calcLevelWizard } from '../components/common/CalcLevelWizard'
 import _ from 'lodash'
 import {
@@ -768,23 +770,42 @@ export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 				onlyId.push(i.idnft)
 			})
 
-			if (callback) {
-				callback(response)
-			}
-
-			Promise.resolve(dispatch(loadBlockNftsSubscribersPvP(chainId, gasPrice, gasLimit, networkUrl, onlyId))).then(response1 => {
+			Promise.resolve(dispatch(loadBlockNftsSubscribersPvP(chainId, gasPrice, gasLimit, networkUrl, onlyId))).then(async(response1) => {
 				//console.log(response1);
 
 				let levels = 0
-				response1.map(i => {
+				response1.map(async(i, index) => {
 					const l = calcLevelWizard(i)
 					levels += l
+
+					const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_#${i.id}`)
+
+					const docSnap = await getDoc(docRef)
+					let data = docSnap.data()
+
+					//console.log(data);
+					let idx = response.findIndex(z => z.idnft === i.id)
+					//console.log(idx);
+
+					if (idx > -1) {
+						let obj = response[idx]
+						obj["level"] = l
+						obj["fightsLeft"] = obj.rounds - (data.win + data.lose)
+						response[idx] = obj
+						//console.log(response);
+					}
+
+					if (index === response1.length - 1) {
+						if (callback) {
+							callback(response)
+						}
+					}
 				})
 
 				const avgLevel = Math.round(levels / response1.length)
 				//console.log(avgLevel);
-
 				dispatch(setAvgLevelPvp(avgLevel))
+
 			})
 
 		})
@@ -1422,18 +1443,18 @@ export const subscribeToTournamentMass = (chainId, gasPrice = DEFAULT_GAS_PRICE,
 	}
 }
 
-export const subscribeToPvPweek = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, pvpWeek, idNft, spellSelected) => {
+export const subscribeToPvPweek = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, pvpWeek, idNft, spellSelected, wizaAmount) => {
 	return (dispatch) => {
 
 		const key = `${pvpWeek}_${idNft}`
 
-		let pactCode = `(free.${CONTRACT_NAME}.subscribe-pvp "${key}" "${pvpWeek}" "${idNft}" "${account.account}" ${JSON.stringify(spellSelected)})`;
+		let pactCode = `(free.${CONTRACT_NAME}.subscribe-pvp "${key}" "${pvpWeek}" "${idNft}" "${account.account}" ${JSON.stringify(spellSelected)} ${wizaAmount} free.wiza)`;
 
 		let caps = [
 			Pact.lang.mkCap(`Subscribe`, "Pay the buyin", `coin.TRANSFER`, [
 				account.account,
 				CLERIC_MINT_ADDRESS,
-				2.0,
+				1.0,
 			]),
 			Pact.lang.mkCap(
 				"Verify owner",

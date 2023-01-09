@@ -249,6 +249,7 @@
         idnft:string
         address:string
         spellSelected:object
+        rounds:integer
     )
 
     (defschema offers-schema
@@ -1146,8 +1147,10 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     ;id = idweek_idnft
-    (defun subscribe-pvp (id:string week:string idnft:string address:string spellSelected:object m:module{wiza1-interface-v1})
+    (defun subscribe-pvp (id:string week:string idnft:string address:string spellSelected:object wiza:decimal m:module{wiza1-interface-v1})
         @doc "Subscribe a wizard to pvp arena"
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+        (enforce (>= wiza 30.0) "You must send at least 30 wiza to participate")
         (let (
                 (pvp-open (get-value PVP_OPEN))
                 (data-wiz (get-wizard-fields-for-id (str-to-int idnft)))
@@ -1161,15 +1164,40 @@
             (enforce (= (length idnft) 0) "Already subscribed to this pvp week")
         )
         (with-capability (OWNER address idnft)
-            ;(install-capability (coin.TRANSFER address CLERIC_MINT_ADDRESS 2.0))
-            ;(coin.transfer address CLERIC_MINT_ADDRESS 2.0)
-            (spend-wiza (get-value BUYIN_PVP) address m)
+            (install-capability (coin.TRANSFER address CLERIC_MINT_ADDRESS 1.0))
+            (coin.transfer address CLERIC_MINT_ADDRESS 1.0)
+            (spend-wiza wiza address m)
             (insert pvp-subscribers id {
                 "pvpweek": week,
                 "idnft": idnft,
                 "address": address,
-                "spellSelected": spellSelected
+                "spellSelected": spellSelected,
+                "rounds": (floor wiza)
             })
+        )
+    )
+
+    (defun add-rounds-pvp (id:string wiza:decimal m:module{wiza1-interface-v1})
+        (enforce (>= wiza 30.0) "You must send at least 30 wiza to increment max rounds")
+        (let (
+                (pvp-open (get-value PVP_OPEN))
+            )
+            (enforce (= pvp-open "1") "Pvp week registrations are closed")
+        )
+        (with-default-read pvp-subscribers id
+            {"idnft": "",
+            "address": "",
+            "rounds": 0}
+            {"idnft":= idnft,
+            "address":= address,
+            "rounds":= rounds}
+            (enforce (> (length idnft) 0) "Not subscribed to this pvp week")
+            (with-capability (OWNER address idnft)
+                (spend-wiza wiza address m)
+                (update pvp-subscribers id {
+                    "rounds": (+ rounds (round wiza))
+                })
+            )
         )
     )
 

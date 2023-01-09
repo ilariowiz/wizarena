@@ -4,6 +4,7 @@ import { getDoc, doc } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
+import toast, { Toaster } from 'react-hot-toast';
 import Header from './Header'
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
@@ -22,7 +23,9 @@ import {
     subscribeToPvPweek,
     getAllSubscribersPvP,
     setSfida,
-    changeSpellPvP
+    changeSpellPvP,
+    getWizaBalance,
+    loadSingleNft
 } from '../actions'
 import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -35,6 +38,7 @@ class PvP extends Component {
         let isConnected = this.props.account && this.props.account.account
 
         this.state = {
+            error: "",
             loading: true,
             isConnected,
             showModalConnection: false,
@@ -47,7 +51,8 @@ class PvP extends Component {
             yourSubscribersResults: [],
             userMintedNfts: [],
             showModalSpellbook: false,
-            itemChangeSpell: {}
+            itemChangeSpell: {},
+            wizaAmount: 0
         }
     }
 
@@ -62,9 +67,31 @@ class PvP extends Component {
 		}, 500)
 	}
 
-    loadProfile() {
-        this.loadPvpWeek()
-        this.loadPvpOpen()
+    async loadProfile() {
+
+        const docRef = doc(firebasedb, "aaa", `zGVGOTbYTTIcX3EIvMob`)
+
+		const docSnap = await getDoc(docRef)
+		let data = docSnap.data()
+
+        //console.log(data);
+
+        if (data) {
+            this.loadPvpWeek()
+            this.loadPvpOpen()
+            this.loadWizaBalance()
+        }
+        else {
+            this.setState({ error: "Firebase/Firestore not available, check if you have an adblocker or firewall blocking the connection" })
+        }
+	}
+
+    loadWizaBalance() {
+		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		if (account && account.account) {
+			this.props.getWizaBalance(chainId, gasPrice, gasLimit, networkUrl, account.account)
+		}
 	}
 
     loadPvpWeek() {
@@ -117,15 +144,15 @@ class PvP extends Component {
         })
     }
 
-    subscribe(id, spellSelected) {
+    subscribe(id, spellSelected, wizaAmount) {
         const { account, chainId, gasPrice, netId } = this.props
         const { pvpWeek } = this.state
 
-        this.setState({ nameNftToSubscribe: `#${id}`, typeModal: "subscribe_pvp" })
+        this.setState({ nameNftToSubscribe: `#${id}`, wizaAmount, typeModal: "subscribe_pvp" })
 
         let refactorSpellSelected = { name: spellSelected.name }
 
-        this.props.subscribeToPvPweek(chainId, gasPrice, 5000, netId, account, pvpWeek, id, refactorSpellSelected)
+        this.props.subscribeToPvPweek(chainId, gasPrice, 6000, netId, account, pvpWeek, id, refactorSpellSelected, wizaAmount)
     }
 
     changeSpell(spellSelected) {
@@ -185,26 +212,41 @@ class PvP extends Component {
         this.setState({ yourSubscribersResults: temp })
     }
 
-    chooseOpponent(item) {
+    chooseOpponent(item, level) {
         const { subscribers, pvpWeek } = this.state
         const { account } = this.props
 
         this.setState({ loading: true })
 
+        let maxL = level+25
+        let minL = level-25
+
         //rimuoviamo se stessi
-        let subs = subscribers.filter(i => i.idnft !== item.id && i.address !== account.account)
+        //se vengono dallo stesso account
+        // se il livello è compreso tra max e min
+        //se ha ancora fights left
+        let subs = subscribers.filter(i => {
+            return i.idnft !== item.id
+                && i.address !== account.account
+                && i.level >= minL && i.level <= maxL
+                && i.fightsLeft > 0
+        })
 
         //console.log(subs);
-        //return
 
         if (subs.length === 0) {
             this.setState({ loading: false })
+            toast.error('No opponent found, please try again')
             return
         }
 
         const idxRandom = Math.floor(Math.random() * subs.length) //da 0 a subs.length -1
 
         let opponent = subs[idxRandom]
+
+        //console.log(opponent);
+
+        //return
 
         const sfida = {
             player1: item,
@@ -249,6 +291,7 @@ class PvP extends Component {
 
     renderRowChoise(item, index, modalWidth) {
         const { pvpWeek, pvpOpen } = this.state
+        const { wizaBalance } = this.props
 
 
         if (!item.attack) {
@@ -262,9 +305,10 @@ class PvP extends Component {
 				width={230}
 				pvpWeek={pvpWeek}
 				canSubscribe={pvpOpen}
-				onSubscribe={(spellSelected) => this.subscribe(item.id, spellSelected)}
+				onSubscribe={(spellSelected, wizaAmount) => this.subscribe(item.id, spellSelected, wizaAmount)}
 				modalWidth={modalWidth}
                 index={index}
+                wizaBalance={wizaBalance || 0}
 			/>
 		)
 	}
@@ -285,6 +329,8 @@ class PvP extends Component {
         }
         //console.log(level);
 
+        const totalFights = item.win + item.lose
+
         return (
             <div
                 key={index}
@@ -292,13 +338,13 @@ class PvP extends Component {
             >
                 <img
                     src={getImageUrl(item.id)}
-                    style={{ width: 140, height: 140, borderRadius: 2, borderColor: 'white', borderWidth: 1, borderStyle: 'solid', marginRight: 10 }}
+                    style={{ width: 120, height: 120, borderRadius: 2, borderColor: 'white', borderWidth: 1, borderStyle: 'solid', marginRight: 10 }}
                     alt={item.id}
                 />
 
                 <div style={{ flexDirection: 'column', justifyContent: 'space-around', height: '100%' }}>
 
-                    <div style={{ alignItems: 'center' }}>
+                    <div style={{ alignItems: 'center', marginBottom: 10 }}>
                         <p style={{ fontSize: 22, color: 'white', marginRight: 20, width: 50 }}>
                             #{item.id}
                         </p>
@@ -306,15 +352,25 @@ class PvP extends Component {
                         <p style={{ fontSize: 20, color: 'white', width: 170 }}>
                             WIN RATE {winRate}%
                         </p>
+                    </div>
 
-                        <p style={{ fontSize: 17, color: 'white', width: 140 }}>
-                            ({item.lose + item.win} fights)
+                    <div style={{ alignItems: 'center', marginBottom: 10 }}>
+                        <p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
+                            Win {item.win}
+                        </p>
+
+                        <p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
+                            Lose {item.lose}
+                        </p>
+
+                        <p style={{ fontSize: 18, color: 'white' }}>
+                            {totalFights}/{item.maxFights || 30} fights
                         </p>
                     </div>
 
                     {
                         level &&
-                        <div style={{ alignItems: 'center' }}>
+                        <div style={{ alignItems: 'center', marginBottom: 10 }}>
                             <p style={{ fontSize: 17, color: 'white', marginRight: 7 }}>
                                 Level
                             </p>
@@ -325,7 +381,7 @@ class PvP extends Component {
                         </div>
                     }
 
-                    <p style={{ fontSize: 17, color: 'white' }}>
+                    <p style={{ fontSize: 17, color: 'white', marginBottom: 10 }}>
                         Spell selected: {item.spellSelected.name}
                     </p>
 
@@ -343,7 +399,7 @@ class PvP extends Component {
                     }
 
                     {
-                        pvpOpen && !this.state.loading ?
+                        pvpOpen && !this.state.loading && totalFights < item.maxFights  ?
                         <div style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <button
                                 className="btnH"
@@ -353,7 +409,7 @@ class PvP extends Component {
                                         return
                                     }
 
-                                    this.chooseOpponent(item)
+                                    this.chooseOpponent(item, level)
                                 }}
                             >
                                 <p style={{ fontSize: 17, color: 'white' }}>
@@ -380,6 +436,24 @@ class PvP extends Component {
                         : null
                     }
 
+                    {
+                        pvpOpen && !this.state.loading && totalFights >= item.maxFights ?
+                        <button
+                            className="btnH"
+                            style={styles.btnPlay}
+                            onClick={() => {
+                                if (this.state.loading) {
+                                    return
+                                }
+                            }}
+                        >
+                            <p style={{ fontSize: 17, color: 'white' }}>
+                                INCREMENT MAX FIGHTS
+                            </p>
+                        </button>
+                        : null
+                    }
+
                 </div>
 
             </div>
@@ -387,7 +461,7 @@ class PvP extends Component {
     }
 
     renderBody(isMobile) {
-        const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults, userMintedNfts } = this.state
+        const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults, userMintedNfts, error } = this.state
         const { account, showModalTx, avgLevelPvP } = this.props
 
         const { boxW, modalW } = getBoxWidth(isMobile)
@@ -432,6 +506,23 @@ class PvP extends Component {
 			)
 		}
 
+        if (error) {
+			return (
+				<div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: boxW, marginTop: 30 }}>
+
+					<img
+						src={getImageUrl(undefined)}
+						style={{ width: 340, height: 340, borderRadius: 2, marginBottom: 30 }}
+						alt='Placeholder'
+					/>
+
+					<p style={{ fontSize: 23, color: 'white', textAlign: 'center', width: 340, marginBottom: 30, lineHeight: 1.2 }}>
+						{error}
+					</p>
+				</div>
+			)
+		}
+
 
         const sorted = this.sortById(userMintedNfts, "id")
 
@@ -450,7 +541,7 @@ class PvP extends Component {
                         </p>
 
                         <p style={{ fontSize: 19, color: 'white' }}>
-                            PVP BUYIN: 2 KDA
+                            PVP BUYIN: 1 KDA
                         </p>
                     </div>
 
@@ -480,6 +571,10 @@ class PvP extends Component {
 
                 <p style={{ fontSize: 22, color: 'white', marginBottom: 10 }}>
                     Your Wizards in the arena ({yourSubscribersResults.length})
+                </p>
+
+                <p style={{ fontSize: 19, color: 'white', marginBottom: 15 }}>
+                    You will only fight wizards 25 levels higher or lower
                 </p>
 
                 <div style={{ flexDirection: 'row', overflow: 'scroll', marginBottom: 30, flexWrap: 'wrap' }}>
@@ -529,6 +624,7 @@ class PvP extends Component {
 					}}
 					nameNft={this.state.nameNftToSubscribe}
                     pvpWeek={this.state.pvpWeek}
+                    wizaAmount={this.state.wizaAmount}
 				/>
 
                 {
@@ -569,6 +665,12 @@ class PvP extends Component {
     render() {
 		return (
 			<div style={styles.container}>
+
+                <Toaster
+                    position="top-center"
+                    reverseOrder={false}
+                />
+
 				<Media
 					query="(max-width: 767px)"
 					render={() => this.renderTopHeader(true)}
@@ -637,9 +739,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, avgLevelPvP } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, avgLevelPvP, wizaBalance } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, avgLevelPvP };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, avgLevelPvP, wizaBalance };
 }
 
 export default connect(mapStateToProps, {
@@ -652,5 +754,7 @@ export default connect(mapStateToProps, {
     subscribeToPvPweek,
     getAllSubscribersPvP,
     setSfida,
-    changeSpellPvP
+    changeSpellPvP,
+    getWizaBalance,
+    loadSingleNft
 })(PvP)

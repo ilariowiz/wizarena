@@ -890,6 +890,8 @@
 
 (free.wiz-arena.set-value "mint-phase" "0")
 
+(free.wiz-arena.set-value "pvp-open" "1")
+
 (commit-tx)
 
 ;;; MINT NFT
@@ -991,6 +993,36 @@
 (free.wiza.reward-users [{"account":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "amount": 1929.0}, {"account":"k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd", "amount": 890.0}])
 
 (commit-tx)
+
+(begin-tx "SUBSCRIBE PVP")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.subscribe-pvp "w3_0" "w3" "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" {"name":"Tornado"} 55.0 free.wiza)
+
+(commit-tx)
+
+
+(begin-tx "ADD rounds PVP")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.add-rounds-pvp "w3_0" 35.0 free.wiza)
+
+(commit-tx)
+
 ;
 ; (begin-tx "GET LEVEL")
 ;
