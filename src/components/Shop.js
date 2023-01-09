@@ -10,6 +10,7 @@ import Header from './Header'
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import NftCardShop from './common/NftCardShop'
+import NftCardShopSelected from './common/NftCardShopSelected'
 import calcUpgradeCost from './common/CalcUpgradeCost'
 import { calcLevelWizardAfterUpgrade, getColorTextBasedOnLevel, calcLevelWizard } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
@@ -109,22 +110,6 @@ class Shop extends Component {
 
     async getHistoryUpgrades() {
         const { account } = this.props
-
-        /*
-        const q = query(collection(firebasedb, "history_upgrades"),
-                        where("address", "==", account.account),
-                        orderBy("timestamp", "desc"))
-
-        const querySnap = await getDocs(q)
-        //console.log(querySnap);
-
-        let historyUpgrades = []
-
-        querySnap.forEach(doc => {
-            //console.log(doc.data());
-            historyUpgrades.push(doc.data())
-        })
-        */
 
         let historyUpgrades = []
 
@@ -247,6 +232,36 @@ class Shop extends Component {
 				item={item}
 				width={200}
                 isSelect={isSelect}
+				onSelect={() => {
+                    this.props.setWizardSelectedShop(item.id)
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                    setTimeout(() => {
+                        this.getPotionEquipped()
+                    }, 200)
+                }}
+                onChange={() => this.props.setWizardSelectedShop(undefined)}
+			/>
+		)
+	}
+
+    renderRowSelected(item, index, width) {
+
+        if (!item.attack) {
+            return <div key={index} />
+        }
+
+        let w = width * 90 / 100
+        if (w > 400) {
+            w = 400
+        }
+
+		return (
+			<NftCardShopSelected
+				key={index}
+				item={item}
+				width={w}
+                isSelect={true}
 				onSelect={() => {
                     this.props.setWizardSelectedShop(item.id)
                     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -426,7 +441,7 @@ class Shop extends Component {
         )
     }
 
-    renderVialCard(key, canBuy) {
+    renderVialCard(key, canBuy, isMobile) {
         const { loadingPotionEquipped } = this.state
 
         const wizard = this.getWizardSelected()
@@ -464,7 +479,7 @@ class Shop extends Component {
         return (
             <div
                 className="cardShopShadow"
-                style={styles.cardVialStyle}
+                style={Object.assign({}, styles.cardVialStyle, { marginRight: isMobile ? 15 : 35, marginBottom: isMobile ? 15 : 35 })}
             >
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
@@ -611,6 +626,7 @@ class Shop extends Component {
 
         const wizard = this.getWizardSelected()
 
+        // ACCOUNT NOT CONNECTED
         if (!account || !account.account || !isConnected) {
 
 			return (
@@ -652,17 +668,19 @@ class Shop extends Component {
 		}
 
 
+        // LIST OF YOUR WIZARDS
         if (!wizard) {
             return this.renderChoises(boxW)
         }
 
+        //WIZARD SELECTED
         return (
             <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
 
-                <div style={{ flexDirection: isMobile ? 'column' : 'row', marginBottom: 30 }}>
+                <div style={{ flexDirection: 'column', marginBottom: 30 }}>
 
-                    <div style={{ height: 'fit-content', marginRight: 30 }} className={wizard ? "selectedShow" : "selectedHide"}>
-                        {this.renderRowChoise(wizard, 0, false)}
+                    <div style={{ height: 'fit-content', justifyContent: 'center' }} className={wizard ? "selectedShow" : "selectedHide"}>
+                        {this.renderRowSelected(wizard, 0, boxW)}
                     </div>
 
 
@@ -672,15 +690,20 @@ class Shop extends Component {
                             $WIZA balance: {wizaBalance || 0.0}
                         </p>
 
-                        <p style={{ fontSize: 22, color: "white", marginBottom: 25 }}>
-                            LEVEL CAP: {MAX_LEVEL}
-                        </p>
+                        <div style={{ alignItems: 'center', marginBottom: 25 }}>
+                            <p style={{ fontSize: 22, color: "white", marginRight: 10 }}>
+                                LEVEL CAP:
+                            </p>
+                            <p style={{ fontSize: 22, color: getColorTextBasedOnLevel(MAX_LEVEL) }}>
+                                {MAX_LEVEL}
+                            </p>
+                        </div>
 
                         <p style={{ fontSize: 26, color: 'white', marginBottom: 10 }}>
                             UPGRADES
                         </p>
 
-                        <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
+                        <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
                             {this.renderShopCard("hp")}
 
                             {this.renderShopCard("defense")}
@@ -707,13 +730,13 @@ class Shop extends Component {
                                 </p>
 
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                    {this.renderVialCard("hp", true)}
+                                    {this.renderVialCard("hp", true, isMobile)}
 
-                                    {this.renderVialCard("defense", true)}
+                                    {this.renderVialCard("defense", true, isMobile)}
 
-                                    {this.renderVialCard("attack", true)}
+                                    {this.renderVialCard("attack", true, isMobile)}
 
-                                    {this.renderVialCard("damage", true)}
+                                    {this.renderVialCard("damage", true, isMobile)}
 
                                 </div>
                             </div>
@@ -726,7 +749,7 @@ class Shop extends Component {
                                 <p style={{ fontSize: 17, color: 'white', marginBottom: 10 }}>
                                     Vial Equipped
                                 </p>
-                                {this.renderVialCard(potionEquipped, false)}
+                                {this.renderVialCard(potionEquipped, false, isMobile)}
                             </div>
                         }
 
