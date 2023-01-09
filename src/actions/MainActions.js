@@ -1229,12 +1229,6 @@ export const delistNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId
 export const buyNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, nft) => {
 	return (dispatch) => {
 
-		//let fee = nft.price * 5 / 100;
-		//let toSeller = nft.price - fee
-
-		//console.log("fee",fee)
-		//console.log("toSeller",toSeller)
-
 		let pactCode = `(free.${CONTRACT_NAME}.buy-wizard "${nft.id}" "${account.account}")`;
 
 		let caps = [
@@ -1243,13 +1237,6 @@ export const buyNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, a
 				nft.owner,
 				nft.price,
 			]),
-			/*
-			Pact.lang.mkCap(`Fee`, "Marketplace fee", `coin.TRANSFER`, [
-				account.account,
-				ADMIN_ADDRESS,
-				fee,
-			]),
-			*/
 			Pact.lang.mkCap(
 				"Verify your account",
 				"Verify your account",
