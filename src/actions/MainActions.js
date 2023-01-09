@@ -790,7 +790,7 @@ export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 					if (idx > -1) {
 						let obj = response[idx]
 						obj["level"] = l
-						obj["fightsLeft"] = obj.rounds - (data.win + data.lose)
+						obj["fightsLeft"] = obj.rounds.int - (data.win + data.lose)
 						response[idx] = obj
 						//console.log(response);
 					}
