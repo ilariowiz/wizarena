@@ -77,6 +77,10 @@ class ModalTransaction extends Component {
 				const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_${nameNft}`)
 				setDoc(docRef, { "lose": 0, "win": 0, "maxFights": wizaAmount })
 			}
+			else if (type === "increment_fight_pvp") {
+				const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_${nameNft}`)
+				updateDoc(docRef, {"maxFights": increment(wizaAmount) })
+			}
 			else if (type === "makeoffer") {
 				//console.log(makeOfferValues);
 				sendMessage(makeOfferValues.id, makeOfferValues.amount, makeOfferValues.duration, makeOfferValues.owner)
@@ -132,6 +136,9 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'subscribe_pvp') {
 					body = `You will subscribe ${nameNft} who will be able to do ${wizaAmount} fights`
+				}
+				else if (type === 'increment_fight_pvp') {
+					body = `You will increase the number of fights Wizard ${nameNft} can do by ${wizaAmount}`
 				}
 				else if (type === 'subscriptionmass') {
 					body = nameNft
@@ -244,6 +251,10 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'subscribe_pvp') {
 					body = `Your Wizard ${nameNft} is entered in the PvP arena!`
+					buttonText = 'Close'
+				}
+				else if (type === 'increment_fight_pvp') {
+					body = `Maximum fights increased!`
 					buttonText = 'Close'
 				}
 				else if (type === 'withdraw') {

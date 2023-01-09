@@ -9,6 +9,7 @@ import Header from './Header'
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import ModalSpellbook from './common/ModalSpellbook'
+import ModalWizaPvP from './common/ModalWizaPvP'
 import NftCardChoicePvP from './common/NftCardChoicePvP'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
@@ -21,6 +22,7 @@ import {
     getPvPweek,
     getPvPopen,
     subscribeToPvPweek,
+    incrementFightPvP,
     getAllSubscribersPvP,
     setSfida,
     changeSpellPvP,
@@ -51,8 +53,10 @@ class PvP extends Component {
             yourSubscribersResults: [],
             userMintedNfts: [],
             showModalSpellbook: false,
+            showModalWizaPvP: false,
             itemChangeSpell: {},
-            wizaAmount: 0
+            wizaAmount: 0,
+            idNftIncrementFights: ""
         }
     }
 
@@ -155,6 +159,15 @@ class PvP extends Component {
         this.props.subscribeToPvPweek(chainId, gasPrice, 6000, netId, account, pvpWeek, id, refactorSpellSelected, wizaAmount)
     }
 
+    incrementPvP(wizaAmount) {
+        const { account, chainId, gasPrice, netId } = this.props
+        const { pvpWeek, idNftIncrementFights } = this.state
+
+        this.setState({ nameNftToSubscribe: `#${idNftIncrementFights}`, wizaAmount, typeModal: "increment_fight_pvp" })
+
+        this.props.incrementFightPvP(chainId, gasPrice, 6000, netId, account, pvpWeek, idNftIncrementFights, wizaAmount)
+    }
+
     changeSpell(spellSelected) {
         const { account, chainId, gasPrice, netId } = this.props
         const { pvpWeek, itemChangeSpell } = this.state
@@ -212,11 +225,28 @@ class PvP extends Component {
         this.setState({ yourSubscribersResults: temp })
     }
 
-    chooseOpponent(item, level) {
+    async chooseOpponent(item, level) {
         const { subscribers, pvpWeek } = this.state
         const { account } = this.props
 
         this.setState({ loading: true })
+
+        const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_#${item.id}`)
+        const docSnap = await getDoc(docRef)
+        let data = docSnap.data()
+
+        if (data) {
+            const fightsDone = data.win + data.lose
+            if (fightsDone >= data.maxFights) {
+                toast.error('Max fights reached. Add WIZA to keep fighting')
+                return
+            }
+        }
+        else {
+            toast.error('Something goes wrong... please try again')
+            return
+        }
+
 
         let maxL = level+25
         let minL = level-25
@@ -246,7 +276,21 @@ class PvP extends Component {
 
         //console.log(opponent);
 
-        //return
+        const docRefOpponent = doc(firebasedb, "pvp_results", `${pvpWeek}_#${opponent.idnft}`)
+        const docSnapOppo = await getDoc(docRefOpponent)
+        let dataOppo = docSnapOppo.data()
+
+        if (dataOppo) {
+            const fightsDone = dataOppo.win + dataOppo.lose
+            if (fightsDone >= dataOppo.maxFights) {
+                window.location.reload()
+                return
+            }
+        }
+        else {
+            window.location.reload()
+            return
+        }
 
         const sfida = {
             player1: item,
@@ -272,6 +316,11 @@ class PvP extends Component {
 
         this.setState({ showModalSpellbook: true, itemChangeSpell: item })
     }
+
+    openPopupIncrementFights(id) {
+        this.setState({ showModalWizaPvP: true, idNftIncrementFights: id })
+    }
+
 
     calcWinRate(item) {
 
@@ -443,11 +492,12 @@ class PvP extends Component {
                         pvpOpen && !this.state.loading && totalFights >= item.maxFights ?
                         <button
                             className="btnH"
-                            style={styles.btnPlay}
+                            style={Object.assign({}, styles.btnPlay, { width: 210 })}
                             onClick={() => {
                                 if (this.state.loading) {
                                     return
                                 }
+                                this.openPopupIncrementFights(item.id)
                             }}
                         >
                             <p style={{ fontSize: 17, color: 'white' }}>
@@ -645,6 +695,20 @@ class PvP extends Component {
                     : null
                 }
 
+                {
+                    this.state.showModalWizaPvP &&
+                    <ModalWizaPvP
+                        showModal={this.state.showModalWizaPvP}
+                        onCloseModal={() => this.setState({ showModalWizaPvP: false })}
+                        width={modalW}
+                        wizaBalance={this.props.wizaBalance}
+                        callback={(wizaAmount) => {
+                            this.incrementPvP(wizaAmount)
+                            this.setState({ showModalWizaPvP: false })
+                        }}
+                    />
+                }
+
             </div>
         )
     }
@@ -755,6 +819,7 @@ export default connect(mapStateToProps, {
     getPvPweek,
     getPvPopen,
     subscribeToPvPweek,
+    incrementFightPvP,
     getAllSubscribersPvP,
     setSfida,
     changeSpellPvP,

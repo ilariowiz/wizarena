@@ -49,7 +49,7 @@ class DoFight extends Component {
 
         const { sfida } = this.props
 
-        console.log(sfida);
+        //console.log(sfida);
 
         this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")

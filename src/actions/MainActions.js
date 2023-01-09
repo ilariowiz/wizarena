@@ -1480,6 +1480,45 @@ export const subscribeToPvPweek = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 	}
 }
 
+export const incrementFightPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, pvpWeek, idNft, wizaAmount) => {
+	return (dispatch) => {
+
+		const key = `${pvpWeek}_${idNft}`
+
+		let pactCode = `(free.${CONTRACT_NAME}.add-rounds-pvp "${key}" ${wizaAmount}.0 free.wiza)`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME}.OWNER`,
+				[account.account, idNft]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("incrementFightPvP", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
 export const changeSpellPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, pvpWeek, idNft, spellSelected) => {
 	return (dispatch) => {
 
