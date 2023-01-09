@@ -802,6 +802,12 @@ export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 					}
 				})
 
+				if (response1.length === 0) {
+					if (callback) {
+						callback(response)
+					}
+				}
+
 				const avgLevel = Math.round(levels / response1.length)
 				//console.log(avgLevel);
 				dispatch(setAvgLevelPvp(avgLevel))
