@@ -9,7 +9,7 @@ import { IoEyeOffOutline } from 'react-icons/io5';
 import { IoEyeOutline } from 'react-icons/io5';
 import moment from 'moment'
 import toast, { Toaster } from 'react-hot-toast';
-import { getDocs, collection, query, where, doc, getDoc } from "firebase/firestore";
+import { getDocs, collection, doc, getDoc } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Header from './Header';
 import ModalTransaction from './common/ModalTransaction'
@@ -904,7 +904,7 @@ class Nft extends Component {
 	}
 
 	renderLeftBoxListing() {
-		const { inputPrice, kadenaPrice, nft } = this.state
+		const { inputPrice, kadenaPrice } = this.state
 
 		return (
 			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
@@ -933,7 +933,7 @@ class Nft extends Component {
 	}
 
 	renderLeftMakeOffer() {
-		const { nft, infoBurn } = this.state
+		const { infoBurn } = this.state
 
 		const isBurned = infoBurn && infoBurn.burned
 
