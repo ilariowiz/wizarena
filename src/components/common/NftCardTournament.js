@@ -77,16 +77,16 @@ class NftCardTournament extends Component {
 					alt={`#${item.id}`}
 				/>
 
-				<div style={{ justifyContent: 'space-between', width, height: 65, alignItems: 'center' }}>
+				<div style={{ justifyContent: 'space-between', width, height: 73, alignItems: 'center' }}>
 
-					<div style={{ flex: 0.7, flexDirection: 'column', justifyContent: 'space-between', marginTop: 5 }}>
+					<div style={{ flex: 0.8, flexDirection: 'column', justifyContent: 'space-between', marginTop: 5 }}>
 						{
 							item.nickname ?
 							<p style={{ color: isMine ? "gold" : "white", fontSize: 17, marginLeft: 10, lineHeight: 1 }}>
-								{item.name} {item.nickname}
+								<span style={{ fontSize: 13 }}>{item.name}</span> {item.nickname}
 							</p>
 							:
-							<p style={{ color: isMine ? "gold" : "white", fontSize: 19, marginLeft: 10, lineHeight: 1, marginBottom: 4 }}>
+							<p style={{ color: isMine ? "gold" : "white", fontSize: 18, marginLeft: 10, lineHeight: 1, marginBottom: 4 }}>
 								{item.name}
 							</p>
 						}
@@ -102,7 +102,7 @@ class NftCardTournament extends Component {
 						</div>
 					</div>
 
-					<div style={{ flex: 0.3, flexDirection: 'column', justifyContent: 'space-between', marginTop: 5, marginRight: 10 }}>
+					<div style={{ flex: 0.2, flexDirection: 'column', justifyContent: 'space-between', marginTop: 5, marginRight: 10 }}>
 						<div style={{ width: '100%', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}>
 							<IoMedalOutline
 								color={isMine ? "gold" : "white"}

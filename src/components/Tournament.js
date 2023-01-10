@@ -495,7 +495,7 @@ class Tournament extends Component {
                         subscribed && subscribed.length > 0 &&
                         <div style={{ marginBottom: 30, flexWrap: 'wrap', marginTop: 15 }}>
                             {subscribed.map((item, index) => {
-                                return this.renderRow(item, index, 220)
+                                return this.renderRow(item, index, 230)
                             })}
                         </div>
                     }
