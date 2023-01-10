@@ -246,9 +246,12 @@ class PvP extends Component {
         }
 
         if (data) {
+            //questo può capitare se ti stanno sfidando e hai lasciato la pagina aperta
+            //quando vai a sfidare tu non si è aggiornata la pagina e quindi ti sembra che puoi ancora fare fights
+            //quindi facciamo il check con i fights dal BE e se sono >= dei tuoi rounds allora facciamo un refresh
             const fightsDone = data.win + data.lose
             if (fightsDone >= item.rounds) {
-                toast.error('Max fights reached. Add WIZA to keep fighting')
+                window.location.reload()
                 return
             }
         }
