@@ -14,7 +14,7 @@ import {
     setNetworkUrl,
     loadSingleNft
 } from '../actions'
-import { BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID } from '../actions/types'
+import { BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID, REVEAL_CAP } from '../actions/types'
 
 import "../css/Fight.css"
 
@@ -491,7 +491,23 @@ class DoFight extends Component {
         return w
     }
 
-    renderBoxHp(width, name, initialHp, currentHp, level, index, isMobile) {
+
+    getName(item) {
+
+		let type = "Wizard"
+		if (parseInt(item.id) >= 1023 && parseInt(item.id) < REVEAL_CAP) {
+			type = "Cleric"
+		}
+
+		if (item.nickname) {
+            return `${item.name} ${item.nickname}`
+        }
+
+        return `${type} ${item.name}`
+	}
+
+
+    renderBoxHp(width, item, initialHp, currentHp, level, index, isMobile) {
 
         const innerWidth = width - 40
 
@@ -502,7 +518,7 @@ class DoFight extends Component {
 
                 <div style={{ justifyContent: 'space-between', alignItems: 'center', width: innerWidth, flexDirection: isMobile ? 'column' : 'row' }}>
                     <p style={{ fontSize: isMobile ? 15 : 20, color: TEXT_SECONDARY_COLOR }}>
-                        Wizard {name}
+                        {this.getName(item)}
                     </p>
 
                     <div style={{ alignItems: 'center' }}>
@@ -590,7 +606,7 @@ class DoFight extends Component {
 
                         <div style={{ height: isMobile ? 15 : 60 }} />
 
-                        {this.renderBoxHp(widthSide, this.player2.name, this.player2InitialHp, player2CurrentHp, this.player2.level, 1, isMobile)}
+                        {this.renderBoxHp(widthSide, this.player2, this.player2InitialHp, player2CurrentHp, this.player2.level, 1, isMobile)}
 
                         <img
         					style={{ width: widthImg, marginTop: isMobile ? 70 : 110 }}
@@ -607,7 +623,7 @@ class DoFight extends Component {
         					alt={this.player2.id}
         				/>
 
-                        {this.renderBoxHp(widthSide, this.player1.name, this.player1InitialHp, player1CurrentHp, this.player1.level, 2, isMobile)}
+                        {this.renderBoxHp(widthSide, this.player1, this.player1InitialHp, player1CurrentHp, this.player1.level, 2, isMobile)}
 
                         <div style={{ height: isMobile ? 15 : 30 }} />
 

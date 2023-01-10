@@ -24,12 +24,19 @@ class NftCard extends Component {
 					alt={`#${item.id}`}
 				/>
 
-				<div style={{ justifyContent: 'space-between', width, height: 55, alignItems: 'center' }}>
+				<div style={{ justifyContent: 'space-between', width, height: 65, alignItems: 'center' }}>
 
 					<div style={{ width: '100%', justifyContent: 'space-between', flexDirection: 'column', marginTop: 5 }}>
-						<p style={{ color: 'white', fontSize: 19, marginLeft: 10, lineHeight: 1 }}>
-							{item.name}
-						</p>
+						{
+							item.nickname ?
+							<p style={{ color: 'white', fontSize: 17, marginLeft: 10, lineHeight: 1 }}>
+								{item.name} {item.nickname}
+							</p>
+							:
+							<p style={{ color: 'white', fontSize: 19, marginLeft: 10, lineHeight: 1 }}>
+								{item.name}
+							</p>
+						}
 
 						{
 							item.level &&

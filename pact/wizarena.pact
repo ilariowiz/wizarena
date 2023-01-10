@@ -136,6 +136,7 @@
         owner:string
         name:string
         imageHash:string
+        nickname:string
     )
 
     (defschema nft-listed-schema
@@ -645,7 +646,8 @@
                     "traits": (at "traits" data),
                     "owner": owner,
                     "name": (at "name" data),
-                    "imageHash": (at "imageHash" data)
+                    "imageHash": (at "imageHash" data),
+                    "nickname": ""
                 })
             )
         )
@@ -1488,6 +1490,16 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;; GENERIC FUN ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (defun update-nickname (id:string address:string nickname:string m:module{wiza1-interface-v1})
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+        (with-capability (OWNER address id)
+            (update nfts id {
+              "nickname": nickname
+            })
+            (spend-wiza 160.0 address m)
+        )
+    )
 
     (defun transfer-wizard (id:string sender:string receiver:string m:module{wiza1-interface-v1})
         @doc "Transfer nft to an account"

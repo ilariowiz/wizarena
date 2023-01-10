@@ -830,18 +830,26 @@ class Nft extends Component {
 		)
 	}
 
-	renderName(name, marginBottom) {
+	renderName(marginBottom) {
+		const { nft } = this.state
 
 		let type = "Wizard"
-		if (parseInt(name.replace("#", "")) >= REVEAL_CAP) {
+		if (parseInt(nft.id) >= 1023 && parseInt(nft.id) < REVEAL_CAP) {
 			type = "Cleric"
 		}
 
 		return (
 			<div style={{ flexDirection: 'column', marginBottom }}>
-				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 30, lineHeight: 1 }}>
-					{type} {name}
-				</p>
+				{
+					nft.nickname ?
+					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 26, lineHeight: 1 }}>
+						{nft.name} {nft.nickname}
+					</p>
+					:
+					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 30, lineHeight: 1 }}>
+						{type} {nft.name}
+					</p>
+				}
 			</div>
 		)
 	}
@@ -852,7 +860,7 @@ class Nft extends Component {
 		return (
 			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
 
-				{this.renderName(nft.name, 24)}
+				{this.renderName(24)}
 
 				<div style={{ flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-end', marginTop: 15 }}>
 					<p style={{ color: '#c2c0c0', fontSize: 17, marginBottom: 4 }}>
@@ -901,7 +909,7 @@ class Nft extends Component {
 		return (
 			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
 
-				{this.renderName(nft.name, 24)}
+				{this.renderName(24)}
 
 				<div style={{ flexDirection: 'column', marginTop: 15 }}>
 					<p style={{ color: '#c2c0c0', fontSize: 17 }}>
@@ -931,7 +939,7 @@ class Nft extends Component {
 
 		return (
 			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
-				{this.renderName(nft.name, 0)}
+				{this.renderName(0)}
 
 				{
 					isBurned &&

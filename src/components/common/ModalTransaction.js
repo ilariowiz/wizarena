@@ -107,7 +107,7 @@ class ModalTransaction extends Component {
 	}
 
 	getContent() {
-		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, amountToMint, offerInfoRecap, wizaAmount } = this.props
+		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, amountToMint, offerInfoRecap, wizaAmount, nicknameToSet } = this.props
 
 		//CASO INIZIALE, signingCmd != null in transactionState
 		let title = 'Signing transaction'
@@ -190,6 +190,9 @@ class ModalTransaction extends Component {
 				}
 				else if (type === "withdrawoffer") {
 					body = 'You will withdraw funds from this offer'
+				}
+				else if (type === "buynickname") {
+					body = `You will give the nickname ${nicknameToSet} to Wizard ${nameNft}`
 				}
 
 				buttonText = 'Open Wallet'
@@ -311,6 +314,10 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'withdrawoffer') {
 					body = 'Funds successfully withdrawn'
+					buttonText = 'Close'
+				}
+				else if (type === 'buynickname') {
+					body = 'Nickname set successfully'
 					buttonText = 'Close'
 				}
 

@@ -80,9 +80,16 @@ class NftCardTournament extends Component {
 				<div style={{ justifyContent: 'space-between', width, height: 65, alignItems: 'center' }}>
 
 					<div style={{ width: '100%', flexDirection: 'column', justifyContent: 'space-between', marginTop: 5 }}>
-						<p style={{ color: isMine ? "gold" : "white", fontSize: 19, marginLeft: 10, lineHeight: 1, marginBottom: 4 }}>
-							{item.name}
-						</p>
+						{
+							item.nickname ?
+							<p style={{ color: isMine ? "gold" : "white", fontSize: 15, marginLeft: 10, lineHeight: 1 }}>
+								{item.name} {item.nickname}
+							</p>
+							:
+							<p style={{ color: isMine ? "gold" : "white", fontSize: 19, marginLeft: 10, lineHeight: 1, marginBottom: 4 }}>
+								{item.name}
+							</p>
+						}
 
 						<div style={{ alignItems: 'center', marginLeft: 10, height: 28 }}>
 							<p style={{ color: "#c2c0c0", fontSize: 15, marginRight: 10 }}>

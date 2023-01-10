@@ -9,6 +9,7 @@ import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
+import ModalSetName from './common/ModalSetName'
 import NftCardShop from './common/NftCardShop'
 import NftCardShopSelected from './common/NftCardShopSelected'
 import calcUpgradeCost from './common/CalcUpgradeCost'
@@ -24,7 +25,8 @@ import {
     buyUpgrade,
     setWizardSelectedShop,
     getPotionEquipped,
-    buyVial
+    buyVial,
+    buyNickname
 } from '../actions'
 import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, MAX_LEVEL } from '../actions/types'
 import '../css/Nft.css'
@@ -53,6 +55,7 @@ class Shop extends Component {
             showModalConnection: false,
             typeModal: 'upgrade',
             nameNftToUpgrade: '',
+            nicknameToSet: "",
             statToUpgrade: '',
             howMuchIncrement: 1,
             wizaCostToUpgrade: 0,
@@ -61,7 +64,8 @@ class Shop extends Component {
             increase: { hp: 1, defense: 1, attack: 1, damage: 1},
             potionEquipped: "",
             loadingPotionEquipped: false,
-            tournamentName: ""
+            tournamentName: "",
+            showModalSetName: false
         }
     }
 
@@ -175,6 +179,8 @@ class Shop extends Component {
 
         const wizard = userMintedNfts.find(i => i.id === wizardSelectedIdShop)
 
+        //console.log(wizard);
+
         if (wizard) {
             return wizard
         }
@@ -204,6 +210,16 @@ class Shop extends Component {
         this.setState({ nameNftToUpgrade: wizard.name, statToUpgrade: potion, wizaCostToUpgrade: costo, typeModal: 'buyvial' })
 
         this.props.buyVial(chainId, gasPrice, netId, account, wizard.id, key, potion)
+    }
+
+    buyNickname(nickname) {
+        const { account, chainId, gasPrice, netId } = this.props
+
+        const wizard = this.getWizardSelected()
+
+        this.setState({ nameNftToUpgrade: wizard.name, nicknameToSet: nickname, typeModal: 'buynickname' })
+
+        this.props.buyNickname(chainId, gasPrice, netId, account, wizard.id, nickname)
     }
 
     sortById() {
@@ -552,6 +568,39 @@ class Shop extends Component {
         )
     }
 
+    renderCardNickname(isMobile) {
+        return (
+            <div
+                className="cardShopShadow"
+                style={Object.assign({}, styles.cardVialStyle, { marginBottom: 30 })}
+            >
+                <p style={{ fontSize: 22, color: 'white', marginBottom: 15, marginTop: 15 }}>
+                    EPIC NAME
+                </p>
+
+                <p style={{ fontSize: 17, color: 'white' }}>
+                    $WIZA
+                </p>
+                <p style={{ fontSize: 21, color: 'white', marginBottom: 20 }}>
+                    160.0
+                </p>
+
+                <button
+                    className='btnH'
+                    style={styles.btnChoose}
+                    onClick={() => {
+                        this.setState({ showModalSetName: true })
+                    }}
+                >
+                    <p style={{ fontSize: 17, color: 'white' }}>
+                        SET NAME
+                    </p>
+                </button>
+
+            </div>
+        )
+    }
+
     renderHistory(item, index) {
         return (
             <div key={index} style={styles.rowHistory}>
@@ -744,6 +793,23 @@ class Shop extends Component {
                             </div>
                         }
 
+                        {
+                            <div style={{ flexDirection: 'column' }}>
+                                <p style={{ fontSize: 26, color: 'white', marginBottom: 5 }}>
+                                    NICKNAME
+                                </p>
+
+                                <p style={{ fontSize: 18, color: 'white', marginBottom: 10 }}>
+                                    Want to give your wizard an epic nickname? Now you can!
+                                </p>
+
+                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                    {this.renderCardNickname(isMobile)}
+
+                                </div>
+                            </div>
+                        }
+
                     </div>
 
                 </div>
@@ -785,7 +851,19 @@ class Shop extends Component {
                     statToUpgrade={this.state.statToUpgrade}
                     wizaCostToUpgrade={this.state.wizaCostToUpgrade}
                     howMuchIncrement={this.state.howMuchIncrement}
+                    nicknameToSet={this.state.nicknameToSet}
 				/>
+
+                <ModalSetName
+                    showModal={this.state.showModalSetName}
+                    onCloseModal={() => this.setState({ showModalSetName: false })}
+                    width={modalW}
+                    wizaBalance={this.props.wizaBalance}
+                    callback={(nickname) => {
+                        this.buyNickname(nickname)
+                        this.setState({ showModalSetName: false })
+                    }}
+                />
 
             </div>
         )
@@ -916,5 +994,6 @@ export default connect(mapStateToProps, {
     buyUpgrade,
     setWizardSelectedShop,
     getPotionEquipped,
-    buyVial
+    buyVial,
+    buyNickname
 })(Shop)

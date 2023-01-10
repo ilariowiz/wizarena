@@ -49,9 +49,16 @@ class NftCardShopSelected extends Component {
 
                         <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                             <div style={{ width: '90%', justifyContent: 'space-between', alignItems: 'center', marginTop: 5, marginBottom: 10 }}>
-                                <p style={{ color: 'white', fontSize: 19 }}>
-                                    {item.name}
-                                </p>
+                                {
+                                    item.nickname ?
+                                    <p style={{ color: 'white', fontSize: 19 }}>
+                                        {item.name} {item.nickname}
+                                    </p>
+                                    :
+                                    <p style={{ color: 'white', fontSize: 19 }}>
+                                        {item.name}
+                                    </p>
+                                }
                             </div>
                         </div>
 
