@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getDoc, doc } from "firebase/firestore";
+import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
@@ -125,6 +125,7 @@ class PvP extends Component {
                         let yourSub = response.find(z => z.id === idSub)
                         if (yourSub) {
                             yourSub["spellSelected"] = i.spellSelected
+                            yourSub["rounds"] = i.rounds.int
                             //console.log(yourSub, i);
                             yourSubs.push(yourSub)
                             this.loadResultsYourSub(yourSub)
@@ -207,7 +208,7 @@ class PvP extends Component {
 		let data = docSnap.data()
 
         if (!data) {
-            data = { win: 0, lose: 0 }
+            data = { win: 0, lose: 0, maxFights: 0 }
         }
 
         //console.log(data);
@@ -235,9 +236,18 @@ class PvP extends Component {
         const docSnap = await getDoc(docRef)
         let data = docSnap.data()
 
+        //console.log(item);
+
+        //se per caso hai fatto un update rounds ma nel BE non si sono aggiornati, li aggiorniamo e facciamo un refresh della pagina
+        if (data && data.maxFights < item.rounds) {
+            await updateDoc(docRef, {"maxFights": item.rounds })
+            window.location.reload()
+            return
+        }
+
         if (data) {
             const fightsDone = data.win + data.lose
-            if (fightsDone >= data.maxFights) {
+            if (fightsDone >= item.rounds) {
                 toast.error('Max fights reached. Add WIZA to keep fighting')
                 return
             }
@@ -281,8 +291,21 @@ class PvP extends Component {
         let dataOppo = docSnapOppo.data()
 
         if (dataOppo) {
+
+            //facciamo un refresh per aggiornare i dati sia su FE che su BE
+            if (dataOppo.maxFights < opponent.rounds.int) {
+                await updateDoc(docRefOpponent, {"maxFights": opponent.rounds.int })
+                window.location.reload()
+                return
+            }
+            //vuol dire che il FE non è aggiornato con gli ultimi dati
+            else if (dataOppo.maxFights > opponent.rounds.int) {
+                window.location.reload()
+                return
+            }
+
             const fightsDone = dataOppo.win + dataOppo.lose
-            if (fightsDone >= dataOppo.maxFights) {
+            if (fightsDone >= opponent.rounds.int) {
                 window.location.reload()
                 return
             }
@@ -413,9 +436,9 @@ class PvP extends Component {
                         </p>
 
                         {
-                            item.maxFights &&
+                            item.rounds &&
                             <p style={{ fontSize: 18, color: 'white' }}>
-                                {totalFights}/{item.maxFights} fights
+                                {totalFights}/{item.rounds} fights
                             </p>
                         }
                     </div>
@@ -451,7 +474,7 @@ class PvP extends Component {
                     }
 
                     {
-                        pvpOpen && !this.state.loading && totalFights < item.maxFights  ?
+                        pvpOpen && !this.state.loading && totalFights < item.rounds  ?
                         <div style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <button
                                 className="btnH"
@@ -489,7 +512,7 @@ class PvP extends Component {
                     }
 
                     {
-                        pvpOpen && !this.state.loading && totalFights >= item.maxFights ?
+                        pvpOpen && !this.state.loading && totalFights >= item.rounds ?
                         <button
                             className="btnH"
                             style={Object.assign({}, styles.btnPlay, { width: 210 })}

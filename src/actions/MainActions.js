@@ -796,6 +796,7 @@ export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 					}
 
 					if (index === response1.length - 1) {
+						//console.log(response);
 						if (callback) {
 							callback(response)
 						}
