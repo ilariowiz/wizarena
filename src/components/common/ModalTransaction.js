@@ -5,7 +5,7 @@ import { firebasedb } from '../Firebase';
 import { IoClose } from 'react-icons/io5'
 import DotLoader from 'react-spinners/DotLoader';
 import Pact from "pact-lang-api";
-import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted } from './WebhookDiscord'
+import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, sendMessageUpdateNickname } from './WebhookDiscord'
 import '../../css/Modal.css'
 import {
 	signTransaction,
@@ -18,7 +18,6 @@ import '../../css/Nft.css'
 const POLL_INTERVAL_S = 3
 
 class ModalTransaction extends Component {
-
 	checkTransaction() {
 		const { transactionState } = this.props
 
@@ -30,7 +29,7 @@ class ModalTransaction extends Component {
 	}
 
 	pollForTransaction = async () => {
-		const { transactionState, networkUrl, nameNft, idNft, inputPrice, statToUpgrade, howMuchIncrement, type, pvpWeek, makeOfferValues, saleValues, wizaAmount } = this.props
+		const { transactionState, networkUrl, nameNft, idNft, inputPrice, statToUpgrade, howMuchIncrement, type, pvpWeek, makeOfferValues, saleValues, wizaAmount, nicknameToSet } = this.props
 
 
 		const requestKey = transactionState.requestKey
@@ -93,6 +92,9 @@ class ModalTransaction extends Component {
 			}
 			else if (type === "delist") {
 				sendMessageDelisted(nameNft.replace("#", ""))
+			}
+			else if (type === "buynickname") {
+				sendMessageUpdateNickname(nameNft.replace("#", ""), nicknameToSet)
 			}
 		}
 		else {

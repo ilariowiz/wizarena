@@ -69,3 +69,21 @@ export const sendMessageDelisted = (id) => {
 
     request.send(JSON.stringify(params));
 }
+
+export const sendMessageUpdateNickname = (id, nickname) => {
+    const request = new XMLHttpRequest()
+
+    request.open("POST", process.env.REACT_APP_DISCORD_WEBHOOK_UPDATE_NICKNAME)
+    request.setRequestHeader("Content-type", 'application/json')
+
+
+    const content = `#${id} changed name to ${nickname}`
+
+    const params = {
+        username: `#${id}`,
+        avatar_url: `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`,
+        content
+    }
+
+    request.send(JSON.stringify(params));
+}
