@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getDoc, doc, updateDoc } from "firebase/firestore";
+import { getDoc, doc, updateDoc, setDoc } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
@@ -232,6 +232,16 @@ class PvP extends Component {
 
         this.setState({ loading: true })
 
+        const docTest = doc(firebasedb, "aaa", `zGVGOTbYTTIcX3EIvMob`)
+		const docSnapTest = await getDoc(docTest)
+		let dataTest = docSnapTest.data()
+
+        if (!dataTest) {
+            toast.error('Something goes wrong... please try again')
+            return
+        }
+
+
         const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_#${item.id}`)
         const docSnap = await getDoc(docRef)
         let data = docSnap.data()
@@ -255,8 +265,11 @@ class PvP extends Component {
                 return
             }
         }
+        //questo capita se durante la registrazione non hai aspettato la fine della transaction e quindi il BE non si è aggiornato
         else {
-            toast.error('Something goes wrong... please try again')
+            await setDoc(docRef, { "lose": 0, "win": 0, "maxFights": item.rounds })
+            //toast.error('Something goes wrong... please try again')
+            window.location.reload()
             return
         }
 
@@ -317,6 +330,8 @@ class PvP extends Component {
             window.location.reload()
             return
         }
+
+        //return
 
         const sfida = {
             player1: item,
