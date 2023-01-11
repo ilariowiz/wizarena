@@ -12,7 +12,7 @@
           (<= (length accountId) 256))) ]
 
   (implements wiza1-interface-v1)
-  (implements wizarena-interface-v1)
+  (implements wizarena-interface-v2)
 
   (defconst ADMIN_KEYSET "free.wiza-token2-keyset")
 
@@ -28,6 +28,10 @@
   )
 
   (defun spend-wiza:object (amount:decimal account:string)
+    true
+  )
+
+  (defun spend-ap:object (amount:integer account:string idnft:string)
     true
   )
 

@@ -1669,6 +1669,76 @@ export const buyUpgrade = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account
 	}
 }
 
+export const buyUpgradeWithAp = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft, stat, increase) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.buy-upgrades-ap "${account.account}" "${idnft}" "${stat}" ${increase})`;
+
+		let cmd = {
+			pactCode,
+			caps: [
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME}.OWNER`,
+          			[account.account, idnft]
+        		),
+				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+			],
+			sender: account.account,
+			gasLimit: 10000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("buyUpgradeWithAp", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const burnAP = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft, amount, increase) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME_WIZA}.mine-from-ap-burn "${account.account}" "${idnft}" ${amount} free.wiz-arena)`;
+
+		let cmd = {
+			pactCode,
+			caps: [
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME_WIZA}.OWNER`,
+          			[account.account, idnft, account.account]
+        		),
+				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+			],
+			sender: account.account,
+			gasLimit: 10000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("burnAP", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
 export const buyVial = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft, key, potion) => {
 	return (dispatch) => {
 

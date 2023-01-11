@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { getDocs, collection } from "firebase/firestore";
 import { firebasedb } from './Firebase';
+//import { chunk } from 'lodash'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { AiOutlineMinus } from 'react-icons/ai'
 import Media from 'react-media';
@@ -26,7 +27,9 @@ import {
     setWizardSelectedShop,
     getPotionEquipped,
     buyVial,
-    buyNickname
+    buyNickname,
+    buyUpgradeWithAp,
+    burnAP
 } from '../actions'
 import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, MAX_LEVEL } from '../actions/types'
 import '../css/Nft.css'
@@ -36,6 +39,7 @@ const potion_hp = require('../assets/potion_hp.png')
 const potion_def = require('../assets/potion_def.png')
 const potion_atk = require('../assets/potion_atk.png')
 const potion_dmg = require('../assets/potion_dmg.png')
+const potion_ap_burn = require('../assets/potion_ap_burn.png')
 
 const vial_hp = require('../assets/vial_hp.png')
 const vial_def = require('../assets/vial_def.png')
@@ -67,7 +71,8 @@ class Shop extends Component {
             potionEquipped: "",
             loadingPotionEquipped: false,
             tournamentName: "",
-            showModalSetName: false
+            showModalSetName: false,
+            apToBurn: 1
         }
     }
 
@@ -199,6 +204,28 @@ class Shop extends Component {
         this.setState({ nameNftToUpgrade: wizard.name, statToUpgrade: stat, wizaCostToUpgrade: costo, howMuchIncrement: increase[stat], typeModal: 'upgrade' })
 
         this.props.buyUpgrade(chainId, gasPrice, netId, account, wizard.id, stat, increase[stat])
+    }
+
+    buyStatWithAP(stat, costo) {
+        const { account, chainId, gasPrice, netId } = this.props
+        const { increase } = this.state
+
+        const wizard = this.getWizardSelected()
+
+        this.setState({ nameNftToUpgrade: wizard.name, statToUpgrade: stat, wizaCostToUpgrade: costo, howMuchIncrement: increase[stat], typeModal: 'upgrade' })
+
+        this.props.buyUpgradeWithAp(chainId, gasPrice, netId, account, wizard.id, stat, increase[stat])
+    }
+
+    burnAP() {
+        const { account, chainId, gasPrice, netId } = this.props
+        const { apToBurn } = this.state
+
+        const wizard = this.getWizardSelected()
+
+        this.setState({ typeModal: "burnap" })
+
+        this.props.burnAP(chainId, gasPrice, netId, account, wizard.id, apToBurn)
     }
 
     buyVial(potion, costo) {
@@ -450,6 +477,280 @@ class Shop extends Component {
         )
     }
 
+    renderAPShopCard(key) {
+        const { increase } = this.state
+
+        const wizard = this.getWizardSelected()
+
+        const increaseTo = increase[key]
+
+        let apCosts = {
+            hp_cost: 1,
+            defense_cost: 4,
+            attack_cost: 4,
+            damage_cost: 2
+        }
+
+        let statToUpgrade;
+
+        const baseApCost = apCosts[`${key}_cost`]
+
+        let costo = increaseTo * baseApCost;
+        let newLevel;
+
+        if (wizard && wizard.id) {
+            statToUpgrade = wizard[key].int
+            let arrayLevelsTo = []
+
+            for (let i = 0; i < increaseTo; i++) {
+                arrayLevelsTo.push(statToUpgrade + i)
+            }
+
+            //console.log(arrayLevelsTo);
+
+            const copySelected = {
+                hp: wizard.hp.int,
+                defense: wizard.defense.int,
+                attack: wizard.attack.int,
+                damage: wizard.damage.int
+            }
+
+            copySelected[key] = arrayLevelsTo[arrayLevelsTo.length - 1]
+
+            //console.log(copySelected);
+            newLevel = calcLevelWizardAfterUpgrade(copySelected, key)
+        }
+
+        let colorTextLevel = getColorTextBasedOnLevel(newLevel)
+        if (newLevel > MAX_LEVEL) {
+            colorTextLevel = "red"
+        }
+
+
+        let img;
+        if (key === "hp") {
+            img = potion_hp
+        }
+        else if (key === "defense") {
+            img = potion_def
+        }
+        else if (key === "attack") {
+            img = potion_atk
+        }
+        else if (key === "damage") {
+            img = potion_dmg
+        }
+
+        return (
+            <div
+                className="cardShopShadow"
+                style={styles.cardShopStyle}
+            >
+                <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+
+                    <div style={{ width: 100, height: 100, alignItems: 'center', justifyContent: 'center' }}>
+                        <img
+                            src={img}
+                            style={{ width: 110, height: 110 }}
+                            alt="logo"
+                        />
+                    </div>
+
+
+                    <div style={{ justifyContent: 'space-between', marginBottom: 15, width: '100%' }}>
+
+                        <button
+                            style={{ marginLeft: 15, cursor: 'pointer', justifyContent: 'center', alignItems: 'center' }}
+                            onClick={() => {
+                                if (!wizard) {
+                                    return
+                                }
+
+                                const oldState = Object.assign({}, this.state.increase)
+                                if (oldState[key] === 1) {
+                                    return
+                                }
+
+                                oldState[key] -= 1
+
+                                this.setState({ increase: oldState })
+							}}
+                        >
+                            <AiOutlineMinus
+                                color="white"
+                                size={22}
+                            />
+                        </button>
+
+
+                        <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                            <p style={{ fontSize: 22, color: 'white' }}>
+                                +{increase[key]}
+                            </p>
+
+                            <p style={{ fontSize: 20, color: 'white' }}>
+                                {key.toUpperCase()}
+                            </p>
+                        </div>
+
+                        <button
+							style={{ marginRight: 15, cursor: 'pointer', justifyContent: 'center', alignItems: 'center' }}
+							onClick={() => {
+                                if (!wizard) {
+                                    return
+                                }
+
+                                const oldState = Object.assign({}, this.state.increase)
+                                oldState[key] += 1
+
+                                this.setState({ increase: oldState })
+							}}
+						>
+							<AiOutlinePlus
+								color="white"
+								size={22}
+							/>
+						</button>
+                    </div>
+
+                    <p style={{ fontSize: 17, color: 'white' }}>
+                        AP
+                    </p>
+                    <p style={{ fontSize: 21, color: 'white', marginBottom: 15 }}>
+                        {costo}
+                    </p>
+
+                    <p style={{ fontSize: 17, color: 'white' }}>
+                        NEW LEVEL
+                    </p>
+                    <p style={{ fontSize: 21, color: colorTextLevel, marginBottom: 10 }}>
+                        {newLevel}
+                    </p>
+                </div>
+
+                <button
+                    className='btnH'
+                    style={Object.assign({}, styles.btnChoose, { opacity: newLevel > MAX_LEVEL ? 0.5 : 1 })}
+                    onClick={() => {
+
+                        if (!wizard || newLevel > MAX_LEVEL) {
+                            return
+                        }
+
+                        this.buyStatWithAP(key, costo)
+                    }}
+                >
+                    <p style={{ fontSize: 17, color: 'white' }}>
+                        UPGRADE
+                    </p>
+                </button>
+
+            </div>
+        )
+    }
+
+    renderAPBurnCard() {
+        const { apToBurn } = this.state
+
+        const wizard = this.getWizardSelected()
+
+        return (
+            <div
+                className="cardShopShadow"
+                style={styles.cardShopStyle}
+            >
+                <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+
+                    <div style={{ width: 100, height: 100, alignItems: 'center', justifyContent: 'center' }}>
+                        <img
+                            src={potion_ap_burn}
+                            style={{ width: 110, height: 110 }}
+                            alt="logo"
+                        />
+                    </div>
+
+
+                    <div style={{ justifyContent: 'space-between', marginBottom: 15, width: '100%' }}>
+
+                        <button
+                            style={{ marginLeft: 15, cursor: 'pointer', justifyContent: 'center', alignItems: 'center' }}
+                            onClick={() => {
+                                if (!wizard || this.state.apToBurn <= 1) {
+                                    return
+                                }
+
+                                this.setState({ apToBurn: this.state.apToBurn - 1 })
+							}}
+                        >
+                            <AiOutlineMinus
+                                color="white"
+                                size={22}
+                            />
+                        </button>
+
+
+                        <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                            <p style={{ fontSize: 22, color: 'white' }}>
+                                {apToBurn}
+                            </p>
+
+                            <p style={{ fontSize: 20, color: 'white' }}>
+                                AP
+                            </p>
+                        </div>
+
+                        <button
+							style={{ marginRight: 15, cursor: 'pointer', justifyContent: 'center', alignItems: 'center' }}
+                            onClick={() => {
+                                if (!wizard || this.state.apToBurn >= wizard.ap.int) {
+                                    return
+                                }
+
+                                this.setState({ apToBurn: this.state.apToBurn + 1 })
+							}}
+						>
+							<AiOutlinePlus
+								color="white"
+								size={22}
+							/>
+						</button>
+                    </div>
+
+                    <p style={{ fontSize: 17, color: 'white' }}>
+                        $WIZA
+                    </p>
+                    <p style={{ fontSize: 21, color: 'white', marginBottom: 15 }}>
+                        {apToBurn * 15}
+                    </p>
+
+                    <p style={{ fontSize: 17, color: 'white' }}>
+
+                    </p>
+                    <p style={{ fontSize: 21, color: "white", marginBottom: 10 }}>
+
+                    </p>
+                </div>
+
+                <button
+                    className='btnH'
+                    style={Object.assign({}, styles.btnChoose, { opacity: wizard.ap.int === 0 ? 0.5 : 1 })}
+                    onClick={() => {
+                        if (!wizard) {
+                            return
+                        }
+
+                        this.burnAP()
+                    }}
+                >
+                    <p style={{ fontSize: 17, color: 'white' }}>
+                        BURN
+                    </p>
+                </button>
+
+            </div>
+        )
+    }
+
     renderVialCard(key, canBuy, isMobile) {
         const { loadingPotionEquipped } = this.state
 
@@ -604,6 +905,8 @@ class Shop extends Component {
     }
 
     renderHistory(item, index) {
+        //console.log(item);
+
         return (
             <div key={index} style={styles.rowHistory}>
                 <p style={{ color: 'white', fontSize: 18, marginRight: 10 }}>
@@ -617,9 +920,17 @@ class Shop extends Component {
                     +{item.increment} {item.stat}
                 </p>
 
-                <p style={{ color: 'white', fontSize: 18 }}>
-                    $WIZA {item.cost}
-                </p>
+                {
+                    item.cost.int ?
+                    <p style={{ color: 'white', fontSize: 18 }}>
+                        AP {item.cost.int}
+                    </p>
+                    :
+                    <p style={{ color: 'white', fontSize: 18 }}>
+                        $WIZA {item.cost}
+                    </p>
+
+                }
             </div>
         )
     }
@@ -666,6 +977,10 @@ class Shop extends Component {
         let imgStyle;
         if (key === "UPGRADES") {
             img = potion_hp
+            imgStyle = { height: 70 }
+        }
+        else if (key === "AP") {
+            img = potion_dmg
             imgStyle = { height: 70 }
         }
         else if (key === "VIALS") {
@@ -785,6 +1100,7 @@ class Shop extends Component {
 
                         <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
                             {this.renderBoxMenu("UPGRADES")}
+                            {this.renderBoxMenu("AP")}
                             {this.renderBoxMenu("VIALS")}
                             {this.renderBoxMenu("NICKNAME")}
                         </div>
@@ -801,6 +1117,27 @@ class Shop extends Component {
                             {this.renderShopCard("attack")}
 
                             {this.renderShopCard("damage")}
+
+                        </div>
+
+                        <p style={{ fontSize: 26, color: 'white', marginBottom: 10 }} id="shop-ap">
+                            ATTRIBUTE POINTS
+                        </p>
+
+                        <p style={{ fontSize: 22, color: "white", marginBottom: 15 }}>
+                            AP available: {wizard.ap.int || 0}
+                        </p>
+
+                        <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
+                            {this.renderAPShopCard("hp")}
+
+                            {this.renderAPShopCard("defense")}
+
+                            {this.renderAPShopCard("attack")}
+
+                            {this.renderAPShopCard("damage")}
+
+                            {this.renderAPBurnCard()}
 
                         </div>
 
@@ -900,6 +1237,7 @@ class Shop extends Component {
                     wizaCostToUpgrade={this.state.wizaCostToUpgrade}
                     howMuchIncrement={this.state.howMuchIncrement}
                     nicknameToSet={this.state.nicknameToSet}
+                    apToBurn={this.state.apToBurn}
 				/>
 
                 <ModalSetName
@@ -1054,5 +1392,7 @@ export default connect(mapStateToProps, {
     setWizardSelectedShop,
     getPotionEquipped,
     buyVial,
-    buyNickname
+    buyNickname,
+    buyUpgradeWithAp,
+    burnAP
 })(Shop)

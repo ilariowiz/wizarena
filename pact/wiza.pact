@@ -162,6 +162,10 @@
         @event true
     )
 
+    (defcap WIZA_REWARD_AP_BURN (account:string amount:decimal)
+        @event true
+    )
+
     (defcap SPEND_WIZA (account:string amount:decimal)
         @event true
     )
@@ -388,14 +392,14 @@
     ; WIZA functions
     ; --------------------------------------------------------------------------
 
-    (defun stake-all (objects:list m:module{wizarena-interface-v1})
+    (defun stake-all (objects:list m:module{wizarena-interface-v2})
         (map
             (nft-to-stake m)
             objects
         )
     )
 
-    (defun nft-to-stake (m:module{wizarena-interface-v1} obj:object)
+    (defun nft-to-stake (m:module{wizarena-interface-v2} obj:object)
         (let (
                 (idnft (at "idnft" obj))
                 (sender (at "sender" obj))
@@ -405,7 +409,7 @@
     )
 
 
-    (defun stake (idnft:string sender:string m:module{wizarena-interface-v1})
+    (defun stake (idnft:string sender:string m:module{wizarena-interface-v2})
         (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
         (let (
                 (data (get-wizard-data idnft m))
@@ -431,14 +435,14 @@
         )
     )
 
-    (defun claim-all-unstake-all (objects:list m:module{wizarena-interface-v1})
+    (defun claim-all-unstake-all (objects:list m:module{wizarena-interface-v2})
         (map
             (claim-all-and-unstake m)
             objects
         )
     )
 
-    (defun claim-all-and-unstake (m:module{wizarena-interface-v1} obj:object)
+    (defun claim-all-and-unstake (m:module{wizarena-interface-v2} obj:object)
         (let (
                 (idnft (at "idnft" obj))
                 (sender (at "sender" obj))
@@ -447,7 +451,7 @@
         )
     )
 
-    (defun unstake (idnft:string sender:string m:module{wizarena-interface-v1})
+    (defun unstake (idnft:string sender:string m:module{wizarena-interface-v2})
         (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
         (let (
                 (data (get-nft-staked idnft))
@@ -473,14 +477,14 @@
         )
     )
 
-    (defun claim-all (objects:list m:module{wizarena-interface-v1})
+    (defun claim-all (objects:list m:module{wizarena-interface-v2})
         (map
             (claim-all-without-unstake m)
             objects
         )
     )
 
-    (defun claim-all-without-unstake (m:module{wizarena-interface-v1} obj:object)
+    (defun claim-all-without-unstake (m:module{wizarena-interface-v2} obj:object)
         (let (
                 (idnft (at "idnft" obj))
                 (sender (at "sender" obj))
@@ -489,7 +493,7 @@
         )
     )
 
-    (defun claim-without-unstake (idnft:string sender:string m:module{wizarena-interface-v1})
+    (defun claim-without-unstake (idnft:string sender:string m:module{wizarena-interface-v2})
         (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
         (let (
                 (data (get-wizard-data idnft m))
@@ -537,6 +541,38 @@
                 (write mined-wiza-table "" {"amount": (+ total-mined reward)})
                 (emit-event (WIZA_REWARD_FROM_STAKE account reward))
               )
+            )
+        )
+    )
+
+    (defun mine-from-ap-burn (account:string idnft:string aptoburn:integer m:module{wizarena-interface-v2})
+        (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
+        (let (
+                (data (get-wizard-data idnft m))
+                (ap (at "ap" (get-wizard-data idnft m)))
+                (guard (at "guard" (coin.details account)))
+            )
+            (enforce (>= ap aptoburn) "You don't have enough AP")
+            (with-capability (OWNER account idnft (at "owner" data))
+                (with-default-read token-table account
+                  {"balance": 0.0,
+                  "guard": guard}
+                  {"balance":= oldbalance,
+                  "guard":= currentGuard}
+                  (let
+                      (
+                        (reward (* aptoburn 15.0))
+                        (total-mined (get-total-mined))
+                    )
+                    (enforce (<= (+ total-mined reward) MAXIMUM_SUPPLY) "Maximum Supply reached. Can't reward")
+                    (write token-table account {
+                        "balance": (+ oldbalance reward),
+                        "guard": guard})
+                    (write mined-wiza-table "" {"amount": (+ total-mined reward)})
+                    (m::spend-ap aptoburn account idnft)
+                    (emit-event (WIZA_REWARD_AP_BURN account reward))
+                  )
+                )
             )
         )
     )
@@ -633,7 +669,7 @@
     ; --------------------------------------------------------------------------
     ; helpers functions
     ; --------------------------------------------------------------------------
-    (defun get-wizard-data (id:string m:module{wizarena-interface-v1})
+    (defun get-wizard-data (id:string m:module{wizarena-interface-v2})
         (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
         (m::get-wizard-fields-for-id (str-to-int id))
     )

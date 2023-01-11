@@ -75,7 +75,6 @@ class NftCardShopSelected extends Component {
 
                         {cardStatsShop(item, numberOfTotalMedals)}
 
-
                     </div>
                 </div>
 

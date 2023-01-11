@@ -109,7 +109,7 @@ class ModalTransaction extends Component {
 	}
 
 	getContent() {
-		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, amountToMint, offerInfoRecap, wizaAmount, nicknameToSet } = this.props
+		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, amountToMint, offerInfoRecap, wizaAmount, nicknameToSet, apToBurn } = this.props
 
 		//CASO INIZIALE, signingCmd != null in transactionState
 		let title = 'Signing transaction'
@@ -195,6 +195,9 @@ class ModalTransaction extends Component {
 				}
 				else if (type === "buynickname") {
 					body = `You will give the nickname ${nicknameToSet} to Wizard ${nameNft}`
+				}
+				else if (type === "burnap") {
+					body = `You will burn ${apToBurn} AP for ${apToBurn*15} $WIZA`
 				}
 
 				buttonText = 'Open Wallet'
@@ -320,6 +323,10 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'buynickname') {
 					body = 'Nickname set successfully'
+					buttonText = 'Close'
+				}
+				else if (type === 'burnap') {
+					body = 'AP burned successfully'
 					buttonText = 'Close'
 				}
 

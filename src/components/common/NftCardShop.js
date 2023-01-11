@@ -27,7 +27,7 @@ class NftCardShop extends Component {
 
 	render() {
 		const { item, width, isSelect } = this.props
-        //console.log(tournament)
+        //console.log(item)
 
         const numberOfTotalMedals = this.calcMedals()
 
@@ -62,7 +62,16 @@ class NftCardShop extends Component {
                             </p>
                         </div>
 
-                        {cardStatsShop(item, numberOfTotalMedals)}
+                        <div style={{ width: '90%', alignItems: 'center', marginBottom: 8 }}>
+                            <p style={{ color: '#c2c0c0', fontSize: 16, marginRight: 10 }}>
+                                AP
+                            </p>
+                            <p style={{ color: "white", fontSize: 18 }}>
+                                {item.ap.int}
+                            </p>
+                        </div>
+
+                        {cardStatsShop(item, undefined)}
 
                         {
                             isSelect ?

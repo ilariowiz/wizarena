@@ -5,7 +5,7 @@
   "Wizards Arena NFTs"
 
     (use coin)
-    (implements wizarena-interface-v1)
+    (implements wizarena-interface-v2)
   ; --------------------------------------------------------------------------
  ; Constants
 ; --------------------------------------------------------------------------
@@ -115,6 +115,10 @@
         @event true
     )
 
+    (defcap BUY_UPGRADE-WITH-AP (id:string stat:string increment:integer ap-cost:integer owner:string)
+        @event true
+    )
+
     (defcap MAKE_OFFER (id:string from:string amount:decimal duration:integer)
         @event true
     )
@@ -211,6 +215,7 @@
         resistance:string
         spellSelected:object
         spellbook:list
+        ap:integer
     )
 
     (defschema upgrade-stat-values-schema
@@ -351,6 +356,11 @@
         (insert upgrade-stat-values "defense_base_cost" {"value": 700.0})
         (insert upgrade-stat-values "attack_base_cost" {"value": 700.0})
         (insert upgrade-stat-values "damage_base_cost" {"value": 400.0})
+
+        (insert upgrade-stat-values "hp_ap_cost" {"value": 1.0})
+        (insert upgrade-stat-values "defense_ap_cost" {"value": 4.0})
+        (insert upgrade-stat-values "attack_ap_cost" {"value": 4.0})
+        (insert upgrade-stat-values "damage_ap_cost" {"value": 2.0})
     )
 
  ; --------------------------------------------------------------------------
@@ -454,7 +464,8 @@
                 "medals": (at "medals" item),
                 "resistance": (at "resistance" item),
                 "spellSelected": (at "spellSelected" item),
-                "spellbook": (at "spellbook" item)}
+                "spellbook": (at "spellbook" item),
+                "ap":0}
             )
         )
     )
@@ -547,6 +558,32 @@
             (update stats id
                 {"id": id,
                 "hp": (at "hp" item)}
+            )
+        )
+    )
+
+    (defun update-aps (objects-list:list)
+        (with-capability (ADMIN)
+            (map
+                (update-ap)
+                objects-list
+            )
+        )
+    )
+
+    (defun update-ap (item:object)
+        (require-capability (ADMIN))
+        (let
+            (
+                (id (at "id" item))
+            )
+            (with-default-read stats id
+                {"ap":0}
+                {"ap":=ap}
+                (update stats id
+                    {"id": id,
+                    "ap": (+ ap (at "ap" item))}
+                )
             )
         )
     )
@@ -1280,6 +1317,58 @@
         )
     )
 
+    (defun buy-upgrades-ap (account:string idnft:string stat:string increase:integer)
+        (with-capability (OWNER account idnft)
+            (let (
+                    (current-stat (at stat (get-wizard-fields-for-id (str-to-int idnft))))
+                    (new-level (calculate-new-level-mass idnft stat increase))
+                    (base-cost (at "value" (read upgrade-stat-values (+ stat "_ap_cost") ['value])))
+                )
+                (enforce (<= new-level LEVEL_CAP) "Wizard's level cannot exceed the level cap")
+                (with-default-read stats idnft
+                    {"ap": 0}
+                    {"ap":=ap}
+                    (enforce (> ap 0) "You have no AP available")
+                    (let (
+                            (ap-cost (round (* increase base-cost)))
+                        )
+                        (enforce (>= ap ap-cost) "You don't have enough AP")
+                        (update stats idnft {
+                            "ap": (- ap ap-cost)
+                        })
+                        (cond
+                            (
+                                (= stat "hp")
+                                (update stats idnft {
+                                    "hp": (+ current-stat increase)
+                                })
+                            )
+                            (
+                                (= stat "defense")
+                                (update stats idnft {
+                                    "defense": (+ current-stat increase)
+                                })
+                            )
+                            (
+                                (= stat "attack")
+                                (update stats idnft {
+                                    "attack": (+ current-stat increase)
+                                })
+                            )
+                            (
+                                (= stat "damage")
+                                (update stats idnft {
+                                    "damage": (+ current-stat increase)
+                                })
+                            )
+                        "")
+                        (emit-event (BUY_UPGRADE-WITH-AP idnft stat increase ap-cost account))
+                    )
+                )
+            )
+        )
+    )
+
     (defun calculate-wiza-cost-from (stat:string from:integer)
         (let (
                 (max-value (at "value" (read upgrade-stat-values stat ['value])))
@@ -1404,6 +1493,20 @@
                     (dmg (at "damage" data))
                 )
                 (round(+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* dmg 2.67)))
+            )
+        )
+    )
+
+    (defun spend-ap:object (amount:integer account:string idnft:string)
+        (with-capability (OWNER account idnft)
+            (with-default-read stats idnft
+                {"ap": 0}
+                {"ap":=ap}
+                (enforce (> ap 0) "You have no AP available")
+                (enforce (>= ap amount) "You don't have enough AP")
+                (update stats idnft {
+                    "ap": (- ap amount)
+                })
             )
         )
     )

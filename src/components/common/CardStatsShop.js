@@ -62,14 +62,17 @@ const cardStatsShop = (item, numberOfMedalsForTournament, width) => {
                 </div>
             </div>
 
-            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
-                <p style={styles.statsTitleStyle}>
-                    MEDALS
-                </p>
-                <p style={styles.statsStyle}>
-                    {numberOfMedalsForTournament}
-                </p>
-            </div>
+            {
+                numberOfMedalsForTournament !== undefined &&
+                <div style={{ width: widthBody, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
+                    <p style={styles.statsTitleStyle}>
+                        MEDALS
+                    </p>
+                    <p style={styles.statsStyle}>
+                        {numberOfMedalsForTournament}
+                    </p>
+                </div>
+            }
         </div>
     )
 }
