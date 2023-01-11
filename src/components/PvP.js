@@ -659,7 +659,7 @@ class PvP extends Component {
                     </div>
 
                     <p style={{ fontSize: 19, color: 'white', marginLeft: 50 }}>
-                        REWARD: +1 HP and +1 DAMAGE (min 30 fights to get the reward)
+                        REWARD: +3 AP (min 30 fights to get the reward)
                     </p>
                 </div>
 
