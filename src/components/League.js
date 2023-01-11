@@ -314,7 +314,6 @@ const styles = {
     row: {
         alignItems: 'center',
         width: '100%',
-        justifyContent: 'space-between',
         paddingTop: 10,
         borderRadius: 2,
         borderWidth: 2,
