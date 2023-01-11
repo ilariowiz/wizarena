@@ -42,6 +42,8 @@ const vial_def = require('../assets/vial_def.png')
 const vial_atk = require('../assets/vial_atk.png')
 const vial_dmg = require('../assets/vial_dmg.png')
 
+const banner_nickname = require('../assets/banner_nickname.png')
+
 
 class Shop extends Component {
     constructor(props) {
@@ -658,6 +660,48 @@ class Shop extends Component {
         )
     }
 
+    renderBoxMenu(key) {
+
+        let img;
+        let imgStyle;
+        if (key === "UPGRADES") {
+            img = potion_hp
+            imgStyle = { height: 70 }
+        }
+        else if (key === "VIALS") {
+            img = vial_atk
+            imgStyle = { height: 50 }
+        }
+        else if (key === "NICKNAME") {
+            img = banner_nickname
+            imgStyle = { height: 60 }
+        }
+
+        let divId = `shop-${key.toLowerCase()}`
+
+        return (
+            <button
+                className="btnH cardShopShadow"
+                style={styles.boxMenu}
+                onClick={() => {
+                    document.getElementById(divId).scrollIntoView({ behavior: 'smooth' })
+                }}
+            >
+                <div style={{ width: 70, height: 70, marginBottom: 3, justifyContent: 'center', alignItems: 'center' }}>
+                    <img
+                        src={img}
+                        style={imgStyle}
+                    />
+                </div>
+
+                <p style={{ fontSize: 18, color: 'white' }}>
+                    {key}
+                </p>
+
+            </button>
+        )
+    }
+
     renderBody(isMobile) {
         const { isConnected, showModalConnection, historyUpgrades, potionEquipped } = this.state
         const { account, showModalTx, wizaBalance } = this.props
@@ -730,7 +774,7 @@ class Shop extends Component {
                             $WIZA balance: {wizaBalance || 0.0}
                         </p>
 
-                        <div style={{ alignItems: 'center', marginBottom: 25 }}>
+                        <div style={{ alignItems: 'center', marginBottom: 20 }}>
                             <p style={{ fontSize: 22, color: "white", marginRight: 10 }}>
                                 LEVEL CAP:
                             </p>
@@ -739,7 +783,13 @@ class Shop extends Component {
                             </p>
                         </div>
 
-                        <p style={{ fontSize: 26, color: 'white', marginBottom: 10 }}>
+                        <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
+                            {this.renderBoxMenu("UPGRADES")}
+                            {this.renderBoxMenu("VIALS")}
+                            {this.renderBoxMenu("NICKNAME")}
+                        </div>
+
+                        <p style={{ fontSize: 26, color: 'white', marginBottom: 10 }} id="shop-upgrades">
                             UPGRADES
                         </p>
 
@@ -756,7 +806,7 @@ class Shop extends Component {
 
                         {
                             !potionEquipped ?
-                            <div style={{ flexDirection: 'column' }}>
+                            <div style={{ flexDirection: 'column' }} id="shop-vials">
                                 <p style={{ fontSize: 26, color: 'white', marginBottom: 5 }}>
                                     VIALS
                                 </p>
@@ -781,7 +831,7 @@ class Shop extends Component {
                                 </div>
                             </div>
                             :
-                            <div style={{ flexDirection: 'column' }}>
+                            <div style={{ flexDirection: 'column' }} id="shop-vials">
                                 <p style={{ fontSize: 26, color: 'white', marginBottom: 5 }}>
                                     VIALS
                                 </p>
@@ -793,22 +843,20 @@ class Shop extends Component {
                             </div>
                         }
 
-                        {
-                            <div style={{ flexDirection: 'column' }}>
-                                <p style={{ fontSize: 26, color: 'white', marginBottom: 5 }}>
-                                    NICKNAME
-                                </p>
+                        <div style={{ flexDirection: 'column' }} id="shop-nickname">
+                            <p style={{ fontSize: 26, color: 'white', marginBottom: 5 }}>
+                                NICKNAME
+                            </p>
 
-                                <p style={{ fontSize: 18, color: 'white', marginBottom: 10 }}>
-                                    Want to give your wizard an epic nickname? Now you can!
-                                </p>
+                            <p style={{ fontSize: 18, color: 'white', marginBottom: 10 }}>
+                                Want to give your wizard an epic nickname? Now you can!
+                            </p>
 
-                                <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-                                    {this.renderCardNickname(isMobile)}
+                            <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                {this.renderCardNickname(isMobile)}
 
-                                </div>
                             </div>
-                        }
+                        </div>
 
                     </div>
 
@@ -976,6 +1024,17 @@ const styles = {
         borderStyle: 'solid',
         marginBottom: 6,
         alignItems: 'center'
+    },
+    boxMenu: {
+        width: 125,
+        height: 100,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        display: 'flex',
+        marginRight: 20,
+        marginBottom: 15
     }
 }
 
