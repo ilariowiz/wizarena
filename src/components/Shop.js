@@ -723,12 +723,7 @@ class Shop extends Component {
                         {apToBurn * 15}
                     </p>
 
-                    <p style={{ fontSize: 17, color: 'white' }}>
-
-                    </p>
-                    <p style={{ fontSize: 21, color: "white", marginBottom: 10 }}>
-
-                    </p>
+                    <div style={{ height: 48 }}/>
                 </div>
 
                 <button
