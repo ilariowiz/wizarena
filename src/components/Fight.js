@@ -180,9 +180,16 @@ class Fight extends Component {
                 />
 
                 <div style={{ width: '80%', marginBottom: 5 }}>
-                    <p style={{ color: 'white', fontSize: 19 }}>
-                        {info.name}
-                    </p>
+                    {
+                        info.nickname ?
+                        <p style={{ color: 'white', fontSize: 18 }}>
+                            {info.name} {info.nickname}
+                        </p>
+                        :
+                        <p style={{ color: 'white', fontSize: 19 }}>
+                            {info.name}
+                        </p>
+                    }
                 </div>
 
                 <div style={{ width: '80%', marginBottom: 5, alignItems: 'center' }}>
