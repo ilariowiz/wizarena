@@ -69,7 +69,12 @@ class ModalTransaction extends Component {
 			this.props.updateTransactionState("success", 1)
 
 			if (type === "upgrade" && nameNft && statToUpgrade && howMuchIncrement) {
-				sendMessageUpgrade(idNft, nameNft, statToUpgrade, howMuchIncrement)
+				const msg = `${nameNft} upgrade ${statToUpgrade.toUpperCase()} by ${howMuchIncrement}`
+				sendMessageUpgrade(idNft, msg)
+			}
+			else if (type === "buyvial" && nameNft && statToUpgrade) {
+				const msg = `${nameNft} bought a ${statToUpgrade.toUpperCase()} vial`
+				sendMessageUpgrade(idNft, msg)
 			}
 			else if (type === "subscribe_pvp") {
 
