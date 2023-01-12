@@ -87,3 +87,22 @@ export const sendMessageUpdateNickname = (id, nickname) => {
 
     request.send(JSON.stringify(params));
 }
+
+export const sendMessageUpgrade = (id, name, stat, increase) => {
+    const request = new XMLHttpRequest()
+
+    request.open("POST", process.env.REACT_APP_DISCORD_WEBHOOK_UPGRADES)
+    request.setRequestHeader("Content-type", 'application/json')
+
+    const content = `${name} upgrade ${stat.toUpperCase()} by ${increase}`
+
+    //console.log(content);
+
+    const params = {
+        username: `#${id}`,
+        avatar_url: `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`,
+        content
+    }
+
+    request.send(JSON.stringify(params));
+}

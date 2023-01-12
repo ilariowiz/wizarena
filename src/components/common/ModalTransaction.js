@@ -5,7 +5,7 @@ import { firebasedb } from '../Firebase';
 import { IoClose } from 'react-icons/io5'
 import DotLoader from 'react-spinners/DotLoader';
 import Pact from "pact-lang-api";
-import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, sendMessageUpdateNickname } from './WebhookDiscord'
+import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, sendMessageUpdateNickname, sendMessageUpgrade } from './WebhookDiscord'
 import '../../css/Modal.css'
 import {
 	signTransaction,
@@ -18,6 +18,11 @@ import '../../css/Nft.css'
 const POLL_INTERVAL_S = 3
 
 class ModalTransaction extends Component {
+
+	componentDidMount() {
+		//sendMessageUpgrade("866", "#866 Joneleth Irenicus", "hp", 1)
+	}
+
 	checkTransaction() {
 		const { transactionState } = this.props
 
@@ -63,13 +68,8 @@ class ModalTransaction extends Component {
 		if (pollRes[requestKey].result.status === "success") {
 			this.props.updateTransactionState("success", 1)
 
-			//chiamato solo per transaction upgrade, serve per far funzionare correttamente i filtri su firebase
 			if (type === "upgrade" && nameNft && statToUpgrade && howMuchIncrement) {
-
-				const docRef = doc(firebasedb, "stats", `${nameNft}`)
-				updateDoc(docRef, {
-		            [statToUpgrade]: increment(howMuchIncrement)
-		        })
+				sendMessageUpgrade(idNft, nameNft, statToUpgrade, howMuchIncrement)
 			}
 			else if (type === "subscribe_pvp") {
 

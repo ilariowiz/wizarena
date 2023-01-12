@@ -72,7 +72,8 @@ class Shop extends Component {
             loadingPotionEquipped: false,
             tournamentName: "",
             showModalSetName: false,
-            apToBurn: 1
+            apToBurn: 1,
+            idNftToUpgrade: ""
         }
     }
 
@@ -201,7 +202,12 @@ class Shop extends Component {
 
         const wizard = this.getWizardSelected()
 
-        this.setState({ nameNftToUpgrade: wizard.name, statToUpgrade: stat, wizaCostToUpgrade: costo, howMuchIncrement: increase[stat], typeModal: 'upgrade' })
+        let nameNftToUpgrade = wizard.name
+        if (wizard.nickname) {
+            nameNftToUpgrade = `${wizard.name} ${wizard.nickname}`
+        }
+
+        this.setState({ nameNftToUpgrade, idNftToUpgrade: wizard.id, statToUpgrade: stat, wizaCostToUpgrade: costo, howMuchIncrement: increase[stat], typeModal: 'upgrade' })
 
         this.props.buyUpgrade(chainId, gasPrice, netId, account, wizard.id, stat, increase[stat])
     }
@@ -212,7 +218,12 @@ class Shop extends Component {
 
         const wizard = this.getWizardSelected()
 
-        this.setState({ nameNftToUpgrade: wizard.name, statToUpgrade: stat, wizaCostToUpgrade: costo, howMuchIncrement: increase[stat], typeModal: 'upgrade' })
+        let nameNftToUpgrade = wizard.name
+        if (wizard.nickname) {
+            nameNftToUpgrade = `${wizard.name} ${wizard.nickname}`
+        }
+
+        this.setState({ nameNftToUpgrade, idNftToUpgrade: wizard.id, statToUpgrade: stat, wizaCostToUpgrade: costo, howMuchIncrement: increase[stat], typeModal: 'upgrade' })
 
         this.props.buyUpgradeWithAp(chainId, gasPrice, netId, account, wizard.id, stat, increase[stat])
     }
@@ -236,7 +247,12 @@ class Shop extends Component {
 
         const key = `${tournamentName}_${wizard.id}`
 
-        this.setState({ nameNftToUpgrade: wizard.name, statToUpgrade: potion, wizaCostToUpgrade: costo, typeModal: 'buyvial' })
+        let nameNftToUpgrade = wizard.name
+        if (wizard.nickname) {
+            nameNftToUpgrade = `${wizard.name} ${wizard.nickname}`
+        }
+
+        this.setState({ nameNftToUpgrade, idNftToUpgrade: wizard.id, statToUpgrade: potion, wizaCostToUpgrade: costo, typeModal: 'buyvial' })
 
         this.props.buyVial(chainId, gasPrice, netId, account, wizard.id, key, potion)
     }
@@ -246,7 +262,7 @@ class Shop extends Component {
 
         const wizard = this.getWizardSelected()
 
-        this.setState({ nameNftToUpgrade: wizard.name, nicknameToSet: nickname, typeModal: 'buynickname' })
+        this.setState({ nameNftToUpgrade: wizard.name, idNftToUpgrade: wizard.id, nicknameToSet: nickname, typeModal: 'buynickname' })
 
         this.props.buyNickname(chainId, gasPrice, netId, account, wizard.id, nickname)
     }
@@ -1228,6 +1244,7 @@ class Shop extends Component {
 						window.location.reload()
 					}}
 					nameNft={this.state.nameNftToUpgrade}
+                    idNft={this.state.idNftToUpgrade}
                     statToUpgrade={this.state.statToUpgrade}
                     wizaCostToUpgrade={this.state.wizaCostToUpgrade}
                     howMuchIncrement={this.state.howMuchIncrement}
