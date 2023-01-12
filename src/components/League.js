@@ -103,8 +103,10 @@ class League extends Component {
 	}
 
     renderSingleCard(item, index, widthNft) {
+        const { account } = this.props
 
         //console.log(item);
+        const isOwner = account.account === item.owner
 
         return (
             <a
@@ -118,14 +120,53 @@ class League extends Component {
             >
                 <img
                     src={getImageUrl(item.id)}
-                    style={{ width: widthNft, height: widthNft, borderWidth: 1, borderColor: 'white', borderRadius: 2, borderStyle: "solid" }}
+                    style={{ width: widthNft, height: widthNft, borderWidth: 1, borderColor: isOwner ? 'gold' : 'white', borderRadius: 2, borderStyle: "solid" }}
                     alt={`#${item.id}`}
                 />
-                <p style={{ fontSize: 16, color: 'white', marginTop: 5 }}>
+                <p style={{ fontSize: 16, color: isOwner ? 'gold' : 'white', marginTop: 5 }}>
                     {item.name}
                 </p>
             </a>
         )
+    }
+
+    renderPlace(place) {
+        if (place === 1) {
+            return "1st place"
+        }
+        else if (place === 2) {
+            return "2nd place"
+        }
+        else if (place === 3) {
+            return "3rd place"
+        }
+        else if (place === 4) {
+            return "4th place"
+        }
+        else if (place === 5) {
+            return "5th place"
+        }
+        else if (place === 6) {
+            return "6th place"
+        }
+        else if (place === 7) {
+            return "7th place"
+        }
+        else if (place === 8) {
+            return "8th place"
+        }
+        else if (place === 9) {
+            return "9th place"
+        }
+        else if (place === 10) {
+            return "10th place"
+        }
+        else if (place === 11) {
+            return "11th place"
+        }
+        else if (place === 12) {
+            return "12th place"
+        }
     }
 
     renderBox(items, index, boxW, isMobile) {
@@ -194,6 +235,10 @@ class League extends Component {
                     </p>
                     <p style={{ fontSize: 18, color: borderColor, marginLeft: 9 }}>
                         MEDALS
+                    </p>
+
+                    <p style={{ fontSize: 16, color: borderColor, marginLeft: 9, width: 100, textAlign: 'center' }}>
+                        {this.renderPlace(index+1)}
                     </p>
                 </div>
 
@@ -331,9 +376,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-    const { chainId, gasPrice, gasLimit, networkUrl } = state.mainReducer
+    const { chainId, gasPrice, gasLimit, networkUrl, account } = state.mainReducer
 
-    return { chainId, gasPrice, gasLimit, networkUrl }
+    return { chainId, gasPrice, gasLimit, networkUrl, account }
 }
 
 export default connect(mapStateToProps, {
