@@ -5,6 +5,7 @@ import { firebasedb } from './Firebase';
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import toast, { Toaster } from 'react-hot-toast';
+import moment from 'moment'
 import Header from './Header'
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
@@ -48,6 +49,7 @@ class PvP extends Component {
             nameNftToSubscribe: '',
             pvpOpen: false,
             pvpWeek: "",
+            pvpWeekEnd: undefined,
             subscribers: [],
             yourSubscribers: [],
             yourSubscribersResults: [],
@@ -102,8 +104,25 @@ class PvP extends Component {
     loadPvpWeek() {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-        this.props.getPvPweek(chainId, gasPrice, gasLimit, networkUrl, (res) => {
-            this.setState({ pvpWeek: res })
+        this.props.getPvPweek(chainId, gasPrice, gasLimit, networkUrl, async(res) => {
+
+            const docRef = doc(firebasedb, "pvp_week", res)
+
+    		const docSnap = await getDoc(docRef)
+    		let data = docSnap.data()
+
+            if (data) {
+                //console.log(data);
+                const dateEnd = moment(data.end.seconds * 1000)
+                //console.log(dateEnd);
+                const dateEndString = moment(dateEnd).format("dddd, MMMM Do, h:mm:ss a");
+
+                this.setState({ pvpWeek: res, pvpWeekEnd: dateEndString })
+            }
+            else {
+                this.setState({ pvpWeek: res })
+            }
+
             this.loadInfoPvP(res)
         })
     }
@@ -585,7 +604,7 @@ class PvP extends Component {
     }
 
     renderBody(isMobile) {
-        const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults, userMintedNfts, error, activeSubs } = this.state
+        const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults, userMintedNfts, error, activeSubs, pvpWeekEnd } = this.state
         const { account, showModalTx, avgLevelPvP } = this.props
 
         const { boxW, modalW } = getBoxWidth(isMobile)
@@ -688,9 +707,19 @@ class PvP extends Component {
                         }
                     </div>
 
-                    <p style={{ fontSize: 19, color: 'white', marginLeft: 50 }}>
-                        REWARD: +3 AP (min 30 fights to get the reward)
-                    </p>
+                    <div style={{ flexDirection: 'column', marginLeft: 50 }}>
+                        <p style={{ fontSize: 19, color: 'white', marginBottom: 10 }}>
+                            REWARD: +3 AP (min 30 fights to get the reward)
+                        </p>
+
+                        {
+                            pvpWeekEnd &&
+                            <p style={{ fontSize: 19, color: 'white' }}>
+                                PVP WEEK END: {pvpWeekEnd}
+                            </p>
+                        }
+
+                    </div>
                 </div>
 
                 <p style={{ fontSize: 22, color: 'white', marginBottom: 10 }}>
