@@ -207,6 +207,21 @@ class Collection extends Component {
 			let newData = Object.assign([], allNfts)
 
 			oldStat.map(i => {
+
+				if (i.stat === "collection") {
+					if (i.value === "Wizards") {
+						newData = newData.filter(n => {
+							return n.id && parseInt(n.id) <= 1023
+						})
+					}
+					else if (i.value === "Clerics") {
+						newData = newData.filter(n => {
+							return n.id && parseInt(n.id) > 1023 && parseInt(n.id) <= 2047
+						})
+					}
+
+				}
+
 				if (i.stat === "hp") {
 
 					const values = i.value.split(" - ")
@@ -706,6 +721,7 @@ class Collection extends Component {
 				{this.renderSearched()}
 
 				<div style={{ flexWrap: 'wrap', marginBottom: 10 }}>
+					{this.renderBoxSearchStat("collection", "COLLECTION", ["Wizards", "Clerics"])}
 					{this.renderBoxSearchStat("hp", "HP", ["40 - 50", "51 - 60", "61 - 65", "66 - 70", "71 - 75", "76 - 80", "81 - 85", "86 - 90", "91 - 95", "96 - 100", "101 - 105"].reverse())}
 					{this.renderBoxSearchStat("defense", "DEFENSE", ["14 - 15", "16 - 17", "18 - 19", "20 - 21", "22 - 23", "24 - 25", "26 - 27", "28 - 29", "30 - 31"].reverse())}
 					{this.renderBoxSearchStat("element", "ELEMENT", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
