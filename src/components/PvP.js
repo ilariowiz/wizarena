@@ -52,6 +52,7 @@ class PvP extends Component {
             yourSubscribers: [],
             yourSubscribersResults: [],
             userMintedNfts: [],
+            activeSubs: 0,
             showModalSpellbook: false,
             showModalWizaPvP: false,
             itemChangeSpell: {},
@@ -118,8 +119,14 @@ class PvP extends Component {
                 this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
 
                     let yourSubs = []
+                    let activeSubs = 0
 
                     subs.map(i => {
+                        //console.log(i);
+                        if (i.fightsLeft && i.fightsLeft > 0) {
+                            activeSubs += 1
+                        }
+
                         const idSub = i.idnft
 
                         let yourSub = response.find(z => z.id === idSub)
@@ -132,8 +139,9 @@ class PvP extends Component {
                         }
                     })
                     //console.log(yourSubs);
+                    //console.log(activeSubs);
 
-    				this.setState({ loading: false, userMintedNfts: response, yourSubscribers: yourSubs })
+    				this.setState({ loading: false, userMintedNfts: response, yourSubscribers: yourSubs, activeSubs })
     			})
             }
 
@@ -289,6 +297,7 @@ class PvP extends Component {
         })
 
         //console.log(subs);
+        //return
 
         if (subs.length === 0) {
             this.setState({ loading: false })
@@ -555,7 +564,7 @@ class PvP extends Component {
     }
 
     renderBody(isMobile) {
-        const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults, userMintedNfts, error } = this.state
+        const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults, userMintedNfts, error, activeSubs } = this.state
         const { account, showModalTx, avgLevelPvP } = this.props
 
         const { boxW, modalW } = getBoxWidth(isMobile)
@@ -645,13 +654,13 @@ class PvP extends Component {
                         </p>
 
                         {
-                            avgLevelPvP && subscribers && subscribers.length > 0 ?
+                            activeSubs && subscribers && subscribers.length > 0 ?
                             <div style={{ alignItems: 'center' }}>
                                 <p style={{ fontSize: 19, color: 'white', marginRight: 10 }}>
-                                    AVG LEVEL
+                                    ACTIVE SUBS
                                 </p>
-                                <p style={{ fontSize: 21, color: getColorTextBasedOnLevel(avgLevelPvP) }}>
-                                    {avgLevelPvP}
+                                <p style={{ fontSize: 19, color: "white" }}>
+                                    {activeSubs}
                                 </p>
                             </div>
                             : null
