@@ -1141,7 +1141,16 @@ class Nft extends Component {
 	renderBoxMedals(width) {
 		const { nft } = this.state
 
-		//console.log(nft)
+		//console.log(nft.medals)
+
+		let sortedKeyMedals = []
+		if (nft.medals) {
+			sortedKeyMedals = Object.keys(nft.medals).sort((a, b) => {
+				return parseInt(a.replace("t","")) - parseInt(b.replace("t", ""))
+			})
+		}
+
+		//console.log(sortedKeyMedals);
 
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
@@ -1159,7 +1168,7 @@ class Nft extends Component {
 							This wizard has not yet won a medal
 						</p>
 						:
-						nft && nft.medals && Object.keys(nft.medals).sort().map((key) => {
+						nft && nft.medals && sortedKeyMedals.map((key) => {
 							return this.renderMedal(key)
 						})
 					}
