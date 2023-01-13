@@ -114,7 +114,9 @@ class Nft extends Component {
 		for (let i = 0; i < array.length; i++) {
 			const fight = array[i]
 
-			if (fight.tournament.includes(key)) {
+			const tournamentFight = fight.tournament.split("_")[0]
+
+			if (tournamentFight === key) {
 				temp.push(fight)
 			}
 		}
@@ -152,6 +154,7 @@ class Nft extends Component {
 				}
 
 				//console.log(openFightsSection);
+				//console.log(response);
 
 				const level = calcLevelWizard(response)
 
