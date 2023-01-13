@@ -133,6 +133,7 @@ class PvP extends Component {
                         if (yourSub) {
                             yourSub["spellSelected"] = i.spellSelected
                             yourSub["rounds"] = i.rounds.int
+                            yourSub["fightsLeft"] = i.fightsLeft
                             //console.log(yourSub, i);
                             yourSubs.push(yourSub)
                             this.loadResultsYourSub(yourSub)
@@ -201,6 +202,26 @@ class PvP extends Component {
                 return parseInt(a[key]) - parseInt(b[key])
             })
         }
+
+        return sorted
+    }
+
+    sortByIdSubs(array, key) {
+
+        //console.log(array);
+
+        let sorted = []
+
+        if (array && array.length > 0) {
+            sorted = array.sort((a, b) => {
+                return parseInt(a[key]) - parseInt(b[key])
+            })
+        }
+
+        sorted = sorted.sort((a, b) => {
+            return b.fightsLeft - a.fightsLeft
+        })
+        //console.log(sorted);
 
         return sorted
     }
@@ -629,7 +650,7 @@ class PvP extends Component {
 
         const sorted = this.sortById(userMintedNfts, "id")
 
-        const yourSubscribersResultsSorted = this.sortById(yourSubscribersResults, "idnft")
+        const yourSubscribersResultsSorted = this.sortByIdSubs(yourSubscribersResults, "idnft")
 
         //console.log(avgLevelPvP, subscribers);
 
