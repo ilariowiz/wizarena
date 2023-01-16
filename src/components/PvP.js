@@ -115,9 +115,10 @@ class PvP extends Component {
                 //console.log(data);
                 const dateEnd = moment(data.end.seconds * 1000)
                 //console.log(dateEnd);
-                const dateEndString = moment(dateEnd).format("dddd, MMMM Do, h:mm:ss a");
+                //const dateEndString = moment(dateEnd).format("dddd, MMMM Do, h:mm:ss a");
+                const dateEndTo = moment().to(dateEnd)
 
-                this.setState({ pvpWeek: res, pvpWeekEnd: dateEndString })
+                this.setState({ pvpWeek: res, pvpWeekEnd: dateEndTo })
             }
             else {
                 this.setState({ pvpWeek: res })
@@ -605,7 +606,7 @@ class PvP extends Component {
 
     renderBody(isMobile) {
         const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults, userMintedNfts, error, activeSubs, pvpWeekEnd } = this.state
-        const { account, showModalTx, avgLevelPvP } = this.props
+        const { account, showModalTx } = this.props
 
         const { boxW, modalW } = getBoxWidth(isMobile)
 
