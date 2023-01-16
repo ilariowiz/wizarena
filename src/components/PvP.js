@@ -710,7 +710,7 @@ class PvP extends Component {
 
                     <div style={{ flexDirection: 'column', marginLeft: 50 }}>
                         <p style={{ fontSize: 19, color: 'white', marginBottom: 10 }}>
-                            REWARD: +3 AP (min 30 fights to get the reward)
+                            REWARD: +2 AP (min 30 fights to get the reward)
                         </p>
 
                         {
