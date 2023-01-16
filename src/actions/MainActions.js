@@ -344,44 +344,36 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 				let partsBlock = _.chunk(response, 683)
 
 				//console.log(partsBlock);
+				const promise1 = Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[0])))
+				const promise2 = Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[1])))
+				const promise3 = Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[2])))
 
-				Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[0]))).then(response1 => {
-					//console.log(response1);
+				Promise.all([promise1, promise2, promise3]).then(values => {
+					//console.log(values);
 
-					Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[1]))).then(response2 => {
-						//console.log(response2);
+					const final = [...values[0], ...values[1], ...values[2]]
 
-						Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[2]))).then(response3 => {
-						    //console.log(response3);
+					//console.log(final);
 
-						    let final = response1.concat(response2)
-							final = final.concat(response3)
-
-						    //console.log(final);
-
-						    final.map(i => {
-						        const level = calcLevelWizard(i)
-						        i.level = level
-						    })
-
-						    final.sort((a, b) => {
-						        if (parseInt(a.price) === 0) return 1;
-						        if (parseInt(b.price) === 0) return -1
-						        return a.price - b.price
-						    })
-
-						    dispatch({
-						        type: LOAD_ALL_NFTS,
-						        payload: { allNfts: final, nftsBlockId: 0 }
-						    })
-
-						    if (callback) {
-						        callback(final)
-						    }
-						})
-
+					final.map(i => {
+						const level = calcLevelWizard(i)
+						i.level = level
 					})
 
+					final.sort((a, b) => {
+						if (parseInt(a.price) === 0) return 1;
+						if (parseInt(b.price) === 0) return -1
+						return a.price - b.price
+					})
+
+					dispatch({
+						type: LOAD_ALL_NFTS,
+						payload: { allNfts: final, nftsBlockId: 0 }
+					})
+
+					if (callback) {
+						callback(final)
+					}
 				})
 			}
 		})
