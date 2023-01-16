@@ -88,6 +88,7 @@ class DoFight extends Component {
                     this.player1.damage = this.player1.damage.int
                     this.player1.defense = this.player1.defense.int
                     this.player1.hp = this.player1.hp.int
+                    this.player1.speed = this.player1.speed.int
                     this.player1.spellSelected = this.refactorSpellSelected(sfida.player1.spellSelected)
 
                     this.player1InitialHp = this.player1.hp
@@ -103,6 +104,7 @@ class DoFight extends Component {
                     this.player2.damage = this.player2.damage.int
                     this.player2.defense = this.player2.defense.int
                     this.player2.hp = this.player2.hp.int
+                    this.player2.speed = this.player2.speed.int
                     this.player2.spellSelected = this.refactorSpellSelected(sfida.player2.spellSelected)
 
                     this.player2InitialHp = this.player2.hp
@@ -123,13 +125,39 @@ class DoFight extends Component {
         s1copy['condizione'] = {}
         s2copy['condizione'] = {}
 
-        let iniziativa = Math.floor(Math.random() * 10) + 1; //da 1 a 10
+        let iniziativa1 = Math.floor(Math.random() * 20) + 1; //da 1 a 20
+        iniziativa1 = iniziativa1 + s1copy.speed
 
-        if (iniziativa <= 5) {
+        let iniziativa2 = Math.floor(Math.random() * 20) + 1; //da 1 a 20
+        iniziativa2 = iniziativa2 + s2copy.speed
+
+        //console.log(iniziativa1, iniziativa2);
+
+        if (iniziativa1 > iniziativa2) {
             this.turno(s1copy, s2copy)
         }
-        else {
+        else if (iniziativa1 < iniziativa2) {
             this.turno(s2copy, s1copy)
+        }
+        //uguali, controlliamo chi ha la speed più alta
+        else {
+            if (s1copy.speed > s2copy.speed) {
+                this.turno(s1copy, s2copy)
+            }
+            else if (s1copy.speed < s2copy.speed) {
+                this.turno(s2copy, s1copy)
+            }
+            else {
+                //se hanno anche le speed uguali allora random
+                let iniziativaRnd = Math.floor(Math.random() * 10) + 1; //da 1 a 10
+                if (iniziativaRnd <= 5) {
+                    this.turno(s1copy, s2copy)
+                }
+                else {
+                    this.turno(s2copy, s1copy)
+                }
+
+            }
         }
     }
 
