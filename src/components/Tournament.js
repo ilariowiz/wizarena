@@ -468,7 +468,7 @@ class Tournament extends Component {
 							</p>
 
                             <p style={{ fontSize: 17, color: 'white', marginBottom: 15 }}>
-            					Participation reward (for each wizard) {wizaPrize || '...'} $WIZA
+            					Participation reward (for each wizard) {wizaPrize || '...'} $WIZA, +1 spell or +1 AP if the wizard already has four spells
             				</p>
 						</div>
 
