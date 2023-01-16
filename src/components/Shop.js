@@ -83,6 +83,15 @@ class Shop extends Component {
         this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
+        /*
+        let speeds = []
+		for (var i = 0; i < 2048; i++) {
+			speeds.push({ id: `${i}`, speed: 0 })
+		}
+
+        console.log(chunk(speeds, 512));
+        */
+
         setTimeout(() => {
 			this.loadProfile()
 

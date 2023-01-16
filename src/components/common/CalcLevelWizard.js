@@ -12,15 +12,16 @@ export const calcLevelWizard = (item) => {
     const def = item.defense.int
     const atk = item.attack.int
     const dmg = item.damage.int
+    const speed = item.speed.int
 
 
     let hpLevel = hp * 1
     let defLevel = def * 4.67
     let atkLevel = atk * 4.67
     let dmgLevel = dmg * 2.67
+    let speedLevel = speed * 2.67
 
-
-    const level = Math.round(hpLevel + defLevel + atkLevel + dmgLevel)
+    const level = Math.round(hpLevel + defLevel + atkLevel + dmgLevel + speedLevel)
 
     //console.log(level);
     return level

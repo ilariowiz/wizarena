@@ -43,7 +43,7 @@ class Collection extends Component {
 		document.title = "Collection - Wizards Arena"
 
 		this.props.setNetworkSettings(MAIN_NET_ID, "1")
-		this.props.setNetworkUrl(MAIN_NET_ID, "1")
+		this.props.setNetworkUrl(MAIN_NET_ID, "1")		
 
 		setTimeout(() => {
 			this.loadAll()

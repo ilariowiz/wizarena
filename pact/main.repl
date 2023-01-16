@@ -623,6 +623,7 @@
     "damage": 17,
     "weakness": "wind",
     "defense": 19,
+    "speed": 0,
     "element": "Dark",
     "fights": [],
     "hp": 81,
@@ -637,6 +638,7 @@
     "damage": 6,
     "weakness": "ice",
     "defense": 15,
+    "speed": 2,
     "element": "Fire",
     "fights": [],
     "hp": 44,
@@ -654,6 +656,7 @@
     "element": "Fire",
     "fights": [],
     "hp": 77,
+    "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
@@ -668,6 +671,7 @@
     "element": "Fire",
     "fights": [],
     "hp": 54,
+    "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
@@ -682,6 +686,7 @@
     "element": "Fire",
     "fights": [],
     "hp": 54,
+    "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
@@ -696,6 +701,7 @@
     "element": "Fire",
     "fights": [],
     "hp": 54,
+    "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
@@ -710,6 +716,7 @@
     "element": "Fire",
     "fights": [],
     "hp": 54,
+    "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
@@ -724,6 +731,7 @@
     "element": "Fire",
     "fights": [],
     "hp": 54,
+    "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
@@ -738,6 +746,7 @@
     "element": "Fire",
     "fights": [],
     "hp": 54,
+    "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
@@ -752,6 +761,7 @@
     "element": "Fire",
     "fights": [],
     "hp": 54,
+    "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
@@ -766,6 +776,7 @@
     "element": "Fire",
     "fights": [],
     "hp": 54,
+    "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
@@ -780,6 +791,7 @@
     "element": "Fire",
     "fights": [],
     "hp": 54,
+    "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
@@ -794,6 +806,7 @@
     "element": "Fire",
     "fights": [],
     "hp": 54,
+    "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
@@ -908,6 +921,19 @@
 }])
 
 (free.wiz-arena.get-clerics "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" 2)
+
+(commit-tx)
+
+(begin-tx "GET LEVEL")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.calculate-level "0")
 
 (commit-tx)
 

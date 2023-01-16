@@ -216,6 +216,7 @@
         spellSelected:object
         spellbook:list
         ap:integer
+        speed:integer
     )
 
     (defschema upgrade-stat-values-schema
@@ -361,6 +362,9 @@
         (insert upgrade-stat-values "defense_ap_cost" {"value": 4.0})
         (insert upgrade-stat-values "attack_ap_cost" {"value": 4.0})
         (insert upgrade-stat-values "damage_ap_cost" {"value": 2.0})
+
+        (insert upgrade-stat-values "speed" {"value": 1.0})
+        (insert upgrade-stat-values "speed_base_cost" {"value": 400.0})
     )
 
  ; --------------------------------------------------------------------------
@@ -465,7 +469,8 @@
                 "resistance": (at "resistance" item),
                 "spellSelected": (at "spellSelected" item),
                 "spellbook": (at "spellbook" item),
-                "ap":0}
+                "ap":0,
+                "speed": (at "speed" item)}
             )
         )
     )
@@ -490,7 +495,8 @@
                 "attack": (at "attack" item),
                 "damage": (at "damage" item),
                 "defense": (at "defense" item),
-                "hp": (at "hp" item)}
+                "hp": (at "hp" item),
+                "speed": (at "speed" item)}
             )
         )
     )
@@ -540,16 +546,16 @@
         )
     )
 
-    (defun update-hps (objects-list:list)
+    (defun update-speeds (objects-list:list)
         (with-capability (ADMIN)
             (map
-                (update-hp)
+                (update-speed)
                 objects-list
             )
         )
     )
 
-    (defun update-hp (item:object)
+    (defun update-speed (item:object)
         (require-capability (ADMIN))
         (let
             (
@@ -557,7 +563,7 @@
             )
             (update stats id
                 {"id": id,
-                "hp": (at "hp" item)}
+                "speed": (at "speed" item)}
             )
         )
     )
@@ -1491,8 +1497,9 @@
                     (def (at "defense" data))
                     (atk (at "attack" data))
                     (dmg (at "damage" data))
+                    (speed (at "speed" data))
                 )
-                (round(+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* dmg 2.67)))
+                (round(+ (+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* dmg 2.67)) (* speed 2.67)))
             )
         )
     )
