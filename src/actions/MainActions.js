@@ -341,7 +341,7 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 				//console.log("response post reduce", blocks)
 				dispatch({ type: LOAD_ALL_NFTS_IDS, payload: { totalCountNfts: response.length, allNftsIds: response } })
 
-				let partsBlock = _.chunk(response, 1024)
+				let partsBlock = _.chunk(response, 683)
 
 				//console.log(partsBlock);
 
@@ -351,30 +351,37 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 					Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[1]))).then(response2 => {
 						//console.log(response2);
 
-						let final = response1.concat(response2)
+						Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[2]))).then(response3 => {
+						    //console.log(response3);
 
-						//console.log(final);
+						    let final = response1.concat(response2)
+							final = final.concat(response3)
 
-						final.map(i => {
-							const level = calcLevelWizard(i)
-							i.level = level
+						    //console.log(final);
+
+						    final.map(i => {
+						        const level = calcLevelWizard(i)
+						        i.level = level
+						    })
+
+						    final.sort((a, b) => {
+						        if (parseInt(a.price) === 0) return 1;
+						        if (parseInt(b.price) === 0) return -1
+						        return a.price - b.price
+						    })
+
+						    dispatch({
+						        type: LOAD_ALL_NFTS,
+						        payload: { allNfts: final, nftsBlockId: 0 }
+						    })
+
+						    if (callback) {
+						        callback(final)
+						    }
 						})
 
-						final.sort((a, b) => {
-							if (parseInt(a.price) === 0) return 1;
-							if (parseInt(b.price) === 0) return -1
-							return a.price - b.price
-						})
-
-						dispatch({
-							type: LOAD_ALL_NFTS,
-							payload: { allNfts: final, nftsBlockId: 0 }
-						})
-
-						if (callback) {
-							callback(final)
-						}
 					})
+
 				})
 			}
 		})
