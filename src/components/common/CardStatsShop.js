@@ -48,7 +48,7 @@ const cardStatsShop = (item, numberOfMedalsForTournament, width) => {
 
             <div style={{ width: widthBody, justifyContent: 'space-between', alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
 
-                <div style={{ marginBottom: 7 }}>
+                <div>
                     <p style={styles.statsTitleStyle}>
                         ATK
                     </p>
@@ -57,7 +57,7 @@ const cardStatsShop = (item, numberOfMedalsForTournament, width) => {
                     </p>
                 </div>
 
-                <div style={{ flexWrap: 'wrap', marginBottom: 7 }}>
+                <div style={{ flexWrap: 'wrap' }}>
                     <p style={styles.statsTitleStyle}>
                         DAMAGE
                     </p>
@@ -65,7 +65,9 @@ const cardStatsShop = (item, numberOfMedalsForTournament, width) => {
                         {dmgBase}
                     </p>
                 </div>
+            </div>
 
+            <div style={{ width: widthBody, justifyContent: 'space-between', alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
                 <div style={{ flexWrap: 'wrap' }}>
                     <p style={styles.statsTitleStyle}>
                         SPEED
