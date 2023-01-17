@@ -167,7 +167,10 @@ class Fight extends Component {
             defense: { int: info.defense },
             attack: { int: info.attack },
             damage: { int: info.damage },
+            speed: {int: info.speed ? info.speed : 0 }
         }
+
+        //console.log(objLevel);
 
         const level = calcLevelWizard(objLevel)
 

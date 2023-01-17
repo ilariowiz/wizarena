@@ -243,6 +243,10 @@ class Nft extends Component {
 			historyUpgrades.push({ stat: "damage", value: difference })
 		}
 
+		if (nft.speed.int > 0) {
+			historyUpgrades.push({ stat: "speed", value: nft.speed.int })
+		}
+
 		this.setState({ historyUpgrades })
     }
 
@@ -1110,6 +1114,7 @@ class Nft extends Component {
 
 							{this.renderStat("ATTACK", nft.attack.int + spellSelected.atkBase)}
 							{this.renderStat("DAMAGE", nft.damage.int + spellSelected.dmgBase)}
+							{this.renderStat("SPEED", nft.speed.int)}
 
 							{this.renderStat("SPELL PERK", spellSelected.condition.name ? spellSelected.condition.name.toUpperCase() : '-')}
 

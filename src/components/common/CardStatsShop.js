@@ -16,6 +16,11 @@ const cardStatsShop = (item, numberOfMedalsForTournament, width) => {
         dmgBase = 0
     }
 
+    let speedBase = item.speed.int || item.speed
+    if (!speedBase || speedBase.int === 0) {
+        speedBase = 0
+    }
+
 
     return (
         <div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
@@ -43,7 +48,7 @@ const cardStatsShop = (item, numberOfMedalsForTournament, width) => {
 
             <div style={{ width: widthBody, justifyContent: 'space-between', alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
 
-                <div>
+                <div style={{ marginBottom: 7 }}>
                     <p style={styles.statsTitleStyle}>
                         ATK
                     </p>
@@ -52,12 +57,21 @@ const cardStatsShop = (item, numberOfMedalsForTournament, width) => {
                     </p>
                 </div>
 
-                <div style={{ flexWrap: 'wrap' }}>
+                <div style={{ flexWrap: 'wrap', marginBottom: 7 }}>
                     <p style={styles.statsTitleStyle}>
                         DAMAGE
                     </p>
                     <p style={styles.statsStyle}>
                         {dmgBase}
+                    </p>
+                </div>
+
+                <div style={{ flexWrap: 'wrap' }}>
+                    <p style={styles.statsTitleStyle}>
+                        SPEED
+                    </p>
+                    <p style={styles.statsStyle}>
+                        {speedBase}
                     </p>
                 </div>
             </div>

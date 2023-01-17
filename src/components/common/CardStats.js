@@ -40,6 +40,11 @@ const cardStats = (item, numberOfMedalsForTournament, width, fromFight) => {
     let hpBase = item.hp.int || item.hp
     let defBase = item.defense.int || item.defense
 
+    let speedBase = item.speed ? item.speed.int : 0
+    if (!speedBase || speedBase.int === 0) {
+        speedBase = 0
+    }
+
     let atkTotal = atkSpell + atkBase
     let dmgTotal = dmgSpell + dmgBase
 
@@ -117,6 +122,15 @@ const cardStats = (item, numberOfMedalsForTournament, width, fromFight) => {
                     </p>
                     <p style={styles.statsStyle}>
                         {dmgTotal}
+                    </p>
+                </div>
+
+                <div style={{ flexWrap: 'wrap' }}>
+                    <p style={styles.statsTitleStyle}>
+                        SPEED
+                    </p>
+                    <p style={styles.statsStyle}>
+                        {speedBase}
                     </p>
                 </div>
             </div>
