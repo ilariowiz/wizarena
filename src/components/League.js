@@ -75,7 +75,7 @@ class League extends Component {
                 if (medals["s2"]) {
                     nft["totMedals"] = parseInt(medals["s2"])
 
-                    if (!places[`${medals["s2"]}`] && Object.keys(places).length < 12) {
+                    if (!places[`${medals["s2"]}`]) {
                         places[`${medals["s2"]}`] = []
                     }
 
@@ -94,6 +94,10 @@ class League extends Component {
                     .forEach((v, k) => {
                         sorted.push(places[parseInt(v)])
                     })
+
+            //console.log(sorted);
+
+            sorted = sorted.slice(0, 12)
 
             //console.log(sorted);
 
