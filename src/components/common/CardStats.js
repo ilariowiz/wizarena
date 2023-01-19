@@ -1,7 +1,7 @@
 import React from 'react'
 import allSpells from './Spells'
 
-const cardStats = (item, numberOfMedalsForTournament, width, fromFight) => {
+const cardStats = (item, numberOfMedalsForTournament, width) => {
 
     //console.log(item);
 
@@ -47,22 +47,6 @@ const cardStats = (item, numberOfMedalsForTournament, width, fromFight) => {
 
     let atkTotal = atkSpell + atkBase
     let dmgTotal = dmgSpell + dmgBase
-
-    if (fromFight && item.potion && item.potion === "hp") {
-        hpBase += 5
-    }
-
-    if (fromFight && item.potion && item.potion === "defense") {
-        defBase += 2
-    }
-
-    if (fromFight && item.potion && item.potion === "attack") {
-        atkTotal += 2
-    }
-
-    if (fromFight && item.potion && item.potion === "damage") {
-        dmgTotal += 3
-    }
 
     return (
         <div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>

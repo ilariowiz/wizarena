@@ -1448,19 +1448,23 @@
                     (cond
                         (
                             (= potion "hp")
-                            (spend-wiza (+ (/ current-level 2) 0.01) account m)
+                            (spend-wiza (+ (round(/ current-level 2.4)) 0.01) account m)
                         )
                         (
                             (= potion "defense")
-                            (spend-wiza (+ current-level 0.01) account m)
+                            (spend-wiza (+ (round(/ current-level 1.1)) 0.01) account m)
                         )
                         (
                             (= potion "attack")
-                            (spend-wiza (+ current-level 0.01) account m)
+                            (spend-wiza (+ (round(/ current-level 1.1)) 0.01) account m)
                         )
                         (
                             (= potion "damage")
-                            (spend-wiza (+ (round(/ current-level 1.4)) 0.01) account m)
+                            (spend-wiza (+ (round(/ current-level 1.6)) 0.01) account m)
+                        )
+                        (
+                            (= potion "speed")
+                            (spend-wiza (+ (round(/ current-level 1.6)) 0.01) account m)
                         )
                     "")
                     (write potions-table key {

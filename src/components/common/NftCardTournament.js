@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { IoMedalOutline } from 'react-icons/io5'
+import Popup from 'reactjs-popup';
 import getImageUrl from './GetImageUrl'
 import calcMedals from './CalcMedals'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
 import '../../css/NftCard.css'
+import 'reactjs-popup/dist/index.css';
 
 const vial_hp = require('../../assets/vial_hp.png')
 const vial_def = require('../../assets/vial_def.png')
 const vial_atk = require('../../assets/vial_atk.png')
 const vial_dmg = require('../../assets/vial_dmg.png')
+const vial_speed = require('../../assets/vial_speed.png')
 const vial_empty = require('../../assets/vial_empty.png')
 
 
@@ -47,18 +50,27 @@ class NftCardTournament extends Component {
 		const potion = this.getPotionEquipped()
 
 		let imagePotion = vial_empty
+		let descPotion = ""
 
 		if (potion && potion === "hp") {
 			imagePotion = vial_hp
+			descPotion = "Vial of HP +8"
 		}
 		else if (potion && potion === "defense") {
 			imagePotion = vial_def
+			descPotion = "Vial of Defense +2"
 		}
 		else if (potion && potion === "attack") {
 			imagePotion = vial_atk
+			descPotion = "Vial of Attack +2"
 		}
 		else if (potion && potion === "damage") {
 			imagePotion = vial_dmg
+			descPotion = "Vial of Damage +4"
+		}
+		else if (potion && potion === "speed") {
+			imagePotion = vial_speed
+			descPotion = "Vial of Speed +4"
 		}
 
 		return (
@@ -119,16 +131,26 @@ class NftCardTournament extends Component {
 
 							{
 								potion ?
-								<div style={{ alignItems: 'center' }}>
-									<img
-			                            src={imagePotion}
-			                            style={{ width: 24, height: 28 }}
-			                            alt={`Potion Equipped: ${potion ? potion.toUpperCase() : "None"}`}
-			                        />
-									<p style={{ color: 'white', fontSize: 14, lineHeight: 1, marginTop: 2 }}>
-										VIAL
-									</p>
-								</div>
+								<Popup
+									trigger={open => (
+										<div style={{ alignItems: 'center' }}>
+											<img
+					                            src={imagePotion}
+					                            style={{ width: 24, height: 28 }}
+					                            alt={`Potion Equipped: ${potion ? potion.toUpperCase() : "None"}`}
+					                        />
+											<p style={{ color: 'white', fontSize: 14, lineHeight: 1, marginTop: 2 }}>
+												VIAL
+											</p>
+										</div>
+									)}
+									position="top center"
+									on="hover"
+								>
+									<div style={{ padding: 5, fontSize: 18 }}>
+										{descPotion}
+									</div>
+								</Popup>
 								: null
 							}
 

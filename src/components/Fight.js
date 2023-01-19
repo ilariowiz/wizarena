@@ -143,22 +143,10 @@ class Fight extends Component {
 	}
 
     renderSingleNft(info, width) {
-        //const { tournament } = this.state
-        //console.log(info, tournament);
+        const { tournament } = this.state
+        //console.log(tournament);
 
-        /*
-        let tournamentName = tournament.split("_")[0]
-
-        const tournamentMedals = info.medals[tournamentName]
-        //console.log(tournamentMedals);
-
-        let medals = 0
-        if (tournamentMedals) {
-            medals = tournamentMedals.int || tournamentMedals
-        }
-        //console.log(medals);
-        const numberOfMedalsForTournament = medals || '0'
-        */
+        let tournamentNumber = tournament.split("_")[0].replace("t", "")
 
         //console.log(info);
 
@@ -171,6 +159,37 @@ class Fight extends Component {
         }
 
         //console.log(objLevel);
+
+        if (info.potion && info.potion === "hp") {
+            if (parseInt(tournamentNumber) <= 11) {
+                info["hp"] = info.hp + 5
+            }
+            else {
+                info["hp"] = info.hp + 8
+            }
+        }
+
+        if (info.potion && info.potion === "defense") {
+            info["defense"] = info.defense + 2
+        }
+
+        if (info.potion && info.potion === "attack") {
+            info["attack"] = info.attack + 2
+        }
+
+        if (info.potion && info.potion === "damage") {
+            if (parseInt(tournamentNumber) <= 11) {
+                info["damage"] = info.damage + 3
+            }
+            else {
+                info["damage"] = info.damage + 4
+            }
+        }
+
+        if (info.potion && info.potion === "speed") {
+            info["speed"] = info.speed + 4
+        }
+
 
         const level = calcLevelWizard(objLevel)
 
@@ -205,7 +224,7 @@ class Fight extends Component {
                     </p>
                 </div>
 
-                {cardStats(info, undefined, '80%', true)}
+                {cardStats(info, undefined, '80%')}
             </div>
         )
     }

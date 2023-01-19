@@ -45,6 +45,7 @@ const vial_hp = require('../assets/vial_hp.png')
 const vial_def = require('../assets/vial_def.png')
 const vial_atk = require('../assets/vial_atk.png')
 const vial_dmg = require('../assets/vial_dmg.png')
+const vial_speed = require('../assets/vial_speed.png')
 
 const banner_nickname = require('../assets/banner_nickname.png')
 
@@ -787,23 +788,28 @@ class Shop extends Component {
         let img;
         if (key === "hp") {
             img = vial_hp
-            bonus = 5
-            costo = (level / 2) + 0.01
+            bonus = 8
+            costo = Math.round(level / 2.4) + 0.01
         }
         else if (key === "defense") {
             img = vial_def
             bonus = 2
-            costo = level + 0.01
+            costo = Math.round(level / 1.1) + 0.01
         }
         else if (key === "attack") {
             img = vial_atk
             bonus = 2
-            costo = level + 0.01
+            costo = Math.round(level / 1.1) + 0.01
         }
         else if (key === "damage") {
             img = vial_dmg
-            bonus = 3
-            costo = Math.round(level / 1.4) + 0.01
+            bonus = 4
+            costo = Math.round(level / 1.6) + 0.01
+        }
+        else if (key === "speed") {
+            img = vial_speed
+            bonus = 4
+            costo = Math.round(level / 1.6) + 0.01
         }
 
         return (
@@ -1184,6 +1190,8 @@ class Shop extends Component {
                                     {this.renderVialCard("attack", true, isMobile)}
 
                                     {this.renderVialCard("damage", true, isMobile)}
+
+                                    {this.renderVialCard("speed", true, isMobile)}
 
                                 </div>
                             </div>
