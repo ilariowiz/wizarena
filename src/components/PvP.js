@@ -50,6 +50,7 @@ class PvP extends Component {
             pvpOpen: false,
             pvpWeek: "",
             pvpWeekEnd: undefined,
+            pvpFightsStart: undefined,
             subscribers: [],
             yourSubscribers: [],
             yourSubscribersResults: [],
@@ -112,13 +113,15 @@ class PvP extends Component {
     		let data = docSnap.data()
 
             if (data) {
+                const dateFightsStart = moment(data.start.seconds * 1000)
+                const dateFightsStartTo = moment().to(dateFightsStart)
+
                 //console.log(data);
                 const dateEnd = moment(data.end.seconds * 1000)
                 //console.log(dateEnd);
-                //const dateEndString = moment(dateEnd).format("dddd, MMMM Do, h:mm:ss a");
                 const dateEndTo = moment().to(dateEnd)
 
-                this.setState({ pvpWeek: res, pvpWeekEnd: dateEndTo })
+                this.setState({ pvpWeek: res, pvpWeekEnd: dateEndTo, pvpFightsStart: dateFightsStartTo })
             }
             else {
                 this.setState({ pvpWeek: res })
@@ -455,7 +458,7 @@ class PvP extends Component {
 
     renderRowSub(item, index) {
         //console.log(item);
-        const { pvpOpen, userMintedNfts } = this.state
+        const { pvpOpen, userMintedNfts, pvpFightsStart } = this.state
 
         const winRate = this.calcWinRate(item)
 
@@ -470,6 +473,8 @@ class PvP extends Component {
         //console.log(level);
 
         const totalFights = item.win + item.lose
+
+        const fightsStart = moment().isBefore(pvpFightsStart)
 
         return (
             <div
@@ -542,7 +547,18 @@ class PvP extends Component {
                     }
 
                     {
-                        pvpOpen && !this.state.loading && totalFights < item.rounds  ?
+                        !fightsStart &&
+                        <div
+                            style={Object.assign({}, styles.btnPlay, { width: 210 })}
+                        >
+                            <p style={{ fontSize: 17, color: 'white' }}>
+                                WAITING...
+                            </p>
+                        </div>
+                    }
+
+                    {
+                        pvpOpen && !this.state.loading && totalFights < item.rounds && fightsStart ?
                         <div style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <button
                                 className="btnH"
@@ -580,7 +596,7 @@ class PvP extends Component {
                     }
 
                     {
-                        pvpOpen && !this.state.loading && totalFights >= item.rounds ?
+                        pvpOpen && !this.state.loading && totalFights >= item.rounds && fightsStart ?
                         <button
                             className="btnH"
                             style={Object.assign({}, styles.btnPlay, { width: 210 })}
@@ -605,7 +621,7 @@ class PvP extends Component {
     }
 
     renderBody(isMobile) {
-        const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults, userMintedNfts, error, activeSubs, pvpWeekEnd } = this.state
+        const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults, userMintedNfts, error, activeSubs, pvpWeekEnd, pvpFightsStart } = this.state
         const { account, showModalTx } = this.props
 
         const { boxW, modalW } = getBoxWidth(isMobile)
@@ -672,7 +688,11 @@ class PvP extends Component {
 
         const yourSubscribersResultsSorted = this.sortByIdSubs(yourSubscribersResults, "idnft")
 
-        //console.log(avgLevelPvP, subscribers);
+        //console.log(avgLevelPvP, subscribers);+
+
+
+        const fightsStart = moment().isBefore(pvpFightsStart)
+        //console.log(fightsStart);
 
         return (
             <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
@@ -714,7 +734,14 @@ class PvP extends Component {
                         </p>
 
                         {
-                            pvpWeekEnd &&
+                            !fightsStart &&
+                            <p style={{ fontSize: 19, color: 'white' }}>
+                                FIGHTS START: {pvpFightsStart}
+                            </p>
+                        }
+
+                        {
+                            pvpWeekEnd && fightsStart &&
                             <p style={{ fontSize: 19, color: 'white' }}>
                                 PVP WEEK END: {pvpWeekEnd}
                             </p>
