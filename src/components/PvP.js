@@ -549,10 +549,10 @@ class PvP extends Component {
                     {
                         !fightsStart &&
                         <div
-                            style={Object.assign({}, styles.btnPlay, { width: 210 })}
+                            style={Object.assign({}, styles.btnWait, { width: 210 })}
                         >
                             <p style={{ fontSize: 17, color: 'white' }}>
-                                WAITING...
+                                WAIT THE START
                             </p>
                         </div>
                     }
@@ -919,6 +919,17 @@ const styles = {
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: CTA_COLOR
+    },
+    btnWait: {
+        height: 35,
+        width: 150,
+        minWidth: 150,
+        borderRadius: 2,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderColor: CTA_COLOR,
+        borderWidth: 2,
+        borderStyle: 'solid'
     },
     boxSubscribed: {
         marginBottom: 20,
