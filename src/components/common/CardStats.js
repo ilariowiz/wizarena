@@ -40,7 +40,7 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
     let hpBase = item.hp.int || item.hp
     let defBase = item.defense.int || item.defense
 
-    let speedBase = item.speed ? item.speed.int : 0
+    let speedBase = item.speed.int || item.speed
     if (!speedBase || speedBase.int === 0) {
         speedBase = 0
     }
