@@ -19,7 +19,7 @@ import ModalMakeOffer from './common/ModalMakeOffer'
 import HistoryItem from './common/HistoryItem'
 import OfferItem from './common/OfferItem'
 import getImageUrl from './common/GetImageUrl'
-import getRingBonuses from './common/GetRingBonuses'
+//import getRingBonuses from './common/GetRingBonuses'
 import traits_qty from './common/Traits_qty'
 import traits_qty_clerics from './common/Traits_qty_clerics'
 import conditions from './common/Conditions'
@@ -168,7 +168,7 @@ class Nft extends Component {
 
 					this.loadOffers(idNft)
 
-					this.loadEquipment(idNft)
+					//this.loadEquipment(idNft)
 
 					if (response.confirmBurn) {
 						this.loadInfoBurn(idNft)
@@ -1062,9 +1062,9 @@ class Nft extends Component {
 		}
 
 		if (equipment.bonus && equipment.bonus.includes(title.toLowerCase())) {
-			const ringBonus = getRingBonuses(equipment)
+			//const ringBonus = getRingBonuses(equipment)
 			//console.log(ringBonus);
-			fixedValue = fixedValue + ringBonus.bonusesDict[title.toLowerCase()]
+			//fixedValue = fixedValue + ringBonus.bonusesDict[title.toLowerCase()]
 		}
 
 		return (
@@ -1163,10 +1163,10 @@ class Nft extends Component {
 						: null
 					}
 
-					{
+					{/*
 						equipment && equipment.equipped &&
 						this.renderBoxEquipment(width)
-					}
+					*/}
 
 				</div>
 			</div>
@@ -1392,6 +1392,7 @@ class Nft extends Component {
 		)
 	}
 
+	/*
 	renderBoxEquipment(width) {
 		const { equipment } = this.state
 
@@ -1426,6 +1427,7 @@ class Nft extends Component {
 			</div>
 		)
 	}
+	*/
 
 	renderBodySmall() {
 		const { nft, loading, infoBurn } = this.state
@@ -1552,7 +1554,7 @@ class Nft extends Component {
 	}
 
 	renderBodyLarge() {
-		const { nft, loading, infoBurn, equipment } = this.state
+		const { nft, loading, infoBurn } = this.state
 		const { account } = this.props
 
 		//console.log(nft);
