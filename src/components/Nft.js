@@ -19,6 +19,7 @@ import ModalMakeOffer from './common/ModalMakeOffer'
 import HistoryItem from './common/HistoryItem'
 import OfferItem from './common/OfferItem'
 import getImageUrl from './common/GetImageUrl'
+import getRingBonuses from './common/GetRingBonuses'
 import traits_qty from './common/Traits_qty'
 import traits_qty_clerics from './common/Traits_qty_clerics'
 import conditions from './common/Conditions'
@@ -37,7 +38,8 @@ import {
 	getInfoNftBurning,
 	getOffersForNft,
 	makeOffer,
-	acceptOffer
+	acceptOffer,
+	getInfoItemEquipped
 } from '../actions'
 import { MAIN_NET_ID, REVEAL_CAP, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, CTA_COLOR, CONTRACT_NAME } from '../actions/types'
 import '../css/Nft.css'
@@ -73,7 +75,8 @@ class Nft extends Component {
 			showModalOffer: false,
 			offerInfoRecap: "",
 			makeOfferValues: {},
-			saleValues: {}
+			saleValues: {},
+			equipment: {}
 		}
 	}
 
@@ -135,7 +138,7 @@ class Nft extends Component {
 
 				//console.log(response)
 
-				const tournaments = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10", "t11"]
+				const tournaments = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10", "t11", "t12"]
 
 				response['groupedFights'] = {}
 
@@ -164,6 +167,9 @@ class Nft extends Component {
 					this.loadMaxMedalsPerTournament()
 
 					this.loadOffers(idNft)
+
+					this.loadEquipment(idNft)
+
 					if (response.confirmBurn) {
 						this.loadInfoBurn(idNft)
 					}
@@ -212,6 +218,15 @@ class Nft extends Component {
         })
     }
 
+	loadEquipment(idNft) {
+		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, idNft, (response) => {
+			//console.log(response);
+			this.setState({ equipment: response })
+		})
+	}
+
 	async getHistoryUpgrades() {
 		const { nft } = this.state
 
@@ -243,7 +258,7 @@ class Nft extends Component {
 			historyUpgrades.push({ stat: "damage", value: difference })
 		}
 
-		if (nft.speed.int > 0) {
+		if (nft.speed && nft.speed.int > 0) {
 			historyUpgrades.push({ stat: "speed", value: nft.speed.int })
 		}
 
@@ -1001,6 +1016,7 @@ class Nft extends Component {
 	}
 
 	renderStat(title, value) {
+		const { equipment } = this.state
 
 		let fixedValue = value
 
@@ -1045,6 +1061,12 @@ class Nft extends Component {
 			)
 		}
 
+		if (equipment.bonus && equipment.bonus.includes(title.toLowerCase())) {
+			const ringBonus = getRingBonuses(equipment)
+			//console.log(ringBonus);
+			fixedValue = fixedValue + ringBonus.bonusesDict[title.toLowerCase()]
+		}
+
 		return (
 			<div style={{ alignItems: 'flex-end', marginBottom: 5 }}>
 				<p style={styles.textTitleStat}>{title}</p>
@@ -1065,7 +1087,7 @@ class Nft extends Component {
     }
 
 	renderBoxStats(width) {
-		const { nft, historyUpgrades, level } = this.state
+		const { nft, historyUpgrades, level, equipment } = this.state
 
 		let rev = false
 		if (parseInt(nft.id) < REVEAL_CAP) {
@@ -1114,7 +1136,7 @@ class Nft extends Component {
 
 							{this.renderStat("ATTACK", nft.attack.int + spellSelected.atkBase)}
 							{this.renderStat("DAMAGE", nft.damage.int + spellSelected.dmgBase)}
-							{this.renderStat("SPEED", nft.speed.int)}
+							{this.renderStat("SPEED", nft.speed ? nft.speed.int : 0)}
 
 							{this.renderStat("SPELL PERK", spellSelected.condition.name ? spellSelected.condition.name.toUpperCase() : '-')}
 
@@ -1139,6 +1161,11 @@ class Nft extends Component {
 							</div>
 						</div>
 						: null
+					}
+
+					{
+						equipment && equipment.equipped &&
+						this.renderBoxEquipment(width)
 					}
 
 				</div>
@@ -1365,6 +1392,41 @@ class Nft extends Component {
 		)
 	}
 
+	renderBoxEquipment(width) {
+		const { equipment } = this.state
+
+		const infoEquipment = getRingBonuses(equipment)
+		//console.log(infoEquipment);
+
+		return (
+			<div style={{ width: width - 20 }}>
+				<div style={styles.subBoxEquipment}>
+					<p style={{ fontSize: 20, color: 'white' }}>
+						EQUIPMENT
+					</p>
+
+					<div style={{ alignItems: 'center' }}>
+						<img
+							src={equipment.url}
+							//src="https://storage.googleapis.com/wizarena/equipment/ring_atk_1.png"
+							style={{ width: 100 }}
+						/>
+
+						<div style={{ flexDirection: 'column' }}>
+							<p style={{ fontSize: 19, color: 'white', marginBottom: 5 }}>
+								{equipment.name}
+							</p>
+
+							<p style={{ fontSize: 18, color: 'white' }}>
+								{infoEquipment.bonusesText.join(", ")}
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		)
+	}
+
 	renderBodySmall() {
 		const { nft, loading, infoBurn } = this.state
 		const { account } = this.props
@@ -1490,7 +1552,7 @@ class Nft extends Component {
 	}
 
 	renderBodyLarge() {
-		const { nft, loading, infoBurn } = this.state
+		const { nft, loading, infoBurn, equipment } = this.state
 		const { account } = this.props
 
 		//console.log(nft);
@@ -1532,8 +1594,10 @@ class Nft extends Component {
 					<div style={{ flexDirection: 'column', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
 
 						<div style={{ width: '100%', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
+
 							{this.renderBoxShare()}
 						</div>
+
 
 						{
 							//nft listato, in renderbtn buy gestiamo tutti i casi, anche account non connesso
@@ -1786,6 +1850,16 @@ const styles = {
 		alignItems: 'center',
 		paddingTop: 2
 	},
+	subBoxEquipment: {
+		width: 'fit-content',
+		flexDirection: 'column',
+		borderRadius: 2,
+		paddingTop: 10,
+		paddingLeft: 10,
+		paddingRight: 10,
+		backgroundColor: '#ffffff15',
+		marginBottom: 10
+	},
 	boxRightLarge: {
 		width: '100%',
 		flexDirection: 'row',
@@ -1909,5 +1983,6 @@ export default connect(mapStateToProps, {
 	getInfoNftBurning,
 	getOffersForNft,
 	makeOffer,
-	acceptOffer
+	acceptOffer,
+	getInfoItemEquipped
 })(Nft);
