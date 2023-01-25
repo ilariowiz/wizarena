@@ -51,6 +51,7 @@ class PvP extends Component {
             pvpWeek: "",
             pvpWeekEnd: undefined,
             pvpFightsStart: undefined,
+            pvpFightsStartDate: undefined,
             subscribers: [],
             yourSubscribers: [],
             yourSubscribersResults: [],
@@ -121,7 +122,7 @@ class PvP extends Component {
                 //console.log(dateEnd);
                 const dateEndTo = moment().to(dateEnd)
 
-                this.setState({ pvpWeek: res, pvpWeekEnd: dateEndTo, pvpFightsStart: dateFightsStartTo })
+                this.setState({ pvpWeek: res, pvpWeekEnd: dateEndTo, pvpFightsStart: dateFightsStartTo, pvpFightsStartDate: dateFightsStart })
             }
             else {
                 this.setState({ pvpWeek: res })
@@ -458,7 +459,7 @@ class PvP extends Component {
 
     renderRowSub(item, index) {
         //console.log(item);
-        const { pvpOpen, userMintedNfts, pvpFightsStart } = this.state
+        const { pvpOpen, userMintedNfts, pvpFightsStart, pvpFightsStartDate } = this.state
 
         const winRate = this.calcWinRate(item)
 
@@ -474,7 +475,7 @@ class PvP extends Component {
 
         const totalFights = item.win + item.lose
 
-        const fightsStart = moment().isBefore(pvpFightsStart)
+        const fightsStart = moment().isAfter(pvpFightsStartDate)
 
         return (
             <div
@@ -558,7 +559,7 @@ class PvP extends Component {
                     }
 
                     {
-                        pvpOpen && !this.state.loading && totalFights < item.rounds && fightsStart ?
+                        !this.state.loading && totalFights < item.rounds && fightsStart ?
                         <div style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <button
                                 className="btnH"
@@ -596,7 +597,7 @@ class PvP extends Component {
                     }
 
                     {
-                        pvpOpen && !this.state.loading && totalFights >= item.rounds && fightsStart ?
+                        !this.state.loading && totalFights >= item.rounds && fightsStart ?
                         <button
                             className="btnH"
                             style={Object.assign({}, styles.btnPlay, { width: 210 })}
@@ -621,7 +622,7 @@ class PvP extends Component {
     }
 
     renderBody(isMobile) {
-        const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults, userMintedNfts, error, activeSubs, pvpWeekEnd, pvpFightsStart } = this.state
+        const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults, userMintedNfts, error, activeSubs, pvpWeekEnd, pvpFightsStart, pvpFightsStartDate } = this.state
         const { account, showModalTx } = this.props
 
         const { boxW, modalW } = getBoxWidth(isMobile)
@@ -691,7 +692,9 @@ class PvP extends Component {
         //console.log(avgLevelPvP, subscribers);+
 
 
-        const fightsStart = moment().isBefore(pvpFightsStart)
+        //console.log(pvpFightsStartDate);
+        const now = moment()
+        const fightsStart = now.isAfter(pvpFightsStartDate)
         //console.log(fightsStart);
 
         return (
