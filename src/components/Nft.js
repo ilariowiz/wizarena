@@ -39,7 +39,7 @@ import {
 	getOffersForNft,
 	makeOffer,
 	acceptOffer,
-	getInfoItemEquipped
+	//getInfoItemEquipped
 } from '../actions'
 import { MAIN_NET_ID, REVEAL_CAP, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, CTA_COLOR, CONTRACT_NAME } from '../actions/types'
 import '../css/Nft.css'
@@ -218,6 +218,7 @@ class Nft extends Component {
         })
     }
 
+	/*
 	loadEquipment(idNft) {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
@@ -226,6 +227,7 @@ class Nft extends Component {
 			this.setState({ equipment: response })
 		})
 	}
+	*/
 
 	async getHistoryUpgrades() {
 		const { nft } = this.state
@@ -1986,5 +1988,5 @@ export default connect(mapStateToProps, {
 	getOffersForNft,
 	makeOffer,
 	acceptOffer,
-	getInfoItemEquipped
+	//getInfoItemEquipped
 })(Nft);
