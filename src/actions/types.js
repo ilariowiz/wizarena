@@ -16,9 +16,10 @@ export const ITEMS_PER_BLOCK = 40
 export const CONTRACT_NAME_WIZA = 'wiza'
 export const WIZA_TOKEN_BANK = 'wiza-token-bank'
 
+export const CONTRACT_NAME_EQUIPMENT = 'wiz-equipment'
 
 export const DEFAULT_GAS_PRICE = 0.00000001;
-export const MAIN_NET_ID = "mainnet01";
+export const MAIN_NET_ID = "mainnet01"; //mainnet01
 export const TEST_NET_ID = "testnet04";
 
 export const LOAD_USER = 'LOAD_USER';
@@ -70,3 +71,10 @@ export const SAVE_SALES = 'SAVE_SALES'
 export const SAVE_RANK = 'SAVE_RANK'
 
 export const SET_WIZARD_SELECTED_SHOP = 'SET_WIZARD_SELECTED_SHOP'
+
+
+
+/////// equipment
+export const LOAD_ALL_ITEMS_IDS = 'LOAD_ALL_ITEMS_IDS'
+export const LOAD_ALL_ITEMS = 'LOAD_ALL_ITEMS'
+export const SET_BLOCK_ID_ITEM = 'SET_BLOCK_ID_ITEM'
