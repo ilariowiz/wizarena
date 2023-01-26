@@ -294,11 +294,13 @@
         (let (
                 (data (get-equipment-fields-for-id iditem))
                 (nft-data (m::get-wizard-fields-for-id (str-to-int idnft)))
+                (nft-equipped-data (get-equipped-fields-for-id idnft))
             )
             (enforce (= (at "owner" nft-data) owner) "you are not the owner of this wizard")
+            (enforce (= (at "equipped" nft-equipped-data) false) "Can't equip an already equipped wizard")
             (enforce (= (at "listed" nft-data) false) "can't equip a listed wizard")
             (enforce (= (at "listed" data) false) "can't equip a listed item")
-            (enforce (= (at "equipped" data) false) "can't equip a an already equipped item")
+            (enforce (= (at "equipped" data) false) "can't equip an already equipped item")
             (write equipped idnft {
                 "id": iditem,
                 "url": (at "url" data),
