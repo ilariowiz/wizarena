@@ -114,7 +114,7 @@ class ModalTransaction extends Component {
 	}
 
 	getContent() {
-		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, amountToMint, offerInfoRecap, wizaAmount, nicknameToSet, apToBurn } = this.props
+		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, amountToMint, offerInfoRecap, wizaAmount, nicknameToSet, apToBurn, numberOfChest, ringToEquipName } = this.props
 
 		//CASO INIZIALE, signingCmd != null in transactionState
 		let title = 'Signing transaction'
@@ -135,11 +135,17 @@ class ModalTransaction extends Component {
 				else if (type === 'list') {
 					body = `You will list ${nameNft} for ${inputPrice} KDA. Marketplace Fee: 7%`
 				}
-				else if (type === 'delist') {
+				else if (type === 'listequipment') {
+					body = `You will list ${nameNft} for ${inputPrice} KDA. Marketplace Fee: 2%`
+				}
+				else if (type === 'delist' || type === 'delistequipment') {
 					body = `You will delist ${nameNft}`
 				}
 				else if (type === 'buy') {
 					body = `You will buy ${nameNft} (you will need KDA on chain 1)`
+				}
+				else if (type === 'buyequipment') {
+					body = `You will buy ${nameNft} (you will need WIZA on chain 1)`
 				}
 				else if (type === 'subscribe_pvp') {
 					body = `You will subscribe ${nameNft} who will be able to do ${wizaAmount} fights`
@@ -204,6 +210,15 @@ class ModalTransaction extends Component {
 				else if (type === "burnap") {
 					body = `You will burn ${apToBurn} AP for ${apToBurn*15} $WIZA`
 				}
+				else if (type === "buychest") {
+					body = `You will buy ${numberOfChest} ${numberOfChest > 1 ? "chests" : "chest"} for ${numberOfChest*5} $KDA`
+				}
+				else if (type === "equip") {
+					body = `You will equip ${ringToEquipName} to ${nameNft}`
+				}
+				else if (type === "unequip") {
+					body = `You will unequip ${ringToEquipName} from ${nameNft} for 120 WIZA`
+				}
 
 				buttonText = 'Open Wallet'
 				action = async () => this.props.signTransaction(transactionState.cmdToConfirm, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, idNft, () => this.checkTransaction())
@@ -246,15 +261,15 @@ class ModalTransaction extends Component {
 					body = "Clerics successfully minted!"
 					buttonText = 'Close'
 				}
-				else if (type === 'list') {
+				else if (type === 'list' || type === 'listequipment') {
 					body = 'Listing successfully'
 					buttonText = 'Close'
 				}
-				else if (type === 'delist') {
+				else if (type === 'delist' || type === "delistequipment") {
 					body = 'Delisting successfully'
 					buttonText = 'Close'
 				}
-				else if (type === 'buy') {
+				else if (type === 'buy' || type === 'buyequipment') {
 					body = `You bought ${nameNft}`
 					buttonText = 'Close'
 				}
@@ -332,6 +347,18 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'burnap') {
 					body = 'AP burned successfully'
+					buttonText = 'Close'
+				}
+				else if (type === 'buychest') {
+					body = `${numberOfChest} ${numberOfChest > 1 ? 'chests' : 'chest'} successfully bought!`
+					buttonText = 'Close'
+				}
+				else if (type === 'equip') {
+					body = `${ringToEquipName} successfully equipped!`
+					buttonText = 'Close'
+				}
+				else if (type === 'unequip') {
+					body = `${ringToEquipName} successfully unequipped!`
 					buttonText = 'Close'
 				}
 
