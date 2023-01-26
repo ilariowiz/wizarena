@@ -150,6 +150,79 @@ class Equipment extends Component {
         this.props.mintEquipment(chainId, gasPrice, netId, numberOfChest, account)
     }
 
+    renderPageCounter() {
+		const { allItemsIds, itemsBlockId } = this.props
+		//console.log("allNftsIds", allNftsIds, nftsBlockId)
+
+		let subarray = []
+
+		//creiamo una lista di idx partendo dal corrente e togliendo e aggiungendo 5
+		//se l'id che esce è minore di 0, lo ignoriamo
+		let indexes = []
+		for (let i = -5; i < 5; i++) {
+			let idx = itemsBlockId + i
+			if (idx >= 0) {
+				indexes.push(idx)
+			}
+		}
+
+		//console.log("indexes", indexes)
+
+		let blocks = allItemsIds.reduce((rows, item, index) => {
+			//console.log(index);
+			//se array row è piena, aggiungiamo una nuova row = [] alla lista
+			if (index % ITEMS_PER_BLOCK === 0 && index > 0) {
+				rows.push([]);
+			}
+
+			//prendiamo l'ultima array della lista e aggiungiamo item
+			rows[rows.length - 1].push(item);
+			return rows;
+		}, [[]]);
+
+		//per ogni index che abbiamo calcolato, controlliamo che ci sia il corrispettivo, nell'array dei blocchi
+		// se c'è aggiungiamo l'index alla subarray
+		for (let i = 0; i < indexes.length; i++) {
+			const idx = indexes[i]
+
+			let block = blocks[idx]
+			if (block) {
+				subarray.push(idx)
+			}
+		}
+
+		//console.log("subarray", subarray)
+
+		let rows = []
+
+		subarray.map(item => {
+
+			let btnStyle = item === itemsBlockId ? styles.btnPageSelectedStyle : styles.btnPageStyle
+
+			rows.push(
+				<button
+					style={btnStyle}
+					key={item}
+					onClick={() => {
+						if (item !== itemsBlockId && !this.state.loading) {
+							this.loadBlock(item)
+						}
+					}}
+				>
+					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 22, lineHeight: 1 }}>
+						{item+1}
+					</p>
+				</button>
+			)
+		})
+
+		return (
+			<div style={{ justifyContent: 'center', alignItems: 'center', height: 40, marginTop: 20, marginBottom: 20 }}>
+				{rows}
+			</div>
+		)
+	}
+
 
     renderBoxHeader(title, subtitle, isMobile) {
 		return (
@@ -340,6 +413,17 @@ class Equipment extends Component {
 
         const { boxW, modalW } = getBoxWidth(isMobile)
 
+        let showPageCounter = false
+		if (allItemsIds && allItems && allItems.length > 0 && itemsToShow.length > 0) {
+			showPageCounter = true
+		}
+
+        /*
+		if (statSearched && statSearched.length > 0) {
+			showPageCounter = false
+		}
+        */
+
         return (
             <div style={{ flexDirection: 'column', width: boxW }}>
                 {this.renderHeader(isMobile)}
@@ -367,6 +451,12 @@ class Equipment extends Component {
                     </div>
 					:
                     null
+				}
+
+                {
+					showPageCounter ?
+					this.renderPageCounter()
+					: null
 				}
 
                 <ModalTransaction
@@ -495,6 +585,30 @@ const styles = {
         alignItems: 'center',
         backgroundColor: CTA_COLOR
     },
+    btnPageStyle: {
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginLeft: 10,
+		marginRight: 10,
+		paddingLeft: 10,
+		paddingRight: 10,
+		paddingTop: 6,
+		paddingBottom: 6
+	},
+	btnPageSelectedStyle: {
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginLeft: 10,
+		marginRight: 10,
+		borderRadius: 2,
+		borderColor: TEXT_SECONDARY_COLOR,
+		borderWidth: 1,
+		borderStyle: 'solid',
+		paddingLeft: 10,
+		paddingRight: 10,
+		paddingTop: 6,
+		paddingBottom: 6
+	},
 }
 
 const mapStateToProps = (state) => {
