@@ -14,6 +14,7 @@
     (use coin)
   (implements fungible-v2)
   (implements wiza1-interface-v1)
+  (implements wiza1-interface-v2)
 
   ; --------------------------------------------------------------------------
  ; Constants
@@ -174,9 +175,6 @@
   ; Initialize
   ; --------------------------------------------------------------------------
   (defun initialize ()
-
-    ;(coin.create-account WIZA_TOKEN_BANK (create-module-guard "wiza-token-holdings"))
-    ;(create-account WIZA_TOKEN_BANK (create-module-guard "wiza-token-holdings"))
 
     (coin.create-account WIZA_TOKEN_BANK (create-BANK-guard))
     (create-account WIZA_TOKEN_BANK (create-BANK-guard))
@@ -410,6 +408,7 @@
 
 
     (defun stake (idnft:string sender:string m:module{wizarena-interface-v2})
+        (enforce (= (at "chain-id" (chain-data)) "1") "Stake is only for chain 1")
         (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
         (let (
                 (data (get-wizard-data idnft m))
@@ -452,6 +451,7 @@
     )
 
     (defun unstake (idnft:string sender:string m:module{wizarena-interface-v2})
+        (enforce (= (at "chain-id" (chain-data)) "1") "Unstake is only for chain 1")
         (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
         (let (
                 (data (get-nft-staked idnft))
@@ -494,6 +494,7 @@
     )
 
     (defun claim-without-unstake (idnft:string sender:string m:module{wizarena-interface-v2})
+        (enforce (= (at "chain-id" (chain-data)) "1") "Claim is only for chain 1")
         (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
         (let (
                 (data (get-wizard-data idnft m))
@@ -521,7 +522,7 @@
     (defun mine-from-stake (account:string multiplier:integer stakedTime:time)
         (require-capability (PRIVATE))
         (let (
-                (days (/ (diff-time (add-time (at "block-time" (chain-data)) (days 3.78)) stakedTime) 86400))
+                (days (/ (diff-time (at "block-time" (chain-data)) stakedTime) 86400))
                 (guard (at "guard" (coin.details account)))
             )
             (with-default-read token-table account
@@ -546,6 +547,7 @@
     )
 
     (defun mine-from-ap-burn (account:string idnft:string aptoburn:integer m:module{wizarena-interface-v2})
+        (enforce (= (at "chain-id" (chain-data)) "1") "Ap burn is only for chain 1")
         (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
         (let (
                 (data (get-wizard-data idnft m))
@@ -614,6 +616,7 @@
     )
 
     (defun spend-wiza:object (amount:decimal account:string)
+        (enforce (= (at "chain-id" (chain-data)) "1") "Spend is only for chain 1")
         (let (
                 (balance (get-user-balance account))
             )
@@ -670,6 +673,7 @@
     ; helpers functions
     ; --------------------------------------------------------------------------
     (defun get-wizard-data (id:string m:module{wizarena-interface-v2})
+        (enforce (= (at "chain-id" (chain-data)) "1") "Wizard data is only for chain 1")
         (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
         (m::get-wizard-fields-for-id (str-to-int id))
     )
