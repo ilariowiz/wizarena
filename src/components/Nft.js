@@ -334,7 +334,7 @@ class Nft extends Component {
 		}
 
 		this.setState({ typeModal: 'list' }, () => {
-			this.props.listNft(chainId, gasPrice, 700, netId, nft.id, parseFloat(inputPrice).toFixed(2), account)
+			this.props.listNft(chainId, gasPrice, 1700, netId, nft.id, parseFloat(inputPrice).toFixed(2), account)
 		})
 
 	}
@@ -396,7 +396,7 @@ class Nft extends Component {
 		let saleValues = { id: nft.id, amount: offer.amount }
 
 		this.setState({ typeModal: 'acceptoffer', offerInfoRecap, saleValues }, () => {
-			this.props.acceptOffer(chainId, gasPrice, 4000, netId, offer.id, nft.id, account)
+			this.props.acceptOffer(chainId, gasPrice, 5000, netId, offer.id, nft.id, account)
 		})
 	}
 

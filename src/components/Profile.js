@@ -421,7 +421,7 @@ class Profile extends Component {
 		let saleValues = { id: offer.refnft, amount: offer.amount }
 
 		this.setState({ typeModal: 'acceptoffer', offerInfoRecap, saleValues }, () => {
-			this.props.acceptOffer(chainId, gasPrice, 4000, netId, offer.id, offer.refnft, account)
+			this.props.acceptOffer(chainId, gasPrice, 5000, netId, offer.id, offer.refnft, account)
 		})
 	}
 

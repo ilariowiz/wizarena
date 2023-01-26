@@ -1083,7 +1083,7 @@ export const addNftToBurningQueue = (chainId, gasPrice = DEFAULT_GAS_PRICE, netI
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
 			sender: account.account,
-			gasLimit: 5000,
+			gasLimit: 6000,
 			gasPrice,
 			chainId,
 			ttl: 600,
