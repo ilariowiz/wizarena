@@ -475,31 +475,31 @@
         )
     )
 
-    (defun update-stats (objects-list:list)
-        (with-capability (ADMIN)
-            (map
-                (update-stat)
-                objects-list
-            )
-        )
-    )
-
-    (defun update-stat (item:object)
-        (require-capability (ADMIN))
-        (let
-            (
-                (id (at "id" item))
-            )
-            (update stats id
-                {"id": id,
-                "attack": (at "attack" item),
-                "damage": (at "damage" item),
-                "defense": (at "defense" item),
-                "hp": (at "hp" item),
-                "speed": (at "speed" item)}
-            )
-        )
-    )
+    ; (defun update-stats (objects-list:list)
+    ;     (with-capability (ADMIN)
+    ;         (map
+    ;             (update-stat)
+    ;             objects-list
+    ;         )
+    ;     )
+    ; )
+    ;
+    ; (defun update-stat (item:object)
+    ;     (require-capability (ADMIN))
+    ;     (let
+    ;         (
+    ;             (id (at "id" item))
+    ;         )
+    ;         (update stats id
+    ;             {"id": id,
+    ;             "attack": (at "attack" item),
+    ;             "damage": (at "damage" item),
+    ;             "defense": (at "defense" item),
+    ;             "hp": (at "hp" item),
+    ;             "speed": (at "speed" item)}
+    ;         )
+    ;     )
+    ; )
 
     (defun update-spellbooks (objects-list:list)
         (with-capability (ADMIN)
@@ -538,35 +538,40 @@
             (
                 (id (at "id" item))
             )
-            (update stats id
-                {"id": id,
-                "fights": (at "fights" item),
-                "medals": (at "medals" item)}
+            (with-default-read stats id
+                {"fights":[],
+                "medals": {}}
+                {"fights":=fights,
+                "medals":=medals}
+                (update stats id
+                    {"fights": (+ fights (at "fights" item)),
+                    "medals": (at "medals" item)}
+                )
             )
         )
     )
 
-    (defun update-speeds (objects-list:list)
-        (with-capability (ADMIN)
-            (map
-                (update-speed)
-                objects-list
-            )
-        )
-    )
-
-    (defun update-speed (item:object)
-        (require-capability (ADMIN))
-        (let
-            (
-                (id (at "id" item))
-            )
-            (update stats id
-                {"id": id,
-                "speed": (at "speed" item)}
-            )
-        )
-    )
+    ; (defun update-speeds (objects-list:list)
+    ;     (with-capability (ADMIN)
+    ;         (map
+    ;             (update-speed)
+    ;             objects-list
+    ;         )
+    ;     )
+    ; )
+    ;
+    ; (defun update-speed (item:object)
+    ;     (require-capability (ADMIN))
+    ;     (let
+    ;         (
+    ;             (id (at "id" item))
+    ;         )
+    ;         (update stats id
+    ;             {"id": id,
+    ;             "speed": (at "speed" item)}
+    ;         )
+    ;     )
+    ; )
 
     (defun update-aps (objects-list:list)
         (with-capability (ADMIN)
@@ -871,15 +876,18 @@
     ;;;; MARKTEPLACE FUN ;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun list-wizard (sender:string id:string price:decimal m:module{wiza1-interface-v1})
+    (defun list-wizard (sender:string id:string price:decimal m:module{wiza1-interface-v1} mequip:module{wizequipment-interface-v1})
         @doc "list a wizard on marketplace"
         (enforce (>= price 1.0) "amount must be equal or greater then 1")
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+        (enforce (= (format "{}" [mequip]) "free.wiz-equipment") "not allowed, security reason")
         (let (
                 (data (get-wizard-fields-for-id (str-to-int id)))
                 (is-staked (check-is-staked id m))
+                (has-equip (at "equipped" (check-is-equipped id mequip)))
             )
             (enforce (= is-staked false) "You can't list a staked wizard")
+            (enforce (= has-equip false) "You can't list an equipped wizard")
             (enforce (= (at "confirmBurn" data) false) "You can't list a wizard in burning queue")
         )
         (with-capability (OWNER sender id)
@@ -998,9 +1006,10 @@
       )
     )
 
-    (defun accept-offer (idoffer:string m:module{wiza1-interface-v1})
+    (defun accept-offer (idoffer:string m:module{wiza1-interface-v1} mequip:module{wizequipment-interface-v1})
       @doc "Accept an offer"
       (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+      (enforce (= (format "{}" [mequip]) "free.wiz-equipment") "not allowed, security reason")
       (with-read offers-table idoffer
         {
           "refnft" := refnft,
@@ -1013,8 +1022,10 @@
         (let (
                 (data (get-wizard-fields-for-id (str-to-int refnft)))
                 (is-staked (check-is-staked refnft m))
+                (has-equip (at "equipped" (check-is-equipped refnft mequip)))
             )
             (enforce (= is-staked false) "You can't accept offers if a wizard is staked")
+            (enforce (= has-equip false) "You can't accept offers for an equipped wizard")
             (enforce (= (at "confirmBurn" data) false) "You can't accept offers if a wizard is in burning queue")
             (enforce (= iswithdrew false) "Cannot withdraw twice")
             (enforce (>= expiresat (at "block-time" (chain-data))) "Offer expired.")
@@ -1230,11 +1241,6 @@
 
     (defun add-rounds-pvp (id:string wiza:decimal m:module{wiza1-interface-v1})
         (enforce (>= wiza 30.0) "You must send at least 30 wiza to increment max rounds")
-        (let (
-                (pvp-open (get-value PVP_OPEN))
-            )
-            (enforce (= pvp-open "1") "Pvp week registrations are closed")
-        )
         (with-default-read pvp-subscribers id
             {"idnft": "",
             "address": "",
@@ -1531,14 +1537,17 @@
     ;;;;;; BURN ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun add-to-burning-queue (idnft:string account:string m:module{wiza1-interface-v1})
+    (defun add-to-burning-queue (idnft:string account:string m:module{wiza1-interface-v1} mequip:module{wizequipment-interface-v1})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+        (enforce (= (format "{}" [mequip]) "free.wiz-equipment") "not allowed, security reason")
         (let (
                 (data (get-wizard-fields-for-id (str-to-int idnft)))
                 (is-staked (check-is-staked idnft m))
+                (has-equip (at "equipped" (check-is-equipped idnft mequip)))
             )
             (enforce (= (at "listed" data) false) "You can't burn a listed wizard")
             (enforce (= is-staked false) "You can't burn a staked wizard")
+            (enforce (= has-equip false) "You can't burn an equipped wizard")
         )
         (with-capability (OWNER account idnft)
             (write burning-queue-table idnft {
@@ -1601,6 +1610,11 @@
         (m::check-nft-is-staked idnft)
     )
 
+    (defun check-is-equipped (idnft:string m:module{wizequipment-interface-v1})
+        (enforce (= (format "{}" [m]) "free.wiz-equipment") "not allowed, security reason")
+        (m::get-equipped-fields-for-id idnft)
+    )
+
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;; GENERIC FUN ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1615,18 +1629,21 @@
         )
     )
 
-    (defun transfer-wizard (id:string sender:string receiver:string m:module{wiza1-interface-v1})
+    (defun transfer-wizard (id:string sender:string receiver:string m:module{wiza1-interface-v1} mequip:module{wizequipment-interface-v1})
         @doc "Transfer nft to an account"
         (enforce-account-exists receiver)
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+        (enforce (= (format "{}" [mequip]) "free.wiz-equipment") "not allowed, security reason")
         (with-capability (OWNER sender id)
             (let (
                     (data (get-wizard-fields-for-id (str-to-int id)))
                     (is-staked (check-is-staked id m))
+                    (has-equip (at "equipped" (check-is-equipped id mequip)))
                 )
                 (enforce (= (at "listed" data) false) "A listed wizard cannot be transferred")
                 (enforce (= is-staked false) "You can't transfer a staked wizard")
                 (enforce (= (at "confirmBurn" data) false) "You can't transfer a wizard in burning queue")
+                (enforce (= has-equip false) "You can't transfer an equipped wizard")
             )
             (update nfts id {"owner": receiver})
         )

@@ -19,7 +19,7 @@ import ModalMakeOffer from './common/ModalMakeOffer'
 import HistoryItem from './common/HistoryItem'
 import OfferItem from './common/OfferItem'
 import getImageUrl from './common/GetImageUrl'
-//import getRingBonuses from './common/GetRingBonuses'
+import getRingBonuses from './common/GetRingBonuses'
 import traits_qty from './common/Traits_qty'
 import traits_qty_clerics from './common/Traits_qty_clerics'
 import conditions from './common/Conditions'
@@ -39,7 +39,7 @@ import {
 	getOffersForNft,
 	makeOffer,
 	acceptOffer,
-	//getInfoItemEquipped
+	getInfoItemEquipped
 } from '../actions'
 import { MAIN_NET_ID, REVEAL_CAP, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, CTA_COLOR, CONTRACT_NAME } from '../actions/types'
 import '../css/Nft.css'
@@ -168,7 +168,7 @@ class Nft extends Component {
 
 					this.loadOffers(idNft)
 
-					//this.loadEquipment(idNft)
+					this.loadEquipment(idNft)
 
 					if (response.confirmBurn) {
 						this.loadInfoBurn(idNft)
@@ -218,7 +218,7 @@ class Nft extends Component {
         })
     }
 
-	/*
+
 	loadEquipment(idNft) {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
@@ -227,7 +227,7 @@ class Nft extends Component {
 			this.setState({ equipment: response })
 		})
 	}
-	*/
+
 
 	async getHistoryUpgrades() {
 		const { nft } = this.state
@@ -1064,9 +1064,9 @@ class Nft extends Component {
 		}
 
 		if (equipment.bonus && equipment.bonus.includes(title.toLowerCase())) {
-			//const ringBonus = getRingBonuses(equipment)
-			//console.log(ringBonus);
-			//fixedValue = fixedValue + ringBonus.bonusesDict[title.toLowerCase()]
+			const ringBonus = getRingBonuses(equipment)
+			console.log(ringBonus);
+			fixedValue = fixedValue + ringBonus.bonusesDict[title.toLowerCase()]
 		}
 
 		return (
@@ -1165,10 +1165,10 @@ class Nft extends Component {
 						: null
 					}
 
-					{/*
+					{
 						equipment && equipment.equipped &&
 						this.renderBoxEquipment(width)
-					*/}
+					}
 
 				</div>
 			</div>
@@ -1394,7 +1394,7 @@ class Nft extends Component {
 		)
 	}
 
-	/*
+
 	renderBoxEquipment(width) {
 		const { equipment } = this.state
 
@@ -1429,7 +1429,7 @@ class Nft extends Component {
 			</div>
 		)
 	}
-	*/
+
 
 	renderBodySmall() {
 		const { nft, loading, infoBurn } = this.state
@@ -1988,5 +1988,5 @@ export default connect(mapStateToProps, {
 	getOffersForNft,
 	makeOffer,
 	acceptOffer,
-	//getInfoItemEquipped
+	getInfoItemEquipped
 })(Nft);
