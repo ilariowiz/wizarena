@@ -1184,6 +1184,34 @@
 
 (commit-tx)
 
+(begin-tx "STAKE ONE")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiza.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiza.stake "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" free.wiz-arena)
+
+(commit-tx)
+
+(begin-tx "STAKE ONE")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiza.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiza.get-unclaimed-mined-1)
+
+(commit-tx)
+
 
 (begin-tx "EQUIP ITEM")
 

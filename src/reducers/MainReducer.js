@@ -27,7 +27,8 @@ import {
 	STORE_TOTAL_MINED,
 	SET_SFIDA,
 	SET_AVG_LEVEL_PVP,
-	SET_WIZARD_SELECTED_SHOP
+	SET_WIZARD_SELECTED_SHOP,
+	STORE_WIZA_NOT_CLAIMED
 } from '../actions/types'
 
 
@@ -58,6 +59,7 @@ const INITIAL_STATE = {
 	wizaBalance: 0,
 	wizardsStaked: 0,
 	circulatingSupply: 0,
+	wizaNotClaimed: 0,
 	sfida: {},
 	avgLevelPvP: 0,
 	wizardSelectedIdShop: undefined
@@ -133,6 +135,8 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, wizardsStaked: action.payload }
 		case STORE_TOTAL_MINED:
 			return { ...state, totalMined: action.payload }
+		case STORE_WIZA_NOT_CLAIMED:
+			return { ...state, wizaNotClaimed: action.payload }
 		case STORE_CIRCULATING_SUPPLY:
 			return { ...state, circulatingSupply: action.payload }
 		case SET_SFIDA:

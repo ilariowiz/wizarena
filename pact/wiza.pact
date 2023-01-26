@@ -690,6 +690,26 @@
         )
     )
 
+    (defun get-unclaimed-mined-1 ()
+        (let (
+                (staked-nfts (select staked-table (where "staked" (= true))))
+            )
+            (map
+                (get-unclaimed-mined-2)
+                staked-nfts
+            )
+        )
+    )
+
+    (defun get-unclaimed-mined-2 (stakednft)
+        (let (
+                (days (/ (diff-time (at "block-time" (chain-data)) (at "timestamp" stakednft)) 86400))
+                (multiplier (at "multiplier" stakednft))
+            )
+            (calculate-reward (ceiling days 4) multiplier)
+        )
+    )
+
     (defun wizards-staked-count ()
         (length (select staked-table (where "staked" (= true))))
     )

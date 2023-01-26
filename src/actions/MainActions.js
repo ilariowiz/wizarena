@@ -44,7 +44,8 @@ import {
 	SET_SFIDA,
 	SET_AVG_LEVEL_PVP,
 	SET_WIZARD_SELECTED_SHOP,
-	CONTRACT_NAME_EQUIPMENT
+	CONTRACT_NAME_EQUIPMENT,
+	STORE_WIZA_NOT_CLAIMED
 } from './types'
 
 
@@ -2110,6 +2111,32 @@ export const getCirculatingSupply = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 			//console.log(response)
 			if (response) {
 				dispatch({ type: STORE_CIRCULATING_SUPPLY, payload: _.floor(response.decimal, 2) })
+			}
+
+		})
+	}
+}
+
+export const getWizaNotClaimed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_WIZA}.get-unclaimed-mined-1)`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (response) {
+
+				let total = 0
+				response.map(i => {
+					total += i
+				})
+
+				//console.log(total);
+
+				dispatch({ type: STORE_WIZA_NOT_CLAIMED, payload: _.floor(total, 2) })
 			}
 
 		})
