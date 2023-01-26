@@ -11,6 +11,7 @@ import Header from './Header'
 import OfferItem from './common/OfferItem'
 import NftCardStake from './common/NftCardStake'
 import NftCardChoice from './common/NftCardChoice'
+import EquipmentCard from './common/EquipmentCard'
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import getBoxWidth from './common/GetBoxW'
@@ -39,7 +40,8 @@ import {
 	getOffersMade,
 	getOffersReceived,
 	acceptOffer,
-	subscribeToTournamentMass
+	subscribeToTournamentMass,
+	loadEquipMinted
 } from '../actions'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -71,7 +73,8 @@ class Profile extends Component {
 			offerInfoRecap: "",
 			kadenaPrice: undefined,
 			saleValues: {},
-			toSubscribe: []
+			toSubscribe: [],
+			equipment: []
 		}
 	}
 
@@ -175,11 +178,6 @@ class Profile extends Component {
 
 						this.loadProfileFights()
 					}
-					/*
-					else if (tournament.tournamentEnd) {
-						this.loadAddressForPrize()
-					}
-					*/
 				}
 
 				this.props.getMontepremi(chainId, gasPrice, gasLimit, networkUrl)
@@ -190,6 +188,19 @@ class Profile extends Component {
 			})
 		})
 	}
+
+	loadEquip() {
+        const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+        if (account && account.account) {
+
+			this.props.loadEquipMinted(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
+                //console.log(response);
+
+                this.setState({ equipment: response, loading: false })
+			})
+		}
+    }
 
 	loadProfileFights() {
 		const { userMintedNfts } = this.props
@@ -226,25 +237,6 @@ class Profile extends Component {
 
 		//console.log(profileFights);
 		this.setState({ profileFights })
-	}
-
-	loadAddressForPrize() {
-		const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
-
-		this.props.checkAddressForPrice(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
-			//console.log(response);
-			if (response && !response.error) {
-				if (response > 0) {
-					this.setState({ prize: response })
-				}
-				else {
-					this.setState({ prize: undefined })
-				}
-			}
-			else {
-				this.setState({ prize: undefined })
-			}
-		})
 	}
 
 	subscribe(idNft, spellSelected) {
@@ -541,6 +533,25 @@ class Profile extends Component {
 					})
 					: null
 				}
+			</div>
+		)
+	}
+
+	renderYourEquip(width) {
+		const { equipment } = this.state
+
+		return (
+			<div style={{ flexWrap: 'wrap', width }}>
+				{equipment.map((item, index) => {
+					return (
+			            <EquipmentCard
+			                key={index}
+			                item={item}
+			                index={index}
+			                history={this.props.history}
+			            />
+			        )
+				})}
 			</div>
 		)
 	}
@@ -873,7 +884,7 @@ class Profile extends Component {
 
 
 	renderMenu(isMobile) {
-		const { section, loading } = this.state;
+		const { section, loading, equipment } = this.state;
 		const { userMintedNfts } = this.props
 
 		const selStyle = { borderBottomWidth: 3, borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderColor: CTA_COLOR, borderStyle: 'solid' }
@@ -882,6 +893,7 @@ class Profile extends Component {
 		const selectedStyle2 = section === 2 ? selStyle : unselStyle
 		const selectedStyle3 = section === 3 ? selStyle : unselStyle
 		const selectedStyle4 = section === 4 ? selStyle : unselStyle
+		const selectedStyle5 = section === 5 ? selStyle : unselStyle
 
 		return (
 			<div style={{ width: '100%', alignItems: 'center', marginBottom: 30, flexWrap: 'wrap' }}>
@@ -911,6 +923,22 @@ class Profile extends Component {
 				>
 					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 2 ? CTA_COLOR : '#21c6e895' }}>
 						TOURNAMENT
+					</p>
+				</button>
+
+				<button
+					style={Object.assign({}, styles.btnMenu, selectedStyle5, { marginRight: 35 })}
+					onClick={() => {
+						if (loading) {
+							return
+						}
+
+						this.setState({ section: 5, loading: true })
+						this.loadEquip()
+					}}
+				>
+					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 2 ? CTA_COLOR : '#21c6e895' }}>
+						EQUIPMENT {equipment.length > 0 ? `(${equipment.length})` : ""}
 					</p>
 				</button>
 
@@ -1136,6 +1164,13 @@ class Profile extends Component {
 				}
 
 				{
+					section === 5 ?
+					this.renderYourEquip(boxW)
+					:
+					null
+				}
+
+				{
 					section === 2 && this.state.toSubscribe.length > 0 &&
 					<div style={styles.footerSubscribe}>
 						{this.renderFooterSubscribe(isMobile)}
@@ -1328,5 +1363,6 @@ export default connect(mapStateToProps, {
 	getOffersMade,
 	getOffersReceived,
 	acceptOffer,
-	subscribeToTournamentMass
+	subscribeToTournamentMass,
+	loadEquipMinted
 })(Profile)
