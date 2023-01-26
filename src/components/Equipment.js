@@ -24,6 +24,7 @@ import {
 import '../css/Shop.css'
 
 const chest_img = require('../assets/chest.png')
+const ring_placeholder = require('../assets/ring_placeholder.png')
 
 
 class Equipment extends Component {
@@ -321,13 +322,13 @@ class Equipment extends Component {
 		return (
 			<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginTop: 30 }}>
 				<img
-					src={getImageUrl(undefined)}
-					style={{ width: 340, height: 340, borderRadius: 2, marginBottom: 30 }}
+					src={ring_placeholder}
+					style={{ width: 200, height: 200, marginBottom: 30 }}
 					alt='Placeholder'
 				/>
 
 				<p style={{ fontSize: 23, color: 'white', textAlign: 'center' }}>
-					The Arena is empty...
+					The marketplace is empty...
 				</p>
 			</div>
 		)
