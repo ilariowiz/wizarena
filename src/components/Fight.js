@@ -95,6 +95,7 @@ class Fight extends Component {
         }
     }
 
+    //callback method if no info nft in fight object
     loadNft(u, idNft) {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
@@ -189,7 +190,6 @@ class Fight extends Component {
         if (info.potion && info.potion === "speed") {
             info["speed"] = info.speed + 4
         }
-
 
         const level = calcLevelWizard(objLevel)
 
