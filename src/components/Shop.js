@@ -29,9 +29,12 @@ import {
     buyVial,
     buyNickname,
     buyUpgradeWithAp,
-    burnAP
+    burnAP,
+    loadEquipMinted,
+    equipItem,
+    unequipItem
 } from '../actions'
-import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, MAX_LEVEL } from '../actions/types'
+import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, MAX_LEVEL, TEST_NET_ID } from '../actions/types'
 import '../css/Nft.css'
 import '../css/Shop.css'
 
@@ -48,6 +51,8 @@ const vial_dmg = require('../assets/vial_dmg.png')
 const vial_speed = require('../assets/vial_speed.png')
 
 const banner_nickname = require('../assets/banner_nickname.png')
+
+const chest_img = require('../assets/chest.png')
 
 
 class Shop extends Component {
@@ -74,7 +79,10 @@ class Shop extends Component {
             tournamentName: "",
             showModalSetName: false,
             apToBurn: 1,
-            idNftToUpgrade: ""
+            idNftToUpgrade: "",
+            numberOfChest: 1,
+            equipment: [],
+            ringToEquipName: ""
         }
     }
 
@@ -105,6 +113,8 @@ class Shop extends Component {
     loadProfile() {
 		this.loadMinted()
 
+        this.loadEquip()
+
 		this.loadWizaBalance()
 
         this.getHistoryUpgrades()
@@ -121,6 +131,37 @@ class Shop extends Component {
 			})
 		}
 	}
+
+    loadEquip() {
+        const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+        if (account && account.account) {
+
+			this.props.loadEquipMinted(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
+                //console.log(response);
+
+                //rimuoviamo i listed
+                let equipment = response.filter(i => !i.listed)
+
+                setTimeout(() => {
+                    const wizard = this.getWizardSelected()
+                    //console.log(wizard);
+                    if (wizard) {
+                        const equippedItem = equipment.find(i => i.equippedToId === wizard.id)
+                        if (equippedItem) {
+                            //mostriamo solo quello equippato
+                            equipment = [equippedItem]
+                        }
+                        else {
+                            equipment = equipment.filter(i => !i.equipped)
+                        }
+                    }
+
+                    this.setState({ equipment })
+                }, 500)
+			})
+		}
+    }
 
 	loadWizaBalance() {
 		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
@@ -277,6 +318,30 @@ class Shop extends Component {
         this.props.buyNickname(chainId, gasPrice, netId, account, wizard.id, nickname)
     }
 
+    equipEquipment(id, name) {
+        const { account, chainId, gasPrice, netId } = this.props
+
+        const wizard = this.getWizardSelected()
+
+        //console.log(wizard);
+
+        this.setState({ typeModal: 'equip', nameNftToUpgrade: wizard.name, ringToEquipName: name })
+
+        this.props.equipItem(chainId, gasPrice, netId, id, account, wizard.id)
+    }
+
+    unequipEquipment(id, name) {
+        const { account, chainId, gasPrice, netId } = this.props
+
+        const wizard = this.getWizardSelected()
+
+        //console.log(wizard);
+
+        this.setState({ typeModal: 'unequip', nameNftToUpgrade: wizard.name, ringToEquipName: name })
+
+        this.props.unequipItem(chainId, gasPrice, netId, id, account, wizard.id)
+    }
+
     sortById() {
         const { userMintedNfts } = this.props
 
@@ -309,6 +374,7 @@ class Shop extends Component {
 
                     setTimeout(() => {
                         this.getPotionEquipped()
+                        this.loadEquip()
                     }, 200)
                 }}
                 onChange={() => this.props.setWizardSelectedShop(undefined)}
@@ -336,6 +402,71 @@ class Shop extends Component {
 			/>
 		)
 	}
+
+    renderRingsCard(item, index) {
+
+        const bonusValues = item.bonus.split(",")
+
+        let bonuses = []
+        bonusValues.map(i => {
+            const b = i.split("_")
+            const btext = `+${b[0]} ${b[1]}`
+            bonuses.push(btext)
+        })
+
+        const wizard = this.getWizardSelected()
+
+        const isEquipped = item.equippedToId === wizard.id
+
+        return (
+            <div
+                key={index}
+                className="cardShopShadow"
+                style={styles.cardShopStyle}
+            >
+                <img
+                    src={item.url}
+                    //src="https://storage.googleapis.com/wizarena/equipment/ring_atk_1.png"
+                    style={{ width: 100, marginBottom: 10 }}
+                />
+
+                <p style={{ fontSize: 19, color: 'white', marginBottom: 10, textAlign: 'center', minHeight: 38, marginRight: 9, marginLeft: 9 }}>
+                    #{item.id} {item.name}
+                </p>
+
+                <p style={{ fontSize: 18, color: 'white', marginBottom: 15, textAlign: 'center' }}>
+                    {bonuses.join(", ")}
+                </p>
+
+                {
+                    isEquipped ?
+                    <button
+                        className='btnH'
+                        style={styles.btnChoose}
+                        onClick={() => {
+                            this.unequipEquipment(item.id, item.name)
+                        }}
+                    >
+                        <p style={{ fontSize: 17, color: 'white' }}>
+                            UNEQUIP
+                        </p>
+                    </button>
+                    :
+                    <button
+                        className='btnH'
+                        style={styles.btnChoose}
+                        onClick={() => {
+                            this.equipEquipment(item.id, item.name)
+                        }}
+                    >
+                        <p style={{ fontSize: 17, color: 'white' }}>
+                            EQUIP
+                        </p>
+                    </button>
+                }
+            </div>
+        )
+    }
 
     renderShopCard(key) {
         const { increase } = this.state
@@ -754,7 +885,7 @@ class Shop extends Component {
 
                 <button
                     className='btnH'
-                    style={Object.assign({}, styles.btnChoose, { opacity: wizard.ap.int === 0 ? 0.5 : 1 })}
+                    style={Object.assign({}, styles.btnChoose, { opacity: wizard.ap && wizard.ap.int === 0 ? 0.5 : 1 })}
                     onClick={() => {
                         if (!wizard) {
                             return
@@ -1044,7 +1175,7 @@ class Shop extends Component {
     }
 
     renderBody(isMobile) {
-        const { isConnected, showModalConnection, historyUpgrades, potionEquipped } = this.state
+        const { isConnected, showModalConnection, historyUpgrades, potionEquipped, equipment } = this.state
         const { account, showModalTx, wizaBalance } = this.props
 
         const { boxW, modalW } = getBoxWidth(isMobile)
@@ -1131,6 +1262,25 @@ class Shop extends Component {
                             {this.renderBoxMenu("NICKNAME")}
                         </div>
 
+                        <p style={{ fontSize: 26, color: 'white', marginBottom: 10 }} id="shop-rings">
+                            RINGS
+                        </p>
+
+                        {
+                            equipment.length > 0 ?
+                            <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
+                                {equipment.map((item, index) => {
+                                    return this.renderRingsCard(item, index)
+                                })}
+                            </div>
+                            :
+                            <div style={{ alignItems: 'flex-start', flexDirection: 'column', marginBottom: 30 }}>
+                                <p style={{ fontSize: 21, color: 'white' }}>
+                                    No ring available
+                                </p>
+                            </div>
+                        }
+
                         <p style={{ fontSize: 26, color: 'white', marginBottom: 10 }} id="shop-upgrades">
                             UPGRADES
                         </p>
@@ -1151,7 +1301,7 @@ class Shop extends Component {
                         </p>
 
                         <p style={{ fontSize: 22, color: "white", marginBottom: 15 }}>
-                            AP available: {wizard.ap.int || 0}
+                            AP available: {wizard.ap ? wizard.ap.int : 0}
                         </p>
 
                         <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
@@ -1267,6 +1417,8 @@ class Shop extends Component {
                     howMuchIncrement={this.state.howMuchIncrement}
                     nicknameToSet={this.state.nicknameToSet}
                     apToBurn={this.state.apToBurn}
+                    numberOfChest={this.state.numberOfChest}
+                    ringToEquipName={this.state.ringToEquipName}
 				/>
 
                 <ModalSetName
@@ -1423,5 +1575,8 @@ export default connect(mapStateToProps, {
     buyVial,
     buyNickname,
     buyUpgradeWithAp,
-    burnAP
+    burnAP,
+    loadEquipMinted,
+    equipItem,
+    unequipItem
 })(Shop)
