@@ -130,6 +130,12 @@ class League extends Component {
                 <p style={{ fontSize: 16, color: isOwner ? 'gold' : 'white', marginTop: 5 }}>
                     {item.name}
                 </p>
+                {
+                    item.nickname &&
+                    <p style={{ fontSize: 14, color: isOwner ? 'gold' : 'white', marginTop: 3, textAlign: 'center', maxWidth: widthNft }}>
+                        {item.nickname}
+                    </p>
+                }
             </a>
         )
     }
