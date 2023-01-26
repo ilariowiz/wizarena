@@ -21,7 +21,7 @@ export const loadAllItemsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit,
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
 
-            if (response) {
+            if (response && response.length > 0) {
                 dispatch({ type: LOAD_ALL_ITEMS_IDS, payload: { totalCountItems: response.length, allItemsIds: response } })
 
                 let partsBlock = _.chunk(response, 1000)
@@ -52,7 +52,16 @@ export const loadAllItemsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit,
 						callback(final)
 					}
 				})
-
+            }
+            else {
+                dispatch({ type: LOAD_ALL_ITEMS_IDS, payload: { totalCountItems: response.length, allItemsIds: response } })
+                dispatch({
+                    type: LOAD_ALL_ITEMS,
+                    payload: { allItems: [], itemsBlockId: 0 }
+                })
+                if (callback) {
+                    callback([])
+                }
             }
 		})
 	}

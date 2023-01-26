@@ -365,13 +365,7 @@ class Equipment extends Component {
     					})}
                     </div>
 					:
-					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-						<img
-							src={getImageUrl(undefined)}
-							style={{ width: 280, height: 280, borderRadius: 2 }}
-							alt='Placeholder'
-						/>
-					</div>
+                    null
 				}
 
                 <ModalTransaction
