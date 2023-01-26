@@ -18,6 +18,8 @@ import DoFight from './components/DoFight'
 import PvP from './components/PvP'
 
 import League from './components/League'
+import Equipment from './components/Equipment'
+import ItemEquipment from './components/ItemEquipment'
 
 
 import { Provider } from 'react-redux';
@@ -49,6 +51,8 @@ ReactDOM.render(
             <Route path="/fightpvp" component={DoFight} />
             <Route path="/pvp" component={PvP} />
             <Route path="/league" component={League} />
+            <Route path="/equipment" component={Equipment} />
+            <Route path="/item/" component={ItemEquipment} />
           </Switch>
         </div>
       </BrowserRouter>
