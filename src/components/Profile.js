@@ -937,7 +937,7 @@ class Profile extends Component {
 						this.loadEquip()
 					}}
 				>
-					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 2 ? CTA_COLOR : '#21c6e895' }}>
+					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 5 ? CTA_COLOR : '#21c6e895' }}>
 						EQUIPMENT {equipment.length > 0 ? `(${equipment.length})` : ""}
 					</p>
 				</button>
