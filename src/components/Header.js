@@ -371,6 +371,17 @@ class Header extends Component {
 									COLLECTION
 								</a>
 
+								<a
+									href={`${window.location.protocol}//${window.location.host}/equipment`}
+									className={section === 8 ? btnPressedStyle : btnStyle}
+									onClick={(e) => {
+										e.preventDefault()
+										this.props.history.replace('/equipment')
+									}}
+								>
+									EQUIPMENT
+								</a>
+
 								{/*<a
 									href={`${window.location.protocol}//${window.location.host}/mint`}
 									className={section === 2 ? btnPressedStyle : btnStyle}
@@ -442,6 +453,17 @@ class Header extends Component {
 									}}
 								>
 									HOME
+								</a>
+
+								<a
+									href={`${window.location.protocol}//${window.location.host}/equipment`}
+									className={btnHeaderNft}
+									onClick={(e) => {
+										e.preventDefault()
+										this.props.history.replace('/equipment')
+									}}
+								>
+									EQUIPMENT
 								</a>
 
 								<a
