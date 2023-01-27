@@ -268,7 +268,7 @@ class Fight extends Component {
             defense: { int: info.defense },
             attack: { int: info.attack },
             damage: { int: info.damage },
-            speed: {int: info.speed }
+            speed: {int: info.speed ? info.speed : 0 }
         }
 
         //console.log(objLevel);
@@ -300,7 +300,7 @@ class Fight extends Component {
         }
 
         if (info.potion && info.potion === "speed") {
-            info["speed"] = info.speed + 4
+            info["speed"] = info.speed ? info.speed + 4 : 4
         }
 
         const level = calcLevelWizard(objLevel)
@@ -314,6 +314,8 @@ class Fight extends Component {
 
     renderSingleNft(info, width) {
         const { levels } = this.state
+
+        //console.log(info);
 
         return (
             <div className="containerChoice" style={{ marginRight: 0, width, height: '100%' }}>

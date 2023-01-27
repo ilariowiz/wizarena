@@ -40,10 +40,20 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
     let hpBase = item.hp.int || item.hp
     let defBase = item.defense.int || item.defense
 
+    let speedBase = 0
+    if (item.speed && (item.speed.int || item.speed.int === 0)) {
+        speedBase = item.speed.int
+    }
+    else if (item.speed && !item.speed.int) {
+        speedBase = item.speed
+    }
+
+    /*
     let speedBase = item.speed.int || item.speed
     if (!speedBase || speedBase.int === 0) {
         speedBase = 0
     }
+    */
 
     let atkTotal = atkSpell + atkBase
     let dmgTotal = dmgSpell + dmgBase
