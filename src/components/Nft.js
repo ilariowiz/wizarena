@@ -1145,6 +1145,8 @@ class Nft extends Component {
 							{this.renderStat("RESISTANCE", nft.resistance.toUpperCase())}
 							{this.renderStat("WEAKNESS", nft.weakness.toUpperCase())}
 
+							{this.renderStat("AP", nft.ap.int)}
+
 						</div>
 						: null
 					}
