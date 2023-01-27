@@ -411,9 +411,12 @@ class Fight extends Component {
         const { u1, u2, actions, winner, error, showOnlyOne, actionsDict, showResult, showBar, fightActions } = this.state
 
         let boxW = Math.floor(window.innerWidth * (isMobile ? 90 : 70) / 100)
-		if (boxW > 1100) boxW = 1100;
+		if (boxW > 900) boxW = 900;
 
 		let spaceImage = (boxW / 2) - 40
+        if (spaceImage > 400) {
+            spaceImage = 400
+        }
 
         if (error) {
             return (
