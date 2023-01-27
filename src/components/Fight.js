@@ -4,21 +4,27 @@ import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import { doc, getDoc } from "firebase/firestore";
 import { firebasedb } from './Firebase';
+import Rainbow from 'rainbowvis.js'
 import Header from './Header'
 import getImageUrl from './common/GetImageUrl'
 import cardStats from './common/CardStats'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
-import { MAIN_NET_ID, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
+import { MAIN_NET_ID, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import {
     setNetworkSettings,
     setNetworkUrl,
     loadSingleNft
 } from '../actions'
 import '../css/NftCardChoice.css'
+import "../css/Fight.css"
+
 
 class Fight extends Component {
     constructor(props) {
         super(props)
+
+        this.dataCurrentHP = {}
+        this.indexFightActions = 0
 
         this.state = {
 			loading: true,
@@ -28,7 +34,11 @@ class Fight extends Component {
             u1: undefined,
             u2: undefined,
             error: '',
-            showOnlyOne: false
+            showOnlyOne: false,
+            showResult: false,
+            showBar: false,
+            fightActions: [],
+            levels: {}
         }
     }
 
@@ -66,13 +76,63 @@ class Fight extends Component {
         //console.log(docSnap.data());
 
         const data = docSnap.data()
-        this.setState({ actions: data.actions, tournament: data.tournament, winner: data.winner })
 
+        let actionsDict = {}
+
+        if (data.info2 && data.info2.defense) {
+
+            actionsDict[`${data.idnft1}_initialhp`] = data.info1.hp
+            this.dataCurrentHP[`#${data.idnft1}`] = data.info1.hp
+
+            actionsDict[`${data.idnft2}_initialhp`] = data.info2.hp
+            this.dataCurrentHP[`#${data.idnft2}`] = data.info2.hp
+            actionsDict['actions'] = []
+
+            for (var i = 0; i < data.actions.length; i++) {
+                const d = data.actions[i]
+
+                const arrayOfWords = d.split(" ")
+                //console.log(arrayOfWords);
+
+                const idxHits = arrayOfWords.findIndex(i => i === "hits")
+                if (idxHits > -1) {
+                    //console.log(idxHits);
+                    let whoLoseDmg = arrayOfWords[idxHits+1].replace(",", "")
+                    const whoDealDmg = arrayOfWords[idxHits-1].replace(",", "")
+
+                    const idxDeals = arrayOfWords.findIndex(i => i === "deals")
+                    if (idxDeals > -1) {
+                        const dmg = parseInt(arrayOfWords[idxDeals+1])
+                        //console.log("dmg = ", dmg);
+
+                        const obj = { [whoLoseDmg]: dmg, [whoDealDmg]: 0, hasAction: true }
+                        actionsDict['actions'].push(obj)
+                    }
+                    else {
+                        let whoLoseDmg = arrayOfWords[idxHits+2]
+
+                        const obj = { [whoLoseDmg]: 100, [whoDealDmg]: 0, hasAction: true }
+                        actionsDict['actions'].push(obj)
+                    }
+                }
+                else {
+                    actionsDict['actions'].push({ hasAction: false })
+                }
+            }
+
+            //console.log(actionsDict);
+        }
+
+        this.setState({ actions: data.actions, tournament: data.tournament, winner: data.winner, actionsDict })
+
+        //per quando non ci sono accoppiamenti
         if (data.actions[0].includes("to show up")) {
             this.setState({ showOnlyOne: true })
 
             if (data.info1 && data.info1.defense) {
                 this.setState({ u1: data.info1, loading: false })
+
+                this.loadLevel(data.info1)
             }
             else {
                 this.loadNft('u1', data.idnft1)
@@ -81,6 +141,8 @@ class Fight extends Component {
         else {
             if (data.info1 && data.info1.defense) {
                 this.setState({ u1: data.info1 })
+
+                this.loadLevel(data.info1)
             }
             else {
                 this.loadNft('u1', data.idnft1)
@@ -88,6 +150,8 @@ class Fight extends Component {
 
             if (data.info2 && data.info2.defense) {
                 this.setState({ u2: data.info2, loading: false })
+
+                this.loadLevel(data.info2)
             }
             else {
                 this.loadNft('u2', data.idnft2)
@@ -125,6 +189,7 @@ class Fight extends Component {
             let finalO = Object.assign(infoNft, data)
 
             //console.log(finalO)
+            this.loadLevel(data)
 
 			this.setState({ [u]: finalO }, () => {
                 if (this.state.showOnlyOne) {
@@ -143,7 +208,54 @@ class Fight extends Component {
 		}
 	}
 
-    renderSingleNft(info, width) {
+    stepFight() {
+        const { actions, actionsDict } = this.state
+
+        const fightActions = Object.assign([], this.state.fightActions)
+
+        if (actions[this.indexFightActions]) {
+
+            const obj = {
+                action: actions[this.indexFightActions],
+                turn: this.indexFightActions+1
+            }
+
+            fightActions.splice(0, 0, obj)
+
+            const currentAction = actionsDict.actions[this.indexFightActions]
+            //console.log(currentAction);
+
+            if (currentAction.hasAction) {
+                //console.log(currentAction);
+
+                Object.keys(currentAction).map(key => {
+                    if (this.dataCurrentHP[key]) {
+                        this.dataCurrentHP[key] = this.dataCurrentHP[key] - currentAction[key]
+                    }
+                })
+
+                //console.log(this.dataCurrentHP);
+            }
+
+            this.indexFightActions += 1
+
+            const element = document.getElementById("mainBox")
+
+            this.setState({ fightActions })
+            /*
+            setTimeout(() => {
+                //console.log(window.scrollY);
+                window.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
+            }, 100)
+            */
+
+            setTimeout(() => {
+                this.stepFight()
+            }, 2000)
+        }
+    }
+
+    loadLevel(info) {
         const { tournament } = this.state
         //console.log(tournament);
 
@@ -156,7 +268,7 @@ class Fight extends Component {
             defense: { int: info.defense },
             attack: { int: info.attack },
             damage: { int: info.damage },
-            speed: {int: info.speed ? info.speed : 0 }
+            speed: {int: info.speed }
         }
 
         //console.log(objLevel);
@@ -193,6 +305,16 @@ class Fight extends Component {
 
         const level = calcLevelWizard(objLevel)
 
+
+        const levels = Object.assign({}, this.state.levels)
+        levels[info.id] = level
+
+        this.setState({ levels })
+    }
+
+    renderSingleNft(info, width) {
+        const { levels } = this.state
+
         return (
             <div className="containerChoice" style={{ marginRight: 0, width, height: '100%' }}>
                 <img
@@ -219,8 +341,8 @@ class Fight extends Component {
                         LEVEL
                     </p>
 
-                    <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 20 }}>
-                        {level}
+                    <p style={{ color: getColorTextBasedOnLevel(levels[info.id]), fontSize: 20 }}>
+                        {levels[info.id]}
                     </p>
                 </div>
 
@@ -243,8 +365,48 @@ class Fight extends Component {
         )
     }
 
+    renderActionFight(item, index, boxW) {
+        return (
+            <div key={index} style={{ width: boxW, marginBottom: 15 }}>
+                <p style={{ fontSize: 14, color: TEXT_SECONDARY_COLOR, width: 78, minWidth: 78 }}>
+                    turn {item.turn}:
+                </p>
+
+                <p style={{ fontSize: 16, color: 'white' }}>
+                    {item.action.trim()}
+                </p>
+            </div>
+        )
+    }
+
+    calcWidthHp(width, max, current) {
+        //console.log(width, max, current);
+        let w = width * current / max
+        if (w < 0) {
+            w = 0
+        }
+
+        return w
+    }
+
+    getColorHpBar(currentHp, maxHp) {
+        if (!currentHp || !maxHp) {
+            return "#3b9b63"
+        }
+
+        let rainbow = new Rainbow()
+        rainbow.setSpectrum("#9e2b1e", "#3b9b63")
+        rainbow.setNumberRange(0, maxHp)
+
+        const color = rainbow.colourAt(currentHp)
+
+        //console.log(color);
+
+        return `#${color}`
+    }
+
     renderBody(isMobile) {
-        const { u1, u2, actions, winner, error, showOnlyOne } = this.state
+        const { u1, u2, actions, winner, error, showOnlyOne, actionsDict, showResult, showBar, fightActions } = this.state
 
         let boxW = Math.floor(window.innerWidth * (isMobile ? 90 : 70) / 100)
 		if (boxW > 1100) boxW = 1100;
@@ -293,32 +455,116 @@ class Fight extends Component {
         }
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 30, alignItems: 'center' }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 30, alignItems: 'center' }} id="mainBox">
 
                 <div style={{ width: boxW, justifyContent: 'space-between', alignItems: 'center', marginBottom: 30 }}>
 
-                    {this.renderSingleNft(u1, spaceImage)}
+                    <div style={{ flexDirection: 'column' }}>
+                        {this.renderSingleNft(u1, spaceImage)}
+
+                        {
+                            showBar &&
+                            <div style={{ width: spaceImage, height: 16, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', borderRadius: 2, alignItems: 'center' }}>
+                                <div
+                                    className="hpBar"
+                                    style={{ width: this.calcWidthHp(spaceImage, actionsDict[`${u1.id}_initialhp`], this.dataCurrentHP[`#${u1.id}`]), height: 16, backgroundColor: this.getColorHpBar(this.dataCurrentHP[`#${u1.id}`], actionsDict[`${u1.id}_initialhp`]) }}
+                                />
+                            </div>
+                        }
+                    </div>
 
                     <p style={{ fontSize: 28, color: TEXT_SECONDARY_COLOR }}>
                         VS
                     </p>
 
-                    {this.renderSingleNft(u2, spaceImage)}
+                    <div style={{ flexDirection: 'column' }}>
+                        {this.renderSingleNft(u2, spaceImage)}
+
+                        {
+                            showBar &&
+                            <div style={{ width: spaceImage, height: 16, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', borderRadius: 2 }}>
+                                <div
+                                    className="hpBar"
+                                    style={{ width: this.calcWidthHp(spaceImage, actionsDict[`${u2.id}_initialhp`], this.dataCurrentHP[`#${u2.id}`]), height: 16, backgroundColor: this.getColorHpBar(this.dataCurrentHP[`#${u2.id}`], actionsDict[`${u2.id}_initialhp`]) }}
+                                />
+                            </div>
+                        }
+                    </div>
                 </div>
 
-                <p style={{ fontSize: 22, marginBottom: 15, color: TEXT_SECONDARY_COLOR }}>
-                    ACTIONS
-                </p>
+                {
+                    !showResult && !showBar &&
+                    <div style={{ justifyContent: 'space-around', alignItems: 'center' }}>
+                        <button
+                            style={Object.assign({}, styles.btnChoice, { marginRight: 50 })}
+                            onClick={() => this.setState({ showResult: true })}
+                        >
+                            <p style={{ fontSize: 17, color: 'white' }}>
+                                SHOW RESULT
+                            </p>
+                        </button>
 
-                {actions && actions.map((item, index) => this.renderAction(item, index, boxW))}
+                        <button
+                            style={styles.btnChoice}
+                            onClick={() => {
+                                this.setState({ showBar: true }, () => {
+                                    setTimeout(() => {
+                                        this.stepFight()
+                                    }, 500)
+                                })
 
-                <p style={{ fontSize: 22, marginTop: 10, marginBottom: 10, color: TEXT_SECONDARY_COLOR }}>
-                    WINNER
-                </p>
+                            }}
+                        >
+                            <p style={{ fontSize: 17, color: 'white' }}>
+                                SHOW FIGHT
+                            </p>
+                        </button>
+                    </div>
+                }
 
-                <p style={{ fontSize: 32, color: TEXT_SECONDARY_COLOR, marginBottom: 30  }}>
-                    #{winner}
-                </p>
+                {
+                    showResult &&
+                    <div style={{ flexDirection: 'column', alignItems: 'center' }}>
+                        <p style={{ fontSize: 22, marginBottom: 15, color: TEXT_SECONDARY_COLOR }}>
+                            ACTIONS
+                        </p>
+
+                        {actions && actions.map((item, index) => this.renderAction(item, index, boxW))}
+
+                        <p style={{ fontSize: 22, marginTop: 10, marginBottom: 10, color: TEXT_SECONDARY_COLOR }}>
+                            WINNER
+                        </p>
+
+                        <p style={{ fontSize: 32, color: TEXT_SECONDARY_COLOR, marginBottom: 30  }}>
+                            #{winner}
+                        </p>
+                    </div>
+                }
+
+                {
+                    showBar &&
+                    <div style={{ flexDirection: 'column', alignItems: 'center' }}>
+                        <p style={{ fontSize: 22, marginBottom: 15, color: TEXT_SECONDARY_COLOR }}>
+                            ACTIONS
+                        </p>
+
+                        {fightActions && fightActions.map((item, index) => this.renderActionFight(item, index, boxW))}
+
+                        {
+                            fightActions.length === actions.length &&
+                            <div style={{ flexDirection: 'column' }}>
+                                <p style={{ fontSize: 22, marginTop: 10, marginBottom: 10, color: TEXT_SECONDARY_COLOR }}>
+                                    WINNER
+                                </p>
+
+                                <p style={{ fontSize: 32, color: TEXT_SECONDARY_COLOR, marginBottom: 30  }}>
+                                    #{winner}
+                                </p>
+                            </div>
+                        }
+
+                    </div>
+                }
 
             </div>
         )
@@ -387,6 +633,15 @@ const styles = {
 		bottom: 0,
 		backgroundColor: BACKGROUND_COLOR
 	},
+    btnChoice: {
+        width: 180,
+        height: 40,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: CTA_COLOR,
+        borderRadius: 2
+    }
 }
 
 const mapStateToProps = (state) => {
