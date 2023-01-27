@@ -14,6 +14,7 @@ import NftCardChoice from './common/NftCardChoice'
 import EquipmentCard from './common/EquipmentCard'
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
+import CardSingleFightProfile from './common/CardSingleFightProfile'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import convertMedalName from './common/ConvertMedalName'
@@ -63,7 +64,7 @@ class Profile extends Component {
 			tournament: {},
 			error: '',
 			nameNftSubscribed: '',
-			profileFights: [],
+			profileFights: {},
 			prize: undefined,
 			unclaimedWizaTotal: 0,
 			stakedIds: [],
@@ -170,6 +171,17 @@ class Profile extends Component {
 		querySnapshot.forEach(doc => {
 			//console.log(doc.data());
 			const tournament = doc.data()
+
+			/* // TEST
+			const tournament = {
+				canSubscribe: false,
+				nRounds: 6,
+				name: "t11_r4",
+				roundEnded: "3",
+				start: {seconds: 1675258200}
+			}
+			*/
+
 			this.setState({ tournament }, () => {
 
 				if (!tournament.canSubscribe) {
@@ -216,8 +228,6 @@ class Profile extends Component {
 			//console.log(s);
 			const fights = s.fights
 
-			//console.log(fights);
-
 			if (fights.length > 0) {
 				let fightsPerTournamentName = fights.filter(i => i.tournament.includes(tournamentName))
 				//console.log(fightsPerTournamentName);
@@ -236,7 +246,22 @@ class Profile extends Component {
 		})
 
 		//console.log(profileFights);
-		this.setState({ profileFights })
+
+		let fightsPerRound = {}
+
+		for (var i = 0; i < profileFights.length; i++) {
+			const singleF = profileFights[i]
+
+			if (!fightsPerRound[singleF.tournament]) {
+				fightsPerRound[singleF.tournament] = []
+			}
+
+			fightsPerRound[singleF.tournament].push(singleF)
+		}
+
+		//console.log(fightsPerRound);
+
+		this.setState({ profileFights: fightsPerRound })
 	}
 
 	subscribe(idNft, spellSelected) {
@@ -556,42 +581,33 @@ class Profile extends Component {
 		)
 	}
 
-	renderSingleFight(item, index) {
-		const { userMintedNfts } = this.props
+	renderRoundFights(key) {
+		const { profileFights } = this.state
 
-		const itemInfo = userMintedNfts.find(i => i.name === item.name)
-
-		const isWinner = item.winner === itemInfo.id
-
-		const roundValue = item.tournament[item.tournament.length - 1]
+		const roundName = key.split("_")[1].replace("r", "")
+		const fights = profileFights[key]
 
 		return (
-			<button
-				style={styles.boxSingleFight}
-				key={index}
-				className='btnH'
-				onClick={() => this.props.history.push(`/fight/${item.fightId}`)}
-			>
-				<img
-					src={getImageUrl(itemInfo.id)}
-					style={{ width: 140, height: 140, borderRadius: 2, marginRight: 15 }}
-					alt={itemInfo.name}
-				/>
+			<div style={{ flexDirection: 'column' }} key={key}>
+				<p style={{ fontSize: 30, color: 'white', marginBottom: 15 }}>
+					ROUND {roundName}
+				</p>
 
-				<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-					<p style={{ color: 'white', fontSize: 18 }}>
-						{item.name}
-					</p>
-
-					<p style={{ color: 'white', fontSize: 17 }}>
-						ROUND {roundValue}
-					</p>
-
-					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 22 }}>
-						{isWinner ? "WINNER" : "LOSER"}
-					</p>
+				<div style={{ flexWrap: 'wrap' }}>
+					{fights && fights.map((item, index) => this.renderSingleFight(item, index))}
 				</div>
-			</button>
+			</div>
+		)
+	}
+
+	renderSingleFight(item, index) {
+		return (
+			<CardSingleFightProfile
+				history={this.props.history}
+				userMintedNfts={this.props.userMintedNfts}
+				item={item}
+				key={index}
+			/>
 		)
 	}
 
@@ -741,7 +757,7 @@ class Profile extends Component {
 					<div style={{ flexDirection: 'column', width: '100%' }}>
 
 						<div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
-							{profileFights.length > 0 && profileFights.map((item, index) => this.renderSingleFight(item, index))}
+							{profileFights && Object.keys(profileFights).length > 0 && Object.keys(profileFights).reverse().map(key => this.renderRoundFights(key))}
 						</div>
 
 						<p style={{ fontSize: 15, color: 'red', marginTop: 10 }}>
