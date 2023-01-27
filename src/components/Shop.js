@@ -52,7 +52,7 @@ const vial_speed = require('../assets/vial_speed.png')
 
 const banner_nickname = require('../assets/banner_nickname.png')
 
-const chest_img = require('../assets/chest.png')
+const ring_dmg = require('../assets/ring_dmg_1.png')
 
 
 class Shop extends Component {
@@ -1148,6 +1148,10 @@ class Shop extends Component {
             img = banner_nickname
             imgStyle = { height: 60 }
         }
+        else if (key === "RINGS") {
+            img = ring_dmg
+            imgStyle = { height: 58 }
+        }
 
         let divId = `shop-${key.toLowerCase()}`
 
@@ -1256,6 +1260,7 @@ class Shop extends Component {
                         </div>
 
                         <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
+                            {this.renderBoxMenu("RINGS")}
                             {this.renderBoxMenu("UPGRADES")}
                             {this.renderBoxMenu("AP")}
                             {this.renderBoxMenu("VIALS")}
