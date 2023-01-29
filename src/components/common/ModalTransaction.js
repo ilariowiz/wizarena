@@ -11,7 +11,7 @@ import {
 	signTransaction,
 	updateTransactionState
 } from '../../actions'
-import { TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../../actions/types'
+import { TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR, RING_MINT_PRICE } from '../../actions/types'
 import '../../css/Nft.css'
 
 
@@ -211,7 +211,7 @@ class ModalTransaction extends Component {
 					body = `You will burn ${apToBurn} AP for ${apToBurn*15} $WIZA`
 				}
 				else if (type === "buychest") {
-					body = `You will buy ${numberOfChest} ${numberOfChest > 1 ? "chests" : "chest"} for ${numberOfChest*5} $KDA`
+					body = `You will buy ${numberOfChest} ${numberOfChest > 1 ? "chests" : "chest"} for ${numberOfChest*RING_MINT_PRICE} $KDA`
 				}
 				else if (type === "equip") {
 					body = `You will equip ${ringToEquipName} to ${nameNft}`

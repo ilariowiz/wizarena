@@ -45,7 +45,8 @@ import {
 	SET_AVG_LEVEL_PVP,
 	SET_WIZARD_SELECTED_SHOP,
 	CONTRACT_NAME_EQUIPMENT,
-	STORE_WIZA_NOT_CLAIMED
+	STORE_WIZA_NOT_CLAIMED,
+	RING_MINT_PRICE
 } from './types'
 
 
@@ -1413,7 +1414,7 @@ export const withdrawOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 export const mintEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, amount, account) => {
 	return (dispatch) => {
 
-		const mintPrice = 5.0
+		const mintPrice = RING_MINT_PRICE
 
 		let pactCode = `(free.${CONTRACT_NAME_EQUIPMENT}.get-equipment-1 "${account.account}" ${amount})`;
 

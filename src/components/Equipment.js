@@ -11,7 +11,7 @@ import ModalOpenItemsMinted from './common/ModalOpenItemsMinted'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
-import { MAIN_NET_ID, ITEMS_PER_BLOCK, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
+import { MAIN_NET_ID, ITEMS_PER_BLOCK, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR, RING_MINT_PRICE } from '../actions/types'
 import {
     setNetworkSettings,
 	setNetworkUrl,
@@ -306,7 +306,7 @@ class Equipment extends Component {
                         KDA
                     </p>
                     <p style={{ fontSize: 21, color: 'white', width: 25, marginRight: isMobile ? 0 : 20 }}>
-                        {numberOfChest * 5}
+                        {numberOfChest * RING_MINT_PRICE}
                     </p>
                 </div>
 

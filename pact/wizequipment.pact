@@ -15,10 +15,11 @@
   (defconst MINTED_COUNT_KEY "minted-count-key")
   (defconst NFTS_COUNT_KEY "nfts-count-key")
   (defconst VOLUME_PURCHASE_COUNT "volume_purchase_count")
-  (defconst PRICE_KEY 5.0)
+  (defconst PRICE_KEY 4.0)
   (defconst FEE_KEY 2)
   (defconst ADMIN_KEYSET "free.wizequipment-keyset")
   (defconst ADMIN_ADDRESS "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb")
+  (defconst MINT_START "mint_start")
 
   ; Capabilities
   ; --------------------------------------------------------------------------
@@ -127,6 +128,7 @@
       (insert counts MINTED_COUNT_KEY {"count": 0})
       (insert counts NFTS_COUNT_KEY {"count": 0})
       (insert volume VOLUME_PURCHASE_COUNT {"count": 0.0})
+      (insert values MINT_START {"value": "0"})
   )
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -171,7 +173,9 @@
               (equipment-minted (get-count MINTED_COUNT_KEY))
               (equipment-created (get-count NFTS_COUNT_KEY))
               (mint-price PRICE_KEY)
+              (mint-start (get-value MINT_START))
           )
+          (enforce (= mint-start "1") "the chests are still empty")
           (enforce (<= (+ equipment-minted amount) equipment-created) "Tried to mint more items then available! Please reduce the amount")
           (install-capability (coin.TRANSFER owner ADMIN_ADDRESS (* mint-price amount)))
           (coin.transfer owner ADMIN_ADDRESS (* mint-price amount))
@@ -460,6 +464,20 @@
   (defun get-volume ()
       @doc "get volume of purchase"
       (at "count" (read volume VOLUME_PURCHASE_COUNT ['count]))
+  )
+
+  (defun get-value (key:string)
+      @doc "Gets value for a key"
+      (at "value" (read values key ['value]))
+  )
+
+  (defun set-value(key:string value:string)
+      @doc "Sets the value for a key to store in a table"
+      (with-capability (ADMIN)
+          (update values key
+              {"value": value}
+          )
+      )
   )
 )
 

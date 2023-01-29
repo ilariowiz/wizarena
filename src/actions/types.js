@@ -7,6 +7,8 @@ export const MAX_LEVEL = 300
 
 export const REVEAL_CAP = 2048
 
+export const RING_MINT_PRICE = 4.0
+
 export const ADMIN_ADDRESS = 'k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb'
 export const CLERIC_MINT_ADDRESS = "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"
 export const CONTRACT_NAME = 'wiz-arena'//'wiz-arena-test3'
