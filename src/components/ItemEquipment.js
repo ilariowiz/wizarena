@@ -10,6 +10,7 @@ import ModalConnectionWidget from './common/ModalConnectionWidget'
 import getRingBonuses from './common/GetRingBonuses'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
+import ringsRarity from './common/RankRings'
 import { MAIN_NET_ID, ITEMS_PER_BLOCK, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
 import {
     setNetworkSettings,
@@ -142,10 +143,16 @@ class ItemEquipment extends Component {
     renderName(marginBottom) {
 		const { equipment } = this.state
 
+        const rarity = ringsRarity[equipment.name]
+        //console.log(rarity);
 		return (
 			<div style={{ flexDirection: 'column', marginBottom }}>
-                <p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 26, lineHeight: 1 }}>
+                <p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 26, lineHeight: 1, marginBottom: 5 }}>
                     #{equipment.id} {equipment.name}
+                </p>
+
+                <p style={{ color: '#c2c0c0', fontSize: 18, lineHeight: 1 }}>
+                    1 of {rarity} {rarity > 1 ? "rings" : "ring"}
                 </p>
 			</div>
 		)
