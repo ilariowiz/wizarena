@@ -173,8 +173,8 @@ class Equipment extends Component {
     }
 
     renderPageCounter() {
-		const { allItemsIds, itemsBlockId } = this.props
-		//console.log("allNftsIds", allNftsIds, nftsBlockId)
+		const { allItemsIds, allItems, itemsBlockId } = this.props
+		//console.log(allItemsIds, allItems, itemsBlockId)
 
 		let subarray = []
 
@@ -201,6 +201,8 @@ class Equipment extends Component {
 			rows[rows.length - 1].push(item);
 			return rows;
 		}, [[]]);
+
+        //console.log(blocks, itemsBlockId);
 
 		//per ogni index che abbiamo calcolato, controlliamo che ci sia il corrispettivo, nell'array dei blocchi
 		// se c'è aggiungiamo l'index alla subarray
@@ -522,7 +524,7 @@ class Equipment extends Component {
         const { boxW, modalW } = getBoxWidth(isMobile)
 
         let showPageCounter = false
-		if (allItemsIds && allItems && allItems.length > 0 && itemsToShow.length > 0) {
+		if (allItemsIds && allItems && allItems.length > 0 && itemsToShow && itemsToShow.length > 0) {
 			showPageCounter = true
 		}
 
@@ -555,7 +557,7 @@ class Equipment extends Component {
 				}
 
                 {
-					itemsToShow.length > 0 ?
+					itemsToShow && itemsToShow.length > 0 ?
                     <div style={{ flexWrap: 'wrap' }}>
     					{itemsToShow.map((item, index) => {
     						return this.renderItem(item, index);
