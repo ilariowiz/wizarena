@@ -459,7 +459,7 @@ class PvP extends Component {
 
     renderRowSub(item, index) {
         //console.log(item);
-        const { pvpOpen, userMintedNfts, pvpFightsStart, pvpFightsStartDate } = this.state
+        const { userMintedNfts, pvpFightsStartDate } = this.state
 
         const winRate = this.calcWinRate(item)
 
@@ -739,7 +739,7 @@ class PvP extends Component {
                         {
                             !fightsStart &&
                             <p style={{ fontSize: 19, color: 'white' }}>
-                                FIGHTS START: {pvpFightsStart}
+                                REGISTRATIONS CLOSE: {pvpFightsStart}
                             </p>
                         }
 

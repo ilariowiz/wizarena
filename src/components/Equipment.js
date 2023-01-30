@@ -11,7 +11,6 @@ import ModalTransaction from './common/ModalTransaction'
 import ModalOpenItemsMinted from './common/ModalOpenItemsMinted'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import getBoxWidth from './common/GetBoxW'
-import getImageUrl from './common/GetImageUrl'
 import { MAIN_NET_ID, ITEMS_PER_BLOCK, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR, RING_MINT_PRICE } from '../actions/types'
 import {
     setNetworkSettings,
