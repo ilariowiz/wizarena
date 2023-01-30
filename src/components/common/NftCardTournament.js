@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { IoMedalOutline } from 'react-icons/io5'
 import Popup from 'reactjs-popup';
+import getRingBonuses from './GetRingBonuses'
 import getImageUrl from './GetImageUrl'
 import calcMedals from './CalcMedals'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
@@ -29,6 +30,25 @@ class NftCardTournament extends Component {
 		const potion = potionsEquipped.find(i => i.key === key)
 
 		return potion.potionEquipped
+	}
+
+	getRingEquipped() {
+		const { ringsEquipped, item } = this.props
+
+		if (!ringsEquipped || ringsEquipped.length === 0) {
+			return ""
+		}
+
+		const ring = ringsEquipped.find(i => i.equippedToId === item.id)
+
+		//console.log(ring);
+
+		if (ring && ring.equipped) {
+			return ring
+		}
+		//console.log(ring);
+
+		return ""
 	}
 
 	render() {
@@ -71,6 +91,12 @@ class NftCardTournament extends Component {
 		else if (potion && potion === "speed") {
 			imagePotion = vial_speed
 			descPotion = "Vial of Speed +4"
+		}
+
+		const ring = this.getRingEquipped()
+		let infoEquipment;
+		if (ring) {
+			infoEquipment = getRingBonuses(ring)
 		}
 
 		return (
@@ -130,18 +156,38 @@ class NftCardTournament extends Component {
 						<div style={{ width: '100%', alignItems: 'center', justifyContent: 'flex-end', height: 28 }}>
 
 							{
-								potion ?
+								ring ?
 								<Popup
 									trigger={open => (
 										<div style={{ alignItems: 'center' }}>
+											<img
+												src={ring.url}
+												style={{ width: 32, height: 32 }}
+												alt={`Ring Equipped: ${ring.name}`}
+											/>
+										</div>
+									)}
+									position="top center"
+									on="hover"
+								>
+									<div style={{ padding: 5, fontSize: 18 }}>
+										{ring.name} : {infoEquipment.bonusesText.join(", ")}
+									</div>
+								</Popup>
+								: null
+							}
+
+							{
+								potion ?
+								<Popup
+									trigger={open => (
+										<div style={{ alignItems: 'center', marginLeft: 5 }}>
 											<img
 					                            src={imagePotion}
 					                            style={{ width: 24, height: 28 }}
 					                            alt={`Potion Equipped: ${potion ? potion.toUpperCase() : "None"}`}
 					                        />
-											<p style={{ color: 'white', fontSize: 14, lineHeight: 1, marginTop: 2 }}>
-												VIAL
-											</p>
+
 										</div>
 									)}
 									position="top center"

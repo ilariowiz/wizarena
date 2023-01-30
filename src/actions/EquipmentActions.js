@@ -134,6 +134,24 @@ export const getEquipmentVolume = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 	}
 }
 
+export const getInfoItemEquippedMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 15000, networkUrl, idnfts, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.get-equipped-fields-for-ids ${JSON.stringify(idnfts)})`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
 export const getInfoItemEquipped = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, idnft, callback) => {
 	return (dispatch) => {
 

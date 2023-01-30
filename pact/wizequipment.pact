@@ -410,7 +410,8 @@
             "url": url,
             "bonus":bonus,
             "name":name,
-            "equipped":equipped}
+            "equipped":equipped,
+            "equippedToId":idnft}
       )
   )
 

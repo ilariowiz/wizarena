@@ -21,7 +21,8 @@ import {
     setNetworkUrl,
     getSubscribed,
     loadUserMintedNfts,
-    getPotionEquippedMass
+    getPotionEquippedMass,
+    getInfoItemEquippedMass
 } from '../actions'
 import '../css/Nft.css'
 import 'reactjs-popup/dist/index.css';
@@ -39,7 +40,8 @@ class Tournament extends Component {
             avgLevel: 0,
             matchPair: [],
             userMinted: [],
-            potionsEquipped: []
+            potionsEquipped: [],
+            ringsEquipped: []
 		}
 	}
 
@@ -103,6 +105,7 @@ class Tournament extends Component {
                     //console.log(subscribed);
 
                     this.getAllPotionsEquipped(subscribed, tournamentName)
+                    this.getRingsEquipped(subscribed)
 
                     const winners = []
                     const winners4 = []
@@ -184,6 +187,22 @@ class Tournament extends Component {
         })
     }
 
+    getRingsEquipped(subscribers) {
+        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+        let idnfts = []
+        subscribers.map(i => {
+            idnfts.push(i.id)
+        })
+
+        //console.log(idnfts);
+
+        this.props.getInfoItemEquippedMass(chainId, gasPrice, gasLimit, networkUrl, idnfts, (response) => {
+            //console.log(response);
+            this.setState({ ringsEquipped: response })
+        })
+    }
+
     async loadPair(id) {
         const docRef = doc(firebasedb, "matching", id)
 
@@ -208,7 +227,7 @@ class Tournament extends Component {
     }
 
     renderRow(item, index, width) {
-        const { potionsEquipped, tournament } = this.state
+        const { potionsEquipped, tournament, ringsEquipped } = this.state
 
         //per ogni row creiamo un array di GameCard
 		return (
@@ -219,6 +238,7 @@ class Tournament extends Component {
                     history={this.props.history}
                     width={width}
                     potionsEquipped={potionsEquipped}
+                    ringsEquipped={ringsEquipped}
                     tournamentName={tournament.name.split("_")[0]}
                     tournamentSeason={tournament.season}
                 />
@@ -938,5 +958,6 @@ export default connect(mapStateToProps, {
     setNetworkUrl,
     getSubscribed,
     loadUserMintedNfts,
-    getPotionEquippedMass
+    getPotionEquippedMass,
+    getInfoItemEquippedMass
 })(Tournament)

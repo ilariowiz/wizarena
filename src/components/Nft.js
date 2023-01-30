@@ -1403,7 +1403,7 @@ class Nft extends Component {
 		const infoEquipment = getRingBonuses(equipment)
 		//console.log(infoEquipment);
 
-		console.log(equipment);
+		//console.log(equipment);
 
 		return (
 			<div style={{ width: width - 20 }}>
