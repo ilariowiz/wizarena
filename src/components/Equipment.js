@@ -38,6 +38,7 @@ class Equipment extends Component {
             itemsToShow: [],
 			floor: 0,
 			uniqueOwners: 1,
+            equipped: 0,
 			searchText: '',
 			searchedText: '',
             numberOfChest: 1,
@@ -77,6 +78,7 @@ class Equipment extends Component {
 
 				this.getFloor(res)
 				this.getUniqueOwners(res)
+                this.getEquipped(res)
 
 				this.props.getPageBlockItems(res, this.props.itemsBlockId || 0, (itemsToShow) => {
 					//console.log("loadAllNftsIds completed");
@@ -141,6 +143,25 @@ class Equipment extends Component {
 
 		this.setState({ uniqueOwners: owners.length })
 	}
+
+    getEquipped(allItems) {
+        if (!allItems) {
+            return
+        }
+
+        let equipped = 0
+
+		for (let i = 0; i < allItems.length; i++) {
+			let ring = allItems[i]
+
+		 	if (ring.equipped) {
+                 equipped += 1
+             }
+		}
+
+        //console.log(equipped);
+        this.setState({ equipped })
+    }
 
     buyChest() {
         const { account, chainId, gasPrice, netId } = this.props
@@ -374,7 +395,7 @@ class Equipment extends Component {
 
     renderHeader(isMobile) {
 		const { totalCountItems } = this.props
-		const { floor, uniqueOwners, volume } = this.state
+		const { floor, uniqueOwners, volume, equipped } = this.state
 
 		let items = totalCountItems || 0
 
@@ -404,7 +425,7 @@ class Equipment extends Component {
 
 					{this.renderBoxHeader(`${volume.toLocaleString()} WIZA`, 'total volume', isMobile)}
 
-					{/* this.renderBoxHeader(`${wizardsStaked || 0}`, 'wizards staked', isMobile) */}
+					{this.renderBoxHeader(`${equipped || 0}`, 'equipped', isMobile)}
 				</div>
 			</div>
 		)
