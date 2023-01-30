@@ -26,7 +26,7 @@ class NftCard extends Component {
 
 				<div style={{ justifyContent: 'space-between', width, height: 65, alignItems: 'center' }}>
 
-					<div style={{ width: '100%', justifyContent: 'space-between', flexDirection: 'column', marginTop: 5 }}>
+					<div style={{ width: '100%', justifyContent: 'space-between', flexDirection: 'column', marginTop: 5, flex: item.listed ? 0.7 : 1 }}>
 						{
 							item.nickname ?
 							<p style={{ color: 'white', fontSize: 17, marginLeft: 10, lineHeight: 1 }}>
@@ -54,11 +54,7 @@ class NftCard extends Component {
 
 					{
 						item.listed ?
-						<div style={{ width: '100%', alignItems: 'center', justifyContent: 'flex-end', marginTop: 5, marginRight: 10 }}>
-							<p style={{ color: '#c2c0c0', fontSize: 14, lineHeight: 1 }}>
-								PRICE
-							</p>
-
+						<div style={{ width: '100%', alignItems: 'center', justifyContent: 'flex-end', marginTop: 5, marginRight: 10, flex: 0.3 }}>
 							<div style={{ marginLeft: 10, alignItems: 'center' }}>
 
 								<img
