@@ -6,7 +6,8 @@ import {
     LOAD_ALL_ITEMS_IDS,
     LOAD_ALL_ITEMS,
     ITEMS_PER_BLOCK,
-    SET_BLOCK_ID_ITEM
+    SET_BLOCK_ID_ITEM,
+    STORE_FILTERS_STATS_EQUIP
 } from './types'
 
 //get all ids of nfts minted
@@ -197,6 +198,13 @@ export const readFromContract = (cmd, returnError, networkUrl) => {
 		}
 
 		dispatch({ type: 'fake' })
+	}
+}
+
+export const storeFiltersStatsEquip = (filters) => {
+	return {
+		type: STORE_FILTERS_STATS_EQUIP,
+		payload: filters
 	}
 }
 

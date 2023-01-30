@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import Media from 'react-media';
 import { AiOutlinePlus } from 'react-icons/ai'
 import { AiOutlineMinus } from 'react-icons/ai'
+import { IoClose } from 'react-icons/io5'
 import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
 import EquipmentCard from './common/EquipmentCard'
@@ -19,7 +20,8 @@ import {
     loadAllItemsIds,
     getPageBlockItems,
     getEquipmentVolume,
-    mintEquipment
+    mintEquipment,
+    storeFiltersStatsEquip
 } from '../actions'
 import '../css/Shop.css'
 
@@ -60,16 +62,16 @@ class Equipment extends Component {
 	}
 
     loadAll() {
-        const { chainId, gasPrice, gasLimit, networkUrl, statSearched, allItems } = this.props
+        const { chainId, gasPrice, gasLimit, networkUrl, statSearchedEquipment, allItems } = this.props
 
         //è inutile refetchare di nuovo tutto, se ci sono le stat cercate significa che
 		//gli nft sono stati già caricati
-		if (statSearched && statSearched.length > 0) {
+		if (statSearchedEquipment && statSearchedEquipment.length > 0) {
 			//this.searchByStat()
 		}
 		else {
 			if (allItems) {
-				//this.loadBlock(this.props.nftsBlockId || 0)
+				this.loadBlock(this.props.itemsBlockId || 0)
 			}
 
 			this.props.loadAllItemsIds(chainId, gasPrice, gasLimit, networkUrl, (res) => {
@@ -223,6 +225,35 @@ class Equipment extends Component {
 		)
 	}
 
+    searchByName() {
+		const { allItems } = this.props
+		const { searchText } = this.state
+
+        if (!searchText) {
+            return
+        }
+
+		const result = allItems.filter(i => i.name.toLowerCase().includes(searchText.toLowerCase()))
+
+		this.props.storeFiltersStatsEquip([])
+		this.setState({ loading: false, itemsToShow: result, searchedText: searchText })
+	}
+
+	cancelSearch() {
+		const { itemsBlockId } = this.props
+
+		this.setState({ searchedText: '', searchText: '' })
+		this.loadBlock(itemsBlockId)
+	}
+
+    loadBlock(id) {
+		const { allItems } = this.props
+		//console.log(allNfts)
+		this.props.getPageBlockItems(allItems, id, (itemsToShow) => {
+			this.setState({ itemsToShow, loading: false })
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+		})
+	}
 
     renderBoxHeader(title, subtitle, isMobile) {
 		return (
@@ -349,7 +380,7 @@ class Equipment extends Component {
 		let items = totalCountItems || 0
 
 		return (
-			<div style={{ width: '100%', flexDirection: 'column', alignItems: 'flex-start', marginTop: 35, marginBottom: 40, flexWrap: 'wrap' }}>
+			<div style={{ width: '100%', flexDirection: 'column', alignItems: 'flex-start', marginTop: 35, marginBottom: 20, flexWrap: 'wrap' }}>
 
                 <div style={{ flexWrap: 'wrap', flexDirection: 'column' }}>
 
@@ -375,6 +406,59 @@ class Equipment extends Component {
 					{this.renderBoxHeader(`${volume.toLocaleString()} WIZA`, 'total volume', isMobile)}
 
 					{/* this.renderBoxHeader(`${wizardsStaked || 0}`, 'wizards staked', isMobile) */}
+				</div>
+			</div>
+		)
+	}
+
+    renderSearchBar() {
+		const { searchText } = this.state
+
+		return (
+			<div style={{ width: '100%', height: 60, alignItems: 'center', marginBottom: 20 }}>
+				<input
+					style={styles.inputSearch}
+					placeholder='Search by name'
+					value={searchText}
+					onChange={(e) => this.setState({ searchText: e.target.value })}
+				/>
+
+				<button
+					className='btnH'
+					style={{ width: 130, height: 46, backgroundColor: CTA_COLOR, borderRadius: 2, justifyContent: 'center', alignItems: 'center' }}
+					onClick={() => this.searchByName()}
+				>
+					<p style={{ fontSize: 19, color: 'white' }}>
+						Search
+					</p>
+				</button>
+			</div>
+		)
+	}
+
+    renderSearched() {
+		const { searchedText } = this.state
+
+		if (!searchedText) {
+			return null
+		}
+
+		return (
+			<div style={{ width: '100%', marginBottom: 20 }}>
+				<div style={{ backgroundColor: '#e5e8eb80', justifyContent: 'center', alignItems: 'center', height: 45, paddingLeft: 20, paddingRight: 20, borderRadius: 2 }}>
+					<p style={{ fontSize: 22, color: 'black', marginRight: 10 }}>
+						{searchedText}
+					</p>
+
+					<button
+						style={{ paddingTop: 5 }}
+						onClick={() => this.cancelSearch()}
+					>
+						<IoClose
+							color='black'
+							size={22}
+						/>
+					</button>
 				</div>
 			</div>
 		)
@@ -419,7 +503,7 @@ class Equipment extends Component {
 		}
 
         /*
-		if (statSearched && statSearched.length > 0) {
+		if (statSearchedEquipment && statSearchedEquipment.length > 0) {
 			showPageCounter = false
 		}
         */
@@ -427,6 +511,10 @@ class Equipment extends Component {
         return (
             <div style={{ flexDirection: 'column', width: boxW }}>
                 {this.renderHeader(isMobile)}
+
+                {this.renderSearchBar()}
+
+				{this.renderSearched()}
 
                 {
 					allItems && allItems.length === 0 ?
@@ -609,13 +697,29 @@ const styles = {
 		paddingTop: 6,
 		paddingBottom: 6
 	},
+    inputSearch: {
+		width: 390,
+		height: 43,
+		marginRight: 15,
+		color: 'black',
+		borderRadius: 2,
+		borderColor: '#e5e8eb',
+		borderStyle: 'solid',
+		borderWidth: 2,
+		fontSize: 19,
+		paddingLeft: 10,
+		WebkitAppearance: 'none',
+		MozAppearance: 'none',
+		appearance: 'none',
+		outline: 'none'
+	},
 }
 
 const mapStateToProps = (state) => {
 	const { account, chainId, gasPrice, gasLimit, netId, networkUrl, showModalTx } = state.mainReducer;
-    const { statSearched, allItems, allItemsIds, totalCountItems, itemsBlockId } = state.equipmentReducer
+    const { statSearchedEquipment, allItems, allItemsIds, totalCountItems, itemsBlockId } = state.equipmentReducer
 
-	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, showModalTx, statSearched, allItems, allItemsIds, totalCountItems, itemsBlockId };
+	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, showModalTx, statSearchedEquipment, allItems, allItemsIds, totalCountItems, itemsBlockId };
 }
 
 export default connect(mapStateToProps, {
@@ -625,5 +729,6 @@ export default connect(mapStateToProps, {
     loadAllItemsIds,
     getPageBlockItems,
     getEquipmentVolume,
-    mintEquipment
+    mintEquipment,
+    storeFiltersStatsEquip
 })(Equipment)

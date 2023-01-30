@@ -390,7 +390,7 @@ class Header extends Component {
 										this.props.history.replace('/collection')
 									}}
 								>
-									COLLECTION
+									MARKETPLACE
 								</a>
 
 								<a

@@ -1,13 +1,14 @@
 import {
     LOAD_ALL_ITEMS_IDS,
     LOAD_ALL_ITEMS,
-    SET_BLOCK_ID_ITEM
+    SET_BLOCK_ID_ITEM,
+    STORE_FILTERS_STATS_EQUIP
 } from '../actions/types'
 
 const INITIAL_STATE = {
     allItems: [],
     allItemsIds: [],
-    statSearched: [],
+    statSearchedEquipment: [],
     totalCountItems: 0,
     itemsBlockId: 0
 }
@@ -30,6 +31,8 @@ export default (state = INITIAL_STATE, action) => {
 		}
         case SET_BLOCK_ID_ITEM:
 			return { ...state, itemsBlockId: action.payload }
+        case STORE_FILTERS_STATS_EQUIP:
+    		return { ...state, statSearchedEquipment: action.payload }
         default:
     		return state
     }
