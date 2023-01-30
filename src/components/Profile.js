@@ -106,6 +106,7 @@ class Profile extends Component {
 	loadProfile() {
 		this.loadMinted()
 		this.loadWizaBalance()
+		this.loadEquip()
 	}
 
 	loadMinted() {
@@ -815,7 +816,7 @@ class Profile extends Component {
 	}
 
 	renderRowChoise(item, index, modalWidth) {
-		const { tournament, toSubscribe } = this.state
+		const { tournament, toSubscribe, equipment } = this.state
 
 		return (
 			<NftCardChoice
@@ -836,6 +837,7 @@ class Profile extends Component {
 				}}
 				modalWidth={modalWidth}
 				toSubscribe={toSubscribe}
+				equipment={equipment}
 			/>
 		)
 	}

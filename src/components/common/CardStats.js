@@ -1,7 +1,7 @@
 import React from 'react'
 import allSpells from './Spells'
 
-const cardStats = (item, numberOfMedalsForTournament, width) => {
+const cardStats = (item, numberOfMedalsForTournament, width, bonusFromRing) => {
 
     //console.log(item);
 
@@ -57,6 +57,31 @@ const cardStats = (item, numberOfMedalsForTournament, width) => {
 
     let atkTotal = atkSpell + atkBase
     let dmgTotal = dmgSpell + dmgBase
+
+    if (bonusFromRing) {
+        //console.log(bonusFromRing);
+        Object.keys(bonusFromRing).map(key => {
+            //console.log(key);
+
+            let bonus = bonusFromRing[key]
+
+            if (key === "hp") {
+                hpBase += bonus
+            }
+            else if (key === 'defense') {
+                defBase += bonus
+            }
+            else if (key === 'attack') {
+                atkTotal += bonus
+            }
+            else if (key === 'damage') {
+                dmgTotal += bonus
+            }
+            else if (key === 'speed') {
+                speedBase += bonus
+            }
+        })
+    }
 
     return (
         <div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>

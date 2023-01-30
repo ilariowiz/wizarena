@@ -5,6 +5,7 @@ import { firebasedb } from '../Firebase';
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCardChoice.css'
 import cardStats from './CardStats'
+import getRingBonuses from './GetRingBonuses'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
 import ModalSpellbook from './ModalSpellbook'
 import {
@@ -52,6 +53,25 @@ class NftCardChoice extends Component {
         return tot
     }
 
+    getRingEquipped() {
+		const { equipment, item } = this.props
+
+		if (!equipment || equipment.length === 0) {
+			return ""
+		}
+
+		const ring = equipment.find(i => i.equippedToId === item.id)
+
+		//console.log(ring);
+
+		if (ring && ring.equipped) {
+			return ring
+		}
+		//console.log(ring);
+
+		return ""
+	}
+
     onSubscribe(spellSelected) {
         const { item } = this.props
 
@@ -59,16 +79,24 @@ class NftCardChoice extends Component {
     }
 
 	render() {
-		const { item, width, canSubscribe, toSubscribe } = this.props
+		const { item, width, canSubscribe, toSubscribe, equipment } = this.props
         const { isSubscribed } = this.state
 
-        //console.log(tournament)
+        //console.log(equipment)
 
         const numberOfTotalMedals = item.medals ? this.calcMedals() : 0
 
         const level = calcLevelWizard(item)
 
         const inToSubscribe = toSubscribe.some(i => i.idnft === item.id)
+
+        const ring = this.getRingEquipped()
+		let infoEquipment;
+		if (ring) {
+			infoEquipment = getRingBonuses(ring)
+            console.log(infoEquipment);
+		}
+
 
 		return (
 			<div
@@ -105,7 +133,7 @@ class NftCardChoice extends Component {
 
                         {
                             item.hp ?
-                            cardStats(item, numberOfTotalMedals)
+                            cardStats(item, numberOfTotalMedals, undefined, infoEquipment ? infoEquipment.bonusesDict : undefined)
                             :
                             null
                         }
