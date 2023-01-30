@@ -1065,7 +1065,7 @@ class Nft extends Component {
 
 		if (equipment.bonus && equipment.bonus.includes(title.toLowerCase())) {
 			const ringBonus = getRingBonuses(equipment)
-			console.log(ringBonus);
+			//console.log(ringBonus);
 			fixedValue = fixedValue + ringBonus.bonusesDict[title.toLowerCase()]
 		}
 
