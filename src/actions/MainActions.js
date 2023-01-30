@@ -1988,7 +1988,7 @@ export const buyNickname = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, accoun
 export const equipItem = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, iditem, account, idnft) => {
 	return (dispatch) => {
 
-		let pactCode = `(free.${CONTRACT_NAME_EQUIPMENT}.equip-item "${iditem}" "${account.account}" "${idnft}" free.wiz-arena-test3)`;
+		let pactCode = `(free.${CONTRACT_NAME_EQUIPMENT}.equip-item "${iditem}" "${account.account}" "${idnft}" free.wiz-arena)`;
 
 		let cmd = {
 			pactCode,
@@ -2023,7 +2023,7 @@ export const equipItem = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, iditem, 
 export const unequipItem = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, iditem, account, idnft) => {
 	return (dispatch) => {
 
-		let pactCode = `(free.${CONTRACT_NAME_EQUIPMENT}.unequip-item "${iditem}" "${account.account}" "${idnft}" free.wiz-arena-test3 free.wiza)`;
+		let pactCode = `(free.${CONTRACT_NAME_EQUIPMENT}.unequip-item "${iditem}" "${account.account}" "${idnft}" free.wiz-arena free.wiza)`;
 
 		let cmd = {
 			pactCode,
