@@ -253,7 +253,11 @@ class Equipment extends Component {
             return
         }
 
-		const result = allItems.filter(i => i.name.toLowerCase().includes(searchText.toLowerCase()))
+		let result = allItems.filter(i => i.name.toLowerCase().includes(searchText.toLowerCase()))
+
+        if (result.length === 0) {
+            result = allItems.filter(i => i.id === searchText)
+        }
 
 		this.props.storeFiltersStatsEquip([])
 		this.setState({ loading: false, itemsToShow: result, searchedText: searchText })
@@ -438,7 +442,7 @@ class Equipment extends Component {
 			<div style={{ width: '100%', height: 60, alignItems: 'center', marginBottom: 20 }}>
 				<input
 					style={styles.inputSearch}
-					placeholder='Search by name'
+					placeholder='Search by name or id'
 					value={searchText}
 					onChange={(e) => this.setState({ searchText: e.target.value })}
 				/>
