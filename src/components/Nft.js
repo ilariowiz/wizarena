@@ -1403,6 +1403,8 @@ class Nft extends Component {
 		const infoEquipment = getRingBonuses(equipment)
 		//console.log(infoEquipment);
 
+		console.log(equipment);
+
 		return (
 			<div style={{ width: width - 20 }}>
 				<div style={styles.subBoxEquipment}>
@@ -1419,7 +1421,7 @@ class Nft extends Component {
 
 						<div style={{ flexDirection: 'column' }}>
 							<p style={{ fontSize: 19, color: 'white', marginBottom: 5 }}>
-								{equipment.name}
+								#{equipment.id} {equipment.name}
 							</p>
 
 							<p style={{ fontSize: 18, color: 'white' }}>
