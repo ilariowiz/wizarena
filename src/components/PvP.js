@@ -28,7 +28,8 @@ import {
     setSfida,
     changeSpellPvP,
     getWizaBalance,
-    loadSingleNft
+    loadSingleNft,
+    loadEquipMinted
 } from '../actions'
 import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -61,7 +62,8 @@ class PvP extends Component {
             showModalWizaPvP: false,
             itemChangeSpell: {},
             wizaAmount: 0,
-            idNftIncrementFights: ""
+            idNftIncrementFights: "",
+            equipment: []
         }
     }
 
@@ -89,11 +91,25 @@ class PvP extends Component {
             this.loadPvpWeek()
             this.loadPvpOpen()
             this.loadWizaBalance()
+            this.loadEquip()
         }
         else {
             this.setState({ error: "Firebase/Firestore not available, check if you have an adblocker or firewall blocking the connection" })
         }
 	}
+
+    loadEquip() {
+        const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+        if (account && account.account) {
+
+			this.props.loadEquipMinted(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
+                //console.log(response);
+
+                this.setState({ equipment: response })
+			})
+		}
+    }
 
     loadWizaBalance() {
 		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
@@ -434,7 +450,7 @@ class PvP extends Component {
     }
 
     renderRowChoise(item, index, modalWidth) {
-        const { pvpWeek, pvpOpen } = this.state
+        const { pvpWeek, pvpOpen, equipment } = this.state
         const { wizaBalance } = this.props
 
 
@@ -453,6 +469,7 @@ class PvP extends Component {
 				modalWidth={modalWidth}
                 index={index}
                 wizaBalance={wizaBalance || 0}
+                equipment={equipment}
 			/>
 		)
 	}
@@ -966,5 +983,6 @@ export default connect(mapStateToProps, {
     setSfida,
     changeSpellPvP,
     getWizaBalance,
-    loadSingleNft
+    loadSingleNft,
+    loadEquipMinted
 })(PvP)

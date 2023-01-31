@@ -94,7 +94,7 @@ class NftCardChoice extends Component {
 		let infoEquipment;
 		if (ring) {
 			infoEquipment = getRingBonuses(ring)
-            console.log(infoEquipment);
+            //console.log(infoEquipment);
 		}
 
 

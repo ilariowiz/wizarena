@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCardChoice.css'
 import cardStats from './CardStats'
+import getRingBonuses from './GetRingBonuses'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
 import ModalSpellbook from './ModalSpellbook'
 import ModalWizaPvP from './ModalWizaPvP'
@@ -58,6 +59,25 @@ class NftCardChoicePvP extends Component {
         return tot
     }
 
+    getRingEquipped() {
+		const { equipment, item } = this.props
+
+		if (!equipment || equipment.length === 0) {
+			return ""
+		}
+
+		const ring = equipment.find(i => i.equippedToId === item.id)
+
+		//console.log(ring);
+
+		if (ring && ring.equipped) {
+			return ring
+		}
+		//console.log(ring);
+
+		return ""
+	}
+
     onSubscribe(spellSelected, wizaAmount) {
         this.props.onSubscribe(spellSelected, wizaAmount)
     }
@@ -71,6 +91,13 @@ class NftCardChoicePvP extends Component {
         //const numberOfTotalMedals = item.medals ? this.calcMedals() : 0
 
         const level = calcLevelWizard(item)
+
+        const ring = this.getRingEquipped()
+		let infoEquipment;
+		if (ring) {
+			infoEquipment = getRingBonuses(ring)
+            //console.log(infoEquipment);
+		}
 
 		return (
 			<div
@@ -107,7 +134,7 @@ class NftCardChoicePvP extends Component {
 
                         {
                             item.hp ?
-                            cardStats(item, undefined)
+                            cardStats(item, undefined, undefined, infoEquipment ? infoEquipment.bonusesDict : undefined)
                             :
                             null
                         }
