@@ -12,7 +12,8 @@ import allSpells from './common/Spells'
 import {
     setNetworkSettings,
     setNetworkUrl,
-    loadSingleNft
+    loadSingleNft,
+    getInfoItemEquipped
 } from '../actions'
 import { BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID, REVEAL_CAP } from '../actions/types'
 
@@ -81,36 +82,58 @@ class DoFight extends Component {
 		this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, idNft, (response) => {
             //console.log(response);
             if (response.name) {
-                if (isPlayer1) {
-                    this.player1 = response
-                    this.player1.level = calcLevelWizard(this.player1)
-                    this.player1.attack = this.player1.attack.int
-                    this.player1.damage = this.player1.damage.int
-                    this.player1.defense = this.player1.defense.int
-                    this.player1.hp = this.player1.hp.int
-                    this.player1.speed = this.player1.speed.int
-                    this.player1.spellSelected = this.refactorSpellSelected(sfida.player1.spellSelected)
 
-                    this.player1InitialHp = this.player1.hp
+                this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, idNft, (ring) => {
 
-                    //console.log(this.player1);
+                    if (isPlayer1) {
+                        this.player1 = response
+                        this.player1.level = calcLevelWizard(this.player1)
+                        this.player1.attack = this.player1.attack.int
+                        this.player1.damage = this.player1.damage.int
+                        this.player1.defense = this.player1.defense.int
+                        this.player1.hp = this.player1.hp.int
+                        this.player1.speed = this.player1.speed.int
+                        this.player1.spellSelected = this.refactorSpellSelected(sfida.player1.spellSelected)
 
-                    this.loadNft(sfida.player2.idnft, false)
-                }
-                else {
-                    this.player2 = response
-                    this.player2.level = calcLevelWizard(this.player2)
-                    this.player2.attack = this.player2.attack.int
-                    this.player2.damage = this.player2.damage.int
-                    this.player2.defense = this.player2.defense.int
-                    this.player2.hp = this.player2.hp.int
-                    this.player2.speed = this.player2.speed.int
-                    this.player2.spellSelected = this.refactorSpellSelected(sfida.player2.spellSelected)
+                        //console.log(this.player1);
+                        if (ring && ring.equipped) {
+                            const stats = ring.bonus.split(",")
+                            stats.map(i => {
+                                const infos = i.split("_")
+                                this.player1[infos[1]] += parseInt(infos[0])
+                            })
+                        }
 
-                    this.player2InitialHp = this.player2.hp
+                        this.player1InitialHp = this.player1.hp
 
-                    this.startFight(this.player1, this.player2)
-                }
+                        this.loadNft(sfida.player2.idnft, false)
+                    }
+                    else {
+                        this.player2 = response
+                        this.player2.level = calcLevelWizard(this.player2)
+                        this.player2.attack = this.player2.attack.int
+                        this.player2.damage = this.player2.damage.int
+                        this.player2.defense = this.player2.defense.int
+                        this.player2.hp = this.player2.hp.int
+                        this.player2.speed = this.player2.speed.int
+                        this.player2.spellSelected = this.refactorSpellSelected(sfida.player2.spellSelected)
+
+                        if (ring && ring.equipped) {
+                            const stats = ring.bonus.split(",")
+                            stats.map(i => {
+                                const infos = i.split("_")
+                                this.player2[infos[1]] += parseInt(infos[0])
+                            })
+                        }
+
+                        this.player2InitialHp = this.player2.hp
+
+                        this.startFight(this.player1, this.player2)
+                    }
+
+                })
+
+
 			}
 			else {
 				this.setState({ error: '404', loading: false })
@@ -789,5 +812,6 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
     setNetworkSettings,
     setNetworkUrl,
-    loadSingleNft
+    loadSingleNft,
+    getInfoItemEquipped
 })(DoFight)
