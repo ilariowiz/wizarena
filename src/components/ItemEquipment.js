@@ -8,6 +8,7 @@ import EquipmentCard from './common/EquipmentCard'
 import HistoryItemEquipment from './common/HistoryItemEquipment'
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
+import ModalTransfer from './common/ModalTransfer'
 import getRingBonuses from './common/GetRingBonuses'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
@@ -20,7 +21,8 @@ import {
     getInfoNftEquipment,
     listEquipment,
     delistEquipment,
-    buyEquipment
+    buyEquipment,
+    transferEquipment
 } from '../actions'
 
 
@@ -38,7 +40,8 @@ class ItemEquipment extends Component {
             typeModal: '',
             wizaPrice: undefined,
             itemHistory: [],
-            loadingHistory: true
+            loadingHistory: true,
+            showModalTransfer: false,
         }
     }
 
@@ -170,6 +173,15 @@ class ItemEquipment extends Component {
 
 		this.setState({ typeModal: 'buyequipment', saleValues }, () => {
 			this.props.buyEquipment(chainId, gasPrice, 7000, netId, account, equipment.id)
+		})
+	}
+
+    transfer(receiver) {
+		const { equipment } = this.state
+		const { account, chainId, gasPrice, netId } = this.props
+
+		this.setState({ typeModal: 'transfer' }, () => {
+			this.props.transferEquipment(chainId, gasPrice, 1500, netId, equipment.id, account, receiver)
 		})
 	}
 
@@ -365,7 +377,7 @@ class ItemEquipment extends Component {
 
 		return (
 			<div style={style}>
-				{/*
+				{
 					!equipment.listed && account && account.account && equipment.owner === account.account ?
 					<button
 						className="btnH"
@@ -377,7 +389,7 @@ class ItemEquipment extends Component {
 						</p>
 					</button>
 					: null
-				*/}
+				}
 
 				<button
 					className='btnH'
@@ -768,7 +780,7 @@ class ItemEquipment extends Component {
 
     render() {
         const { showModalTx } = this.props
-		const { inputPrice, equipment, typeModal, showModalConnection, loading, error } = this.state
+		const { inputPrice, equipment, typeModal, showModalConnection, loading, error, showModalTransfer } = this.state
 
 		let modalW = window.innerWidth * 82 / 100
 		if (modalW > 480) {
@@ -847,6 +859,18 @@ class ItemEquipment extends Component {
 					showModal={showModalConnection}
 					onCloseModal={() => this.setState({ showModalConnection: false })}
 				/>
+
+                <ModalTransfer
+					width={modalW}
+					showModal={showModalTransfer}
+					onCloseModal={() => this.setState({ showModalTransfer: false })}
+					callback={(receiver) => {
+						this.setState({ showModalTransfer: false }, () => {
+							this.transfer(receiver)
+						})
+					}}
+				/>
+
 			</div>
 		)
 	}
@@ -933,6 +957,20 @@ const styles = {
 		paddingTop: 5,
 		paddingBottom: 5,
 	},
+    btnTransfer: {
+		height: 35,
+		maxWidth: 154,
+		justifyContent: 'center',
+		alignItems: 'center',
+		borderWidth: 2,
+		borderColor: CTA_COLOR,
+		borderRadius: 2,
+		borderStyle: 'solid',
+		marginTop: 5,
+		paddingLeft: 11,
+		paddingRight: 11,
+        marginBottom: 15
+	}
 }
 
 
@@ -950,5 +988,6 @@ export default connect(mapStateToProps, {
     getInfoNftEquipment,
     listEquipment,
     delistEquipment,
-    buyEquipment
+    buyEquipment,
+    transferEquipment
 })(ItemEquipment)

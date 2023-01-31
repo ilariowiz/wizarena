@@ -346,6 +346,20 @@
     )
   )
 
+  (defun transfer-equipment (id:string sender:string receiver:string)
+      @doc "Transfer nft to an account"
+      (enforce-account-exists receiver)
+      (with-capability (OWNER sender id)
+          (let (
+                  (data (get-equipment-fields-for-id id))
+              )
+              (enforce (= (at "equipped" data) false) "You can't transfer an equipped item")
+              (enforce (= (at "listed" data) false) "You can't transfer a listed item")
+          )
+          (update equipment id {"owner": receiver})
+      )
+  )
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;;;;;;; UTILS  ;;;;;;;;;;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -478,6 +492,13 @@
           (update values key
               {"value": value}
           )
+      )
+  )
+
+  (defun enforce-account-exists (account:string)
+      @doc "Enforces that an account exists in the coin table"
+      (let ((coin-account (at "account" (coin.details account))))
+          (enforce (= coin-account account) "account was not found")
       )
   )
 )
