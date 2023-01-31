@@ -8,7 +8,7 @@ import {
 const INITIAL_STATE = {
     allItems: [],
     allItemsIds: [],
-    statSearchedEquipment: [],
+    statSearchedEquipment: undefined,
     totalCountItems: 0,
     itemsBlockId: 0
 }

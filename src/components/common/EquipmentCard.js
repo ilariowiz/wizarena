@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import getRingBonuses from './GetRingBonuses'
 import '../../css/ItemCard.css'
-//const logoWiza = require('../../assets/wiz_logo_centrale.png')
+
+const logoWiza = require('../../assets/wzlogo_bg_transparent.png')
 
 class EquipmentCard extends Component {
     render() {
@@ -37,11 +38,12 @@ class EquipmentCard extends Component {
                 {
                     item.listed ?
                     <div style={{ alignItems: 'center', justifyContent: 'flex-start', width: '100%' }}>
-                        <p style={{ fontSize: 14, color: "#c2c0c0", marginRight: 10 }}>
-                            PRICE
-                        </p>
+                        <img
+                            src={logoWiza}
+                            style={{ width: 34, marginRight: 10 }}
+                        />
 
-                        <p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
+                        <p style={{ fontSize: 18, color: 'white', marginRight: 7 }}>
                             {item.price}
                         </p>
 
