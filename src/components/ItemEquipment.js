@@ -5,6 +5,7 @@ import DotLoader from 'react-spinners/DotLoader';
 import toast, { Toaster } from 'react-hot-toast';
 import Header from './Header'
 import EquipmentCard from './common/EquipmentCard'
+import HistoryItemEquipment from './common/HistoryItemEquipment'
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import getRingBonuses from './common/GetRingBonuses'
@@ -35,7 +36,9 @@ class ItemEquipment extends Component {
             inputPrice: '',
             showModalConnection: false,
             typeModal: '',
-            wizaPrice: undefined
+            wizaPrice: undefined,
+            itemHistory: [],
+            loadingHistory: true
         }
     }
 
@@ -91,9 +94,39 @@ class ItemEquipment extends Component {
 
         this.props.getInfoNftEquipment(chainId, gasPrice, gasLimit, networkUrl, iditem, (response) => {
 			//console.log(response);
+            this.loadHistory(iditem)
 			this.setState({ equipment: response, loading: false })
 		})
     }
+
+    loadHistory(iditem) {
+		let url = `https://estats.chainweb.com/txs/events?search=wiz-equipment.EQUIPMENT_BUY&param=${iditem}&offset=0&limit=50`
+		//console.log(url);
+		fetch(url)
+  		.then(response => response.json())
+  		.then(data => {
+  			//console.log(data)
+
+			let filterData = []
+			if (data && data.length > 0) {
+				for (var i = 0; i < data.length; i++) {
+					let d = data[i]
+
+					const id = d.params[0]
+
+					if (id && id === iditem) {
+						filterData.push(d)
+					}
+				}
+			}
+
+			this.setState({ itemHistory: filterData, loadingHistory: false })
+  		})
+		.catch(e => {
+			console.log(e)
+			this.setState({ loadHistory: false })
+		})
+	}
 
     onlyNumbers(str) {
 		return /^[0-9]+$/.test(str);
@@ -458,6 +491,52 @@ class ItemEquipment extends Component {
 		)
 	}
 
+    renderHistoryItem(item, index, isMobile) {
+		const { itemHistory } = this.state
+
+		return (
+			<HistoryItemEquipment
+				item={item}
+				index={index}
+				nftH={itemHistory}
+				key={index}
+				isMobile={isMobile}
+			/>
+		)
+	}
+
+    renderBoxSales(width) {
+		const { itemHistory, loadingHistory } = this.state
+
+		return (
+			<div style={Object.assign({}, styles.boxSection, { width })}>
+
+				<div style={{ backgroundColor: '#ffffff15', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
+					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, color: 'white' }}>
+						Item sales
+					</p>
+				</div>
+
+				<div style={Object.assign({}, styles.boxHistory, { width })}>
+
+					{itemHistory.map((item, index) => {
+						return this.renderHistoryItem(item, index, false)
+					})}
+
+					{
+						itemHistory && itemHistory.length === 0 ?
+						<p style={{ fontSize: 18, color: 'white', marginLeft: 15, marginBottom: 15, marginTop: 15 }}>
+							{loadingHistory ? "Loading..." : "No sales"}
+						</p>
+						: null
+					}
+
+				</div>
+
+			</div>
+		)
+	}
+
     renderBodySmall() {
 		const { equipment, loading } = this.state
 		const { account } = this.props
@@ -547,6 +626,8 @@ class ItemEquipment extends Component {
                     this.renderBoxEquipped(imageWidth)
                     : null
                 }
+
+                {this.renderBoxSales(imageWidth)}
 
             </div>
         )
@@ -646,6 +727,8 @@ class ItemEquipment extends Component {
                     </div>
 
                     {this.renderBoxStats(boxW)}
+
+                    {this.renderBoxSales(boxW)}
 
                 </div>
             </div>
@@ -843,6 +926,12 @@ const styles = {
 		flexDirection: 'row',
 		flexWrap: 'wrap',
 		padding: 10,
+	},
+    boxHistory: {
+		flexDirection: 'column',
+		width: '90%',
+		paddingTop: 5,
+		paddingBottom: 5,
 	},
 }
 

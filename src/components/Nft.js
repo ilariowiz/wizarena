@@ -138,7 +138,7 @@ class Nft extends Component {
 
 				//console.log(response)
 
-				const tournaments = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10", "t11", "t12"]
+				const tournaments = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10", "t11", "t12", "t13"]
 
 				response['groupedFights'] = {}
 

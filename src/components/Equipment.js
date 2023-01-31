@@ -424,17 +424,35 @@ class Equipment extends Component {
 
                 </div>
 
-				<div style={{ flexWrap: 'wrap', alignItems: 'center' }}>
-					{this.renderBoxHeader(items.toLocaleString(), 'items', isMobile)}
+                <div style={{ width: '100%', alignItems: 'center' }}>
+    				<div style={{ flexWrap: 'wrap', alignItems: 'center' }}>
+    					{this.renderBoxHeader(items.toLocaleString(), 'items', isMobile)}
 
-					{this.renderBoxHeader(uniqueOwners.toLocaleString(), 'owners', isMobile)}
+    					{this.renderBoxHeader(uniqueOwners.toLocaleString(), 'owners', isMobile)}
 
-					{this.renderBoxHeader(`${floor || '...'} WIZA`, 'floor price', isMobile)}
+    					{this.renderBoxHeader(`${floor || '...'} WIZA`, 'floor price', isMobile)}
 
-					{this.renderBoxHeader(`${volume.toLocaleString()} WIZA`, 'total volume', isMobile)}
+    					{this.renderBoxHeader(`${volume.toLocaleString()} WIZA`, 'total volume', isMobile)}
 
-					{this.renderBoxHeader(`${equipped || 0}`, 'equipped', isMobile)}
-				</div>
+    					{this.renderBoxHeader(`${equipped || 0}`, 'equipped', isMobile)}
+    				</div>
+
+                    <div style={{ alignItems: 'center' }}>
+    					<a
+    						href={`${window.location.protocol}//${window.location.host}/salesequipment`}
+    	                    style={styles.btnSales}
+    	                    onClick={(e) => {
+    							e.preventDefault()
+    							this.props.history.push('/salesequipment')
+    						}}
+    	                >
+    	                    <p style={{ fontSize: 17, color: 'white' }}>
+    	                        Sales
+    	                    </p>
+    	                </a>
+    				</div>
+                </div>
+
 			</div>
 		)
 	}
@@ -819,6 +837,18 @@ const styles = {
 		minWidth: 60,
 		display: 'flex',
 		flexDirection: 'row'
+	},
+    btnSales: {
+		width: 160,
+		height: 38,
+		marginRight: 10,
+		borderWidth: 2,
+		borderColor: 'white',
+		borderStyle: 'solid',
+		borderRadius: 2,
+		justifyContent: 'center',
+		alignItems: 'center',
+		display: 'flex'
 	},
 }
 

@@ -11,6 +11,7 @@ import Fight from './components/Fight'
 import Rules from './components/Rules'
 import Tournament from './components/Tournament'
 import Sales from './components/Sales'
+import SalesEquipment from './components/SalesEquipment'
 import Shop from './components/Shop'
 import BurningQueue from './components/BurningQueue'
 
@@ -46,6 +47,7 @@ ReactDOM.render(
             <Route path="/rules" component={Rules} />
             <Route path="/tournament" component={Tournament} />
             <Route path="/sales" component={Sales} />
+            <Route path="/salesequipment" component={SalesEquipment} />
             <Route path="/magicshop" component={Shop} />
             <Route path="/burningqueue" component={BurningQueue} />
             <Route path="/fightpvp" component={DoFight} />

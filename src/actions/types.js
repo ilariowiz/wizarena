@@ -70,6 +70,7 @@ export const SET_SFIDA = 'SET_SFIDA'
 export const SET_AVG_LEVEL_PVP = 'SET_AVG_LEVEL_PVP'
 
 export const SAVE_SALES = 'SAVE_SALES'
+export const SAVE_SALES_EQUIPMENT = 'SAVE_SALES_EQUIPMENT'
 
 export const SAVE_RANK = 'SAVE_RANK'
 
