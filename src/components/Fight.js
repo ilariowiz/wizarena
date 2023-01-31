@@ -8,6 +8,7 @@ import Rainbow from 'rainbowvis.js'
 import Header from './Header'
 import getImageUrl from './common/GetImageUrl'
 import cardStats from './common/CardStats'
+import getRingBonuses from './common/GetRingBonuses'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import { MAIN_NET_ID, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import {
@@ -317,6 +318,11 @@ class Fight extends Component {
 
         //console.log(info);
 
+        let infoEquipment;
+        if (info.ring && info.ring.bonus) {
+            infoEquipment = getRingBonuses(info.ring)
+        }
+
         return (
             <div className="containerChoice" style={{ marginRight: 0, width, height: '100%' }}>
                 <img
@@ -348,7 +354,7 @@ class Fight extends Component {
                     </p>
                 </div>
 
-                {cardStats(info, undefined, '80%')}
+                {cardStats(info, undefined, '80%', infoEquipment ? infoEquipment.bonusesDict : undefined)}
             </div>
         )
     }
