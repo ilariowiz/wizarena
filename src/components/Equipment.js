@@ -401,6 +401,28 @@ class Equipment extends Component {
         )
     }
 
+    renderProgress() {
+        const { totalCountItems } = this.props
+
+		let items = totalCountItems || 0
+
+        let maxItems = 4000
+
+        let pctMinted = items * 100 / maxItems
+
+        return (
+            <div style={{ position: 'relative', width: '100%', height: 16, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', overflow: 'hidden', alignItems: 'center', marginBottom: 15 }}>
+                <div
+                    style={{ backgroundColor: CTA_COLOR, height: 16, width: `${pctMinted}%` }}
+                />
+
+                <p style={{ position: 'absolute', right: 6, color: 'white', fontSize: 14 }}>
+                    {items}/{maxItems}
+                </p>
+            </div>
+        )
+    }
+
     renderHeader(isMobile) {
 		const { totalCountItems } = this.props
 		const { floor, uniqueOwners, volume, equipped } = this.state
@@ -410,15 +432,19 @@ class Equipment extends Component {
 		return (
 			<div style={{ width: '100%', flexDirection: 'column', alignItems: 'flex-start', marginTop: 35, marginBottom: 20, flexWrap: 'wrap' }}>
 
-                <div style={{ flexWrap: 'wrap', flexDirection: 'column' }}>
+                <div style={{ flexWrap: 'wrap', flexDirection: 'column', alignItems: isMobile ? "center" : 'flex-start'  }}>
 
                     <p style={{ fontSize: 24, color: 'white', marginBottom: 25 }}>
                         Buy a mystery chest
                     </p>
 
-                    {this.renderChestCard(isMobile)}
+                    <div style={{ flexDirection: 'column' }}>
+                        {this.renderChestCard(isMobile)}
 
-                    <p style={{ fontSize: 22, color: 'white', marginBottom: 40, marginTop: 20 }}>
+                        {this.renderProgress()}
+                    </div>
+
+                    <p style={{ fontSize: 22, color: 'white', marginBottom: 35, marginTop: 20 }}>
                         ...or buy a ring directly from the marketplace
                     </p>
 
@@ -762,7 +788,7 @@ const styles = {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        marginBottom: 35,
+        marginBottom: 15,
         backgroundColor: "#3729af"
     },
     cardShopStyleMobile: {
@@ -770,7 +796,7 @@ const styles = {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 35,
+        marginBottom: 15,
         backgroundColor: "#3729af",
         width: 'fit-content',
         paddingLeft: 15,
