@@ -5,7 +5,7 @@ import { firebasedb } from '../Firebase';
 import { IoClose } from 'react-icons/io5'
 import DotLoader from 'react-spinners/DotLoader';
 import Pact from "pact-lang-api";
-import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, sendMessageUpdateNickname, sendMessageUpgrade } from './WebhookDiscord'
+import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, sendMessageUpdateNickname, sendMessageUpgrade, sendMessageListedEquipment, sendMessageDelistedEquipment, sendMessageSalesEquipment } from './WebhookDiscord'
 import '../../css/Modal.css'
 import {
 	signTransaction,
@@ -92,11 +92,20 @@ class ModalTransaction extends Component {
 			else if (type === "acceptoffer" || type === "buy") {
 				sendMessageSales(saleValues.id, saleValues.amount)
 			}
+			else if (type === "buyequipment") {
+				sendMessageSalesEquipment(saleValues)
+			}
 			else if (type === "list") {
 				sendMessageListed(idNft, inputPrice)
 			}
+			else if (type === 'listequipment') {
+				sendMessageListedEquipment(saleValues)
+			}
 			else if (type === "delist") {
 				sendMessageDelisted(nameNft.replace("#", ""))
+			}
+			else if (type === "delistequipment") {
+				sendMessageDelistedEquipment(saleValues)
 			}
 			else if (type === "buynickname") {
 				sendMessageUpdateNickname(nameNft.replace("#", ""), nicknameToSet)

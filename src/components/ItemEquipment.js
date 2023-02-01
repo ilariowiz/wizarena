@@ -150,7 +150,9 @@ class ItemEquipment extends Component {
 			return
 		}
 
-		this.setState({ typeModal: 'listequipment' }, () => {
+        let saleValues = { id: equipment.id, amount: inputPrice, url: equipment.url, name: equipment.name }
+
+		this.setState({ typeModal: 'listequipment', saleValues }, () => {
 			this.props.listEquipment(chainId, gasPrice, 700, netId, equipment.id, parseFloat(inputPrice).toFixed(2), account)
 		})
 
@@ -160,7 +162,9 @@ class ItemEquipment extends Component {
 		const { equipment } = this.state;
 		const { account, chainId, gasPrice, netId } = this.props
 
-		this.setState({ typeModal: 'delistequipment' }, () => {
+        let saleValues = { id: equipment.id, url: equipment.url, name: equipment.name }
+
+		this.setState({ typeModal: 'delistequipment', saleValues }, () => {
 			this.props.delistEquipment(chainId, gasPrice, 700, netId, account, equipment.id)
 		})
 	}
@@ -169,7 +173,7 @@ class ItemEquipment extends Component {
 		const { equipment } = this.state
 		const { account, chainId, gasPrice, netId } = this.props
 
-		let saleValues = { id: equipment.id, amount: equipment.price }
+		let saleValues = { id: equipment.id, amount: equipment.price, url: equipment.url, name: equipment.name }
 
 		this.setState({ typeModal: 'buyequipment', saleValues }, () => {
 			this.props.buyEquipment(chainId, gasPrice, 7000, netId, account, equipment.id)
