@@ -34,7 +34,7 @@ class ModalTransaction extends Component {
 	}
 
 	pollForTransaction = async () => {
-		const { transactionState, networkUrl, nameNft, idNft, inputPrice, statToUpgrade, howMuchIncrement, type, pvpWeek, makeOfferValues, saleValues, wizaAmount, nicknameToSet } = this.props
+		const { transactionState, networkUrl, nameNft, idNft, inputPrice, statToUpgrade, howMuchIncrement, type, pvpWeek, makeOfferValues, saleValues, wizaAmount, nicknameToSet, ringToEquipName } = this.props
 
 
 		const requestKey = transactionState.requestKey
@@ -106,6 +106,10 @@ class ModalTransaction extends Component {
 			}
 			else if (type === "delistequipment") {
 				sendMessageDelistedEquipment(saleValues)
+			}
+			else if (type === "equip") {
+				const msg = `${nameNft} wore the ${ringToEquipName}`
+				sendMessageUpgrade(nameNft.replace("#", ""), msg)
 			}
 			else if (type === "buynickname") {
 				sendMessageUpdateNickname(nameNft.replace("#", ""), nicknameToSet)
