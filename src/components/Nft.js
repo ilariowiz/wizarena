@@ -1020,6 +1020,8 @@ class Nft extends Component {
 	renderStat(title, value) {
 		const { equipment } = this.state
 
+		//console.log(equipment);
+
 		let fixedValue = value
 
 		if (title === "SPELL PERK") {
@@ -1063,7 +1065,7 @@ class Nft extends Component {
 			)
 		}
 
-		if (equipment.bonus && equipment.bonus.includes(title.toLowerCase())) {
+		if (equipment.equipped && equipment.bonus && equipment.bonus.includes(title.toLowerCase())) {
 			const ringBonus = getRingBonuses(equipment)
 			//console.log(ringBonus);
 			fixedValue = fixedValue + ringBonus.bonusesDict[title.toLowerCase()]
@@ -1415,7 +1417,6 @@ class Nft extends Component {
 					<div style={{ alignItems: 'center' }}>
 						<img
 							src={equipment.url}
-							//src="https://storage.googleapis.com/wizarena/equipment/ring_atk_1.png"
 							style={{ width: 100 }}
 						/>
 
