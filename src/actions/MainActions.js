@@ -1,7 +1,7 @@
 import Pact from "pact-lang-api";
 import SignClient from "@walletconnect/sign-client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
-import { getDoc, doc } from "firebase/firestore";
+import { getDoc, doc, setDoc } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import { calcLevelWizard } from '../components/common/CalcLevelWizard'
 import _ from 'lodash'
@@ -806,11 +806,12 @@ export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 					let idx = response.findIndex(z => z.idnft === i.id)
 					//console.log(idx);
 
-					/*
+
 					if (!data) {
-						console.log(response[idx]);
+						//console.log(response[idx]);
+						setDoc(docRef, { "lose": 0, "win": 0, "maxFights": response[idx].rounds.int })
 					}
-					*/
+
 
 					if (idx > -1) {
 						let obj = response[idx]
