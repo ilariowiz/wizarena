@@ -47,7 +47,7 @@ class Sales extends Component {
 
 		//console.log(url);
 		fetch(url)
-  		.then(response => response.json())
+  		.then(response => response.json()) //response.headers.get('Chainweb-Next')
   		.then(data => {
   			//console.log(data)
             this.setState({ loading: false })

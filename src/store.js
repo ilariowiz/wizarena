@@ -13,7 +13,7 @@ const saveSubsetMain = createFilter(
 
 const saveSubsetSales = createFilter(
 	'salesReducer',
-	['sales', 'lastTimeUpdateSales']
+	['sales', 'lastTimeUpdateSales', 'lastTimeUpdateSalesEquipment', 'salesEquipment']
 )
 
 const saveSubsetRank = createFilter(
