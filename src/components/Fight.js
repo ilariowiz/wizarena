@@ -74,7 +74,7 @@ class Fight extends Component {
         const docRef = doc(firebasedb, "fights", idFight)
         const docSnap = await getDoc(docRef)
 
-        //console.log(docSnap.data());
+        console.log(docSnap.data());
 
         const data = docSnap.data()
 
@@ -82,11 +82,42 @@ class Fight extends Component {
 
         if (data.info2 && data.info2.defense) {
 
-            actionsDict[`${data.idnft1}_initialhp`] = data.info1.hp
-            this.dataCurrentHP[`#${data.idnft1}`] = data.info1.hp
+            let hp1 = data.info1.hp
+            if (data.info1.potion && data.info1.potion === "hp") {
+                hp1 += 8
+            }
 
-            actionsDict[`${data.idnft2}_initialhp`] = data.info2.hp
-            this.dataCurrentHP[`#${data.idnft2}`] = data.info2.hp
+            if (data.info1.ring && data.info1.ring.equipped) {
+                if (data.info1.ring.bonus.includes("hp")) {
+                    let infoEquipment = getRingBonuses(data.info1.ring)
+
+                    if (infoEquipment.bonusesDict["hp"]) {
+                        hp1 += infoEquipment.bonusesDict["hp"]
+                    }
+                }
+            }
+
+            actionsDict[`${data.idnft1}_initialhp`] = hp1
+            this.dataCurrentHP[`#${data.idnft1}`] = hp1
+
+
+            let hp2 = data.info2.hp
+            if (data.info2.potion && data.info2.potion === "hp") {
+                hp2 += 8
+            }
+
+            if (data.info2.ring && data.info2.ring.equipped) {
+                if (data.info2.ring.bonus.includes("hp")) {
+                    let infoEquipment = getRingBonuses(data.info2.ring)
+
+                    if (infoEquipment.bonusesDict["hp"]) {
+                        hp2 += infoEquipment.bonusesDict["hp"]
+                    }
+                }
+            }
+
+            actionsDict[`${data.idnft2}_initialhp`] = hp2
+            this.dataCurrentHP[`#${data.idnft2}`] = hp2
             actionsDict['actions'] = []
 
             for (var i = 0; i < data.actions.length; i++) {
