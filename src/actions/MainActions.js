@@ -233,8 +233,8 @@ export const connectWalletConnect = (netId, chainId, gasPrice, gasLimit, network
 
 		const requiredNamespaces = {
 			kadena: {
-				methods: ["kadena_sign", "kadena_quicksign"],
-				chains: ["kadena:mainnet01", "kadena:testnet04"],
+				methods: ["kadena_sign"],
+				chains: ["kadena:mainnet01"],
 				events: ["kadena_transaction_updated"]
 			}
 		}
@@ -272,7 +272,7 @@ export const connectWalletConnect = (netId, chainId, gasPrice, gasLimit, network
 			const accounts = session.namespaces["kadena"].accounts.map((item) => {
 				//console.log(item);
 				let normalAccountName = item;
-				["mainnet01", "testnet04"].forEach(chain => {
+				["mainnet01"].forEach(chain => {
 					normalAccountName = normalAccountName.replace("**", ":").replace(`kadena:${chain}:`, "")
 				})
 				return normalAccountName
