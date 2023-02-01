@@ -33,9 +33,10 @@ class DoFight extends Component {
         this.indexShow = 0
         this.turnTimeout = undefined
 
+        this.history = []
+
         this.state = {
             loading: true,
-            history: [],
             historyShow: [],
             winner: undefined,
             isEnd: false
@@ -120,8 +121,10 @@ class DoFight extends Component {
 
                         if (ring && ring.equipped) {
                             const stats = ring.bonus.split(",")
+                            //console.log("stats ring 2", stats);
                             stats.map(i => {
                                 const infos = i.split("_")
+                                //console.log(infos[1], infos[0]);
                                 this.player2[infos[1]] += parseInt(infos[0])
                             })
                         }
@@ -396,10 +399,7 @@ class DoFight extends Component {
 
     fineTurno(attaccante, difensore, desc, end) {
         //console.log(attaccante, difensore, desc, end);
-        const { history } = this.state
         const { sfida } = this.props
-
-        const newH = Object.assign([], history)
 
         //console.log(newH);
 
@@ -415,16 +415,16 @@ class DoFight extends Component {
         }
 
         const obj = { desc, player1CurrentHp: currentHp1, player2CurrentHp: currentHp2 }
-        newH.push(obj)
+        this.history.push(obj)
 
         //console.log(currentHp1, currentHp2);
 
         if (end) {
             //console.log(attaccante, difensore, desc, end);
 
-            this.setState({ loading: false, winner: attaccante.name, history: newH }, () => {
+            this.setState({ loading: false, winner: attaccante.name }, () => {
 
-                this.updateFirebase(sfida, attaccante, difensore, newH)
+                this.updateFirebase(sfida, attaccante, difensore, this.history)
 
                 this.indexShow = 0
 
@@ -434,10 +434,7 @@ class DoFight extends Component {
             })
         }
         else {
-            this.setState({ history: newH }, () => {
-                this.turno(difensore, attaccante)
-            })
-
+            this.turno(difensore, attaccante)
         }
     }
 
@@ -482,9 +479,7 @@ class DoFight extends Component {
     }
 
     showFight() {
-        const { history } = this.state
-
-        let historyToShow = history[this.indexShow]
+        let historyToShow = this.history[this.indexShow]
         historyToShow["turn"] = this.indexShow+1
 
         let historyShow = Object.assign([], this.state.historyShow)
@@ -493,8 +488,8 @@ class DoFight extends Component {
 
         this.setState({ historyShow }, () => {
 
-            //console.log(history.length, this.indexShow);
-            if (history.length > this.indexShow+1) {
+            //console.log(this.history.length, this.indexShow);
+            if (this.history.length > this.indexShow+1) {
                 this.indexShow += 1
                 this.turnTimeout = setTimeout(() => {
                     this.showFight()

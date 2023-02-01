@@ -54,7 +54,7 @@ class CardSingleFightProfile extends Component {
                                 }}
                             >
                                 <p style={{ color: 'white', fontSize: 17 }}>
-            						GO FIGHT
+            						REPLAY
             					</p>
                             </a>
                         </div>
@@ -83,7 +83,7 @@ class CardSingleFightProfile extends Component {
                                 }}
                             >
                                 <p style={{ color: 'white', fontSize: 17 }}>
-            						GO FIGHT
+            						REPLAY
             					</p>
                             </a>
                         </div>
