@@ -36,14 +36,21 @@
     (defconst PVP_OPEN "pvp-open")
     (defconst PVP_WEEK "pvp-week")
 
-    (defconst TOURNAMENT_NAME "tournament-name")
-
     (defconst ID_REVEAL "id-reveal")
 
     (defconst WIZARDS_OFFERS_COUNT_KEY "wizards-offers-count-key")
     (defconst WIZARDS_OFFERS_BANK:string "wizards-offers-bank" "Account holding offers")
 
     (defconst BUYIN_PVP "buyin-pvp")
+
+    ;tournament in wiza
+    (defconst BUYIN_WIZA_KEY "buyin-wiza-key")
+    (defconst FEE_TOURNAMENT_WIZA_KEY "fee-tournament-wiza-key")
+    (defconst TOURNAMENT_WIZA_OPEN "tournament_wiza_open")
+    (defconst TOURNAMENT_WIZA_LEVEL_CAP 200)
+
+    (defconst TOURNAMENT_NAME "tournament-name")
+    (defconst TOURNAMENT_WIZA_NAME "tournament-wiza-name")
 
 ; --------------------------------------------------------------------------
 ; Capabilities
@@ -94,6 +101,11 @@
     )
 
     (defcap TOURNAMENT_SUBSCRIPTION (id:string tournament:string)
+        @doc "Emitted event when a Wizard signs up for the tournament"
+        @event true
+    )
+
+    (defcap TOURNAMENT_WIZA_SUBSCRIPTION (id:string tournament:string)
         @doc "Emitted event when a Wizard signs up for the tournament"
         @event true
     )
@@ -198,9 +210,9 @@
         value:decimal
     )
 
-    (defschema prizes-schema
-        balance:decimal
-    )
+    ; (defschema prizes-schema
+    ;     balance:decimal
+    ; )
 
     (defschema stats-schema
         id:string
@@ -293,7 +305,7 @@
     (deftable token-table:{token-schema})
     (deftable tournaments:{tournament-sub-schema})
     (deftable values-tournament:{values-tournament-schema})
-    (deftable prizes:{prizes-schema})
+    ;(deftable prizes:{prizes-schema})
     (deftable stats:{stats-schema})
     (deftable upgrade-stat-values:{upgrade-stat-values-schema})
     (deftable burning-queue-table:{burning-queue-schema})
@@ -341,11 +353,18 @@
 
         (insert values ID_REVEAL {"value":"1024"})
 
-        (insert values TOURNAMENT_NAME {"value": "t9"})
-
         (insert counts WIZARDS_OFFERS_COUNT_KEY {"count": 0})
         (coin.create-account WIZARDS_OFFERS_BANK (create-BANK-guard))
         (create-account WIZARDS_OFFERS_BANK (create-BANK-guard))
+
+        ; wiza tornament
+        (insert values-tournament BUYIN_WIZA_KEY {"value": 100.0})
+        (insert values-tournament FEE_TOURNAMENT_WIZA_KEY {"value": 11.0})
+
+        (insert values TOURNAMENT_WIZA_OPEN {"value": "0"})
+
+        (insert values TOURNAMENT_NAME {"value": "t14"})
+        (insert values TOURNAMENT_WIZA_NAME {"value": "t1001"})
     )
 
     (defun insertValuesUpgrade ()
@@ -1118,14 +1137,14 @@
             )
             (with-capability (PRIVATE)
                 (map
-                    (nft-to-subscribe)
+                    (nft-to-subscribe "kda")
                     subscribers
                 )
             )
         )
     )
 
-    (defun nft-to-subscribe (subscriber:object)
+    (defun nft-to-subscribe (type:string subscriber:object)
         (require-capability (PRIVATE))
         (let (
                 (id (at "id" subscriber))
@@ -1133,36 +1152,41 @@
                 (idnft (at "idnft" subscriber))
                 (address (at "address" subscriber))
                 (spellSelected (at "spellSelected" subscriber))
+                (tournament-name (get-value TOURNAMENT_NAME))
+                (tournament-wiza-name (get-value TOURNAMENT_WIZA_NAME))
+            )
+            (if
+                (= type "kda")
+                (enforce (= tournament-name round) "can't subscribe to the tournament")
+                (enforce (= tournament-wiza-name round) "can't subscribe to the tournament")
             )
             (with-capability (OWNER address idnft)
-                (subscribe-tournament id round idnft address spellSelected)
+                (subscribe-tournament id round idnft address spellSelected type)
             )
         )
     )
 
     ;round = tournament number
-    (defun subscribe-tournament (id:string round:string idnft:string address:string spellSelected:object)
+    (defun subscribe-tournament (id:string round:string idnft:string address:string spellSelected:object type:string)
         @doc "Subscribe a wizard to tournament"
         (require-capability (PRIVATE))
         (let (
                 (data-wiz (get-wizard-fields-for-id (str-to-int idnft)))
+                (current-level (calculate-level idnft))
             )
             (enforce (= (at "confirmBurn" data-wiz) false) "You can't subscribe a wizard in burning queue")
+            (if
+                (= type "wiza")
+                (enforce (<= current-level TOURNAMENT_WIZA_LEVEL_CAP) "you can't subscribe this wizard")
+                ""
+            )
         )
-        (with-default-read tournaments id
-            {"idnft": ""}
-            {"idnft":= idnft }
-            (enforce (= (length idnft) 0) "Already subscribed to this tournament")
+        (subscribe-last id round idnft address spellSelected)
+        (if
+            (= type "kda")
+            (emit-event (TOURNAMENT_SUBSCRIPTION idnft round))
+            (emit-event (TOURNAMENT_WIZA_SUBSCRIPTION idnft round))
         )
-        (insert tournaments id {
-            "round": round,
-            "idnft": idnft,
-            "address": address
-        })
-        (update stats idnft {
-          "spellSelected": spellSelected
-        })
-        (emit-event (TOURNAMENT_SUBSCRIPTION idnft round))
     )
 
     (defun send-prizes (winners:list)
@@ -1201,6 +1225,45 @@
     (defun get-all-subscription-for-tournament (idtournament:string)
         @doc "Get all subscribers for a single tournament"
         (select tournaments (where "round" (= idtournament)))
+    )
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;; TOURNAMENT in WIZA ;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (defun subscribe-tournament-wiza-mass (subscribers:list address:string m:module{wiza1-interface-v1})
+        (let (
+                (buyin (* (get-value-tournament BUYIN_WIZA_KEY) (length subscribers)))
+                (tournament-open (get-value TOURNAMENT_WIZA_OPEN))
+            )
+            (enforce (= tournament-open "1") "Tournament registrations are closed")
+            (with-capability (ACCOUNT_GUARD address)
+                (spend-wiza buyin address m)
+            )
+            (with-capability (PRIVATE)
+                (map
+                    (nft-to-subscribe "wiza")
+                    subscribers
+                )
+            )
+        )
+    )
+
+    (defun subscribe-last (id:string round:string idnft:string address:string spellSelected:object)
+        (require-capability (PRIVATE))
+        (with-default-read tournaments id
+            {"idnft": ""}
+            {"idnft":= idnft }
+            (enforce (= (length idnft) 0) "Already subscribed to this tournament")
+        )
+        (insert tournaments id {
+            "round": round,
+            "idnft": idnft,
+            "address": address
+        })
+        (update stats idnft {
+          "spellSelected": spellSelected
+        })
     )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1816,7 +1879,7 @@
     (create-table token-table)
     (create-table tournaments)
     (create-table values-tournament)
-    (create-table prizes)
+    ;(create-table prizes)
 
     (create-table coin.coin-table)
 

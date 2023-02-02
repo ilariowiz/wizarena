@@ -626,9 +626,9 @@
 (free.wiz-arena.add-stats [{
     "id": "0",
     "attack": 7,
-    "damage": 17,
+    "damage": 2,
     "weakness": "wind",
-    "defense": 19,
+    "defense": 17,
     "speed": 0,
     "element": "Dark",
     "fights": [],
@@ -1013,6 +1013,59 @@
 (free.wiz-arena.get-wizard-fields-for-id 0)
 
 (commit-tx)
+
+(begin-tx "OPEN TOURNAMENT REG WIZA")
+
+(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+
+(free.wiz-arena.set-value "tournament_wiza_open" "1")
+
+(commit-tx)
+
+
+;;;; SUBSCRIBE TO TOURNAMENT
+(begin-tx "SUBSCRIBE Tournament WIZA")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.subscribe-tournament-wiza-mass
+    [{ "id":"t1_0","round":"t1001","idnft":"0","address":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "spellSelected": {"name": "Unholy Nova"}},
+    { "id":"t1_1","round":"t1001","idnft":"1","address":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "spellSelected": {"name": "Unholy Nova"}}]
+    "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"
+    free.wiza
+)
+
+
+(commit-tx)
+
+;;;; SUBSCRIBE TO TOURNAMENT
+(begin-tx "SUBSCRIBE Tournament KDA")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (coin.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" free.wiz-arena.WIZ_BANK 8.0)
+    (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
+    ;(free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    ;(free.wiz-arena.OWNER "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb" "1")
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.subscribe-tournament-mass
+    [{ "id":"t2_0","round":"t14","idnft":"0","address":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "spellSelected": {"name": "Unholy Nova"}},
+    { "id":"t2_1","round":"t14","idnft":"1","address":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "spellSelected": {"name": "Unholy Nova"}}]
+    "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"
+)
+
+(commit-tx)
+
 
 (begin-tx "CREATE EQUIPMENT")
 
