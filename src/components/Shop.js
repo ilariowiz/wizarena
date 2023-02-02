@@ -1338,7 +1338,7 @@ class Shop extends Component {
                                 </p>
 
                                 <p style={{ fontSize: 18, color: 'gold', marginBottom: 10 }}>
-                                    ATTENTION! Vials can only be used for the tournament in KDA
+                                    ATTENTION! Vials can only be used in the main tournament. Vials will not work in the apprentice tournament
                                 </p>
 
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
