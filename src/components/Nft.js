@@ -137,8 +137,12 @@ class Nft extends Component {
 				document.title = `${response.name} - Wizards Arena`
 
 				//console.log(response)
+				//console.log(Object.keys(response.medals));
 
-				const tournaments = ["t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9", "t10", "t11", "t12", "t13"]
+				let tournaments = Object.keys(response.medals)
+				tournaments.sort((a, b) => {
+					return parseInt(a.replace("t", "")) - parseInt(b.replace("t", ""))
+				})
 
 				response['groupedFights'] = {}
 
