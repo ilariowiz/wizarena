@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import getRingBonuses from './GetRingBonuses'
+import getImageUrl from './GetImageUrl'
 import '../../css/ItemCard.css'
 
 const logoWiza = require('../../assets/wzlogo_bg_transparent.png')
@@ -7,6 +8,8 @@ const logoWiza = require('../../assets/wzlogo_bg_transparent.png')
 class EquipmentCard extends Component {
     render() {
         const { item, history } = this.props
+
+        //console.log(item);
 
         const infoEquipment = getRingBonuses(item)
 
@@ -52,7 +55,30 @@ class EquipmentCard extends Component {
                         </p>
                     </div>
                     :
-                    <div style={{ height: 10 }} />
+                    null
+                }
+
+                {
+                    item.equipped ?
+                    <div style={{ alignItems: 'center', justifyContent: 'flex-end', width: '100%' }}>
+                        <p style={{ fontSize: 13, color: '#c2c0c0', marginRight: 7 }}>
+                            equipped to
+                        </p>
+
+                        <p style={{ fontSize: 15, color: 'white', marginRight: 7 }}>
+                            #{item.equippedToId}
+                        </p>
+
+                        <img
+        					style={{ width: 40, height: 40, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', borderRadius: 2 }}
+        					src={getImageUrl(item.equippedToId)}
+        					alt={`#${item.equippedToId}`}
+        				/>
+
+
+                    </div>
+                    :
+                    null
                 }
 
             </a>
