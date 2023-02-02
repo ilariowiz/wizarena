@@ -487,7 +487,7 @@ class Tournament extends Component {
                 </p>
 
                 <p style={{ fontSize: 20, color: 'white', marginBottom }}>
-                    Prize <span style={{ color: 'gold' }}>{montepremi || '...'}</span> $KDA
+                    Prize <span style={{ color: 'gold' }}>{montepremi ? montepremi.toFixed(2) : '...'}</span> $KDA
                 </p>
 
                 <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
