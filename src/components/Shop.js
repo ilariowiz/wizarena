@@ -1334,7 +1334,11 @@ class Shop extends Component {
                                 </p>
 
                                 <p style={{ fontSize: 18, color: 'white', marginBottom: 10 }}>
-                                    ATTENTION! Each wizard can have a maximum of one vial
+                                    Each wizard can have a maximum of one vial
+                                </p>
+
+                                <p style={{ fontSize: 18, color: 'gold', marginBottom: 10 }}>
+                                    ATTENTION! Vials can only be used for the tournament in KDA
                                 </p>
 
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>

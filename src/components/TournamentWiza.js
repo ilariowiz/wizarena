@@ -14,7 +14,6 @@ import convertMedalName from './common/ConvertMedalName'
 import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import {
-    getMontepremi,
     getBuyin,
     getFeeTournament,
     setNetworkSettings,
@@ -41,7 +40,8 @@ class Tournament extends Component {
             matchPair: [],
             userMinted: [],
             potionsEquipped: [],
-            ringsEquipped: []
+            ringsEquipped: [],
+            subscribed: []
 		}
 	}
 
@@ -70,7 +70,7 @@ class Tournament extends Component {
     async loadTournament() {
         const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
 
-        const querySnapshot = await getDocs(collection(firebasedb, "stage"))
+        const querySnapshot = await getDocs(collection(firebasedb, "stage_low"))
 
         querySnapshot.forEach(doc => {
             //console.log(doc.data());
@@ -90,7 +90,6 @@ class Tournament extends Component {
 
             this.setState({ tournament }, async () => {
 
-                this.props.getMontepremi(chainId, gasPrice, gasLimit, networkUrl)
 				this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-wiza-key")
 				this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-wiza-key")
 
@@ -100,23 +99,23 @@ class Tournament extends Component {
                 const roundEnded = tournament.roundEnded
                 const tournamentName = tournament.name.split("_")[0]
 
-                this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "kda", (subscribed) => {
+                this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "wiza", (subscribed) => {
 
                     //console.log(subscribed);
 
-                    this.getAllPotionsEquipped(subscribed, tournamentName)
+                    //this.getAllPotionsEquipped(subscribed, tournamentName)
                     this.getRingsEquipped(subscribed)
 
-                    const winners = []
-                    const winners4 = []
-                    const winners5 = []
-                    const winners6 = []
-
+                    let subs = []
                     let yourWizards = 0
                     let winnerWizards = 0
 
-                    subscribed.map((item) => {
-                        //console.log(item);
+                    //torneo non è iniziato
+                    if (roundEnded === "0") {
+                        subs = subscribed
+                    }
+
+                    subscribed.map(item => {
                         if (item.owner === account.account) {
                             yourWizards++
                         }
@@ -128,32 +127,13 @@ class Tournament extends Component {
                                 winnerWizards++
                             }
 
-                            //se siamo ad un round inferiore al 5
-                            if (parseInt(roundEnded) < 5) {
-                                if (item.medals[tournamentName] === roundEnded) {
-                                    winners4.push(item)
-                                }
-                            }
-                            else {
-                                if (item.medals[tournamentName] === "4") {
-                                    winners4.push(item)
-                                }
-                                if (item.medals[tournamentName] === "5") {
-                                    winners5.push(item)
-                                }
-                                if (item.medals[tournamentName] === "6") {
-                                    winners6.push(item)
-                                }
+                            if (item.medals[tournamentName] === roundEnded && parseInt(roundEnded) > 0) {
+                                subs.push(item)
                             }
                         }
                     })
 
                     //console.log(yourWizards , "/", winnerWizards);
-
-                    //console.log(winners);
-                    winners.push(winners4)
-                    winners.push(winners5)
-                    winners.push(winners6)
 
                     let yourStat;
                     if (roundEnded === "6") {
@@ -166,7 +146,7 @@ class Tournament extends Component {
                     const avgLevel = this.calcAvgLevel(subscribed)
                     //console.log(avgLevel);
 
-                    this.setState({ winners, yourStat, avgLevel, loading: false })
+                    this.setState({ subscribed: subs, yourStat, avgLevel, loading: false })
                 })
 
             })
@@ -174,7 +154,7 @@ class Tournament extends Component {
     }
 
     getAllPotionsEquipped(subscribers, tournamentName) {
-        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+        const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
 
         let keys = []
         subscribers.map(i => {
@@ -247,8 +227,12 @@ class Tournament extends Component {
     }
 
     renderInfoTournament(width) {
-		const { tournament } = this.state
-		const { montepremi, subscribed } = this.props
+		const { tournament, subscribed } = this.state
+		const { buyinWiza, feeTournamentWiza } = this.props
+
+        const fee = buyinWiza * feeTournamentWiza / 100
+        const totalFee = fee * subscribed.length
+        let montepremi = (subscribed.length * buyinWiza) - totalFee
 
 		const tname = convertMedalName(tournament.name)
 
@@ -268,7 +252,7 @@ class Tournament extends Component {
 				</p>
 
 				<p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
-					Total Prize {montepremi || '...'} KDA
+					Total Prize {montepremi || '...'} WIZA
 				</p>
 
                 <p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
@@ -290,13 +274,16 @@ class Tournament extends Component {
 	}
 
     renderSingleGraph(color, name) {
-        const { subscribed, subscribedKdaSpellGraph } = this.props
+        const { subscribedWizaSpellGraph } = this.props
+        const { subscribed } = this.state
+
+        //console.log(subscribedWizaSpellGraph);
 
         let number = 0
         let pct = 0
 
-        if (subscribedKdaSpellGraph[name]) {
-            number = subscribedKdaSpellGraph[name]
+        if (subscribedWizaSpellGraph[name]) {
+            number = subscribedWizaSpellGraph[name]
             pct = number / subscribed.length * 100
         }
 
@@ -367,81 +354,18 @@ class Tournament extends Component {
 
                     <div style={{ alignItems: 'center', marginBottom: 10 }}>
                         <p style={{ fontSize: 30, color: 'white', marginRight: 15 }}>
-                            The Twelve League
-                        </p>
-
-                        <p style={{ fontSize: 17, color: 'white', marginTop: 2 }}>
-                            ({tournament.leagueTournament})
+                            The Apprentice Tournament
                         </p>
                     </div>
-
-                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
-
-                        <div style={{ alignItems: 'center', marginRight: 20 }}>
-                            <p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
-                                Region:
-                            </p>
-                            <Popup
-        						trigger={open => (
-                                    <p style={{ textDecoration: "underline", fontSize: 20, color: 'white', cursor: 'pointer' }}>
-                                        {tournament.region}
-                                    </p>
-        						)}
-        						position="bottom center"
-        						on="hover"
-        					>
-        						<div style={{ padding: 10 }}>
-        							<p style={{ fontSize: 17, color: 'black', lineHeight: 1.2 }}>
-                                        {tournament.regionDescription}
-                                    </p>
-        						</div>
-        					</Popup>
-                        </div>
-
-                        <div style={{ alignItems: 'center', marginRight: 20 }}>
-                            <p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
-                                Event:
-                            </p>
-                            <Popup
-        						trigger={open => (
-                                    <p style={{ textDecoration: "underline", fontSize: 20, color: 'white', cursor: 'pointer' }}>
-                                        {tournament.event}
-                                    </p>
-        						)}
-        						position="bottom center"
-        						on="hover"
-        					>
-        						<div style={{ padding: 10 }}>
-        							<p style={{ fontSize: 17, color: 'black', lineHeight: 1.2 }}>
-                                        {tournament.eventDescription}
-                                    </p>
-        						</div>
-        					</Popup>
-                        </div>
-                    </div>
-
                 </div>
 
-                <a
-                    className="btnH"
-                    href={`${window.location.protocol}//${window.location.host}/league`}
-                    style={styles.btnRanking}
-                    onClick={(e) => {
-                        e.preventDefault()
-                        this.props.history.push(`./league`)
-                    }}
-                >
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        RANKING
-                    </p>
-                </a>
             </div>
         )
     }
 
     renderBody(isMobile) {
-        const { tournament } = this.state
-        const { buyin, subscribed } = this.props
+        const { tournament, matchPair, subscribed } = this.state
+        const { buyinWiza, subscribedWiza } = this.props
 
         const { boxW } = getBoxWidth(isMobile)
 
@@ -450,9 +374,6 @@ class Tournament extends Component {
         }
 
         //console.log(tournament);
-
-        const wizaPrize = buyin && subscribed && buyin * 30
-
         const roundName = tournament.name.split("_")[1]
 
         //LE ISCRIZIONI SONO APERTE
@@ -484,11 +405,11 @@ class Tournament extends Component {
 							</p>
 
 							<p style={{ fontSize: 22, color: 'white', marginBottom: 20 }}>
-								BUY-IN {buyin || '...'} KDA
+								BUY-IN {buyinWiza || '...'} WIZA
 							</p>
 
                             <p style={{ fontSize: 17, color: 'white', marginBottom: 15 }}>
-            					Participation reward (for each wizard) {wizaPrize || '...'} $WIZA, +1 spell or +1 AP if the wizard already has four spells
+            					Participation reward (for each wizard) +3 AP
             				</p>
 						</div>
 
@@ -507,7 +428,7 @@ class Tournament extends Component {
                     </button>
 
                     {
-                        subscribed && subscribed.length > 0 &&
+                        subscribedWiza && subscribedWiza.length > 0 &&
                         this.renderGraph()
                     }
 
@@ -704,9 +625,9 @@ class Tournament extends Component {
     }
 
     renderRoundConcluso(boxW) {
-        const { tournament, winners, yourStat } = this.state
+        const { tournament, subscribed, yourStat } = this.state
 
-        if (!winners || winners.length === 0) {
+        if (!subscribed || subscribed.length === 0) {
             return <div />
         }
 
@@ -727,21 +648,7 @@ class Tournament extends Component {
 
         //console.log(winners);
 
-        const winners4 = winners[0]
-        const winners5 = winners[1]
-        const winners6 = winners[2]
-
-        let subtitleText4 = ""
-        let subtitleText5 = ""
-        let subtitleText6 = ""
-        if (parseInt(roundEnded) < 5) {
-            subtitleText4 = winners4.length > 1 ?  `The ${winners4.length} winners of ${roundEnded} medals:` : `The winner of ${roundEnded} medals:`
-        }
-        else {
-            subtitleText4 = winners4.length > 1 ? `The ${winners4.length} winners of 4 medals:` : `The winner of 4 medals:`
-            subtitleText5 = winners5.length > 0 ? `The ${winners5.length} winners of 5 medals:` : ""
-            subtitleText6 = winners6.length > 0 ? `The ${winners6.length} winners of 6 medals:` : ""
-        }
+        const subtitleText = `The ${subscribed.length} winners of ${roundEnded} medals:`
 
         let titleText = tournament.tournamentEnd ?
                         "The tournament is over! Let's see who the winners are"
@@ -780,50 +687,14 @@ class Tournament extends Component {
                     </p>
                 }
 
-                {
-                    subtitleText6 &&
-                    <div style={{ flexDirection: 'column', marginBottom: 60 }}>
-                        <div
-                            style={Object.assign({}, styles.boxPodio, { borderColor: 'gold' })}
-                        >
-                            <p style={{ fontSize: 20, color: 'white' }}>
-                                {subtitleText6}
-                            </p>
-                        </div>
-
-                        <div style={{ flexWrap: 'wrap' }}>
-                            {winners6.map((item, index) => {
-                                return this.renderRow(item, index, 260);
-                            })}
-                        </div>
-                    </div>
-                }
-
-                {
-                    subtitleText5 &&
-                    <div style={{ flexDirection: 'column', marginBottom: 60 }}>
-                        <div style={Object.assign({}, styles.boxPodio, { borderColor: 'silver' })}>
-                            <p style={{ fontSize: 20, color: 'white' }}>
-                                {subtitleText5}
-                            </p>
-                        </div>
-
-                        <div style={{ flexWrap: 'wrap' }}>
-                            {winners5.map((item, index) => {
-                                return this.renderRow(item, index, 260);
-                            })}
-                        </div>
-                    </div>
-                }
-
                 <div style={Object.assign({}, styles.boxPodio, { borderColor: '#CD7F32' })}>
                     <p style={{ fontSize: 20, color: 'white' }}>
-                        {subtitleText4}
+                        {subtitleText}
                     </p>
                 </div>
 
                 <div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
-                    {winners4.map((item, index) => {
+                    {subscribed.map((item, index) => {
                         return this.renderRow(item, index, 260);
                     })}
                 </div>
@@ -944,14 +815,13 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, montepremi, buyin, feeTournament, subscribed, subscribedKdaSpellGraph } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinWiza, feeTournamentWiza, subscribedWiza, subscribedWizaSpellGraph } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, montepremi, buyin, feeTournament, subscribed, subscribedKdaSpellGraph };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinWiza, feeTournamentWiza, subscribedWiza, subscribedWizaSpellGraph };
 }
 
 export default connect(mapStateToProps, {
     getBuyin,
-    getMontepremi,
     getFeeTournament,
     setNetworkSettings,
     setNetworkUrl,

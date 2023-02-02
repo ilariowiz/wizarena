@@ -20,6 +20,7 @@ import {
 	LOAD_FEE_TOURNAMENT,
 	LOAD_MONTEPREMI,
 	LOAD_SUBSCRIBED,
+	LOAD_SUBSCRIBED_WIZA,
 	STORE_FILTERS_STATS,
 	SAVE_WIZA_BALANCE,
 	LOAD_WIZARDS_STAKED,
@@ -28,7 +29,9 @@ import {
 	SET_SFIDA,
 	SET_AVG_LEVEL_PVP,
 	SET_WIZARD_SELECTED_SHOP,
-	STORE_WIZA_NOT_CLAIMED
+	STORE_WIZA_NOT_CLAIMED,
+	LOAD_BUYIN_WIZA,
+	LOAD_FEE_TOURNAMENT_WIZA
 } from '../actions/types'
 
 
@@ -54,8 +57,12 @@ const INITIAL_STATE = {
 	feeTournament: 0,
 	montepremi: 0,
 	subscribed: [],
+	buyinWiza: 0,
+	feeTournamentWiza: 0,
+	subscribedWiza: [],
 	statSearched: [],
-	subscribedSpellGraph: {},
+	subscribedKdaSpellGraph: {},
+	subscribedWizaSpellGraph: {},
 	wizaBalance: 0,
 	wizardsStaked: 0,
 	circulatingSupply: 0,
@@ -119,13 +126,23 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, countMinted: action.payload }
 		case LOAD_BUYIN:
 			return { ...state, buyin: action.payload }
+		case LOAD_BUYIN_WIZA:
+			return { ...state, buyinWiza: action.payload }
 		case LOAD_FEE_TOURNAMENT:
 			return { ...state, feeTournament: action.payload }
+		case LOAD_FEE_TOURNAMENT_WIZA:
+			return { ...state, feeTournamentWiza: action.payload }
 		case LOAD_MONTEPREMI:
 			return { ...state, montepremi: action.payload }
 		case LOAD_SUBSCRIBED: {
-			const { nfts, subscribedSpellGraph } = action.payload
-			return { ...state, subscribed: nfts, subscribedSpellGraph }
+			const { nfts, subscribedKdaSpellGraph } = action.payload
+			return { ...state, subscribed: nfts, subscribedKdaSpellGraph }
+		}
+		case LOAD_SUBSCRIBED_WIZA: {
+			const { nfts, subscribedWizaSpellGraph } = action.payload
+
+			//console.log(nfts, subscribedWizaSpellGraph);
+			return { ...state, subscribedWiza: nfts, subscribedWizaSpellGraph }
 		}
 		case STORE_FILTERS_STATS:
 			return { ...state, statSearched: action.payload }

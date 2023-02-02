@@ -9,7 +9,7 @@ import Nft from './components/Nft';
 import Settings from './components/Settings';
 import Fight from './components/Fight'
 import Rules from './components/Rules'
-import Tournament from './components/Tournament'
+
 import Sales from './components/Sales'
 import SalesEquipment from './components/SalesEquipment'
 import Shop from './components/Shop'
@@ -22,6 +22,9 @@ import League from './components/League'
 import Equipment from './components/Equipment'
 import ItemEquipment from './components/ItemEquipment'
 
+import TournamentPre from './components/TournamentPre'
+import Tournament from './components/Tournament'
+import TournamentWiza from './components/TournamentWiza'
 
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'
@@ -45,7 +48,6 @@ ReactDOM.render(
             <Route path="/settings" component={Settings} />
             <Route path="/fight/" component={Fight} />
             <Route path="/rules" component={Rules} />
-            <Route path="/tournament" component={Tournament} />
             <Route path="/sales" component={Sales} />
             <Route path="/salesequipment" component={SalesEquipment} />
             <Route path="/magicshop" component={Shop} />
@@ -55,6 +57,9 @@ ReactDOM.render(
             <Route path="/league" component={League} />
             <Route path="/equipment" component={Equipment} />
             <Route path="/item/" component={ItemEquipment} />
+            <Route path="/tournaments/" component={TournamentPre} />
+            <Route path="/tournamentK" component={Tournament} />
+            <Route path="/tournamentW" component={TournamentWiza} />
           </Switch>
         </div>
       </BrowserRouter>

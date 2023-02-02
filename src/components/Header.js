@@ -450,14 +450,14 @@ class Header extends Component {
 
 
 								<a
-									href={`${window.location.protocol}//${window.location.host}/tournament`}
+									href={`${window.location.protocol}//${window.location.host}/tournaments`}
 									className={section === 4 ? btnPressedStyle : btnStyle}
 									onClick={(e) => {
 										e.preventDefault()
-										this.props.history.replace('/tournament')
+										this.props.history.replace('/tournaments')
 									}}
 								>
-									TOURNAMENT
+									TOURNAMENTS
 								</a>
 							</div>
 							: null
@@ -522,14 +522,14 @@ class Header extends Component {
 								</a>
 
 								<a
-									href={`${window.location.protocol}//${window.location.host}/tournament`}
+									href={`${window.location.protocol}//${window.location.host}/tournaments`}
 									className={btnHeaderNft}
 									onClick={(e) => {
 										e.preventDefault()
-										this.props.history.replace('/tournament')
+										this.props.history.replace('/tournaments')
 									}}
 								>
-									TOURNAMENT
+									TOURNAMENTS
 								</a>
 							</div>
 							:

@@ -46,7 +46,10 @@ import {
 	SET_WIZARD_SELECTED_SHOP,
 	CONTRACT_NAME_EQUIPMENT,
 	STORE_WIZA_NOT_CLAIMED,
-	RING_MINT_PRICE
+	RING_MINT_PRICE,
+	LOAD_BUYIN_WIZA,
+	LOAD_FEE_TOURNAMENT_WIZA,
+	LOAD_SUBSCRIBED_WIZA
 } from './types'
 
 
@@ -398,7 +401,7 @@ export const loadBlockNftsSplit = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 }
 
 
-export const loadBlockNftsSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, block, callbackSubscribed) => {
+export const loadBlockNftsSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, block, tournamentType, callbackSubscribed) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -436,13 +439,19 @@ export const loadBlockNftsSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, g
 					}
 				})
 
-				//console.log(subscribedSpellGraph);
+				//console.log(subscribedSpellGraph, tournamentType);
 
 				if (callbackSubscribed) {
 					callbackSubscribed(response)
 				}
 
-				dispatch({ type: LOAD_SUBSCRIBED, payload: { nfts: response, subscribedSpellGraph } })
+				if (tournamentType === "kda") {
+					dispatch({ type: LOAD_SUBSCRIBED, payload: { nfts: response, subscribedKdaSpellGraph: subscribedSpellGraph } })
+				}
+				else {
+					dispatch({ type: LOAD_SUBSCRIBED_WIZA, payload: { nfts: response, subscribedWizaSpellGraph: subscribedSpellGraph } })
+				}
+
 			}
 		})
 	}
@@ -608,6 +617,10 @@ export const loadBlockUserMintedNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, g
 			//console.log(response)
 
 			if (response) {
+				response.map(i => {
+					const level = calcLevelWizard(i)
+					i.level = level
+				})
 
 				response.sort((a, b) => {
 	                return parseInt(a.id) - parseInt(b.id)
@@ -979,37 +992,47 @@ export const getMontepremi = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 	}
 }
 
-export const getBuyin = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl) => {
+export const getBuyin = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, buyinKey) => {
 	return (dispatch) => {
 
 		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME}.get-value-tournament "buyin-key")`,
+			pactCode: `(free.${CONTRACT_NAME}.get-value-tournament "${buyinKey}")`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
-			dispatch({ type: LOAD_BUYIN, payload: response })
+			if (buyinKey === "buyin-key") {
+				dispatch({ type: LOAD_BUYIN, payload: response })
+			}
+			else {
+				dispatch({ type: LOAD_BUYIN_WIZA, payload: response })
+			}
 		})
 	}
 }
 
-export const getFeeTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl) => {
+export const getFeeTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, feeKey) => {
 	return (dispatch) => {
 
 		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME}.get-value-tournament "fee-tournament-key")`,
+			pactCode: `(free.${CONTRACT_NAME}.get-value-tournament "${feeKey}")`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
-			dispatch({ type: LOAD_FEE_TOURNAMENT, payload: response })
+			if (feeKey === "fee-tournament-key") {
+				dispatch({ type: LOAD_FEE_TOURNAMENT, payload: response })
+			}
+			else {
+				dispatch({ type: LOAD_FEE_TOURNAMENT_WIZA, payload: response })
+			}
 		})
 	}
 }
 
-export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 150000, networkUrl, tournament, callback) => {
+export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 150000, networkUrl, tournament, tournamentType, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -1026,7 +1049,7 @@ export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 					onlyId.push(i.idnft)
 				})
 
-				dispatch(loadBlockNftsSubscribed(chainId, gasLimit, gasLimit, networkUrl, onlyId, callback))
+				dispatch(loadBlockNftsSubscribed(chainId, gasLimit, gasLimit, networkUrl, onlyId, tournamentType, callback))
 			}
 		})
 
@@ -1609,6 +1632,50 @@ export const subscribeToTournamentMass = (chainId, gasPrice = DEFAULT_GAS_PRICE,
 		}
 
 		//console.log("subscribeToTournamentMass", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const subscribeToTournamentMassWIZA = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, list) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.subscribe-tournament-wiza-mass ${JSON.stringify(list)} "${account.account}" free.wiza)`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
+				[account.account]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		//console.log(caps);
+
+		let gasL = 3000 * list.length
+		if (gasL > 180000) {
+			gasL = 180000
+		}
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit: gasL,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("subscribeToTournamentMassWIZA", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}

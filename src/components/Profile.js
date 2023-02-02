@@ -10,7 +10,6 @@ import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
 import OfferItem from './common/OfferItem'
 import NftCardStake from './common/NftCardStake'
-import NftCardChoice from './common/NftCardChoice'
 import EquipmentCard from './common/EquipmentCard'
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
@@ -23,11 +22,6 @@ import {
 	clearTransaction,
 	setNetworkSettings,
 	setNetworkUrl,
-	getMontepremi,
-	getBuyin,
-	checkAddressForPrice,
-	withdrawPrize,
-	getFeeTournament,
 	getWizaBalance,
 	stakeNft,
 	unstakeNft,
@@ -41,7 +35,6 @@ import {
 	getOffersMade,
 	getOffersReceived,
 	acceptOffer,
-	subscribeToTournamentMass,
 	loadEquipMinted
 } from '../actions'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
@@ -61,11 +54,8 @@ class Profile extends Component {
 			showModalConnection: false,
 			isConnected,
 			typeModal: 'subscription',
-			tournament: {},
 			error: '',
 			nameNftSubscribed: '',
-			profileFights: {},
-			prize: undefined,
 			unclaimedWizaTotal: 0,
 			stakedIds: [],
 			notStakedIds: [],
@@ -74,7 +64,6 @@ class Profile extends Component {
 			offerInfoRecap: "",
 			kadenaPrice: undefined,
 			saleValues: {},
-			toSubscribe: [],
 			equipment: []
 		}
 	}
@@ -107,6 +96,7 @@ class Profile extends Component {
 		this.loadMinted()
 		this.loadWizaBalance()
 		this.loadEquip()
+		this.loadOffersMade()
 	}
 
 	loadMinted() {
@@ -117,6 +107,7 @@ class Profile extends Component {
 		if (account && account.account) {
 			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
 				this.setState({ loading: false })
+				this.loadOffersReceived()
 			})
 		}
 	}
@@ -163,45 +154,6 @@ class Profile extends Component {
 		}
 	}
 
-	async loadTournament() {
-		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
-
-		//console.log(account)
-		const querySnapshot = await getDocs(collection(firebasedb, "stage"))
-
-		querySnapshot.forEach(doc => {
-			//console.log(doc.data());
-			const tournament = doc.data()
-
-			/* // TEST
-			const tournament = {
-				canSubscribe: false,
-				nRounds: 6,
-				name: "t11_r4",
-				roundEnded: "3",
-				start: {seconds: 1675258200}
-			}
-			*/
-
-			this.setState({ tournament }, () => {
-
-				if (!tournament.canSubscribe) {
-					//round è finito ma torneo no
-					if (!tournament.tournamentEnd) {
-
-						this.loadProfileFights()
-					}
-				}
-
-				this.props.getMontepremi(chainId, gasPrice, gasLimit, networkUrl)
-				this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl)
-				this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl)
-
-				this.setState({ loading: false })
-			})
-		})
-	}
-
 	loadEquip() {
         const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
@@ -214,93 +166,6 @@ class Profile extends Component {
 			})
 		}
     }
-
-	loadProfileFights() {
-		const { userMintedNfts } = this.props
-		const { tournament } = this.state
-
-		const tournamentName = tournament.name.split("_")[0]
-		//console.log(tournamentName);
-
-		let profileFights = []
-
-		for (let i = 0; i < userMintedNfts.length; i++) {
-			const s = userMintedNfts[i]
-			//console.log(s);
-			const fights = s.fights
-
-			if (fights.length > 0) {
-				let fightsPerTournamentName = fights.filter(i => i.tournament.includes(tournamentName))
-				//console.log(fightsPerTournamentName);
-
-				fightsPerTournamentName.map(i => {
-					i['name'] = s.name
-					profileFights.push(i)
-				})
-			}
-		}
-
-		profileFights.sort((a, b) => {
-			if (parseInt(a.tournament[a.tournament.length - 1]) === 0) return 1;
-			if (parseInt(b.tournament[b.tournament.length - 1]) === 0) return -1
-			return parseInt(a.tournament[a.tournament.length - 1]) - parseInt(b.tournament[b.tournament.length - 1])
-		})
-
-		//console.log(profileFights);
-
-		let fightsPerRound = {}
-
-		for (var i = 0; i < profileFights.length; i++) {
-			const singleF = profileFights[i]
-
-			if (!fightsPerRound[singleF.tournament]) {
-				fightsPerRound[singleF.tournament] = []
-			}
-
-			fightsPerRound[singleF.tournament].push(singleF)
-		}
-
-		//console.log(fightsPerRound);
-
-		this.setState({ profileFights: fightsPerRound })
-	}
-
-	subscribe(idNft, spellSelected) {
-		const { account, buyin, feeTournament } = this.props
-		const { tournament } = this.state
-
-		if (!buyin || !feeTournament  || !spellSelected || !spellSelected.name) {
-			return
-		}
-
-		let refactorSpellSelected = { name: spellSelected.name }
-
-		const tNumber = tournament.name.split("_")[0]
-
-		let obj = {
-			spellSelected: refactorSpellSelected,
-			idnft: idNft,
-			id: `${tNumber}_${idNft}`,
-			round: tNumber,
-			address: account.account
-		}
-
-		const toSubscribe = Object.assign([],  this.state.toSubscribe)
-		toSubscribe.push(obj)
-
-		this.setState({ toSubscribe })
-	}
-
-	subscribeMass() {
-		const { chainId, gasPrice, netId, account, buyin } = this.props
-		const { toSubscribe } = this.state
-
-		const tot = toSubscribe.length * buyin
-
-		this.setState({ nameNftSubscribed: `You will subscribe ${toSubscribe.length} wizards for ${tot} KDA`, typeModal: "subscriptionmass" })
-
-		this.props.subscribeToTournamentMass(chainId, gasPrice, 6000, netId, account, buyin, toSubscribe)
-	}
 
 	stakeNft(idnft) {
 		const { chainId, gasPrice, netId, account } = this.props
@@ -324,15 +189,6 @@ class Profile extends Component {
 		this.setState({ nameNftSubscribed: `#${idnft}`, typeModal: "claim" })
 
 		this.props.claimWithoutUnstake(chainId, gasPrice, 4000, netId, idnft, account)
-	}
-
-
-	withdrawPrize() {
-		const { chainId, gasPrice, netId, account } = this.props
-
-		this.setState({ typeModal: "withdraw" })
-
-		this.props.withdrawPrize(chainId, gasPrice, 4000, netId, account)
 	}
 
 
@@ -582,294 +438,6 @@ class Profile extends Component {
 		)
 	}
 
-	renderRoundFights(key) {
-		const { profileFights } = this.state
-
-		const roundName = key.split("_")[1].replace("r", "")
-		const fights = profileFights[key]
-
-		return (
-			<div style={{ flexDirection: 'column' }} key={key}>
-				<p style={{ fontSize: 30, color: 'white', marginBottom: 15 }}>
-					ROUND {roundName}
-				</p>
-
-				<div style={{ flexWrap: 'wrap' }}>
-					{fights && fights.map((item, index) => this.renderSingleFight(item, index))}
-				</div>
-			</div>
-		)
-	}
-
-	renderSingleFight(item, index) {
-		return (
-			<CardSingleFightProfile
-				history={this.props.history}
-				userMintedNfts={this.props.userMintedNfts}
-				item={item}
-				key={index}
-			/>
-		)
-	}
-
-	renderTournament(width, modalWidth) {
-		const { userMintedNfts, buyin } = this.props
-		const { tournament, error, profileFights, prize } = this.state
-
-		const tournamentName = tournament.name.split("_")[0]
-		const round = tournament.name.split("_")[1]
-
-
-		if (userMintedNfts.length === 0) {
-			return (
-				<div style={{ width, flexDirection: 'column' }}>
-					<p style={{ fontSize: 20, color: 'white', marginBottom: 20 }}>
-						You must have a Wizard to participate in the tournament
-					</p>
-
-					{this.renderInfoTournament(width)}
-				</div>
-			)
-		}
-
-
-
-		//LE ISCRIZIONI SONO APERTE
-		if (tournament && tournament.canSubscribe) {
-
-			const dateStart = moment(tournament.start.seconds * 1000)
-            //console.log(dateStart);
-
-            const dateStartString = moment(dateStart).format("dddd, MMMM Do YYYY, h:mm:ss a");
-            const dateStartTo = moment().to(dateStart)
-
-			return (
-				<div style={{ width, flexDirection: 'column' }}>
-
-					<div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 30 }}>
-
-						<div style={{ flexDirection: 'column', width: '100%' }}>
-							<p style={{ fontSize: 18, color: 'white', marginBottom: 20 }}>
-								Registration for the tournament is open. The tournament will start:
-							</p>
-
-							<p style={{ fontSize: 19, color: 'white', marginBottom: 5 }}>
-								{dateStartTo}
-							</p>
-                            <p style={{ fontSize: 16, color: 'white', marginBottom: 20 }}>
-								{dateStartString}
-							</p>
-
-							<p style={{ fontSize: 17, color: 'white', marginBottom: 20 }}>
-								BUY-IN {buyin || '...'} KDA
-							</p>
-						</div>
-
-						{this.renderInfoTournament(width)}
-					</div>
-
-
-					<div style={{ flexDirection: 'column', width: '100%' }}>
-						<div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
-							{userMintedNfts.map((item, index) => this.renderRowChoise(item, index, modalWidth))}
-						</div>
-					</div>
-				</div>
-			)
-		}
-
-		//SE SIAMO IN ATTESA DEL PRIMO FIGHT
-		if (tournament && !tournament.canSubscribe && !tournament.tournamentEnd && tournament.roundEnded === "0") {
-
-			const roundValue = round.replace("r", "")
-
-			const start = moment(tournament.start.seconds * 1000) //milliseconds
-			let text;
-			if (moment().isBefore(start)) {
-				text = `The round ${roundValue} will start ${start.fromNow()}`
-			}
-			else {
-				text = `The tournament started ${start.fromNow()}`
-			}
-
-			return (
-				<div style={{ width, flexDirection: 'column' }}>
-					<div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 30 }}>
-
-						<div style={{ flexDirection: 'column', width: '100%' }}>
-							<p style={{ fontSize: 18, color: 'white', marginBottom: 20 }}>
-								Registration for the tournament is closed!
-							</p>
-
-							<p style={{ fontSize: 18, color: 'white' }}>
-								{text}
-							</p>
-						</div>
-
-						{this.renderInfoTournament(width)}
-					</div>
-
-					<div style={{ flexDirection: 'column', width: '100%' }}>
-
-						<div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
-							{userMintedNfts.map((item, index) => this.renderRowChoise(item, index, modalWidth))}
-						</div>
-
-						<p style={{ fontSize: 15, color: 'red', marginTop: 10 }}>
-							{error}
-						</p>
-					</div>
-				</div>
-			)
-		}
-
-
-		// SE IL PRIMO FIGHT è STATO FATTO
-		if (tournament && !tournament.canSubscribe && !tournament.tournamentEnd && parseInt(tournament.roundEnded) > 0) {
-
-			const roundValue = round.replace("r", "")
-
-			const start = moment(tournament.start.seconds * 1000) //milliseconds
-			let text;
-			if (moment().isBefore(start)) {
-				text = `The round ${roundValue} will start ${start.fromNow()}`
-			}
-			else {
-				text = `The tournament started ${start.fromNow()}`
-			}
-
-			return (
-				<div style={{ width, flexDirection: 'column' }}>
-					<div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 30 }}>
-
-						<div style={{ flexDirection: 'column', width: '100%' }}>
-							<p style={{ fontSize: 19, color: 'white', marginBottom: 20 }}>
-								The round {tournament.roundEnded} is over!
-							</p>
-
-							<p style={{ fontSize: 18, color: 'white' }}>
-								{text}
-							</p>
-						</div>
-
-						{this.renderInfoTournament(width)}
-					</div>
-
-					<div style={{ flexDirection: 'column', width: '100%' }}>
-
-						<div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
-							{profileFights && Object.keys(profileFights).length > 0 && Object.keys(profileFights).reverse().map(key => this.renderRoundFights(key))}
-						</div>
-
-						<p style={{ fontSize: 15, color: 'red', marginTop: 10 }}>
-							{error}
-						</p>
-					</div>
-				</div>
-			)
-		}
-
-		// SE IL TORNEO è finito
-		if (tournament && tournament.tournamentEnd) {
-
-			return (
-				<div style={{ width }}>
-
-					<div style={{ flexDirection: 'column', width: '100%' }}>
-						<p style={{ fontSize: 19, color: 'white', marginBottom: 30 }}>
-							Tournament {tournamentName.replace("t", "")} is over! Congratulations to all participants!
-						</p>
-
-						{
-							prize ?
-							<div style={{ flexDirection: 'column' }}>
-								<p style={{ fontSize: 20, color: 'white', marginBottom: 20 }}>
-									You are one of the winners!
-								</p>
-								<p style={{ fontSize: 20, color: 'white', marginBottom: 20 }}>
-									The Archmage is sending you the prize...
-								</p>
-
-								<button
-									className="btnH"
-									style={styles.btnWithdraw}
-									onClick={() => this.withdrawPrize()}
-								>
-									<p style={{ fontSize: 17, color: 'white' }}>
-										WITHDRAW PRIZE: {prize} KDA
-									</p>
-								</button>
-							</div>
-							:
-							<p style={{ fontSize: 18, color: 'white' }}>
-								Wait for the next tournament to start
-							</p>
-						}
-
-
-					</div>
-
-					{this.renderInfoTournament(width)}
-				</div>
-			)
-		}
-	}
-
-	renderRowChoise(item, index, modalWidth) {
-		const { tournament, toSubscribe, equipment } = this.state
-
-		return (
-			<NftCardChoice
-				key={index}
-				item={item}
-				width={230}
-				tournament={tournament.name.split("_")[0]}
-				canSubscribe={tournament.canSubscribe}
-				onSubscribe={(spellSelected) => this.subscribe(item.id, spellSelected)}
-				removeFromSubscribers={(idnft) => {
-					let toSubscribe = Object.assign([], this.state.toSubscribe)
-
-					const idx = toSubscribe.findIndex(i => i.idnft === idnft)
-					if (idx > -1) {
-						toSubscribe.splice(idx, 1)
-					}
-					this.setState({ toSubscribe })
-				}}
-				modalWidth={modalWidth}
-				toSubscribe={toSubscribe}
-				equipment={equipment}
-			/>
-		)
-	}
-
-	renderInfoTournament(width) {
-		const { tournament } = this.state
-		const { montepremi } = this.props
-
-		//const iscritti = Math.floor(montepremi / (buyin / 2))
-
-		const tname = convertMedalName(tournament.name)
-
-		return (
-			<div style={{ width, flexDirection: 'column', marginLeft: 15 }}>
-				<p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
-					{tname.torneo.toUpperCase()}
-				</p>
-
-				<p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
-					{tname.round.toUpperCase()}
-				</p>
-
-				<p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
-					NUMBER OF ROUNDS {tournament.nRounds}
-				</p>
-
-				<p style={{ fontSize: 18, color: 'white' }}>
-					Total Prize {montepremi || '...'} KDA
-				</p>
-			</div>
-		)
-	}
 
 	renderOffers(width, offers, isMade, isMobile) {
 		const { kadenaPrice } = this.state
@@ -902,7 +470,7 @@ class Profile extends Component {
 
 
 	renderMenu(isMobile) {
-		const { section, loading, equipment } = this.state;
+		const { section, loading, equipment, offersMade, offersReceived } = this.state;
 		const { userMintedNfts } = this.props
 
 		const selStyle = { borderBottomWidth: 3, borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderColor: CTA_COLOR, borderStyle: 'solid' }
@@ -925,22 +493,6 @@ class Profile extends Component {
 				>
 					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 1 ? CTA_COLOR : '#21c6e895' }}>
 						MY COLLECTION ({(userMintedNfts && userMintedNfts.length) || 0})
-					</p>
-				</button>
-
-				<button
-					style={Object.assign({}, styles.btnMenu, selectedStyle2, { marginRight: 35 })}
-					onClick={() => {
-						if (loading) {
-							return
-						}
-
-						this.setState({ section: 2, loading: true })
-						this.loadTournament()
-					}}
-				>
-					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 2 ? CTA_COLOR : '#21c6e895' }}>
-						TOURNAMENT
 					</p>
 				</button>
 
@@ -972,7 +524,7 @@ class Profile extends Component {
 					}}
 				>
 					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 3 ? CTA_COLOR : '#21c6e895' }}>
-						OFFERS MADE
+						{offersMade ? `OFFERS MADE (${offersMade.length})` : "OFFERS MADE"}
 					</p>
 				</button>
 
@@ -988,56 +540,7 @@ class Profile extends Component {
 					}}
 				>
 					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 4 ? CTA_COLOR : '#21c6e895' }}>
-						OFFERS RECEIVED
-					</p>
-				</button>
-			</div>
-		)
-	}
-
-	renderFooterSubscribe(isMobile) {
-		const { toSubscribe } = this.state
-
-		let temp = []
-		toSubscribe.map(i => {
-			temp.push(
-				<Popup
-					key={i.idnft}
-					trigger={open => (
-						<img
-							style={{ width: 60, height: 60, borderRadius: 2, marginRight: 10, marginBottom: 10, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', cursor: 'pointer' }}
-							src={getImageUrl(i.idnft)}
-							alt={`#${i.idnft}`}
-						/>
-					)}
-					position="top center"
-					on="hover"
-				>
-					<div style={{ padding: 10, fontSize: 16 }}>
-						#{i.idnft} - Spell Selected: {i.spellSelected.name}
-					</div>
-				</Popup>
-			)
-		})
-
-		const styleBox = isMobile ?
-						{ flexDirection: 'column', alignItems: 'center', paddingBottom: 10, width: '100%' }
-						:
-						{ justifyContent: 'space-between', alignItems: 'center', flex: 1 }
-
-		return (
-			<div style={styleBox}>
-				<div style={{ flexWrap: 'wrap', marginLeft: 20 }}>
-					{temp}
-				</div>
-
-				<button
-					className="btnH"
-					style={{ width: 180, height: 40, justifyContent: 'center', alignItems: 'center', borderRadius: 2, backgroundColor: CTA_COLOR, marginRight: 20 }}
-					onClick={() => this.subscribeMass()}
-				>
-					<p style={{ fontSize: 17, color: 'white' }}>
-						SUBSCRIBE
+						{offersReceived ? `OFFERS RECEIVED (${offersReceived.length})` : "OFFERS RECEIVED"}
 					</p>
 				</button>
 			</div>
@@ -1188,13 +691,6 @@ class Profile extends Component {
 					null
 				}
 
-				{
-					section === 2 && this.state.toSubscribe.length > 0 &&
-					<div style={styles.footerSubscribe}>
-						{this.renderFooterSubscribe(isMobile)}
-					</div>
-				}
-
 				<ModalTransaction
 					showModal={showModalTx}
 					width={modalW}
@@ -1311,18 +807,6 @@ const styles = {
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
-	boxSingleFight: {
-		backgroundColor: '#ffffff15',
-		borderRadius: 2,
-		alignItems: 'center',
-		width: 260,
-		height: 170,
-		display: 'flex',
-		justifyContent: 'flex-start',
-		paddingLeft: 15,
-		marginRight: 20,
-		marginBottom: 20
-	},
 	btnClaimAll: {
 		width: 200,
 		height: 40,
@@ -1334,28 +818,12 @@ const styles = {
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
-	footerSubscribe: {
-		width: '100%',
-		minHeight: 90,
-		position: 'sticky',
-		bottom: 0,
-		left: 0,
-		backgroundColor: BACKGROUND_COLOR,
-		borderColor: 'white',
-		borderStyle: 'solid',
-		borderRadius: 2,
-		borderTopWidth: 2,
-		borderLeftWidth: 2,
-		borderRightWidth: 2,
-		borderBottomWidth: 0,
-		paddingTop: 10
-	}
 }
 
 const mapStateToProps = (state) => {
-	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, montepremi, buyin, feeTournament, wizaBalance } = state.mainReducer;
+	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, wizaBalance } = state.mainReducer;
 
-	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, montepremi, buyin, feeTournament, wizaBalance };
+	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, wizaBalance };
 }
 
 export default connect(mapStateToProps, {
@@ -1363,11 +831,6 @@ export default connect(mapStateToProps, {
 	clearTransaction,
 	setNetworkSettings,
 	setNetworkUrl,
-	getMontepremi,
-	getBuyin,
-	checkAddressForPrice,
-	withdrawPrize,
-	getFeeTournament,
 	getWizaBalance,
 	stakeNft,
 	unstakeNft,
@@ -1381,6 +844,5 @@ export default connect(mapStateToProps, {
 	getOffersMade,
 	getOffersReceived,
 	acceptOffer,
-	subscribeToTournamentMass,
 	loadEquipMinted
 })(Profile)
