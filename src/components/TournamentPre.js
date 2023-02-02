@@ -73,7 +73,7 @@ class Tournament extends Component {
     loadMinted(tournament, isResults, isSubs) {
 		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-        this.setState({ loading: true })
+        this.setState({ loading: true, showSubs: false })
 
 		if (account && account.account) {
 			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
@@ -779,7 +779,10 @@ class Tournament extends Component {
         const { tournament, tournamentWiza, profileFights, error, showProfileFights, showSubs, yourSubs } = this.state
         const { showModalTx } = this.props
 
-        const { boxW, modalW } = getBoxWidth(isMobile)
+        let { boxW, modalW } = getBoxWidth(isMobile)
+        if (boxW > 1250) {
+            boxW = 1250
+        }
 
         if (!tournament.name || !tournamentWiza.name) {
             return (
@@ -798,7 +801,7 @@ class Tournament extends Component {
         return (
             <div style={{ width: boxW, flexDirection: 'column', justifyContent: 'center', flexWrap: 'wrap', paddingTop: 30 }}>
 
-                <div style={{ width: boxW, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', flexWrap: 'wrap', marginBottom: 50 }}>
+                <div style={{ width: boxW, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', flexWrap: 'wrap', marginBottom: 30 }}>
                     {this.renderTournamentHigh(boxTournamentWidth)}
 
                     {this.renderTournamentLow(boxTournamentWidth)}
@@ -949,7 +952,8 @@ const styles = {
         padding: 24,
         borderWidth: 2,
         borderColor: CTA_COLOR,
-        borderStyle: 'solid'
+        borderStyle: 'solid',
+        marginBottom: 20
     },
     footerSubscribe: {
 		width: '100%',
