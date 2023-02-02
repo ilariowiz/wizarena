@@ -174,7 +174,7 @@ class Equipment extends Component {
     }
 
     renderPageCounter() {
-		const { allItemsIds, allItems, itemsBlockId } = this.props
+		const { allItemsIds, itemsBlockId } = this.props
 		//console.log(allItemsIds, allItems, itemsBlockId)
 
 		let subarray = []
@@ -584,7 +584,6 @@ class Equipment extends Component {
 	}
 
     renderBoxSearchStat(statDisplay, list) {
-		const { statSearched } = this.props
 
 		let text = statDisplay.toUpperCase()
 
@@ -629,15 +628,14 @@ class Equipment extends Component {
         const { boxW, modalW } = getBoxWidth(isMobile)
 
         let showPageCounter = false
-		if (allItemsIds && allItems && allItems.length > 0 && itemsToShow && itemsToShow.length > 0) {
+		if (allItemsIds && allItems && allItems.length > 0 && itemsToShow && itemsToShow.length > 0 && !searchedText) {
 			showPageCounter = true
 		}
 
-        /*
-		if (statSearchedEquipment && statSearchedEquipment.length > 0) {
-			showPageCounter = false
-		}
-        */
+        let numberOfItems = allItems && allItems.length
+        if (searchedText && searchedText.length > 0) {
+            numberOfItems = itemsToShow.length
+        }
 
         return (
             <div style={{ flexDirection: 'column', width: boxW }}>
@@ -654,6 +652,10 @@ class Equipment extends Component {
                     {this.renderBoxSearchStat("DAMAGE", ["Ring of Damage +2", "Ring of Damage +4", "Ring of Damage +6", "Ring of Damage +8", "Ring of Damage +10", "Ring of Force", "Ring of Destruction", "Ring of Power"].reverse())}
                     {this.renderBoxSearchStat("SPEED", ["Ring of Speed +2", "Ring of Speed +4", "Ring of Speed +6", "Ring of Speed +8", "Ring of Speed +10", "Ring of Lightning", "Ring of Swift Death", "Ring of Power"].reverse())}
 				</div>
+
+                <p style={{ marginBottom: 15, fontSize: 16, color: 'white' }}>
+					{numberOfItems} items
+				</p>
 
                 {
 					allItems && allItems.length === 0 ?
