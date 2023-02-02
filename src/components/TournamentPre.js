@@ -73,7 +73,7 @@ class Tournament extends Component {
     loadMinted(tournament, isResults, isSubs) {
 		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-        this.setState({ loading: true, showSubs: false })
+        this.setState({ loading: true, showSubs: false, showProfileFights: false })
 
 		if (account && account.account) {
 			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
