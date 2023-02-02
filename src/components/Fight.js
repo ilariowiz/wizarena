@@ -74,7 +74,7 @@ class Fight extends Component {
         const docRef = doc(firebasedb, "fights", idFight)
         const docSnap = await getDoc(docRef)
 
-        console.log(docSnap.data());
+        //console.log(docSnap.data());
 
         const data = docSnap.data()
 
@@ -558,7 +558,7 @@ class Fight extends Component {
                             }}
                         >
                             <p style={{ fontSize: 17, color: 'white' }}>
-                                SHOW FIGHT
+                                REPLAY
                             </p>
                         </button>
                     </div>
