@@ -1066,6 +1066,49 @@
 
 (commit-tx)
 
+(begin-tx "SUBSCRIBE PVP")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.subscribe-pvp "w3_0" "w3" "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" {"name":"Tornado"} 55.0 free.wiza)
+
+(commit-tx)
+
+(begin-tx "TRANSFER WIZARD")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.transfer-wizard "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb" free.wiza free.wiz-equipment)
+
+(commit-tx)
+
+
+(begin-tx "ADD rounds PVP")
+
+(env-sigs [{
+  "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb",
+  "caps": [
+    (free.wiz-arena.OWNER "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb" "0"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.add-rounds-pvp "w3_0" 35.0 free.wiza)
+
+(commit-tx)
+
 
 (begin-tx "CREATE EQUIPMENT")
 
@@ -1450,36 +1493,6 @@
 }])
 
 (free.wiz-arena.update-nickname "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "Voldemort" free.wiza)
-
-(commit-tx)
-
-
-(begin-tx "SUBSCRIBE PVP")
-
-(env-sigs [{
-  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-  "caps": [
-    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
-    (coin.GAS)
-  ]
-}])
-
-(free.wiz-arena.subscribe-pvp "w3_0" "w3" "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" {"name":"Tornado"} 55.0 free.wiza)
-
-(commit-tx)
-
-
-(begin-tx "ADD rounds PVP")
-
-(env-sigs [{
-  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-  "caps": [
-    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
-    (coin.GAS)
-  ]
-}])
-
-(free.wiz-arena.add-rounds-pvp "w3_0" 35.0 free.wiza)
 
 (commit-tx)
 

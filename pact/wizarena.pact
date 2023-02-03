@@ -1288,8 +1288,8 @@
             (enforce (= (length idnft) 0) "Already subscribed to this pvp week")
         )
         (with-capability (OWNER address idnft)
-            (install-capability (coin.TRANSFER address CLERIC_MINT_ADDRESS 1.0))
-            (coin.transfer address CLERIC_MINT_ADDRESS 1.0)
+            ;(install-capability (coin.TRANSFER address CLERIC_MINT_ADDRESS 1.0))
+            ;(coin.transfer address CLERIC_MINT_ADDRESS 1.0)
             (spend-wiza wiza address m)
             (insert pvp-subscribers id {
                 "pvpweek": week,
@@ -1306,17 +1306,19 @@
         (enforce (>= wiza 30.0) "You must send at least 30 wiza to increment max rounds")
         (with-default-read pvp-subscribers id
             {"idnft": "",
-            "address": "",
             "rounds": 0}
             {"idnft":= idnft,
-            "address":= address,
             "rounds":= rounds}
             (enforce (> (length idnft) 0) "Not subscribed to this pvp week")
-            (with-capability (OWNER address idnft)
-                (spend-wiza wiza address m)
-                (update pvp-subscribers id {
-                    "rounds": (+ rounds (round wiza))
-                })
+            (let (
+                    (data-wiz (get-wizard-fields-for-id (str-to-int idnft)))
+                )
+                (with-capability (OWNER (at "owner" data-wiz) idnft)
+                    (spend-wiza wiza (at "owner" data-wiz) m)
+                    (update pvp-subscribers id {
+                        "rounds": (+ rounds (round wiza))
+                    })
+                )
             )
         )
     )
