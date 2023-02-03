@@ -5,7 +5,7 @@ import '../../css/Nft.css'
 import cardStatsShop from './CardStatsShop'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
 import {
-    getSubscription
+    
 } from '../../actions'
 import { CTA_COLOR } from '../../actions/types'
 
@@ -120,6 +120,4 @@ const mapStateToProps = (state) => {
 	return { account, chainId, netId, gasPrice, gasLimit, networkUrl }
 }
 
-export default connect(mapStateToProps, {
-    getSubscription
-})(NftCardShopSelected);
+export default connect(mapStateToProps)(NftCardShopSelected);

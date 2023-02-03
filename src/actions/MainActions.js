@@ -960,11 +960,11 @@ export const getWizardsStakedCount = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 	}
 }
 
-export const getSubscription = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, id, callback) => {
+export const getSubscriptions = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 5000, networkUrl, ids, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME}.get-subscription "${id}")`,
+			pactCode: `(free.${CONTRACT_NAME}.get-subscriptions ${JSON.stringify(ids)})`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 

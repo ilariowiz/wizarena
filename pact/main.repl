@@ -1066,6 +1066,18 @@
 
 (commit-tx)
 
+;; READ SUBSCRIPTION
+(begin-tx "READ SUBSCRIPTION")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": []
+}])
+
+(free.wiz-arena.get-subscriptions ["t1_0"])
+
+(commit-tx)
+
 (begin-tx "SUBSCRIBE PVP")
 
 (env-sigs [{

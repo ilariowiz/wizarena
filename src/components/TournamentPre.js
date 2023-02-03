@@ -28,7 +28,8 @@ import {
     loadEquipMinted,
     subscribeToTournamentMass,
     clearTransaction,
-    subscribeToTournamentMassWIZA
+    subscribeToTournamentMassWIZA,
+    getSubscriptions
 } from '../actions'
 import '../css/Nft.css'
 import 'reactjs-popup/dist/index.css';
@@ -56,7 +57,8 @@ class Tournament extends Component {
             toSubscribe: [],
 			equipment: [],
             montepremiWiza: 0,
-            statSearched: []
+            statSearched: [],
+            subscriptionsInfo: []
 		}
 	}
 
@@ -78,7 +80,7 @@ class Tournament extends Component {
         this.setState({ loading: true, showSubs: false, showProfileFights: false })
 
 		if (account && account.account) {
-			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
+			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (minted) => {
                 if (isResults) {
                     this.loadProfileFights(tournament)
                 }
@@ -86,9 +88,23 @@ class Tournament extends Component {
                 if (isSubs) {
                     this.props.loadEquipMinted(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
                         //console.log(response);
-                        this.setState({ equipment: response }, () => {
-                            this.loadSubs(tournament)
+
+                        let idsSubscription = []
+                        const tName = tournament.name.split("_")[0]
+
+                        minted.map(i => {
+                            idsSubscription.push(`${tName}_${i.id}`)
                         })
+
+                        this.props.getSubscriptions(chainId, gasPrice, gasLimit, networkUrl, idsSubscription, (subscriptions) => {
+                            //console.log(subscriptions);
+
+                            this.setState({ equipment: response, subscriptionsInfo: subscriptions }, () => {
+                                this.loadSubs(tournament)
+                            })
+                        })
+
+
         			})
 
                 }
@@ -859,13 +875,14 @@ class Tournament extends Component {
 	}
 
     renderRowChoise(item, index, modalWidth) {
-		const { tournamentSubs, toSubscribe, equipment } = this.state
+		const { tournamentSubs, toSubscribe, equipment, subscriptionsInfo } = this.state
 
 		return (
 			<NftCardChoice
 				key={index}
 				item={item}
 				width={230}
+                subscriptionsInfo={subscriptionsInfo}
 				tournament={tournamentSubs.name.split("_")[0]}
 				canSubscribe={tournamentSubs.canSubscribe}
 				onSubscribe={(spellSelected) => this.subscribe(item.id, spellSelected)}
@@ -1190,5 +1207,6 @@ export default connect(mapStateToProps, {
     loadEquipMinted,
     subscribeToTournamentMass,
     clearTransaction,
-    subscribeToTournamentMassWIZA
+    subscribeToTournamentMassWIZA,
+    getSubscriptions
 })(Tournament)

@@ -1217,9 +1217,25 @@
         )
     )
 
+    (defun get-subscriptions (ids:list)
+        @doc "Check if id is subscribed for tournament"
+        (map
+            (get-subscription)
+            ids
+        )
+    )
+
     (defun get-subscription (id:string)
         @doc "Check if id is subscribed for tournament"
-        (read tournaments id)
+        (with-default-read tournaments id
+            {"address": "",
+            "idnft": "",
+            "round": ""}
+            {"address":=address,
+            "idnft":=idnft,
+            "round":=round}
+            {"address": address, "idnft":idnft, "round": round}
+        )
     )
 
     (defun get-all-subscription-for-tournament (idtournament:string)

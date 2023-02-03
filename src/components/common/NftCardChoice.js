@@ -8,9 +8,6 @@ import cardStats from './CardStats'
 import getRingBonuses from './GetRingBonuses'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
 import ModalSpellbook from './ModalSpellbook'
-import {
-    getSubscription
-} from '../../actions'
 import { CTA_COLOR } from '../../actions/types'
 
 
@@ -19,24 +16,8 @@ class NftCardChoice extends Component {
         super(props)
 
         this.state = {
-            isSubscribed: false,
-            subscriptionInfo: {},
             showModalSpellbook: false
         }
-    }
-
-    componentDidMount() {
-        const { item, tournament, chainId, gasPrice, gasLimit, networkUrl } = this.props
-
-        //console.log(item, tournament);
-
-        const idSubscription = `${tournament}_${item.id}`
-        this.props.getSubscription(chainId, gasPrice, gasLimit, networkUrl, idSubscription, (response) => {
-            //console.log(response)
-            if (response && response.address) {
-                this.setState({ subscriptionInfo: response, isSubscribed: true })
-            }
-        })
     }
 
     calcMedals() {
@@ -79,10 +60,15 @@ class NftCardChoice extends Component {
     }
 
 	render() {
-		const { item, width, canSubscribe, toSubscribe, equipment } = this.props
-        const { isSubscribed } = this.state
+		const { item, width, canSubscribe, toSubscribe, equipment, subscriptionsInfo } = this.props
 
-        //console.log(equipment)
+        //console.log(subscriptionsInfo)
+
+        let isSubscribed;
+        //console.log(isSubscribed);
+        if (subscriptionsInfo && subscriptionsInfo.length > 0) {
+            isSubscribed = subscriptionsInfo.some(i => i.idnft === item.id)
+        }
 
         const numberOfTotalMedals = item.medals ? this.calcMedals() : 0
 
@@ -96,7 +82,6 @@ class NftCardChoice extends Component {
 			infoEquipment = getRingBonuses(ring)
             //console.log(infoEquipment);
 		}
-
 
 		return (
 			<div
@@ -246,6 +231,4 @@ const mapStateToProps = (state) => {
 	return { account, chainId, netId, gasPrice, gasLimit, networkUrl }
 }
 
-export default connect(mapStateToProps, {
-    getSubscription
-})(NftCardChoice);
+export default connect(mapStateToProps)(NftCardChoice);
