@@ -6,6 +6,7 @@ import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import DotLoader from 'react-spinners/DotLoader';
 import { AiFillCheckCircle } from 'react-icons/ai'
+import { IoClose } from 'react-icons/io5'
 import Popup from 'reactjs-popup';
 import NftCardTournament from './common/NftCardTournament'
 import NftCardChoice from './common/NftCardChoice'
@@ -54,7 +55,8 @@ class Tournament extends Component {
             tournamentSubs: {},
             toSubscribe: [],
 			equipment: [],
-            montepremiWiza: 0
+            montepremiWiza: 0,
+            statSearched: []
 		}
 	}
 
@@ -245,6 +247,8 @@ class Tournament extends Component {
 
         let yourSubs = userMintedNfts.filter(i => i.level <= levelCap)
 
+        //console.log(yourSubs);
+
         this.setState({ yourSubs, showSubs: true, showProfileFights: false, tournamentSubs: tournament, loading: false })
 
     }
@@ -297,6 +301,112 @@ class Tournament extends Component {
 		this.props.subscribeToTournamentMassWIZA(chainId, gasPrice, 3000, netId, account, toSubscribe)
 	}
 
+    async searchByStat(stat) {
+		const { statSearched, tournamentSubs } = this.state
+        const { userMintedNfts } = this.props
+
+        const levelCap = tournamentSubs.levelCap
+        let yourSubs = userMintedNfts.filter(i => i.level <= levelCap)
+
+		let oldStat = Object.assign([], statSearched);
+
+		if (stat) {
+			const oldItem = oldStat.find(i => i.stat === stat.stat)
+			if (oldItem) {
+				if (oldItem.value === stat.value) {
+					const idx = oldStat.findIndex(i => i.stat === stat.stat)
+					oldStat.splice(idx, 1)
+				}
+				else {
+					oldItem.value = stat.value
+				}
+			}
+			else {
+				oldStat.push(stat)
+			}
+		}
+
+		if (oldStat.length > 0) {
+
+			let newData = Object.assign([], yourSubs)
+
+			oldStat.map(i => {
+
+				if (i.stat === "hp") {
+
+					const values = i.value.split(" - ")
+					const minV = parseInt(values[0])
+					const maxV = parseInt(values[1])
+
+					newData = newData.filter(n => {
+						return n.hp && n.hp.int >= minV && n.hp.int <= maxV
+					})
+				}
+
+				if (i.stat === "defense") {
+					const values = i.value.split(" - ")
+					const minV = parseInt(values[0])
+					const maxV = parseInt(values[1])
+
+					newData = newData.filter(n => {
+						return n.defense && n.defense.int >= minV && n.defense.int <= maxV
+					})
+				}
+
+				if (i.stat === "element") {
+					//console.log(newData);
+					newData = newData.filter(n => {
+						return n.element && n.element.toUpperCase() === i.value.toUpperCase()
+					})
+				}
+
+				if (i.stat === "resistance") {
+					//console.log(newData);
+					newData = newData.filter(n => {
+						return n.resistance && n.resistance.toUpperCase() === i.value.toUpperCase()
+					})
+				}
+
+				if (i.stat === "weakness") {
+					//console.log(newData);
+					newData = newData.filter(n => {
+						return n.weakness && n.weakness.toUpperCase() === i.value.toUpperCase()
+					})
+				}
+
+				if (i.stat === "spellbook") {
+					//console.log(newData);
+					newData = newData.filter(n => {
+						return n.spellbook && n.spellbook.length === i.value
+					})
+				}
+
+				if (i.stat === "level") {
+					//console.log(newData);
+					const rangeLevels = i.value.split(" - ")
+					const minLevel = rangeLevels[0]
+					const maxLevel = rangeLevels[1]
+
+					newData = newData.filter(n => {
+						return n.level >= parseInt(minLevel) && n.level <= parseInt(maxLevel)
+					})
+				}
+			})
+
+			newData.sort((a, b) => {
+				if (parseInt(a.price) === 0) return 1;
+				if (parseInt(b.price) === 0) return -1
+				return a.price - b.price
+			})
+
+			//console.log(newData);
+			this.setState({ yourSubs: newData, loading: false, statSearched: oldStat })
+		}
+		else {
+			this.setState({ loading: false, statSearched: [] })
+			this.loadSubs(this.state.tournamentSubs)
+		}
+	}
 
     renderBtnOpenTournament(goto) {
         return (
@@ -775,6 +885,72 @@ class Tournament extends Component {
 		)
 	}
 
+    renderListStat(item, index, statName) {
+		return (
+			<button
+				key={index}
+				style={{ marginBottom: 15, marginLeft: 10 }}
+				onClick={() => {
+					this.listPopup.close()
+					this.searchByStat({ stat: statName, value: item })
+				}}
+			>
+				<p style={{ fontSize: 19 }}>
+					{item}
+				</p>
+			</button>
+		)
+	}
+
+    renderBoxSearchStat(statName, statDisplay, list) {
+		const { statSearched } = this.state
+
+		//console.log(statSearched);
+
+		const findItem = statSearched && statSearched.length > 0 ? statSearched.find(i => i.stat === statName) : undefined
+
+		let text = statDisplay.toUpperCase()
+		if (findItem) {
+			//console.log(findItem);
+
+			let v = findItem.value
+			text = `${statDisplay} = ${v}`
+		}
+
+		return (
+			<Popup
+				ref={ref => this.listPopup = ref}
+				trigger={
+					<button style={styles.btnStat}>
+						<p style={{ fontSize: 18, color: 'white' }}>{text}</p>
+						{
+							findItem &&
+							<IoClose
+								color='red'
+								size={22}
+								style={{ marginLeft: 5 }}
+								onClick={(e) => {
+									e.stopPropagation()
+									this.searchByStat({ stat: findItem.stat, value: findItem.value })
+								}}
+							/>
+						}
+					</button>
+				}
+				position="bottom left"
+				on="click"
+				closeOnDocumentClick
+				arrow={true}
+			>
+				<div style={{ flexDirection: 'column', paddingTop: 10 }}>
+					{list.map((item, index) => {
+						return this.renderListStat(item, index, statName)
+					})}
+				</div>
+			</Popup>
+		)
+	}
+
     renderBody(isMobile) {
         const { tournament, tournamentWiza, profileFights, error, showProfileFights, showSubs, yourSubs } = this.state
         const { showModalTx } = this.props
@@ -827,6 +1003,19 @@ class Tournament extends Component {
                             {error}
                         </p>
                     </div>
+                }
+
+                {
+                    showSubs &&
+                    <div style={{ flexWrap: 'wrap', marginBottom: 15 }}>
+    					{this.renderBoxSearchStat("hp", "HP", ["40 - 50", "51 - 60", "61 - 65", "66 - 70", "71 - 75", "76 - 80", "81 - 85", "86 - 90", "91 - 95", "96 - 100", "101 - 105", "106 - 110"].reverse())}
+    					{this.renderBoxSearchStat("defense", "DEFENSE", ["14 - 15", "16 - 17", "18 - 19", "20 - 21", "22 - 23", "24 - 25", "26 - 27", "28 - 29", "30 - 31", "32 - 33", "34 - 35", "36 - 37"].reverse())}
+    					{this.renderBoxSearchStat("element", "ELEMENT", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
+    					{this.renderBoxSearchStat("resistance", "RESISTANCE", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
+    					{this.renderBoxSearchStat("weakness", "WEAKNESS", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
+    					{this.renderBoxSearchStat("spellbook", "SPELLBOOK", [1, 2, 3, 4])}
+    					{this.renderBoxSearchStat("level", "LEVEL", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 275", "276 - 300"].reverse())}
+    				</div>
                 }
 
                 {
@@ -970,7 +1159,19 @@ const styles = {
 		borderRightWidth: 2,
 		borderBottomWidth: 0,
 		paddingTop: 10
-	}
+	},
+    btnStat: {
+		padding: 10,
+		backgroundColor: CTA_COLOR,
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginRight: 10,
+		marginBottom: 10,
+		borderRadius: 2,
+		minWidth: 60,
+		display: 'flex',
+		flexDirection: 'row'
+	},
 }
 
 const mapStateToProps = (state) => {
