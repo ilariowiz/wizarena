@@ -139,7 +139,15 @@ class Nft extends Component {
 				//console.log(response)
 				//console.log(Object.keys(response.medals));
 
-				let tournaments = Object.keys(response.medals)
+				let tournaments = []
+				response.fights.map(i => {
+					const torneoName = i.tournament.split("_")[0]
+					if (!tournaments.includes(torneoName)) {
+						tournaments.push(torneoName)
+					}
+				})
+
+				//let tournaments = Object.keys(response.medals)
 				tournaments.sort((a, b) => {
 					return parseInt(a.replace("t", "")) - parseInt(b.replace("t", ""))
 				})
