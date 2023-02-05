@@ -49,7 +49,8 @@ import {
 	RING_MINT_PRICE,
 	LOAD_BUYIN_WIZA,
 	LOAD_FEE_TOURNAMENT_WIZA,
-	LOAD_SUBSCRIBED_WIZA
+	LOAD_SUBSCRIBED_WIZA,
+	SET_KADENA_NAME
 } from './types'
 
 
@@ -148,6 +149,24 @@ export const connectChainweaver = (account, chainId, gasPrice, gasLimit, network
 		dispatch(setIsXwallet(false))
 		dispatch(setIsWalletConnectQR(false))
 
+		//è un kadenaname
+		if (account.includes(".")) {
+			const kadenaaddressResponse = await fetch(`https://www.kadenanames.com/api/v1/address/${account}`);
+			const { address } = await kadenaaddressResponse.json()
+
+			//console.log(address);
+			if (address) {
+				account = address
+			}
+			else {
+				console.log("Failed to sign the command in the wallet")
+				if (callback) {
+					callback("The account could not be verified")
+				}
+				return
+			}
+		}
+
 		let pactCode = `(free.${CONTRACT_NAME}.check-your-account "${account}")`;
 
 		let caps = [
@@ -180,6 +199,9 @@ export const connectChainweaver = (account, chainId, gasPrice, gasLimit, network
 
 			if (!signedCmd) {
 				console.log("Failed to sign the command in the wallet")
+				if (callback) {
+					callback("The account could not be verified")
+				}
 				return
 			}
 
@@ -311,12 +333,23 @@ export const fetchAccountDetails = (accountName, chainId, gasPrice = DEFAULT_GAS
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
-		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+		dispatch(readFromContract(cmd, true, networkUrl)).then(async (response) => {
 			//console.log(response)
 
 			if (response.account) {
 				dispatch(loadUser(response))
 				dispatch(setIsConnectWallet(true))
+
+				//console.log(response.account);
+
+				const kadenanameResponse = await fetch(`https://www.kadenanames.com/api/v1/name/${response.account}`);
+				const { name } = await kadenanameResponse.json()
+
+				//console.log(name);
+				if (name) {
+					dispatch({ type: SET_KADENA_NAME, payload: name })
+				}
+
 				if (callback) {
 					callback()
 				}
@@ -706,6 +739,23 @@ export const getOffersReceived = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimi
 
 		let cmd = {
 			pactCode: `(free.${CONTRACT_NAME}.get-offers-for-owner "${account.account}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (response && callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
+export const getEquipmentActiveOffers = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 60000, networkUrl, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.get-active-offers)`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 

@@ -80,6 +80,7 @@ export const SAVE_RANK = 'SAVE_RANK'
 
 export const SET_WIZARD_SELECTED_SHOP = 'SET_WIZARD_SELECTED_SHOP'
 
+export const SET_KADENA_NAME = 'SET_KADENA_NAME'
 
 
 /////// equipment

@@ -341,7 +341,7 @@ class Header extends Component {
 	}
 
 	render() {
-		const { section, account, page, isMobile } = this.props
+		const { section, account, page, isMobile, kadenaname } = this.props
 
 		const { boxW } = getBoxWidth(isMobile)
 
@@ -542,7 +542,7 @@ class Header extends Component {
 						{
 							account && account.account ?
 							<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 15, marginRight: isMobile ? 8 : 22, lineHeight: 1 }}>
-								{account.account.slice(0, 10)}...
+								{kadenaname ? kadenaname : `${account.account.slice(0, 10)}...`}
 							</p>
 							: null
 						}
@@ -610,9 +610,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId } = state.mainReducer
+	const { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname } = state.mainReducer
 
-	return { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId }
+	return { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname }
 }
 
 export default connect(mapStateToProps, {

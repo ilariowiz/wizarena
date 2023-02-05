@@ -9,21 +9,33 @@ class ModalTransfer extends Component {
 		super(props)
 
 		this.state = {
-			address: '',
+			addr: '',
+            loading: false
 		}
 	}
 
-    startTransfer() {
-        const { address } = this.state
-        if (!address) {
+    async startTransfer() {
+        const { addr } = this.state
+        if (!addr) {
             return
         }
 
-        this.props.callback(address)
+        if (addr.includes(".") && !this.state.loading) {
+            this.setState({ loading: true })
+            const response = await fetch(`https://www.kadenanames.com/api/v1/address/${addr}`);
+            const { address } = await response.json();
+            //console.log(address);
+            this.setState({ loading: false })
+            this.props.callback(address)
+        }
+        else {
+            this.props.callback(addr)
+        }
     }
 
 	render() {
 		const { showModal, onCloseModal, width } = this.props;
+        const { loading } = this.state
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 
@@ -31,8 +43,8 @@ class ModalTransfer extends Component {
 			<div className={classContainer}>
 				<div style={Object.assign({}, styles.subcontainer, { width })}>
 
-					<p style={{ color: 'white', fontSize: 18 }}>
-						Paste the k: wallet of the receiver
+					<p style={{ color: 'white', fontSize: 18, textAlign: 'center' }}>
+						Paste the k: wallet or KadenaName of the receiver
 					</p>
 
 					<div style={styles.boxWallet}>
@@ -40,8 +52,8 @@ class ModalTransfer extends Component {
                             style={styles.input}
                             type='text'
                             placeholder='Kadena address'
-                            value={this.state.address}
-                            onChange={(e) => this.setState({ address: e.target.value })}
+                            value={this.state.addr}
+                            onChange={(e) => this.setState({ addr: e.target.value })}
                         />
 
                         <button
@@ -50,7 +62,7 @@ class ModalTransfer extends Component {
                             onClick={() => this.startTransfer()}
                         >
                             <p style={{ color: 'white', fontSize: 19 }}>
-                                Transfer
+                                {loading ? "Loading..." : "Transfer"}
                             </p>
                         </button>
 
@@ -84,7 +96,8 @@ const styles = {
 		justifyContent: 'center',
 		alignItems: 'center',
 		flexDirection: 'column',
-		position: 'relative'
+		position: 'relative',
+        padding: 10
 	},
     boxWallet: {
 		flexDirection: 'column',
