@@ -1,3 +1,5 @@
+import itemToUrl from './ItemToUrl'
+
 export const sendMessage = (id, amount, expiration, owner) => {
     const request = new XMLHttpRequest()
 
@@ -10,6 +12,24 @@ export const sendMessage = (id, amount, expiration, owner) => {
     const params = {
         username: `${owner.slice(0, 15)}...`,
         avatar_url: `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`,
+        content
+    }
+
+    request.send(JSON.stringify(params));
+}
+
+export const sendMessageOfferItem = (info) => {
+    const request = new XMLHttpRequest()
+
+    request.open("POST", process.env.REACT_APP_DISCORD_WEBHOOK_URL)
+    request.setRequestHeader("Content-type", 'application/json')
+
+
+    const content = `There is a new offer for the ${info.ringType}: ${info.amount} WIZA, expires in ${info.duration} days`
+
+    const params = {
+        username: info.ringType,
+        avatar_url: itemToUrl[info.ringType],
         content
     }
 
