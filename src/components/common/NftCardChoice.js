@@ -137,7 +137,6 @@ class NftCardChoice extends Component {
                             </button>
                             :
                             null
-
                         }
 
                         {

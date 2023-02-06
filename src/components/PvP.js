@@ -6,6 +6,8 @@ import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import toast, { Toaster } from 'react-hot-toast';
 import moment from 'moment'
+import _ from 'lodash'
+import Popup from 'reactjs-popup';
 import Header from './Header'
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
@@ -22,7 +24,7 @@ import {
 	setNetworkUrl,
     getPvPweek,
     getPvPopen,
-    subscribeToPvPweek,
+    subscribeToPvPMass,
     incrementFightPvP,
     getAllSubscribersPvP,
     setSfida,
@@ -63,7 +65,9 @@ class PvP extends Component {
             itemChangeSpell: {},
             wizaAmount: 0,
             idNftIncrementFights: "",
-            equipment: []
+            equipment: [],
+            toSubscribe: [],
+            sumSubscribePvP: ""
         }
     }
 
@@ -198,6 +202,44 @@ class PvP extends Component {
         })
     }
 
+    subscribe(idNft, spellSelected, wizaAmount) {
+		const { pvpWeek } = this.state
+        const { account } = this.props
+
+		if (!pvpWeek) {
+			return
+		}
+
+		let refactorSpellSelected = { name: spellSelected.name }
+
+		let obj = {
+			spellSelected: refactorSpellSelected,
+			idnft: idNft,
+            week: pvpWeek,
+            wizaAmount,
+            id: `${pvpWeek}_${idNft}`,
+            address: account.account
+		}
+
+		const toSubscribe = Object.assign([],  this.state.toSubscribe)
+		toSubscribe.push(obj)
+
+		this.setState({ toSubscribe })
+	}
+
+    subscribeMass() {
+		const { chainId, gasPrice, gasLimit, netId, account } = this.props
+		const { toSubscribe } = this.state
+
+		let tot = 0
+        toSubscribe.map(i => tot += i.wizaAmount)
+
+		this.setState({ sumSubscribePvP: `You will subscribe ${toSubscribe.length} wizards for ${toSubscribe.length} KDA and ${tot} WIZA`, typeModal: "subscribe_pvp" })
+
+		this.props.subscribeToPvPMass(chainId, gasPrice, gasLimit, netId, account, toSubscribe)
+	}
+
+    /*
     subscribe(id, spellSelected, wizaAmount) {
         const { account, chainId, gasPrice, netId } = this.props
         const { pvpWeek } = this.state
@@ -208,6 +250,7 @@ class PvP extends Component {
 
         this.props.subscribeToPvPweek(chainId, gasPrice, 6000, netId, account, pvpWeek, id, refactorSpellSelected, wizaAmount)
     }
+    */
 
     incrementPvP(wizaAmount) {
         const { account, chainId, gasPrice, netId } = this.props
@@ -450,7 +493,7 @@ class PvP extends Component {
     }
 
     renderRowChoise(item, index, modalWidth) {
-        const { pvpWeek, pvpOpen, equipment } = this.state
+        const { pvpWeek, pvpOpen, equipment, toSubscribe } = this.state
         const { wizaBalance } = this.props
 
 
@@ -470,6 +513,16 @@ class PvP extends Component {
                 index={index}
                 wizaBalance={wizaBalance || 0}
                 equipment={equipment}
+                toSubscribe={toSubscribe}
+                removeFromSubscribers={(idnft) => {
+					let toSubscribe = Object.assign([], this.state.toSubscribe)
+
+					const idx = toSubscribe.findIndex(i => i.idnft === idnft)
+					if (idx > -1) {
+						toSubscribe.splice(idx, 1)
+					}
+					this.setState({ toSubscribe })
+				}}
 			/>
 		)
 	}
@@ -637,6 +690,67 @@ class PvP extends Component {
             </div>
         )
     }
+
+    renderFooterSubscribe(isMobile) {
+		const { toSubscribe, tournamentSubs } = this.state
+
+        let totWiza = 0
+
+
+		let temp = []
+		toSubscribe.map(i => {
+
+            totWiza += i.wizaAmount
+
+			temp.push(
+				<Popup
+					key={i.idnft}
+					trigger={open => (
+						<img
+							style={{ width: 60, height: 60, borderRadius: 2, marginRight: 10, marginBottom: 10, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', cursor: 'pointer' }}
+							src={getImageUrl(i.idnft)}
+							alt={`#${i.idnft}`}
+						/>
+					)}
+					position="top center"
+					on="hover"
+				>
+					<div style={{ padding: 10, fontSize: 16 }}>
+						#{i.idnft} <br /> Spell Selected: {i.spellSelected.name} <br /> WIZA: {i.wizaAmount}
+					</div>
+				</Popup>
+			)
+		})
+
+		const styleBox = isMobile ?
+						{ flexDirection: 'column', alignItems: 'center', paddingBottom: 10, width: '100%' }
+						:
+						{ justifyContent: 'space-between', alignItems: 'center', flex: 1 }
+
+		return (
+			<div style={styleBox}>
+				<div style={{ flexWrap: 'wrap', marginLeft: 20 }}>
+					{temp}
+				</div>
+
+                <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginRight: 20 }}>
+
+                    <p style={{ fontSize: 15, color: 'white', marginBottom: 3 }}>
+                        TOT WIZA {totWiza}
+                    </p>
+                    <button
+    					className="btnH"
+    					style={{ width: 180, height: 40, justifyContent: 'center', alignItems: 'center', borderRadius: 2, backgroundColor: CTA_COLOR }}
+    					onClick={() => this.subscribeMass()}
+    				>
+    					<p style={{ fontSize: 17, color: 'white' }}>
+    						SUBSCRIBE
+    					</p>
+    				</button>
+                </div>
+			</div>
+		)
+	}
 
     renderBody(isMobile) {
         const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults, userMintedNfts, error, activeSubs, pvpWeekEnd, pvpFightsStart, pvpFightsStartDate } = this.state
@@ -810,6 +924,13 @@ class PvP extends Component {
 
                 </div>
 
+                {
+                    this.state.toSubscribe.length > 0 &&
+                    <div style={styles.footerSubscribe}>
+						{this.renderFooterSubscribe(isMobile)}
+					</div>
+                }
+
 
                 <ModalTransaction
 					showModal={showModalTx}
@@ -826,6 +947,8 @@ class PvP extends Component {
 					nameNft={this.state.nameNftToSubscribe}
                     pvpWeek={this.state.pvpWeek}
                     wizaAmount={this.state.wizaAmount}
+                    toSubscribePvP={this.state.toSubscribe}
+                    sumSubscribePvP={this.state.sumSubscribePvP}
 				/>
 
                 {
@@ -961,7 +1084,23 @@ const styles = {
         borderColor: TEXT_SECONDARY_COLOR,
         borderStyle: 'solid',
         borderRadius: 2
-    }
+    },
+    footerSubscribe: {
+		width: '100%',
+		minHeight: 90,
+		position: 'sticky',
+		bottom: 0,
+		left: 0,
+		backgroundColor: BACKGROUND_COLOR,
+		borderColor: 'white',
+		borderStyle: 'solid',
+		borderRadius: 2,
+		borderTopWidth: 2,
+		borderLeftWidth: 2,
+		borderRightWidth: 2,
+		borderBottomWidth: 0,
+		paddingTop: 10
+	},
 }
 
 const mapStateToProps = (state) => {
@@ -977,7 +1116,7 @@ export default connect(mapStateToProps, {
 	setNetworkUrl,
     getPvPweek,
     getPvPopen,
-    subscribeToPvPweek,
+    subscribeToPvPMass,
     incrementFightPvP,
     getAllSubscribersPvP,
     setSfida,

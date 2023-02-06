@@ -5,7 +5,7 @@ import { firebasedb } from '../Firebase';
 import { IoClose } from 'react-icons/io5'
 import DotLoader from 'react-spinners/DotLoader';
 import Pact from "pact-lang-api";
-import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, sendMessageUpdateNickname, sendMessageUpgrade, sendMessageListedEquipment, sendMessageDelistedEquipment, sendMessageSalesEquipment } from './WebhookDiscord'
+import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, sendMessageUpdateNickname, sendMessageUpgrade, sendMessageListedEquipment, sendMessageDelistedEquipment, sendMessageSalesEquipment, sendMessageOfferItem } from './WebhookDiscord'
 import '../../css/Modal.css'
 import {
 	signTransaction,
@@ -34,7 +34,7 @@ class ModalTransaction extends Component {
 	}
 
 	pollForTransaction = async () => {
-		const { transactionState, networkUrl, nameNft, idNft, inputPrice, statToUpgrade, howMuchIncrement, type, pvpWeek, makeOfferValues, saleValues, wizaAmount, nicknameToSet, ringToEquipName } = this.props
+		const { transactionState, networkUrl, nameNft, idNft, inputPrice, statToUpgrade, howMuchIncrement, type, pvpWeek, makeOfferValues, saleValues, wizaAmount, nicknameToSet, ringToEquipName, toSubscribePvP } = this.props
 
 
 		const requestKey = transactionState.requestKey
@@ -78,8 +78,10 @@ class ModalTransaction extends Component {
 			}
 			else if (type === "subscribe_pvp") {
 
-				const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_${nameNft}`)
-				setDoc(docRef, { "lose": 0, "win": 0, "maxFights": wizaAmount })
+				toSubscribePvP.map(i => {
+					const docRef = doc(firebasedb, "pvp_results", `${i.week}_#${i.idnft}`)
+					setDoc(docRef, { "lose": 0, "win": 0, "maxFights": i.wizaAmount })
+				})
 			}
 			else if (type === "increment_fight_pvp") {
 				const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_${nameNft}`)
@@ -89,10 +91,14 @@ class ModalTransaction extends Component {
 				//console.log(makeOfferValues);
 				sendMessage(makeOfferValues.id, makeOfferValues.amount, makeOfferValues.duration, makeOfferValues.owner)
 			}
+			else if (type === "makeofferitem") {
+				//console.log(makeOfferValues);
+				sendMessageOfferItem(makeOfferValues)
+			}
 			else if (type === "acceptoffer" || type === "buy") {
 				sendMessageSales(saleValues.id, saleValues.amount)
 			}
-			else if (type === "buyequipment") {
+			else if (type === "buyequipment" || type === "acceptofferequipment") {
 				sendMessageSalesEquipment(saleValues)
 			}
 			else if (type === "list") {
@@ -127,7 +133,7 @@ class ModalTransaction extends Component {
 	}
 
 	getContent() {
-		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, amountToMint, offerInfoRecap, wizaAmount, nicknameToSet, apToBurn, numberOfChest, ringToEquipName } = this.props
+		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, amountToMint, offerInfoRecap, wizaAmount, nicknameToSet, apToBurn, numberOfChest, ringToEquipName, makeOfferValues, sumSubscribePvP } = this.props
 
 		//CASO INIZIALE, signingCmd != null in transactionState
 		let title = 'Signing transaction'
@@ -161,7 +167,7 @@ class ModalTransaction extends Component {
 					body = `You will buy ${nameNft} (you will need WIZA on chain 1)`
 				}
 				else if (type === 'subscribe_pvp') {
-					body = `You will subscribe ${nameNft} who will be able to do ${wizaAmount} fights`
+					body = sumSubscribePvP
 				}
 				else if (type === 'increment_fight_pvp') {
 					body = `You will increase the number of fights Wizard ${nameNft} can do by ${wizaAmount}`
@@ -211,7 +217,7 @@ class ModalTransaction extends Component {
 				else if (type === 'makeoffer') {
 					body = `You will submit the offer. Remember that the amount of the offer will be locked in the contract for the duration of the offer.`
 				}
-				else if (type === "acceptoffer") {
+				else if (type === "acceptoffer" || type === "acceptofferequipment") {
 					body = offerInfoRecap || "You will accept this offer"
 				}
 				else if (type === "withdrawoffer") {
@@ -231,6 +237,9 @@ class ModalTransaction extends Component {
 				}
 				else if (type === "unequip") {
 					body = `You will unequip ${ringToEquipName} from ${nameNft} for 120 WIZA`
+				}
+				else if (type === "makeofferitem") {
+					body = `You will offer ${makeOfferValues.amount} WIZA for ${makeOfferValues.ringType}, expiring in ${makeOfferValues.duration} ${makeOfferValues.duration > 1 ? "days" : "day"}`
 				}
 
 				buttonText = 'Open Wallet'
@@ -291,7 +300,7 @@ class ModalTransaction extends Component {
 					buttonText = 'Close'
 				}
 				else if (type === 'subscribe_pvp') {
-					body = `Your Wizard ${nameNft} is entered in the PvP arena!`
+					body = `Your Wizards are registered for PvP arena!`
 					buttonText = 'Close'
 				}
 				else if (type === 'increment_fight_pvp') {
@@ -342,11 +351,11 @@ class ModalTransaction extends Component {
 					body = `Spell changed!`
 					buttonText = 'Close'
 				}
-				else if (type === 'makeoffer') {
+				else if (type === 'makeoffer' || type === 'makeofferitem') {
 					body = `Offer sent!`
 					buttonText = 'Close'
 				}
-				else if (type === 'acceptoffer') {
+				else if (type === 'acceptoffer' || type === 'acceptofferequipment') {
 					body = `Offer accepted!`
 					buttonText = 'Close'
 				}

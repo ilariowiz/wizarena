@@ -1286,16 +1286,51 @@
     ;;;;;; PVP ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    ;id = idweek_idnft
-    (defun subscribe-pvp (id:string week:string idnft:string address:string spellSelected:object wiza:decimal m:module{wiza1-interface-v1})
-        @doc "Subscribe a wizard to pvp arena"
+    (defun subscribe-pvp-mass (subscribers:list address:string m:module{wiza1-interface-v1})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
-        (enforce (>= wiza 30.0) "You must send at least 30 wiza to participate")
         (let (
                 (pvp-open (get-value PVP_OPEN))
-                (data-wiz (get-wizard-fields-for-id (str-to-int idnft)))
+                (buyin (* 1.0 (length subscribers)))
             )
             (enforce (= pvp-open "1") "Pvp week registrations are closed")
+            (with-capability (ACCOUNT_GUARD address)
+                (install-capability (coin.TRANSFER address ADMIN_ADDRESS buyin))
+                (coin.transfer address ADMIN_ADDRESS buyin)
+            )
+            (with-capability (PRIVATE)
+                (map
+                    (nft-to-subscribe-pvp m)
+                    subscribers
+                )
+            )
+        )
+    )
+
+    (defun nft-to-subscribe-pvp (m:module{wiza1-interface-v1} subscriber:object)
+        (require-capability (PRIVATE))
+        (let (
+                (id (at "id" subscriber))
+                (week (at "week" subscriber))
+                (idnft (at "idnft" subscriber))
+                (address (at "address" subscriber))
+                (spellSelected (at "spellSelected" subscriber))
+                (wizaAmount (at "wizaAmount" subscriber))
+            )
+            (with-capability (OWNER address idnft)
+                (subscribe-pvp id week idnft address spellSelected wizaAmount m)
+            )
+        )
+    )
+
+    ;id = idweek_idnft
+    (defun subscribe-pvp (id:string week:string idnft:string address:string spellSelected:object wiza:integer m:module{wiza1-interface-v1})
+        @doc "Subscribe a wizard to pvp arena"
+        (require-capability (PRIVATE))
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+        (enforce (>= wiza 30) "You must send at least 30 wiza to participate")
+        (let (
+                (data-wiz (get-wizard-fields-for-id (str-to-int idnft)))
+            )
             (enforce (= (at "confirmBurn" data-wiz) false) "You can't subscribe a wizard in burning queue")
         )
         (with-default-read pvp-subscribers id
@@ -1304,17 +1339,15 @@
             (enforce (= (length idnft) 0) "Already subscribed to this pvp week")
         )
         (with-capability (OWNER address idnft)
-            ;(install-capability (coin.TRANSFER address CLERIC_MINT_ADDRESS 1.0))
-            ;(coin.transfer address CLERIC_MINT_ADDRESS 1.0)
-            (spend-wiza wiza address m)
+            (spend-wiza (+ wiza 0.0) address m)
             (insert pvp-subscribers id {
                 "pvpweek": week,
                 "idnft": idnft,
                 "address": address,
                 "spellSelected": spellSelected,
-                "rounds": (floor wiza)
+                "rounds": wiza
             })
-            (emit-event (PVP_SUBSCRIPTION idnft week wiza))
+            (emit-event (PVP_SUBSCRIPTION idnft week (+ wiza 0.0)))
         )
     )
 

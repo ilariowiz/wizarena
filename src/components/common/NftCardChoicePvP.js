@@ -83,7 +83,7 @@ class NftCardChoicePvP extends Component {
     }
 
 	render() {
-		const { item, width, canSubscribe } = this.props
+		const { item, width, canSubscribe, toSubscribe } = this.props
         const { isSubscribed, loading } = this.state
 
         //console.log(tournament)
@@ -98,6 +98,8 @@ class NftCardChoicePvP extends Component {
 			infoEquipment = getRingBonuses(ring)
             //console.log(infoEquipment);
 		}
+
+        const inToSubscribe = toSubscribe.some(i => i.idnft === item.id)
 
 		return (
 			<div
@@ -153,14 +155,14 @@ class NftCardChoicePvP extends Component {
 
 
                         {
-                            !isSubscribed && canSubscribe && level && !loading ?
+                            !isSubscribed && canSubscribe && level && !loading && !inToSubscribe ?
                             <button
                                 className='btnSubscribe'
                                 style={styles.btnSubscribe}
                                 onClick={() => this.setState({ showModalSpellbook: true })}
                             >
-                                <p style={{ fontSize: 17, color: 'white' }}>
-                                    SUBSCRIBE
+                                <p style={{ fontSize: 16, color: 'white' }}>
+                                    SELECT TO SUBSCRIBE
                                 </p>
                             </button>
                             :
@@ -194,6 +196,19 @@ class NftCardChoicePvP extends Component {
                             : null
                         }
 
+                        {
+                            inToSubscribe && !isSubscribed && canSubscribe && !loading ?
+                            <button
+                                className='btnSubscribe'
+                                style={Object.assign({}, styles.btnSubscribe, { backgroundColor: '#014766'})}
+                                onClick={() => this.props.removeFromSubscribers(item.id)}
+                            >
+                                <p style={{ fontSize: 16, color: 'white' }}>
+                                    REMOVE TO SUBSCRIBERS
+                                </p>
+                            </button>
+                            : null
+                        }
 
                     </div>
 
