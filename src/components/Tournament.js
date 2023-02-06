@@ -91,8 +91,8 @@ class Tournament extends Component {
             this.setState({ tournament }, async () => {
 
                 this.props.getMontepremi(chainId, gasPrice, gasLimit, networkUrl)
-				this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-wiza-key")
-				this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-wiza-key")
+				this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-key")
+				this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-key")
 
 
                 this.loadPair(tournament.name)
@@ -442,6 +442,8 @@ class Tournament extends Component {
     renderBody(isMobile) {
         const { tournament } = this.state
         const { buyin, subscribed } = this.props
+
+        //console.log(buyin);
 
         const { boxW } = getBoxWidth(isMobile)
 
