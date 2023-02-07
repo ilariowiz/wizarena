@@ -9,6 +9,7 @@ import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
 import OfferItem from './common/OfferItem'
+import OfferEquipmentItem from './common/OfferEquipmentItem'
 import NftCardStake from './common/NftCardStake'
 import EquipmentCard from './common/EquipmentCard'
 import ModalTransaction from './common/ModalTransaction'
@@ -35,7 +36,9 @@ import {
 	getOffersMade,
 	getOffersReceived,
 	acceptOffer,
-	loadEquipMinted
+	loadEquipMinted,
+	getEquipmentOffersMade,
+	withdrawEquipmentOffer
 } from '../actions'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -64,7 +67,8 @@ class Profile extends Component {
 			offerInfoRecap: "",
 			kadenaPrice: undefined,
 			saleValues: {},
-			equipment: []
+			equipment: [],
+			offersEquipmentMade: []
 		}
 	}
 
@@ -97,6 +101,7 @@ class Profile extends Component {
 		this.loadWizaBalance()
 		this.loadEquip()
 		this.loadOffersMade()
+		this.loadOffersEquipmentMade()
 	}
 
 	loadMinted() {
@@ -130,6 +135,16 @@ class Profile extends Component {
 				this.setState({ offersMade: response, loading: false })
 			})
 		}
+	}
+
+	loadOffersEquipmentMade() {
+		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		this.props.getEquipmentOffersMade(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
+			//console.log(response);
+			this.setState({ offersEquipmentMade: response, loading: false })
+		})
+
 	}
 
 	loadOffersReceived() {
@@ -307,6 +322,14 @@ class Profile extends Component {
 		})
 	}
 
+	withdrawEquipmentOffer(offer) {
+		const { account, chainId, gasPrice, netId } = this.props
+
+		this.setState({ typeModal: 'withdrawoffer' }, () => {
+			this.props.withdrawEquipmentOffer(chainId, gasPrice, 5000, netId, offer.id, account)
+		})
+	}
+
 	buildsRow(items, itemsPerRow = 4) {
 		return items.reduce((rows, item, index) => {
 			//console.log(index);
@@ -467,10 +490,27 @@ class Profile extends Component {
 		)
 	}
 
+	renderEquipmentOffersMade(width, isMobile) {
+		const { offersEquipmentMade } = this.state
 
+		return (
+			<div style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+				{offersEquipmentMade.map((item, index) => {
+					return (
+						<OfferEquipmentItem
+							item={item}
+							key={index}
+							withdrawOffer={() => this.withdrawEquipmentOffer(item)}
+							isMobile={isMobile}
+						/>
+					)
+				})}
+			</div>
+		)
+	}
 
 	renderMenu(isMobile) {
-		const { section, loading, equipment, offersMade, offersReceived } = this.state;
+		const { section, loading, equipment, offersMade, offersReceived, offersEquipmentMade } = this.state;
 		const { userMintedNfts } = this.props
 
 		const selStyle = { borderBottomWidth: 3, borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderColor: CTA_COLOR, borderStyle: 'solid' }
@@ -524,7 +564,7 @@ class Profile extends Component {
 					}}
 				>
 					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 3 ? CTA_COLOR : '#21c6e895' }}>
-						{offersMade ? `OFFERS MADE (${offersMade.length})` : "OFFERS MADE"}
+						{offersMade ? `OFFERS MADE (${offersMade.length + offersEquipmentMade.length})` : "OFFERS MADE"}
 					</p>
 				</button>
 
@@ -549,7 +589,7 @@ class Profile extends Component {
 
 	renderBody(isMobile) {
 		const { account, showModalTx, wizaBalance } = this.props
-		const { showModalConnection, isConnected, section, loading, unclaimedWizaTotal, offersMade, offersReceived } = this.state
+		const { showModalConnection, isConnected, section, loading, unclaimedWizaTotal, offersMade, offersReceived, offersEquipmentMade } = this.state
 
 		const { boxW, modalW } = getBoxWidth(isMobile)
 
@@ -673,6 +713,13 @@ class Profile extends Component {
 				{
 					section === 3 && !loading && offersMade ?
 					this.renderOffers(boxW, offersMade, true, isMobile)
+					:
+					null
+				}
+
+				{
+					section === 3 && !loading && offersEquipmentMade ?
+					this.renderEquipmentOffersMade(boxW, isMobile)
 					:
 					null
 				}
@@ -844,5 +891,7 @@ export default connect(mapStateToProps, {
 	getOffersMade,
 	getOffersReceived,
 	acceptOffer,
-	loadEquipMinted
+	loadEquipMinted,
+	getEquipmentOffersMade,
+	withdrawEquipmentOffer
 })(Profile)

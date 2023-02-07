@@ -464,6 +464,19 @@ class Equipment extends Component {
     				</div>
 
                     <div style={{ alignItems: 'center' }}>
+                        <a
+                            href={`${window.location.protocol}//${window.location.host}/equipmentoffers`}
+                            style={styles.btnOffers}
+                            onClick={(e) => {
+                                e.preventDefault()
+                                this.props.history.push('/equipmentoffers')
+                            }}
+                        >
+                            <p style={{ fontSize: 17, color: 'white' }}>
+                                Offers
+                            </p>
+                        </a>
+
     					<a
     						href={`${window.location.protocol}//${window.location.host}/salesequipment`}
     	                    style={styles.btnSales}
@@ -865,6 +878,19 @@ const styles = {
 		minWidth: 60,
 		display: 'flex',
 		flexDirection: 'row'
+	},
+    btnOffers: {
+		width: 160,
+		height: 38,
+		marginRight: 10,
+		borderRadius: 2,
+        borderWidth: 2,
+        borderColor: CTA_COLOR,
+        borderStyle: 'solid',
+		justifyContent: 'center',
+		alignItems: 'center',
+		display: 'flex',
+        backgroundColor: CTA_COLOR
 	},
     btnSales: {
 		width: 160,

@@ -21,6 +21,7 @@ import PvP from './components/PvP'
 import League from './components/League'
 import Equipment from './components/Equipment'
 import ItemEquipment from './components/ItemEquipment'
+import EquipmentOffers from './components/EquipmentOffers'
 
 import TournamentPre from './components/TournamentPre'
 import Tournament from './components/Tournament'
@@ -56,6 +57,7 @@ ReactDOM.render(
             <Route path="/pvp" component={PvP} />
             <Route path="/league" component={League} />
             <Route path="/equipment" component={Equipment} />
+            <Route path="/equipmentoffers" component={EquipmentOffers} />
             <Route path="/item/" component={ItemEquipment} />
             <Route path="/tournaments/" component={TournamentPre} />
             <Route path="/tournamentK" component={Tournament} />

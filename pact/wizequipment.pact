@@ -21,6 +21,10 @@
   (defconst ADMIN_ADDRESS "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb")
   (defconst MINT_START "mint_start")
 
+  (defconst ITEMS_OFFERS_COUNT_KEY "items-offers-count-key")
+
+  (defconst WIZ_EQUIPMENT_OFFERS_BANK:string "wiz-equipment-offers-bank" "Account holding offers")
+
   ; Capabilities
   ; --------------------------------------------------------------------------
 
@@ -55,6 +59,14 @@
       (compose-capability (ACCOUNT_GUARD ADMIN_ADDRESS))
   )
 
+  (defun create-BANK-guard ()
+      (create-user-guard (require-PRIVATE))
+  )
+
+  (defun require-PRIVATE ()
+      (require-capability (PRIVATE))
+  )
+
   (defcap EQUIPMENT_MINTED (id:string owner:string)
       @doc "Emitted event when an Equipment is minted"
       @event true
@@ -62,6 +74,14 @@
 
   (defcap EQUIPMENT_BUY (id:string buyer:string seller:string price:decimal)
       @doc "Emitted event when an Equipment is purchased"
+      @event true
+  )
+
+  (defcap MAKE_ITEM_OFFER (itemtype:string from:string amount:decimal duration:integer)
+      @event true
+  )
+
+  (defcap WITHDRAW_OFFER (idoffer:string from:string amount:decimal)
       @event true
   )
 
@@ -112,12 +132,32 @@
       count:decimal
   )
 
+  (defschema offers-schema
+      @doc "schema for offers on marketplace"
+      id:string
+      buyer:string
+      itemtype:string
+      timestamp:time
+      expiresat:time
+      amount:decimal
+      withdrawn:bool
+      status:string
+  )
+
+  (defschema token-schema
+      balance:decimal
+      guard:guard
+  )
+
   (deftable equipment:{equip-main-schema})
   (deftable creation:{creation-schema})
   (deftable equipped:{equipped-schema})
   (deftable counts:{counts-schema})
   (deftable values:{values-schema})
   (deftable volume:{volume-schema})
+
+  (deftable offers:{offers-schema})
+  (deftable token-table:{token-schema})
 
   ; Can only happen once
   ; --------------------------------------------------------------------------
@@ -129,7 +169,54 @@
       (insert counts NFTS_COUNT_KEY {"count": 0})
       (insert volume VOLUME_PURCHASE_COUNT {"count": 0.0})
       (insert values MINT_START {"value": "0"})
+
+      (insert counts ITEMS_OFFERS_COUNT_KEY {"count": 0})
+
+      (coin.create-account WIZ_EQUIPMENT_OFFERS_BANK (create-BANK-guard))
+      (create-account WIZ_EQUIPMENT_OFFERS_BANK (create-BANK-guard))
   )
+
+  ; --------------------------------------------------------------------------
+   ; STATE MODIFYING FUNCTIONS, REQUIRE CAPABILITIES
+   ; --------------------------------------------------------------------------
+
+     (defun create-account:string (account:string guard:guard)
+       @doc "create new account"
+       (enforce-reserved account guard)
+       (insert token-table account {
+           "balance": 0.0,
+           "guard": guard
+       })
+     )
+
+     (defun enforce-reserved:bool
+     ( accountId:string
+       guard:guard )
+     @doc "Enforce reserved account name protocols."
+     (let ((r (check-reserved accountId)))
+       (if (= "" r) true
+         (if (= "k" r)
+           (enforce
+             (= (format "{}" [guard])
+                (format "KeySet {keys: [{}],pred: keys-all}"
+                        [(drop 2 accountId)]))
+             "Single-key account protocol violation")
+           (enforce false
+             (format "Unrecognized reserved protocol: {}" [r]))))))
+
+     (defun check-reserved:string (accountId:string)
+         " Checks ACCOUNT for reserved name and returns type if \
+         \ found or empty string. Reserved names start with a \
+         \ single char and colon, e.g. 'c:foo', which would return 'c' as type."
+         (let ((pfx (take 2 accountId)))
+           (if (= ":" (take -1 pfx)) (take 1 pfx) "")))
+
+     (defun enforce-account-exists (account:string)
+         @doc "Enforces that an account exists in the coin table"
+         (let ((coin-account (at "account" (coin.details account))))
+             (enforce (= coin-account account) "account was not found")
+         )
+     )
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;:;;;;;;; EQUIP CREATION , ADMIN ONLY ;;;;
@@ -360,6 +447,146 @@
       )
   )
 
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;;;;;; OFFERS ;;;;;;;;;;;;;;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+  (defun make-offer (buyer:string itemtype:string duration:integer amount:decimal m:module{wiza1-interface-v2})
+      @doc "make an offer for an item type"
+      (enforce (> amount 0.0) "Amount must be greater then zero")
+      (enforce (> duration 0) "Duration must be at least 1 day")
+      (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+      (let (
+          (new-offer-id (int-to-str 10 (get-count ITEMS_OFFERS_COUNT_KEY)))
+          (bank-guard (at "guard" (coin.details WIZ_EQUIPMENT_OFFERS_BANK)))
+        )
+        (with-capability (ACCOUNT_GUARD buyer)
+            (install-capability (m::TRANSFER buyer WIZ_EQUIPMENT_OFFERS_BANK amount))
+            (m::transfer-create buyer WIZ_EQUIPMENT_OFFERS_BANK bank-guard amount)
+
+          (insert offers new-offer-id {
+            "id": new-offer-id,
+            "buyer": buyer,
+            "itemtype": itemtype,
+            "timestamp": (at "block-time" (chain-data)),
+            "expiresat": (add-time (at "block-time" (chain-data)) (days duration)),
+            "amount": amount,
+            "withdrawn": false,
+            "status": "pending"
+          })
+          (with-default-read token-table WIZ_EQUIPMENT_OFFERS_BANK
+            {"balance": 0.0}
+            {"balance":= oldbalance }
+            (update token-table WIZ_EQUIPMENT_OFFERS_BANK {"balance": (+ oldbalance amount)})
+          )
+          (with-capability (PRIVATE)
+            (increase-count ITEMS_OFFERS_COUNT_KEY)
+          )
+          (emit-event (MAKE_ITEM_OFFER itemtype buyer amount duration))
+        )
+      )
+  )
+
+  (defun accept-offer (idoffer:string iditem:string owner:string m:module{wiza1-interface-v2})
+    (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+    (with-read offers idoffer
+      {
+        "buyer":=buyer,
+        "itemtype":=itemtype,
+        "timestamp":=timestamp,
+        "expiresat":=expiresat,
+        "amount":=amount,
+        "withdrawn":=iswithdrew
+      }
+      (let (
+            (data (get-equipment-fields-for-id iditem))
+          )
+          (enforce (= (at "equipped" data) false) "You can't sell an equipped item")
+          (enforce (= (at "name" data) itemtype) "The item is not what was requested")
+          (enforce (= iswithdrew false) "Cannot accept twice")
+          (enforce (>= expiresat (at "block-time" (chain-data))) "Offer expired.")
+
+          (with-capability (OWNER (at "owner" data) iditem)
+              (let (
+                  (fee (/ (* FEE_KEY amount) 100))
+                  (owner-guard (at "guard" (coin.details (at "owner" data))))
+                  (admin-guard (at "guard" (coin.details ADMIN_ADDRESS)))
+                )
+                (with-capability (PRIVATE)
+                    (install-capability (m::TRANSFER WIZ_EQUIPMENT_OFFERS_BANK (at "owner" data) (- amount fee)))
+                    (m::transfer-create WIZ_EQUIPMENT_OFFERS_BANK (at "owner" data) owner-guard (- amount fee))
+
+                    (install-capability (m::TRANSFER WIZ_EQUIPMENT_OFFERS_BANK ADMIN_ADDRESS fee))
+                    (m::transfer-create WIZ_EQUIPMENT_OFFERS_BANK ADMIN_ADDRESS admin-guard fee)
+
+                    (update offers idoffer { "withdrawn": true, "status": "accepted" })
+                    (update equipment iditem {
+                      "owner": buyer,
+                      "price": 0.0,
+                      "listed": false
+                    })
+                    (with-default-read token-table WIZ_EQUIPMENT_OFFERS_BANK
+                      {"balance": 0.0}
+                      {"balance":= oldbalance }
+                      (update token-table WIZ_EQUIPMENT_OFFERS_BANK {"balance": (- oldbalance amount)})
+                    )
+                    (increase-volume-by VOLUME_PURCHASE_COUNT amount)
+                )
+                (emit-event (EQUIPMENT_BUY iditem buyer (at "owner" data) amount))
+              )
+          )
+      )
+    )
+  )
+
+  (defun cancel-offer (idoffer:string m:module{wiza1-interface-v2})
+    @doc "cancel offer"
+    (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+    (with-read offers idoffer
+      {
+        "buyer" := buyer,
+        "expiresat" := expiresat,
+        "amount" := amount,
+        "withdrawn" := iswithdrew
+      }
+      ; enforce some rules
+      (let (
+            (buyer-guard (at "guard" (coin.details buyer)))
+          )
+          (with-capability (ACCOUNT_GUARD buyer)
+            (enforce (= iswithdrew false) "Cannot withdraw twice")
+            (enforce (<= expiresat (at "block-time" (chain-data))) "Cannot cancel offer yet.")
+            (with-capability (PRIVATE)
+              (install-capability (m::TRANSFER WIZ_EQUIPMENT_OFFERS_BANK buyer amount))
+              (m::transfer-create WIZ_EQUIPMENT_OFFERS_BANK buyer buyer-guard amount)
+
+              (update offers idoffer { "withdrawn": true, "status": "canceled" })
+              (with-default-read token-table WIZ_EQUIPMENT_OFFERS_BANK
+                {"balance": 0.0}
+                {"balance":= oldbalance }
+                (update token-table WIZ_EQUIPMENT_OFFERS_BANK {"balance": (- oldbalance amount)})
+              )
+            )
+            (emit-event (WITHDRAW_OFFER idoffer buyer amount))
+          )
+      )
+
+    )
+  )
+
+  (defun get-active-offers ()
+    @doc "Get all active offers"
+    (select offers (where "withdrawn" (= false)))
+  )
+
+  (defun get-offers-for-buyer (buyer:string)
+    @doc "Get all offers made by a single buyer"
+    (select offers (and?
+                          (where "status" (!= "canceled")) ;se già ritirata non la prendiamo
+                          (where "buyer" (= buyer))))
+  )
+
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;;;;;;; UTILS  ;;;;;;;;;;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -495,12 +722,6 @@
       )
   )
 
-  (defun enforce-account-exists (account:string)
-      @doc "Enforces that an account exists in the coin table"
-      (let ((coin-account (at "account" (coin.details account))))
-          (enforce (= coin-account account) "account was not found")
-      )
-  )
 )
 
 (if (read-msg "upgrade")
@@ -512,6 +733,8 @@
     (create-table counts)
     (create-table values)
     (create-table volume)
+    (create-table offers)
+    (create-table token-table)
 
     (initialize)
 

@@ -768,6 +768,23 @@ export const getEquipmentActiveOffers = (chainId, gasPrice = DEFAULT_GAS_PRICE, 
 	}
 }
 
+export const getEquipmentOffersMade = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 60000, networkUrl, account, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.get-offers-for-buyer "${account.account}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (response && callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
 export const loadMaxItemsPerWallet = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, account, phase, callback) => {
 	return (dispatch) => {
 
@@ -1710,6 +1727,43 @@ export const acceptOfferEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 	}
 }
 
+export const withdrawEquipmentOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idOffer, account) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME_EQUIPMENT}.cancel-offer "${idOffer}" free.wiza)`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME_EQUIPMENT}.ACCOUNT_GUARD`,
+				[account.account]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("withdrawEquipmentOffer", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
 export const subscribeToTournamentMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, buyin, list) => {
 	return (dispatch) => {
 
@@ -1848,52 +1902,6 @@ export const subscribeToPvPMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
 }
-
-/*
-export const subscribeToPvPweek = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, pvpWeek, idNft, spellSelected, wizaAmount) => {
-	return (dispatch) => {
-
-		const key = `${pvpWeek}_${idNft}`
-
-		let pactCode = `(free.${CONTRACT_NAME}.subscribe-pvp "${key}" "${pvpWeek}" "${idNft}" "${account.account}" ${JSON.stringify(spellSelected)} ${wizaAmount}.0 free.wiza)`;
-
-		let caps = [
-			Pact.lang.mkCap(`Subscribe`, "Pay the buyin", `coin.TRANSFER`, [
-				account.account,
-				CLERIC_MINT_ADDRESS,
-				1.0,
-			]),
-			Pact.lang.mkCap(
-				"Verify owner",
-				"Verify your are the owner",
-				`free.${CONTRACT_NAME}.OWNER`,
-				[account.account, idNft]
-			),
-			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
-		]
-
-		let cmd = {
-			pactCode,
-			caps,
-			sender: account.account,
-			gasLimit,
-			gasPrice,
-			chainId,
-			ttl: 600,
-			envData: {
-				"user-ks": account.guard,
-				account: account.account
-			},
-			signingPubKey: account.guard.keys[0],
-			networkId: netId
-		}
-
-		//console.log("subscribeToPvp", cmd)
-
-		dispatch(updateTransactionState("cmdToConfirm", cmd))
-	}
-}
-*/
 
 export const incrementFightPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, pvpWeek, idNft, wizaAmount) => {
 	return (dispatch) => {
