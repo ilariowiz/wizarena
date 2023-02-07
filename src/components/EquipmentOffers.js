@@ -69,9 +69,13 @@ class Sales extends Component {
 		this.setState({ loading: true })
 
         this.props.getEquipmentActiveOffers(chainId, gasPrice, gasLimit, networkUrl, (response) => {
-            //console.log(response);
+            console.log(response);
 
             let allOffers = response.filter(i => i.buyer !== account.account)
+
+            allOffers = allOffers.sort((a, b) => {
+                return b.amount - a.amount
+            })
 
             this.setState({ loading: false, allOffers })
         })
@@ -209,7 +213,7 @@ class Sales extends Component {
                     </p>
                 }
 
-                <div style={{ width: boxW, flexDirection: 'column' }}>
+                <div style={{ width: boxW, flexDirection: 'row', flexWrap: 'wrap' }}>
                     {allOffers.map((item, index) => {
                         return this.renderItemOffer(item, index)
                     })}
@@ -320,8 +324,8 @@ const styles = {
         borderRadius: 2,
         marginBottom: 20,
         marginRight: 20,
-        width: 'fit-content',
-        padding: 10
+        width: 230,
+        padding: 10,
     },
     btnAccept: {
         width: 160,
