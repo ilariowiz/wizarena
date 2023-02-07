@@ -77,7 +77,9 @@ class Tournament extends Component {
     loadMinted(tournament, isResults, isSubs) {
 		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-        this.setState({ loading: true, showSubs: false, showProfileFights: false })
+        this.setState({ loading: true, showSubs: false, showProfileFights: false }, () => {
+            document.getElementById("loading").scrollIntoView({ behavior: 'smooth' })
+        })
 
 		if (account && account.account) {
 			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (minted) => {
@@ -265,7 +267,9 @@ class Tournament extends Component {
 
         //console.log(yourSubs);
 
-        this.setState({ yourSubs, showSubs: true, showProfileFights: false, tournamentSubs: tournament, loading: false })
+        this.setState({ yourSubs, showSubs: true, showProfileFights: false, tournamentSubs: tournament, loading: false }, () => {
+            document.getElementById("filters").scrollIntoView({ behavior: 'smooth' })
+        })
 
     }
 
@@ -1002,7 +1006,7 @@ class Tournament extends Component {
 
                 {
 					this.state.loading ?
-					<div style={{ width: boxW, height: 50, justifyContent: 'center', alignItems: 'center' }}>
+					<div style={{ width: boxW, height: 50, justifyContent: 'center', alignItems: 'center' }} id="loading">
 						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
 					</div>
 					: null
@@ -1024,7 +1028,7 @@ class Tournament extends Component {
 
                 {
                     showSubs &&
-                    <div style={{ flexWrap: 'wrap', marginBottom: 15 }}>
+                    <div style={{ flexWrap: 'wrap', marginBottom: 15 }} id="filters">
     					{this.renderBoxSearchStat("hp", "HP", ["40 - 50", "51 - 60", "61 - 65", "66 - 70", "71 - 75", "76 - 80", "81 - 85", "86 - 90", "91 - 95", "96 - 100", "101 - 105", "106 - 110"].reverse())}
     					{this.renderBoxSearchStat("defense", "DEFENSE", ["14 - 15", "16 - 17", "18 - 19", "20 - 21", "22 - 23", "24 - 25", "26 - 27", "28 - 29", "30 - 31", "32 - 33", "34 - 35", "36 - 37"].reverse())}
     					{this.renderBoxSearchStat("element", "ELEMENT", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
