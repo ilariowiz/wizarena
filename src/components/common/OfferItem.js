@@ -103,7 +103,7 @@ class OfferItem extends Component {
 		}
 
 		return (
-			<p style={{ fontSize: isMobile ? 14 : 17, color: 'white', flex: 1 }}>
+			<p style={{ fontSize: isMobile ? 14 : 17, marginRight: 5, color: 'white', flex: 1 }}>
 				Expiration {diff}
 			</p>
 		)
@@ -132,7 +132,7 @@ class OfferItem extends Component {
 				}
 
                 <div style={{ alignItems: 'center', flex: 1 }}>
-    				<p style={{ fontSize: 22, color: 'white', marginLeft: isMobile ? 10 : 20 }}>
+    				<p style={{ fontSize: isMobile ? 18 : 22, color: 'white', marginLeft: isMobile ? 10 : 20 }}>
     					KDA {item.amount}
     				</p>
 
@@ -144,9 +144,13 @@ class OfferItem extends Component {
     				}
                 </div>
 
-                <p style={{ fontSize: 15, color: 'white', flex: 1 }}>
-                    From {item.buyer.slice(0, isMobile ? 5 : 15)}...
-                </p>
+                {
+                    !isMobile &&
+                    <p style={{ fontSize: 15, color: 'white', flex: 1 }}>
+                        From {item.buyer.slice(0, 15)}...
+                    </p>
+                }
+
 
 				{this.renderExpiration()}
 
