@@ -156,20 +156,24 @@ class Sales extends Component {
                     You own {youOwn}
                 </p>
 
-                <button
-                    style={Object.assign({}, styles.btnAccept, { backgroundColor: youOwn && youOwn > 0 ? CTA_COLOR : '#21c6e895' })}
-                    onClick={() => {
-                        if (!youOwn || youOwn === 0) {
-                            return
-                        }
-
-                        this.acceptOffer(item, )
-                    }}
-                >
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        ACCEPT OFFER
-                    </p>
-                </button>
+                {
+                    !youOwn || youOwn === 0 ?
+                    <div style={{ height: 40, width: 160 }} />
+                    :
+                    <button
+                        style={Object.assign({}, styles.btnAccept, { backgroundColor: CTA_COLOR })}
+                        onClick={() => {
+                            if (!youOwn || youOwn === 0) {
+                                return
+                            }
+                            this.acceptOffer(item)
+                        }}
+                    >
+                        <p style={{ fontSize: 17, color: 'white' }}>
+                            ACCEPT OFFER
+                        </p>
+                    </button>
+                }
 
             </div>
         )
