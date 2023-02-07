@@ -69,7 +69,7 @@ class Sales extends Component {
 		this.setState({ loading: true })
 
         this.props.getEquipmentActiveOffers(chainId, gasPrice, gasLimit, networkUrl, (response) => {
-            console.log(response);
+            //console.log(response);
 
             let allOffers = response.filter(i => i.buyer !== account.account)
 
