@@ -174,8 +174,8 @@ class Equipment extends Component {
     }
 
     renderPageCounter() {
-		const { allItemsIds, itemsBlockId } = this.props
-		//console.log(allItemsIds, allItems, itemsBlockId)
+		const { allItems, itemsBlockId } = this.props
+		//console.log(allItems, itemsBlockId)
 
 		let subarray = []
 
@@ -191,7 +191,7 @@ class Equipment extends Component {
 
 		//console.log("indexes", indexes)
 
-		let blocks = allItemsIds.reduce((rows, item, index) => {
+		let blocks = allItems.reduce((rows, item, index) => {
 			//console.log(index);
 			//se array row è piena, aggiungiamo una nuova row = [] alla lista
 			if (index % ITEMS_PER_BLOCK === 0 && index > 0) {
