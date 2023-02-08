@@ -291,6 +291,10 @@ class Nft extends Component {
 			nftH.push(doc.data())
 		})
 
+		nftH.sort((a, b) => {
+			return new Date(b.blockTime) - new Date(a.blockTime)
+		})
+
 		//console.log(nftH);
 
 		this.setState({ nftH, loadingHistory: false })
