@@ -47,58 +47,11 @@ class Sales extends Component {
 
     loadSales(next) {
 
-        /*
-        let url = 'https://estats.chainweb.com/txs/events?search=wiz-arena.WIZ_BUY'
-        if (next) {
-            url = `${url}&next=${next}`
-        }
-
-        let nextNext = ''
-
-		console.log(url);
-		fetch(url)
-  		.then(response => {
-            nextNext = response.headers.get('Chainweb-Next')
-            return response.json()
-        })
-  		.then(data => {
-  			console.log(data)
-
-            this.allSales.push(...data)
-            console.log(this.allSales);
-
-            if (data.length > 0) {
-                const lastTimestamp = data[data.length - 1].blockTime
-
-                const diff = moment().diff(lastTimestamp, 'days')
-                console.log(diff);
-                if (diff < 118) {
-
-                    setTimeout(() => {
-                        this.loadSales(nextNext)
-                    }, 2000)
-                }
-            }
-            else {
-                setTimeout(() => {
-                    this.loadSales(nextNext)
-                }, 2000)
-            }
-
-  		})
-		.catch(e => {
-			console.log(e)
-
-		})
-
-        */
-
-
 		let url = 'https://estats.chainweb.com/txs/events?search=wiz-arena.WIZ_BUY&limit=50'
 
 		//console.log(url);
 		fetch(url)
-  		.then(response => response.json()) //response.headers.get('Chainweb-Next')
+  		.then(response => response.json())
   		.then(data => {
   			//console.log(data)
             this.setState({ loading: false })

@@ -329,7 +329,11 @@ class DoFight extends Component {
                 }
             }
 
-            if (atkTot >= difesaDif) {
+            //console.log(tiro);
+
+            //se atktot è maggiore o uguale alla difesa, oppure il tiro è un 20 oppure il tiro non è un uno
+            if ((atkTot >= difesaDif || tiro === 20) && tiro !== 1) {
+                //console.log("hit");
 
                 const dannoBase = attaccante.damage
                 let dannoSpell = dannoBase + attaccante.spellSelected.dmgBase
