@@ -450,7 +450,7 @@ class Equipment extends Component {
 
                 </div>
 
-                <div style={{ width: '100%', alignItems: 'center' }}>
+                <div style={{ width: '100%', alignItems: 'center', flexWrap: 'wrap' }}>
     				<div style={{ flexWrap: 'wrap', alignItems: 'center' }}>
     					{this.renderBoxHeader(items.toLocaleString(), 'items', isMobile)}
 
