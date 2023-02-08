@@ -9,14 +9,14 @@ import { IoEyeOffOutline } from 'react-icons/io5';
 import { IoEyeOutline } from 'react-icons/io5';
 import moment from 'moment'
 import toast, { Toaster } from 'react-hot-toast';
-import { getDocs, collection, doc, getDoc } from "firebase/firestore";
+import { getDocs, collection, doc, getDoc, query, where } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Header from './Header';
 import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import ModalTransfer from './common/ModalTransfer'
 import ModalMakeOffer from './common/ModalMakeOffer'
-import HistoryItem from './common/HistoryItem'
+import HistoryItemNft from './common/HistoryItemNft'
 import OfferItem from './common/OfferItem'
 import getImageUrl from './common/GetImageUrl'
 import getRingBonuses from './common/GetRingBonuses'
@@ -279,35 +279,21 @@ class Nft extends Component {
 		this.setState({ historyUpgrades })
     }
 
-	loadHistory(idNft) {
-		let url = `https://estats.chainweb.com/txs/events?search=${CONTRACT_NAME}.WIZ_BUY&param=${idNft}&offset=0&limit=50`
+	async loadHistory(idNft) {
 
-		//console.log(url);
+		const q = query(collection(firebasedb, "sales"), where("idnft", "==", idNft))
 
-		fetch(url)
-  		.then(response => response.json())
-  		.then(data => {
-  			//console.log(data)
+		const querySnapshot = await getDocs(q)
 
-			let filterData = []
-			if (data && data.length > 0) {
-				for (var i = 0; i < data.length; i++) {
-					let d = data[i]
+		let nftH = []
 
-					const id = d.params[0]
-
-					if (id && id === idNft) {
-						filterData.push(d)
-					}
-				}
-			}
-
-			this.setState({ nftH: filterData, loadingHistory: false })
-  		})
-		.catch(e => {
-			console.log(e)
-			this.setState({ loadHistory: false })
+		querySnapshot.forEach(doc => {
+			nftH.push(doc.data())
 		})
+
+		//console.log(nftH);
+
+		this.setState({ nftH, loadingHistory: false })
 	}
 
 	async loadMaxMedalsPerTournament() {
@@ -665,7 +651,7 @@ class Nft extends Component {
 		const { nftH } = this.state
 
 		return (
-			<HistoryItem
+			<HistoryItemNft
 				item={item}
 				index={index}
 				nftH={nftH}
