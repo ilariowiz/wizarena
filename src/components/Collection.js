@@ -36,6 +36,7 @@ class Collection extends Component {
 			uniqueOwners: 1,
 			searchText: '',
 			searchedText: '',
+			listed: 0
 		}
 	}
 
@@ -71,6 +72,7 @@ class Collection extends Component {
 
 				this.getFloor(res)
 				this.getUniqueOwners(res)
+				this.getListed(res)
 
 				this.props.getPageBlockNfts(res, this.props.nftsBlockId || 0, (nftsToShow) => {
 					//console.log("loadAllNftsIds completed");
@@ -151,6 +153,23 @@ class Collection extends Component {
 		}
 
 		this.setState({ uniqueOwners: owners.length })
+	}
+
+	getListed(allNfts) {
+		if (!allNfts) {
+			return
+		}
+
+		let tot = 0
+
+		allNfts.map(i => {
+			if (i.listed) {
+				tot += 1
+			}
+		})
+		//console.log(tot);
+
+		this.setState({ listed: tot })
 	}
 
 	searchByName() {
@@ -419,7 +438,7 @@ class Collection extends Component {
 
 	renderHeader(isMobile) {
 		const { totalCountNfts, wizardsStaked } = this.props
-		const { floor, uniqueOwners, volume } = this.state
+		const { floor, uniqueOwners, volume, listed } = this.state
 
 		let items = totalCountNfts || 0
 
@@ -429,13 +448,15 @@ class Collection extends Component {
 				<div style={{ flexWrap: 'wrap', alignItems: 'center' }}>
 					{this.renderBoxHeader(items.toLocaleString(), 'items', isMobile)}
 
+					{this.renderBoxHeader(`${listed || 0}`, 'listed', isMobile)}
+
 					{this.renderBoxHeader(uniqueOwners.toLocaleString(), 'owners', isMobile)}
 
 					{this.renderBoxHeader(`${floor || '...'} kda`, 'floor price', isMobile)}
 
 					{this.renderBoxHeader(`${volume.toLocaleString()} kda`, 'total volume', isMobile)}
 
-					{this.renderBoxHeader(`${wizardsStaked || 0}`, 'wizards staked', isMobile)}
+					{this.renderBoxHeader(`${wizardsStaked || 0}`, 'staked', isMobile)}
 				</div>
 
 				<div style={{ alignItems: 'center' }}>
