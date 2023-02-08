@@ -19,6 +19,8 @@ class Sales extends Component {
             loading: true,
             error: ""
         }
+
+        this.allSales = []
     }
 
     componentDidMount() {
@@ -33,6 +35,7 @@ class Sales extends Component {
 
         //console.log(lastTimeUpdateSales, diff);
 
+        //this.loadSales()
         if (!lastTimeUpdateSales || (diff && diff > 10)) {
             this.loadSales()
         }
@@ -42,7 +45,55 @@ class Sales extends Component {
 
 	}
 
-    loadSales() {
+    loadSales(next) {
+
+        /*
+        let url = 'https://estats.chainweb.com/txs/events?search=wiz-arena.WIZ_BUY'
+        if (next) {
+            url = `${url}&next=${next}`
+        }
+
+        let nextNext = ''
+
+		console.log(url);
+		fetch(url)
+  		.then(response => {
+            nextNext = response.headers.get('Chainweb-Next')
+            return response.json()
+        })
+  		.then(data => {
+  			console.log(data)
+
+            this.allSales.push(...data)
+            console.log(this.allSales);
+
+            if (data.length > 0) {
+                const lastTimestamp = data[data.length - 1].blockTime
+
+                const diff = moment().diff(lastTimestamp, 'days')
+                console.log(diff);
+                if (diff < 118) {
+
+                    setTimeout(() => {
+                        this.loadSales(nextNext)
+                    }, 2000)
+                }
+            }
+            else {
+                setTimeout(() => {
+                    this.loadSales(nextNext)
+                }, 2000)
+            }
+
+  		})
+		.catch(e => {
+			console.log(e)
+
+		})
+
+        */
+
+
 		let url = 'https://estats.chainweb.com/txs/events?search=wiz-arena.WIZ_BUY&limit=50'
 
 		//console.log(url);
@@ -57,6 +108,7 @@ class Sales extends Component {
 			console.log(e)
 			this.setState({ loading: false, error: "Ops... something goes wrong!" })
 		})
+
 	}
 
     renderSale(item, index, isMobile) {
@@ -84,7 +136,7 @@ class Sales extends Component {
         return (
             <div style={{ width: boxW, alignItems: 'center', flexDirection: 'column', paddingTop: 30 }}>
                 <p style={{ fontSize: 28, color: 'white', marginBottom: 30 }}>
-                    Last 50 sales
+                    Last sales
                 </p>
 
                 {

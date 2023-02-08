@@ -84,7 +84,7 @@ class Sales extends Component {
         return (
             <div style={{ width: boxW, alignItems: 'center', flexDirection: 'column', paddingTop: 30 }}>
                 <p style={{ fontSize: 28, color: 'white', marginBottom: 30 }}>
-                    Last 50 sales
+                    Last sales
                 </p>
 
                 {
