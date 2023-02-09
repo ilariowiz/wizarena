@@ -8,7 +8,7 @@ import getBoxWidth from './common/GetBoxW'
 import ModalMakeOfferItem from './common/ModalMakeOfferItem'
 import ModalTransaction from './common/ModalTransaction'
 import itemToUrl from './common/ItemToUrl'
-import { MAIN_NET_ID, ITEMS_PER_BLOCK, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
+import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
 import {
     setNetworkSettings,
     setNetworkUrl,
@@ -37,8 +37,6 @@ class Sales extends Component {
     }
 
     componentDidMount() {
-        const { lastTimeUpdateSales } = this.props
-
 		document.title = "Equipment Offers - Wizards Arena"
 
         this.props.setNetworkSettings(MAIN_NET_ID, "1")
@@ -136,6 +134,7 @@ class Sales extends Component {
                 <img
                     src={itemToUrl[item.itemtype]}
                     style={{ width: 76, height: 76, marginBottom: 15 }}
+                    alt={item.itemtype}
                 />
 
                 <p style={{ fontSize: 22, color: 'white', marginBottom: 15, alignItems: 'center' }}>
