@@ -61,6 +61,13 @@ class OfferEquipmentItem extends Component {
                 }
 
                 {
+                    offerState === 'iswithdrew' &&
+                    <p style={{ color: 'white', fontSize: 17, marginRight: isMobile ? 5 : 15 }}>
+                        {item.status}
+                    </p>
+                }
+
+                {
                     offerState === "expired" &&
                     <button
                         style={styles.btnAccept}
