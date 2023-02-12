@@ -76,7 +76,8 @@ class Nft extends Component {
 			offerInfoRecap: "",
 			makeOfferValues: {},
 			saleValues: {},
-			equipment: {}
+			equipment: {},
+			maxStats: undefined
 		}
 	}
 
@@ -87,6 +88,7 @@ class Nft extends Component {
 		this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 		this.loadKadenaPrice()
+		this.loadMaxStats()
 
 		setTimeout(() => {
 			this.getPathNft()
@@ -101,6 +103,15 @@ class Nft extends Component {
 			this.setState({ kadenaPrice: data.kadena.usd })
 		})
 		.catch(error => console.log(error))
+	}
+
+	async loadMaxStats() {
+		const docRef = doc(firebasedb, "max_stats", 'm')
+
+		const docSnap = await getDoc(docRef)
+		const data = docSnap.data()
+
+		this.setState({ maxStats: data })
 	}
 
 	getPathNft() {
@@ -1020,7 +1031,7 @@ class Nft extends Component {
 	}
 
 	renderStat(title, value) {
-		const { equipment } = this.state
+		const { equipment, maxStats } = this.state
 
 		//console.log(equipment);
 
@@ -1043,7 +1054,7 @@ class Nft extends Component {
 			}
 
 			return (
-				<div style={{ alignItems: 'flex-end', marginBottom: 5 }}>
+				<div style={{ alignItems: 'center', marginBottom: 10 }}>
 					<p style={styles.textTitleStat}>{title}</p>
 
 					{
@@ -1073,10 +1084,42 @@ class Nft extends Component {
 			fixedValue = fixedValue + ringBonus.bonusesDict[title.toLowerCase()]
 		}
 
+		let widthIn = 0
+		let bgColorIn = 'white'
+		let max = undefined
+		if (maxStats) {
+			max = maxStats[title.toLowerCase()]
+			widthIn = fixedValue * 100 / max
+
+			if (title === "HP") {
+				bgColorIn = '#58af04'
+			}
+			else if (title === 'DEFENSE') {
+				bgColorIn = '#14c3e8'
+			}
+			else if (title === 'ATTACK') {
+				bgColorIn = '#a10ed8'
+			}
+			else if (title === 'DAMAGE') {
+				bgColorIn = '#f80303'
+			}
+			else if (title === 'SPEED') {
+				bgColorIn = '#f1e711'
+			}
+		}
+
 		return (
-			<div style={{ alignItems: 'flex-end', marginBottom: 5 }}>
+			<div style={{ alignItems: 'center', marginBottom: 10 }}>
 				<p style={styles.textTitleStat}>{title}</p>
-				<p style={styles.textValueStat}>{fixedValue}</p>
+
+				{
+					maxStats && maxStats[title.toLowerCase()] &&
+					<div style={{ position: 'relative', height: 8, width: 100, backgroundColor: '#ffffff10', borderRadius: 4, overflow: 'hidden', marginRight: 9 }}>
+						<div style={{ width: `${widthIn}%`, backgroundColor: bgColorIn }} />
+					</div>
+				}
+
+				<p style={styles.textValueStatNumber}>{fixedValue}{max ? `/${max}` : ''}</p>
 			</div>
 		)
 	}
@@ -1136,20 +1179,22 @@ class Nft extends Component {
 							{this.renderStat("HP", nft.hp.int)}
 							{this.renderStat("DEFENSE", nft.defense.int)}
 
-							{this.renderStat("ELEMENT", nft.element.toUpperCase())}
-
-							{this.renderStat("SPELL", spellSelected.name.toUpperCase())}
-
 							{this.renderStat("ATTACK", nft.attack.int + spellSelected.atkBase)}
 							{this.renderStat("DAMAGE", nft.damage.int + spellSelected.dmgBase)}
 							{this.renderStat("SPEED", nft.speed ? nft.speed.int : 0)}
+
+							{this.renderStat("AP", nft.ap.int)}
+
+							{this.renderStat("ELEMENT", nft.element.toUpperCase())}
+
+							{this.renderStat("SPELL", spellSelected.name.toUpperCase())}
 
 							{this.renderStat("SPELL PERK", spellSelected.condition.name ? spellSelected.condition.name.toUpperCase() : '-')}
 
 							{this.renderStat("RESISTANCE", nft.resistance.toUpperCase())}
 							{this.renderStat("WEAKNESS", nft.weakness.toUpperCase())}
 
-							{this.renderStat("AP", nft.ap.int)}
+
 
 						</div>
 						: null
@@ -1954,11 +1999,15 @@ const styles = {
 		color: '#8d8b8b',
 		fontSize: 16,
 		marginRight: 9,
-		marginBottom: 2
 	},
 	textValueStat: {
 		color: 'white',
 		fontSize: 22,
+		marginRight: 24
+	},
+	textValueStatNumber: {
+		color: 'white',
+		fontSize: 18,
 		marginRight: 24
 	},
 	btnTransfer: {

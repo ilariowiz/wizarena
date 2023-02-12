@@ -394,10 +394,40 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 
 					//console.log(final);
 
+					//let maxStats = { hp: 0, defense: 0, attack: 0, damage: 0, speed: 0 }
+
 					final.map(i => {
 						const level = calcLevelWizard(i)
 						i.level = level
+
+						/*
+						if (i.hp.int > maxStats.hp) {
+							maxStats['hp'] = i.hp.int
+						}
+						if (i.defense.int > maxStats.defense) {
+							maxStats['defense'] = i.defense.int
+						}
+						if (i.attack.int > maxStats.attack) {
+							maxStats['attack'] = i.attack.int
+						}
+						if (i.damage.int > maxStats.damage) {
+							maxStats['damage'] = i.damage.int
+						}
+						if (i.hp.int > maxStats.hp) {
+							maxStats['speed'] = i.speed.int
+						}
+						*/
 					})
+
+					/*
+					maxStats['hp'] += 24 //anello life
+					maxStats['defense'] += 6
+					maxStats['attack'] += 6
+					maxStats['damage'] += 12
+					maxStats['speed'] += 12
+
+					console.log(maxStats);
+					*/
 
 					final.sort((a, b) => {
 						if (parseInt(a.price) === 0) return 1;
