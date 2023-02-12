@@ -1119,7 +1119,7 @@ class Nft extends Component {
 					</div>
 				}
 
-				<p style={styles.textValueStatNumber}>{fixedValue}{max ? `/${max}` : ''}</p>
+				<p style={styles.textValueStat}>{fixedValue}{max ? `/${max}` : ''}</p>
 			</div>
 		)
 	}
@@ -2001,11 +2001,6 @@ const styles = {
 		marginRight: 9,
 	},
 	textValueStat: {
-		color: 'white',
-		fontSize: 22,
-		marginRight: 24
-	},
-	textValueStatNumber: {
 		color: 'white',
 		fontSize: 18,
 		marginRight: 24
