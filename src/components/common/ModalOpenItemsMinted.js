@@ -38,7 +38,9 @@ class ModalOpenItemsMinted extends Component {
 
                 let final = []
 
-                final = response.sort((a, b) => {
+                final = response.filter(i => parseInt(i.id) < 100000)
+
+                final = final.sort((a, b) => {
                     return parseInt(b.id) - parseInt(a.id)
                 })
 
