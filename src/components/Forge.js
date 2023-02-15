@@ -42,7 +42,6 @@ class Forge extends Component {
             selectionRing2: [],
             finalRecipe: undefined,
             showModalRecipe: false,
-            showModalOpenChests: false,
             discount: 1,
             forgeXP: 0,
             level: 1,
@@ -90,7 +89,7 @@ class Forge extends Component {
         if (account && account.account) {
 
 			this.props.getForgeLevel(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
-                console.log(response);
+                //console.log(response);
 
                 if (response) {
                     const level = forgeLevel(response)
@@ -154,7 +153,7 @@ class Forge extends Component {
             return
         }
 
-        console.log(ring1, finalRecipe);
+        //console.log(ring1, finalRecipe);
 
         this.props.forgeItem(chainId, gasPrice, netId, finalRecipe.ingredients, [ring1.id, ring2.id], account)
     }
@@ -377,7 +376,6 @@ class Forge extends Component {
 						this.props.clearTransaction()
 						window.location.reload()
 					}}
-                    numberOfChest={1}
 				/>
 
                 <ModalForgeEquipment
@@ -408,19 +406,6 @@ class Forge extends Component {
                     }}
                     isMobile={isMobile}
                 />
-
-                {
-                    this.state.showModalOpenChests &&
-                    <ModalOpenItemsMinted
-                        showModal={this.state.showModalOpenChests}
-                        onCloseModal={() => {
-                             this.setState({ showModalOpenChests: false })
-                             window.location.reload()
-                        }}
-                        history={this.props.history}
-                        amountMinted={1}
-                    />
-                }
 
             </div>
         )
