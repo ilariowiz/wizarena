@@ -223,6 +223,9 @@ class ModalTransaction extends Component {
 				else if (type === "withdrawoffer") {
 					body = 'You will withdraw funds from this offer'
 				}
+				else if (type === "forge") {
+					body = 'You are about to forge a ring.'
+				}
 				else if (type === "buynickname") {
 					body = `You will give the nickname ${nicknameToSet} to Wizard ${nameNft}`
 				}
@@ -369,6 +372,10 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'burnap') {
 					body = 'AP burned successfully'
+					buttonText = 'Close'
+				}
+				else if (type === 'forge') {
+					body = 'Ring forged successfully'
 					buttonText = 'Close'
 				}
 				else if (type === 'buychest') {

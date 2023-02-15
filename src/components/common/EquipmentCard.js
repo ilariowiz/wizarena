@@ -74,8 +74,6 @@ class EquipmentCard extends Component {
         					src={getImageUrl(item.equippedToId)}
         					alt={`#${item.equippedToId}`}
         				/>
-
-
                     </div>
                     :
                     null

@@ -402,9 +402,9 @@ class Equipment extends Component {
     }
 
     renderProgress() {
-        const { totalCountItems } = this.props
+        const { totalMintedItems } = this.props
 
-		let items = totalCountItems || 0
+		let items = totalMintedItems || 0
 
         let maxItems = 4000
 
@@ -908,9 +908,9 @@ const styles = {
 
 const mapStateToProps = (state) => {
 	const { account, chainId, gasPrice, gasLimit, netId, networkUrl, showModalTx } = state.mainReducer;
-    const { statSearchedEquipment, allItems, allItemsIds, totalCountItems, itemsBlockId } = state.equipmentReducer
+    const { statSearchedEquipment, allItems, allItemsIds, totalCountItems, totalMintedItems, itemsBlockId } = state.equipmentReducer
 
-	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, showModalTx, statSearchedEquipment, allItems, allItemsIds, totalCountItems, itemsBlockId };
+	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, showModalTx, statSearchedEquipment, allItems, allItemsIds, totalCountItems, totalMintedItems, itemsBlockId };
 }
 
 export default connect(mapStateToProps, {

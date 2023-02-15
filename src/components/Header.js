@@ -416,6 +416,17 @@ class Header extends Component {
 								</a>*/}
 
 								<a
+									href={`${window.location.protocol}//${window.location.host}/forge`}
+									className={section === 9 ? btnPressedStyle : btnStyle}
+									onClick={(e) => {
+										e.preventDefault()
+										this.props.history.replace('/forge')
+									}}
+								>
+									FORGE
+								</a>
+
+								<a
 									href={`${window.location.protocol}//${window.location.host}/me`}
 									className={section === 3 ? btnPressedStyle : btnStyle}
 									onClick={(e) => {
@@ -486,6 +497,17 @@ class Header extends Component {
 									}}
 								>
 									EQUIPMENT
+								</a>
+
+								<a
+									href={`${window.location.protocol}//${window.location.host}/forge`}
+									className={btnHeaderNft}
+									onClick={(e) => {
+										e.preventDefault()
+										this.props.history.replace('/forge')
+									}}
+								>
+									FORGE
 								</a>
 
 								<a

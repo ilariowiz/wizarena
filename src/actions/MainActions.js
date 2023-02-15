@@ -1259,6 +1259,46 @@ export const removeNftFromBurningQueue = (chainId, gasPrice = DEFAULT_GAS_PRICE,
 	}
 }
 
+export const forgeItem = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, recipe, ingredients, account) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME_EQUIPMENT}.forge "${recipe}" ${JSON.stringify(ingredients)} "${account.account}" free.wiza)`;
+
+		let caps = [Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", [])]
+		ingredients.map(i => {
+			caps.push(
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME_EQUIPMENT}.OWNER`,
+          			[account.account, i]
+        		)
+			)
+		})
+
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit: 4000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("forgeItem", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
 export const mintNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, amount, account, stage) => {
 	return (dispatch) => {
 

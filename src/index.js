@@ -27,6 +27,8 @@ import TournamentPre from './components/TournamentPre'
 import Tournament from './components/Tournament'
 import TournamentWiza from './components/TournamentWiza'
 
+import Forge from './components/Forge'
+
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
@@ -62,6 +64,7 @@ ReactDOM.render(
             <Route path="/tournaments/" component={TournamentPre} />
             <Route path="/tournamentK" component={Tournament} />
             <Route path="/tournamentW" component={TournamentWiza} />
+            <Route path="/forge" component={Forge} />
           </Switch>
         </div>
       </BrowserRouter>

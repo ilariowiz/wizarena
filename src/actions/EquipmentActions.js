@@ -23,7 +23,7 @@ export const loadAllItemsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit,
 			//console.log(response)
 
             if (response && response.length > 0) {
-                dispatch({ type: LOAD_ALL_ITEMS_IDS, payload: { totalCountItems: response.length, allItemsIds: response } })
+                dispatch({ type: LOAD_ALL_ITEMS_IDS, payload: { allItemsIds: response } })
 
                 let partsBlock = _.chunk(response, 1000)
 
@@ -36,9 +36,21 @@ export const loadAllItemsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit,
                 Promise.all([promise1, promise2, promise3]).then(values => {
 					//console.log(values);
 
-					const final = [...values[0], ...values[1], ...values[2]]
+					let final = [...values[0], ...values[1], ...values[2]]
 
 					//console.log(final);
+
+                    let totalMintedItems = 0
+                    final.map(i => {
+                        if (parseInt(i.id) < 100000) {
+                            totalMintedItems ++
+                        }
+                    })
+
+                    final = final.filter(i => i.owner !== "wiz-equipment-fused")
+
+                    //console.log(final);
+
                     final.sort((a, b) => {
     	                return parseInt(a.id) - parseInt(b.id)
     	            })
@@ -51,7 +63,7 @@ export const loadAllItemsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit,
 
 					dispatch({
 						type: LOAD_ALL_ITEMS,
-						payload: { allItems: final, itemsBlockId: 0 }
+						payload: { allItems: final, itemsBlockId: 0, totalCountItems: final.length, totalMintedItems }
 					})
 
 					if (callback) {
@@ -60,10 +72,10 @@ export const loadAllItemsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit,
 				})
             }
             else {
-                dispatch({ type: LOAD_ALL_ITEMS_IDS, payload: { totalCountItems: response.length, allItemsIds: response } })
+                dispatch({ type: LOAD_ALL_ITEMS_IDS, payload: { allItemsIds: response } })
                 dispatch({
                     type: LOAD_ALL_ITEMS,
-                    payload: { allItems: [], itemsBlockId: 0 }
+                    payload: { allItems: [], itemsBlockId: 0, totalCountItems: 0, totalMintedItems: 0 }
                 })
                 if (callback) {
                     callback([])
@@ -180,6 +192,42 @@ export const getInfoNftEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLi
 
 		let cmd = {
 			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.get-equipment-fields-for-id "${iditem}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
+export const getDiscountLevel = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, account, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.get-discount-level "${account.account}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
+export const getForgeLevel = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, account, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.get-forge-xp "${account.account}")`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
