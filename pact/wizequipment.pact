@@ -25,6 +25,9 @@
 
   (defconst WIZ_EQUIPMENT_OFFERS_BANK:string "wiz-equipment-offers-bank" "Account holding offers")
 
+  (defconst WIZ_EQUIPMENT_FUSED:string "wiz-equipment-fused" "account holding fused rings")
+  (defconst FORGED_ID "forged-id")
+
   ; Capabilities
   ; --------------------------------------------------------------------------
 
@@ -82,6 +85,10 @@
   )
 
   (defcap WITHDRAW_OFFER (idoffer:string from:string amount:decimal)
+      @event true
+  )
+
+  (defcap FORGE_ITEM (recipe:string ingredients:list account:string)
       @event true
   )
 
@@ -149,6 +156,18 @@
       guard:guard
   )
 
+  (defschema recipe-book-schema
+      url:string
+      bonus:string
+      name:string
+      wiza:decimal
+      level:integer
+  )
+
+  (defschema forge-level-schema
+      xp:integer
+  )
+
   (deftable equipment:{equip-main-schema})
   (deftable creation:{creation-schema})
   (deftable equipped:{equipped-schema})
@@ -158,6 +177,9 @@
 
   (deftable offers:{offers-schema})
   (deftable token-table:{token-schema})
+
+  (deftable recipe-book:{recipe-book-schema})
+  (deftable forge-level:{forge-level-schema})
 
   ; Can only happen once
   ; --------------------------------------------------------------------------
@@ -174,6 +196,10 @@
 
       (coin.create-account WIZ_EQUIPMENT_OFFERS_BANK (create-BANK-guard))
       (create-account WIZ_EQUIPMENT_OFFERS_BANK (create-BANK-guard))
+
+      (insert counts FORGED_ID {"count": 100000})
+      (coin.create-account WIZ_EQUIPMENT_FUSED (create-BANK-guard))
+      (create-account WIZ_EQUIPMENT_FUSED (create-BANK-guard))
   )
 
   ; --------------------------------------------------------------------------
@@ -588,8 +614,160 @@
   )
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;;;;;;; FORGE  ;;;;;;;;;;;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (defun forge (recipe:string ingredients:list owner:string m:module{wiza1-interface-v2})
+    (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+    (map
+        (check-ownership owner)
+        ingredients
+    )
+    (with-capability (OWNER owner (at 0 ingredients))
+        (let (
+                (discount (get-discount-level owner))
+            )
+            (with-read recipe-book recipe
+                {"url":=url,
+                "bonus":=bonus,
+                "name":=name,
+                "wiza":=wiza,
+                "level":=level}
+                (let (
+                        (final-cost (- wiza (/ (* wiza discount) 100)))
+                        (id (id-for-forged-equipment))
+                        (forge-level (get-forge-level owner))
+                    )
+                    (enforce (>= forge-level level) "the forge level is not high enough for this recipe")
+                    (m::spend-wiza final-cost owner)
+
+                    (with-capability (PRIVATE)
+                        (update-forge-level owner (round final-cost))
+                        (map
+                            (melt-item)
+                            ingredients
+                        )
+                        (forge-final id {
+                                "id": id,
+                                "created": (at "block-time" (chain-data)),
+                                "url": url,
+                                "bonus": bonus,
+                                "name": name,
+                                "owner": owner,
+                                "listed": false,
+                                "price": 0.0,
+                                "equipped": false,
+                                "equippedToId": ""
+                            }
+                        )
+                        (emit-event (FORGE_ITEM recipe ingredients owner))
+                    )
+                )
+            )
+        )
+    )
+
+  )
+
+  (defun check-ownership (owner:string id:string)
+    (let (
+            (data (get-equipment-fields-for-id id))
+        )
+        (with-capability (OWNER owner id)
+            (enforce (= (contains (at "bonus" data) ",") false) "can't melt this item")
+            (enforce (= (at "equipped" data) false) "You can't melt an equipped item")
+            (enforce (= (at "listed" data) false) "You can't melt a listed item")
+        )
+    )
+  )
+
+  (defun get-discount-level (owner:string)
+    (with-default-read forge-level owner
+        {"xp":0}
+        {"xp":=xp}
+        (cond
+            (
+                (>= xp 2000)
+                10
+            )
+            (
+                (>= xp 5000)
+                15
+            )
+            (
+                (>= xp 10000)
+                20
+            )
+            (
+                (>= xp 20000)
+                25
+            )
+        1)
+    )
+  )
+
+  (defun get-forge-xp (owner:string)
+    (with-default-read forge-level owner
+        {"xp":0}
+        {"xp":=xp}
+        xp
+    )
+  )
+
+  (defun get-forge-level (owner:string)
+    (with-default-read forge-level owner
+        {"xp":0}
+        {"xp":=xp}
+        (cond
+            (
+                (>= xp 2000)
+                2
+            )
+            (
+                (>= xp 5000)
+                3
+            )
+            (
+                (>= xp 10000)
+                4
+            )
+            (
+                (>= xp 20000)
+                5
+            )
+        1)
+    )
+  )
+
+  (defun update-forge-level (owner:string xpgained:integer)
+    (require-capability (PRIVATE))
+    (with-default-read forge-level owner
+        {"xp":0}
+        {"xp":=xp}
+        (write forge-level owner {"xp": (+ xp xpgained)})
+    )
+  )
+
+  (defun melt-item (id:string)
+    (require-capability (PRIVATE))
+    (update equipment id
+        {"owner": WIZ_EQUIPMENT_FUSED}
+    )
+  )
+
+  (defun forge-final (id:string data:object)
+    (require-capability (PRIVATE))
+    (insert equipment id data)
+    (increase-count FORGED_ID)
+  )
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;;;;;;; UTILS  ;;;;;;;;;;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (defun forge-combination (key:string)
+     (read recipe-book key)
+  )
 
   (defun equipment-owned-by (owner:string)
       @doc "all ids equipment from owner"
@@ -614,15 +792,24 @@
       (let (
               (max-reveal (get-count MINTED_COUNT_KEY))
           )
-          (if
-              (< (str-to-int 10 id) max-reveal)
-              (let (
-                      (info (read equipment id))
+          (cond
+              (
+                  (< (str-to-int 10 id) max-reveal)
+                  (let (
+                          (info (read equipment id))
+                      )
+                      info
                   )
-                  info
               )
-              ""
-          )
+              (
+                  (>= (str-to-int 10 id) 100000)
+                  (let (
+                          (info (read equipment id))
+                      )
+                      info
+                  )
+              )
+          "")
       )
   )
 
@@ -678,6 +865,11 @@
       (int-to-str 10 (get-count MINTED_POST_COUNT_KEY))
   )
 
+  (defun id-for-forged-equipment ()
+      @doc "Returns an id for a new equipment to be minted"
+      (int-to-str 10 (get-count FORGED_ID))
+  )
+
   (defun get-count (key:string)
       @doc "Gets count for key"
       (at "count" (read counts key ['count]))
@@ -722,6 +914,19 @@
       )
   )
 
+  (defun set-recipe-book-value (key:string url:string bonus:string name:string wiza:decimal level:integer)
+      @doc "Sets the value for a key to store in a table"
+      (with-capability (ADMIN)
+          (insert recipe-book key
+              {"url": url,
+            "bonus":bonus,
+            "name":name,
+            "wiza":wiza,
+            "level":level}
+          )
+      )
+  )
+
 )
 
 (if (read-msg "upgrade")
@@ -735,6 +940,10 @@
     (create-table volume)
     (create-table offers)
     (create-table token-table)
+
+    (create-table recipe-book)
+
+    (create-table forge-level)
 
     (initialize)
 
