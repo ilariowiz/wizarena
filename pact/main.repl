@@ -1229,6 +1229,10 @@
 
 (free.wiz-equipment.make-offer "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" "ring of defense +2" 3 100.0 free.wiza)
 
+(free.wiz-equipment.update-forge-level "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" 5400)
+
+(free.wiz-equipment.get-forge-level "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+
 (commit-tx)
 
 (begin-tx "GET ALL OFFERS")

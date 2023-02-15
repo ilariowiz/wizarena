@@ -687,15 +687,15 @@
         {"xp":=xp}
         (cond
             (
-                (>= xp 2000)
+                (and (>= xp 2000) (< xp 5000))
                 10
             )
             (
-                (>= xp 5000)
+                (and (>= xp 5000) (< xp 10000))
                 15
             )
             (
-                (>= xp 10000)
+                (and (>= xp 10000) (< xp 20000))
                 20
             )
             (
@@ -720,15 +720,15 @@
         {"xp":=xp}
         (cond
             (
-                (>= xp 2000)
+                (and (>= xp 2000) (< xp 5000))
                 2
             )
             (
-                (>= xp 5000)
+                (and (>= xp 5000) (< xp 10000))
                 3
             )
             (
-                (>= xp 10000)
+                (and (>= xp 10000) (< xp 20000))
                 4
             )
             (
@@ -740,7 +740,7 @@
   )
 
   (defun update-forge-level (owner:string xpgained:integer)
-    (require-capability (PRIVATE))
+    ;(require-capability (PRIVATE))
     (with-default-read forge-level owner
         {"xp":0}
         {"xp":=xp}
