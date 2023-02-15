@@ -97,6 +97,8 @@ class ItemEquipment extends Component {
 
         this.props.getInfoNftEquipment(chainId, gasPrice, gasLimit, networkUrl, iditem, (response) => {
 			//console.log(response);
+            document.title = `${response.name} - Wizards Arena`
+            
             this.loadHistory(iditem)
 			this.setState({ equipment: response, loading: false })
 		})
