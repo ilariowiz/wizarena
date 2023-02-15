@@ -96,18 +96,18 @@ export default (state = INITIAL_STATE, action) => {
 		case SET_QR_WALLET_CONNECT_CLIENT:
 			return { ...state, qrWalletConnectClient: action.payload }
 		case LOAD_ALL_NFTS_IDS: {
-			const { allNftsIds, totalCountNfts } = action.payload
-			return { ...state, allNftsIds, totalCountNfts }
+			const { allNftsIds } = action.payload
+			return { ...state, allNftsIds }
 		}
 		case LOAD_ALL_NFTS: {
-			const { allNfts, nftsBlockId } = action.payload
+			const { allNfts, nftsBlockId, totalCountNfts } = action.payload
 
 			let oldNftsBlockId = state.nftsBlockId
 			if (!oldNftsBlockId) {
 				oldNftsBlockId = nftsBlockId
 			}
 
-			return { ...state, allNfts, nftsBlockId: oldNftsBlockId }
+			return { ...state, allNfts, nftsBlockId: oldNftsBlockId, totalCountNfts }
 		}
 		case SET_BLOCK_ID:
 			return { ...state, nftsBlockId: action.payload }

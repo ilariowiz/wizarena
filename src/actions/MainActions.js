@@ -378,7 +378,7 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 			//console.log(response)
 			if (response) {
 				//console.log("response post reduce", blocks)
-				dispatch({ type: LOAD_ALL_NFTS_IDS, payload: { totalCountNfts: response.length, allNftsIds: response } })
+				dispatch({ type: LOAD_ALL_NFTS_IDS, payload: { allNftsIds: response } })
 
 				let partsBlock = _.chunk(response, Math.ceil(response.length/3))
 
@@ -390,9 +390,15 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 				Promise.all([promise1, promise2, promise3]).then(values => {
 					//console.log(values);
 
-					const final = [...values[0], ...values[1], ...values[2]]
+					let final = []
+					values.map(i => {
+						final.push(...i)
+					})
 
 					//console.log(final);
+					final = final.filter(i => i.owner !== "wiz-bank")
+
+					let totalCountNfts = final.length
 
 					//let maxStats = { hp: 0, defense: 0, attack: 0, damage: 0, speed: 0 }
 
@@ -437,7 +443,7 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 
 					dispatch({
 						type: LOAD_ALL_NFTS,
-						payload: { allNfts: final, nftsBlockId: 0 }
+						payload: { allNfts: final, nftsBlockId: 0, totalCountNfts }
 					})
 
 					if (callback) {
