@@ -41,7 +41,7 @@ class Collection extends Component {
 	}
 
 	componentDidMount() {
-		document.title = "Collection - Wizards Arena"
+		document.title = "Marketplace - Wizards Arena"
 
 		this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
