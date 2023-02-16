@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import Media from 'react-media';
 import { AiOutlinePlus } from 'react-icons/ai'
 import { AiOutlineMinus } from 'react-icons/ai'
+import { AiOutlineDoubleLeft } from 'react-icons/ai'
+import { AiOutlineDoubleRight } from 'react-icons/ai'
 import { IoClose } from 'react-icons/io5'
 import Popup from 'reactjs-popup';
 import DotLoader from 'react-spinners/DotLoader';
@@ -175,7 +177,7 @@ class Equipment extends Component {
 
     renderPageCounter() {
 		const { allItems, itemsBlockId } = this.props
-		//console.log(allItems, itemsBlockId)
+		//console.log(itemsBlockId)
 
 		let subarray = []
 
@@ -223,7 +225,6 @@ class Equipment extends Component {
 		subarray.map(item => {
 
 			let btnStyle = item === itemsBlockId ? styles.btnPageSelectedStyle : styles.btnPageStyle
-
 			rows.push(
 				<button
 					style={btnStyle}
@@ -240,6 +241,49 @@ class Equipment extends Component {
 				</button>
 			)
 		})
+
+        if (!subarray.includes(0)) {
+            rows.splice(
+                0,
+                0,
+                <button
+                    style={styles.btnPageStyle}
+                    key={0}
+                    onClick={() => {
+                        if (!this.state.loading) {
+                            this.loadBlock(0)
+                        }
+                    }}
+                >
+                    <AiOutlineDoubleLeft
+                        size={22}
+                        color={TEXT_SECONDARY_COLOR}
+                    />
+                </button>
+            )
+        }
+
+        let lastBlock = blocks.length - 1
+
+        if (!subarray.includes(lastBlock)) {
+            rows.push(
+                <button
+                    style={styles.btnPageStyle}
+                    key={lastBlock}
+                    onClick={() => {
+                        if (!this.state.loading) {
+                            this.loadBlock(lastBlock)
+                        }
+                    }}
+                >
+                    <AiOutlineDoubleRight
+                        size={22}
+                        color={TEXT_SECONDARY_COLOR}
+                    />
+                </button>
+            )
+        }
+
 
 		return (
 			<div style={{ justifyContent: 'center', alignItems: 'center', height: 40, marginTop: 20, marginBottom: 20 }}>
