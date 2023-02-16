@@ -367,6 +367,13 @@ class PvP extends Component {
             return
         }
 
+        //questo non ho ancora chiaro quando capita ma nel BE non dovresti avere più rounds di quelli che hai nel contratto
+        if (data && data.maxFights > item.rounds) {
+            await updateDoc(docRef, {"maxFights": item.rounds })
+            window.location.reload()
+            return
+        }
+
         if (data) {
             //questo può capitare se ti stanno sfidando e hai lasciato la pagina aperta
             //quando vai a sfidare tu non si è aggiornata la pagina e quindi ti sembra che puoi ancora fare fights
