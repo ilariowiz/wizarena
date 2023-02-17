@@ -200,7 +200,7 @@ class ModalTransaction extends Component {
 					body = `You will stake all your wizards that aren't listed or in burning queue`
 				}
 				else if (type === 'burningon') {
-					body = `You will add Wizard ${nameNft} to the burning queue, twice a week the one with the lowest ranking will be burned and the owner will receive $WIZA in return`
+					body = `You will add Wizard ${nameNft} to the burning queue`
 				}
 				else if (type === 'burningoff') {
 					body = `You will remove ${nameNft} from burning queue`
