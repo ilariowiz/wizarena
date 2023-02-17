@@ -295,6 +295,16 @@
         potionBought:bool
     )
 
+    (defschema wizards-base-stats-schema
+        @doc "schema for wizards basic stats"
+        id:string
+        hp:integer
+        defense:integer
+        attack:integer
+        damage:integer
+        speed:integer
+    )
+
     (deftable nfts:{nft-main-schema})
     (deftable nfts-market:{nft-listed-schema})
     (deftable creation:{creation-schema})
@@ -321,6 +331,8 @@
     (deftable offers-table:{offers-schema})
 
     (deftable potions-table:{potions-schema})
+
+    (deftable wizards-base-stats:{wizards-base-stats-schema})
 
     ; --------------------------------------------------------------------------
   ; Can only happen once
@@ -488,7 +500,33 @@
                 "resistance": (at "resistance" item),
                 "spellSelected": (at "spellSelected" item),
                 "spellbook": (at "spellbook" item),
-                "ap":0,
+                "ap":(at "ap" item),
+                "speed": (at "speed" item)}
+            )
+        )
+    )
+
+    (defun add-base-stats (objects-list:list)
+        (with-capability (ADMIN)
+            (map
+                (add-base-stat)
+                objects-list
+            )
+        )
+    )
+
+    (defun add-base-stat (item:object)
+        (require-capability (ADMIN))
+        (let
+            (
+                (id (at "id" item))
+            )
+            (insert wizards-base-stats id
+                {"id": id,
+                "attack": (at "attack" item),
+                "damage": (at "damage" item),
+                "defense": (at "defense" item),
+                "hp": (at "hp" item),
                 "speed": (at "speed" item)}
             )
         )
@@ -1648,6 +1686,104 @@
     )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;; RETRAIN ;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (defun retrain (idnft:string owner:string stat:string amount:integer m:module{wiza1-interface-v1})
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+        (with-capability (OWNER owner idnft)
+            (let (
+                    (base-stats (get-base-stats idnft))
+                    (current-data (get-wizard-fields-for-id (str-to-int idnft)))
+                )
+                (enforce (>= (- (at stat current-data) amount) (at stat base-stats)) "can't retrain this stat so much")
+                (cond
+                    (
+                        (= stat "hp")
+                        (let (
+                                (ap-gained (/ amount 2))
+                            )
+                            (with-read stats idnft
+                                {"ap":=ap,
+                                "hp":=hp}
+                                (update stats idnft
+                                    {"ap": (+ ap ap-gained),
+                                    "hp": (- hp amount)}
+                                )
+                            )
+                        )
+                    )
+                    (
+                        (= stat "defense")
+                        (let (
+                                (ap-gained (* amount 2))
+                            )
+                            (with-read stats idnft
+                                {"ap":=ap,
+                                "defense":=defense}
+                                (update stats idnft
+                                    {"ap": (+ ap ap-gained),
+                                    "defense": (- defense amount)}
+                                )
+                            )
+                        )
+                    )
+                    (
+                        (= stat "attack")
+                        (let (
+                                (ap-gained (* amount 2))
+                            )
+                            (with-read stats idnft
+                                {"ap":=ap,
+                                "attack":=attack}
+                                (update stats idnft
+                                    {"ap": (+ ap ap-gained),
+                                    "attack": (- attack amount)}
+                                )
+                            )
+                        )
+                    )
+                    (
+                        (= stat "damage")
+                        (let (
+                                (ap-gained amount)
+                            )
+                            (with-read stats idnft
+                                {"ap":=ap,
+                                "damage":=damage}
+                                (update stats idnft
+                                    {"ap": (+ ap ap-gained),
+                                    "damage": (- damage amount)}
+                                )
+                            )
+                        )
+                    )
+                    (
+                        (= stat "speed")
+                        (let (
+                                (ap-gained amount)
+                            )
+                            (with-read stats idnft
+                                {"ap":=ap,
+                                "speed":=speed}
+                                (update stats idnft
+                                    {"ap": (+ ap ap-gained),
+                                    "speed": (- speed amount)}
+                                )
+                            )
+                        )
+                    )
+                "")
+                (spend-wiza (+ (* amount 5) 0.0) owner m)
+            )
+        )
+    )
+
+    (defun get-base-stats (idnft:string)
+        (read wizards-base-stats idnft)
+    )
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;; BURN ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1948,6 +2084,8 @@
     (create-table offers-table)
 
     (create-table potions-table)
+
+    (create-table wizards-base-stats)
 
     (initialize)
     (insertValuesUpgrade)
