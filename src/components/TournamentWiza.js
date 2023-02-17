@@ -279,6 +279,10 @@ class Tournament extends Component {
 
         //console.log(subscribedWizaSpellGraph);
 
+        if (!subscribedWizaSpellGraph) {
+            return <div />
+        }
+
         let number = 0
         let pct = 0
 
