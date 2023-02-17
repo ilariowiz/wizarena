@@ -287,6 +287,7 @@
         amount:decimal
         withdrawn:bool
         status:string
+        level:integer
     )
 
     (defschema potions-schema
@@ -1004,6 +1005,7 @@
         (let (
             (currentowner (at "owner" (read nfts refnft ["owner"])))
             (new-offer-id (int-to-str 10 (get-count WIZARDS_OFFERS_COUNT_KEY)))
+            (current-level (calculate-level refnft))
           )
           (enforce (!= currentowner buyer) "the buyer can't be the owner")
           (with-capability (ACCOUNT_GUARD buyer)
@@ -1018,7 +1020,8 @@
               "expiresat": (add-time (at "block-time" (chain-data)) (days duration)),
               "amount": amount,
               "withdrawn": false,
-              "status": "pending"
+              "status": "pending",
+              "level": current-level
             })
             (with-default-read token-table WIZARDS_OFFERS_BANK
               {"balance": 0.0}
@@ -1074,18 +1077,21 @@
           "timestamp" := timestamp,
           "expiresat" := expiresat,
           "amount" := amount,
-          "withdrawn" := iswithdrew
+          "withdrawn" := iswithdrew,
+          "level":=level
         }
         (let (
                 (data (get-wizard-fields-for-id (str-to-int refnft)))
                 (is-staked (check-is-staked refnft m))
                 (has-equip (at "equipped" (check-is-equipped refnft mequip)))
+                (current-level (calculate-level refnft))
             )
             (enforce (= is-staked false) "You can't accept offers if a wizard is staked")
             (enforce (= has-equip false) "You can't accept offers for an equipped wizard")
             (enforce (= (at "confirmBurn" data) false) "You can't accept offers if a wizard is in burning queue")
             (enforce (= iswithdrew false) "Cannot withdraw twice")
             (enforce (>= expiresat (at "block-time" (chain-data))) "Offer expired.")
+            (enforce (>= current-level level) "You cannot accept this offer because this wizard level is lower than the level when the offer was made")
 
             (with-capability (OWNER (at "owner" data) refnft)
                 (let (

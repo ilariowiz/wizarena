@@ -2274,6 +2274,41 @@ export const burnAP = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, id
 	}
 }
 
+export const buyDowngrade = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft, stat, decrease) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.retrain "${idnft}" "${account.account}" "${stat}" ${decrease} free.wiza)`;
+
+		let cmd = {
+			pactCode,
+			caps: [
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME}.OWNER`,
+          			[account.account, idnft]
+        		),
+				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+			],
+			sender: account.account,
+			gasLimit: 3000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("downgrade", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
 export const buyVial = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft, key, potion) => {
 	return (dispatch) => {
 

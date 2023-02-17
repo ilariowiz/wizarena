@@ -64,6 +64,46 @@ export const calcLevelWizardAfterUpgrade = (item, stat) => {
     return level
 }
 
+export const calcLevelWizardAfterDowngrade = (item, stat) => {
+
+    if (!item || !item.hp) {
+        return 0
+    }
+
+    let hp = item.hp
+    let def = item.defense
+    let atk = item.attack
+    let dmg = item.damage
+    let speed = item.speed
+
+    if (stat === "hp") {
+        hp -= 1
+    }
+    else if (stat === "defense") {
+        def -= 1
+    }
+    else if (stat === "attack") {
+        atk -= 1
+    }
+    else if (stat === "damage") {
+        dmg -= 1
+    }
+    else if (stat === "speed") {
+        speed -= 1
+    }
+
+    let hpLevel = hp * 1
+    let defLevel = def * 4.67
+    let atkLevel = atk * 4.67
+    let dmgLevel = dmg * 2.67
+
+
+    const level = Math.round(hpLevel + defLevel + atkLevel + dmgLevel)
+
+    //console.log(level);
+    return level
+}
+
 export const getColorTextBasedOnLevel = (level) => {
     if (!level) {
         return "white"

@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getDocs, collection } from "firebase/firestore";
+import { getDocs, collection, getDoc, doc } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 //import { chunk } from 'lodash'
 import { AiOutlinePlus } from 'react-icons/ai'
@@ -14,7 +14,7 @@ import ModalSetName from './common/ModalSetName'
 import NftCardShop from './common/NftCardShop'
 import NftCardShopSelected from './common/NftCardShopSelected'
 import calcUpgradeCost from './common/CalcUpgradeCost'
-import { calcLevelWizardAfterUpgrade, getColorTextBasedOnLevel, calcLevelWizard } from './common/CalcLevelWizard'
+import { calcLevelWizardAfterUpgrade, getColorTextBasedOnLevel, calcLevelWizard, calcLevelWizardAfterDowngrade } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import {
@@ -32,7 +32,8 @@ import {
     burnAP,
     loadEquipMinted,
     equipItem,
-    unequipItem
+    unequipItem,
+    buyDowngrade
 } from '../actions'
 import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, MAX_LEVEL, TEST_NET_ID } from '../actions/types'
 import '../css/Nft.css'
@@ -43,6 +44,7 @@ const potion_def = require('../assets/potion_def.png')
 const potion_atk = require('../assets/potion_atk.png')
 const potion_dmg = require('../assets/potion_dmg.png')
 const potion_ap_burn = require('../assets/potion_ap_burn.png')
+const potion_speed = require('../assets/potion_speed.png')
 
 const vial_hp = require('../assets/vial_hp.png')
 const vial_def = require('../assets/vial_def.png')
@@ -53,6 +55,12 @@ const vial_speed = require('../assets/vial_speed.png')
 const banner_nickname = require('../assets/banner_nickname.png')
 
 const ring_dmg = require('../assets/ring_dmg_1.png')
+
+const retrain_def = require('../assets/retrain_def.png')
+const retrain_atk = require('../assets/retrain_atk.png')
+const retrain_dmg = require('../assets/retrain_dmg.png')
+const retrain_speed = require('../assets/retrain_speed.png')
+const retrain_hp = require('../assets/retrain_hp.png')
 
 
 class Shop extends Component {
@@ -82,7 +90,9 @@ class Shop extends Component {
             idNftToUpgrade: "",
             numberOfChest: 1,
             equipment: [],
-            ringToEquipName: ""
+            ringToEquipName: "",
+            decrease: { hp: 1, defense: 1, attack: 1, damage: 1, speed: 1},
+            baseStats: undefined
         }
     }
 
@@ -106,6 +116,8 @@ class Shop extends Component {
 
             if (this.props.wizardSelectedIdShop) {
                 this.getPotionEquipped()
+
+                this.getBaseStats()
             }
 		}, 500)
 	}
@@ -228,6 +240,23 @@ class Shop extends Component {
         })
     }
 
+    async getBaseStats() {
+        const { wizardSelectedIdShop } = this.props
+
+        if (wizardSelectedIdShop) {
+            const docRef = doc(firebasedb, "base_stats", `${wizardSelectedIdShop}`)
+
+    		const docSnap = await getDoc(docRef)
+    		let data = docSnap.data()
+
+            if (data) {
+                data['speed'] = 0
+                //console.log(data);
+                this.setState({ baseStats: data })
+            }
+        }
+    }
+
     getWizardSelected() {
         const { userMintedNfts, wizardSelectedIdShop } = this.props
 
@@ -288,6 +317,22 @@ class Shop extends Component {
         this.setState({ typeModal: "burnap" })
 
         this.props.burnAP(chainId, gasPrice, netId, account, wizard.id, apToBurn)
+    }
+
+    downgrade(stat, costo) {
+        const { account, chainId, gasPrice, netId } = this.props
+        const { decrease } = this.state
+
+        const wizard = this.getWizardSelected()
+
+        let nameNftToUpgrade = wizard.name
+        if (wizard.nickname) {
+            nameNftToUpgrade = `${wizard.name} ${wizard.nickname}`
+        }
+
+        this.setState({ nameNftToUpgrade, idNftToUpgrade: wizard.id, statToUpgrade: stat, wizaCostToUpgrade: costo, howMuchIncrement: decrease[stat], typeModal: 'downgrade' })
+
+        this.props.buyDowngrade(chainId, gasPrice, netId, account, wizard.id, stat, decrease[stat])
     }
 
     buyVial(potion, costo) {
@@ -375,6 +420,7 @@ class Shop extends Component {
                     setTimeout(() => {
                         this.getPotionEquipped()
                         this.loadEquip()
+                        this.getBaseStats()
                     }, 200)
                 }}
                 onChange={() => this.props.setWizardSelectedShop(undefined)}
@@ -903,6 +949,237 @@ class Shop extends Component {
         )
     }
 
+    renderRetrainShopCard(key) {
+        const { decrease, baseStats } = this.state
+
+        const wizard = this.getWizardSelected()
+
+        const decreaseTo = decrease[key]
+
+        let apGain = {
+            hp_gain: 0.5,
+            defense_gain: 2,
+            attack_gain: 2,
+            damage_gain: 1,
+            speed_gain: 1
+        }
+
+        let statToDowngrade;
+
+        const baseApGain = apGain[`${key}_gain`]
+
+        //console.log(decreaseTo, key, baseApGain);
+
+        let gain = Math.floor(decreaseTo * baseApGain);
+        let newLevel;
+
+        if (wizard && wizard.id) {
+            statToDowngrade = wizard[key].int
+            let arrayLevelsTo = []
+
+            for (let i = 0; i < decreaseTo; i++) {
+                if ((statToDowngrade - i) < 0) {
+                    break
+                }
+                arrayLevelsTo.push(statToDowngrade - i)
+            }
+
+            //console.log(arrayLevelsTo);
+
+            const copySelected = {
+                hp: wizard.hp.int,
+                defense: wizard.defense.int,
+                attack: wizard.attack.int,
+                damage: wizard.damage.int,
+                speed: wizard.speed ? wizard.speed.int : 0
+            }
+
+            copySelected[key] = arrayLevelsTo[arrayLevelsTo.length - 1]
+
+            //console.log(copySelected);
+            newLevel = calcLevelWizardAfterDowngrade(copySelected, key)
+        }
+
+        let colorTextLevel = getColorTextBasedOnLevel(newLevel)
+        if (newLevel > MAX_LEVEL) {
+            colorTextLevel = "red"
+        }
+
+
+        let img;
+        if (key === "hp") {
+            img = retrain_hp
+        }
+        else if (key === "defense") {
+            img = retrain_def
+        }
+        else if (key === "attack") {
+            img = retrain_atk
+        }
+        else if (key === "damage") {
+            img = retrain_dmg
+        }
+        else if (key === "speed") {
+            img = retrain_speed
+        }
+
+        if (!baseStats) {
+            return <div />
+        }
+
+        const baseStat = baseStats[key]
+
+
+        const statAfterDowngrade = wizard[key].int - decrease[key]
+
+        let canDecrease = statAfterDowngrade >= baseStat
+        //console.log(statAfterDowngrade, key, canDecrease);
+
+        return (
+            <div
+                className="cardShopShadow"
+                style={styles.cardShopStyle}
+            >
+                <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+
+                    <div style={{ width: 100, height: 100, alignItems: 'center', justifyContent: 'center' }}>
+                        <img
+                            src={img}
+                            style={{ width: 110, height: 110 }}
+                            alt="logo"
+                        />
+                    </div>
+
+
+                    <div style={{ justifyContent: 'space-between', marginBottom: 15, width: '100%' }}>
+
+                        <button
+                            style={{ marginLeft: 15, cursor: 'pointer', justifyContent: 'center', alignItems: 'center' }}
+                            onClick={() => {
+                                if (!wizard) {
+                                    return
+                                }
+
+                                const oldState = Object.assign({}, this.state.decrease)
+                                if (oldState[key] === 1) {
+                                    return
+                                }
+
+                                oldState[key] -= 1
+
+                                this.setState({ decrease: oldState })
+							}}
+                        >
+                            <AiOutlineMinus
+                                color={canDecrease ? "white" : "#c2c0c0"}
+                                size={22}
+                            />
+                        </button>
+
+
+                        <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                            <p style={{ fontSize: 22, color: 'white' }}>
+                                -{decrease[key]}
+                            </p>
+
+                            <p style={{ fontSize: 20, color: 'white' }}>
+                                {key.toUpperCase()}
+                            </p>
+                        </div>
+
+                        <button
+							style={{ marginRight: 15, cursor: 'pointer', justifyContent: 'center', alignItems: 'center' }}
+							onClick={() => {
+                                if (!wizard) {
+                                    return
+                                }
+
+                                const oldState = Object.assign({}, this.state.decrease)
+                                oldState[key] += 1
+
+                                const newStatAfterDowngrade = wizard[key].int - oldState[key]
+
+                                let newCanDecrease = newStatAfterDowngrade >= baseStat
+
+                                if (!newCanDecrease) {
+                                    return
+                                }
+
+                                this.setState({ decrease: oldState })
+							}}
+						>
+							<AiOutlinePlus
+								color={canDecrease ? "white" : "#c2c0c0"}
+								size={22}
+							/>
+						</button>
+                    </div>
+
+                    <p style={{ fontSize: 17, color: '#c2c0c0' }}>
+                        INITIAL STAT
+                    </p>
+                    <p style={{ fontSize: 17, color: '#c2c0c0', marginBottom: 15 }}>
+                        {baseStat}
+                    </p>
+
+                    <div style={{ alignItems: 'center', justifyContent: 'center' }}>
+
+                        <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: 20 }}>
+                            <p style={{ fontSize: 17, color: '#f80303', marginBottom: 5 }}>
+                                COST
+                            </p>
+                            <p style={{ fontSize: 17, color: 'white' }}>
+                                WIZA
+                            </p>
+                            <p style={{ fontSize: 21, color: 'white', marginBottom: 15 }}>
+                                {decreaseTo * 5}
+                            </p>
+                        </div>
+
+                        <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginLeft: 20 }}>
+                            <p style={{ fontSize: 17, color: 'gold', marginBottom: 5 }}>
+                                GAIN
+                            </p>
+                            <p style={{ fontSize: 17, color: 'white' }}>
+                                AP
+                            </p>
+                            <p style={{ fontSize: 21, color: 'white', marginBottom: 15 }}>
+                                {gain}
+                            </p>
+                        </div>
+
+
+                    </div>
+
+                    <p style={{ fontSize: 17, color: 'white' }}>
+                        {canDecrease ? "NEW LEVEL" : "LEVEL"}
+                    </p>
+                    <p style={{ fontSize: 21, color: colorTextLevel, marginBottom: 10 }}>
+                        {canDecrease ? newLevel : wizard.level}
+                    </p>
+                </div>
+
+                <button
+                    className='btnH'
+                    style={Object.assign({}, styles.btnChoose, { opacity: !canDecrease ? 0.5 : 1 })}
+                    onClick={() => {
+
+                        if (!wizard || !canDecrease) {
+                            return
+                        }
+
+                        this.downgrade(key, decreaseTo*5)
+                    }}
+                >
+                    <p style={{ fontSize: 17, color: 'white' }}>
+                        DOWNGRADE
+                    </p>
+                </button>
+
+            </div>
+        )
+    }
+
     renderVialCard(key, canBuy, isMobile) {
         const { loadingPotionEquipped } = this.state
 
@@ -1140,6 +1417,10 @@ class Shop extends Component {
             img = potion_dmg
             imgStyle = { height: 70 }
         }
+        else if (key === "RETRAIN") {
+            img = retrain_def
+            imgStyle = { height: 70 }
+        }
         else if (key === "VIALS") {
             img = vial_atk
             imgStyle = { height: 50 }
@@ -1263,6 +1544,7 @@ class Shop extends Component {
                             {this.renderBoxMenu("RINGS")}
                             {this.renderBoxMenu("UPGRADES")}
                             {this.renderBoxMenu("AP")}
+                            {this.renderBoxMenu("RETRAIN")}
                             {this.renderBoxMenu("VIALS")}
                             {this.renderBoxMenu("NICKNAME")}
                         </div>
@@ -1322,6 +1604,27 @@ class Shop extends Component {
 
                         </div>
 
+                        <p style={{ fontSize: 26, color: 'white', marginBottom: 10 }} id="shop-retrain">
+                            RETRAIN
+                        </p>
+
+                        <p style={{ fontSize: 20, color: "white", marginBottom: 15 }}>
+                            Rebuild your wizard, you can't go under the initial stat
+                        </p>
+
+                        <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
+                            {this.renderRetrainShopCard("hp")}
+
+                            {this.renderRetrainShopCard("defense")}
+
+                            {this.renderRetrainShopCard("attack")}
+
+                            {this.renderRetrainShopCard("damage")}
+
+                            {this.renderRetrainShopCard("speed")}
+
+                        </div>
+
                         {
                             !potionEquipped ?
                             <div style={{ flexDirection: 'column' }} id="shop-vials">
@@ -1338,7 +1641,7 @@ class Shop extends Component {
                                 </p>
 
                                 <p style={{ fontSize: 18, color: 'gold', marginBottom: 10 }}>
-                                    ATTENTION! Vials can only be used in the main tournament. Vials will not work in the apprentice tournament
+                                    ATTENTION! Vials will not work in the apprentice tournament
                                 </p>
 
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
@@ -1587,5 +1890,6 @@ export default connect(mapStateToProps, {
     burnAP,
     loadEquipMinted,
     equipItem,
-    unequipItem
+    unequipItem,
+    buyDowngrade
 })(Shop)

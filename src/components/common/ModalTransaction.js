@@ -72,6 +72,10 @@ class ModalTransaction extends Component {
 				const msg = `${nameNft} upgrade ${statToUpgrade.toUpperCase()} by ${howMuchIncrement}`
 				sendMessageUpgrade(idNft, msg)
 			}
+			else if (type === "downgrade" && nameNft && statToUpgrade && howMuchIncrement) {
+				const msg = `${nameNft} downgrade ${statToUpgrade.toUpperCase()} by ${howMuchIncrement}`
+				sendMessageUpgrade(idNft, msg)
+			}
 			else if (type === "buyvial" && nameNft && statToUpgrade) {
 				const msg = `${nameNft} bought a ${statToUpgrade.toUpperCase()} vial`
 				sendMessageUpgrade(idNft, msg)
@@ -207,6 +211,9 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'upgrade') {
 					body = `You will improve the ${statToUpgrade} of ${nameNft}`
+				}
+				else if (type === 'downgrade') {
+					body = `You will downgrade the ${statToUpgrade} of ${nameNft}`
 				}
 				else if (type === 'buyvial') {
 					body = `You will buy the ${statToUpgrade} vial for the ${nameNft}`
@@ -344,6 +351,10 @@ class ModalTransaction extends Component {
 				}
 				else if (type === 'upgrade') {
 					body = `Your Wizard ${nameNft} is stronger now!`
+					buttonText = 'Close'
+				}
+				else if (type === 'downgrade') {
+					body = 'Retrain done!'
 					buttonText = 'Close'
 				}
 				else if (type === 'buyvial') {
