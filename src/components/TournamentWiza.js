@@ -251,13 +251,13 @@ class Tournament extends Component {
 					NUMBER OF ROUNDS {tournament.nRounds}
 				</p>
 
-				<p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
+				{/*<p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
 					Total Prize {montepremi || '...'} WIZA
 				</p>
 
                 <p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
 					Registered Wizards {subscribed ? subscribed.length : '...'}
-				</p>
+				</p> */}
 
                 <a
                     style={styles.btnRules}
