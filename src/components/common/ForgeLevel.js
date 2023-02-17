@@ -17,7 +17,7 @@ const forgeLevel = (xp) => {
     }
     else if (xp >= 10000 && xp < 20000) {
         level = 4
-        xpNextLevel = 50000
+        xpNextLevel = 20000
     }
     else {
         level = 5
