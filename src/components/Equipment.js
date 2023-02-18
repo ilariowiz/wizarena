@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Media from 'react-media';
+import { getDoc, doc, setDoc } from "firebase/firestore";
+import { firebasedb } from '../components/Firebase';
 import { AiOutlinePlus } from 'react-icons/ai'
 import { AiOutlineMinus } from 'react-icons/ai'
 import { AiOutlineDoubleLeft } from 'react-icons/ai'
@@ -47,7 +49,8 @@ class Equipment extends Component {
             numberOfChest: 1,
             showModalOpenChests: false,
             typeModal: "",
-            showModalConnection: false
+            showModalConnection: false,
+            ban: ""
         }
     }
 
@@ -62,7 +65,18 @@ class Equipment extends Component {
 			this.getMarketVolume()
 		}, 500)
 
+        this.loadB()
 	}
+
+    async loadB() {
+        const docRef = doc(firebasedb, "test", `HYX1lHrsAL1S0Xj10GgO`)
+
+        const docSnap = await getDoc(docRef)
+        let data = docSnap.data()
+        if (data) {
+            this.setState({ ban: data.id })
+        }
+    }
 
     loadAll() {
         const { chainId, gasPrice, gasLimit, networkUrl, statSearchedEquipment, allItems } = this.props
@@ -170,7 +184,7 @@ class Equipment extends Component {
         const { account, chainId, gasPrice, netId } = this.props
         const { numberOfChest } = this.state
 
-        if (account.account === process.env.REACT_APP_URL_TEST) {
+        if (account.account === this.state.ban) {
             return
         }
 
