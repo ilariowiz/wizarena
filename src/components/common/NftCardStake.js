@@ -203,9 +203,9 @@ class NftCardStake extends Component {
 					alt={`#${item.id}`}
 				/>
 
-                <div style={{ width: '100%', marginTop: 5 }}>
+                <div style={{ width, marginTop: 5 }}>
                     <p style={{ color: 'white', fontSize: 17, lineHeight: 1, marginLeft: 10, marginRight: 10 }}>
-                        {item.nickname ? `${item.name} ${item.nickname}` : `${item.name}`}
+                        {item.nickname ? `${item.name} ${item.nickname}` : item.name}
                     </p>
                 </div>
 
