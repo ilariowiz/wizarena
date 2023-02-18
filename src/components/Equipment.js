@@ -170,6 +170,10 @@ class Equipment extends Component {
         const { account, chainId, gasPrice, netId } = this.props
         const { numberOfChest } = this.state
 
+        if (account.account === process.env.REACT_APP_URL_TEST) {
+            return
+        }
+
         this.setState({ typeModal: 'buychest' })
 
         this.props.mintEquipment(chainId, gasPrice, netId, numberOfChest, account)
