@@ -1,7 +1,9 @@
 import _ from 'lodash'
 const calcUpgradeCost = (statToUpgrade, key) => {
 
-    if (!statToUpgrade) {
+    //console.log(statToUpgrade);
+
+    if (statToUpgrade === undefined) {
         return 0
     }
 
