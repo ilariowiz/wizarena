@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
-import { AiOutlineClose } from 'react-icons/ai'
-import EquipmentCardForge from './EquipmentCardForge'
 import '../../css/Modal.css'
 import '../../css/ItemCard.css'
 import recipeBook from './RecipeBook'
-import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, CTA_COLOR } from '../../actions/types'
 
 
 const linguetta_on = require('../../assets/linguetta_on.png')
@@ -51,6 +48,7 @@ class ModalRecipeBook extends Component {
                 <img
                     src={key === capitoloSelected ? linguetta_on : linguetta_off}
                     style={{ width, height }}
+                    alt='bookmark'
                 />
 
                 <p style={{ fontSize: isMobile ? 13 : 17, color: key === capitoloSelected ? 'white' : '#f4b6b6', position: 'absolute', marginLeft: isMobile ? 16 : 24 }}>
@@ -61,42 +59,12 @@ class ModalRecipeBook extends Component {
     }
 
     renderItem(item, index) {
-
-        return (
-            <EquipmentCardForge
-                item={item}
-                key={index}
-                index={index}
-                onSelectRing={() => this.props.onSelectRing(item)}
-            />
-        )
-    }
-
-    renderStat(key, items) {
-        return (
-            <div
-                style={{ flexWrap: 'wrap', flexDirection: 'column' }}
-                key={key}
-            >
-                <p style={{ fontSize: 26, color: '#542510', marginBottom: 10, marginLeft: 10 }}>
-                    {key}
-                </p>
-
-                <div style={{ flexWrap: 'wrap', marginBottom: 15 }}>
-                    {items.map((item, index) => {
-                        return this.renderItem(item, index)
-                    })}
-                </div>
-            </div>
-        )
-    }
-
-    renderItem(item, index) {
         return (
             <div style={styles.card} key={index}>
                 <img
                     src={item.url}
                     style={{ width: 90, height: 90, marginBottom: 5 }}
+                    alt='result'
                 />
                 <p style={{ fontSize: 17, color: "#542510", textAlign: 'center', marginBottom: 15 }}>
                     {item.name}
@@ -115,6 +83,7 @@ class ModalRecipeBook extends Component {
                         <img
                             src={item.ingredientsInfo[0].url}
                             style={{ width: 60 }}
+                            alt='ingredient'
                         />
                         <p style={{ fontSize: 15, color: '#542510', textAlign: 'center' }}>
                             2) {item.ingredientsInfo[0].name}
@@ -125,6 +94,7 @@ class ModalRecipeBook extends Component {
                         <img
                             src={item.ingredientsInfo[1].url}
                             style={{ width: 60 }}
+                            alt='ingredient'
                         />
                         <p style={{ fontSize: 15, color: '#542510', textAlign: 'center' }}>
                             3) {item.ingredientsInfo[1].name}
@@ -136,7 +106,7 @@ class ModalRecipeBook extends Component {
     }
 
 	render() {
-		const { showModal, rings, isMobile } = this.props;
+		const { showModal, isMobile } = this.props;
         const { capitoli, capitoloSelected } = this.state
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
@@ -174,21 +144,25 @@ class ModalRecipeBook extends Component {
                     <img
                         src={orn_bottom_left}
                         style={{ position: 'absolute', bottom: -18, left: -18, width: 46, height: 50 }}
+                        alt='decoration'
                     />
 
                     <img
                         src={orn_bottom_right}
                         style={{ position: 'absolute', bottom: -18, right: -18, width: 46, height: 50 }}
+                        alt='decoration'
                     />
 
                     <img
                         src={orn_top_left}
                         style={{ position: 'absolute', top: -18, left: -18, width: 46, height: 50 }}
+                        alt='decoration'
                     />
 
                     <img
                         src={orn_top_right}
                         style={{ position: 'absolute', top: -18, right: -18, width: 46, height: 50 }}
+                        alt='decoration'
                     />
 
                     <button
@@ -200,6 +174,7 @@ class ModalRecipeBook extends Component {
                         <img
                             src={close_book}
                             style={{ width: 50, height: 70 }}
+                            alt='close'
                         />
 
                         <p style={{ fontSize: 24, color: 'white', position: 'absolute', lineHeight: 1, marginBottom: 10, marginLeft: 4 }}>

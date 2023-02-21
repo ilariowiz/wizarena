@@ -29,7 +29,7 @@ class NftCardShop extends Component {
 		const { item, width, isSelect } = this.props
         //console.log(item)
 
-        const numberOfTotalMedals = this.calcMedals()
+        //const numberOfTotalMedals = this.calcMedals()
 
         const level = calcLevelWizard(item)
 

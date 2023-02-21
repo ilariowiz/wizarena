@@ -25,8 +25,8 @@ class EquipmentCard extends Component {
                 <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                     <img
                         src={item.url}
-                        //src="https://storage.googleapis.com/wizarena/equipment/ring_atk_1.png"
                         style={{ width: 110, marginBottom: 10 }}
+                        alt='equipment'
                     />
                 </div>
 
@@ -44,6 +44,7 @@ class EquipmentCard extends Component {
                         <img
                             src={logoWiza}
                             style={{ width: 34, marginRight: 10 }}
+                            alt='logo'
                         />
 
                         <p style={{ fontSize: 18, color: 'white', marginRight: 7 }}>

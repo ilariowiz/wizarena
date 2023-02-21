@@ -38,6 +38,7 @@ class OfferEquipmentItem extends Component {
                     <img
                         src={itemToUrl[item.itemtype]}
                         style={{ width: 56, height: 56, marginLeft: isMobile ? 5 : 20, marginRight: isMobile ? 5 : 15 }}
+                        alt='ring'
                     />
 
                     <p style={{ fontSize: isMobile ? 17 : 20, color: 'white', alignItems: 'center' }}>
