@@ -29,7 +29,7 @@ class HistoryItem extends Component {
 					!isMobile &&
 					<img
 						src={getImageUrl(item.idnft)}
-						style={{ width: 52, height: 52, borderRadius: 2 }}
+						style={{ width: 52, height: 52, borderRadius: 2, borderColor: 'white', borderStyle: 'solid', borderWidth: 1 }}
 						alt={item.idnft}
 					/>
 				}
@@ -89,7 +89,7 @@ const styles = {
 		borderRightWidth: 0,
 		borderColor: '#ededed',
 		borderStyle: 'solid',
-		height: 58
+		height: 60
 	},
 	dataRequest: {
 		fontSize: 16,
