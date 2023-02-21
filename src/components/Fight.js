@@ -501,7 +501,7 @@ class Fight extends Component {
 
                 <div style={{ width: boxW, justifyContent: 'space-between', alignItems: 'center', marginBottom: 30 }}>
 
-                    <div style={{ flexDirection: 'column' }}>
+                    <div style={{ flexDirection: 'column', height: '100%' }}>
                         {this.renderSingleNft(u1, spaceImage)}
 
                         {
@@ -519,7 +519,7 @@ class Fight extends Component {
                         VS
                     </p>
 
-                    <div style={{ flexDirection: 'column' }}>
+                    <div style={{ flexDirection: 'column', height: '100%' }}>
                         {this.renderSingleNft(u2, spaceImage)}
 
                         {
