@@ -200,7 +200,7 @@ class Forge extends Component {
         return (
             <div style={{ width: boxW, alignItems: 'center', flexDirection: 'column', paddingTop: 30 }}>
 
-                <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center', position: 'relative', flexDirection: 'column', marginBottom: 20 }}>
+                <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center', position: 'relative', flexDirection: 'column', marginBottom: 20, maxWidth: 1100 }}>
                     <p style={{ fontSize: 32, color: 'white', marginBottom: 10 }}>
                         The Forge
                     </p>
