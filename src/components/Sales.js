@@ -1,5 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { getDocs, collection, doc, getDoc, query, where, orderBy, limit } from "firebase/firestore";
+import { firebasedb } from './Firebase';
+import { Chart, ReactGoogleChartEvent } from "react-google-charts";
 import Media from 'react-media';
 import Header from './Header'
 import DotLoader from 'react-spinners/DotLoader';
@@ -17,10 +20,11 @@ class Sales extends Component {
 
         this.state = {
             loading: true,
-            error: ""
+            error: "",
+            allSales: [],
+            dataSales: [],
+            selectedSales: []
         }
-
-        this.allSales = []
     }
 
     componentDidMount() {
@@ -35,7 +39,8 @@ class Sales extends Component {
 
         //console.log(lastTimeUpdateSales, diff);
 
-        //this.loadSales()
+        this.loadSales()
+
         if (!lastTimeUpdateSales || (diff && diff > 10)) {
             this.loadSales()
         }
@@ -45,50 +50,115 @@ class Sales extends Component {
 
 	}
 
-    loadSales(next) {
+    async loadSales(next) {
 
-		let url = 'https://estats.chainweb.com/txs/events?search=wiz-arena.WIZ_BUY&limit=50'
+        const q = query(collection(firebasedb, "sales"), orderBy("blockTime", "desc"), limit(200))
 
-		//console.log(url);
-		fetch(url)
-  		.then(response => response.json())
-  		.then(data => {
-  			//console.log(data)
-            this.setState({ loading: false })
-            this.props.setSales(data)
-  		})
-		.catch(e => {
-			console.log(e)
-			this.setState({ loading: false, error: "Ops... something goes wrong!" })
+		const querySnapshot = await getDocs(q)
+
+        let data = [["Date", "Sales", { role: 'style'}]]
+		let nftH = []
+        let dateObj = {}
+
+		querySnapshot.forEach(doc => {
+            const d = doc.data()
+
+            const date = moment(d.blockTime).format("DD-MM-YY")
+
+            //console.log(date);
+
+            if (dateObj[date]) {
+                dateObj[date]['amount'] += 1
+            }
+            else {
+                dateObj[date] = { amount: 1 }
+            }
+
+			nftH.push(doc.data())
 		})
 
+        //console.log(dateObj);
+
+        let temp = []
+
+        Object.keys(dateObj).map(key => {
+            temp.push([key, dateObj[key]['amount'], TEXT_SECONDARY_COLOR])
+        })
+
+        temp = temp.reverse()
+
+        //console.log(temp);
+
+        let sales = {}
+
+        for (var i = 0; i < nftH.length; i++) {
+            let sale = nftH[i]
+            const date = moment(sale.blockTime).format("DD-MM-YY")
+
+            if (sales[date]) {
+                sales[date].push(sale)
+            }
+            else {
+                sales[date] = [sale]
+            }
+        }
+
+        //console.log(sales);
+
+        data.push(...temp)
+
+        //console.log(data);
+
+		//console.log(nftH);
+
+        this.chartEvents = [
+            {
+                eventName: 'select',
+                callback: ({ chartWrapper }) => {
+                    const chart = chartWrapper.getChart()
+                    const selection = chart.getSelection()
+                    if (selection.length === 1) {
+                        const [selectedItem] = selection
+                        const dataTable = chartWrapper.getDataTable()
+                        const { row } = selectedItem
+                        //console.log(dataTable.Wf[row].c[0].v);
+                        //console.log(this.state.allSales[dataTable.Wf[row].c[0].v]);
+
+                        this.setState({ selectedSales: this.state.allSales[dataTable.Wf[row].c[0].v] })
+                    }
+                }
+            }
+        ]
+
+        this.setState({ loading: false, allSales: sales, dataSales: data })
 	}
 
     renderSale(item, index, isMobile) {
-        const { sales } = this.props
+        const { selectedSales } = this.state
+
+        //console.log(item, selectedSales);
 
         return (
 			<HistoryItem
 				item={item}
 				index={index}
-				nftH={sales}
+				nftH={selectedSales}
 				key={index}
 				isMobile={isMobile}
-                isAll={true}
                 history={this.props.history}
 			/>
 		)
     }
 
     renderBody(isMobile) {
-        const { loading, error } = this.state
+        const { loading, error, dataSales, selectedSales } = this.state
         const { sales } = this.props
 
         const boxW = Math.floor(window.innerWidth * (isMobile ? 85 : 92) / 100)
 
         return (
             <div style={{ width: boxW, alignItems: 'center', flexDirection: 'column', paddingTop: 30 }}>
-                <p style={{ fontSize: 28, color: 'white', marginBottom: 30 }}>
+                <p style={{ fontSize: 28, color: 'white' }}>
                     Last sales
                 </p>
 
@@ -100,11 +170,33 @@ class Sales extends Component {
 					: null
 				}
 
+                {
+                    dataSales.length > 0 ?
+                    <Chart
+                        chartType='ColumnChart'
+                        width='100%'
+                        height='400px'
+                        data={dataSales}
+                        options={{
+                            backgroundColor: BACKGROUND_COLOR,
+                            hAxis: {
+                                textStyle:{ color: 'white', fontSize: 13, fontName: "PerfectDOS"},
+                            },
+                            vAxis: {
+                                textStyle:{ color: 'white', fontSize: 14, fontName: "PerfectDOS"}
+                            },
+                            legend: { textStyle: { color: 'white', fontSize: 16, fontName: "PerfectDOS" } }
+                        }}
+                        chartEvents={this.chartEvents}
+                    />
+                    : null
+                }
+
                 <div style={{ width: '100%', flexDirection: 'column' }}>
-                    {sales.map((item, index) => {
-                        return this.renderSale(item, index, isMobile)
-                    })}
-                </div>
+                   {selectedSales.map((item, index) => {
+                       return this.renderSale(item, index, isMobile)
+                   })}
+               </div>
 
                 {
                     error &&
