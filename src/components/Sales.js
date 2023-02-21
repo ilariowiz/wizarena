@@ -28,26 +28,9 @@ class Sales extends Component {
     }
 
     componentDidMount() {
-        const { lastTimeUpdateSales } = this.props
-
 		document.title = "Sales - Wizards Arena"
 
-        let diff = undefined
-        if (lastTimeUpdateSales) {
-            diff = moment().diff(lastTimeUpdateSales, 'minutes')
-        }
-
-        //console.log(lastTimeUpdateSales, diff);
-
         this.loadSales()
-
-        if (!lastTimeUpdateSales || (diff && diff > 10)) {
-            this.loadSales()
-        }
-        else {
-            this.setState({ loading: false })
-        }
-
 	}
 
     async loadSales(next) {
@@ -152,7 +135,6 @@ class Sales extends Component {
 
     renderBody(isMobile) {
         const { loading, error, dataSales, selectedSales } = this.state
-        const { sales } = this.props
 
         const boxW = Math.floor(window.innerWidth * (isMobile ? 85 : 92) / 100)
 
@@ -192,7 +174,7 @@ class Sales extends Component {
                     : null
                 }
 
-                <div style={{ width: '100%', flexDirection: 'column' }}>
+                <div style={{ width: '100%', flexDirection: 'column', marginBottom: 40 }}>
                    {selectedSales.map((item, index) => {
                        return this.renderSale(item, index, isMobile)
                    })}
