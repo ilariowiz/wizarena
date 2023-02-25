@@ -35,7 +35,11 @@ class Sales extends Component {
 
     async loadSales(next) {
 
-        const q = query(collection(firebasedb, "sales"), orderBy("blockTime", "desc"), limit(200))
+        const newDate = moment().subtract(30, 'days').format()
+
+        //console.log(newDate);
+
+        const q = query(collection(firebasedb, "sales"), where('blockTime', '>', newDate), orderBy("blockTime", "desc"))
 
 		const querySnapshot = await getDocs(q)
 
@@ -47,8 +51,6 @@ class Sales extends Component {
             const d = doc.data()
 
             const date = moment(d.blockTime).format("DD-MM-YY")
-
-            //console.log(date);
 
             if (dateObj[date]) {
                 dateObj[date]['amount'] += 1
