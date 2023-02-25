@@ -443,7 +443,8 @@
             )
             (enforce (= (at "owner" nft-data) owner) "you are not the owner of this wizard")
             (enforce (= (at "equipped" data) true) "this item is not equipped")
-            (mw::spend-wiza 120.0 owner)
+            ;(mw::spend-wiza 120.0 owner)
+            (mw::spend-wiza (floor (+ (/ (calculate-level nft-data) 5) 0.0) 1) owner)
             (write equipped idnft {
                 "id": iditem,
                 "url": (at "url" data),
@@ -470,6 +471,18 @@
               (enforce (= (at "listed" data) false) "You can't transfer a listed item")
           )
           (update equipment id {"owner": receiver})
+      )
+  )
+
+  (defun calculate-level (data:object)
+      (let (
+              (hp (at "hp" data))
+              (def (at "defense" data))
+              (atk (at "attack" data))
+              (dmg (at "damage" data))
+              (speed (at "speed" data))
+          )
+          (round(+ (+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* dmg 2.67)) (* speed 2.67)))
       )
   )
 

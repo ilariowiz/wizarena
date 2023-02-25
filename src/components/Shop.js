@@ -472,7 +472,6 @@ class Shop extends Component {
             >
                 <img
                     src={item.url}
-                    //src="https://storage.googleapis.com/wizarena/equipment/ring_atk_1.png"
                     style={{ width: 100, marginBottom: 10 }}
                 />
 
@@ -493,8 +492,8 @@ class Shop extends Component {
                             this.unequipEquipment(item.id, item.name)
                         }}
                     >
-                        <p style={{ fontSize: 17, color: 'white' }}>
-                            UNEQUIP
+                        <p style={{ fontSize: 16, color: 'white' }}>
+                            UNEQUIP <br /><span style={{ fontSize: 13 }}>({Math.floor(wizard.level / 5)} WIZA)</span>
                         </p>
                     </button>
                     :

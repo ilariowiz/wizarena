@@ -246,7 +246,7 @@ class ModalTransaction extends Component {
 					body = `You will equip ${ringToEquipName} to ${nameNft}`
 				}
 				else if (type === "unequip") {
-					body = `You will unequip ${ringToEquipName} from ${nameNft} for 120 WIZA`
+					body = `You will unequip ${ringToEquipName} from ${nameNft}`
 				}
 				else if (type === "makeofferitem") {
 					body = `You will offer ${makeOfferValues.amount} WIZA for ${makeOfferValues.ringType}, expiring in ${makeOfferValues.duration} ${makeOfferValues.duration > 1 ? "days" : "day"}`
