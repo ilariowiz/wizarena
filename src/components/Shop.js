@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { getDocs, collection, getDoc, doc } from "firebase/firestore";
 import { firebasedb } from './Firebase';
-//import { chunk } from 'lodash'
+import { round } from 'lodash'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { AiOutlineMinus } from 'react-icons/ai'
 import Media from 'react-media';
@@ -33,7 +33,8 @@ import {
     loadEquipMinted,
     equipItem,
     unequipItem,
-    buyDowngrade
+    buyDowngrade,
+    getWizaValue
 } from '../actions'
 import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, MAX_LEVEL, TEST_NET_ID } from '../actions/types'
 import '../css/Nft.css'
@@ -92,7 +93,8 @@ class Shop extends Component {
             equipment: [],
             ringToEquipName: "",
             decrease: { hp: 1, defense: 1, attack: 1, damage: 1, speed: 1},
-            baseStats: undefined
+            baseStats: undefined,
+            wizaValue: 0
         }
     }
 
@@ -130,6 +132,8 @@ class Shop extends Component {
 		this.loadWizaBalance()
 
         this.getHistoryUpgrades()
+
+        this.loadWizaValue()
 	}
 
     loadMinted() {
@@ -181,6 +185,15 @@ class Shop extends Component {
 		if (account && account.account) {
 			this.props.getWizaBalance(chainId, gasPrice, gasLimit, networkUrl, account.account)
 		}
+	}
+
+    loadWizaValue() {
+		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		this.props.getWizaValue(chainId, gasPrice, gasLimit, networkUrl, (wizaValue) => {
+            console.log(wizaValue);
+            this.setState({ wizaValue })
+        })
 	}
 
     async getHistoryUpgrades() {
@@ -1305,6 +1318,7 @@ class Shop extends Component {
     }
 
     renderCardNickname(isMobile) {
+        const { wizaValue } = this.state
         return (
             <div
                 className="cardShopShadow"
@@ -1318,7 +1332,7 @@ class Shop extends Component {
                     $WIZA
                 </p>
                 <p style={{ fontSize: 21, color: 'white', marginBottom: 20 }}>
-                    160.0
+                    {round(wizaValue * 1.4, 2)}
                 </p>
 
                 <button
@@ -1890,5 +1904,6 @@ export default connect(mapStateToProps, {
     loadEquipMinted,
     equipItem,
     unequipItem,
-    buyDowngrade
+    buyDowngrade,
+    getWizaValue
 })(Shop)

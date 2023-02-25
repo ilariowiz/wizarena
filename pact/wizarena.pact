@@ -1877,11 +1877,15 @@
 
     (defun update-nickname (id:string address:string nickname:string m:module{wiza1-interface-v1})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
-        (with-capability (OWNER address id)
-            (update nfts id {
-              "nickname": nickname
-            })
-            (spend-wiza 160.0 address m)
+        (let (
+                (wiza-cost (* (get-wiza-value) 1.4))
+            )
+            (with-capability (OWNER address id)
+                (update nfts id {
+                  "nickname": nickname
+                })
+                (spend-wiza wiza-cost address m)
+            )
         )
     )
 
@@ -1938,6 +1942,10 @@
     )
 
     ;;;;;; NON STATE MODIFYING HELPER FUNCTIONS ;;;;;;;;;
+
+    (defun get-wiza-value ()
+        (free.wiz-dexinfo.get-wiza-value)
+    )
 
     (defun get-value-tournament(key:string)
         (at "value" (read values-tournament key ['value]))
