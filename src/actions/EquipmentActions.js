@@ -25,17 +25,27 @@ export const loadAllItemsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit,
             if (response && response.length > 0) {
                 dispatch({ type: LOAD_ALL_ITEMS_IDS, payload: { allItemsIds: response } })
 
-                let partsBlock = _.chunk(response, 1000)
+                let partsBlock = _.chunk(response, response.length/5)
 
                 //console.log(partsBlock);
 
+                let promises = []
+                partsBlock.map(pr => {
+                    let promise = Promise.resolve(dispatch(loadBlockItemsSplit(chainId, gasPrice, 75000, networkUrl, pr)))
+                    promises.push(promise)
+                })
+
+                /*
                 const promise1 = Promise.resolve(dispatch(loadBlockItemsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[0])))
                 const promise2 = Promise.resolve(dispatch(loadBlockItemsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[1])))
                 const promise3 = Promise.resolve(dispatch(loadBlockItemsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[2])))
                 const promise4 = Promise.resolve(dispatch(loadBlockItemsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[3])))
                 const promise5 = Promise.resolve(dispatch(loadBlockItemsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[4])))
 
-                Promise.all([promise1, promise2, promise3, promise4, promise5]).then(values => {
+                [promise1, promise2, promise3, promise4, promise5]
+                */
+
+                Promise.all(promises).then(values => {
 					//console.log(values);
 
                     let final = []
