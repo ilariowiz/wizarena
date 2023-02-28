@@ -494,7 +494,7 @@ class Equipment extends Component {
 		return (
 			<div style={{ width: '100%', flexDirection: 'column', alignItems: 'flex-start', marginTop: 35, marginBottom: 20, flexWrap: 'wrap' }}>
 
-                <div style={{ flexWrap: 'wrap', flexDirection: 'column', alignItems: isMobile ? "center" : 'flex-start'  }}>
+                {/*<div style={{ flexWrap: 'wrap', flexDirection: 'column', alignItems: isMobile ? "center" : 'flex-start'  }}>
 
                     <p style={{ fontSize: 24, color: 'white', marginBottom: 25 }}>
                         Buy a mystery chest
@@ -510,7 +510,7 @@ class Equipment extends Component {
                         ...or buy a ring directly from the marketplace
                     </p>
 
-                </div>
+                </div>*/}
 
                 <div style={{ width: '100%', alignItems: 'center', flexWrap: 'wrap' }}>
     				<div style={{ flexWrap: 'wrap', alignItems: 'center' }}>
