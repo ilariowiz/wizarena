@@ -251,12 +251,12 @@
         amount:integer
     )
 
-    (defschema account-free-minted-clerics-schema
+    (defschema account-free-minted-druids-schema
         @doc "keeps track of how many clerics an account has minted for free"
         minted:integer
     )
 
-    (defschema account-minted-clerics-schema
+    (defschema account-minted-druids-schema
         @doc "keeps track of how many clerics an account has minted"
         minted:integer
     )
@@ -321,10 +321,10 @@
     (deftable upgrade-stat-values:{upgrade-stat-values-schema})
     (deftable burning-queue-table:{burning-queue-schema})
 
-    (deftable free-mint-table:{free-mint-list-schema})
-    (deftable wl-mint-table:{wl-mint-schema})
-    (deftable account-free-minted-clerics:{account-free-minted-clerics-schema})
-    (deftable account-minted-clerics:{account-minted-clerics-schema})
+    (deftable free-mint-table-druids:{free-mint-list-schema})
+    (deftable wl-mint-table-druids:{wl-mint-schema})
+    (deftable account-free-minted-druids:{account-free-minted-druids-schema})
+    (deftable account-minted-druids:{account-minted-druids-schema})
     (deftable price:{price-schema})
 
     (deftable pvp-subscribers:{pvp-subscribers-schema})
@@ -465,12 +465,32 @@
                 (wizcount (get-count NFTS_COUNT_KEY))
             )
             (insert creation id
-                {"traits": (at "attributes" item-list),
+                {"traits": {},
                 "name": (at "name" item-list),
                 "imageHash": (at "imageHash" item-list)}
             )
         )
         (increase-count NFTS_COUNT_KEY)
+    )
+
+    (defun add-traits (objects-list:list)
+        (with-capability (ADMIN)
+            (map
+                (add-trait)
+                objects-list
+            )
+        )
+    )
+
+    (defun add-trait (item-list:object)
+        (require-capability (ADMIN))
+        (let (
+                (id (at "id" item-list))
+            )
+            (update nfts id {
+                "traits": (at "attributes" item-list)
+            })
+        )
     )
 
     (defun add-stats (objects-list:list)
@@ -661,14 +681,14 @@
     ;;;;;;;; MINT CLERICS FUN ;;;;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun get-clerics (owner:string amount:integer)
+    (defun get-druids (owner:string amount:integer)
         @doc "Mint part 1"
         (enforce (>= amount 1) "Must mint at least 1 wizard")
         (let (
                 (wiz-minted (get-count MINTED_COUNT_KEY))
                 (wiz-created (get-count NFTS_COUNT_KEY))
                 (mint-phase (get-value MINT_PHASE))
-                (max-per-mint-phase (get-max-items-clerics owner (get-value MINT_PHASE)))
+                (max-per-mint-phase (get-max-items-druids owner (get-value MINT_PHASE)))
                 (mint-price (get-mint-price))
                 (minted (get-minted (get-value MINT_PHASE) owner))
             )
@@ -688,54 +708,35 @@
             ; in public non importa quanti ne hai
             (if
                 (= mint-phase "0")
-                (with-default-read account-free-minted-clerics owner
+                (with-default-read account-free-minted-druids owner
                   {"minted": 0}
                   {"minted":= minted }
-                  (write account-free-minted-clerics owner {"minted": (+ minted amount)})
+                  (write account-free-minted-druids owner {"minted": (+ minted amount)})
                 )
                 ""
             )
             (if
                 (= mint-phase "1")
-                (with-default-read account-minted-clerics owner
+                (with-default-read account-minted-druids owner
                   {"minted": 0}
                   {"minted":= minted }
-                  (write account-minted-clerics owner {"minted": (+ minted amount)})
+                  (write account-minted-druids owner {"minted": (+ minted amount)})
                 )
                 ""
             )
             (with-capability (ACCOUNT_GUARD owner)
                 (with-capability (PRIVATE)
                     (increase-volume-by VOLUME_PURCHASE_COUNT (* mint-price amount))
-                    (if
-                        ; if during WL you mint 9 NFT, the tenth is free
-                        (= mint-phase "1")
-                        (with-default-read account-minted-clerics owner
-                          {"minted": 0}
-                          {"minted":= minted }
-                          (if
-                              (= minted 9)
-                              (map
-                                  (get-cleric owner)
-                                  (make-list (+ amount 1) 1)
-                              )
-                              (map
-                                  (get-cleric owner)
-                                  (make-list amount 1)
-                              )
-                          )
-                        )
-                        (map
-                            (get-cleric owner)
-                            (make-list amount 1)
-                        )
+                    (map
+                        (get-druid owner)
+                        (make-list amount 1)
                     )
                 )
             )
         )
     )
 
-    (defun get-cleric (owner:string number:integer)
+    (defun get-druid (owner:string number:integer)
         @doc "Mint part 2"
         (enforce (= number 1) "Number enforced to be 1 to avoid confusion but allow mapping to work")
         (require-capability (PRIVATE))
@@ -746,7 +747,7 @@
             (let (
                     (data (get-latest-wizard-data id))
                 )
-                (mint-cleric id {
+                (mint-druid id {
                     "id": id,
                     "created": (at "block-time" (chain-data)),
                     "traits": (at "traits" data),
@@ -760,7 +761,7 @@
         (increase-count MINTED_COUNT_KEY)
     )
 
-    (defun mint-cleric (id:string data:object)
+    (defun mint-druid (id:string data:object)
         @doc "Mint part 3"
         (require-capability (PRIVATE))
         (insert nfts id data)
@@ -772,15 +773,15 @@
         (increase-count MINTED_POST_COUNT_KEY)
     )
 
-    (defun get-max-items-clerics (address:string phase:string)
+    (defun get-max-items-druids (address:string phase:string)
         (cond
             (
                 (= phase "0")
-                (at "amount" (read free-mint-table address ['amount]))
+                (at "amount" (read free-mint-table-druids address ['amount]))
             )
             (
                 (= phase "1")
-                (at "amount" (read wl-mint-table address ['amount]))
+                (at "amount" (read wl-mint-table-druids address ['amount]))
             )
             (
                 (= phase "2")
@@ -793,7 +794,7 @@
         (cond
             (
                 (= phase "0")
-                (with-default-read account-free-minted-clerics owner
+                (with-default-read account-free-minted-druids owner
                     {"minted": 0}
                     {"minted":= minted }
                     minted
@@ -801,7 +802,7 @@
             )
             (
                 (= phase "1")
-                (with-default-read account-minted-clerics owner
+                (with-default-read account-minted-druids owner
                     {"minted": 0}
                     {"minted":= minted }
                     minted
@@ -829,7 +830,7 @@
                 (address (at "address" data))
                 (amount (at "amount" data))
             )
-            (write free-mint-table address { "amount": amount })
+            (write free-mint-table-druids address { "amount": amount })
         )
     )
 
@@ -848,7 +849,7 @@
                 (address (at "address" data))
                 (amount (at "amount" data))
             )
-            (write wl-mint-table address { "amount": amount })
+            (write wl-mint-table-druids address { "amount": amount })
         )
     )
 
@@ -1926,6 +1927,14 @@
         )
     )
 
+    (defun set-price(value:decimal)
+        (with-capability (ADMIN)
+            (update price PRICE_KEY
+                {"price": value}
+            )
+        )
+    )
+
     (defun write-new-value(key:string value:string)
         (with-capability (ADMIN)
             (write values key
@@ -2088,10 +2097,10 @@
     (create-table upgrade-stat-values)
     (create-table burning-queue-table)
 
-    (create-table free-mint-table)
-    (create-table wl-mint-table)
-    (create-table account-free-minted-clerics)
-    (create-table account-minted-clerics)
+    (create-table free-mint-table-druids)
+    (create-table wl-mint-table-druids)
+    (create-table account-free-minted-druids)
+    (create-table account-minted-druids)
     (create-table price)
 
     (create-table pvp-subscribers)
