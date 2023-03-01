@@ -1193,7 +1193,7 @@ class Shop extends Component {
     }
 
     renderVialCard(key, canBuy, isMobile) {
-        const { loadingPotionEquipped } = this.state
+        const { loadingPotionEquipped, wizaValue } = this.state
 
         const wizard = this.getWizardSelected()
 
@@ -1202,34 +1202,29 @@ class Shop extends Component {
         }
 
         let bonus;
-        let costo = 0;
+        let costo = round(wizaValue * 2.1, 2);
         let level = calcLevelWizard(wizard)
 
         let img;
         if (key === "hp") {
             img = vial_hp
             bonus = 8
-            costo = Math.round(level / 2.4) + 0.01
         }
         else if (key === "defense") {
             img = vial_def
             bonus = 2
-            costo = Math.round(level / 1.1) + 0.01
         }
         else if (key === "attack") {
             img = vial_atk
             bonus = 2
-            costo = Math.round(level / 1.1) + 0.01
         }
         else if (key === "damage") {
             img = vial_dmg
             bonus = 4
-            costo = Math.round(level / 1.6) + 0.01
         }
         else if (key === "speed") {
             img = vial_speed
             bonus = 4
-            costo = Math.round(level / 1.6) + 0.01
         }
 
         return (

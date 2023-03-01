@@ -1602,6 +1602,7 @@
             (let (
                     (current-level (calculate-level idnft))
                     (tournament-open (get-value TOURNAMENT_OPEN))
+                    (wiza-cost (* (get-wiza-value) 2.1))
                 )
                 (enforce (= tournament-open "1") "You can't buy vial now")
                 (with-default-read potions-table key
@@ -1610,28 +1611,7 @@
                     {"potionEquipped":=potionEquipped,
                     "potionBought":=potionBought}
                     (enforce (= potionBought false) "Already bought a potion for this tournament")
-                    (cond
-                        (
-                            (= potion "hp")
-                            (spend-wiza (+ (round(/ current-level 2.4)) 0.01) account m)
-                        )
-                        (
-                            (= potion "defense")
-                            (spend-wiza (+ (round(/ current-level 1.1)) 0.01) account m)
-                        )
-                        (
-                            (= potion "attack")
-                            (spend-wiza (+ (round(/ current-level 1.1)) 0.01) account m)
-                        )
-                        (
-                            (= potion "damage")
-                            (spend-wiza (+ (round(/ current-level 1.6)) 0.01) account m)
-                        )
-                        (
-                            (= potion "speed")
-                            (spend-wiza (+ (round(/ current-level 1.6)) 0.01) account m)
-                        )
-                    "")
+                    (spend-wiza wiza-cost account m)
                     (write potions-table key {
                         "potionEquipped": potion,
                         "potionBought": true
