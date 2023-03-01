@@ -35,7 +35,7 @@ class Sales extends Component {
 
     async loadSales(next) {
 
-        const newDate = moment().subtract(30, 'days').format()
+        const newDate = moment().subtract(28, 'days').format()
 
         //console.log(newDate);
 
@@ -50,7 +50,7 @@ class Sales extends Component {
 		querySnapshot.forEach(doc => {
             const d = doc.data()
 
-            const date = moment(d.blockTime).format("DD-MM-YY")
+            const date = moment(d.blockTime).format("DD-MM")
 
             if (dateObj[date]) {
                 dateObj[date]['amount'] += 1
@@ -78,7 +78,7 @@ class Sales extends Component {
 
         for (var i = 0; i < nftH.length; i++) {
             let sale = nftH[i]
-            const date = moment(sale.blockTime).format("DD-MM-YY")
+            const date = moment(sale.blockTime).format("DD-MM")
 
             if (sales[date]) {
                 sales[date].push(sale)

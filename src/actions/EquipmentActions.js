@@ -35,16 +35,6 @@ export const loadAllItemsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit,
                     promises.push(promise)
                 })
 
-                /*
-                const promise1 = Promise.resolve(dispatch(loadBlockItemsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[0])))
-                const promise2 = Promise.resolve(dispatch(loadBlockItemsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[1])))
-                const promise3 = Promise.resolve(dispatch(loadBlockItemsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[2])))
-                const promise4 = Promise.resolve(dispatch(loadBlockItemsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[3])))
-                const promise5 = Promise.resolve(dispatch(loadBlockItemsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[4])))
-
-                [promise1, promise2, promise3, promise4, promise5]
-                */
-
                 Promise.all(promises).then(values => {
 					//console.log(values);
 
