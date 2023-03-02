@@ -94,7 +94,8 @@ class Shop extends Component {
             ringToEquipName: "",
             decrease: { hp: 1, defense: 1, attack: 1, damage: 1, speed: 1},
             baseStats: undefined,
-            wizaValue: 0
+            wizaValue: 0,
+            loadingEquip: true
         }
     }
 
@@ -103,15 +104,6 @@ class Shop extends Component {
 
         this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
-
-        /*
-        let speeds = []
-		for (var i = 0; i < 2048; i++) {
-			speeds.push({ id: `${i}`, speed: 0 })
-		}
-
-        console.log(chunk(speeds, 512));
-        */
 
         setTimeout(() => {
 			this.loadProfile()
@@ -173,7 +165,7 @@ class Shop extends Component {
                         }
                     }
 
-                    this.setState({ equipment })
+                    this.setState({ equipment, loadingEquip: false })
                 }, 500)
 			})
 		}
@@ -1560,6 +1552,15 @@ class Shop extends Component {
                         <p style={{ fontSize: 26, color: 'white', marginBottom: 10 }} id="shop-rings">
                             RINGS
                         </p>
+
+                        {
+                            this.state.loadingEquip &&
+                            <div style={{ alignItems: 'flex-start', flexDirection: 'column', marginBottom: 30 }}>
+                                <p style={{ fontSize: 21, color: 'white' }}>
+                                    Loading equipment...
+                                </p>
+                            </div>
+                        }
 
                         {
                             equipment.length > 0 ?
