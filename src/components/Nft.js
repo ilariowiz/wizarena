@@ -24,6 +24,7 @@ import traits_qty from './common/Traits_qty'
 import traits_qty_clerics from './common/Traits_qty_clerics'
 import conditions from './common/Conditions'
 import allSpells from './common/Spells'
+import titles from './common/LeagueTitle'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import 'reactjs-popup/dist/index.css';
 import {
@@ -875,6 +876,8 @@ class Nft extends Component {
 			type = "Cleric"
 		}
 
+		let title = titles[nft.id]
+
 		return (
 			<div style={{ flexDirection: 'column', marginBottom }}>
 				{
@@ -886,6 +889,21 @@ class Nft extends Component {
 					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 30, lineHeight: 1 }}>
 						{type} {nft.name}
 					</p>
+				}
+
+				{
+					title ?
+					<div style={{ marginTop: 10, alignItems: 'center' }}>
+						<img
+							style={{ width: 40, height: 40, marginRight: 6 }}
+							src={title.img}
+						/>
+
+						<p style={{ fontSize: 22, color: title.textColor }}>
+							{title.title}
+						</p>
+					</div>
+					: null
 				}
 			</div>
 		)
