@@ -1144,7 +1144,7 @@ class Shop extends Component {
                                 WIZA
                             </p>
                             <p style={{ fontSize: 21, color: 'white', marginBottom: 15 }}>
-                                {decreaseTo * 5}
+                                {decreaseTo * 15}
                             </p>
                         </div>
 
