@@ -445,7 +445,7 @@ class Tournament extends Component {
             return <div> </div>
         }
 
-        //console.log(tournament);
+        //console.log(tournament.showLeague);
         const roundName = tournament.name.split("_")[1]
 
         //LE ISCRIZIONI SONO APERTE
@@ -460,7 +460,12 @@ class Tournament extends Component {
 			return (
 				<div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
 
-                    {this.renderHeaderLeague()}
+                    {
+                        tournament.showLeague ?
+                        this.renderHeaderLeague()
+                        :
+                        null
+                    }
 
 					<div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 30 }}>
 
@@ -533,7 +538,12 @@ class Tournament extends Component {
 			return (
 				<div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
 
-                    {this.renderHeaderLeague()}
+                    {
+                        tournament.showLeague ?
+                        this.renderHeaderLeague()
+                        :
+                        null
+                    }
 
 					<div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 30 }}>
 
@@ -582,7 +592,12 @@ class Tournament extends Component {
         return (
             <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
 
-                {this.renderHeaderLeague()}
+                {
+                    tournament.showLeague ?
+                    this.renderHeaderLeague()
+                    :
+                    null
+                }
 
                 <div style={{ justifyContent: 'space-between', marginBottom: 30 }}>
 
@@ -745,7 +760,12 @@ class Tournament extends Component {
         return (
             <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
 
-                {this.renderHeaderLeague()}
+                {
+                    tournament.showLeague ?
+                    this.renderHeaderLeague()
+                    :
+                    null
+                }
 
                 <div style={{ justifyContent: 'space-between', marginBottom: 30 }}>
 
