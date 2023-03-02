@@ -251,14 +251,6 @@ class Tournament extends Component {
 					NUMBER OF ROUNDS {tournament.nRounds}
 				</p>
 
-				{/*<p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
-					Total Prize {montepremi || '...'} WIZA
-				</p>
-
-                <p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
-					Registered Wizards {subscribed ? subscribed.length : '...'}
-				</p> */}
-
                 <a
                     style={styles.btnRules}
                     href="https://wizardsarena.gitbook.io/wizards-arena/"
@@ -325,24 +317,19 @@ class Tournament extends Component {
                 }
 
                 <div style={{ flexWrap: 'wrap', alignItems: 'center' }}>
-                    <p style={{ fontSize: 17, color: TEXT_SECONDARY_COLOR, marginBottom: 10, marginRight: 10 }}>
-                        Wizards:
-                    </p>
                     {this.renderSingleGraph('#88f71e', 'Acid')}
                     {this.renderSingleGraph('#5b30b7', 'Dark')}
+                    {this.renderSingleGraph('#503631', 'Earth')}
                     {this.renderSingleGraph('#cc1919', 'Fire')}
                     {this.renderSingleGraph('#11c8ee', 'Ice')}
-                    {this.renderSingleGraph('#e6dc0c', 'Thunder')}
-                    {this.renderSingleGraph('#afb9cc', 'Wind')}
-                    <p style={{ fontSize: 17, color: TEXT_SECONDARY_COLOR, marginBottom: 10, marginRight: 10 }}>
-                        Clerics:
-                    </p>
-                    {this.renderSingleGraph('#503631', 'Earth')}
                     {this.renderSingleGraph('#840fb2', 'Psycho')}
                     {this.renderSingleGraph('#b2e5ef', 'Spirit')}
                     {this.renderSingleGraph('#faf000', 'Sun')}
+                    {this.renderSingleGraph('#e6dc0c', 'Thunder')}
                     {this.renderSingleGraph('#4b0082', 'Undead')}
                     {this.renderSingleGraph('#15a3c7', 'Water')}
+                    {this.renderSingleGraph('#afb9cc', 'Wind')}
+                    
                 </div>
             </div>
         )
@@ -413,7 +400,7 @@ class Tournament extends Component {
 							</p>
 
                             <p style={{ fontSize: 17, color: 'white', marginBottom: 15 }}>
-            					Participation reward (for each wizard) +3 AP
+            					Participation reward (for each wizard) {tournament.reward}
             				</p>
 						</div>
 

@@ -334,24 +334,18 @@ class Tournament extends Component {
                 }
 
                 <div style={{ flexWrap: 'wrap', alignItems: 'center' }}>
-                    <p style={{ fontSize: 17, color: TEXT_SECONDARY_COLOR, marginBottom: 10, marginRight: 10 }}>
-                        Wizards:
-                    </p>
                     {this.renderSingleGraph('#88f71e', 'Acid')}
                     {this.renderSingleGraph('#5b30b7', 'Dark')}
+                    {this.renderSingleGraph('#503631', 'Earth')}
                     {this.renderSingleGraph('#cc1919', 'Fire')}
                     {this.renderSingleGraph('#11c8ee', 'Ice')}
-                    {this.renderSingleGraph('#e6dc0c', 'Thunder')}
-                    {this.renderSingleGraph('#afb9cc', 'Wind')}
-                    <p style={{ fontSize: 17, color: TEXT_SECONDARY_COLOR, marginBottom: 10, marginRight: 10 }}>
-                        Clerics:
-                    </p>
-                    {this.renderSingleGraph('#503631', 'Earth')}
                     {this.renderSingleGraph('#840fb2', 'Psycho')}
                     {this.renderSingleGraph('#b2e5ef', 'Spirit')}
                     {this.renderSingleGraph('#faf000', 'Sun')}
+                    {this.renderSingleGraph('#e6dc0c', 'Thunder')}
                     {this.renderSingleGraph('#4b0082', 'Undead')}
                     {this.renderSingleGraph('#15a3c7', 'Water')}
+                    {this.renderSingleGraph('#afb9cc', 'Wind')}
                 </div>
             </div>
         )
@@ -452,9 +446,6 @@ class Tournament extends Component {
         }
 
         //console.log(tournament);
-
-        const wizaPrize = buyin && subscribed && buyin * 30
-
         const roundName = tournament.name.split("_")[1]
 
         //LE ISCRIZIONI SONO APERTE
@@ -490,7 +481,7 @@ class Tournament extends Component {
 							</p>
 
                             <p style={{ fontSize: 17, color: 'white', marginBottom: 15 }}>
-            					Participation reward (for each wizard) {wizaPrize || '...'} $WIZA, +1 spell or +1 AP if the wizard already has four spells
+            					Participation reward (for each wizard) {tournament.reward}
             				</p>
 						</div>
 

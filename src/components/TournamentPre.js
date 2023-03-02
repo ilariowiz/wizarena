@@ -539,8 +539,6 @@ class Tournament extends Component {
         const { tournament, tournamentKdaSubs, avgLevelKda } = this.state
         const { buyin, feeTournament } = this.props
 
-        const wizaPrize = buyin && buyin * 30
-
         const fee = buyin * feeTournament / 100
         const totalFee = fee * tournamentKdaSubs
         let montepremi = (tournamentKdaSubs * buyin) - totalFee
@@ -631,7 +629,7 @@ class Tournament extends Component {
                 </div>
 
                 <p style={{ fontSize: 17, color: 'white', marginBottom, height: 55 }}>
-                    Participation reward: (for each wizard) {wizaPrize || '...'} $WIZA, +1 spell or +1 AP if the wizard already has four spells
+                    Participation reward: (for each wizard) {tournament.reward}
                 </p>
 
                 {
@@ -789,7 +787,7 @@ class Tournament extends Component {
                 </div>
 
                 <p style={{ fontSize: 17, color: 'white', marginBottom, height: 55 }}>
-                    Participation reward: (for each wizard) +3 AP
+                    Participation reward: (for each wizard) {tournamentWiza.reward}
                 </p>
 
                 {
