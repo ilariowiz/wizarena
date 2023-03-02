@@ -583,7 +583,12 @@ class Tournament extends Component {
                             {tournament.leagueTournament}
                         </p>
                     </div>
-                    : null
+                    :
+                    <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
+                        <p style={{ fontSize: 24, color: 'white' }}>
+                            The Weekly Tournament
+                        </p>
+                    </div>
                 }
 
                 <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
