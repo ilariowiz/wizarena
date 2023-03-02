@@ -1185,6 +1185,8 @@ class Nft extends Component {
 
 							{this.renderStat("AP", nft.ap.int)}
 
+							{this.renderStat("DOWNGRADES POINTS", nft.downgrades.int)}
+
 							{this.renderStat("ELEMENT", nft.element.toUpperCase())}
 
 							{this.renderStat("SPELL", spellSelected.name.toUpperCase())}

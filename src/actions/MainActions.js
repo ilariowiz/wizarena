@@ -376,18 +376,31 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
+
+			/*
+			let temp = []
+
+			response.map(i => {
+				temp.push({ id: i })
+			})
+
+			let tempBlock = _.chunk(temp, Math.ceil(temp.length/3))
+			console.log(tempBlock);
+			*/
+
 			if (response) {
 				//console.log("response post reduce", blocks)
 				dispatch({ type: LOAD_ALL_NFTS_IDS, payload: { allNftsIds: response } })
 
 				let partsBlock = _.chunk(response, Math.ceil(response.length/3))
 
-				//console.log(partsBlock);
-				const promise1 = Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[0])))
-				const promise2 = Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[1])))
-				const promise3 = Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 150000, networkUrl, partsBlock[2])))
+				let promises = []
+                partsBlock.map(pr => {
+                    let promise = Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 150000, networkUrl, pr)))
+                    promises.push(promise)
+                })
 
-				Promise.all([promise1, promise2, promise3]).then(values => {
+				Promise.all(promises).then(values => {
 					//console.log(values);
 
 					let final = []

@@ -229,6 +229,7 @@
         spellbook:list
         ap:integer
         speed:integer
+        downgrades:integer
     )
 
     (defschema upgrade-stat-values-schema
@@ -522,7 +523,8 @@
                 "spellSelected": (at "spellSelected" item),
                 "spellbook": (at "spellbook" item),
                 "ap":(at "ap" item),
-                "speed": (at "speed" item)}
+                "speed": (at "speed" item),
+                "downgrades": 32}
             )
         )
     )
@@ -629,27 +631,27 @@
         )
     )
 
-    ; (defun update-speeds (objects-list:list)
-    ;     (with-capability (ADMIN)
-    ;         (map
-    ;             (update-speed)
-    ;             objects-list
-    ;         )
-    ;     )
-    ; )
-    ;
-    ; (defun update-speed (item:object)
-    ;     (require-capability (ADMIN))
-    ;     (let
-    ;         (
-    ;             (id (at "id" item))
-    ;         )
-    ;         (update stats id
-    ;             {"id": id,
-    ;             "speed": (at "speed" item)}
-    ;         )
-    ;     )
-    ; )
+    (defun update-downgrades (objects-list:list)
+        (with-capability (ADMIN)
+            (map
+                (update-downgrade)
+                objects-list
+            )
+        )
+    )
+
+    (defun update-downgrade (item:object)
+        (require-capability (ADMIN))
+        (let
+            (
+                (id (at "id" item))
+            )
+            (update stats id
+                {"id": id,
+                "downgrades": 32}
+            )
+        )
+    )
 
     (defun update-aps (objects-list:list)
         (with-capability (ADMIN)
@@ -1683,19 +1685,23 @@
                     (base-stats (get-base-stats idnft))
                     (current-data (get-wizard-fields-for-id (str-to-int idnft)))
                 )
-                (enforce (>= (- (at stat current-data) amount) (at stat base-stats)) "can't retrain this stat so much")
+                (enforce (>= (- (at stat current-data) amount) (at stat base-stats)) "Can't retrain this stat so much")
+                (enforce (> (at "downgrades" current-data) 0) "This wizard can no longer do downgrades")
                 (cond
                     (
                         (= stat "hp")
                         (let (
                                 (ap-gained (/ amount 2))
                             )
+                            (enforce (>= (at "downgrades" current-data) ap-gained) "Can't downgrade")
                             (with-read stats idnft
                                 {"ap":=ap,
-                                "hp":=hp}
+                                "hp":=hp,
+                                "downgrades":=downgrades}
                                 (update stats idnft
                                     {"ap": (+ ap ap-gained),
-                                    "hp": (- hp amount)}
+                                    "hp": (- hp amount),
+                                    "downgrades": (- downgrades ap-gained)}
                                 )
                             )
                         )
@@ -1705,12 +1711,15 @@
                         (let (
                                 (ap-gained (* amount 2))
                             )
+                            (enforce (>= (at "downgrades" current-data) ap-gained) "Can't downgrade")
                             (with-read stats idnft
                                 {"ap":=ap,
-                                "defense":=defense}
+                                "defense":=defense,
+                                "downgrades":=downgrades}
                                 (update stats idnft
                                     {"ap": (+ ap ap-gained),
-                                    "defense": (- defense amount)}
+                                    "defense": (- defense amount),
+                                    "downgrades": (- downgrades ap-gained)}
                                 )
                             )
                         )
@@ -1720,12 +1729,15 @@
                         (let (
                                 (ap-gained (* amount 2))
                             )
+                            (enforce (>= (at "downgrades" current-data) ap-gained) "Can't downgrade")
                             (with-read stats idnft
                                 {"ap":=ap,
-                                "attack":=attack}
+                                "attack":=attack,
+                                "downgrades":=downgrades}
                                 (update stats idnft
                                     {"ap": (+ ap ap-gained),
-                                    "attack": (- attack amount)}
+                                    "attack": (- attack amount),
+                                    "downgrades": (- downgrades ap-gained)}
                                 )
                             )
                         )
@@ -1735,12 +1747,15 @@
                         (let (
                                 (ap-gained amount)
                             )
+                            (enforce (>= (at "downgrades" current-data) ap-gained) "Can't downgrade")
                             (with-read stats idnft
                                 {"ap":=ap,
-                                "damage":=damage}
+                                "damage":=damage,
+                                "downgrades":=downgrades}
                                 (update stats idnft
                                     {"ap": (+ ap ap-gained),
-                                    "damage": (- damage amount)}
+                                    "damage": (- damage amount),
+                                    "downgrades": (- downgrades ap-gained)}
                                 )
                             )
                         )
@@ -1750,18 +1765,21 @@
                         (let (
                                 (ap-gained amount)
                             )
+                            (enforce (>= (at "downgrades" current-data) ap-gained) "Can't downgrade")
                             (with-read stats idnft
                                 {"ap":=ap,
-                                "speed":=speed}
+                                "speed":=speed,
+                                "downgrades":=downgrades}
                                 (update stats idnft
                                     {"ap": (+ ap ap-gained),
-                                    "speed": (- speed amount)}
+                                    "speed": (- speed amount),
+                                    "downgrades": (- downgrades ap-gained)}
                                 )
                             )
                         )
                     )
                 "")
-                (spend-wiza (+ (* amount 5) 0.0) owner m)
+                (spend-wiza (+ (* amount 15) 0.0) owner m)
             )
         )
     )
