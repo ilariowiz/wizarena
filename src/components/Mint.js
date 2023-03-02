@@ -17,6 +17,7 @@ import {
 	setNetworkUrl,
 	readAccountMinted,
 	getMintPhase,
+	getMintPrice
 } from '../actions'
 import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -41,7 +42,8 @@ class Mint extends Component {
 			countdownDuration: undefined,
 			error: '',
 			maxItemsPerWallet: -1,
-			loading: true
+			loading: true,
+			mintPrice: 0
 		}
 	}
 
@@ -53,6 +55,7 @@ class Mint extends Component {
 
 		setTimeout(() => {
 			this.getMintPhase()
+			this.getMintPrice()
 		}, 500)
 	}
 
@@ -91,6 +94,14 @@ class Mint extends Component {
 			else {
 				this.setState({ loading: false })
 			}
+		})
+	}
+
+	getMintPrice() {
+		const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
+
+		this.props.getMintPrice(chainId, gasPrice, gasLimit, networkUrl, (response) => {
+			this.setState({ mintPrice: response })
 		})
 	}
 
@@ -143,7 +154,7 @@ class Mint extends Component {
 
 		//console.log(countMinted);
 
-		if (countMinted >= 2048) {
+		if (countMinted >= 3072) {
 			clearInterval(this.countdownMinted)
 			this.countdownMinted = null
 			return
@@ -153,11 +164,11 @@ class Mint extends Component {
 	}
 
 	mint() {
-		const { amount, stage, maxItemsPerWallet } = this.state;
+		const { amount, stage, maxItemsPerWallet, mintPrice } = this.state;
 		const { account, chainId, gasPrice, netId } = this.props
 
 		if (amount > maxItemsPerWallet) {
-			this.setState({ error: 'You can\'t mint others Clerics' })
+			this.setState({ error: 'You can\'t mint others Druids' })
 			return
 		}
 
@@ -166,7 +177,7 @@ class Mint extends Component {
 			return
 		}
 
-		this.props.mintNft(chainId, gasPrice, netId, amount, account, stage)
+		this.props.mintNft(chainId, gasPrice, netId, amount, account, stage, mintPrice)
 	}
 
 	renderHeader(width) {
@@ -199,7 +210,7 @@ class Mint extends Component {
 
 		let minted = countMinted || 0;
 
-		const max = 2048
+		const max = 3072
 
 		const progress = minted / max * 100
 
@@ -231,7 +242,7 @@ class Mint extends Component {
 		const { maxItemsPerWallet, amount, stage } = this.state
 		const { countMinted, account } = this.props
 
-		if (countMinted && countMinted === 2048) {
+		if (countMinted && countMinted === 3072) {
 			return (
 				<div style={Object.assign({}, styles.btnConnect, { width, cursor: 'default' })}>
 					<p style={{ fontSize: 19, color: TEXT_SECONDARY_COLOR }}>
@@ -331,7 +342,7 @@ class Mint extends Component {
 									return
 								}
 
-								if (maxItemsPerWallet === 200 && amount === 9) {
+								if (maxItemsPerWallet === 200 && amount === 10) {
 									return
 								}
 
@@ -359,9 +370,9 @@ class Mint extends Component {
 						<p style={{ fontSize: 19, color: 'white' }}>
 							{
 								stage === "free" ?
-								`MINT ${amount} Clerics for FREE`
+								`MINT ${amount} Druids for FREE`
 								:
-								`MINT ${amount} Clerics for ${10 * amount} KDA`
+								`MINT ${amount} Druids for ${this.state.mintPrice * amount} KDA`
 							}
 						</p>
 					</button>
@@ -371,7 +382,7 @@ class Mint extends Component {
 					maxItemsPerWallet > 0 && stage === "public" ?
 					<div style={{ width: '100%', justifyContent: 'center', marginBottom: 20 }}>
 						<p style={{ fontSize: 14, color: 'white' }}>
-							Max 9 per transaction
+							Max 10 per transaction
 						</p>
 					</div>
 					:
@@ -393,7 +404,7 @@ class Mint extends Component {
 	}
 
 	renderBoxMint() {
-		const { stage, loading, error } = this.state
+		const { stage, loading, error, mintPrice } = this.state
 		const { account } = this.props
 
 		let title = stage !== 'early' ? `STAGE: ${stage.toUpperCase()} MINT` : 'EARLY'
@@ -411,7 +422,7 @@ class Mint extends Component {
 					</p>
 
 					<p style={{ fontSize: 19, color: 'white' }}>
-						{stage === "free" ? "FREE" : "10 KDA"}
+						{stage === "free" ? "FREE" : `${mintPrice} KDA`}
 					</p>
 				</div>
 
@@ -496,7 +507,7 @@ class Mint extends Component {
 								/>
 
 								<div style={{ flexDirection: 'column', justifyContent: 'center' }}>
-									<p style={{ fontSize: 26, color: 'white', lineHeight: 1 }}>Clerics Arena</p>
+									<p style={{ fontSize: 26, color: 'white', lineHeight: 1 }}>Druids Arena</p>
 									<p style={{ fontSize: 17, color: '#c2c0c0', lineHeight: 1 }}>Supply: 1.024</p>
 								</div>
 							</div>
@@ -691,5 +702,6 @@ export default connect(mapStateToProps, {
 	setNetworkSettings,
 	setNetworkUrl,
 	readAccountMinted,
-	getMintPhase
+	getMintPhase,
+	getMintPrice
 })(Mint)

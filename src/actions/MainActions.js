@@ -839,7 +839,7 @@ export const loadMaxItemsPerWallet = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 	return (dispatch) => {
 
 		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME}.get-max-items-clerics "${account.account}" "${phase}")`,
+			pactCode: `(free.${CONTRACT_NAME}.get-max-items-druids "${account.account}" "${phase}")`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
@@ -857,6 +857,23 @@ export const getMintPhase = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3
 
 		let cmd = {
 			pactCode: `(free.${CONTRACT_NAME}.get-value "mint-phase")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
+export const getMintPrice = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-mint-price)`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
@@ -1336,12 +1353,10 @@ export const forgeItem = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, recipe, 
 	}
 }
 
-export const mintNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, amount, account, stage) => {
+export const mintNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, amount, account, stage, mintPrice) => {
 	return (dispatch) => {
 
-		const mintPrice = 10.0
-
-		let pactCode = `(free.${CONTRACT_NAME}.get-clerics "${account.account}" ${amount})`;
+		let pactCode = `(free.${CONTRACT_NAME}.get-druids "${account.account}" ${amount})`;
 
 		let caps = [
 			Pact.lang.mkCap(
@@ -1367,7 +1382,7 @@ export const mintNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, amount, ac
 			pactCode,
 			caps,
 			sender: account.account,
-			gasLimit: 5000 * amount,
+			gasLimit: 3000 * amount,
 			gasPrice,
 			chainId,
 			ttl: 600,
