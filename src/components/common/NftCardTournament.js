@@ -54,9 +54,9 @@ class NftCardTournament extends Component {
 	render() {
 		const { item, history, width, account, tournamentSeason } = this.props
 
-		//console.log(item);
+		//console.log(tournamentSeason);
 
-		let totalMedals = calcMedals(item)
+		let totalMedals = calcMedals(item, tournamentSeason)
 
 		//console.log(totalMedals);
 
@@ -149,7 +149,7 @@ class NftCardTournament extends Component {
 							/>
 
 							<p style={{ color: isMine ? "gold" : "white", fontSize: 18, lineHeight: 1 }}>
-								{totalMedals[tournamentSeason]}
+								{totalMedals}
 							</p>
 						</div>
 

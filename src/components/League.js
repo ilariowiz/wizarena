@@ -39,9 +39,10 @@ class League extends Component {
         this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
+        this.loadTournament()
+
 		setTimeout(() => {
 			this.loadAll()
-            this.loadTournament()
 		}, 500)
 
 	}
@@ -58,6 +59,7 @@ class League extends Component {
 
     loadAll() {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+        const { tournament } = this.state
 
 		this.setState({ loading: true })
 
@@ -70,18 +72,17 @@ class League extends Component {
             for (let i = 0; i < res.length; i++) {
                 let nft = res[i]
 
-                const medals = calcMedals(nft)
+                const medals = calcMedals(nft, tournament.season)
 
-                if (medals["s2"]) {
-                    nft["totMedals"] = parseInt(medals["s2"])
+                //console.log(medals);
 
-                    if (!places[`${medals["s2"]}`]) {
-                        places[`${medals["s2"]}`] = []
-                    }
+                nft["totMedals"] = medals
+                if (!places[`${medals}`]) {
+                    places[`${medals}`] = []
+                }
 
-                    if (places[`${medals["s2"]}`]) {
-                        places[`${medals["s2"]}`].push(nft)
-                    }
+                if (places[`${medals}`]) {
+                    places[`${medals}`].push(nft)
                 }
             }
 
