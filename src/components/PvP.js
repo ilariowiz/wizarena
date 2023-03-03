@@ -133,8 +133,10 @@ class PvP extends Component {
     		const docSnap = await getDoc(docRef)
     		let data = docSnap.data()
 
+            let dateFightsStart;
+
             if (data) {
-                const dateFightsStart = moment(data.start.seconds * 1000)
+                dateFightsStart = moment(data.start.seconds * 1000)
                 const dateFightsStartTo = moment().to(dateFightsStart)
 
                 //console.log(data);
@@ -148,11 +150,11 @@ class PvP extends Component {
                 this.setState({ pvpWeek: res })
             }
 
-            this.loadInfoPvP(res)
+            this.loadInfoPvP(res, dateFightsStart)
         })
     }
 
-    loadInfoPvP(week) {
+    loadInfoPvP(week, dateFightsStart) {
         const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
         this.props.getAllSubscribersPvP(chainId, gasPrice, gasLimit, networkUrl, week, (subs) => {
@@ -180,7 +182,7 @@ class PvP extends Component {
                             yourSub["fightsLeft"] = i.fightsLeft
                             //console.log(yourSub, i);
                             yourSubs.push(yourSub)
-                            this.loadResultsYourSub(yourSub)
+                            this.loadResultsYourSub(yourSub, dateFightsStart)
                         }
                     })
                     //console.log(yourSubs);
@@ -239,19 +241,6 @@ class PvP extends Component {
 		this.props.subscribeToPvPMass(chainId, gasPrice, gasLimit, netId, account, toSubscribe)
 	}
 
-    /*
-    subscribe(id, spellSelected, wizaAmount) {
-        const { account, chainId, gasPrice, netId } = this.props
-        const { pvpWeek } = this.state
-
-        this.setState({ nameNftToSubscribe: `#${id}`, wizaAmount, typeModal: "subscribe_pvp" })
-
-        let refactorSpellSelected = { name: spellSelected.name }
-
-        this.props.subscribeToPvPweek(chainId, gasPrice, 6000, netId, account, pvpWeek, id, refactorSpellSelected, wizaAmount)
-    }
-    */
-
     incrementPvP(wizaAmount) {
         const { account, chainId, gasPrice, netId } = this.props
         const { pvpWeek, idNftIncrementFights } = this.state
@@ -309,12 +298,21 @@ class PvP extends Component {
         return sorted
     }
 
-    async loadResultsYourSub(item) {
+    async loadResultsYourSub(item, dateFightsStart) {
         const { pvpWeek } = this.state
 
         //console.log(item);
 
-        const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_#${item.id}`)
+        let keyDb = "pvp_results"
+        if (dateFightsStart) {
+            const fightsStart = moment().isAfter(dateFightsStart)
+
+            if (!fightsStart) {
+                keyDb = "pvp_training"
+            }
+        }
+
+        const docRef = doc(firebasedb, keyDb, `${pvpWeek}_#${item.id}`)
 
 		const docSnap = await getDoc(docRef)
 		let data = docSnap.data()
@@ -388,6 +386,10 @@ class PvP extends Component {
         else {
             await setDoc(docRef, { "lose": 0, "win": 0, "maxFights": item.rounds })
             //toast.error('Something goes wrong... please try again')
+
+            const docRefTraining = doc(firebasedb, "pvp_training", `${pvpWeek}_#${item.id}`)
+            await setDoc(docRefTraining, { "lose": 0, "win": 0 })
+
             window.location.reload()
             return
         }
@@ -461,8 +463,6 @@ class PvP extends Component {
             pvpWeek: pvpWeek,
             fightsStart
         }
-
-
         //console.log(sfida);
         //return
 
@@ -593,9 +593,16 @@ class PvP extends Component {
                         </p>
 
                         {
-                            item.rounds &&
+                            item.rounds && fightsStart &&
                             <p style={{ fontSize: 18, color: 'white' }}>
                                 {totalFights}/{item.rounds} fights
+                            </p>
+                        }
+
+                        {
+                            !fightsStart &&
+                            <p style={{ fontSize: 18, color: 'white' }}>
+                                {item.win + item.lose} fights
                             </p>
                         }
                     </div>
@@ -632,21 +639,39 @@ class PvP extends Component {
 
                     {
                         !fightsStart &&
-                        <button
-                            className="btnH"
-                            style={Object.assign({}, styles.btnPlay, { marginRight: 10 })}
-                            onClick={() => {
-                                if (this.state.loading) {
-                                    return
-                                }
+                        <div style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <button
+                                className="btnH"
+                                style={Object.assign({}, styles.btnPlay, { marginRight: 10 })}
+                                onClick={() => {
+                                    if (this.state.loading) {
+                                        return
+                                    }
 
-                                this.chooseOpponent(item, level)
-                            }}
-                        >
-                            <p style={{ fontSize: 17, color: 'white' }}>
-                                TRAINING
-                            </p>
-                        </button>
+                                    this.chooseOpponent(item, level)
+                                }}
+                            >
+                                <p style={{ fontSize: 17, color: 'white' }}>
+                                    TRAINING
+                                </p>
+                            </button>
+
+                            <button
+                                className="btnH"
+                                style={styles.btnPlay}
+                                onClick={() => {
+                                    if (this.state.loading) {
+                                        return
+                                    }
+
+                                    this.openPopupChangeSpell(item.id)
+                                }}
+                            >
+                                <p style={{ fontSize: 17, color: 'white' }}>
+                                    CHANGE SPELL
+                                </p>
+                            </button>
+                        </div>
                     }
 
                     {

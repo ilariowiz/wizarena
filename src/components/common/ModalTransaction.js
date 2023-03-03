@@ -85,6 +85,9 @@ class ModalTransaction extends Component {
 				toSubscribePvP.map(i => {
 					const docRef = doc(firebasedb, "pvp_results", `${i.week}_#${i.idnft}`)
 					setDoc(docRef, { "lose": 0, "win": 0, "maxFights": i.wizaAmount })
+
+					const docRefTraining = doc(firebasedb, "pvp_training", `${i.week}_#${i.idnft}`)
+					setDoc(docRefTraining, { "lose": 0, "win": 0 })
 				})
 			}
 			else if (type === "increment_fight_pvp") {

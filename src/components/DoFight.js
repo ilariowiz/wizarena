@@ -428,9 +428,7 @@ class DoFight extends Component {
 
             this.setState({ loading: false, winner: attaccante.name }, () => {
 
-                if (sfida.fightsStart) {
-                    this.updateFirebase(sfida, attaccante, difensore, this.history)
-                }
+                this.updateFirebase(sfida, attaccante, difensore, this.history, sfida.fightsStart)
 
                 this.indexShow = 0
 
@@ -444,9 +442,11 @@ class DoFight extends Component {
         }
     }
 
-    async updateFirebase(sfida, attaccante, difensore, history) {
+    async updateFirebase(sfida, attaccante, difensore, history, fightsStart) {
 
-        const docRef = doc(firebasedb, "pvp_results", `${sfida.pvpWeek}_#${attaccante.id}`)
+        let keyDb = fightsStart ? "pvp_results" : "pvp_training"
+
+        const docRef = doc(firebasedb, keyDb, `${sfida.pvpWeek}_#${attaccante.id}`)
         try {
             await updateDoc(docRef, {
                 "win": increment(1)
@@ -456,7 +456,7 @@ class DoFight extends Component {
             console.log(error);
         }
 
-        const docRef2 = doc(firebasedb, "pvp_results", `${sfida.pvpWeek}_#${difensore.id}`)
+        const docRef2 = doc(firebasedb, keyDb, `${sfida.pvpWeek}_#${difensore.id}`)
         try {
             await updateDoc(docRef2, {
                 "lose": increment(1)
@@ -466,22 +466,26 @@ class DoFight extends Component {
             console.log(error);
         }
 
-        const fightObj = {
-            actions: history,
-            idnft1: attaccante.id,
-            idnft2: difensore.id,
-            pvpWeek: sfida.pvpWeek,
-            winner: attaccante.id,
-            info1: attaccante,
-            info2: difensore,
-            hp1: this.player1InitialHp,
-            hp2: this.player2InitialHp
+        if (fightsStart) {
+            const fightObj = {
+                actions: history,
+                idnft1: attaccante.id,
+                idnft2: difensore.id,
+                pvpWeek: sfida.pvpWeek,
+                winner: attaccante.id,
+                info1: attaccante,
+                info2: difensore,
+                hp1: this.player1InitialHp,
+                hp2: this.player2InitialHp
+            }
+
+            //console.log(fightObj);
+
+            const fightRef = doc(collection(firebasedb, "fights_pvp"))
+            const newDoc = setDoc(fightRef, fightObj)
         }
 
-        //console.log(fightObj);
 
-        const fightRef = doc(collection(firebasedb, "fights_pvp"))
-        const newDoc = setDoc(fightRef, fightObj)
     }
 
     showFight() {
