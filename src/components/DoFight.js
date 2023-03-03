@@ -428,7 +428,9 @@ class DoFight extends Component {
 
             this.setState({ loading: false, winner: attaccante.name }, () => {
 
-                this.updateFirebase(sfida, attaccante, difensore, this.history)
+                if (sfida.fightsStart) {
+                    this.updateFirebase(sfida, attaccante, difensore, this.history)
+                }
 
                 this.indexShow = 0
 

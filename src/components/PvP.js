@@ -339,7 +339,7 @@ class PvP extends Component {
     }
 
     async chooseOpponent(item, level) {
-        const { subscribers, pvpWeek } = this.state
+        const { subscribers, pvpWeek, pvpFightsStartDate } = this.state
         const { account } = this.props
 
         this.setState({ loading: true })
@@ -453,13 +453,18 @@ class PvP extends Component {
 
         //return
 
+        const fightsStart = moment().isAfter(pvpFightsStartDate)
+
         const sfida = {
             player1: item,
             player2: opponent,
-            pvpWeek: pvpWeek
+            pvpWeek: pvpWeek,
+            fightsStart
         }
 
+
         //console.log(sfida);
+        //return
 
         this.props.setSfida(sfida)
 
@@ -553,6 +558,7 @@ class PvP extends Component {
         const totalFights = item.win + item.lose
 
         const fightsStart = moment().isAfter(pvpFightsStartDate)
+        //console.log(fightsStart);
 
         return (
             <div
@@ -626,13 +632,21 @@ class PvP extends Component {
 
                     {
                         !fightsStart &&
-                        <div
-                            style={Object.assign({}, styles.btnWait, { width: 210 })}
+                        <button
+                            className="btnH"
+                            style={Object.assign({}, styles.btnPlay, { marginRight: 10 })}
+                            onClick={() => {
+                                if (this.state.loading) {
+                                    return
+                                }
+
+                                this.chooseOpponent(item, level)
+                            }}
                         >
                             <p style={{ fontSize: 17, color: 'white' }}>
-                                WAIT THE START
+                                TRAINING
                             </p>
-                        </div>
+                        </button>
                     }
 
                     {
