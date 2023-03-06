@@ -1033,9 +1033,12 @@ class PvP extends Component {
 
                 </div>
 
-                <p style={{ fontSize: 22, color: 'white', marginBottom: 10 }}>
-                    Select the wizard you want to enroll in the PvP Arena
-                </p>
+                {
+                    !fightsStart &&
+                    <p style={{ fontSize: 22, color: 'white', marginBottom: 10 }}>
+                        Select the wizard you want to enroll in the PvP Arena
+                    </p>
+                }
 
                 {
 					this.state.loading ?
@@ -1045,15 +1048,18 @@ class PvP extends Component {
 					: null
 				}
 
-                <div style={{ flexWrap: 'wrap', marginBottom: 30 }}>
-                    {
-                        sorted && sorted.length > 0 &&
-                        sorted.map((item, index) => {
-                            return this.renderRowChoise(item, index, modalW)
-                        })
-                    }
+                {
+                    !fightsStart &&
+                    <div style={{ flexWrap: 'wrap', marginBottom: 30 }}>
+                        {
+                            sorted && sorted.length > 0 &&
+                            sorted.map((item, index) => {
+                                return this.renderRowChoise(item, index, modalW)
+                            })
+                        }
 
-                </div>
+                    </div>
+                }
 
                 {
                     this.state.toSubscribe.length > 0 &&
