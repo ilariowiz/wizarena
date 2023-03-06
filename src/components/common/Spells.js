@@ -344,6 +344,187 @@ const allSpells = [
 		dmgBase: 3,
 		condition: { name: 'Paralyze 2', effect: "skip", pct: 40 },
 		element: 'Psycho'
+	},
+	// ****** NUOVE!!
+	//ACID
+	{
+		name: "Infestation",
+		atkBase: 6,
+		dmgBase: 7,
+		condition: { name: 'Disease', effect: "malus_4_def", pct: 70 },
+		element: 'Acid'
+	},
+	{
+		name: "Corrosion",
+		atkBase: 7,
+		dmgBase: 9,
+		condition: {},
+		element: 'Acid'
+	},
+	//FIRE
+	{
+		name: "Hellish Flame",
+		atkBase: 6,
+		dmgBase: 7,
+		condition: { name: 'Burn 2', effect: "malus_4_atk", pct: 60 },
+		element: 'Fire'
+	},
+	{
+		name: "Dragon's Breath",
+		atkBase: 6,
+		dmgBase: 7,
+		condition: { name: 'Fear 2', effect: "skip", pct: 30 },
+		element: 'Fire'
+	},
+	// ICE
+	{
+		name: "Avalanche",
+		atkBase: 6,
+		dmgBase: 7,
+		condition: { name: 'Paralyze 2', effect: "skip", pct: 40 },
+		element: 'Ice'
+	},
+	{
+		name: "Ice Shield",
+		atkBase: 6,
+		dmgBase: 6,
+		condition: { name: 'Harden', effect: "malus_4_dmg", pct: 70 },
+		element: 'Ice'
+	},
+	// THUNDER
+	{
+		name: "Shock",
+		atkBase: 5,
+		dmgBase: 8,
+		condition: { name: 'Confuse', effect: "skip", pct: 20 },
+		element: 'Thunder'
+	},
+	{
+		name: "Shatter",
+		atkBase: 6,
+		dmgBase: 6,
+		condition: { name: 'Exhaust', effect: "malus_4_atk", pct: 60 },
+		element: 'Thunder'
+	},
+	// DARK
+	{
+		name: "Hex",
+		atkBase: 6,
+		dmgBase: 7,
+		condition: { name: 'Curse', effect: "malus_4_def", pct: 60 },
+		element: 'Dark'
+	},
+	{
+		name: "Blight",
+		atkBase: 6,
+		dmgBase: 7,
+		condition: { name: 'Exhaust', effect: "malus_4_atk", pct: 60 },
+		element: 'Dark'
+	},
+	// WIND
+	{
+		name: "Wind Barrier",
+		atkBase: 6,
+		dmgBase: 6,
+		condition: { name: 'Protection', effect: "malus_3_atk", pct: 75 },
+		element: 'Wind'
+	},
+	{
+		name: "Whirl",
+		atkBase: 7,
+		dmgBase: 9,
+		condition: {},
+		element: 'Wind'
+	},
+	// EARTH
+	{
+		name: "Rock Shield",
+		atkBase: 6,
+		dmgBase: 6,
+		condition: { name: 'Harden', effect: "malus_4_dmg", pct: 70 },
+		element: 'Earth'
+	},
+	{
+		name: "Meteors",
+		atkBase: 7,
+		dmgBase: 9,
+		condition: {},
+		element: 'Earth'
+	},
+	// SUN
+	{
+		name: "Light Shield",
+		atkBase: 6,
+		dmgBase: 6,
+		condition: { name: 'Protection', effect: "malus_3_atk", pct: 75 },
+		element: 'Sun'
+	},
+	{
+		name: "Divine Light",
+		atkBase: 7,
+		dmgBase: 9,
+		condition: {},
+		element: 'Sun'
+	},
+	// SPIRIT
+	{
+		name: "Phantasmal Force",
+		atkBase: 6,
+		dmgBase: 6,
+		condition: { name: 'Exhaust', effect: "malus_4_atk", pct: 60 },
+		element: 'Spirit'
+	},
+	{
+		name: "Possession",
+		atkBase: 6,
+		dmgBase: 8,
+		condition: { name: 'Confuse', effect: "skip", pct: 20 },
+		element: 'Spirit'
+	},
+	// UNDEAD
+	{
+		name: "Finger of Death",
+		atkBase: 6,
+		dmgBase: 6,
+		condition: { name: 'Fear 2', effect: "skip", pct: 30 },
+		element: 'Undead'
+	},
+	{
+		name: "Dance Macabre",
+		atkBase: 6,
+		dmgBase: 6,
+		condition: { name: 'Fear', effect: "malus_4_atk", pct: 55 },
+		element: 'Undead'
+	},
+	// WATER
+	{
+		name: "Flood",
+		atkBase: 5,
+		dmgBase: 6,
+		condition: { name: 'Paralyze 2', effect: "skip", pct: 40 },
+		element: 'Water'
+	},
+	{
+		name: "Water Barrier",
+		atkBase: 6,
+		dmgBase: 6,
+		condition: { name: 'Protection', effect: "malus_3_atk", pct: 75 },
+		element: 'Water'
+	},
+	// PSYCHO
+	{
+		name: "Deadly Illusion",
+		atkBase: 5,
+		dmgBase: 6,
+		condition: { name: 'Paralyze 2', effect: "skip", pct: 40 },
+		element: 'Psycho'
+	},
+	{
+		name: "Maddening Darkness",
+		atkBase: 6,
+		dmgBase: 5,
+		condition: { name: 'Fear 3', effect: "malus_4_def", pct: 70 },
+		element: 'Psycho'
 	}
 ]
 

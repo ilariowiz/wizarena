@@ -55,6 +55,34 @@ const conditions = [
         name: "Fear",
         effect: "Inflicts a penalty of 4 on the opponent's attack",
     },
+    {
+        name: "Disease",
+        effect: "Inflicts a penalty of 4 on the opponent's defense",
+    },
+    {
+        name: "Burn 2",
+        effect: "Inflicts a penalty of 4 on the opponent's attack",
+    },
+    {
+        name: "Fear 2",
+        effect: "The opponent is too scared to move and loses the turn",
+    },
+    {
+        name: "Harden",
+        effect: "Inflicts a penalty of 4 on the opponent's damage",
+    },
+    {
+        name: "Curse",
+        effect: "Inflicts a penalty of 4 on the opponent's defense",
+    },
+    {
+        name: "Protection",
+        effect: "Inflicts a penalty of 3 on the opponent's attack",
+    },
+    {
+        name: "Fear 3",
+        effect: "Inflicts a penalty of 4 on the opponent's defense",
+    },
 ]
 
 export default conditions
