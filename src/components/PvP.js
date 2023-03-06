@@ -581,6 +581,8 @@ class PvP extends Component {
 
         //console.log(nftInfo);
 
+        //console.log(item);
+
         const totalFights = item.win + item.lose
 
         const fightsStart = moment().isAfter(pvpFightsStartDate)
@@ -597,11 +599,13 @@ class PvP extends Component {
             //console.log(bonusEquipment);
 		}
 
-        let hp = bonusEquipment['hp'] ? item.hp.int + bonusEquipment['hp'] : item.hp.int
-        let def = bonusEquipment['defense'] ? item.defense.int + bonusEquipment['defense'] : item.defense.int
-        let atk = bonusEquipment['attack'] ? item.attack.int + bonusEquipment['attack'] : item.attack.int
-        let dmg = bonusEquipment['damage'] ? item.damage.int + bonusEquipment['damage'] : item.damage.int
-        let speed = bonusEquipment['speed'] ? item.speed.int + bonusEquipment['speed'] : item.speed.int
+        //console.log(bonusEquipment['hp']);
+
+        let hp = bonusEquipment && bonusEquipment['hp'] ? item.hp.int + bonusEquipment['hp'] : item.hp.int
+        let def = bonusEquipment && bonusEquipment['defense'] ? item.defense.int + bonusEquipment['defense'] : item.defense.int
+        let atk = bonusEquipment && bonusEquipment['attack'] ? item.attack.int + bonusEquipment['attack'] : item.attack.int
+        let dmg = bonusEquipment && bonusEquipment['damage'] ? item.damage.int + bonusEquipment['damage'] : item.damage.int
+        let speed = bonusEquipment && bonusEquipment['speed'] ? item.speed.int + bonusEquipment['speed'] : item.speed.int
 
         return (
             <div
