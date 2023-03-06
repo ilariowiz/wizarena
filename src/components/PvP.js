@@ -638,7 +638,7 @@ class PvP extends Component {
                     }
 
                     {
-                        !fightsStart &&
+                        !this.state.loading && !fightsStart &&
                         <div style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <button
                                 className="btnH"
