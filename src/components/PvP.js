@@ -16,6 +16,8 @@ import ModalWizaPvP from './common/ModalWizaPvP'
 import NftCardChoicePvP from './common/NftCardChoicePvP'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
+import allSpells from './common/Spells'
+import getRingBonuses from './common/GetRingBonuses'
 import { getColorTextBasedOnLevel, calcLevelWizard } from './common/CalcLevelWizard'
 import {
     loadUserMintedNfts,
@@ -539,9 +541,31 @@ class PvP extends Component {
 		)
 	}
 
+    getRingEquipped(item) {
+		const { equipment } = this.state
+
+        //console.log(equipment);
+
+		if (!equipment || equipment.length === 0) {
+			return ""
+		}
+
+		const ring = equipment.find(i => i.equippedToId === item.id)
+
+		//console.log(ring);
+
+		if (ring && ring.equipped) {
+			return ring
+		}
+		//console.log(ring);
+
+		return ""
+	}
+
     renderRowSub(item, index) {
         //console.log(item);
         const { userMintedNfts, pvpFightsStartDate } = this.state
+        const { equipment } = this.props
 
         const winRate = this.calcWinRate(item)
 
@@ -555,10 +579,29 @@ class PvP extends Component {
         }
         //console.log(level);
 
+        //console.log(nftInfo);
+
         const totalFights = item.win + item.lose
 
         const fightsStart = moment().isAfter(pvpFightsStartDate)
         //console.log(fightsStart);
+
+        const spellSelectedInfo = allSpells.find(i => i.name === item.spellSelected.name)
+        const ringEquipped = this.getRingEquipped(item)
+
+        //console.log(ringEquipped);
+
+        let bonusEquipment;
+		if (ringEquipped) {
+			bonusEquipment = getRingBonuses(ringEquipped).bonusesDict
+            //console.log(bonusEquipment);
+		}
+
+        let hp = bonusEquipment['hp'] ? item.hp.int + bonusEquipment['hp'] : item.hp.int
+        let def = bonusEquipment['defense'] ? item.defense.int + bonusEquipment['defense'] : item.defense.int
+        let atk = bonusEquipment['attack'] ? item.attack.int + bonusEquipment['attack'] : item.attack.int
+        let dmg = bonusEquipment['damage'] ? item.damage.int + bonusEquipment['damage'] : item.damage.int
+        let speed = bonusEquipment['speed'] ? item.speed.int + bonusEquipment['speed'] : item.speed.int
 
         return (
             <div
@@ -619,6 +662,48 @@ class PvP extends Component {
                             </p>
                         </div>
                     }
+
+                    <div style={{ alignItems: 'center', marginBottom: 10, flexWrap: 'wrap' }}>
+                        <p style={{ fontSize: 14, color: '#c2c0c0', marginRight: 4 }}>
+                            HP
+                        </p>
+
+                        <p style={{ fontSize: 16, color: "white", marginRight: 8 }}>
+                            {hp}
+                        </p>
+
+                        <p style={{ fontSize: 14, color: '#c2c0c0', marginRight: 4 }}>
+                            DEF
+                        </p>
+
+                        <p style={{ fontSize: 16, color: "white", marginRight: 8 }}>
+                            {def}
+                        </p>
+
+                        <p style={{ fontSize: 14, color: '#c2c0c0', marginRight: 4 }}>
+                            ATK
+                        </p>
+
+                        <p style={{ fontSize: 16, color: "white", marginRight: 8 }}>
+                            {atk + spellSelectedInfo.atkBase}
+                        </p>
+
+                        <p style={{ fontSize: 14, color: '#c2c0c0', marginRight: 4 }}>
+                            DMG
+                        </p>
+
+                        <p style={{ fontSize: 16, color: "white", marginRight: 8 }}>
+                            {dmg + spellSelectedInfo.dmgBase}
+                        </p>
+
+                        <p style={{ fontSize: 14, color: '#c2c0c0', marginRight: 4 }}>
+                            SPEED
+                        </p>
+
+                        <p style={{ fontSize: 16, color: "white", marginRight: 8 }}>
+                            {speed}
+                        </p>
+                    </div>
 
                     <p style={{ fontSize: 17, color: 'white', marginBottom: 10 }}>
                         Spell selected: {item.spellSelected.name}
