@@ -7,12 +7,22 @@ export const sendMessage = (id, amount, expiration, owner) => {
     request.setRequestHeader("Content-type", 'application/json')
 
 
-    const content = `${owner.slice(0, 5)}... wallet has received an offer for Wizard #${id} of ${amount} KDA which expires in ${expiration} days`
+    const content = `${owner} wallet has received an offer for Wizard #${id} of ${amount} KDA which expires in ${expiration} days`
 
     const params = {
-        username: `${owner.slice(0, 15)}...`,
+        username: `Wizard Bot`,
         avatar_url: `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`,
-        content
+        //content
+        embeds: [
+            {
+                "title": `#${id}`,
+                "description": content,
+                "url": `https://www.wizardsarena.net/nft/${id}`,
+                "thumbnail": {
+                    "url": `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`
+                }
+            }
+        ]
     }
 
     request.send(JSON.stringify(params));
@@ -46,9 +56,19 @@ export const sendMessageSales = (id, amount) => {
     const content = `#${id} just sold for ${amount} KDA`
 
     const params = {
-        username: `#${id}`,
+        username: `Wizard Bot`,
         avatar_url: `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`,
-        content
+        //content
+        embeds: [
+            {
+                "title": `#${id}`,
+                "description": content,
+                "url": `https://www.wizardsarena.net/nft/${id}`,
+                "thumbnail": {
+                    "url": `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`
+                }
+            }
+        ]
     }
 
     request.send(JSON.stringify(params));
@@ -64,9 +84,19 @@ export const sendMessageSalesEquipment = (info) => {
     const content = `#${info.id} ${info.name} just sold for ${info.amount} WIZA`
 
     const params = {
-        username: `#${info.id}`,
+        username: `Wizard Bot`,
         avatar_url: info.url,
-        content
+        //content
+        embeds: [
+            {
+                "title": `${info.name}`,
+                "description": content,
+                "url": `https://www.wizardsarena.net/item/${info.id}`,
+                "thumbnail": {
+                    "url": info.url
+                }
+            }
+        ]
     }
 
     request.send(JSON.stringify(params));
@@ -82,9 +112,19 @@ export const sendMessageListed = (id, amount) => {
     const content = `#${id} just listed for ${amount} KDA`
 
     const params = {
-        username: `#${id}`,
+        username: 'Wizard Bot',
         avatar_url: `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`,
-        content
+        //content,
+        embeds: [
+            {
+                "title": `#${id}`,
+                "description": content,
+                "url": `https://www.wizardsarena.net/nft/${id}`,
+                "thumbnail": {
+                    "url": `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`
+                }
+            }
+        ]
     }
 
     request.send(JSON.stringify(params));
@@ -100,9 +140,19 @@ export const sendMessageListedEquipment = (info) => {
     const content = `#${info.id} ${info.name} just listed for ${info.amount} WIZA`
 
     const params = {
-        username: `#${info.id}`,
+        username: `Wizard Bot`,
         avatar_url: info.url,
-        content
+        //content
+        embeds: [
+            {
+                "title": `${info.name}`,
+                "description": content,
+                "url": `https://www.wizardsarena.net/item/${info.id}`,
+                "thumbnail": {
+                    "url": info.url
+                }
+            }
+        ]
     }
 
     request.send(JSON.stringify(params));
@@ -118,9 +168,19 @@ export const sendMessageDelisted = (id) => {
     const content = `#${id} just delisted`
 
     const params = {
-        username: `#${id}`,
+        username: `Wizard Bot`,
         avatar_url: `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`,
-        content
+        //content
+        embeds: [
+            {
+                "title": `#${id}`,
+                "description": content,
+                "url": `https://www.wizardsarena.net/nft/${id}`,
+                "thumbnail": {
+                    "url": `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`
+                }
+            }
+        ]
     }
 
     request.send(JSON.stringify(params));
@@ -136,9 +196,19 @@ export const sendMessageDelistedEquipment = (info) => {
     const content = `#${info.id} ${info.name} just delisted`
 
     const params = {
-        username: `#${info.id}`,
+        username: 'Wizard Bot',
         avatar_url: info.url,
-        content
+        //content
+        embeds: [
+            {
+                "title": `${info.name}`,
+                "description": content,
+                "url": `https://www.wizardsarena.net/item/${info.id}`,
+                "thumbnail": {
+                    "url": info.url
+                }
+            }
+        ]
     }
 
     request.send(JSON.stringify(params));
