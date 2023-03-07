@@ -730,7 +730,7 @@ class Profile extends Component {
 					style={Object.assign({}, styles.btnMenu, selectedStyle1, { marginRight: 35 })}
 					onClick={() => {
 						if (this.state.section !== 1) {
-							this.setState({ section: 1, unclaimedWizaTotal: 0 })
+							this.setState({ section: 1 })
 						}
 					}}
 				>
@@ -798,7 +798,7 @@ class Profile extends Component {
 
 		let unclW = 0;
 		if (unclaimedWizaTotal) {
-			unclW = _.floor(unclaimedWizaTotal, 3)
+			unclW = _.floor(unclaimedWizaTotal, 4)
 		}
 
 		if (!account || !account.account || !isConnected) {
