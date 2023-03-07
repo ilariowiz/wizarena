@@ -678,8 +678,23 @@
         (m::get-wizard-fields-for-id (str-to-int id))
     )
 
+    (defun get-nft-staked-mass (nfts:list)
+        (map
+            (get-nft-staked)
+            nfts
+        )
+    )
+
     (defun get-nft-staked (idnft:string)
-        (read staked-table idnft)
+        (with-default-read staked-table idnft
+            {"staked": false,
+            "multiplier": 1,
+            "timestamp":(at "block-time" (chain-data))}
+            {"staked":= staked,
+            "multiplier":=multiplier,
+            "timestamp":= timestamp}
+            {"staked":staked, "multiplier":multiplier, "timestamp":timestamp, "idnft": idnft}
+        )
     )
 
     (defun check-nft-is-staked:object (idnft:string)
@@ -712,6 +727,26 @@
 
     (defun wizards-staked-count ()
         (length (select staked-table (where "staked" (= true))))
+    )
+
+    (defun calculate-reward-mass (nfts:list)
+        (map
+            (calculate-reward-mass-2)
+            nfts
+        )
+    )
+
+    (defun calculate-reward-mass-2 (idnft:string)
+        (let (
+                (data (get-nft-staked idnft))
+            )
+            (let (
+                    (days (/ (diff-time (at "block-time" (chain-data)) (at "timestamp" data)) 86400))
+                    (multiplier (at "multiplier" data))
+                )
+                (calculate-reward days multiplier)
+            )
+        )
     )
 
     (defun calculate-reward (days:decimal multiplier:integer)

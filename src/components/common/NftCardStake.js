@@ -9,8 +9,6 @@ import '../../css/NftCard.css'
 import '../../css/Nft.css'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
 import {
-    getWizardStakeInfo,
-	calculateReward,
     getInfoNftBurning
 } from '../../actions'
 import { CTA_COLOR } from '../../actions/types'
@@ -22,10 +20,6 @@ class NftCardStake extends Component {
         super(props)
 
         this.state = {
-            stakeInfo: {},
-			staked: false,
-			unclaimedWiza: 0.0,
-			loading: true,
             inBurnQueue: this.props.item.confirmBurn,
             infoBurn: {}
         }
@@ -38,79 +32,11 @@ class NftCardStake extends Component {
         const timer = index * 100
 
         setTimeout(() => {
-
-            if (!item.listed && item.medals) {
-                this.loadInfoStake()
-            }
-            else {
-                this.setState({ loading: false })
-            }
-
             if (item.confirmBurn) {
                 this.loadInfoBurn()
             }
-
         }, timer)
 	}
-
-    loadInfoStake() {
-        const { item, chainId, gasPrice, gasLimit, networkUrl } = this.props
-
-        //console.log(item);
-
-        this.props.getWizardStakeInfo(chainId, gasPrice, gasLimit, networkUrl, item.id, (response) => {
-            //console.log(response)
-
-			if (response.status === "failure") {
-				this.setState({ staked: false, stakeInfo: {}, loading: false })
-
-                //aggiungiamo ai non staked solo quelli non listati e non in burning queue
-                //in modo che se dobbiamo fare stake all, sono già filtrati
-                if (!item.listed && !item.confirmBurn) {
-                    this.props.onLoadNotStaked(item.id)
-                }
-			}
-            else if (response.staked === false) {
-                this.setState({ staked: false, stakeInfo: {}, loading: false })
-
-                //aggiungiamo ai non staked solo quelli non listati e non in burning queue
-                //in modo che se dobbiamo fare stake all, sono già filtrati
-                if (!item.listed && !item.confirmBurn) {
-                    this.props.onLoadNotStaked(item.id)
-                }
-            }
-			else {
-				this.setState({ staked: response.staked, stakeInfo: response, loading: false })
-
-                if (response.staked) {
-                    this.props.onLoadIsStaked(item.id)
-                }
-
-				const stakedFromDate = moment(response.timestamp.timep)
-
-				const diffMinsFromStaked = moment().diff(stakedFromDate, 'minutes')
-				//console.log(diffMinsFromStaked);
-
-				const minAday = 1440
-
-				const daysPassed = (diffMinsFromStaked / minAday)
-
-				this.props.calculateReward(chainId, gasPrice, gasLimit, networkUrl, daysPassed, response.multiplier.int, (response) => {
-					//console.log(response);
-                    if (response.status !== "failure") {
-                        this.setState({ unclaimedWiza: response.decimal ? _.floor(response.decimal, 4) : _.floor(response, 4) })
-                        if (response.decimal) {
-                            this.props.onLoadUnclaim(response.decimal)
-                        }
-                        else {
-                            this.props.onLoadUnclaim(response)
-                        }
-                    }
-
-				})
-			}
-        })
-    }
 
     loadInfoBurn() {
         const { item, chainId, gasPrice, gasLimit, networkUrl } = this.props
@@ -145,11 +71,16 @@ class NftCardStake extends Component {
     }
 
 	renderStakedTop() {
-		const { unclaimedWiza, stakeInfo } = this.state
-
-		//console.log(unclaimedWiza);
+		const { stakeInfo } = this.props
 
 		const startStaked = moment(stakeInfo.timestamp.timep).fromNow()
+        const multiplier = stakeInfo.multiplier.int
+
+        const diffMinsFromStaked = moment().diff(moment(stakeInfo.timestamp.timep), 'minutes')
+        //console.log(diffMinsFromStaked);
+        const minAday = 1440
+        const daysPassed = (diffMinsFromStaked / minAday)
+        const unclaimedWiza = daysPassed * multiplier * 4
 
 		return (
 			<div style={{ flexDirection: 'column', width: '100%', marginRight: 10, alignItems: 'flex-end' }}>
@@ -159,7 +90,7 @@ class NftCardStake extends Component {
 				</p>
 
 				<p style={{ color: 'white', fontSize: 16, marginBottom: 2, lineHeight: 1 }}>
-					{unclaimedWiza}
+					{_.floor(unclaimedWiza, 4)}
 				</p>
 
 				<p style={{ color: '#c2c0c0', fontSize: 12, marginBottom: 2, lineHeight: 1 }}>
@@ -182,10 +113,10 @@ class NftCardStake extends Component {
     }
 
 	render() {
-		const { item, history, width } = this.props
-		const { staked, loading, inBurnQueue } = this.state
+		const { item, history, width, stakeInfo, loading } = this.props
+		const { inBurnQueue } = this.state
 
-        //console.log(item);
+        //console.log(stakeInfo);
         const level = calcLevelWizard(item)
 
 		return (
@@ -196,6 +127,7 @@ class NftCardStake extends Component {
                     e.preventDefault()
                     history.push(`/nft/${item.id}`)
                 }}
+                style={{ marginBottom: 12 }}
 			>
 				<img
 					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
@@ -204,12 +136,12 @@ class NftCardStake extends Component {
 				/>
 
                 <div style={{ width, marginTop: 5 }}>
-                    <p style={{ color: 'white', fontSize: 17, lineHeight: 1, marginLeft: 10, marginRight: 10 }}>
+                    <p style={{ color: 'white', minHeight: 34, fontSize: 17, lineHeight: 1, marginLeft: 10, marginRight: 10 }}>
                         {item.nickname ? `${item.name} ${item.nickname}` : item.name}
                     </p>
                 </div>
 
-				<div style={{ justifyContent: 'space-between', width, height: 70, alignItems: 'center' }}>
+				<div style={{ justifyContent: 'space-between', width, height: 60, alignItems: 'center' }}>
 
 					<div style={{ width: '100%', flexDirection: 'column', justifyContent: 'center' }}>
 
@@ -266,13 +198,13 @@ class NftCardStake extends Component {
 					}
 
 					{
-						staked ?
+						stakeInfo && stakeInfo.staked ?
 						this.renderStakedTop()
 						: null
 					}
 
                     {
-                        inBurnQueue && !staked ?
+                        inBurnQueue && stakeInfo && !stakeInfo.staked ?
                         this.renderBurningTop()
                         : null
                     }
@@ -313,7 +245,7 @@ class NftCardStake extends Component {
                 }
 
 				{
-					!staked && !inBurnQueue && !item.listed && item.medals && !loading &&
+					stakeInfo && !stakeInfo.staked && !inBurnQueue && !item.listed && item.medals && !loading &&
                     <div style={{ width, alignItems: 'center', justifyContent: 'space-between' }}>
                         <button
                             className="btnH"
@@ -346,7 +278,7 @@ class NftCardStake extends Component {
 				}
 
                 {
-                    inBurnQueue && !staked && !item.listed && item.medals && !loading &&
+                    inBurnQueue && stakeInfo && !stakeInfo.staked && !item.listed && item.medals && !loading &&
 					<button
 						className="btnH"
 						style={Object.assign({}, styles.btnStake, { width, backgroundColor: "#840fb2" })}
@@ -363,7 +295,7 @@ class NftCardStake extends Component {
                 }
 
 				{
-					staked && !item.listed && item.medals && !loading &&
+					stakeInfo && stakeInfo.staked && !item.listed && item.medals && !loading &&
                     <div style={{ width, alignItems: 'center', justifyContent: 'space-between' }}>
                         <button
                             className="btnH"
@@ -417,7 +349,5 @@ const mapStateToProps = (state) => {
 }
 
 export default connect(mapStateToProps, {
-	getWizardStakeInfo,
-	calculateReward,
     getInfoNftBurning
 })(NftCardStake);

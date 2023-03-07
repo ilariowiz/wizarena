@@ -2584,11 +2584,11 @@ export const getWizaNotClaimed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimi
 	}
 }
 
-export const getWizardStakeInfo = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, idnft, callback) => {
+export const getWizardsStakeInfo = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 5000, networkUrl, nfts, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME_WIZA}.get-nft-staked "${idnft}")`,
+			pactCode: `(free.${CONTRACT_NAME_WIZA}.get-nft-staked-mass ${JSON.stringify(nfts)})`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
@@ -2601,11 +2601,11 @@ export const getWizardStakeInfo = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 	}
 }
 
-export const calculateReward = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, days, multiplier, callback) => {
+export const calculateRewardMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 5000, networkUrl, nfts, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME_WIZA}.calculate-reward ${days} ${multiplier})`,
+			pactCode: `(free.${CONTRACT_NAME_WIZA}.calculate-reward-mass ${JSON.stringify(nfts)})`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
@@ -2617,7 +2617,6 @@ export const calculateReward = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit 
 		})
 	}
 }
-
 
 export const stakeNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idNft, account) => {
 	return (dispatch) => {

@@ -4,6 +4,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import moment from 'moment'
 import _ from 'lodash'
+import { IoClose } from 'react-icons/io5'
 import Popup from 'reactjs-popup';
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
@@ -38,7 +39,9 @@ import {
 	acceptOffer,
 	loadEquipMinted,
 	getEquipmentOffersMade,
-	withdrawEquipmentOffer
+	withdrawEquipmentOffer,
+	getWizardsStakeInfo,
+	calculateRewardMass
 } from '../actions'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -60,6 +63,7 @@ class Profile extends Component {
 			error: '',
 			nameNftSubscribed: '',
 			unclaimedWizaTotal: 0,
+			stakeInfo: [],
 			stakedIds: [],
 			notStakedIds: [],
 			offersMade: [],
@@ -68,7 +72,10 @@ class Profile extends Component {
 			kadenaPrice: undefined,
 			saleValues: {},
 			equipment: [],
-			offersEquipmentMade: []
+			offersEquipmentMade: [],
+			statSearched: [],
+			yourNfts: [],
+			loadingStake: true
 		}
 	}
 
@@ -110,20 +117,73 @@ class Profile extends Component {
 		this.setState({ loading: true })
 
 		if (account && account.account) {
-			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
-				this.setState({ loading: false })
+			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
+
+				//console.log(response);
+				this.setState({ loading: false, yourNfts: response })
+
+				this.loadStakeInfo(response)
 				this.loadOffersReceived()
 			})
 		}
+	}
+
+	loadStakeInfo(response) {
+		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		const onlyids = response.map(i => i.id)
+
+		this.props.getWizardsStakeInfo(chainId, gasPrice, gasLimit, networkUrl, onlyids, (info) => {
+			//console.log(info);
+			let stakedIds = []
+			let notStakedIds = []
+
+			//console.log(response);
+
+			info.map(i => {
+
+				const res = response.find(r => r.id === i.idnft)
+
+				if (i.staked) {
+					stakedIds.push(i.idnft)
+				}
+				else {
+					//aggiungiamo ai non staked solo quelli non listati e non in burning queue
+					//in modo da avere gia la lista corretta quando si fa stake-all
+					if (!res.listed && !res.confirmBurn) {
+						notStakedIds.push(i.idnft)
+					}
+				}
+			})
+
+			//console.log(notStakedIds);
+
+			this.setState({ stakeInfo: info, stakedIds, notStakedIds })
+			//console.log(onlyStaked);
+
+			this.props.calculateRewardMass(chainId, gasPrice, stakedIds.length * 200, networkUrl, stakedIds, (rewards) => {
+				//console.log(rewards);
+				let tot = 0
+				rewards.map(i => {
+					if (i.decimal) {
+						tot += _.floor(i.decimal, 4)
+					}
+					else {
+						tot += _.floor(i, 4)
+					}
+				})
+
+				//console.log(tot);
+				this.setState({ unclaimedWizaTotal: tot, loadingStake: false })
+			})
+		})
 	}
 
 	loadWizaBalance() {
 		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
 		if (account && account.account) {
-			this.props.getWizaBalance(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
-				//this.setState({ loading: false })
-			})
+			this.props.getWizaBalance(chainId, gasPrice, gasLimit, networkUrl, account.account)
 		}
 	}
 
@@ -330,74 +390,131 @@ class Profile extends Component {
 		})
 	}
 
-	buildsRow(items, itemsPerRow = 4) {
-		return items.reduce((rows, item, index) => {
-			//console.log(index);
-			//se array row è piena, aggiungiamo una nuova row = [] alla lista
-			if (index % itemsPerRow === 0 && index > 0) {
-				rows.push([]);
-			}
+	async searchByStat(stat) {
+		const { statSearched } = this.state
+        const { userMintedNfts } = this.props
 
-			//prendiamo l'ultima array della lista e aggiungiamo item
-			rows[rows.length - 1].push(item);
-			return rows;
-		}, [[]]);
+		let oldStat = Object.assign([], statSearched);
+
+		if (stat) {
+			const oldItem = oldStat.find(i => i.stat === stat.stat)
+			if (oldItem) {
+				if (oldItem.value === stat.value) {
+					const idx = oldStat.findIndex(i => i.stat === stat.stat)
+					oldStat.splice(idx, 1)
+				}
+				else {
+					oldItem.value = stat.value
+				}
+			}
+			else {
+				oldStat.push(stat)
+			}
+		}
+
+		if (oldStat.length > 0) {
+
+			let newData = Object.assign([], userMintedNfts)
+
+			oldStat.map(i => {
+
+				if (i.stat === "hp") {
+
+					const values = i.value.split(" - ")
+					const minV = parseInt(values[0])
+					const maxV = parseInt(values[1])
+
+					newData = newData.filter(n => {
+						return n.hp && n.hp.int >= minV && n.hp.int <= maxV
+					})
+				}
+
+				if (i.stat === "defense") {
+					const values = i.value.split(" - ")
+					const minV = parseInt(values[0])
+					const maxV = parseInt(values[1])
+
+					newData = newData.filter(n => {
+						return n.defense && n.defense.int >= minV && n.defense.int <= maxV
+					})
+				}
+
+				if (i.stat === "element") {
+					//console.log(newData);
+					newData = newData.filter(n => {
+						return n.element && n.element.toUpperCase() === i.value.toUpperCase()
+					})
+				}
+
+				if (i.stat === "resistance") {
+					//console.log(newData);
+					newData = newData.filter(n => {
+						return n.resistance && n.resistance.toUpperCase() === i.value.toUpperCase()
+					})
+				}
+
+				if (i.stat === "weakness") {
+					//console.log(newData);
+					newData = newData.filter(n => {
+						return n.weakness && n.weakness.toUpperCase() === i.value.toUpperCase()
+					})
+				}
+
+				if (i.stat === "spellbook") {
+					//console.log(newData);
+					newData = newData.filter(n => {
+						return n.spellbook && n.spellbook.length === i.value
+					})
+				}
+
+				if (i.stat === "level") {
+					//console.log(newData);
+					const rangeLevels = i.value.split(" - ")
+					const minLevel = rangeLevels[0]
+					const maxLevel = rangeLevels[1]
+
+					newData = newData.filter(n => {
+						return n.level >= parseInt(minLevel) && n.level <= parseInt(maxLevel)
+					})
+				}
+			})
+
+			newData.sort((a, b) => {
+				if (parseInt(a.price) === 0) return 1;
+				if (parseInt(b.price) === 0) return -1
+				return a.price - b.price
+			})
+
+			//console.log(newData);
+			this.setState({ yourNfts: newData, loading: false, statSearched: oldStat })
+		}
+		else {
+			this.setState({ loading: false, statSearched: [], yourNfts: userMintedNfts })
+		}
 	}
 
-	renderRow(itemsPerRow, index, nInRow, width) {
+	renderRow(item, index) {
+		const { stakeInfo, loadingStake } = this.state
 
-		//per ogni row creiamo un array di GameCard
-		let array = [];
+		//console.log(item);
 
-		let singleWidth = Math.floor((width - (nInRow * 12)) / nInRow)
-		if (singleWidth > 320) singleWidth = 320;
-
-		itemsPerRow.map((item, idx) => {
-			//console.log(item);
-			array.push(
-				<NftCardStake
-					item={item}
-					key={item.id}
-					index={idx}
-					history={this.props.history}
-					width={singleWidth}
-					onStake={() => this.stakeNft(item.id)}
-					onUnstake={() => this.unstakeNft(item.id)}
-					onClaim={() => this.claimWizaWithoutUnstake(item.id)}
-					onAddBurning={() => this.addToBurning(item.id)}
-					onRemoveBurning={() => this.removeFromBurning(item.id)}
-					onDelist={() => this.delist(item.id)}
-					onLoadUnclaim={(value) => {
-						this.setState({ unclaimedWizaTotal: this.state.unclaimedWizaTotal + parseFloat(value) })
-					}}
-					onLoadIsStaked={(value) => {
-						let oldState = Object.assign([], this.state.stakedIds)
-						if (!oldState.includes(value)) {
-							oldState.push(value)
-							//console.log(oldState);
-
-							this.setState({ stakedIds: oldState })
-						}
-					}}
-					onLoadNotStaked={(value) => {
-						let oldState = Object.assign([], this.state.notStakedIds)
-						if (!oldState.includes(value)) {
-							oldState.push(value)
-							//console.log(oldState);
-
-							this.setState({ notStakedIds: oldState })
-						}
-					}}
-				/>
-			)
-		})
-
-		//passiamo l'array all'interno della row
 		return (
-			<div style={styles.rowStyle} key={index}>
-				{array}
-			</div>
-		);
+			<NftCardStake
+				item={item}
+				key={item.id}
+				index={index}
+				history={this.props.history}
+				width={260}
+				onStake={() => this.stakeNft(item.id)}
+				onUnstake={() => this.unstakeNft(item.id)}
+				onClaim={() => this.claimWizaWithoutUnstake(item.id)}
+				onAddBurning={() => this.addToBurning(item.id)}
+				onRemoveBurning={() => this.removeFromBurning(item.id)}
+				onDelist={() => this.delist(item.id)}
+				stakeInfo={stakeInfo.find(i => i.idnft === item.id)}
+				loading={loadingStake}
+			/>
+		)
 	}
 
 	renderError() {
@@ -416,26 +533,112 @@ class Profile extends Component {
 		)
 	}
 
-	renderYourWizards(width) {
-		const { userMintedNfts } = this.props
+	renderListStat(item, index, statName) {
+		return (
+			<button
+				key={index}
+				style={{ marginBottom: 15, marginLeft: 10 }}
+				onClick={() => {
+					this.listPopup.close()
+					this.searchByStat({ stat: statName, value: item })
+				}}
+			>
+				<p style={{ fontSize: 19 }}>
+					{item}
+				</p>
+			</button>
+		)
+	}
 
-		let nftMinW = 260;
-		let nInRow = Math.floor(width / nftMinW)
-		let rows = userMintedNfts ? this.buildsRow(userMintedNfts, nInRow) : []
+	renderBoxSearchStat(statName, statDisplay, list) {
+		const { statSearched } = this.state
+
+		//console.log(statSearched);
+
+		const findItem = statSearched && statSearched.length > 0 ? statSearched.find(i => i.stat === statName) : undefined
+
+		let text = statDisplay.toUpperCase()
+		if (findItem) {
+			//console.log(findItem);
+
+			let v = findItem.value
+			text = `${statDisplay} = ${v}`
+		}
+
+		return (
+			<Popup
+				ref={ref => this.listPopup = ref}
+				trigger={
+					<button style={styles.btnStat}>
+						<p style={{ fontSize: 18, color: 'white' }}>{text}</p>
+						{
+							findItem &&
+							<IoClose
+								color='red'
+								size={22}
+								style={{ marginLeft: 5 }}
+								onClick={(e) => {
+									e.stopPropagation()
+									this.searchByStat({ stat: findItem.stat, value: findItem.value })
+								}}
+							/>
+						}
+					</button>
+				}
+				position="bottom left"
+				on="click"
+				closeOnDocumentClick
+				arrow={true}
+			>
+				<div style={{ flexDirection: 'column', paddingTop: 10 }}>
+					{list.map((item, index) => {
+						return this.renderListStat(item, index, statName)
+					})}
+				</div>
+			</Popup>
+		)
+	}
+
+	renderYourWizards(width) {
+		const { yourNfts, loading } = this.state
+		const { userMintedNfts } = this.props
 
 		return (
 			<div style={{ width, flexDirection: 'column' }}>
+
 				{
-					userMintedNfts && userMintedNfts.length === 0 ?
+					userMintedNfts && userMintedNfts.length === 0 && !loading ?
 					this.renderError()
 					: null
 				}
 
 				{
-					userMintedNfts && userMintedNfts.length > 0 ?
-					rows.map((itemsPerRow, index) => {
-						return this.renderRow(itemsPerRow, index, nInRow, width);
-					})
+					!loading &&
+					<div style={{ flexWrap: 'wrap', marginBottom: 10 }} id="filters">
+						{this.renderBoxSearchStat("hp", "HP", ["40 - 50", "51 - 60", "61 - 65", "66 - 70", "71 - 75", "76 - 80", "81 - 85", "86 - 90", "91 - 95", "96 - 100", "101 - 105", "106 - 110"].reverse())}
+						{this.renderBoxSearchStat("defense", "DEFENSE", ["14 - 15", "16 - 17", "18 - 19", "20 - 21", "22 - 23", "24 - 25", "26 - 27", "28 - 29", "30 - 31", "32 - 33", "34 - 35", "36 - 37"].reverse())}
+						{this.renderBoxSearchStat("element", "ELEMENT", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
+						{this.renderBoxSearchStat("resistance", "RESISTANCE", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
+						{this.renderBoxSearchStat("weakness", "WEAKNESS", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
+						{this.renderBoxSearchStat("spellbook", "SPELLBOOK", [1, 2, 3, 4])}
+						{this.renderBoxSearchStat("level", "LEVEL", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 275", "276 - 300"].reverse())}
+					</div>
+				}
+
+				{
+					!loading &&
+					<p style={{ fontSize: 15, color: '#c2c0c0', marginBottom: 15 }}>
+						Wizards {yourNfts.length}
+					</p>
+				}
+
+				{
+					yourNfts && yourNfts.length > 0 ?
+					<div style={{ alignItems: 'center', flexWrap: 'wrap', width: '100%' }}>
+						{yourNfts.map((item, index) => {
+							return this.renderRow(item, index);
+						})}
+					</div>
 					: null
 				}
 			</div>
@@ -824,10 +1027,6 @@ const styles = {
 		bottom: 0,
 		backgroundColor: BACKGROUND_COLOR
 	},
-	rowStyle: {
-		width: '100%',
-		marginBottom: 15
-	},
 	btnConnect: {
 		width: 340,
 		height: 45,
@@ -865,6 +1064,18 @@ const styles = {
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
+	btnStat: {
+		padding: 10,
+		backgroundColor: CTA_COLOR,
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginRight: 10,
+		marginBottom: 10,
+		borderRadius: 2,
+		minWidth: 60,
+		display: 'flex',
+		flexDirection: 'row'
+	},
 }
 
 const mapStateToProps = (state) => {
@@ -893,5 +1104,7 @@ export default connect(mapStateToProps, {
 	acceptOffer,
 	loadEquipMinted,
 	getEquipmentOffersMade,
-	withdrawEquipmentOffer
+	withdrawEquipmentOffer,
+	getWizardsStakeInfo,
+	calculateRewardMass
 })(Profile)
