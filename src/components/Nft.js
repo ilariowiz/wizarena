@@ -91,9 +91,7 @@ class Nft extends Component {
 		this.loadKadenaPrice()
 		this.loadMaxStats()
 
-		setTimeout(() => {
-			this.getPathNft()
-		}, 500)
+		this.getPathNft()
 	}
 
 	loadKadenaPrice() {
@@ -116,10 +114,38 @@ class Nft extends Component {
 	}
 
 	getPathNft() {
+		const { nftSelected, allNfts, userMintedNfts } = this.props
+
 		const { pathname } = this.props.location;
 		const idNft = pathname.replace('/nft/', '')
 
-		this.loadNft(idNft)
+		//console.log(this.props.nftSelected, allNfts);
+
+		if (nftSelected && nftSelected === idNft) {
+			let item = allNfts && allNfts.length > 0 && allNfts.find(i => i.id === idNft)
+			//console.log(item);
+			//console.log('info exist');
+			if (!item && userMintedNfts && userMintedNfts.length > 0) {
+				item = userMintedNfts.find(i => i.id === idNft)
+			}
+
+			if (item && item.name) {
+				setTimeout(() => {
+					window.scrollTo({ top: 0, behavior: 'smooth' });
+				}, 100)
+				this.loadExtraInfo(item)
+			}
+			else {
+				setTimeout(() => {
+					this.loadNft(idNft)
+				}, 500)
+			}
+		}
+		else {
+			setTimeout(() => {
+				this.loadNft(idNft)
+			}, 500)
+		}
 	}
 
 	groupFights(array, key) {
@@ -146,61 +172,65 @@ class Nft extends Component {
 
 		this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, idNft, (response) => {
 			if (response.name) {
-				document.title = `${response.name} - Wizards Arena`
-
-				//console.log(response)
-				//console.log(Object.keys(response.medals));
-
-				let tournaments = []
-				response.fights.map(i => {
-					const torneoName = i.tournament.split("_")[0]
-					if (!tournaments.includes(torneoName)) {
-						tournaments.push(torneoName)
-					}
-				})
-
-				//let tournaments = Object.keys(response.medals)
-				tournaments.sort((a, b) => {
-					return parseInt(a.replace("t", "")) - parseInt(b.replace("t", ""))
-				})
-
-				response['groupedFights'] = {}
-
-				let openFightsSection = []
-
-				if (response.fights) {
-					tournaments.map(i => {
-						const groupedFight = this.groupFights(response.fights, i)
-						//console.log(groupedFight);
-						if (groupedFight.length > 0) {
-							openFightsSection = [i]
-						}
-
-						response['groupedFights'][i] = groupedFight
-					})
-				}
-
-				//console.log(openFightsSection);
-				//console.log(response);
-
-				const level = calcLevelWizard(response)
-
-				this.setState({ nft: response, level, loading: false, openFightsSection }, () => {
-					this.loadHistory(idNft)
-					this.getHistoryUpgrades()
-					this.loadMaxMedalsPerTournament()
-
-					this.loadOffers(idNft)
-
-					this.loadEquipment(idNft)
-
-					if (response.confirmBurn) {
-						this.loadInfoBurn(idNft)
-					}
-				})
+				this.loadExtraInfo(response)
 			}
 			else {
 				this.setState({ error: '404', loading: false })
+			}
+		})
+	}
+
+	loadExtraInfo(response) {
+		document.title = `${response.name} - Wizards Arena`
+
+		//console.log(response)
+		//console.log(Object.keys(response.medals));
+
+		let tournaments = []
+		response.fights.map(i => {
+			const torneoName = i.tournament.split("_")[0]
+			if (!tournaments.includes(torneoName)) {
+				tournaments.push(torneoName)
+			}
+		})
+
+		//let tournaments = Object.keys(response.medals)
+		tournaments.sort((a, b) => {
+			return parseInt(a.replace("t", "")) - parseInt(b.replace("t", ""))
+		})
+
+		response['groupedFights'] = {}
+
+		let openFightsSection = []
+
+		if (response.fights) {
+			tournaments.map(i => {
+				const groupedFight = this.groupFights(response.fights, i)
+				//console.log(groupedFight);
+				if (groupedFight.length > 0) {
+					openFightsSection = [i]
+				}
+
+				response['groupedFights'][i] = groupedFight
+			})
+		}
+
+		//console.log(openFightsSection);
+		//console.log(response);
+
+		const level = calcLevelWizard(response)
+
+		this.setState({ nft: response, level, loading: false, openFightsSection }, () => {
+			this.loadHistory(response.id)
+			this.getHistoryUpgrades()
+			this.loadMaxMedalsPerTournament()
+
+			this.loadOffers(response.id)
+
+			this.loadEquipment(response.id)
+
+			if (response.confirmBurn) {
+				this.loadInfoBurn(response.id)
 			}
 		})
 	}
@@ -2041,9 +2071,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, nftSelected, userMintedNfts } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, nftSelected, userMintedNfts };
 }
 
 export default connect(mapStateToProps, {

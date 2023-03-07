@@ -1079,9 +1079,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, wizaBalance } = state.mainReducer;
+	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, wizaBalance } = state.mainReducer;
 
-	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, wizaBalance };
+	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, wizaBalance };
 }
 
 export default connect(mapStateToProps, {

@@ -82,6 +82,7 @@ export const SET_WIZARD_SELECTED_SHOP = 'SET_WIZARD_SELECTED_SHOP'
 
 export const SET_KADENA_NAME = 'SET_KADENA_NAME'
 
+export const SELECT_WIZARD = 'SELECT_WIZARD'
 
 /////// equipment
 export const LOAD_ALL_ITEMS_IDS = 'LOAD_ALL_ITEMS_IDS'

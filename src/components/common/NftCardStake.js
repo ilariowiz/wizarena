@@ -9,7 +9,8 @@ import '../../css/NftCard.css'
 import '../../css/Nft.css'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
 import {
-    getInfoNftBurning
+    getInfoNftBurning,
+    selectWizard
 } from '../../actions'
 import { CTA_COLOR } from '../../actions/types'
 
@@ -125,6 +126,7 @@ class NftCardStake extends Component {
 				className='container'
 				onClick={(e) => {
                     e.preventDefault()
+                    this.props.selectWizard(item.id)
                     history.push(`/nft/${item.id}`)
                 }}
                 style={{ marginBottom: 12 }}
@@ -349,5 +351,6 @@ const mapStateToProps = (state) => {
 }
 
 export default connect(mapStateToProps, {
-    getInfoNftBurning
+    getInfoNftBurning,
+    selectWizard
 })(NftCardStake);

@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 import getImageUrl from './GetImageUrl'
 import { getColorTextBasedOnLevel } from './CalcLevelWizard'
 import '../../css/NftCard.css'
+import {
+	selectWizard
+} from '../../actions'
 
 const logoKda = require('../../assets/kdalogo2.png')
 
@@ -15,6 +19,7 @@ class NftCard extends Component {
 				className='container'
 				onClick={(e) => {
 					e.preventDefault()
+					this.props.selectWizard(item.id)
 					history.push(`/nft/${item.id}`)
 				}}
 			>
@@ -77,4 +82,6 @@ class NftCard extends Component {
 	}
 }
 
-export default NftCard
+export default connect(null, {
+	selectWizard
+})(NftCard)

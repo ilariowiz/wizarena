@@ -32,7 +32,8 @@ import {
 	STORE_WIZA_NOT_CLAIMED,
 	LOAD_BUYIN_WIZA,
 	LOAD_FEE_TOURNAMENT_WIZA,
-	SET_KADENA_NAME
+	SET_KADENA_NAME,
+	SELECT_WIZARD
 } from '../actions/types'
 
 
@@ -71,7 +72,8 @@ const INITIAL_STATE = {
 	sfida: {},
 	avgLevelPvP: 0,
 	wizardSelectedIdShop: undefined,
-	kadenaname: ""
+	kadenaname: "",
+	nftSelected: undefined
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -166,6 +168,8 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, wizardSelectedIdShop: action.payload }
 		case SET_KADENA_NAME:
 			return { ...state, kadenaname: action.payload }
+		case SELECT_WIZARD:
+			return { ...state, nftSelected: action.payload }
 		case LOGOUT:
 			return { ...state, account: {}, transactionState: {}, showModalTx: false, isConnectWallet: false, isXWallet: false, isQRWalletConnect: false, userMintedNfts: [], wizaBalance: 0, wizardsStaked: 0, qrWalletConnectClient: undefined, kadenaname:""}
 		default:

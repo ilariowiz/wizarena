@@ -50,7 +50,8 @@ import {
 	LOAD_BUYIN_WIZA,
 	LOAD_FEE_TOURNAMENT_WIZA,
 	LOAD_SUBSCRIBED_WIZA,
-	SET_KADENA_NAME
+	SET_KADENA_NAME,
+	SELECT_WIZARD
 } from './types'
 
 
@@ -3204,6 +3205,13 @@ export const setAvgLevelPvp = (value) => {
 export const setWizardSelectedShop = (wizardId) => {
 	return {
 		type: SET_WIZARD_SELECTED_SHOP,
+		payload: wizardId
+	}
+}
+
+export const selectWizard = (wizardId) => {
+	return {
+		type: SELECT_WIZARD,
 		payload: wizardId
 	}
 }
