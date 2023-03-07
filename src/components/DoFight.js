@@ -219,6 +219,15 @@ class DoFight extends Component {
         else if (name.includes("Fear")) {
             return "is frightened"
         }
+        else if (name.includes("Disease")) {
+            return "is sickened"
+        }
+        else if (name.includes("Harden") || name.includes("Protection")) {
+            return "is less effective"
+        }
+        else if (name.includes("Curse")) {
+            return "is cursed"
+        }
     }
 
     convertConditionNamePositive(name) {
@@ -251,6 +260,15 @@ class DoFight extends Component {
         }
         else if (name.includes("Fear")) {
             return "is no longer frightened"
+        }
+        else if (name.includes("Disease")) {
+            return "is no longer sickened"
+        }
+        else if (name.includes("Harden") || name.includes("Protection")) {
+            return "is effective again"
+        }
+        else if (name.includes("Curse")) {
+            return "is no longer cursed"
         }
     }
 
@@ -656,7 +674,7 @@ class DoFight extends Component {
         return (
             <div style={{ width: boxW, flexDirection: 'column' }}>
 
-                <div style={{ justifyContent: 'space-between' }}>
+                <div style={{ justifyContent: 'space-between', width: boxW, position: 'relative' }}>
 
                     <div style={{ width: widthSide, flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between' }}>
 
@@ -664,20 +682,25 @@ class DoFight extends Component {
 
                         {this.renderBoxHp(widthSide, this.player2, this.player2InitialHp, player2CurrentHp, this.player2.level, 1, isMobile)}
 
-                        <img
-        					style={{ width: widthImg, marginTop: isMobile ? 70 : 110 }}
-        					src={`https://storage.googleapis.com/wizarena/wizards_nobg_back/${this.player1.id}.png`}
-        					alt={this.player1.id}
-        				/>
+                        <div style={{ width: widthImg, marginTop: isMobile ? 70 : 110, position: 'relative' }}>
+                            <img
+            					style={{ width: widthImg }}
+            					src={`https://storage.googleapis.com/wizarena/wizards_nobg_back/${this.player1.id}.png`}
+            					alt={this.player1.id}
+            				/>
+                        </div>
                     </div>
 
 
                     <div style={{ width: widthSide, flexDirection: 'column', alignItems: 'center', height: 'fit-content' }}>
-                        <img
-        					style={{ width: widthImg , height: widthImg, marginBottom: isMobile ? 70 : 110 }}
-                            src={`https://storage.googleapis.com/wizarena/wizards_nobg/${this.player2.id}.png`}
-        					alt={this.player2.id}
-        				/>
+
+                        <div style={{ width: widthImg, height: widthImg, marginBottom: isMobile ? 70 : 110, position: 'relative' }}>
+                            <img
+            					style={{ width: widthImg , height: widthImg }}
+                                src={`https://storage.googleapis.com/wizarena/wizards_nobg/${this.player2.id}.png`}
+            					alt={this.player2.id}
+            				/>
+                        </div>
 
                         {this.renderBoxHp(widthSide, this.player1, this.player1InitialHp, player1CurrentHp, this.player1.level, 2, isMobile)}
 
