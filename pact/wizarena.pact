@@ -164,7 +164,6 @@
 
     (defschema creation-schema
         @doc "Initial nft creation"
-        traits:list
         name:string
         imageHash:string
     )
@@ -466,8 +465,7 @@
                 (wizcount (get-count NFTS_COUNT_KEY))
             )
             (insert creation id
-                {"traits": {},
-                "name": (at "name" item-list),
+                {"name": (at "name" item-list),
                 "imageHash": (at "imageHash" item-list)}
             )
         )
@@ -752,7 +750,7 @@
                 (mint-druid id {
                     "id": id,
                     "created": (at "block-time" (chain-data)),
-                    "traits": (at "traits" data),
+                    "traits": [],
                     "owner": owner,
                     "name": (at "name" data),
                     "imageHash": (at "imageHash" data),
@@ -1951,7 +1949,8 @@
     ;;;;;; NON STATE MODIFYING HELPER FUNCTIONS ;;;;;;;;;
 
     (defun get-wiza-value ()
-        (free.wiz-dexinfo.get-wiza-value)
+        55.1
+        ;(free.wiz-dexinfo.get-wiza-value)
     )
 
     (defun get-value-tournament(key:string)
@@ -1981,7 +1980,7 @@
             (enforce (< 0 created-count) "no wizard created")
             (enforce (< minted-count created-count) "all wizard minted")
             (let (
-                    (data (read creation id ['traits 'name 'imageHash]))
+                    (data (read creation id ['name 'imageHash]))
                 )
                 data
             )
