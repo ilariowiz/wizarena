@@ -114,7 +114,7 @@ class Nft extends Component {
 	}
 
 	getPathNft() {
-		const { nftSelected, allNfts, userMintedNfts } = this.props
+		const { nftSelected, allNfts, userMintedNfts, subscribed, subscribedWiza } = this.props
 
 		const { pathname } = this.props.location;
 		const idNft = pathname.replace('/nft/', '')
@@ -127,6 +127,14 @@ class Nft extends Component {
 			//console.log('info exist');
 			if (!item && userMintedNfts && userMintedNfts.length > 0) {
 				item = userMintedNfts.find(i => i.id === idNft)
+			}
+
+			if (!item && subscribed && subscribed.length > 0) {
+				item = subscribed.find(i => i.id === idNft)
+			}
+
+			if (!item && subscribedWiza && subscribedWiza.length > 0) {
+				item = subscribedWiza.find(i => i.id === idNft)
 			}
 
 			if (item && item.name) {
@@ -2071,9 +2079,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, nftSelected, userMintedNfts } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, nftSelected, userMintedNfts, subscribed, subscribedWiza } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, nftSelected, userMintedNfts };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, nftSelected, userMintedNfts, subscribed, subscribedWiza };
 }
 
 export default connect(mapStateToProps, {

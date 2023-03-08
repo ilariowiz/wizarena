@@ -68,13 +68,15 @@ class Tournament extends Component {
 	}
 
     async loadTournament() {
-        const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
+        const { chainId, gasPrice, gasLimit, networkUrl, account, subscribedWiza } = this.props
 
         const querySnapshot = await getDocs(collection(firebasedb, "stage_low"))
 
         querySnapshot.forEach(doc => {
             //console.log(doc.data());
 			const tournament = doc.data()
+
+            //console.log(subscribedWiza);
 
             /*
             const tournament = {
@@ -90,13 +92,15 @@ class Tournament extends Component {
 
             this.setState({ tournament }, async () => {
 
+                if (subscribedWiza) {
+                    this.calcSubscribers(subscribedWiza, tournament)
+                }
+
 				this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-wiza-key")
 				this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-wiza-key")
 
 
                 this.loadPair(tournament.name)
-
-                const roundEnded = tournament.roundEnded
                 const tournamentName = tournament.name.split("_")[0]
 
                 this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "wiza", (subscribed) => {
@@ -104,53 +108,62 @@ class Tournament extends Component {
                     //console.log(subscribed);
 
                     //this.getAllPotionsEquipped(subscribed, tournamentName)
-                    this.getRingsEquipped(subscribed)
-
-                    let subs = []
-                    let yourWizards = 0
-                    let winnerWizards = 0
-
-                    //torneo non è iniziato
-                    if (roundEnded === "0") {
-                        subs = subscribed
-                    }
-
-                    subscribed.map(item => {
-                        if (item.owner === account.account) {
-                            yourWizards++
-                        }
-
-                        if (item.medals[tournamentName]) {
-
-                            //se un tuo wiz ha vinto lo stesso numero di medaglie del round appena concluso è ancora in gara per vincere
-                            if (item.medals[tournamentName] === roundEnded && item.owner === account.account) {
-                                winnerWizards++
-                            }
-
-                            if (item.medals[tournamentName] === roundEnded && parseInt(roundEnded) > 0) {
-                                subs.push(item)
-                            }
-                        }
-                    })
-
-                    //console.log(yourWizards , "/", winnerWizards);
-
-                    let yourStat;
-                    if (roundEnded === "6") {
-                        yourStat = `Your winning Wizards ${winnerWizards} / ${yourWizards}`
-                    }
-                    else {
-                        yourStat = `Your Wizards still in the game ${winnerWizards} / ${yourWizards}`
-                    }
-
-                    const avgLevel = this.calcAvgLevel(subscribed)
-                    //console.log(avgLevel);
-
-                    this.setState({ subscribed: subs, yourStat, avgLevel, loading: false })
+                    this.calcSubscribers(subscribed, tournament)
                 })
 
             })
         })
+    }
+
+    calcSubscribers(subscribed, tournament) {
+        const { account } = this.props
+
+        const roundEnded = tournament.roundEnded
+        const tournamentName = tournament.name.split("_")[0]
+
+        this.getRingsEquipped(subscribed)
+
+        let subs = []
+        let yourWizards = 0
+        let winnerWizards = 0
+
+        //torneo non è iniziato
+        if (roundEnded === "0") {
+            subs = subscribed
+        }
+
+        subscribed.map(item => {
+            if (item.owner === account.account) {
+                yourWizards++
+            }
+
+            if (item.medals[tournamentName]) {
+
+                //se un tuo wiz ha vinto lo stesso numero di medaglie del round appena concluso è ancora in gara per vincere
+                if (item.medals[tournamentName] === roundEnded && item.owner === account.account) {
+                    winnerWizards++
+                }
+
+                if (item.medals[tournamentName] === roundEnded && parseInt(roundEnded) > 0) {
+                    subs.push(item)
+                }
+            }
+        })
+
+        //console.log(yourWizards , "/", winnerWizards);
+
+        let yourStat;
+        if (roundEnded === "6") {
+            yourStat = `Your winning Wizards ${winnerWizards} / ${yourWizards}`
+        }
+        else {
+            yourStat = `Your Wizards still in the game ${winnerWizards} / ${yourWizards}`
+        }
+
+        const avgLevel = this.calcAvgLevel(subscribed)
+        //console.log(avgLevel);
+
+        this.setState({ subscribed: subs, yourStat, avgLevel, loading: false })
     }
 
     getAllPotionsEquipped(subscribers, tournamentName) {
@@ -329,7 +342,7 @@ class Tournament extends Component {
                     {this.renderSingleGraph('#4b0082', 'Undead')}
                     {this.renderSingleGraph('#15a3c7', 'Water')}
                     {this.renderSingleGraph('#afb9cc', 'Wind')}
-                    
+
                 </div>
             </div>
         )
@@ -357,6 +370,8 @@ class Tournament extends Component {
     renderBody(isMobile) {
         const { tournament, matchPair, subscribed } = this.state
         const { buyinWiza, subscribedWiza } = this.props
+
+        //console.log(subscribedWiza, tournament);
 
         const { boxW } = getBoxWidth(isMobile)
 

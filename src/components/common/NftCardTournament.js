@@ -8,6 +8,9 @@ import calcMedals from './CalcMedals'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
 import '../../css/NftCard.css'
 import 'reactjs-popup/dist/index.css';
+import {
+	selectWizard
+} from '../../actions'
 
 const vial_hp = require('../../assets/vial_hp.png')
 const vial_def = require('../../assets/vial_def.png')
@@ -106,6 +109,7 @@ class NftCardTournament extends Component {
 				style={{ borderColor: isMine ? "gold" : "white" }}
 				onClick={(e) => {
 					e.preventDefault()
+					this.props.selectWizard(item.id)
 					history.push(`/nft/${item.id}`)
 				}}
 			>
@@ -217,4 +221,6 @@ const mapStateToProps = (state) => {
 	return { account }
 }
 
-export default connect(mapStateToProps)(NftCardTournament);
+export default connect(mapStateToProps, {
+	selectWizard
+})(NftCardTournament);
