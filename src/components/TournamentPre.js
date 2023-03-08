@@ -353,7 +353,7 @@ class Tournament extends Component {
         const { chainId, gasPrice, netId, account } = this.props
         const { wizardToChangeSpell } = this.state
 
-        console.log(wizardToChangeSpell);
+        //console.log(wizardToChangeSpell);
 
 		this.setState({ nameNftSubscribed: `#${wizardToChangeSpell.id}`, typeModal: "changespell_pvp" })
 
