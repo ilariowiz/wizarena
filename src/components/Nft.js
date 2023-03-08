@@ -633,8 +633,8 @@ class Nft extends Component {
 							this.setState({ openFightsSection: openFightsSectionCopy })
 						}}
 					>
-						<p style={{ fontSize: 18, color: 'white', marginRight: 15 }}>
-							TOURNAMENT n. {key.replace("t","")}
+						<p style={{ fontSize: 14, color: '#eae9e9', marginRight: 15 }}>
+							TOURNAMENT <span style={{ fontSize: 18, color: 'white' }}>{key.replace("t","")}</span>
 						</p>
 
 						{
