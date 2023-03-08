@@ -1162,6 +1162,14 @@
     ;;;;;; TOURNAMENT ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+    (defun change-spell-tournament (idnft:string address:string spellSelected:object)
+        (with-capability (OWNER address idnft)
+            (update stats idnft {
+              "spellSelected": spellSelected
+            })
+        )
+    )
+
     (defun subscribe-tournament-mass (subscribers:list address:string)
         (let (
                 (buyin (* (get-value-tournament BUYIN_KEY) (length subscribers)))

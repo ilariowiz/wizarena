@@ -155,13 +155,15 @@ class NftCardChoice extends Component {
 
                         {
                             isSubscribed ?
-                            <div
-                                style={Object.assign({}, styles.btnSubscribe, { backgroundColor: '#014766'})}
+                            <button
+                                className='btnSubscribe'
+                                style={styles.btnSubscribe}
+                                onClick={() => this.props.onChangeSpell()}
                             >
-                                <p style={{ fontSize: 17, color: 'white' }}>
-                                    Already subscribed
+                                <p style={{ fontSize: 16, color: 'white' }}>
+                                    CHANGE SPELL
                                 </p>
-                            </div>
+                            </button>
                             : null
                         }
 
