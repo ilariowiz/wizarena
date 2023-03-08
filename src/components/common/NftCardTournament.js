@@ -124,7 +124,7 @@ class NftCardTournament extends Component {
 					<div style={{ flex: 0.8, flexDirection: 'column', justifyContent: 'space-between', marginTop: 5 }}>
 						{
 							item.nickname ?
-							<p style={{ color: isMine ? "gold" : "white", fontSize: 17, marginLeft: 10, lineHeight: 1 }}>
+							<p style={{ color: isMine ? "gold" : "white", fontSize: 16, marginLeft: 10, lineHeight: 1 }}>
 								<span style={{ fontSize: 13 }}>{item.name}</span> {item.nickname}
 							</p>
 							:
