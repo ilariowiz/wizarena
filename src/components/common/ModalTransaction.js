@@ -22,6 +22,7 @@ class ModalTransaction extends Component {
 	componentDidMount() {
 		//sendMessageUpgrade("866", "#866 Joneleth Irenicus", "hp", 1)
 		//sendMessage("866", 32, 3, "k:461ae9f3c9c255112ac3797f6b15699c656c9bc44ed089551a0f792085ef9504")
+		//sendMessageUpdateNickname("555", "Test")
 	}
 
 	checkTransaction() {

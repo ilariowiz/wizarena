@@ -221,12 +221,22 @@ export const sendMessageUpdateNickname = (id, nickname) => {
     request.setRequestHeader("Content-type", 'application/json')
 
 
-    const content = `#${id} changed name to ${nickname}`
+    const content = `#${id} changed name to **${nickname}**`
 
     const params = {
-        username: `#${id}`,
+        username: `Wizard Bot`,
         avatar_url: `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`,
-        content
+        //content
+        embeds: [
+            {
+                "title": `#${id}`,
+                "description": content,
+                "url": `https://www.wizardsarena.net/nft/${id}`,
+                "thumbnail": {
+                    "url": `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`
+                }
+            }
+        ]
     }
 
     request.send(JSON.stringify(params));
@@ -240,9 +250,19 @@ export const sendMessageUpgrade = (id, message) => {
     //console.log(content);
 
     const params = {
-        username: `#${id}`,
+        username: `Wizard Bot`,
         avatar_url: `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`,
-        content: message
+        //content: message
+        embeds: [
+            {
+                "title": `#${id}`,
+                "description": message,
+                "url": `https://www.wizardsarena.net/nft/${id}`,
+                "thumbnail": {
+                    "url": `https://storage.googleapis.com/wizarena/generated_imgs/${id}.png`
+                }
+            }
+        ]
     }
 
     request.send(JSON.stringify(params));
