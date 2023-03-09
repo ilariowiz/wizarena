@@ -471,18 +471,21 @@ class Nft extends Component {
 		if (parseInt(this.state.nft.id) < REVEAL_CAP) {
 
 			//se id < 1024 prendiamo i tratti dei wizards, altrimenti quelli dei clerics
-			if (nft.id < 1024) {
+			if (parseInt(nft.id) < 1024) {
 				const section = traits_qty[item.trait_type.toLowerCase()]
 				const qty = section[item.value]
 
 				percentString = qty * 100 / 1024
 			}
-			else {
+			else if (parseInt(nft.id) >= 1024 && parseInt(nft.id) < 2048) {
 				const section = traits_qty_clerics[item.trait_type.toLowerCase()]
 				const qty = section[item.value]
 
 				percentString = qty * 100 / 1024
 			}
+		}
+		else {
+			return <div />
 		}
 
 		return (
@@ -910,8 +913,11 @@ class Nft extends Component {
 		const { nft } = this.state
 
 		let type = "Wizard"
-		if (parseInt(nft.id) >= 1023 && parseInt(nft.id) < REVEAL_CAP) {
+		if (parseInt(nft.id) >= 1023 && parseInt(nft.id) < 2048) {
 			type = "Cleric"
+		}
+		else if (parseInt(nft.id) >= 2048 && parseInt(nft.id) < 3072) {
+			type = 'Druid'
 		}
 
 		let title = titles[nft.id]
