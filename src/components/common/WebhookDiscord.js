@@ -7,7 +7,7 @@ export const sendMessage = (id, amount, expiration, owner) => {
     request.setRequestHeader("Content-type", 'application/json')
 
 
-    const content = `${owner} wallet has received an offer for Wizard #${id} of ${amount} KDA which expires in ${expiration} days`
+    const content = `${owner} wallet has received an offer for Wizard #${id} of **${amount}** KDA which expires in **${expiration}** days`
 
     const params = {
         username: `Wizard Bot`,
@@ -35,7 +35,7 @@ export const sendMessageOfferItem = (info) => {
     request.setRequestHeader("Content-type", 'application/json')
 
 
-    const content = `There is a new offer for the ${info.ringType}: ${info.amount} WIZA, expires in ${info.duration} days`
+    const content = `There is a new offer for the ${info.ringType}: **${info.amount}** WIZA, expires in **${info.duration}** days`
 
     const params = {
         username: info.ringType,
@@ -53,7 +53,7 @@ export const sendMessageSales = (id, amount) => {
     request.setRequestHeader("Content-type", 'application/json')
 
 
-    const content = `#${id} just sold for ${amount} KDA`
+    const content = `#${id} just sold for **${amount}** KDA`
 
     const params = {
         username: `Wizard Bot`,
@@ -81,7 +81,7 @@ export const sendMessageSalesEquipment = (info) => {
     request.setRequestHeader("Content-type", 'application/json')
 
 
-    const content = `#${info.id} ${info.name} just sold for ${info.amount} WIZA`
+    const content = `#${info.id} ${info.name} just sold for **${info.amount}** WIZA`
 
     const params = {
         username: `Wizard Bot`,
@@ -109,7 +109,7 @@ export const sendMessageListed = (id, amount) => {
     request.setRequestHeader("Content-type", 'application/json')
 
 
-    const content = `#${id} just listed for ${amount} KDA`
+    const content = `#${id} just listed for **${amount}** KDA`
 
     const params = {
         username: 'Wizard Bot',
@@ -137,7 +137,7 @@ export const sendMessageListedEquipment = (info) => {
     request.setRequestHeader("Content-type", 'application/json')
 
 
-    const content = `#${info.id} ${info.name} just listed for ${info.amount} WIZA`
+    const content = `#${info.id} ${info.name} just listed for **${info.amount}** WIZA`
 
     const params = {
         username: `Wizard Bot`,
