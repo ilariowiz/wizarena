@@ -490,7 +490,7 @@ const allSpells = [
 		element: 'Undead'
 	},
 	{
-		name: "Dance Macabre",
+		name: "Danse Macabre",
 		atkBase: 6,
 		dmgBase: 6,
 		condition: { name: 'Fear', effect: "malus_4_atk", pct: 55 },
