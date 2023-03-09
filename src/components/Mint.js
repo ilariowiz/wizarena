@@ -23,10 +23,10 @@ import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '
 import '../css/Nft.css'
 
 const logo = require('../assets/wiz_logo_centrale.png')
-const sample1 = require('../assets/sneak5.png')
-const sample2 = require('../assets/sneak6.png')
-const sample3 = require('../assets/sneak7.png')
-const sample4 = require('../assets/sneak8.png')
+const sample1 = require('../assets/sneak/sneak1.png')
+const sample2 = require('../assets/sneak/sneak2.png')
+const sample3 = require('../assets/sneak/sneak3.png')
+const sample4 = require('../assets/sneak/sneak4.png')
 
 
 class Mint extends Component {
