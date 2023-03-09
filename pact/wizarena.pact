@@ -52,6 +52,11 @@
     (defconst TOURNAMENT_NAME "tournament-name")
     (defconst TOURNAMENT_WIZA_NAME "tournament-wiza-name")
 
+    (defconst TOURNAMENT_ELITE_NAME "tournament-elite-name")
+    (defconst TOURNAMENT_ELITE_OPEN "tournament_elite_open")
+    (defconst TOURNAMENT_ELITE_MIN_LEVEL 300)
+    (defconst BUYIN_ELITE_KEY "buyin-elite-key")
+
 ; --------------------------------------------------------------------------
 ; Capabilities
 ; --------------------------------------------------------------------------
@@ -106,6 +111,11 @@
     )
 
     (defcap TOURNAMENT_WIZA_SUBSCRIPTION (id:string tournament:string)
+        @doc "Emitted event when a Wizard signs up for the tournament"
+        @event true
+    )
+
+    (defcap TOURNAMENT_ELITE_SUBSCRIPTION (id:string tournament:string)
         @doc "Emitted event when a Wizard signs up for the tournament"
         @event true
     )
@@ -374,10 +384,14 @@
         (insert values-tournament BUYIN_WIZA_KEY {"value": 100.0})
         (insert values-tournament FEE_TOURNAMENT_WIZA_KEY {"value": 11.0})
 
+        (insert values-tournament BUYIN_ELITE_KEY {"value": 300.0})
+
         (insert values TOURNAMENT_WIZA_OPEN {"value": "0"})
+        (insert values TOURNAMENT_ELITE_OPEN {"value": "0"})
 
         (insert values TOURNAMENT_NAME {"value": "t14"})
         (insert values TOURNAMENT_WIZA_NAME {"value": "t1001"})
+        (insert values TOURNAMENT_ELITE_NAME {"value": "t3000"})
     )
 
     (defun insertValuesUpgrade ()
@@ -1207,12 +1221,22 @@
                 (spellSelected (at "spellSelected" subscriber))
                 (tournament-name (get-value TOURNAMENT_NAME))
                 (tournament-wiza-name (get-value TOURNAMENT_WIZA_NAME))
+                (tournament-elite-name (get-value TOURNAMENT_ELITE_NAME))
             )
-            (if
-                (= type "kda")
-                (enforce (= tournament-name round) "can't subscribe to the tournament")
-                (enforce (= tournament-wiza-name round) "can't subscribe to the tournament")
-            )
+            (cond
+                (
+                    (= type "kda")
+                    (enforce (= tournament-name round) "can't subscribe to the tournament")
+                )
+                (
+                    (= type "wiza")
+                    (enforce (= tournament-wiza-name round) "can't subscribe to the tournament")
+                )
+                (
+                    (= type "elite")
+                    (enforce (= tournament-elite-name round) "can't subscribe to the tournament")
+                )
+            "")
             (with-capability (OWNER address idnft)
                 (subscribe-tournament id round idnft address spellSelected type)
             )
@@ -1233,13 +1257,27 @@
                 (enforce (<= current-level TOURNAMENT_WIZA_LEVEL_CAP) "you can't subscribe this wizard")
                 ""
             )
+            (if
+                (= type "elite")
+                (enforce (>= current-level TOURNAMENT_ELITE_MIN_LEVEL) "you can't subscribe this wizard")
+                ""
+            )
         )
         (subscribe-last id round idnft address spellSelected)
-        (if
-            (= type "kda")
-            (emit-event (TOURNAMENT_SUBSCRIPTION idnft round))
-            (emit-event (TOURNAMENT_WIZA_SUBSCRIPTION idnft round))
-        )
+        (cond
+            (
+                (= type "kda")
+                (emit-event (TOURNAMENT_SUBSCRIPTION idnft round))
+            )
+            (
+                (= type "wiza")
+                (emit-event (TOURNAMENT_WIZA_SUBSCRIPTION idnft round))
+            )
+            (
+                (= type "elite")
+                (emit-event (TOURNAMENT_ELITE_SUBSCRIPTION idnft round))
+            )
+        "")
     )
 
     (defun send-prizes (winners:list)
@@ -1312,6 +1350,24 @@
             (with-capability (PRIVATE)
                 (map
                     (nft-to-subscribe "wiza")
+                    subscribers
+                )
+            )
+        )
+    )
+
+    (defun subscribe-tournament-elite-mass (subscribers:list address:string m:module{wiza1-interface-v1})
+        (let (
+                (buyin (* (get-value-tournament BUYIN_ELITE_KEY) (length subscribers)))
+                (tournament-open (get-value TOURNAMENT_ELITE_OPEN))
+            )
+            (enforce (= tournament-open "1") "Tournament registrations are closed")
+            (with-capability (ACCOUNT_GUARD address)
+                (spend-wiza buyin address m)
+            )
+            (with-capability (PRIVATE)
+                (map
+                    (nft-to-subscribe "elite")
                     subscribers
                 )
             )
