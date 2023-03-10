@@ -47,7 +47,7 @@ class Settings extends Component {
                     {
                         isXWallet ?
                         <p style={{ fontSize: 16, color: 'white', marginTop: 15 }}>
-                            <i>Connected to X-Wallet</i>
+                            <i>Connected to eckoWallet</i>
                         </p>
                         : null
                     }

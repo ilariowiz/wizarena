@@ -306,7 +306,7 @@ class Header extends Component {
 								{
 									isXWallet &&
 									<p style={{ fontSize: 16, color: 'white', marginBottom: 10 }}>
-										<i>Connected to X-Wallet</i>
+										<i>Connected to eckoWallet</i>
 									</p>
 								}
 

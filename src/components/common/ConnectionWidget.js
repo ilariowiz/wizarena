@@ -124,7 +124,7 @@ class ConnectionWidget extends Component {
 					}}
 				>
 					<p style={{ fontSize: 17, color: 'black' }}>
-						X-WALLET
+						eckoWALLET
 					</p>
 				</button>
 
