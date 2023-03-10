@@ -637,7 +637,7 @@
                 "medals":=medals}
                 (update stats id
                     {"fights": (+ fights (at "fights" item)),
-                    "medals": (at "medals" item)}
+                    "medals": (+ (at "medals" item) medals)}
                 )
             )
         )
