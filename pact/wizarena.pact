@@ -105,6 +105,11 @@
         @event true
     )
 
+    (defcap WIZ_TRANSFER (id:string from:string to:string)
+        @doc "Emitted event when a Wizard is transferred"
+        @event true
+    )
+
     (defcap TOURNAMENT_SUBSCRIPTION (id:string tournament:string)
         @doc "Emitted event when a Wizard signs up for the tournament"
         @event true
@@ -698,6 +703,7 @@
     (defun get-druids (owner:string amount:integer)
         @doc "Mint part 1"
         (enforce (>= amount 1) "Must mint at least 1 wizard")
+        (enforce (<= amount 10) "A maximum of 10 wizards can be minted per transaction")
         (let (
                 (wiz-minted (get-count MINTED_COUNT_KEY))
                 (wiz-created (get-count NFTS_COUNT_KEY))
@@ -1967,6 +1973,7 @@
                 (enforce (= has-equip false) "You can't transfer an equipped wizard")
             )
             (update nfts id {"owner": receiver})
+            (emit-event (WIZ_TRANSFER id sender receiver))
         )
     )
 
