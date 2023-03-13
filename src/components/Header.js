@@ -404,7 +404,7 @@ class Header extends Component {
 									EQUIPMENT
 								</a>
 
-								{/*<a
+								<a
 									href={`${window.location.protocol}//${window.location.host}/mint`}
 									className={section === 2 ? btnPressedStyle : btnStyle}
 									onClick={(e) => {
@@ -413,7 +413,7 @@ class Header extends Component {
 									}}
 								>
 									MINT
-								</a>*/}
+								</a>
 
 								<a
 									href={`${window.location.protocol}//${window.location.host}/forge`}

@@ -43,11 +43,15 @@ class Mint extends Component {
 			error: '',
 			maxItemsPerWallet: -1,
 			loading: true,
-			mintPrice: 0
+			mintPrice: 0,
+			inFreeList: false,
+			inWList: false
 		}
 	}
 
 	componentDidMount() {
+		const { account } = this.props
+
 		document.title = "Mint - Wizards Arena"
 
 		this.props.setNetworkSettings(MAIN_NET_ID, "1")
@@ -56,6 +60,12 @@ class Mint extends Component {
 		setTimeout(() => {
 			this.getMintPhase()
 			this.getMintPrice()
+
+			if (account && account.account) {
+				this.checkWalletInList('0')
+				this.checkWalletInList('1')
+			}
+
 		}, 500)
 	}
 
@@ -93,6 +103,25 @@ class Mint extends Component {
 			}
 			else {
 				this.setState({ loading: false })
+			}
+		})
+	}
+
+	checkWalletInList(phase) {
+		const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
+
+		this.props.loadMaxItemsPerWallet(chainId, gasPrice, gasLimit, networkUrl, account, phase, (res) => {
+			console.log(res);
+			if (res.status && res.status === "failure") {
+				//non sei in questa fase
+			}
+			else {
+				if (phase === "0") {
+					this.setState({ inFreeList: true })
+				}
+				else {
+					this.setState({ inWList: true })
+				}
 			}
 		})
 	}
@@ -404,7 +433,7 @@ class Mint extends Component {
 	}
 
 	renderBoxMint() {
-		const { stage, loading, error, mintPrice } = this.state
+		const { stage, loading, error, mintPrice, inFreeList, inWList } = this.state
 		const { account } = this.props
 
 		let title = stage !== 'early' ? `STAGE: ${stage.toUpperCase()} MINT` : 'EARLY'
@@ -415,6 +444,21 @@ class Mint extends Component {
 				<p style={{ fontSize: 20, color: 'white', marginBottom: 20 }}>
 					{title}
 				</p>
+
+				<div style={{ flexDirection: 'column', marginBottom: 15 }}>
+					<p style={{  fontSize: 19, color: 'white', marginBottom: 10 }}>
+						Your wallet is eligible for
+					</p>
+
+					<p style={{  fontSize: 16, color: inFreeList ? "white" : "#c2c0c0", marginBottom: 10 }}>
+						-Free Mint: {inFreeList ? "YES" : "NO"}
+					</p>
+
+					<p style={{  fontSize: 16, color: inWList ? "white" : "#c2c0c0", marginBottom: 10 }}>
+						-WL: {inWList ? "YES" : "NO"}
+					</p>
+
+				</div>
 
 				<div style={{ justifyContent: 'space-between', alignItems: 'center', width: '100%', marginBottom: 20 }}>
 					<p style={{ fontSize: 17, color: '#c2c0c0' }}>
