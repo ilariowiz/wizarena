@@ -222,6 +222,11 @@ class Profile extends Component {
 					//console.log(offersForThisNft);
 					ownNft.push(...offersForThisNft)
 				})
+
+				let now = moment()
+
+				ownNft = ownNft.filter(i => moment(i.expiresat.timep) > now)
+
 				//console.log(ownNft);
 
 				this.setState({ offersReceived: ownNft, loading: false })
