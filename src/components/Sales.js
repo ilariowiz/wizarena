@@ -50,16 +50,18 @@ class Sales extends Component {
 		querySnapshot.forEach(doc => {
             const d = doc.data()
 
-            const date = moment(d.blockTime).format("DD-MM")
+            if (!d.type) {
+                const date = moment(d.blockTime).format("DD-MM")
 
-            if (dateObj[date]) {
-                dateObj[date]['amount'] += 1
-            }
-            else {
-                dateObj[date] = { amount: 1 }
-            }
+                if (dateObj[date]) {
+                    dateObj[date]['amount'] += 1
+                }
+                else {
+                    dateObj[date] = { amount: 1 }
+                }
 
-			nftH.push(doc.data())
+    			nftH.push(doc.data())
+            }
 		})
 
         //console.log(dateObj);

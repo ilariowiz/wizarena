@@ -4,7 +4,7 @@ import moment from 'moment'
 import { TEST_NET_ID, CTA_COLOR } from '../../actions/types'
 
 
-class HistoryItemNft extends Component {
+class HistoryListedNft extends Component {
 	render() {
 		const { item, index, nftH, netId, isMobile } = this.props
 
@@ -25,22 +25,15 @@ class HistoryItemNft extends Component {
 			<div style={Object.assign({}, styles.boxSingleHistory, { borderBottomWidth: removeBorder ? 0 : 1 })} key={item.blockHash}>
 
 				<p style={{ fontSize: 17, color: 'white', flex: 0.6, marginLeft: 20 }}>
-					SALE
+					LISTED
 				</p>
 
 				<p style={{ fontSize: 17, color: 'white', flex: 0.6, marginLeft: 20 }}>
 					KDA {item.amount}
 				</p>
 
-				{
-					!isMobile &&
-					<p style={{ fontSize: 15, color: 'white', flex: 1 }}>
-						From {item.from.slice(0, 10)}...
-					</p>
-				}
-
 				<p style={{ fontSize: 15, color: 'white', flex: 1 }}>
-					To {item.to.slice(0, 10)}...
+					Owner {item.owner.slice(0, 15)}...
 				</p>
 
 				<p
@@ -93,4 +86,4 @@ const mapStateToProps = (state) => {
 	return { netId }
 }
 
-export default connect(mapStateToProps)(HistoryItemNft)
+export default connect(mapStateToProps)(HistoryListedNft)

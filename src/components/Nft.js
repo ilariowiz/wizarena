@@ -17,6 +17,7 @@ import ModalConnectionWidget from './common/ModalConnectionWidget'
 import ModalTransfer from './common/ModalTransfer'
 import ModalMakeOffer from './common/ModalMakeOffer'
 import HistoryItemNft from './common/HistoryItemNft'
+import HistoryListedNft from './common/HistoryListedNft'
 import OfferItem from './common/OfferItem'
 import getImageUrl from './common/GetImageUrl'
 import getRingBonuses from './common/GetRingBonuses'
@@ -345,7 +346,7 @@ class Nft extends Component {
 			return new Date(b.blockTime) - new Date(a.blockTime)
 		})
 
-		//console.log(nftH);
+		console.log(nftH);
 
 		this.setState({ nftH, loadingHistory: false })
 	}
@@ -706,6 +707,18 @@ class Nft extends Component {
 
 	renderHistoryItem(item, index, isMobile) {
 		const { nftH } = this.state
+
+		if (item.type && item.type === "LISTED") {
+			return (
+				<HistoryListedNft
+					item={item}
+					index={index}
+					nftH={nftH}
+					key={index}
+					isMobile={isMobile}
+				/>
+			)
+		}
 
 		return (
 			<HistoryItemNft
