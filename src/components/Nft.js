@@ -345,7 +345,7 @@ class Nft extends Component {
 			return new Date(b.blockTime) - new Date(a.blockTime)
 		})
 
-		console.log(nftH);
+		//console.log(nftH);
 
 		this.setState({ nftH, loadingHistory: false })
 	}
