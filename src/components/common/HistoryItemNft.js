@@ -24,22 +24,22 @@ class HistoryItemNft extends Component {
 		return (
 			<div style={Object.assign({}, styles.boxSingleHistory, { borderBottomWidth: removeBorder ? 0 : 1 })} key={item.blockHash}>
 
-				<p style={{ fontSize: 17, color: 'white', flex: 0.6, marginLeft: 20 }}>
+				<p style={{ fontSize: 17, color: 'white', width: '15%', marginLeft: 20 }}>
 					SALE
 				</p>
 
-				<p style={{ fontSize: 17, color: 'white', flex: 0.6, marginLeft: 20 }}>
+				<p style={{ fontSize: 17, color: 'white', width: '15%', marginLeft: 20 }}>
 					KDA {item.amount}
 				</p>
 
 				{
 					!isMobile &&
-					<p style={{ fontSize: 15, color: 'white', flex: 1 }}>
+					<p style={{ fontSize: 15, color: 'white', width: '24%' }}>
 						From {item.from.slice(0, 10)}...
 					</p>
 				}
 
-				<p style={{ fontSize: 15, color: 'white', flex: 1 }}>
+				<p style={{ fontSize: 15, color: 'white', width: '24%' }}>
 					To {item.to.slice(0, 10)}...
 				</p>
 
@@ -70,19 +70,20 @@ const styles = {
 		borderRightWidth: 0,
 		borderColor: '#ededed',
 		borderStyle: 'solid',
-		height: 50
+		height: 50,
+		width: '100%'
 	},
 	dataRequest: {
 		fontSize: 16,
 		color: CTA_COLOR,
-		flex: 0.6,
+		width: '22%',
 		cursor: 'pointer',
 		textAlign: 'right'
 	},
 	dataNonRequest: {
 		fontSize: 15,
 		color: 'white',
-		flex: 0.6,
+		width: '22%',
 		textAlign: 'right'
 	}
 }
