@@ -110,6 +110,16 @@
         @event true
     )
 
+    (defcap WIZ_LISTED (id:string owner:string price:decimal)
+        @doc "Emitted event when a Wizard is transferred"
+        @event true
+    )
+
+    (defcap WIZ_DELISTED (id:string owner:string)
+        @doc "Emitted event when a Wizard is transferred"
+        @event true
+    )
+
     (defcap TOURNAMENT_SUBSCRIPTION (id:string tournament:string)
         @doc "Emitted event when a Wizard signs up for the tournament"
         @event true
@@ -971,6 +981,7 @@
         )
         (with-capability (OWNER sender id)
             (update nfts-market id {"listed": true, "price": price})
+            (emit-event (WIZ_LISTED id sender price))
         )
     )
 
@@ -983,6 +994,7 @@
         )
         (with-capability (OWNER sender id)
             (update nfts-market id {"listed": false, "price": 0.0})
+            (emit-event (WIZ_DELISTED id sender))
         )
     )
 
