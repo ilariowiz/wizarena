@@ -6,7 +6,7 @@ import { TEST_NET_ID, CTA_COLOR } from '../../actions/types'
 
 class HistoryItemNft extends Component {
 	render() {
-		const { item, index, nftH, netId, isMobile } = this.props
+		const { item, index, nftH, netId, isMobile, type } = this.props
 
 		let removeBorder = index + 1 === nftH.length
 
@@ -25,23 +25,52 @@ class HistoryItemNft extends Component {
 			<div style={Object.assign({}, styles.boxSingleHistory, { borderBottomWidth: removeBorder ? 0 : 1 })} key={item.blockHash}>
 
 				<p style={{ fontSize: 17, color: 'white', width: '15%', marginLeft: 20 }}>
-					SALE
-				</p>
-
-				<p style={{ fontSize: 17, color: 'white', width: '15%', marginLeft: 20 }}>
-					KDA {item.amount}
+					{type}
 				</p>
 
 				{
-					!isMobile &&
-					<p style={{ fontSize: 15, color: 'white', width: '24%' }}>
+					item.amount ?
+					<p style={{ fontSize: 17, color: 'white', width: '15%' }}>
+						KDA {item.amount}
+					</p>
+					:
+					<p style={{ fontSize: 17, color: 'white', width: '15%' }}>
+
+					</p>
+				}
+
+				{
+					item.owner ?
+					<p style={{ fontSize: 14, color: 'white', width: '24%' }}>
+						Owner {item.owner.slice(0, 10)}...
+					</p>
+					:
+					undefined
+				}
+
+
+				{
+					!isMobile && item.from &&
+					<p style={{ fontSize: 14, color: 'white', width: '24%' }}>
 						From {item.from.slice(0, 10)}...
 					</p>
 				}
 
-				<p style={{ fontSize: 15, color: 'white', width: '24%' }}>
-					To {item.to.slice(0, 10)}...
-				</p>
+				{
+					item.to ?
+					<p style={{ fontSize: 14, color: 'white', width: '24%' }}>
+						To {item.to.slice(0, 10)}...
+					</p>
+					:
+					undefined
+				}
+
+				{
+					!item.to && !isMobile &&
+					<p style={{ fontSize: 15, color: 'white', width: '24%' }}>
+
+					</p>
+				}
 
 				<p
 					style={styleData}

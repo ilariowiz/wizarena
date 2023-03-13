@@ -17,7 +17,6 @@ import ModalConnectionWidget from './common/ModalConnectionWidget'
 import ModalTransfer from './common/ModalTransfer'
 import ModalMakeOffer from './common/ModalMakeOffer'
 import HistoryItemNft from './common/HistoryItemNft'
-import HistoryListedNft from './common/HistoryListedNft'
 import OfferItem from './common/OfferItem'
 import getImageUrl from './common/GetImageUrl'
 import getRingBonuses from './common/GetRingBonuses'
@@ -708,18 +707,6 @@ class Nft extends Component {
 	renderHistoryItem(item, index, isMobile) {
 		const { nftH } = this.state
 
-		if (item.type && item.type === "LISTED") {
-			return (
-				<HistoryListedNft
-					item={item}
-					index={index}
-					nftH={nftH}
-					key={index}
-					isMobile={isMobile}
-				/>
-			)
-		}
-
 		return (
 			<HistoryItemNft
 				item={item}
@@ -727,6 +714,7 @@ class Nft extends Component {
 				nftH={nftH}
 				key={index}
 				isMobile={isMobile}
+				type={item.type || 'SALE'}
 			/>
 		)
 	}
