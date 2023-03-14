@@ -111,13 +111,15 @@ class Mint extends Component {
 		const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
 
 		this.props.loadMaxItemsPerWallet(chainId, gasPrice, gasLimit, networkUrl, account, phase, (res) => {
-			console.log(res);
+			//console.log(res);
 			if (res.status && res.status === "failure") {
 				//non sei in questa fase
 			}
 			else {
 				if (phase === "0") {
-					this.setState({ inFreeList: true })
+					if (res > 0) {
+						this.setState({ inFreeList: true })
+					}
 				}
 				else {
 					this.setState({ inWList: true })
