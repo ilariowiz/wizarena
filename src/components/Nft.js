@@ -179,6 +179,7 @@ class Nft extends Component {
 		this.setState({ loading: true })
 
 		this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, idNft, (response) => {
+			//console.log(response);
 			if (response.name) {
 				this.loadExtraInfo(response)
 			}
@@ -195,19 +196,24 @@ class Nft extends Component {
 		//console.log(Object.keys(response.medals));
 
 		let tournaments = []
-		response.fights.map(i => {
-			const torneoName = i.tournament.split("_")[0]
-			if (!tournaments.includes(torneoName)) {
-				tournaments.push(torneoName)
-			}
-		})
 
-		//let tournaments = Object.keys(response.medals)
-		tournaments.sort((a, b) => {
-			return parseInt(a.replace("t", "")) - parseInt(b.replace("t", ""))
-		})
+		if (response.fights) {
+			response.fights.map(i => {
+				const torneoName = i.tournament.split("_")[0]
+				if (!tournaments.includes(torneoName)) {
+					tournaments.push(torneoName)
+				}
+			})
 
-		response['groupedFights'] = {}
+			//let tournaments = Object.keys(response.medals)
+			tournaments.sort((a, b) => {
+				return parseInt(a.replace("t", "")) - parseInt(b.replace("t", ""))
+			})
+
+			response['groupedFights'] = {}
+		}
+
+
 
 		let openFightsSection = []
 
@@ -302,6 +308,10 @@ class Nft extends Component {
 		const data = docSnap.data()
 
 		//console.log(data);
+
+		if (!nft.hp) {
+			return
+		}
 
 		let historyUpgrades = []
 

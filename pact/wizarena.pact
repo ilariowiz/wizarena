@@ -2096,7 +2096,6 @@
         @doc "Return the fields for a given id"
         (let (
                 (info-market (read nfts-market (int-to-str 10 id)))
-                (info-stat (read stats (int-to-str 10 id)))
                 (confirmBurn (check-nft-in-burning-queue (int-to-str 10 id)))
                 (max-reveal (str-to-int (get-value ID_REVEAL)))
             )
@@ -2105,6 +2104,7 @@
                 (< id max-reveal)
                 (let (
                         (info (read nfts (int-to-str 10 id)))
+                        (info-stat (read stats (int-to-str 10 id)))
                     )
                     (+ (+ (+ info info-market) info-stat) {"confirmBurn":confirmBurn})
                 )
