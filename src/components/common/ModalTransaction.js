@@ -158,7 +158,7 @@ class ModalTransaction extends Component {
 				title = 'Review transaction'
 				body = ''
 				if (type === 'mint') {
-					body = `You will mint ${amountToMint} Clerics`
+					body = `You will mint ${amountToMint} Druids`
 				}
 				else if (type === 'list') {
 					body = `You will list ${nameNft} for ${inputPrice} KDA. Marketplace Fee: 7%`
@@ -295,7 +295,7 @@ class ModalTransaction extends Component {
 				body = ''
 				buttonText = ''
 				if (type === 'mint') {
-					body = "Clerics successfully minted!"
+					body = "Druids successfully minted!"
 					buttonText = 'Close'
 				}
 				else if (type === 'list' || type === 'listequipment') {
