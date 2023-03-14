@@ -35,7 +35,12 @@ class Sales extends Component {
 
     async loadSales(next) {
 
-        const newDate = moment().subtract(28, 'days').format()
+        let days = 28
+        if (window.innerWidth < 700) {
+            days = 21
+        }
+
+        const newDate = moment().subtract(days, 'days').format()
 
         //console.log(newDate);
 
@@ -160,8 +165,8 @@ class Sales extends Component {
                     dataSales.length > 0 ?
                     <Chart
                         chartType='ColumnChart'
-                        width='100%'
-                        height='400px'
+                        width={boxW}
+                        height={400}
                         data={dataSales}
                         options={{
                             backgroundColor: BACKGROUND_COLOR,
@@ -171,9 +176,17 @@ class Sales extends Component {
                             vAxis: {
                                 textStyle:{ color: 'white', fontSize: 14, fontName: "PerfectDOS"}
                             },
-                            legend: { textStyle: { color: 'white', fontSize: 16, fontName: "PerfectDOS" } }
+                            legend: { position: 'none' }
                         }}
                         chartEvents={this.chartEvents}
+                        chartArea={{
+                            width: boxW,
+                            height: 400,
+                            top: 16,
+                            bottom: 16,
+                            left: 16,
+                            right: 16
+                        }}
                     />
                     : null
                 }
