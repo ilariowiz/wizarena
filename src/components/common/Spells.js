@@ -366,7 +366,7 @@ const allSpells = [
 		name: "Hellish Flame",
 		atkBase: 6,
 		dmgBase: 7,
-		condition: { name: 'Burn 2', effect: "malus_4_atk", pct: 60 },
+		condition: { name: 'Burn 2', effect: "malus_4_def", pct: 60 },
 		element: 'Fire'
 	},
 	{
@@ -426,7 +426,7 @@ const allSpells = [
 		name: "Wind Barrier",
 		atkBase: 6,
 		dmgBase: 6,
-		condition: { name: 'Protection', effect: "malus_3_atk", pct: 75 },
+		condition: { name: 'Protection', effect: "malus_3_dmg", pct: 75 },
 		element: 'Wind'
 	},
 	{
@@ -456,7 +456,7 @@ const allSpells = [
 		name: "Light Shield",
 		atkBase: 6,
 		dmgBase: 6,
-		condition: { name: 'Protection', effect: "malus_3_atk", pct: 75 },
+		condition: { name: 'Protection', effect: "malus_3_dmg", pct: 75 },
 		element: 'Sun'
 	},
 	{
@@ -508,7 +508,7 @@ const allSpells = [
 		name: "Water Barrier",
 		atkBase: 6,
 		dmgBase: 6,
-		condition: { name: 'Protection', effect: "malus_3_atk", pct: 75 },
+		condition: { name: 'Protection', effect: "malus_3_dmg", pct: 75 },
 		element: 'Water'
 	},
 	// PSYCHO

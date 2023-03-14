@@ -61,7 +61,7 @@ const conditions = [
     },
     {
         name: "Burn 2",
-        effect: "Inflicts a penalty of 4 on the opponent's attack",
+        effect: "Inflicts a penalty of 4 on the opponent's defense",
     },
     {
         name: "Fear 2",
@@ -77,7 +77,7 @@ const conditions = [
     },
     {
         name: "Protection",
-        effect: "Inflicts a penalty of 3 on the opponent's attack",
+        effect: "Inflicts a penalty of 3 on the opponent's damage",
     },
     {
         name: "Fear 3",
