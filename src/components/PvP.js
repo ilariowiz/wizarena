@@ -353,6 +353,20 @@ class PvP extends Component {
             return
         }
 
+        const fightsStart = moment().isAfter(pvpFightsStartDate)
+
+        if (!fightsStart) {
+            const docRefT = doc(firebasedb, "pvp_training", `${pvpWeek}_#${item.id}`)
+            const docSnapT = await getDoc(docRefT)
+
+            let dataT = docSnapT.data()
+
+            if (!dataT) {
+                const docRefTraining = doc(firebasedb, "pvp_training", `${pvpWeek}_#${item.id}`)
+                await setDoc(docRefTraining, { "lose": 0, "win": 0 })
+            }
+        }
+
 
         const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_#${item.id}`)
         const docSnap = await getDoc(docRef)
@@ -388,10 +402,6 @@ class PvP extends Component {
         else {
             await setDoc(docRef, { "lose": 0, "win": 0, "maxFights": item.rounds })
             //toast.error('Something goes wrong... please try again')
-
-            const docRefTraining = doc(firebasedb, "pvp_training", `${pvpWeek}_#${item.id}`)
-            await setDoc(docRefTraining, { "lose": 0, "win": 0 })
-
             window.location.reload()
             return
         }
@@ -457,7 +467,7 @@ class PvP extends Component {
 
         //return
 
-        const fightsStart = moment().isAfter(pvpFightsStartDate)
+
 
         const sfida = {
             player1: item,
