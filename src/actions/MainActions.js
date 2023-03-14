@@ -48,8 +48,10 @@ import {
 	STORE_WIZA_NOT_CLAIMED,
 	RING_MINT_PRICE,
 	LOAD_BUYIN_WIZA,
+	LOAD_BUYIN_ELITE,
 	LOAD_FEE_TOURNAMENT_WIZA,
 	LOAD_SUBSCRIBED_WIZA,
+	LOAD_SUBSCRIBED_ELITE,
 	SET_KADENA_NAME,
 	SELECT_WIZARD
 } from './types'
@@ -261,7 +263,7 @@ export const connectWalletConnect = (netId, chainId, gasPrice, gasLimit, network
 			kadena: {
 				methods: ["kadena_sign"],
 				chains: ["kadena:mainnet01"],
-				events: ["kadena_transaction_updated"]
+				events: []
 			}
 		}
 
@@ -393,7 +395,7 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 				//console.log("response post reduce", blocks)
 				dispatch({ type: LOAD_ALL_NFTS_IDS, payload: { allNftsIds: response } })
 
-				let partsBlock = _.chunk(response, Math.ceil(response.length/3))
+				let partsBlock = _.chunk(response, Math.ceil(response.length/5))
 
 				let promises = []
                 partsBlock.map(pr => {
@@ -532,10 +534,12 @@ export const loadBlockNftsSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, g
 				if (tournamentType === "kda") {
 					dispatch({ type: LOAD_SUBSCRIBED, payload: { nfts: response, subscribedKdaSpellGraph: subscribedSpellGraph } })
 				}
-				else {
+				else if (tournamentType === "wiza") {
 					dispatch({ type: LOAD_SUBSCRIBED_WIZA, payload: { nfts: response, subscribedWizaSpellGraph: subscribedSpellGraph } })
 				}
-
+				else if (tournamentType === "elite") {
+					dispatch({ type: LOAD_SUBSCRIBED_ELITE, payload: { nfts: response, subscribedEliteSpellGraph: subscribedSpellGraph } })
+				}
 			}
 		})
 	}
@@ -1140,8 +1144,11 @@ export const getBuyin = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, 
 			if (buyinKey === "buyin-key") {
 				dispatch({ type: LOAD_BUYIN, payload: response })
 			}
-			else {
+			else if (buyinKey === "buyin-wiza-key") {
 				dispatch({ type: LOAD_BUYIN_WIZA, payload: response })
+			}
+			else if (buyinKey === "buyin-elite-key") {
+				dispatch({ type: LOAD_BUYIN_ELITE, payload: response })
 			}
 		})
 	}
@@ -1942,6 +1949,50 @@ export const subscribeToTournamentMassWIZA = (chainId, gasPrice = DEFAULT_GAS_PR
 	return (dispatch) => {
 
 		let pactCode = `(free.${CONTRACT_NAME}.subscribe-tournament-wiza-mass ${JSON.stringify(list)} "${account.account}" free.wiza)`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
+				[account.account]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		//console.log(caps);
+
+		let gasL = 3000 * list.length
+		if (gasL > 180000) {
+			gasL = 180000
+		}
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit: gasL,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("subscribeToTournamentMassWIZA", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const subscribeToTournamentMassELITE = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, list) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.subscribe-tournament-elite-mass ${JSON.stringify(list)} "${account.account}" free.wiza)`;
 
 		let caps = [
 			Pact.lang.mkCap(
@@ -2948,15 +2999,15 @@ export const signTransaction = (cmdToSign, isXWallet, isQRWalletConnect, qrWalle
 				//console.log(accountConnectedRes);
 
 				if (accountConnectedRes && accountConnectedRes.status !== "success") {
-					console.log("X Wallet connection was lost, please re-connect")
-					dispatch(updateTransactionState("error", "X Wallet connection was lost, please re-connect"))
+					console.log("eckoWallet connection was lost, please re-connect")
+					dispatch(updateTransactionState("error", "eckoWallet connection was lost, please re-connect"))
 					dispatch(logout(isXWallet, netId))
 
 					return
 				}
 				else if (accountConnectedRes && accountConnectedRes.wallet && accountConnectedRes.wallet.account !== account.account) {
 					console.log(`Wrong X Wallet account selected in extension, please select ${account.account}`)
-					dispatch(updateTransactionState("error", `Wrong X Wallet account selected in extension, please select ${account.account}`))
+					dispatch(updateTransactionState("error", `Wrong eckoWallet account selected in extension, please select ${account.account}`))
 					return
 				}
 				/*
@@ -2977,8 +3028,8 @@ export const signTransaction = (cmdToSign, isXWallet, isQRWalletConnect, qrWalle
 			}
 
 			if (xwalletSignRes.status !== "success") {
-				console.log("Failed to sign the command in X-Wallet")
-				dispatch(updateTransactionState("error", `Failed to sign the command in X-Wallet`))
+				console.log("Failed to sign the command in eckoWallet")
+				dispatch(updateTransactionState("error", `Failed to sign the command in eckoWallet`))
 				return
 			}
 
@@ -3062,6 +3113,7 @@ export const signTransaction = (cmdToSign, isXWallet, isQRWalletConnect, qrWalle
 		}
 
 		//console.log(signedCmd)
+
 		dispatch(updateTransactionState("signedCmd", signedCmd))
 
 		let localRes = null
