@@ -137,10 +137,11 @@ class OfferItem extends Component {
     				</p>
 
     				{
-    					!isMobile && kadenaPrice &&
+    					!isMobile && kadenaPrice && kadenaPrice > 0 ?
     					<p style={{ fontSize: 15, color: 'white', marginLeft: 10 }}>
     						(USD ${(kadenaPrice * item.amount).toFixed(2)})
     					</p>
+                        : null
     				}
                 </div>
 
