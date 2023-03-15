@@ -18,7 +18,7 @@
                     (kdareserve (at "reserve" (at "leg0" data)))
                     (wizareserve (at "reserve" (at "leg1" data)))
                 )
-                (ceiling (/ wizareserve kdareserve) 2)
+                (floor (/ wizareserve kdareserve) 4)
             )
         )
     )
