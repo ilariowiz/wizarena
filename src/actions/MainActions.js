@@ -1085,7 +1085,7 @@ export const getVolume = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300,
 	}
 }
 
-export const getWizardsStakedCount = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 60000, networkUrl) => {
+export const getWizardsStakedCount = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 70000, networkUrl) => {
 	return (dispatch) => {
 
 		let cmd = {
