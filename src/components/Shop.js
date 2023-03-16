@@ -246,7 +246,9 @@ class Shop extends Component {
     		let data = docSnap.data()
 
             if (data) {
-                data['speed'] = 0
+                if (!data.speed) {
+                    data['speed'] = 0
+                }
                 //console.log(data);
                 this.setState({ baseStats: data })
             }
