@@ -1614,6 +1614,12 @@
                                     "damage": (+ current-stat increase)
                                 })
                             )
+                            (
+                                (= stat "speed")
+                                (update stats idnft {
+                                    "speed": (+ current-stat increase)
+                                })
+                            )
                         "")
                         (emit-event (BUY_UPGRADE-WITH-AP idnft stat increase ap-cost account))
                     )
@@ -1654,23 +1660,28 @@
                     (def (at "defense" data))
                     (atk (at "attack" data))
                     (dmg (at "damage" data))
+                    (speed (at "speed" data))
                 )
                 (cond
                     (
                         (= stat "hp")
-                        (round (+ (+ (+ (+ hp increase) (* def 4.67)) (* atk 4.67)) (* dmg 2.67)))
+                        (round (+ (+ (+ (+ (+ hp increase) (* def 4.67)) (* atk 4.67)) (* dmg 2.67)) (* speed 2.67)))
                     )
                     (
                         (= stat "defense")
-                        (round (+ (+ (+ hp (* (+ def increase) 4.67)) (* atk 4.67)) (* dmg 2.67)))
+                        (round (+ (+ (+ (+ hp (* (+ def increase) 4.67)) (* atk 4.67)) (* dmg 2.67)) (* speed 2.67)))
                     )
                     (
                         (= stat "attack")
-                        (round (+ (+ (+ hp (* def 4.67)) (* (+ atk increase) 4.67)) (* dmg 2.67)))
+                        (round (+ (+ (+ (+ hp (* def 4.67)) (* (+ atk increase) 4.67)) (* dmg 2.67)) (* speed 2.67)))
                     )
                     (
                         (= stat "damage")
-                        (round (+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* (+ dmg increase) 2.67)))
+                        (round (+ (+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* (+ dmg increase) 2.67)) (* speed 2.67)))
+                    )
+                    (
+                        (= stat "speed")
+                        (round (+ (+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* (+ speed increase) 2.67)) (* dmg 2.67)))
                     )
                 "")
             )
