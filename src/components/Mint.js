@@ -5,7 +5,6 @@ import Media from 'react-media';
 import { AiOutlinePlus } from 'react-icons/ai'
 import { AiOutlineMinus } from 'react-icons/ai'
 import Header from './Header'
-import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import getBoxWidth from './common/GetBoxW'
 import {
@@ -17,7 +16,8 @@ import {
 	setNetworkUrl,
 	readAccountMinted,
 	getMintPhase,
-	getMintPrice
+	getMintPrice,
+	updateInfoTransactionModal
 } from '../actions'
 import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -129,7 +129,7 @@ class Mint extends Component {
 	}
 
 	getMintPrice() {
-		const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
+		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
 		this.props.getMintPrice(chainId, gasPrice, gasLimit, networkUrl, (response) => {
 			this.setState({ mintPrice: response })
@@ -207,6 +207,12 @@ class Mint extends Component {
 			this.setState({ error: 'Mint not started yet' })
 			return
 		}
+
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will mint ${amount} Druids`,
+			typeModal: 'mint',
+			transactionOkText: "Druids successfully minted!",
+		})
 
 		this.props.mintNft(chainId, gasPrice, netId, amount, account, stage, mintPrice)
 	}
@@ -515,8 +521,7 @@ class Mint extends Component {
 	}
 
 	renderBody(isMobile) {
-		const { showModalConnection, stage, amount } = this.state
-		const { showModalTx } = this.props
+		const { showModalConnection, stage } = this.state
 
 		const { boxW, modalW } = getBoxWidth(isMobile)
 
@@ -586,21 +591,6 @@ class Mint extends Component {
 						{this.renderSample(sample4, sampleWidth)}
 					</div>
 				</div>
-
-				<ModalTransaction
-					showModal={showModalTx}
-					width={modalW}
-					type='mint'
-					mintSuccess={() => {
-						this.props.clearTransaction()
-						this.getMintPhase()
-					}}
-					mintFail={() => {
-						this.props.clearTransaction()
-						this.getMintPhase()
-					}}
-					amountToMint={amount}
-				/>
 
 				<ModalConnectionWidget
 					width={modalW}
@@ -735,9 +725,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { totalCountNfts, account, chainId, gasPrice, gasLimit, netId, networkUrl, showModalTx, countMinted } = state.mainReducer;
+	const { totalCountNfts, account, chainId, gasPrice, gasLimit, netId, networkUrl, countMinted } = state.mainReducer;
 
-	return { totalCountNfts, account, chainId, gasPrice, gasLimit, netId, networkUrl, showModalTx, countMinted };
+	return { totalCountNfts, account, chainId, gasPrice, gasLimit, netId, networkUrl, countMinted };
 }
 
 export default connect(mapStateToProps, {
@@ -749,5 +739,6 @@ export default connect(mapStateToProps, {
 	setNetworkUrl,
 	readAccountMinted,
 	getMintPhase,
-	getMintPrice
+	getMintPrice,
+	updateInfoTransactionModal
 })(Mint)

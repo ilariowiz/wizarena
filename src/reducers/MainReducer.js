@@ -21,6 +21,7 @@ import {
 	LOAD_MONTEPREMI,
 	LOAD_SUBSCRIBED,
 	LOAD_SUBSCRIBED_WIZA,
+	LOAD_SUBSCRIBED_ELITE,
 	STORE_FILTERS_STATS,
 	SAVE_WIZA_BALANCE,
 	LOAD_WIZARDS_STAKED,
@@ -31,9 +32,10 @@ import {
 	SET_WIZARD_SELECTED_SHOP,
 	STORE_WIZA_NOT_CLAIMED,
 	LOAD_BUYIN_WIZA,
+	LOAD_BUYIN_ELITE,
 	LOAD_FEE_TOURNAMENT_WIZA,
 	SET_KADENA_NAME,
-	SELECT_WIZARD
+	SELECT_WIZARD,
 } from '../actions/types'
 
 
@@ -60,11 +62,14 @@ const INITIAL_STATE = {
 	montepremi: 0,
 	subscribed: [],
 	buyinWiza: 0,
+	buyinElite: 0,
 	feeTournamentWiza: 0,
 	subscribedWiza: [],
+	subscribedElite: [],
 	statSearched: [],
 	subscribedKdaSpellGraph: {},
 	subscribedWizaSpellGraph: {},
+	subscribedEliteSpellGraph: {},
 	wizaBalance: 0,
 	wizardsStaked: 0,
 	circulatingSupply: 0,
@@ -73,7 +78,7 @@ const INITIAL_STATE = {
 	avgLevelPvP: 0,
 	wizardSelectedIdShop: undefined,
 	kadenaname: "",
-	nftSelected: undefined
+	nftSelected: undefined,
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -132,6 +137,8 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, buyin: action.payload }
 		case LOAD_BUYIN_WIZA:
 			return { ...state, buyinWiza: action.payload }
+		case LOAD_BUYIN_ELITE:
+			return { ...state, buyinElite: action.payload }
 		case LOAD_FEE_TOURNAMENT:
 			return { ...state, feeTournament: action.payload }
 		case LOAD_FEE_TOURNAMENT_WIZA:
@@ -147,6 +154,12 @@ export default (state = INITIAL_STATE, action) => {
 
 			//console.log(nfts, subscribedWizaSpellGraph);
 			return { ...state, subscribedWiza: nfts, subscribedWizaSpellGraph }
+		}
+		case LOAD_SUBSCRIBED_ELITE: {
+			const { nfts, subscribedEliteSpellGraph } = action.payload
+
+			//console.log(nfts, subscribedWizaSpellGraph);
+			return { ...state, subscribedElite: nfts, subscribedEliteSpellGraph }
 		}
 		case STORE_FILTERS_STATS:
 			return { ...state, statSearched: action.payload }

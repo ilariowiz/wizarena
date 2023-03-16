@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Media from 'react-media';
-import { getDoc, doc, setDoc } from "firebase/firestore";
+import { getDoc, doc } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import { AiOutlinePlus } from 'react-icons/ai'
 import { AiOutlineMinus } from 'react-icons/ai'
@@ -12,7 +12,6 @@ import Popup from 'reactjs-popup';
 import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
 import EquipmentCard from './common/EquipmentCard'
-import ModalTransaction from './common/ModalTransaction'
 import ModalOpenItemsMinted from './common/ModalOpenItemsMinted'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import getBoxWidth from './common/GetBoxW'
@@ -25,7 +24,8 @@ import {
     getPageBlockItems,
     getEquipmentVolume,
     mintEquipment,
-    storeFiltersStatsEquip
+    storeFiltersStatsEquip,
+    updateInfoTransactionModal
 } from '../actions'
 import '../css/Shop.css'
 
@@ -188,7 +188,11 @@ class Equipment extends Component {
             return
         }
 
-        this.setState({ typeModal: 'buychest' })
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will buy ${numberOfChest} ${numberOfChest > 1 ? "chests" : "chest"} for ${numberOfChest*RING_MINT_PRICE} $KDA`,
+			typeModal: 'buychest',
+			transactionOkText: `${numberOfChest} ${numberOfChest > 1 ? 'chests' : 'chest'} successfully bought!`,
+		})
 
         this.props.mintEquipment(chainId, gasPrice, netId, numberOfChest, account)
     }
@@ -697,7 +701,7 @@ class Equipment extends Component {
 	}
 
     renderBody(isMobile) {
-        const { allItems, allItemsIds, showModalTx } = this.props
+        const { allItems, allItemsIds } = this.props
 		const { loading, itemsToShow, searchedText, numberOfChest, showModalConnection } = this.state
 
         const { boxW, modalW } = getBoxWidth(isMobile)
@@ -762,26 +766,6 @@ class Equipment extends Component {
 					this.renderPageCounter()
 					: null
 				}
-
-                <ModalTransaction
-					showModal={showModalTx}
-					width={modalW}
-					type={this.state.typeModal}
-					mintSuccess={() => {
-						this.props.clearTransaction()
-						//window.location.reload()
-                        if (this.state.typeModal === "buychest") {
-                            setTimeout(() => {
-                                this.setState({ showModalOpenChests: true })
-                            }, 300)
-                        }
-					}}
-					mintFail={() => {
-						this.props.clearTransaction()
-						window.location.reload()
-					}}
-                    numberOfChest={this.state.numberOfChest}
-				/>
 
                 {
                     this.state.showModalOpenChests &&
@@ -969,10 +953,10 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, gasPrice, gasLimit, netId, networkUrl, showModalTx } = state.mainReducer;
+	const { account, chainId, gasPrice, gasLimit, netId, networkUrl } = state.mainReducer;
     const { statSearchedEquipment, allItems, allItemsIds, totalCountItems, totalMintedItems, itemsBlockId } = state.equipmentReducer
 
-	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, showModalTx, statSearchedEquipment, allItems, allItemsIds, totalCountItems, totalMintedItems, itemsBlockId };
+	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, statSearchedEquipment, allItems, allItemsIds, totalCountItems, totalMintedItems, itemsBlockId };
 }
 
 export default connect(mapStateToProps, {
@@ -983,5 +967,6 @@ export default connect(mapStateToProps, {
     getPageBlockItems,
     getEquipmentVolume,
     mintEquipment,
-    storeFiltersStatsEquip
+    storeFiltersStatsEquip,
+    updateInfoTransactionModal
 })(Equipment)

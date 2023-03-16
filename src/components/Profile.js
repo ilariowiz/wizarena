@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import { connect } from 'react-redux'
-import { collection, getDocs } from "firebase/firestore";
-import { firebasedb } from '../components/Firebase';
 import moment from 'moment'
 import _ from 'lodash'
 import { IoClose } from 'react-icons/io5'
@@ -13,12 +11,9 @@ import OfferItem from './common/OfferItem'
 import OfferEquipmentItem from './common/OfferEquipmentItem'
 import NftCardStake from './common/NftCardStake'
 import EquipmentCard from './common/EquipmentCard'
-import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
-import CardSingleFightProfile from './common/CardSingleFightProfile'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
-import convertMedalName from './common/ConvertMedalName'
 import {
 	loadUserMintedNfts,
 	clearTransaction,
@@ -41,7 +36,8 @@ import {
 	getEquipmentOffersMade,
 	withdrawEquipmentOffer,
 	getWizardsStakeInfo,
-	calculateRewardMass
+	calculateRewardMass,
+	updateInfoTransactionModal
 } from '../actions'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -59,18 +55,14 @@ class Profile extends Component {
 			loading: true,
 			showModalConnection: false,
 			isConnected,
-			typeModal: 'subscription',
 			error: '',
-			nameNftSubscribed: '',
 			unclaimedWizaTotal: 0,
 			stakeInfo: [],
 			stakedIds: [],
 			notStakedIds: [],
 			offersMade: [],
 			offersReceived: [],
-			offerInfoRecap: "",
 			kadenaPrice: undefined,
-			saleValues: {},
 			equipment: [],
 			offersEquipmentMade: [],
 			statSearched: [],
@@ -129,7 +121,7 @@ class Profile extends Component {
 	}
 
 	loadStakeInfo(response) {
-		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
 		const onlyids = response.map(i => i.id)
 
@@ -250,7 +242,13 @@ class Profile extends Component {
 	stakeNft(idnft) {
 		const { chainId, gasPrice, netId, account } = this.props
 
-		this.setState({ nameNftSubscribed: `#${idnft}`, typeModal: "stake" })
+		let text = `You will stake #${idnft}. You can unstake it any time. While it is staked you will not be able to sell this wizard but you will still be able to register it for tournaments.`
+
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: text,
+			typeModal: 'stake',
+			transactionOkText: `Your Wizard #${idnft} is staked!`
+		})
 
 		this.props.stakeNft(chainId, gasPrice, 4000, netId, idnft, account)
 	}
@@ -258,7 +256,13 @@ class Profile extends Component {
 	unstakeNft(idnft) {
 		const { chainId, gasPrice, netId, account } = this.props
 
-		this.setState({ nameNftSubscribed: `#${idnft}`, typeModal: "unstake" })
+		let text = `You will unstake #${idnft}`
+
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: text,
+			typeModal: 'unstake',
+			transactionOkText: `Your Wizard #${idnft} is unstaked!`
+		})
 
 		this.props.unstakeNft(chainId, gasPrice, 4000, netId, idnft, account)
 	}
@@ -266,7 +270,13 @@ class Profile extends Component {
 	claimWizaWithoutUnstake(idnft) {
 		const { chainId, gasPrice, netId, account } = this.props
 
-		this.setState({ nameNftSubscribed: `#${idnft}`, typeModal: "claim" })
+		let text = `You will claim your $WIZA mined by #${idnft}`
+
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: text,
+			typeModal: 'claim',
+			transactionOkText: `Your $WIZA have been claimed!`
+		})
 
 		this.props.claimWithoutUnstake(chainId, gasPrice, 4000, netId, idnft, account)
 	}
@@ -280,7 +290,11 @@ class Profile extends Component {
 			return
 		}
 
-		this.setState({ typeModal: "claimall" })
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will claim your $WIZA mined by all your wizards`,
+			typeModal: 'claimall',
+			transactionOkText: `Your $WIZA have been claimed!`
+		})
 
 		let objects = []
 		stakedIds.map(i => {
@@ -306,7 +320,11 @@ class Profile extends Component {
 			return
 		}
 
-		this.setState({ typeModal: "unstakeandclaimall" })
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will unstake and claim your $WIZA mined by all your wizards`,
+			typeModal: 'unstakeandclaimall',
+			transactionOkText: `Your $WIZA have been claimed!`
+		})
 
 		let objects = []
 		stakedIds.map(i => {
@@ -332,7 +350,11 @@ class Profile extends Component {
 			return
 		}
 
-		this.setState({ typeModal: "stakeall" })
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will stake all your wizards that aren't listed or in burning queue`,
+			typeModal: 'stakeall',
+			transactionOkText: `Your Wizards are staked!`
+		})
 
 		let objects = []
 		notStakedIds.map(i => {
@@ -353,7 +375,11 @@ class Profile extends Component {
 	addToBurning(id) {
 		const { chainId, gasPrice, netId, account } = this.props
 
-		this.setState({ typeModal: "burningon", nameNftSubscribed: `#${id}` })
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `Your Wizard #${id} has been added to the burning queue!`,
+			typeModal: 'burningon',
+			transactionOkText: `You will add Wizard #${id} to the burning queue`
+		})
 
 		this.props.addNftToBurningQueue(chainId, gasPrice, netId, id, account)
 	}
@@ -361,7 +387,11 @@ class Profile extends Component {
 	removeFromBurning(id) {
 		const { chainId, gasPrice, netId, account } = this.props
 
-		this.setState({ typeModal: "burningoff", nameNftSubscribed: `#${id}` })
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will remove #${id} from burning queue`,
+			typeModal: 'burningoff',
+			transactionOkText: `Your Wizard #${id} has been removed from the burning queue`
+		})
 
 		this.props.removeNftFromBurningQueue(chainId, gasPrice, netId, id, account)
 	}
@@ -369,9 +399,14 @@ class Profile extends Component {
 	delist(id) {
 		const { account, chainId, gasPrice, netId } = this.props
 
-		this.setState({ typeModal: 'delist', nameNftSubscribed: `#${id}` }, () => {
-			this.props.delistNft(chainId, gasPrice, 700, netId, account, id)
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will delist #${id}`,
+			typeModal: 'delist',
+			transactionOkText: 'Delisting successfully',
+			nameNft: `#${id}`
 		})
+
+		this.props.delistNft(chainId, gasPrice, 700, netId, account, id)
 	}
 
 	acceptOffer(offer) {
@@ -382,17 +417,26 @@ class Profile extends Component {
 
 		let saleValues = { id: offer.refnft, amount: offer.amount }
 
-		this.setState({ typeModal: 'acceptoffer', offerInfoRecap, saleValues }, () => {
-			this.props.acceptOffer(chainId, gasPrice, 5000, netId, offer.id, offer.refnft, account)
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: offerInfoRecap,
+			typeModal: 'acceptoffer',
+			transactionOkText: `Offer accepted!`,
+			saleValues
 		})
+
+		this.props.acceptOffer(chainId, gasPrice, 5000, netId, offer.id, offer.refnft, account)
 	}
 
 	withdrawEquipmentOffer(offer) {
 		const { account, chainId, gasPrice, netId } = this.props
 
-		this.setState({ typeModal: 'withdrawoffer' }, () => {
-			this.props.withdrawEquipmentOffer(chainId, gasPrice, 5000, netId, offer.id, account)
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: 'You will withdraw funds from this offer',
+			typeModal: 'withdrawoffer',
+			transactionOkText: 'Funds successfully withdrawn'
 		})
+
+		this.props.withdrawEquipmentOffer(chainId, gasPrice, 5000, netId, offer.id, account)
 	}
 
 	async searchByStat(stat) {
@@ -688,9 +732,6 @@ class Profile extends Component {
 							isMobile={isMobile}
 							history={this.props.history}
 							onAcceptOffer={() => this.acceptOffer(item)}
-							onWithdrawOffer={() => {
-								this.setState({ typeModal: 'withdrawoffer' })
-							}}
 						/>
 					)
 				})}
@@ -724,7 +765,6 @@ class Profile extends Component {
 		const selStyle = { borderBottomWidth: 3, borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderColor: CTA_COLOR, borderStyle: 'solid' }
 		const unselStyle = { borderBottomWidth: 3, borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderColor: 'transparent', borderStyle: 'solid' }
 		const selectedStyle1 = section === 1 ? selStyle : unselStyle
-		const selectedStyle2 = section === 2 ? selStyle : unselStyle
 		const selectedStyle3 = section === 3 ? selStyle : unselStyle
 		const selectedStyle4 = section === 4 ? selStyle : unselStyle
 		const selectedStyle5 = section === 5 ? selStyle : unselStyle
@@ -767,7 +807,7 @@ class Profile extends Component {
 							return
 						}
 
-						this.setState({ section: 3, loading: true, typeModal: "withdrawoffer" })
+						this.setState({ section: 3, loading: true })
 						this.loadOffersMade()
 					}}
 				>
@@ -796,7 +836,7 @@ class Profile extends Component {
 	}
 
 	renderBody(isMobile) {
-		const { account, showModalTx, wizaBalance } = this.props
+		const { account, wizaBalance } = this.props
 		const { showModalConnection, isConnected, section, loading, unclaimedWizaTotal, offersMade, offersReceived, offersEquipmentMade } = this.state
 
 		const { boxW, modalW } = getBoxWidth(isMobile)
@@ -946,34 +986,6 @@ class Profile extends Component {
 					null
 				}
 
-				<ModalTransaction
-					showModal={showModalTx}
-					width={modalW}
-					type={this.state.typeModal}
-					mintSuccess={() => {
-						this.props.clearTransaction()
-
-						if (this.state.typeModal === "subscription") {
-							this.loadTournament()
-						}
-						else {
-							window.location.reload()
-						}
-					}}
-					mintFail={() => {
-						this.props.clearTransaction()
-						if (this.state.typeModal === "subscription") {
-							this.loadTournament()
-						}
-						else {
-							window.location.reload()
-						}
-					}}
-					nameNft={this.state.nameNftSubscribed}
-					offerInfoRecap={this.state.offerInfoRecap}
-					saleValues={this.state.saleValues}
-				/>
-
 			</div>
 		)
 	}
@@ -1084,9 +1096,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, wizaBalance } = state.mainReducer;
+	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, wizaBalance } = state.mainReducer;
 
-	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, wizaBalance };
+	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, wizaBalance };
 }
 
 export default connect(mapStateToProps, {
@@ -1111,5 +1123,6 @@ export default connect(mapStateToProps, {
 	getEquipmentOffersMade,
 	withdrawEquipmentOffer,
 	getWizardsStakeInfo,
-	calculateRewardMass
+	calculateRewardMass,
+	updateInfoTransactionModal
 })(Profile)

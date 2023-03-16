@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getDocs, collection, doc, getDoc, query, where, orderBy, limit } from "firebase/firestore";
+import { getDocs, collection, query, where, orderBy } from "firebase/firestore";
 import { firebasedb } from './Firebase';
-import { Chart, ReactGoogleChartEvent } from "react-google-charts";
+import { Chart } from "react-google-charts";
 import Media from 'react-media';
 import Header from './Header'
 import DotLoader from 'react-spinners/DotLoader';

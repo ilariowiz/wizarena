@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import DotLoader from 'react-spinners/DotLoader';
 import {
-	fetchAccountDetails,
 	connectXWallet,
 	connectChainweaver,
 	connectWalletConnect
@@ -246,7 +245,6 @@ const mapStateToProps = (state) => {
 }
 
 export default connect(mapStateToProps, {
-	fetchAccountDetails,
 	connectXWallet,
 	connectChainweaver,
 	connectWalletConnect

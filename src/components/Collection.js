@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import { connect } from 'react-redux'
 import Media from 'react-media';
 import Popup from 'reactjs-popup';
-import { getDocs, collection, query, where } from "firebase/firestore";
-import { firebasedb } from './Firebase';
 import DotLoader from 'react-spinners/DotLoader';
 import { IoClose } from 'react-icons/io5'
 import Header from './Header'

@@ -12,7 +12,6 @@ import toast, { Toaster } from 'react-hot-toast';
 import { getDocs, collection, doc, getDoc, query, where } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Header from './Header';
-import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import ModalTransfer from './common/ModalTransfer'
 import ModalMakeOffer from './common/ModalMakeOffer'
@@ -22,6 +21,7 @@ import getImageUrl from './common/GetImageUrl'
 import getRingBonuses from './common/GetRingBonuses'
 import traits_qty from './common/Traits_qty'
 import traits_qty_clerics from './common/Traits_qty_clerics'
+import traits_qty_druids from './common/Traits_qty_druids'
 import conditions from './common/Conditions'
 import allSpells from './common/Spells'
 import titles from './common/LeagueTitle'
@@ -40,9 +40,10 @@ import {
 	getOffersForNft,
 	makeOffer,
 	acceptOffer,
-	getInfoItemEquipped
+	getInfoItemEquipped,
+	updateInfoTransactionModal
 } from '../actions'
-import { MAIN_NET_ID, REVEAL_CAP, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, CTA_COLOR, CONTRACT_NAME } from '../actions/types'
+import { MAIN_NET_ID, REVEAL_CAP, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
 
 const logoKda = require('../assets/kdalogo2.png')
@@ -75,7 +76,6 @@ class Nft extends Component {
 			loadingOffers: true,
 			showModalOffer: false,
 			offerInfoRecap: "",
-			makeOfferValues: {},
 			saleValues: {},
 			equipment: {},
 			maxStats: undefined
@@ -395,9 +395,15 @@ class Nft extends Component {
 			return
 		}
 
-		this.setState({ typeModal: 'list' }, () => {
-			this.props.listNft(chainId, gasPrice, 1700, netId, nft.id, parseFloat(inputPrice).toFixed(2), account)
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will list ${nft.name} for ${inputPrice} KDA. Marketplace Fee: 7%`,
+			typeModal: 'list',
+			transactionOkText: 'Listing successfully',
+			idNft: nft.id,
+			inputPrice
 		})
+
+		this.props.listNft(chainId, gasPrice, 1700, netId, nft.id, parseFloat(inputPrice).toFixed(2), account)
 
 	}
 
@@ -405,9 +411,14 @@ class Nft extends Component {
 		const { nft } = this.state;
 		const { account, chainId, gasPrice, netId } = this.props
 
-		this.setState({ typeModal: 'delist' }, () => {
-			this.props.delistNft(chainId, gasPrice, 700, netId, account, nft.id)
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will delist #${nft.id}`,
+			typeModal: 'delist',
+			transactionOkText: 'Delisting successfully',
+			nameNft: `#${nft.id}`,
 		})
+
+		this.props.delistNft(chainId, gasPrice, 700, netId, account, nft.id)
 	}
 
 	buy() {
@@ -416,18 +427,27 @@ class Nft extends Component {
 
 		let saleValues = { id: nft.id, amount: nft.price }
 
-		this.setState({ typeModal: 'buy', saleValues }, () => {
-			this.props.buyNft(chainId, gasPrice, 7000, netId, account, nft)
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will buy #${nft.id} (you will need KDA on chain 1)`,
+			typeModal: 'buy',
+			transactionOkText: `You bought #${nft.id}`,
+			saleValues
 		})
+
+		this.props.buyNft(chainId, gasPrice, 7000, netId, account, nft)
 	}
 
 	transfer(receiver) {
 		const { nft } = this.state
 		const { account, chainId, gasPrice, netId } = this.props
 
-		this.setState({ typeModal: 'transfer' }, () => {
-			this.props.transferNft(chainId, gasPrice, 1500, netId, nft.id, account, receiver)
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will transfer #${nft.id} to another wallet`,
+			typeModal: 'transfer',
+			transactionOkText: `Transfer completed successfully`,
 		})
+
+		this.props.transferNft(chainId, gasPrice, 1500, netId, nft.id, account, receiver)
 	}
 
 	submitOffer(amount, duration) {
@@ -443,7 +463,14 @@ class Nft extends Component {
 			owner: nft.owner
 		}
 
-		this.setState({ typeModal: 'makeoffer', showModalOffer: false, makeOfferValues }, () => {
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will submit the offer. Remember that the amount of the offer will be locked in the contract for the duration of the offer.`,
+			typeModal: 'makeoffer',
+			transactionOkText: `Offer sent!`,
+			makeOfferValues
+		})
+
+		this.setState({ showModalOffer: false }, () => {
 			this.props.makeOffer(chainId, gasPrice, 4000, netId, nft.id, account, duration, amount)
 		})
 	}
@@ -457,9 +484,14 @@ class Nft extends Component {
 
 		let saleValues = { id: nft.id, amount: offer.amount }
 
-		this.setState({ typeModal: 'acceptoffer', offerInfoRecap, saleValues }, () => {
-			this.props.acceptOffer(chainId, gasPrice, 5000, netId, offer.id, nft.id, account)
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: offerInfoRecap,
+			typeModal: 'acceptoffer',
+			transactionOkText: `Offer accepted!`,
+			saleValues
 		})
+
+		this.props.acceptOffer(chainId, gasPrice, 5000, netId, offer.id, nft.id, account)
 	}
 
 	copyLink() {
@@ -478,6 +510,7 @@ class Nft extends Component {
 		const { nft } = this.state
 
 		let percentString;
+
 		if (parseInt(this.state.nft.id) < REVEAL_CAP) {
 
 			//se id < 1024 prendiamo i tratti dei wizards, altrimenti quelli dei clerics
@@ -489,6 +522,12 @@ class Nft extends Component {
 			}
 			else if (parseInt(nft.id) >= 1024 && parseInt(nft.id) < 2048) {
 				const section = traits_qty_clerics[item.trait_type.toLowerCase()]
+				const qty = section[item.value]
+
+				percentString = qty * 100 / 1024
+			}
+			else if (parseInt(nft.id) >= 2048) {
+				const section = traits_qty_druids[item.trait_type.toLowerCase()]
 				const qty = section[item.value]
 
 				percentString = qty * 100 / 1024
@@ -952,6 +991,7 @@ class Nft extends Component {
 						<img
 							style={{ width: 40, height: 40, marginRight: 6 }}
 							src={title.img}
+							alt="Cup"
 						/>
 
 						<p style={{ fontSize: 22, color: title.textColor }}>
@@ -1540,6 +1580,7 @@ class Nft extends Component {
 						<img
 							src={equipment.url}
 							style={{ width: 100 }}
+							alt="Equipment"
 						/>
 
 						<div style={{ flexDirection: 'column' }}>
@@ -1841,8 +1882,7 @@ class Nft extends Component {
 	}
 
 	render() {
-		const { showModalTx } = this.props
-		const { inputPrice, nft, typeModal, showModalConnection, loading, error, showModalTransfer, showModalOffer } = this.state
+		const { showModalConnection, loading, error, showModalTransfer, showModalOffer } = this.state
 
 		let modalW = window.innerWidth * 82 / 100
 		if (modalW > 480) {
@@ -1897,26 +1937,6 @@ class Nft extends Component {
 					error &&
 					this.renderError()
 				}
-
-				<ModalTransaction
-					showModal={showModalTx}
-					width={modalW}
-					type={typeModal}
-					inputPrice={inputPrice}
-					idNft={nft.id}
-					nameNft={nft.name}
-					mintSuccess={() => {
-						this.props.clearTransaction()
-						this.getPathNft()
-					}}
-					mintFail={() => {
-						this.props.clearTransaction()
-						this.getPathNft()
-					}}
-					offerInfoRecap={this.state.offerInfoRecap}
-					makeOfferValues={this.state.makeOfferValues}
-					saleValues={this.state.saleValues}
-				/>
 
 				<ModalConnectionWidget
 					width={modalW}
@@ -2096,9 +2116,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, nftSelected, userMintedNfts, subscribed, subscribedWiza } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, nftSelected, userMintedNfts, subscribed, subscribedWiza } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, nftSelected, userMintedNfts, subscribed, subscribedWiza };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, nftSelected, userMintedNfts, subscribed, subscribedWiza };
 }
 
 export default connect(mapStateToProps, {
@@ -2114,5 +2134,6 @@ export default connect(mapStateToProps, {
 	getOffersForNft,
 	makeOffer,
 	acceptOffer,
-	getInfoItemEquipped
+	getInfoItemEquipped,
+	updateInfoTransactionModal
 })(Nft);

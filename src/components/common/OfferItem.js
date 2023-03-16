@@ -3,9 +3,10 @@ import { connect } from 'react-redux'
 import getImageUrl from './GetImageUrl'
 import moment from 'moment'
 import {
-    withdrawOffer
+    withdrawOffer,
+    updateInfoTransactionModal
 } from '../../actions'
-import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
+import { CTA_COLOR } from '../../actions/types'
 import '../../css/Nft.css'
 
 class OfferItem extends Component {
@@ -49,7 +50,12 @@ class OfferItem extends Component {
 					className='btnH'
 					style={styles.btnAccept}
 					onClick={() => {
-                        this.props.onWithdrawOffer()
+                        this.props.updateInfoTransactionModal({
+                			transactionToConfirmText: 'You will withdraw funds from this offer',
+                			typeModal: 'withdrawoffer',
+                			transactionOkText: 'Funds successfully withdrawn'
+                		})
+
                         this.props.withdrawOffer(chainId, gasPrice, 5000, netId, item.id, account)
                     }}
 				>
@@ -110,7 +116,7 @@ class OfferItem extends Component {
 	}
 
 	render() {
-		const { item, index, kadenaPrice, isOwner, isBuyer, showImage, isMobile } = this.props
+		const { item, kadenaPrice, isOwner, isBuyer, showImage, isMobile } = this.props
 
 		return (
 			<div
@@ -211,5 +217,6 @@ const mapStateToProps = (state) => {
 }
 
 export default connect(mapStateToProps, {
-    withdrawOffer
+    withdrawOffer,
+    updateInfoTransactionModal
 })(OfferItem)

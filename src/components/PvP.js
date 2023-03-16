@@ -9,7 +9,6 @@ import moment from 'moment'
 import _ from 'lodash'
 import Popup from 'reactjs-popup';
 import Header from './Header'
-import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import ModalSpellbook from './common/ModalSpellbook'
 import ModalWizaPvP from './common/ModalWizaPvP'
@@ -33,7 +32,8 @@ import {
     changeSpellPvP,
     getWizaBalance,
     loadSingleNft,
-    loadEquipMinted
+    loadEquipMinted,
+    updateInfoTransactionModal
 } from '../actions'
 import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -50,8 +50,6 @@ class PvP extends Component {
             loading: true,
             isConnected,
             showModalConnection: false,
-            typeModal: 'subscribe_pvp',
-            nameNftToSubscribe: '',
             pvpOpen: false,
             pvpWeek: "",
             pvpWeekEnd: undefined,
@@ -69,7 +67,6 @@ class PvP extends Component {
             idNftIncrementFights: "",
             equipment: [],
             toSubscribe: [],
-            sumSubscribePvP: ""
         }
     }
 
@@ -238,7 +235,12 @@ class PvP extends Component {
 		let tot = 0
         toSubscribe.map(i => tot += i.wizaAmount)
 
-		this.setState({ sumSubscribePvP: `You will subscribe ${toSubscribe.length} wizards for ${toSubscribe.length} KDA and ${tot} WIZA`, typeModal: "subscribe_pvp" })
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will subscribe ${toSubscribe.length} wizards for ${toSubscribe.length} KDA and ${tot} WIZA`,
+			typeModal: 'subscribe_pvp',
+			transactionOkText: `Your Wizards are registered for PvP arena!`,
+            toSubscribePvP: toSubscribe
+		})
 
 		this.props.subscribeToPvPMass(chainId, gasPrice, gasLimit, netId, account, toSubscribe)
 	}
@@ -247,7 +249,14 @@ class PvP extends Component {
         const { account, chainId, gasPrice, netId } = this.props
         const { pvpWeek, idNftIncrementFights } = this.state
 
-        this.setState({ nameNftToSubscribe: `#${idNftIncrementFights}`, wizaAmount, typeModal: "increment_fight_pvp" })
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will increase the number of fights Wizard #${idNftIncrementFights} can do by ${wizaAmount}`,
+			typeModal: 'increment_fight_pvp',
+			transactionOkText: `Maximum fights increased!`,
+            nameNft: `#${idNftIncrementFights}`,
+            wizaAmount,
+            pvpWeek
+		})
 
         this.props.incrementFightPvP(chainId, gasPrice, 6000, netId, account, pvpWeek, idNftIncrementFights, wizaAmount)
     }
@@ -258,7 +267,11 @@ class PvP extends Component {
 
         //console.log(itemChangeSpell);
 
-        this.setState({ nameNftToSubscribe: `#${itemChangeSpell.id}`, typeModal: "changespell_pvp" })
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will change the spell of #${itemChangeSpell.id}`,
+			typeModal: 'changespell_pvp',
+			transactionOkText: `Spell changed!`,
+		})
 
         let refactorSpellSelected = { name: spellSelected.name }
 
@@ -575,7 +588,6 @@ class PvP extends Component {
     renderRowSub(item, index) {
         //console.log(item);
         const { userMintedNfts, pvpFightsStartDate } = this.state
-        const { equipment } = this.props
 
         const winRate = this.calcWinRate(item)
 
@@ -837,7 +849,7 @@ class PvP extends Component {
     }
 
     renderFooterSubscribe(isMobile) {
-		const { toSubscribe, tournamentSubs } = this.state
+		const { toSubscribe } = this.state
 
         let totWiza = 0
 
@@ -899,7 +911,7 @@ class PvP extends Component {
 
     renderBody(isMobile) {
         const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults, userMintedNfts, error, activeSubs, pvpWeekEnd, pvpFightsStart, pvpFightsStartDate } = this.state
-        const { account, showModalTx } = this.props
+        const { account } = this.props
 
         const { boxW, modalW } = getBoxWidth(isMobile)
 
@@ -1083,25 +1095,6 @@ class PvP extends Component {
                 }
 
 
-                <ModalTransaction
-					showModal={showModalTx}
-					width={modalW}
-					type={this.state.typeModal}
-					mintSuccess={() => {
-						this.props.clearTransaction()
-						window.location.reload()
-					}}
-					mintFail={() => {
-						this.props.clearTransaction()
-						window.location.reload()
-					}}
-					nameNft={this.state.nameNftToSubscribe}
-                    pvpWeek={this.state.pvpWeek}
-                    wizaAmount={this.state.wizaAmount}
-                    toSubscribePvP={this.state.toSubscribe}
-                    sumSubscribePvP={this.state.sumSubscribePvP}
-				/>
-
                 {
                     this.state.showModalSpellbook ?
                     <ModalSpellbook
@@ -1255,9 +1248,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, avgLevelPvP, wizaBalance } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, avgLevelPvP, wizaBalance };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance };
 }
 
 export default connect(mapStateToProps, {
@@ -1274,5 +1267,6 @@ export default connect(mapStateToProps, {
     changeSpellPvP,
     getWizaBalance,
     loadSingleNft,
-    loadEquipMinted
+    loadEquipMinted,
+    updateInfoTransactionModal
 })(PvP)

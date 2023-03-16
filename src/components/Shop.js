@@ -8,13 +8,12 @@ import { AiOutlineMinus } from 'react-icons/ai'
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
-import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import ModalSetName from './common/ModalSetName'
 import NftCardShop from './common/NftCardShop'
 import NftCardShopSelected from './common/NftCardShopSelected'
 import calcUpgradeCost from './common/CalcUpgradeCost'
-import { calcLevelWizardAfterUpgrade, getColorTextBasedOnLevel, calcLevelWizard, calcLevelWizardAfterDowngrade } from './common/CalcLevelWizard'
+import { calcLevelWizardAfterUpgrade, getColorTextBasedOnLevel, calcLevelWizardAfterDowngrade } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import {
@@ -34,7 +33,8 @@ import {
     equipItem,
     unequipItem,
     buyDowngrade,
-    getWizaValue
+    getWizaValue,
+    updateInfoTransactionModal
 } from '../actions'
 import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, MAX_LEVEL, TEST_NET_ID } from '../actions/types'
 import '../css/Nft.css'
@@ -74,24 +74,15 @@ class Shop extends Component {
             loading: true,
             isConnected,
             showModalConnection: false,
-            typeModal: 'upgrade',
-            nameNftToUpgrade: '',
-            nicknameToSet: "",
-            statToUpgrade: '',
-            howMuchIncrement: 1,
-            wizaCostToUpgrade: 0,
             historyUpgrades: [],
             loadingHistoryUpgrades: true,
-            increase: { hp: 1, defense: 1, attack: 1, damage: 1},
+            increase: { hp: 1, defense: 1, attack: 1, damage: 1, speed: 1},
             potionEquipped: "",
             loadingPotionEquipped: false,
             tournamentName: "",
             showModalSetName: false,
             apToBurn: 1,
-            idNftToUpgrade: "",
-            numberOfChest: 1,
             equipment: [],
-            ringToEquipName: "",
             decrease: { hp: 1, defense: 1, attack: 1, damage: 1, speed: 1},
             baseStats: undefined,
             wizaValue: 0,
@@ -183,7 +174,7 @@ class Shop extends Component {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
 		this.props.getWizaValue(chainId, gasPrice, gasLimit, networkUrl, (wizaValue) => {
-            console.log(wizaValue);
+            //console.log(wizaValue);
             this.setState({ wizaValue })
         })
 	}
@@ -292,7 +283,15 @@ class Shop extends Component {
             nameNftToUpgrade = `${wizard.name} ${wizard.nickname}`
         }
 
-        this.setState({ nameNftToUpgrade, idNftToUpgrade: wizard.id, statToUpgrade: stat, wizaCostToUpgrade: costo, howMuchIncrement: increase[stat], typeModal: 'upgrade' })
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will improve the ${stat} of ${nameNftToUpgrade}`,
+			typeModal: 'upgrade',
+			transactionOkText: `Your Wizard #${wizard.id} is stronger now!`,
+            nameNft: nameNftToUpgrade,
+            statToUpgrade: stat,
+            howMuchIncrement: increase[stat],
+            idNft: wizard.id
+		})
 
         this.props.buyUpgrade(chainId, gasPrice, netId, account, wizard.id, stat, increase[stat])
     }
@@ -308,7 +307,15 @@ class Shop extends Component {
             nameNftToUpgrade = `${wizard.name} ${wizard.nickname}`
         }
 
-        this.setState({ nameNftToUpgrade, idNftToUpgrade: wizard.id, statToUpgrade: stat, wizaCostToUpgrade: costo, howMuchIncrement: increase[stat], typeModal: 'upgrade' })
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will improve the ${stat} of ${nameNftToUpgrade}`,
+			typeModal: 'upgrade',
+			transactionOkText: `Your Wizard #${wizard.id} is stronger now!`,
+            nameNft: nameNftToUpgrade,
+            statToUpgrade: stat,
+            howMuchIncrement: increase[stat],
+            idNft: wizard.id
+		})
 
         this.props.buyUpgradeWithAp(chainId, gasPrice, netId, account, wizard.id, stat, increase[stat])
     }
@@ -319,7 +326,11 @@ class Shop extends Component {
 
         const wizard = this.getWizardSelected()
 
-        this.setState({ typeModal: "burnap" })
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will burn ${apToBurn} AP for ${apToBurn*15} $WIZA`,
+			typeModal: 'burnap',
+			transactionOkText: 'AP burned successfully',
+		})
 
         this.props.burnAP(chainId, gasPrice, netId, account, wizard.id, apToBurn)
     }
@@ -335,7 +346,15 @@ class Shop extends Component {
             nameNftToUpgrade = `${wizard.name} ${wizard.nickname}`
         }
 
-        this.setState({ nameNftToUpgrade, idNftToUpgrade: wizard.id, statToUpgrade: stat, wizaCostToUpgrade: costo, howMuchIncrement: decrease[stat], typeModal: 'downgrade' })
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will downgrade the ${stat} of ${nameNftToUpgrade}`,
+			typeModal: 'downgrade',
+			transactionOkText: 'Retrain done!',
+            nameNft: nameNftToUpgrade,
+            statToUpgrade: stat,
+            howMuchIncrement: decrease[stat],
+            idNft: wizard.id
+		})
 
         this.props.buyDowngrade(chainId, gasPrice, netId, account, wizard.id, stat, decrease[stat])
     }
@@ -353,7 +372,14 @@ class Shop extends Component {
             nameNftToUpgrade = `${wizard.name} ${wizard.nickname}`
         }
 
-        this.setState({ nameNftToUpgrade, idNftToUpgrade: wizard.id, statToUpgrade: potion, wizaCostToUpgrade: costo, typeModal: 'buyvial' })
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will buy the ${potion} vial for the ${nameNftToUpgrade}`,
+			typeModal: 'buyvial',
+			transactionOkText: `Vial bought!`,
+            nameNft: nameNftToUpgrade,
+            statToUpgrade: potion,
+            idNft: wizard.id
+		})
 
         this.props.buyVial(chainId, gasPrice, netId, account, wizard.id, key, potion)
     }
@@ -363,7 +389,14 @@ class Shop extends Component {
 
         const wizard = this.getWizardSelected()
 
-        this.setState({ nameNftToUpgrade: wizard.name, idNftToUpgrade: wizard.id, nicknameToSet: nickname, typeModal: 'buynickname' })
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will give the nickname ${nickname} to Wizard ${wizard.name}`,
+			typeModal: 'buynickname',
+			transactionOkText: 'Nickname set successfully',
+            nameNft: wizard.name,
+            idNft: wizard.id,
+            nicknameToSet: nickname
+		})
 
         this.props.buyNickname(chainId, gasPrice, netId, account, wizard.id, nickname)
     }
@@ -374,8 +407,13 @@ class Shop extends Component {
         const wizard = this.getWizardSelected()
 
         //console.log(wizard);
-
-        this.setState({ typeModal: 'equip', nameNftToUpgrade: wizard.name, ringToEquipName: name })
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will equip ${name} to ${wizard.name}`,
+			typeModal: 'equip',
+			transactionOkText: `${name} successfully equipped!`,
+            nameNft: wizard.name,
+            ringToEquipName: name
+		})
 
         this.props.equipItem(chainId, gasPrice, netId, id, account, wizard.id)
     }
@@ -386,8 +424,13 @@ class Shop extends Component {
         const wizard = this.getWizardSelected()
 
         //console.log(wizard);
-
-        this.setState({ typeModal: 'unequip', nameNftToUpgrade: wizard.name, ringToEquipName: name })
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will unequip ${name} from ${wizard.name}`,
+			typeModal: 'unequip',
+			transactionOkText: `${name} successfully unequipped!`,
+            nameNft: wizard.name,
+            ringToEquipName: name
+		})
 
         this.props.unequipItem(chainId, gasPrice, netId, id, account, wizard.id)
     }
@@ -478,6 +521,7 @@ class Shop extends Component {
                 <img
                     src={item.url}
                     style={{ width: 100, marginBottom: 10 }}
+                    alt="Ring"
                 />
 
                 <p style={{ fontSize: 19, color: 'white', marginBottom: 10, textAlign: 'center', minHeight: 38, marginRight: 9, marginLeft: 9 }}>
@@ -543,11 +587,14 @@ class Shop extends Component {
 
             //console.log(arrayLevelsTo);
 
+            //console.log(wizard);
+
             const copySelected = {
                 hp: wizard.hp.int,
                 defense: wizard.defense.int,
                 attack: wizard.attack.int,
-                damage: wizard.damage.int
+                damage: wizard.damage.int,
+                speed: wizard.speed.int || 0
             }
 
             copySelected[key] = arrayLevelsTo[arrayLevelsTo.length - 1]
@@ -574,6 +621,9 @@ class Shop extends Component {
         }
         else if (key === "damage") {
             img = potion_dmg
+        }
+        else if (key === "speed") {
+            img = potion_speed
         }
 
         return (
@@ -695,7 +745,8 @@ class Shop extends Component {
             hp_cost: 1,
             defense_cost: 4,
             attack_cost: 4,
-            damage_cost: 2
+            damage_cost: 2,
+            speed_cost: 2
         }
 
         let statToUpgrade;
@@ -715,11 +766,17 @@ class Shop extends Component {
 
             //console.log(arrayLevelsTo);
 
+            let speed = wizard.speed.int
+            if (!speed) {
+                speed = 0
+            }
+
             const copySelected = {
                 hp: wizard.hp.int,
                 defense: wizard.defense.int,
                 attack: wizard.attack.int,
-                damage: wizard.damage.int
+                damage: wizard.damage.int,
+                speed
             }
 
             copySelected[key] = arrayLevelsTo[arrayLevelsTo.length - 1]
@@ -746,6 +803,9 @@ class Shop extends Component {
         }
         else if (key === "damage") {
             img = potion_dmg
+        }
+        else if (key === "speed") {
+            img = potion_speed
         }
 
         return (
@@ -1195,7 +1255,6 @@ class Shop extends Component {
 
         let bonus;
         let costo = round(wizaValue * 2.1, 2);
-        let level = calcLevelWizard(wizard)
 
         let img;
         if (key === "hp") {
@@ -1448,6 +1507,7 @@ class Shop extends Component {
                     <img
                         src={img}
                         style={imgStyle}
+                        alt="Menu"
                     />
                 </div>
 
@@ -1461,7 +1521,7 @@ class Shop extends Component {
 
     renderBody(isMobile) {
         const { isConnected, showModalConnection, historyUpgrades, potionEquipped, equipment } = this.state
-        const { account, showModalTx, wizaBalance } = this.props
+        const { account, wizaBalance } = this.props
 
         const { boxW, modalW } = getBoxWidth(isMobile)
 
@@ -1590,6 +1650,8 @@ class Shop extends Component {
 
                             {this.renderShopCard("damage")}
 
+                            {this.renderShopCard("speed")}
+
                         </div>
 
                         <p style={{ fontSize: 26, color: 'white', marginBottom: 10 }} id="shop-ap">
@@ -1608,6 +1670,8 @@ class Shop extends Component {
                             {this.renderAPShopCard("attack")}
 
                             {this.renderAPShopCard("damage")}
+
+                            {this.renderAPShopCard("speed")}
 
                             {this.renderAPBurnCard()}
 
@@ -1717,30 +1781,6 @@ class Shop extends Component {
                 }
 
                 <div style={{ height: 50 }} />
-
-
-                <ModalTransaction
-					showModal={showModalTx}
-					width={modalW}
-					type={this.state.typeModal}
-					mintSuccess={() => {
-						this.props.clearTransaction()
-						window.location.reload()
-					}}
-					mintFail={() => {
-						this.props.clearTransaction()
-						window.location.reload()
-					}}
-					nameNft={this.state.nameNftToUpgrade}
-                    idNft={this.state.idNftToUpgrade}
-                    statToUpgrade={this.state.statToUpgrade}
-                    wizaCostToUpgrade={this.state.wizaCostToUpgrade}
-                    howMuchIncrement={this.state.howMuchIncrement}
-                    nicknameToSet={this.state.nicknameToSet}
-                    apToBurn={this.state.apToBurn}
-                    numberOfChest={this.state.numberOfChest}
-                    ringToEquipName={this.state.ringToEquipName}
-				/>
 
                 <ModalSetName
                     showModal={this.state.showModalSetName}
@@ -1879,9 +1919,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, wizaBalance, wizardSelectedIdShop } = state.mainReducer;
+	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, wizaBalance, wizardSelectedIdShop } = state.mainReducer;
 
-	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, allNfts, wizaBalance, wizardSelectedIdShop };
+	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, wizaBalance, wizardSelectedIdShop };
 }
 
 export default connect(mapStateToProps, {
@@ -1901,5 +1941,6 @@ export default connect(mapStateToProps, {
     equipItem,
     unequipItem,
     buyDowngrade,
-    getWizaValue
+    getWizaValue,
+    updateInfoTransactionModal
 })(Shop)

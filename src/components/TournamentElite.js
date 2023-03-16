@@ -15,7 +15,6 @@ import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import {
     getBuyin,
-    getFeeTournament,
     setNetworkSettings,
     setNetworkUrl,
     getSubscribed,
@@ -27,7 +26,7 @@ import '../css/Nft.css'
 import 'reactjs-popup/dist/index.css';
 
 
-class Tournament extends Component {
+class TournamentElite extends Component {
     constructor(props) {
 		super(props)
 
@@ -68,9 +67,9 @@ class Tournament extends Component {
 	}
 
     async loadTournament() {
-        const { chainId, gasPrice, gasLimit, networkUrl, subscribedWiza } = this.props
+        const { chainId, gasPrice, gasLimit, networkUrl, subscribedElite } = this.props
 
-        const querySnapshot = await getDocs(collection(firebasedb, "stage_low"))
+        const querySnapshot = await getDocs(collection(firebasedb, "stage_elite"))
 
         querySnapshot.forEach(doc => {
             //console.log(doc.data());
@@ -92,18 +91,16 @@ class Tournament extends Component {
 
             this.setState({ tournament }, async () => {
 
-                if (subscribedWiza) {
-                    this.calcSubscribers(subscribedWiza, tournament)
+                if (subscribedElite) {
+                    this.calcSubscribers(subscribedElite, tournament)
                 }
 
-				this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-wiza-key")
-				this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-wiza-key")
-
+				this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-elite-key")
 
                 this.loadPair(tournament.name)
                 const tournamentName = tournament.name.split("_")[0]
 
-                this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "wiza", (subscribed) => {
+                this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "elite", (subscribed) => {
 
                     //console.log(subscribed);
 
@@ -274,20 +271,20 @@ class Tournament extends Component {
 	}
 
     renderSingleGraph(color, name) {
-        const { subscribedWizaSpellGraph } = this.props
+        const { subscribedEliteSpellGraph } = this.props
         const { subscribed } = this.state
 
         //console.log(subscribedWizaSpellGraph);
 
-        if (!subscribedWizaSpellGraph) {
+        if (!subscribedEliteSpellGraph) {
             return <div />
         }
 
         let number = 0
         let pct = 0
 
-        if (subscribedWizaSpellGraph[name]) {
-            number = subscribedWizaSpellGraph[name]
+        if (subscribedEliteSpellGraph[name]) {
+            number = subscribedEliteSpellGraph[name]
             pct = number / subscribed.length * 100
         }
 
@@ -351,7 +348,7 @@ class Tournament extends Component {
 
                     <div style={{ alignItems: 'center', marginBottom: 10 }}>
                         <p style={{ fontSize: 30, color: 'white', marginRight: 15 }}>
-                            The Apprentice Tournament
+                            The Elite Tournament
                         </p>
                     </div>
                 </div>
@@ -362,7 +359,7 @@ class Tournament extends Component {
 
     renderBody(isMobile) {
         const { tournament, subscribed } = this.state
-        const { buyinWiza, subscribedWiza } = this.props
+        const { buyinElite, subscribedElite } = this.props
 
         //console.log(subscribedWiza, tournament);
 
@@ -404,7 +401,7 @@ class Tournament extends Component {
 							</p>
 
 							<p style={{ fontSize: 22, color: 'white', marginBottom: 20 }}>
-								BUY-IN {buyinWiza || '...'} WIZA
+								BUY-IN {buyinElite || '...'} WIZA
 							</p>
 
                             <p style={{ fontSize: 17, color: 'white', marginBottom: 15 }}>
@@ -427,7 +424,7 @@ class Tournament extends Component {
                     </button>
 
                     {
-                        subscribedWiza && subscribedWiza.length > 0 &&
+                        subscribedElite && subscribedElite.length > 0 &&
                         this.renderGraph()
                     }
 
@@ -814,18 +811,17 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinWiza, feeTournamentWiza, subscribedWiza, subscribedWizaSpellGraph } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinElite, subscribedElite, subscribedEliteSpellGraph } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinWiza, feeTournamentWiza, subscribedWiza, subscribedWizaSpellGraph };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinElite, subscribedElite, subscribedEliteSpellGraph };
 }
 
 export default connect(mapStateToProps, {
     getBuyin,
-    getFeeTournament,
     setNetworkSettings,
     setNetworkUrl,
     getSubscribed,
     loadUserMintedNfts,
     getPotionEquippedMass,
     getInfoItemEquippedMass
-})(Tournament)
+})(TournamentElite)

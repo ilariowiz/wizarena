@@ -53,7 +53,8 @@ import {
 	LOAD_SUBSCRIBED_WIZA,
 	LOAD_SUBSCRIBED_ELITE,
 	SET_KADENA_NAME,
-	SELECT_WIZARD
+	SELECT_WIZARD,
+	UPDATE_TRANSACTION_TO_CONFIRM_TEXT
 } from './types'
 
 
@@ -1215,6 +1216,23 @@ export const getWizaValue = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3
 	}
 }
 
+export const getWizaKDAPool = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3000, networkUrl, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(kdlaunch.kdswap-exchange.get-pair coin free.wiza)`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
 export const getInfoNftBurning = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, idnft, callback) => {
 	return (dispatch) => {
 
@@ -2267,43 +2285,6 @@ export const transferEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimi
 }
 
 
-export const withdrawPrize = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account) => {
-	return (dispatch) => {
-
-		let pactCode = `(free.${CONTRACT_NAME}.withdraw-prize "${account.account}")`;
-
-		let caps = [
-			Pact.lang.mkCap(
-				"Verify your account",
-				"Verify your account",
-				`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
-				[account.account]
-			),
-			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
-		]
-
-		let cmd = {
-			pactCode,
-			caps,
-			sender: account.account,
-			gasLimit,
-			gasPrice,
-			chainId,
-			ttl: 600,
-			envData: {
-				"user-ks": account.guard,
-				account: account.account
-			},
-			signingPubKey: account.guard.keys[0],
-			networkId: netId
-		}
-
-		//console.log("withdrawPrize", cmd)
-
-		dispatch(updateTransactionState("cmdToConfirm", cmd))
-	}
-}
-
 export const buyUpgrade = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft, stat, increase) => {
 	return (dispatch) => {
 
@@ -2579,6 +2560,59 @@ export const unequipItem = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, iditem
 		}
 
 		//console.log("unequipItem", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const swapKdaWiza = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, amountKda, amountWiza, account) => {
+	return (dispatch) => {
+
+		//console.log(amountKda);
+
+		let slippage = 0.05
+		let token0AmountWithSplippage = parseFloat(amountKda) + (parseFloat(amountKda) * slippage / 100)
+		//console.log(token0AmountWithSplippage);
+
+		let token1AmountWithSlippage = amountWiza - (amountWiza * slippage / 100)
+
+		let pactCode = `(kdlaunch.kdswap-exchange.swap-exact-in (read-decimal "token0Amount") (read-decimal "token1AmountWithSlippage") [coin free.wiza] "${account.account}" "${account.account}" (read-keyset "user-ks"))`;
+
+		let cmd = {
+			pactCode,
+			caps: [
+				Pact.lang.mkCap(`Transfer capability`, "swap kda to wiza", `coin.TRANSFER`, [
+					account.account,
+					"zV4AcMr1UcqDswRfSh6tzmpsmx7hWg5o0IYns0ZuN1I",
+					amountKda,
+				]),
+				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+				/*
+				Pact.lang.mkCap("Gas station", "pay gas", "kdlaunch.kdswap-gas-station.GAS_PAYER", [
+					"free-gas",
+					1,
+					amountKda
+				])
+				*/
+			],
+			sender: account.account,
+			gasLimit: 5000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account,
+				token0Amount: parseFloat(amountKda),
+				token0AmountWithSplippage,
+				token1Amount: amountWiza,
+				token1AmountWithSlippage
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("swapKdaWiza", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
@@ -3085,7 +3119,7 @@ export const signTransaction = (cmdToSign, isXWallet, isQRWalletConnect, qrWalle
 					}
 				})
 
-				console.log(signRes);
+				//console.log(signRes);
 
 				signedCmd = signRes.signedCmd
 

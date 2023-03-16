@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import getRingBonuses from './GetRingBonuses'
-import getImageUrl from './GetImageUrl'
 import '../../css/ItemCard.css'
 
 
@@ -21,6 +20,7 @@ class EquipmentCardForge extends Component {
                     <img
                         src={item.url}
                         style={{ width: 110, marginBottom: 10 }}
+                        alt="Equipment"
                     />
                 </div>
 

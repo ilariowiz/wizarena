@@ -26,8 +26,11 @@ import EquipmentOffers from './components/EquipmentOffers'
 import TournamentPre from './components/TournamentPre'
 import Tournament from './components/Tournament'
 import TournamentWiza from './components/TournamentWiza'
+import TournamentElite from './components/TournamentElite'
 
 import Forge from './components/Forge'
+
+//import DoFightTEST from './components/DoFightTEST'
 
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'
@@ -64,7 +67,9 @@ ReactDOM.render(
             <Route path="/tournaments/" component={TournamentPre} />
             <Route path="/tournamentK" component={Tournament} />
             <Route path="/tournamentW" component={TournamentWiza} />
+            <Route path="/tournamentE" component={TournamentElite} />
             <Route path="/forge" component={Forge} />
+
           </Switch>
         </div>
       </BrowserRouter>
@@ -73,6 +78,7 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
+//<Route path="/fighttest" component={DoFightTEST} />
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA

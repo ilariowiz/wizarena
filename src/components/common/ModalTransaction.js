@@ -11,7 +11,7 @@ import {
 	signTransaction,
 	updateTransactionState
 } from '../../actions'
-import { TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR, RING_MINT_PRICE } from '../../actions/types'
+import { TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../../actions/types'
 import '../../css/Nft.css'
 
 
@@ -36,7 +36,7 @@ class ModalTransaction extends Component {
 	}
 
 	pollForTransaction = async () => {
-		const { transactionState, networkUrl, nameNft, idNft, inputPrice, statToUpgrade, howMuchIncrement, type, pvpWeek, makeOfferValues, saleValues, wizaAmount, nicknameToSet, ringToEquipName, toSubscribePvP } = this.props
+		const { transactionState, networkUrl, nameNft, idNft, inputPrice, statToUpgrade, howMuchIncrement, typeModal, pvpWeek, makeOfferValues, saleValues, wizaAmount, nicknameToSet, ringToEquipName, toSubscribePvP } = this.props
 
 
 		const requestKey = transactionState.requestKey
@@ -45,7 +45,7 @@ class ModalTransaction extends Component {
 		let pollRes = null
 
 		while (time_spent_polling_s < 240) {
-			await this.wait(POLL_INTERVAL_S * 2000)
+			await this.wait(POLL_INTERVAL_S * 3000)
 
 			try {
 				pollRes = await Pact.fetch.poll(
@@ -70,19 +70,19 @@ class ModalTransaction extends Component {
 		if (pollRes[requestKey].result.status === "success") {
 			this.props.updateTransactionState("success", 1)
 
-			if (type === "upgrade" && nameNft && statToUpgrade && howMuchIncrement) {
+			if (typeModal === "upgrade" && nameNft && statToUpgrade && howMuchIncrement) {
 				const msg = `${nameNft} upgrade ${statToUpgrade.toUpperCase()} by ${howMuchIncrement}`
 				sendMessageUpgrade(idNft, msg)
 			}
-			else if (type === "downgrade" && nameNft && statToUpgrade && howMuchIncrement) {
+			else if (typeModal === "downgrade" && nameNft && statToUpgrade && howMuchIncrement) {
 				const msg = `${nameNft} downgrade ${statToUpgrade.toUpperCase()} by ${howMuchIncrement}`
 				sendMessageUpgrade(idNft, msg)
 			}
-			else if (type === "buyvial" && nameNft && statToUpgrade) {
+			else if (typeModal === "buyvial" && nameNft && statToUpgrade) {
 				const msg = `${nameNft} bought a ${statToUpgrade.toUpperCase()} vial`
 				sendMessageUpgrade(idNft, msg)
 			}
-			else if (type === "subscribe_pvp") {
+			else if (typeModal === "subscribe_pvp") {
 
 				toSubscribePvP.map(i => {
 					const docRef = doc(firebasedb, "pvp_results", `${i.week}_#${i.idnft}`)
@@ -92,41 +92,40 @@ class ModalTransaction extends Component {
 					setDoc(docRefTraining, { "lose": 0, "win": 0 })
 				})
 			}
-			else if (type === "increment_fight_pvp") {
+			else if (typeModal === "increment_fight_pvp") {
 				const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_${nameNft}`)
 				updateDoc(docRef, {"maxFights": increment(wizaAmount) })
 			}
-			else if (type === "makeoffer") {
-				//console.log(makeOfferValues);
+			else if (typeModal === "makeoffer") {
 				sendMessage(makeOfferValues.id, makeOfferValues.amount, makeOfferValues.duration, makeOfferValues.owner)
 			}
-			else if (type === "makeofferitem") {
+			else if (typeModal === "makeofferitem") {
 				//console.log(makeOfferValues);
 				sendMessageOfferItem(makeOfferValues)
 			}
-			else if (type === "acceptoffer" || type === "buy") {
+			else if (typeModal === "acceptoffer" || typeModal === "buy") {
 				sendMessageSales(saleValues.id, saleValues.amount)
 			}
-			else if (type === "buyequipment" || type === "acceptofferequipment") {
+			else if (typeModal === "buyequipment" || typeModal === "acceptofferequipment") {
 				sendMessageSalesEquipment(saleValues)
 			}
-			else if (type === "list") {
+			else if (typeModal === "list") {
 				sendMessageListed(idNft, inputPrice)
 			}
-			else if (type === 'listequipment') {
+			else if (typeModal === 'listequipment') {
 				sendMessageListedEquipment(saleValues)
 			}
-			else if (type === "delist") {
+			else if (typeModal === "delist") {
 				sendMessageDelisted(nameNft.replace("#", ""))
 			}
-			else if (type === "delistequipment") {
+			else if (typeModal === "delistequipment") {
 				sendMessageDelistedEquipment(saleValues)
 			}
-			else if (type === "equip") {
+			else if (typeModal === "equip") {
 				const msg = `${nameNft} wore the ${ringToEquipName}`
 				sendMessageUpgrade(nameNft.replace("#", ""), msg)
 			}
-			else if (type === "buynickname") {
+			else if (typeModal === "buynickname") {
 				sendMessageUpdateNickname(nameNft.replace("#", ""), nicknameToSet)
 			}
 		}
@@ -142,7 +141,7 @@ class ModalTransaction extends Component {
 	}
 
 	getContent() {
-		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, type, inputPrice, idNft, nameNft, statToUpgrade, amountToMint, offerInfoRecap, wizaAmount, nicknameToSet, apToBurn, numberOfChest, ringToEquipName, makeOfferValues, sumSubscribePvP } = this.props
+		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, idNft, transactionToConfirmText, transactionOkText } = this.props
 
 		//CASO INIZIALE, signingCmd != null in transactionState
 		let title = 'Signing transaction'
@@ -152,110 +151,13 @@ class ModalTransaction extends Component {
 		let loading = false
 		let canCancel = false
 
+		//console.log(transactionToConfirmText, typeModal);
+
 		if (transactionState) {
 
 			if (transactionState.cmdToConfirm != null) {
 				title = 'Review transaction'
-				body = ''
-				if (type === 'mint') {
-					body = `You will mint ${amountToMint} Druids`
-				}
-				else if (type === 'list') {
-					body = `You will list ${nameNft} for ${inputPrice} KDA. Marketplace Fee: 7%`
-				}
-				else if (type === 'listequipment') {
-					body = `You will list ${nameNft} for ${inputPrice} WIZA. Marketplace Fee: 2%`
-				}
-				else if (type === 'delist' || type === 'delistequipment') {
-					body = `You will delist ${nameNft}`
-				}
-				else if (type === 'buy') {
-					body = `You will buy ${nameNft} (you will need KDA on chain 1)`
-				}
-				else if (type === 'buyequipment') {
-					body = `You will buy ${nameNft} (you will need WIZA on chain 1)`
-				}
-				else if (type === 'subscribe_pvp') {
-					body = sumSubscribePvP
-				}
-				else if (type === 'increment_fight_pvp') {
-					body = `You will increase the number of fights Wizard ${nameNft} can do by ${wizaAmount}`
-				}
-				else if (type === 'subscriptionmass') {
-					body = nameNft
-				}
-				else if (type === 'withdraw') {
-					body = 'You will collect your prize'
-				}
-				else if (type === 'transfer') {
-					body = `You will transfer ${nameNft} to another wallet`
-				}
-				else if (type === 'stake') {
-					body = `You will stake ${nameNft}. You can unstake it any time. While it is staked you will not be able to sell this wizard but you will still be able to register it for tournaments.`
-				}
-				else if (type === 'unstake') {
-					body = `You will unstake ${nameNft}`
-				}
-				else if (type === 'claim') {
-					body = `You will claim your $WIZA mined by ${nameNft}`
-				}
-				else if (type === 'claimall') {
-					body = `You will claim your $WIZA mined by all your wizards`
-				}
-				else if (type === 'unstakeandclaimall') {
-					body = `You will unstake and claim your $WIZA mined by all your wizards`
-				}
-				else if (type === 'stakeall') {
-					body = `You will stake all your wizards that aren't listed or in burning queue`
-				}
-				else if (type === 'burningon') {
-					body = `You will add Wizard ${nameNft} to the burning queue`
-				}
-				else if (type === 'burningoff') {
-					body = `You will remove ${nameNft} from burning queue`
-				}
-				else if (type === 'upgrade') {
-					body = `You will improve the ${statToUpgrade} of ${nameNft}`
-				}
-				else if (type === 'downgrade') {
-					body = `You will downgrade the ${statToUpgrade} of ${nameNft}`
-				}
-				else if (type === 'buyvial') {
-					body = `You will buy the ${statToUpgrade} vial for the ${nameNft}`
-				}
-				else if (type === 'changespell_pvp') {
-					body = `You will change the spell of ${nameNft}`
-				}
-				else if (type === 'makeoffer') {
-					body = `You will submit the offer. Remember that the amount of the offer will be locked in the contract for the duration of the offer.`
-				}
-				else if (type === "acceptoffer" || type === "acceptofferequipment") {
-					body = offerInfoRecap || "You will accept this offer"
-				}
-				else if (type === "withdrawoffer") {
-					body = 'You will withdraw funds from this offer'
-				}
-				else if (type === "forge") {
-					body = 'You are about to forge a ring.'
-				}
-				else if (type === "buynickname") {
-					body = `You will give the nickname ${nicknameToSet} to Wizard ${nameNft}`
-				}
-				else if (type === "burnap") {
-					body = `You will burn ${apToBurn} AP for ${apToBurn*15} $WIZA`
-				}
-				else if (type === "buychest") {
-					body = `You will buy ${numberOfChest} ${numberOfChest > 1 ? "chests" : "chest"} for ${numberOfChest*RING_MINT_PRICE} $KDA`
-				}
-				else if (type === "equip") {
-					body = `You will equip ${ringToEquipName} to ${nameNft}`
-				}
-				else if (type === "unequip") {
-					body = `You will unequip ${ringToEquipName} from ${nameNft}`
-				}
-				else if (type === "makeofferitem") {
-					body = `You will offer ${makeOfferValues.amount} WIZA for ${makeOfferValues.ringType}, expiring in ${makeOfferValues.duration} ${makeOfferValues.duration > 1 ? "days" : "day"}`
-				}
+				body = transactionToConfirmText
 
 				buttonText = 'Open Wallet'
 				action = async () => this.props.signTransaction(transactionState.cmdToConfirm, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, idNft, () => this.checkTransaction())
@@ -283,7 +185,7 @@ class ModalTransaction extends Component {
 
 			if (transactionState.sentCmd != null) {
 				title = 'Checking transaction...'
-				body = `Transaction key: ${transactionState.requestKey.slice(0, 15)}...`
+				body = `Transaction key: ${transactionState.requestKey}`
 				buttonText = ''
 				action = null
 				loading = true
@@ -292,120 +194,8 @@ class ModalTransaction extends Component {
 
 			if (transactionState.success != null) {
 				title = 'Transaction completed!'
-				body = ''
-				buttonText = ''
-				if (type === 'mint') {
-					body = "Druids successfully minted!"
-					buttonText = 'Close'
-				}
-				else if (type === 'list' || type === 'listequipment') {
-					body = 'Listing successfully'
-					buttonText = 'Close'
-				}
-				else if (type === 'delist' || type === "delistequipment") {
-					body = 'Delisting successfully'
-					buttonText = 'Close'
-				}
-				else if (type === 'buy' || type === 'buyequipment') {
-					body = `You bought ${nameNft}`
-					buttonText = 'Close'
-				}
-				else if (type === 'subscriptionmass') {
-					body = `Your Wizards are registered for the tournament!`
-					buttonText = 'Close'
-				}
-				else if (type === 'subscribe_pvp') {
-					body = `Your Wizards are registered for PvP arena!`
-					buttonText = 'Close'
-				}
-				else if (type === 'increment_fight_pvp') {
-					body = `Maximum fights increased!`
-					buttonText = 'Close'
-				}
-				else if (type === 'withdraw') {
-					body = `Prize successfully withdrawn!`
-					buttonText = 'Close'
-				}
-				else if (type === 'transfer') {
-					body = `Transfer completed successfully`
-					buttonText = 'Close'
-				}
-				else if (type === 'stake') {
-					body = `Your Wizard ${nameNft} is staked!`
-					buttonText = 'Close'
-				}
-				else if (type === 'stakeall') {
-					body = `Your Wizards are staked!`
-					buttonText = 'Close'
-				}
-				else if (type === 'unstake') {
-					body = `Your Wizard ${nameNft} is unstaked!`
-					buttonText = 'Close'
-				}
-				else if (type === 'burningon') {
-					body = `Your Wizard ${nameNft} has been added to the burning queue!`
-					buttonText = 'Close'
-				}
-				else if (type === 'burningoff') {
-					body = `Your Wizard ${nameNft} has been removed from the burning queue`
-					buttonText = 'Close'
-				}
-				else if (type === 'claim' || type === 'claimall' || type === "unstakeandclaimall") {
-					body = `Your $WIZA have been claimed!`
-					buttonText = 'Close'
-				}
-				else if (type === 'upgrade') {
-					body = `Your Wizard ${nameNft} is stronger now!`
-					buttonText = 'Close'
-				}
-				else if (type === 'downgrade') {
-					body = 'Retrain done!'
-					buttonText = 'Close'
-				}
-				else if (type === 'buyvial') {
-					body = `Vial bought!`
-					buttonText = 'Close'
-				}
-				else if (type === 'changespell_pvp') {
-					body = `Spell changed!`
-					buttonText = 'Close'
-				}
-				else if (type === 'makeoffer' || type === 'makeofferitem') {
-					body = `Offer sent!`
-					buttonText = 'Close'
-				}
-				else if (type === 'acceptoffer' || type === 'acceptofferequipment') {
-					body = `Offer accepted!`
-					buttonText = 'Close'
-				}
-				else if (type === 'withdrawoffer') {
-					body = 'Funds successfully withdrawn'
-					buttonText = 'Close'
-				}
-				else if (type === 'buynickname') {
-					body = 'Nickname set successfully'
-					buttonText = 'Close'
-				}
-				else if (type === 'burnap') {
-					body = 'AP burned successfully'
-					buttonText = 'Close'
-				}
-				else if (type === 'forge') {
-					body = 'Ring forged successfully'
-					buttonText = 'Close'
-				}
-				else if (type === 'buychest') {
-					body = `${numberOfChest} ${numberOfChest > 1 ? 'chests' : 'chest'} successfully bought!`
-					buttonText = 'Close'
-				}
-				else if (type === 'equip') {
-					body = `${ringToEquipName} successfully equipped!`
-					buttonText = 'Close'
-				}
-				else if (type === 'unequip') {
-					body = `${ringToEquipName} successfully unequipped!`
-					buttonText = 'Close'
-				}
+				body = transactionOkText
+				buttonText = 'Close'
 
 				action = () => this.props.mintSuccess()
 				loading = false
@@ -508,8 +298,10 @@ const styles = {
 
 const mapStateToProps = (state) => {
 	const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, gasPrice, gasLimit } = state.mainReducer
+	const { transactionToConfirmText, typeModal, transactionOkText, nameNft, saleValues, howMuchIncrement, statToUpgrade, idNft, nicknameToSet, ringToEquipName, wizaAmount, toSubscribePvP, inputPrice, makeOfferValues } = state.modalTransactionReducer
 
-	return { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, gasPrice, gasLimit }
+
+	return { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, gasPrice, gasLimit, transactionToConfirmText, typeModal, transactionOkText, nameNft, saleValues, howMuchIncrement, statToUpgrade, idNft, nicknameToSet, ringToEquipName, wizaAmount, toSubscribePvP, inputPrice, makeOfferValues }
 }
 
 export default connect(mapStateToProps, {

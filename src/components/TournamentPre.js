@@ -2,22 +2,18 @@ import React, { Component } from 'react'
 import Media from 'react-media';
 import { connect } from 'react-redux'
 import moment from 'moment'
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import DotLoader from 'react-spinners/DotLoader';
 import { AiFillCheckCircle } from 'react-icons/ai'
 import { IoClose } from 'react-icons/io5'
 import Popup from 'reactjs-popup';
-import NftCardTournament from './common/NftCardTournament'
 import NftCardChoice from './common/NftCardChoice'
 import ModalSpellbook from './common/ModalSpellbook'
 import CardSingleFightProfile from './common/CardSingleFightProfile'
 import Header from './Header'
-import ModalTransaction from './common/ModalTransaction'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
-import convertMedalName from './common/ConvertMedalName'
-import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import {
     getBuyin,
@@ -31,7 +27,9 @@ import {
     clearTransaction,
     subscribeToTournamentMassWIZA,
     getSubscriptions,
-    changeSpellTournament
+    changeSpellTournament,
+    subscribeToTournamentMassELITE,
+    updateInfoTransactionModal
 } from '../actions'
 import '../css/Nft.css'
 import 'reactjs-popup/dist/index.css';
@@ -42,15 +40,16 @@ class Tournament extends Component {
 		super(props)
 
 		this.state = {
-            typeModal: "subscription",
-            nameNftSubscribed: "",
             tournament: {},
             tournamentWiza: {},
+            tournamentElite: {},
 			tournamentKdaSubs: 0,
             tournamentWizaSubs: 0,
+            tournamentEliteSubs: 0,
             loading: true,
             avgLevelKda: 0,
             avgLevelWiza: 0,
+            avgLevelElite: 0,
             profileFights: {},
             showProfileFights: false,
             showSubs: false,
@@ -75,6 +74,7 @@ class Tournament extends Component {
         setTimeout(() => {
             this.loadTournamentKda()
             this.loadTournamentWiza()
+            this.loadTournamentElite()
         }, 500)
 	}
 
@@ -119,7 +119,7 @@ class Tournament extends Component {
 	}
 
     async loadTournamentKda() {
-        const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
+        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
         const querySnapshot = await getDocs(collection(firebasedb, "stage"))
 
@@ -160,7 +160,7 @@ class Tournament extends Component {
     }
 
     async loadTournamentWiza() {
-        const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
+        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
         const querySnapshot = await getDocs(collection(firebasedb, "stage_low"))
 
@@ -200,6 +200,45 @@ class Tournament extends Component {
         })
     }
 
+    async loadTournamentElite() {
+        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+        const querySnapshot = await getDocs(collection(firebasedb, "stage_elite"))
+
+        querySnapshot.forEach(doc => {
+            //console.log(doc.data());
+			const tournament = doc.data()
+
+            /*
+            const tournament = {
+                canSubscribe: false,
+                nRounds: 6,
+                name: "t7_r1",
+                roundEnded: "0",
+                showPair: true,
+                start: {seconds: 1671715800, nanoseconds: 843000000},
+                tournamentEnd: false
+            }
+            */
+
+            this.setState({ tournamentElite: tournament }, async () => {
+
+				this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-elite-key")
+                const tournamentName = tournament.name.split("_")[0]
+
+                this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "elite", (subscribed) => {
+
+                    //console.log(subscribed);
+                    const avgLevel = this.calcAvgLevel(subscribed)
+                    //console.log(avgLevel);
+
+                    this.setState({ tournamentEliteSubs: subscribed.length, avgLevelElite: avgLevel, loading: false })
+                })
+
+            })
+        })
+    }
+
     calcAvgLevel(array) {
         let sum = 0
         array.map(i => {
@@ -222,9 +261,10 @@ class Tournament extends Component {
 		for (let i = 0; i < userMintedNfts.length; i++) {
 			const s = userMintedNfts[i]
 			//console.log(s);
-			const fights = s.fights
 
-			if (fights.length > 0) {
+            const fights = s.fights
+
+			if (fights && fights.length > 0) {
 				let fightsPerTournamentName = fights.filter(i => i.tournament.includes(tournamentName))
 				//console.log(fightsPerTournamentName);
 
@@ -262,13 +302,18 @@ class Tournament extends Component {
 
     loadSubs(tournament) {
         const { userMintedNfts } = this.props
-        const { subscriptionsInfo } = this.state
 
         const levelCap = tournament.levelCap
 
         //console.log(subscriptionsInfo);
+        let yourPossibleSubs = []
 
-        let yourPossibleSubs = userMintedNfts.filter(i => i.level <= levelCap)
+        if (tournament.type && tournament.type === "elite") {
+            yourPossibleSubs = userMintedNfts.filter(i => i.level >= levelCap)
+        }
+        else {
+            yourPossibleSubs = userMintedNfts.filter(i => i.level <= levelCap)
+        }
 
         //console.log(yourSubs);
         let yourSubs = this.setYourSub(yourPossibleSubs)
@@ -302,10 +347,10 @@ class Tournament extends Component {
     }
 
     subscribe(idNft, spellSelected) {
-		const { account, buyin, feeTournament, buyinWiza, feeTournamentWiza } = this.props
+		const { account, buyin, feeTournament, buyinWiza, feeTournamentWiza, buyinElite } = this.props
 		const { tournamentSubs } = this.state
 
-		if (!buyin || !feeTournament || !buyinWiza || !feeTournamentWiza || !spellSelected || !spellSelected.name) {
+		if (!buyin || !feeTournament || !buyinWiza || !feeTournamentWiza || !buyinElite || !spellSelected || !spellSelected.name) {
 			return
 		}
 
@@ -333,7 +378,11 @@ class Tournament extends Component {
 
 		const tot = toSubscribe.length * buyin
 
-		this.setState({ nameNftSubscribed: `You will subscribe ${toSubscribe.length} wizards for ${tot} KDA`, typeModal: "subscriptionmass" })
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will subscribe ${toSubscribe.length} wizards for ${tot} KDA`,
+			typeModal: 'subscriptionmass',
+			transactionOkText: `Your Wizards are registered for the tournament!`,
+		})
 
 		this.props.subscribeToTournamentMass(chainId, gasPrice, 3000, netId, account, buyin, toSubscribe)
 	}
@@ -344,9 +393,28 @@ class Tournament extends Component {
 
 		const tot = toSubscribe.length * buyinWiza
 
-		this.setState({ nameNftSubscribed: `You will subscribe ${toSubscribe.length} wizards for ${tot} WIZA`, typeModal: "subscriptionmass" })
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will subscribe ${toSubscribe.length} wizards for ${tot} WIZA`,
+			typeModal: 'subscriptionmass',
+			transactionOkText: `Your Wizards are registered for the tournament!`,
+		})
 
 		this.props.subscribeToTournamentMassWIZA(chainId, gasPrice, 3000, netId, account, toSubscribe)
+	}
+
+    subscribeMassElite() {
+		const { chainId, gasPrice, netId, account, buyinElite } = this.props
+		const { toSubscribe } = this.state
+
+		const tot = toSubscribe.length * buyinElite
+
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will subscribe ${toSubscribe.length} wizards for ${tot} WIZA`,
+			typeModal: 'subscriptionmass',
+			transactionOkText: `Your Wizards are registered for the tournament!`,
+		})
+
+		this.props.subscribeToTournamentMassELITE(chainId, gasPrice, 3000, netId, account, toSubscribe)
 	}
 
     changeSpellTournament(spellSelected) {
@@ -355,7 +423,11 @@ class Tournament extends Component {
 
         //console.log(wizardToChangeSpell);
 
-		this.setState({ nameNftSubscribed: `#${wizardToChangeSpell.id}`, typeModal: "changespell_pvp" })
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will change the spell of #${wizardToChangeSpell.id}`,
+			typeModal: 'changespell_pvp',
+			transactionOkText: `Spell changed!`,
+		})
 
 		this.props.changeSpellTournament(chainId, gasPrice, 3000, netId, account, wizardToChangeSpell.id, spellSelected)
     }
@@ -480,7 +552,7 @@ class Tournament extends Component {
                     this.props.history.push(`/${goto}`)
                 }}
             >
-                <p style={{ fontSize: 17, color: 'white', textAlign: 'center' }}>
+                <p style={{ fontSize: 16, color: 'white', textAlign: 'center' }}>
                     Open Tournament
                 </p>
             </a>
@@ -496,7 +568,7 @@ class Tournament extends Component {
                     this.loadMinted(tournament, true, false)
                 }}
             >
-                <p style={{ fontSize: 17, color: 'white' }}>
+                <p style={{ fontSize: 16, color: 'white' }}>
                     Your results
                 </p>
             </button>
@@ -512,7 +584,7 @@ class Tournament extends Component {
                     this.loadMinted(tournament, false, true)
                 }}
             >
-                <p style={{ fontSize: 17, color: 'white', textAlign: 'center' }}>
+                <p style={{ fontSize: 16, color: 'white', textAlign: 'center' }}>
                     Subscribe your wizards
                 </p>
             </button>
@@ -559,10 +631,13 @@ class Tournament extends Component {
 					className="btnH"
 					style={{ width: 180, height: 40, justifyContent: 'center', alignItems: 'center', borderRadius: 2, backgroundColor: CTA_COLOR, marginRight: 20 }}
 					onClick={() => {
-                        if (tournamentSubs.coinBuyin === "KDA") {
+                        if (tournamentSubs.type === "weekly") {
                             this.subscribeMassKda()
                         }
-                        else {
+                        else if (tournamentSubs.type === "elite") {
+                            this.subscribeMassElite()
+                        }
+                        else if (tournamentSubs.type === "apprentice") {
                             this.subscribeMassWiza()
                         }
 
@@ -594,7 +669,6 @@ class Tournament extends Component {
 
         let finalDate;
         if (tournament.canSubscribe) {
-            const dateStartString = moment(dateStart).format("dddd, MMMM Do YYYY, h:mm:ss a");
             finalDate = `Start: ${moment().to(dateStart)}`
         }
         else if (!tournament.canSubscribe && !tournament.tournamentEnd && tournament.roundEnded === "0") {
@@ -615,8 +689,8 @@ class Tournament extends Component {
             >
                 {
                     tournament.showLeague ?
-                    <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
-                        <p style={{ fontSize: 24, color: 'white' }}>
+                    <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 50, marginBottom }}>
+                        <p style={{ fontSize: 22, color: 'white' }}>
                             The Twelve League
                         </p>
 
@@ -625,8 +699,8 @@ class Tournament extends Component {
                         </p>
                     </div>
                     :
-                    <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
-                        <p style={{ fontSize: 24, color: 'white' }}>
+                    <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 50, marginBottom }}>
+                        <p style={{ fontSize: 22, color: 'white' }}>
                             The Weekly Tournament
                         </p>
                     </div>
@@ -642,7 +716,7 @@ class Tournament extends Component {
                     </p>
                 </div>
 
-                <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
+                <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 40, marginBottom }}>
                     <p style={{ fontSize: 20, color: 'white' }}>
                         Buyin <span style={{ color: 'gold' }}>{buyin}</span> $KDA
                     </p>
@@ -674,22 +748,22 @@ class Tournament extends Component {
                     </p>
                 </div>
 
-                <p style={{ fontSize: 17, color: 'white', marginBottom, height: 55 }}>
+                <p style={{ fontSize: 16, color: 'white', marginBottom, height: 55 }}>
                     Participation reward: (for each wizard) {tournament.reward}
                 </p>
 
                 {
                     finalDate ?
-                    <p style={{ fontSize: 17, color: 'white', marginBottom }}>
+                    <p style={{ fontSize: 17, color: 'white', height: 34, marginBottom }}>
                         {finalDate}
                     </p>
                     :
-                    <p style={{ height: 17, fontSize: 17, color: 'white', marginBottom }}>
+                    <p style={{ height: 17, fontSize: 17, color: 'white', height: 34, marginBottom }}>
 
                     </p>
                 }
 
-                <div style={{ alignItems: 'center' }}>
+                <div style={{ alignItems: 'center', marginTop: 10 }}>
                     <p style={{ fontSize: 20, color: 'white', marginRight: 10 }}>
                         Registrations open
                     </p>
@@ -734,6 +808,161 @@ class Tournament extends Component {
         )
     }
 
+    renderTournamentElite(boxTournamentWidth) {
+        const { tournamentElite, tournamentEliteSubs, avgLevelElite } = this.state
+        const { buyinElite } = this.props
+
+        let montepremi = tournamentEliteSubs * buyinElite
+
+        const tournamentName = tournamentElite.name.split("_")[0]
+        const tournamentValue = tournamentName.replace("t", "")
+        const roundName = tournamentElite.name.split("_")[1]
+        const roundValue = roundName.replace("r", "")
+
+        const dateStart = moment(tournamentElite.start.seconds * 1000)
+        //console.log(dateStart);
+
+        let finalDate;
+        if (tournamentElite.canSubscribe) {
+            finalDate = `Start: ${moment().to(dateStart)}`
+        }
+        else if (!tournamentElite.canSubscribe && !tournamentElite.tournamentEnd && tournamentElite.roundEnded === "0") {
+            if (moment().isBefore(dateStart)) {
+                finalDate = `The round ${roundValue} will start ${dateStart.fromNow()}`
+            }
+            else {
+                finalDate = `Started ${dateStart.fromNow()}`
+            }
+        }
+
+        const marginBottom = 23
+
+        return (
+            <div
+                className="cardShopShadow"
+                style={Object.assign({}, styles.boxTournament, { width: boxTournamentWidth })}
+            >
+                {
+                    tournamentElite.showLeague ?
+                    <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 50, marginBottom }}>
+                        <p style={{ fontSize: 22, color: 'white' }}>
+                            The Twelve League
+                        </p>
+
+                        <p style={{ fontSize: 18, color: 'gold' }}>
+                            {tournamentElite.leagueTournament}
+                        </p>
+                    </div>
+                    :
+                    <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 50, marginBottom }}>
+                        <p style={{ fontSize: 22, color: 'white' }}>
+                            The Elite Tournament
+                        </p>
+                    </div>
+                }
+
+                <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
+                    <p style={{ fontSize: 20, color: 'white' }}>
+                        Tournament {tournamentValue}
+                    </p>
+
+                    <p style={{ fontSize: 17, color: 'white' }}>
+                        Round {roundValue}
+                    </p>
+                </div>
+
+                <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 40, marginBottom }}>
+                    <p style={{ fontSize: 20, color: 'white' }}>
+                        Buyin <span style={{ color: 'gold' }}>{buyinElite}</span> $WIZA
+                    </p>
+
+                    <p style={{ fontSize: 17, color: 'white' }}>
+                        Fee 0%
+                    </p>
+                </div>
+
+                <p style={{ fontSize: 20, color: 'white', marginBottom }}>
+                    MIN Level: <span style={{ color: 'gold' }}>{tournamentElite.levelCap}</span>
+                </p>
+
+                <p style={{ fontSize: 17, color: 'white', marginBottom }}>
+                    Structure: {tournamentElite.structure}
+                </p>
+
+                <p style={{ fontSize: 20, color: 'white', marginBottom }}>
+                    Prize <span style={{ color: 'gold' }}>{montepremi ? montepremi.toFixed(2) : '...'}</span> $WIZA
+                </p>
+
+                <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
+                    <p style={{ fontSize: 17, color: 'white' }}>
+                        Subscribed <span style={{ color: 'gold' }}>{tournamentEliteSubs}</span>
+                    </p>
+
+                    <p style={{ fontSize: 17, color: 'white' }}>
+                        AVG level <span style={{ color: 'gold' }}>{avgLevelElite || '...'}</span>
+                    </p>
+                </div>
+
+                <p style={{ fontSize: 16, color: 'white', marginBottom, height: 55 }}>
+                    Participation reward: (for each wizard) {tournamentElite.reward}
+                </p>
+
+                {
+                    finalDate ?
+                    <p style={{ fontSize: 17, color: 'white', height: 34, marginBottom }}>
+                        {finalDate}
+                    </p>
+                    :
+                    <p style={{ height: 17, fontSize: 17, color: 'white', height: 34, marginBottom }}>
+
+                    </p>
+                }
+
+                <div style={{ alignItems: 'center', marginTop: 10 }}>
+                    <p style={{ fontSize: 20, color: 'white', marginRight: 10 }}>
+                        Registrations open
+                    </p>
+
+                    {
+                        tournamentElite.canSubscribe ?
+                        <AiFillCheckCircle
+                            color='green'
+                            size={26}
+                        />
+                        :
+                        <AiFillCheckCircle
+                            color='#504f4f'
+                            size={26}
+                        />
+                    }
+                </div>
+
+                {
+                    tournamentElite.canSubscribe ?
+                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: marginBottom }}>
+                        {this.renderBtnSubscribe(tournamentElite)}
+
+                        {this.renderBtnOpenTournament('tournamentE')}
+
+                    </div>
+                    :
+                    null
+                }
+
+                {
+                    !tournamentElite.canSubscribe &&
+                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: marginBottom }}>
+                        {this.renderBtnYourResults(tournamentElite)}
+
+                        {this.renderBtnOpenTournament('tournamentE')}
+
+                    </div>
+                }
+
+            </div>
+        )
+    }
+
     renderTournamentLow(boxTournamentWidth) {
         const { tournamentWiza, tournamentWizaSubs, avgLevelWiza } = this.state
         const { buyinWiza, feeTournamentWiza } = this.props
@@ -752,7 +981,6 @@ class Tournament extends Component {
 
         let finalDate;
         if (tournamentWiza.canSubscribe) {
-            const dateStartString = moment(dateStart).format("dddd, MMMM Do YYYY, h:mm:ss a");
             finalDate = `Start: ${moment().to(dateStart)}`
         }
         else if (!tournamentWiza.canSubscribe && !tournamentWiza.tournamentEnd && tournamentWiza.roundEnded === "0") {
@@ -773,8 +1001,8 @@ class Tournament extends Component {
             >
                 {
                     tournamentWiza.showLeague ?
-                    <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
-                        <p style={{ fontSize: 24, color: 'white' }}>
+                    <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 50, marginBottom }}>
+                        <p style={{ fontSize: 22, color: 'white' }}>
                             The Twelve League
                         </p>
 
@@ -783,8 +1011,8 @@ class Tournament extends Component {
                         </p>
                     </div>
                     :
-                    <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
-                        <p style={{ fontSize: 24, color: 'white' }}>
+                    <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 50, marginBottom }}>
+                        <p style={{ fontSize: 22, color: 'white' }}>
                             The Apprentice Tournament
                         </p>
                     </div>
@@ -800,7 +1028,7 @@ class Tournament extends Component {
                     </p>
                 </div>
 
-                <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
+                <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 40, marginBottom }}>
                     <p style={{ fontSize: 20, color: 'white' }}>
                         Buyin <span style={{ color: 'gold' }}>{buyinWiza}</span> $WIZA
                     </p>
@@ -832,22 +1060,22 @@ class Tournament extends Component {
                     </p>
                 </div>
 
-                <p style={{ fontSize: 17, color: 'white', marginBottom, height: 55 }}>
+                <p style={{ fontSize: 16, color: 'white', marginBottom, height: 55 }}>
                     Participation reward: (for each wizard) {tournamentWiza.reward}
                 </p>
 
                 {
                     finalDate ?
-                    <p style={{ fontSize: 17, color: 'white', marginBottom }}>
+                    <p style={{ fontSize: 17, color: 'white', height: 34, marginBottom }}>
                         {finalDate}
                     </p>
                     :
-                    <p style={{ height: 17, fontSize: 17, color: 'white', marginBottom }}>
+                    <p style={{ height: 17, fontSize: 17, color: 'white', height: 34, marginBottom }}>
 
                     </p>
                 }
 
-                <div style={{ alignItems: 'center' }}>
+                <div style={{ alignItems: 'center', marginTop: 10 }}>
                     <p style={{ fontSize: 20, color: 'white', marginRight: 10 }}>
                         Registrations open
                     </p>
@@ -1020,15 +1248,14 @@ class Tournament extends Component {
 	}
 
     renderBody(isMobile) {
-        const { tournament, tournamentWiza, profileFights, error, showProfileFights, showSubs, yourSubs } = this.state
-        const { showModalTx } = this.props
+        const { tournament, tournamentWiza, tournamentElite, profileFights, error, showProfileFights, showSubs, yourSubs } = this.state
 
         let { boxW, modalW } = getBoxWidth(isMobile)
         if (boxW > 1250) {
             boxW = 1250
         }
 
-        if (!tournament.name || !tournamentWiza.name) {
+        if (!tournament.name || !tournamentWiza.name || !tournamentElite.name) {
             return (
                 <div style={{ width: boxW, height: 50, justifyContent: 'center', alignItems: 'center', paddingTop: 30 }}>
                     <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
@@ -1037,15 +1264,17 @@ class Tournament extends Component {
         }
 
         //console.log(tournament);
-        let boxTournamentWidth = isMobile ? (boxW * 90 / 100) : (boxW - 60) / 2
-        if (boxTournamentWidth > 420) {
-            boxTournamentWidth = 420
+        let boxTournamentWidth = isMobile ? (boxW * 90 / 100) : (boxW - 140) / 3
+        if (boxTournamentWidth > 358) {
+            boxTournamentWidth = 358
         }
 
         return (
             <div style={{ width: boxW, flexDirection: 'column', justifyContent: 'center', flexWrap: 'wrap', paddingTop: 30 }}>
 
-                <div style={{ width: boxW, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', flexWrap: 'wrap', marginBottom: 30 }}>
+                <div style={{ width: boxW, flexDirection: 'row', justifyContent: isMobile ? 'center' : 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 30 }}>
+                    {this.renderTournamentElite(boxTournamentWidth)}
+
                     {this.renderTournamentHigh(boxTournamentWidth)}
 
                     {this.renderTournamentLow(boxTournamentWidth)}
@@ -1122,22 +1351,6 @@ class Tournament extends Component {
 					</div>
                 }
 
-                <ModalTransaction
-					showModal={showModalTx}
-					width={modalW}
-					type={this.state.typeModal}
-					mintSuccess={() => {
-						this.props.clearTransaction()
-
-						window.location.reload()
-					}}
-					mintFail={() => {
-						this.props.clearTransaction()
-						window.location.reload()
-					}}
-					nameNft={this.state.nameNftSubscribed}
-				/>
-
                 {
                     this.state.showModalSpellbook &&
                     <ModalSpellbook
@@ -1211,7 +1424,7 @@ const styles = {
 		backgroundColor: BACKGROUND_COLOR
 	},
     btnSubscribe: {
-        width: 190,
+        width: 150,
 		height: 45,
 		backgroundColor: CTA_COLOR,
 		justifyContent: 'center',
@@ -1235,7 +1448,7 @@ const styles = {
     boxTournament: {
         borderRadius: 8,
         flexDirection: 'column',
-        padding: 24,
+        padding: 12,
         borderWidth: 2,
         borderColor: CTA_COLOR,
         borderStyle: 'solid',
@@ -1272,9 +1485,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyin, buyinWiza, feeTournament, feeTournamentWiza, userMintedNfts } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyin, buyinWiza, feeTournament, feeTournamentWiza, userMintedNfts };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts };
 }
 
 export default connect(mapStateToProps, {
@@ -1289,5 +1502,7 @@ export default connect(mapStateToProps, {
     clearTransaction,
     subscribeToTournamentMassWIZA,
     getSubscriptions,
-    changeSpellTournament
+    changeSpellTournament,
+    subscribeToTournamentMassELITE,
+    updateInfoTransactionModal
 })(Tournament)

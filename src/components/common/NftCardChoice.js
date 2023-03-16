@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { doc, updateDoc } from "firebase/firestore";
-import { firebasedb } from '../Firebase';
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCardChoice.css'
 import cardStats from './CardStats'
@@ -54,13 +52,11 @@ class NftCardChoice extends Component {
 	}
 
     onSubscribe(spellSelected) {
-        const { item } = this.props
-
         this.props.onSubscribe(spellSelected)
     }
 
 	render() {
-		const { item, width, canSubscribe, toSubscribe, equipment, subscriptionsInfo } = this.props
+		const { item, width, canSubscribe, toSubscribe, subscriptionsInfo } = this.props
 
         //console.log(subscriptionsInfo)
 

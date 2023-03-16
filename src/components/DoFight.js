@@ -569,8 +569,11 @@ class DoFight extends Component {
     getName(item) {
 
 		let type = "Wizard"
-		if (parseInt(item.id) >= 1023 && parseInt(item.id) < REVEAL_CAP) {
+		if (parseInt(item.id) >= 1023 && parseInt(item.id) < 2048) {
 			type = "Cleric"
+		}
+        if (parseInt(item.id) >= 2048 && parseInt(item.id) < REVEAL_CAP) {
+			type = "Druid"
 		}
 
 		if (item.nickname) {

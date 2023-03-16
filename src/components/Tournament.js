@@ -68,7 +68,7 @@ class Tournament extends Component {
 	}
 
     async loadTournament() {
-        const { chainId, gasPrice, gasLimit, networkUrl, account, subscribed } = this.props
+        const { chainId, gasPrice, gasLimit, networkUrl, subscribed } = this.props
 
         const querySnapshot = await getDocs(collection(firebasedb, "stage"))
 
@@ -101,7 +101,6 @@ class Tournament extends Component {
 
                 this.loadPair(tournament.name)
 
-                const roundEnded = tournament.roundEnded
                 const tournamentName = tournament.name.split("_")[0]
 
                 this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "kda", (subscribed) => {

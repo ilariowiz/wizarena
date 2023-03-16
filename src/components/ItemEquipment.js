@@ -4,16 +4,13 @@ import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import toast, { Toaster } from 'react-hot-toast';
 import Header from './Header'
-import EquipmentCard from './common/EquipmentCard'
 import HistoryItemEquipment from './common/HistoryItemEquipment'
-import ModalTransaction from './common/ModalTransaction'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import ModalTransfer from './common/ModalTransfer'
 import getRingBonuses from './common/GetRingBonuses'
-import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import ringsRarity from './common/RankRings'
-import { MAIN_NET_ID, ITEMS_PER_BLOCK, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
+import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
 import {
     setNetworkSettings,
 	setNetworkUrl,
@@ -22,7 +19,8 @@ import {
     listEquipment,
     delistEquipment,
     buyEquipment,
-    transferEquipment
+    transferEquipment,
+    updateInfoTransactionModal
 } from '../actions'
 
 
@@ -37,7 +35,6 @@ class ItemEquipment extends Component {
             equipment: {},
             inputPrice: '',
             showModalConnection: false,
-            typeModal: '',
             wizaPrice: undefined,
             itemHistory: [],
             loadingHistory: true,
@@ -98,7 +95,7 @@ class ItemEquipment extends Component {
         this.props.getInfoNftEquipment(chainId, gasPrice, gasLimit, networkUrl, iditem, (response) => {
 			//console.log(response);
             document.title = `${response.name} - Wizards Arena`
-            
+
             this.loadHistory(iditem)
 			this.setState({ equipment: response, loading: false })
 		})
@@ -154,9 +151,14 @@ class ItemEquipment extends Component {
 
         let saleValues = { id: equipment.id, amount: inputPrice, url: equipment.url, name: equipment.name }
 
-		this.setState({ typeModal: 'listequipment', saleValues }, () => {
-			this.props.listEquipment(chainId, gasPrice, 700, netId, equipment.id, parseFloat(inputPrice).toFixed(2), account)
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will list ${equipment.name} for ${inputPrice} WIZA. Marketplace Fee: 2%`,
+			typeModal: 'listequipment',
+			transactionOkText: 'Listing successfully',
+            saleValues
 		})
+
+		this.props.listEquipment(chainId, gasPrice, 700, netId, equipment.id, parseFloat(inputPrice).toFixed(2), account)
 
 	}
 
@@ -166,9 +168,14 @@ class ItemEquipment extends Component {
 
         let saleValues = { id: equipment.id, url: equipment.url, name: equipment.name }
 
-		this.setState({ typeModal: 'delistequipment', saleValues }, () => {
-			this.props.delistEquipment(chainId, gasPrice, 700, netId, account, equipment.id)
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will delist #${equipment.id}`,
+			typeModal: 'delistequipment',
+			transactionOkText: 'Delisting successfully',
+            saleValues
 		})
+
+		this.props.delistEquipment(chainId, gasPrice, 700, netId, account, equipment.id)
 	}
 
     buy() {
@@ -177,18 +184,27 @@ class ItemEquipment extends Component {
 
 		let saleValues = { id: equipment.id, amount: equipment.price, url: equipment.url, name: equipment.name }
 
-		this.setState({ typeModal: 'buyequipment', saleValues }, () => {
-			this.props.buyEquipment(chainId, gasPrice, 7000, netId, account, equipment.id)
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will buy ${equipment.name} (you will need WIZA on chain 1)`,
+			typeModal: 'buyequipment',
+			transactionOkText: `You bought ${equipment.name}`,
+            saleValues
 		})
+
+		this.props.buyEquipment(chainId, gasPrice, 7000, netId, account, equipment.id)
 	}
 
     transfer(receiver) {
 		const { equipment } = this.state
 		const { account, chainId, gasPrice, netId } = this.props
 
-		this.setState({ typeModal: 'transfer' }, () => {
-			this.props.transferEquipment(chainId, gasPrice, 1500, netId, equipment.id, account, receiver)
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will transfer #${equipment.id} to another wallet`,
+			typeModal: 'transfer',
+			transactionOkText: `Transfer completed successfully`,
 		})
+
+		this.props.transferEquipment(chainId, gasPrice, 1500, netId, equipment.id, account, receiver)
 	}
 
     renderName(marginBottom) {
@@ -498,6 +514,7 @@ class ItemEquipment extends Component {
                         <img
                             src={getImageUrl(equipment.equippedToId)}
                             style={{ width: width - 80, marginBottom: 10, borderColor: 'white', borderWidth: 1, borderStyle: 'solid', borderRadius: 2 }}
+                            alt="Ring"
                         />
 
                         <p style={{ fontSize: 22, color: 'white' }}>
@@ -785,8 +802,7 @@ class ItemEquipment extends Component {
 	}
 
     render() {
-        const { showModalTx } = this.props
-		const { inputPrice, equipment, typeModal, showModalConnection, loading, error, showModalTransfer } = this.state
+		const { showModalConnection, loading, error, showModalTransfer } = this.state
 
 		let modalW = window.innerWidth * 82 / 100
 		if (modalW > 480) {
@@ -841,24 +857,6 @@ class ItemEquipment extends Component {
 					error &&
 					this.renderError()
 				}
-
-                <ModalTransaction
-					showModal={showModalTx}
-					width={modalW}
-					type={typeModal}
-					inputPrice={inputPrice}
-					idNft={equipment.id}
-					nameNft={equipment.name}
-					mintSuccess={() => {
-						this.props.clearTransaction()
-						this.getPathNft()
-					}}
-					mintFail={() => {
-						this.props.clearTransaction()
-						this.getPathNft()
-					}}
-					saleValues={this.state.saleValues}
-				/>
 
 				<ModalConnectionWidget
 					width={modalW}
@@ -981,10 +979,10 @@ const styles = {
 
 
 const mapStateToProps = (state) => {
-	const { account, chainId, gasPrice, gasLimit, netId, networkUrl, showModalTx } = state.mainReducer;
+	const { account, chainId, gasPrice, gasLimit, netId, networkUrl } = state.mainReducer;
     const { statSearched, allItems, allItemsIds, totalCountItems, itemsBlockId } = state.equipmentReducer
 
-	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, showModalTx, statSearched, allItems, allItemsIds, totalCountItems, itemsBlockId };
+	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, statSearched, allItems, allItemsIds, totalCountItems, itemsBlockId };
 }
 
 export default connect(mapStateToProps, {
@@ -995,5 +993,6 @@ export default connect(mapStateToProps, {
     listEquipment,
     delistEquipment,
     buyEquipment,
-    transferEquipment
+    transferEquipment,
+    updateInfoTransactionModal
 })(ItemEquipment)

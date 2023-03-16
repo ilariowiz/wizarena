@@ -74,6 +74,7 @@ class ModalOpenItemsMinted extends Component {
                 <img
                     src={chest_img}
                     style={{ width: 80, marginBottom: 20 }}
+                    alt="Chest"
                 />
 
                 <button
@@ -94,7 +95,7 @@ class ModalOpenItemsMinted extends Component {
     }
 
 	render() {
-		const { showModal, winner } = this.props;
+		const { showModal } = this.props;
         const { lastMinted, loading } = this.state
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"

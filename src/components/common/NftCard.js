@@ -31,21 +31,21 @@ class NftCard extends Component {
 
 				<div style={{ justifyContent: 'space-between', width, height: 65, alignItems: 'center' }}>
 
-					<div style={{ width: '100%', justifyContent: 'space-between', flexDirection: 'column', marginTop: 5, flex: item.listed ? 0.7 : 1 }}>
+					<div style={{ width: '100%', justifyContent: 'space-between', flexDirection: 'column', flex: item.listed ? 0.7 : 1 }}>
 						{
 							item.nickname ?
-							<p style={{ color: 'white', fontSize: 17, marginLeft: 10, lineHeight: 1 }}>
+							<p style={{ color: 'white', fontSize: 16, marginLeft: 10, lineHeight: 1 }}>
 								{item.name} {item.nickname}
 							</p>
 							:
-							<p style={{ color: 'white', fontSize: 19, marginLeft: 10, lineHeight: 1 }}>
+							<p style={{ color: 'white', fontSize: 18, marginLeft: 10, lineHeight: 1 }}>
 								{item.name}
 							</p>
 						}
 
 						{
 							item.level &&
-							<div style={{ alignItems: 'center', marginLeft: 10 }}>
+							<div style={{ alignItems: 'center', marginLeft: 10, marginTop: 5 }}>
 								<p style={{ color: "#c2c0c0", fontSize: 14, marginRight: 10 }}>
 									LEVEL
 								</p>

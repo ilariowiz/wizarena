@@ -5,7 +5,7 @@ export const CTA_COLOR = '#07abf3'
 export const MIN_LEVEL = 122
 export const MAX_LEVEL = 300
 
-export const REVEAL_CAP = 2048
+export const REVEAL_CAP = 3072
 
 export const RING_MINT_PRICE = 4.0
 
@@ -85,6 +85,8 @@ export const SET_WIZARD_SELECTED_SHOP = 'SET_WIZARD_SELECTED_SHOP'
 export const SET_KADENA_NAME = 'SET_KADENA_NAME'
 
 export const SELECT_WIZARD = 'SELECT_WIZARD'
+
+export const UPDATE_INFO_TRANSACTION_MODAL = 'UPDATE_INFO_TRANSACTION_MODAL'
 
 /////// equipment
 export const LOAD_ALL_ITEMS_IDS = 'LOAD_ALL_ITEMS_IDS'

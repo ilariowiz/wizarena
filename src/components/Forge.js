@@ -3,13 +3,9 @@ import { connect } from 'react-redux'
 import Media from 'react-media';
 import Header from './Header'
 import DotLoader from 'react-spinners/DotLoader';
-import moment from 'moment'
 import { AiOutlinePlus } from 'react-icons/ai'
 import ModalForgeEquipment from './common/ModalForgeEquipment'
-import EquipmentCardForge from './common/EquipmentCardForge'
 import ModalRecipeBook from './common/ModalRecipeBook'
-import ModalOpenItemsMinted from './common/ModalOpenItemsMinted'
-import ModalTransaction from './common/ModalTransaction'
 import getBoxWidth from './common/GetBoxW'
 import recipeBook from './common/RecipeBook'
 import forgeLevel from './common/ForgeLevel'
@@ -21,7 +17,8 @@ import {
     clearTransaction,
     getForgeLevel,
     getDiscountLevel,
-    forgeItem
+    forgeItem,
+    updateInfoTransactionModal
 } from '../actions'
 
 const ring_placeholder = require('../assets/ring_placeholder.png')
@@ -147,13 +144,18 @@ class Forge extends Component {
 
     forge() {
         const { ring1, ring2, finalRecipe } = this.state
-        const { account, chainId, gasPrice, netId, networkUrl } = this.props
+        const { account, chainId, gasPrice, netId } = this.props
 
         if (!ring1 || !ring2 || !finalRecipe) {
             return
         }
 
         //console.log(ring1, finalRecipe);
+        this.props.updateInfoTransactionModal({
+            transactionToConfirmText: 'You are about to forge a ring.',
+            typeModal: 'forge',
+            transactionOkText: 'Ring forged successfully'
+        })
 
         this.props.forgeItem(chainId, gasPrice, netId, finalRecipe.ingredients, [ring1.id, ring2.id], account)
     }
@@ -186,9 +188,8 @@ class Forge extends Component {
 
     renderBody(isMobile) {
         const { loading, error, ring1, ring2, ringIdxSelected, finalRecipe, discount } = this.state
-        const { showModalTx } = this.props
 
-        const { boxW, modalW } = getBoxWidth(isMobile)
+        const { boxW } = getBoxWidth(isMobile)
 
         let placeholderW = 120
 
@@ -221,6 +222,7 @@ class Forge extends Component {
                             <img
                                 src={recipe_book}
                                 style={{ width: 60 }}
+                                alt="Recipe Book"
                             />
                             <p style={{ fontSize: 14, color: 'white', textAlign: 'center' }}>
                                 Recipe Book
@@ -255,6 +257,7 @@ class Forge extends Component {
                                     <img
                                         src={ring1.url}
                                         style={{ width: 120, height: 120 }}
+                                        alt="Ring 1"
                                     />
                                     <p style={{ fontSize: 16, color: 'white', marginTop: 5, textAlign: 'center' }}>
                                         #{ring1.id} {ring1.name}
@@ -264,6 +267,7 @@ class Forge extends Component {
                                 <img
                                     src={ring_placeholder}
                                     style={{ width: placeholderW, height: placeholderW }}
+                                    alt="Placeholder"
                                 />
                             }
                         </button>
@@ -288,6 +292,7 @@ class Forge extends Component {
                                     <img
                                         src={ring2.url}
                                         style={{ width: 120, height: 120 }}
+                                        alt="Ring 2"
                                     />
                                     <p style={{ fontSize: 16, color: 'white', marginTop: 5, textAlign: 'center' }}>
                                         #{ring2.id} {ring2.name}
@@ -297,6 +302,7 @@ class Forge extends Component {
                                 <img
                                     src={ring_placeholder}
                                     style={{ width: placeholderW, height: placeholderW }}
+                                    alt="Placeholder"
                                 />
                             }
                         </button>
@@ -329,6 +335,7 @@ class Forge extends Component {
                                 <img
                                     src={finalRecipe.url}
                                     style={{ width: 120, height: 120 }}
+                                    alt="Forged Ring"
                                 />
                                 <p style={{ fontSize: 16, color: 'white', marginTop: 5, textAlign: 'center' }}>
                                     {finalRecipe.name}
@@ -338,6 +345,7 @@ class Forge extends Component {
                             <img
                                 src={ring_placeholder}
                                 style={{ width: placeholderW, height: placeholderW }}
+                                alt="Placeholder"
                             />
                         }
                     </div>
@@ -362,21 +370,6 @@ class Forge extends Component {
                         {error}
                     </p>
                 }
-
-                <ModalTransaction
-					showModal={showModalTx}
-					width={modalW}
-					type="forge"
-					mintSuccess={() => {
-						this.props.clearTransaction()
-
-                        window.location.reload()
-					}}
-					mintFail={() => {
-						this.props.clearTransaction()
-						window.location.reload()
-					}}
-				/>
 
                 <ModalForgeEquipment
                     showModal={this.state.showModalYourRings}
@@ -507,9 +500,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-    const { account, chainId, gasPrice, gasLimit, networkUrl, netId, showModalTx } = state.mainReducer
+    const { account, chainId, gasPrice, gasLimit, networkUrl, netId } = state.mainReducer
 
-    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, showModalTx }
+    return { account, chainId, gasPrice, gasLimit, networkUrl, netId }
 }
 
 export default connect(mapStateToProps, {
@@ -519,5 +512,6 @@ export default connect(mapStateToProps, {
     clearTransaction,
     getForgeLevel,
     getDiscountLevel,
-    forgeItem
+    forgeItem,
+    updateInfoTransactionModal
 })(Forge)

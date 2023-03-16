@@ -1,7 +1,7 @@
 import _ from 'lodash'
 const calcUpgradeCost = (statToUpgrade, key) => {
 
-    //console.log(statToUpgrade);
+    //console.log(statToUpgrade, key);
 
     if (statToUpgrade === undefined) {
         return 0
@@ -11,11 +11,13 @@ const calcUpgradeCost = (statToUpgrade, key) => {
     const DEFENSE_BASE_WIZA = 700
     const ATTACK_BASE_WIZA = 700
     const DAMAGE_BASE_WIZA = 400
+    const SPEED_BASE_WIZA = 400
 
     const MAX_HP_VALUE = 61
     const MAX_DEFENSE_VALUE = 19
     const MAX_ATTACK_VALUE = 9
     const MAX_DAMAGE_VALUE = 7
+    const MAX_SPEED_VALUE = 1
     //ignoriamo attacco e danno della spell, perché si potrebbe cheatare cambiando con una spell con poco atk e poco dmg
 
     //console.log("stat to upgrade -", key, statToUpgrade);
@@ -38,6 +40,10 @@ const calcUpgradeCost = (statToUpgrade, key) => {
         MAX_SELECTED = MAX_DAMAGE_VALUE
         BASE_WIZA_SELECTED = DAMAGE_BASE_WIZA
     }
+    else if (key === 'speed') {
+        MAX_SELECTED = MAX_SPEED_VALUE
+        BASE_WIZA_SELECTED = SPEED_BASE_WIZA
+    }
 
     let diffFromMax = MAX_SELECTED - statToUpgrade
     //console.log("diff From Max", diffFromMax);
@@ -48,7 +54,6 @@ const calcUpgradeCost = (statToUpgrade, key) => {
     //const wizaCost = (BASE_WIZA_SELECTED - (BASE_WIZA_SELECTED * diffFromMax / 100))
     const wizaCost = (BASE_WIZA_SELECTED - ((100 * diffFromMax / MAX_SELECTED) * BASE_WIZA_SELECTED / 100))
     //console.log("wiza cost", Math.ceil(wizaCost));
-    //console.log(wizaCost);
 
     return _.round(wizaCost, 2)
 }

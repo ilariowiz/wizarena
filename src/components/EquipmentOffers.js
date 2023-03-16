@@ -6,7 +6,6 @@ import DotLoader from 'react-spinners/DotLoader';
 import moment from 'moment'
 import getBoxWidth from './common/GetBoxW'
 import ModalMakeOfferItem from './common/ModalMakeOfferItem'
-import ModalTransaction from './common/ModalTransaction'
 import itemToUrl from './common/ItemToUrl'
 import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
 import {
@@ -16,7 +15,8 @@ import {
     clearTransaction,
     makeOfferEquipment,
     loadEquipMinted,
-    acceptOfferEquipment
+    acceptOfferEquipment,
+    updateInfoTransactionModal
 } from '../actions'
 
 
@@ -31,8 +31,6 @@ class Sales extends Component {
             showModalOffer: false,
             typeModal: "",
             yourEquip: [],
-            offerInfoRecap: "",
-            saleValues: {}
         }
     }
 
@@ -90,7 +88,14 @@ class Sales extends Component {
 			duration
 		}
 
-		this.setState({ typeModal: 'makeofferitem', showModalOffer: false, makeOfferValues }, () => {
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will offer ${makeOfferValues.amount} WIZA for ${makeOfferValues.ringType}, expiring in ${makeOfferValues.duration} ${makeOfferValues.duration > 1 ? "days" : "day"}`,
+			typeModal: 'makeofferitem',
+			transactionOkText: `Offer sent!`,
+			makeOfferValues
+		})
+
+		this.setState({ showModalOffer: false }, () => {
 			this.props.makeOfferEquipment(chainId, gasPrice, 4000, netId, account, ringType, duration, amount)
 		})
 	}
@@ -112,9 +117,14 @@ class Sales extends Component {
 
 		let saleValues = { id: idToSell, amount: offer.amount, name: offer.itemtype, url: itemToUrl[offer.itemtype] }
 
-		this.setState({ typeModal: 'acceptofferequipment', offerInfoRecap, saleValues }, () => {
-			this.props.acceptOfferEquipment(chainId, gasPrice, 5000, netId, offer.id, idToSell, account)
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: offerInfoRecap,
+			typeModal: 'acceptofferequipment',
+			transactionOkText: `Offer accepted!`,
+			saleValues
 		})
+
+		this.props.acceptOfferEquipment(chainId, gasPrice, 5000, netId, offer.id, idToSell, account)
 	}
 
     getExpire(item) {
@@ -180,8 +190,7 @@ class Sales extends Component {
 
 
     renderBody(isMobile) {
-        const { loading, error, showModalOffer, typeModal, allOffers } = this.state
-        const { showModalTx } = this.props
+        const { loading, error, showModalOffer, allOffers } = this.state
 
         const { boxW, modalW } = getBoxWidth(isMobile)
 
@@ -227,23 +236,6 @@ class Sales extends Component {
 					showModal={showModalOffer}
 					onCloseModal={() => this.setState({ showModalOffer: false })}
 					submitOffer={(amount, duration, ringType) => this.submitOffer(amount, duration, ringType)}
-				/>
-
-                <ModalTransaction
-					showModal={showModalTx}
-					width={modalW}
-					type={typeModal}
-					mintSuccess={() => {
-						this.props.clearTransaction()
-						window.location.reload()
-					}}
-					mintFail={() => {
-						this.props.clearTransaction()
-						window.location.reload()
-					}}
-					makeOfferValues={this.state.makeOfferValues}
-                    offerInfoRecap={this.state.offerInfoRecap}
-                    saleValues={this.state.saleValues}
 				/>
 
             </div>
@@ -353,5 +345,6 @@ export default connect(mapStateToProps, {
     clearTransaction,
     makeOfferEquipment,
     loadEquipMinted,
-    acceptOfferEquipment
+    acceptOfferEquipment,
+    updateInfoTransactionModal
 })(Sales)

@@ -12,7 +12,7 @@ export const calcLevelWizard = (item) => {
     const def = item.defense.int
     const atk = item.attack.int
     const dmg = item.damage.int
-    const speed = item.speed.int
+    const speed = item.speed.int || 0
 
 
     let hpLevel = hp * 1
@@ -38,6 +38,7 @@ export const calcLevelWizardAfterUpgrade = (item, stat) => {
     let def = item.defense
     let atk = item.attack
     let dmg = item.damage
+    let speed = item.speed || 0
 
     if (stat === "hp") {
         hp += 1
@@ -51,14 +52,18 @@ export const calcLevelWizardAfterUpgrade = (item, stat) => {
     else if (stat === "damage") {
         dmg += 1
     }
+    else if (stat === "speed") {
+        speed += 1
+    }
 
     let hpLevel = hp * 1
     let defLevel = def * 4.67
     let atkLevel = atk * 4.67
     let dmgLevel = dmg * 2.67
+    let speedLevel = speed * 2.67
 
 
-    const level = Math.round(hpLevel + defLevel + atkLevel + dmgLevel)
+    const level = Math.round(hpLevel + defLevel + atkLevel + dmgLevel + speedLevel)
 
     //console.log(level);
     return level
@@ -74,7 +79,7 @@ export const calcLevelWizardAfterDowngrade = (item, stat) => {
     let def = item.defense
     let atk = item.attack
     let dmg = item.damage
-    let speed = item.speed
+    let speed = item.speed || 0
 
     if (stat === "hp") {
         hp -= 1
@@ -96,9 +101,10 @@ export const calcLevelWizardAfterDowngrade = (item, stat) => {
     let defLevel = def * 4.67
     let atkLevel = atk * 4.67
     let dmgLevel = dmg * 2.67
+    let speedLevel = speed * 2.67
 
 
-    const level = Math.round(hpLevel + defLevel + atkLevel + dmgLevel)
+    const level = Math.round(hpLevel + defLevel + atkLevel + dmgLevel + speedLevel)
 
     //console.log(level);
     return level

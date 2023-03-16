@@ -5,6 +5,8 @@ import { IoMenu } from 'react-icons/io5'
 import { IoClose } from 'react-icons/io5'
 import { SiDiscord } from 'react-icons/si'
 import { SiTwitter } from 'react-icons/si'
+import ModalBuyWIZA from './common/ModalBuyWIZA'
+import ModalTransaction from './common/ModalTransaction'
 import getBoxWidth from './common/GetBoxW'
 import '../css/Header.css'
 import {
@@ -13,7 +15,10 @@ import {
 	setNetworkSettings,
 	setNetworkUrl,
 	logout,
-	getWizaNotClaimed
+	getWizaNotClaimed,
+	swapKdaWiza,
+	clearTransaction,
+	updateInfoTransactionModal
 } from '../actions'
 import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, MAIN_NET_ID } from '../actions/types'
 
@@ -25,7 +30,8 @@ class Header extends Component {
 		super(props)
 
 		this.state = {
-			showPanel: false
+			showPanel: false,
+			showModalBuy: false,
 		}
 	}
 
@@ -72,6 +78,31 @@ class Header extends Component {
 
 		this.props.getWizaNotClaimed(chainId, gasPrice, gasLimit, networkUrl)
 	}
+
+	swap(amount, estimatedWiza) {
+        const { chainId, gasPrice, netId, account } = this.props
+
+        //console.log(account);
+
+        if (!amount || !account.account || !estimatedWiza) {
+            return
+        }
+
+        let decAmount = amount
+        if (!decAmount.includes(',') && !decAmount.includes('.')) {
+            decAmount = `${decAmount}.0`
+        }
+
+        const text = `You will swap ${decAmount} KDA to (estimated) ${estimatedWiza} WIZA`
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: text,
+			typeModal: 'swap',
+			transactionOkText: 'Swap was successfully'
+		})
+
+		this.setState({ showModalBuy: false })
+		this.props.swapKdaWiza(chainId, gasPrice, netId, parseFloat(decAmount), estimatedWiza, account)
+    }
 
 	renderSlidePanel(boxW) {
 		const { showPanel } = this.state
@@ -168,9 +199,19 @@ class Header extends Component {
 							</p>
 						</a>
 
-						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 30 }}>
+						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 20 }}>
 							All you need to know about WIZA
 						</p>
+
+						<button
+							className="btnH"
+							style={Object.assign({}, styles.btnLogout, { borderColor: TEXT_SECONDARY_COLOR, marginBottom: 20, width: 180, height: 40 })}
+							onClick={() => this.setState({ showModalBuy: true })}
+						>
+							<p style={{ fontSize: 16, color: 'white' }}>
+								BUY WIZA
+							</p>
+						</button>
 
 						<a
 							href="https://wizardsarena.gitbook.io/wizards-arena/usdwiza/how-to-mine"
@@ -343,7 +384,7 @@ class Header extends Component {
 	render() {
 		const { section, account, page, isMobile, kadenaname } = this.props
 
-		const { boxW } = getBoxWidth(isMobile)
+		const { boxW, modalW } = getBoxWidth(isMobile)
 
 		let margin = isMobile ? 12 : 22
 
@@ -404,7 +445,7 @@ class Header extends Component {
 									EQUIPMENT
 								</a>
 
-								<a
+								{/*<a
 									href={`${window.location.protocol}//${window.location.host}/mint`}
 									className={section === 2 ? btnPressedStyle : btnStyle}
 									onClick={(e) => {
@@ -413,7 +454,7 @@ class Header extends Component {
 									}}
 								>
 									MINT
-								</a>
+								</a>*/}
 
 								<a
 									href={`${window.location.protocol}//${window.location.host}/forge`}
@@ -597,6 +638,29 @@ class Header extends Component {
 
 					{this.renderSlidePanel(boxW)}
 				</div>
+
+				<ModalBuyWIZA
+					width={modalW}
+					showModal={this.state.showModalBuy}
+					onCloseModal={() => this.setState({ showModalBuy: false })}
+					onSwap={(amount, estimatedWiza) => {
+						this.swap(amount, estimatedWiza)
+					}}
+				/>
+
+				<ModalTransaction
+					showModal={this.props.showModalTx}
+					width={modalW}
+					mintSuccess={() => {
+						this.props.clearTransaction()
+						window.location.reload()
+					}}
+					mintFail={() => {
+						this.props.clearTransaction()
+						window.location.reload()
+					}}
+				/>
+
 			</div>
 		)
 	}
@@ -632,9 +696,10 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname } = state.mainReducer
+	const { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx } = state.mainReducer
+	const { transactionToConfirmText, typeModal, transactionOkText } = state.modalTransactionReducer
 
-	return { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname }
+	return { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, transactionToConfirmText, typeModal, transactionOkText }
 }
 
 export default connect(mapStateToProps, {
@@ -643,5 +708,8 @@ export default connect(mapStateToProps, {
 	setNetworkSettings,
 	setNetworkUrl,
 	logout,
-	getWizaNotClaimed
+	getWizaNotClaimed,
+	swapKdaWiza,
+	clearTransaction,
+	updateInfoTransactionModal
 })(Header);
