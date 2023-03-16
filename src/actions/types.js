@@ -3,7 +3,7 @@ export const TEXT_SECONDARY_COLOR = '#21c6e8'
 export const CTA_COLOR = '#07abf3'
 
 export const MIN_LEVEL = 122
-export const MAX_LEVEL = 300
+export const MAX_LEVEL = 350
 
 export const REVEAL_CAP = 3072
 
