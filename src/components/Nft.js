@@ -305,7 +305,11 @@ class Nft extends Component {
 		const docRef = doc(firebasedb, "base_stats", `${nft.id}`)
 
 		const docSnap = await getDoc(docRef)
-		const data = docSnap.data()
+		let data = docSnap.data()
+
+		if (!data.speed) {
+			data['speed'] = 0
+		}
 
 		//console.log(data);
 
@@ -333,7 +337,10 @@ class Nft extends Component {
 		}
 
 		if (nft.speed && nft.speed.int > 0) {
-			historyUpgrades.push({ stat: "speed", value: nft.speed.int })
+			let difference = nft.speed.int - data.speed
+			if (difference > 0) {
+				historyUpgrades.push({ stat: "speed", value: difference })
+			}
 		}
 
 		this.setState({ historyUpgrades })
