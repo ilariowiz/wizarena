@@ -236,6 +236,11 @@ class Collection extends Component {
 							return n.id && parseInt(n.id) > 1023 && parseInt(n.id) <= 2047
 						})
 					}
+					else if (i.value === "Druids") {
+						newData = newData.filter(n => {
+							return n.id && parseInt(n.id) > 2047 && parseInt(n.id) <= 3071
+						})
+					}
 
 				}
 
@@ -740,7 +745,7 @@ class Collection extends Component {
 				{this.renderSearched()}
 
 				<div style={{ flexWrap: 'wrap', marginBottom: 10 }}>
-					{this.renderBoxSearchStat("collection", "COLLECTION", ["Wizards", "Clerics"])}
+					{this.renderBoxSearchStat("collection", "COLLECTION", ["Wizards", "Clerics", "Druids"])}
 					{this.renderBoxSearchStat("hp", "HP", ["40 - 50", "51 - 60", "61 - 65", "66 - 70", "71 - 75", "76 - 80", "81 - 85", "86 - 90", "91 - 95", "96 - 100", "101 - 105", "106 - 110", "111 - 115", "116 - 120", "121 - 125"].reverse())}
 					{this.renderBoxSearchStat("defense", "DEFENSE", ["14 - 15", "16 - 17", "18 - 19", "20 - 21", "22 - 23", "24 - 25", "26 - 27", "28 - 29", "30 - 31", "32 - 33", "34 - 35", "36 - 37", "38 - 39", "40 - 41"].reverse())}
 					{this.renderBoxSearchStat("element", "ELEMENT", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
