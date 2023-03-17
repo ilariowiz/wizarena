@@ -2007,6 +2007,12 @@
         )
     )
 
+    ; (defun recover-transfer (id:string receiver:string)
+    ;     (with-capability (ADMIN)
+    ;         (update nfts id {"owner": receiver})
+    ;     )
+    ; )
+
     (defun increase-count(key:string)
         @doc "Increases count of a key in a table by 1"
         (require-capability (PRIVATE))

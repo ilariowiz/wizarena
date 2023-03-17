@@ -10,7 +10,8 @@ class ModalTransfer extends Component {
 
 		this.state = {
 			addr: '',
-            loading: false
+            loading: false,
+            error: ""
 		}
 	}
 
@@ -20,22 +21,29 @@ class ModalTransfer extends Component {
             return
         }
 
+        //is a kadenanames
         if (addr.includes(".") && !this.state.loading) {
             this.setState({ loading: true })
             const response = await fetch(`https://www.kadenanames.com/api/v1/address/${addr}`);
             const { address } = await response.json();
             //console.log(address);
-            this.setState({ loading: false })
+            this.setState({ loading: false, error: '' })
             this.props.callback(address)
         }
         else {
-            this.props.callback(addr)
+            if (!addr.includes("k:")) {
+                this.setState({ error: "Invalid wallet address. Only k: accounts are supported." })
+            }
+            else {
+                this.setState({ error: "" })
+                this.props.callback(addr)
+            }
         }
     }
 
 	render() {
 		const { showModal, onCloseModal, width } = this.props;
-        const { loading } = this.state
+        const { loading, error } = this.state
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 
@@ -65,6 +73,14 @@ class ModalTransfer extends Component {
                                 {loading ? "Loading..." : "Transfer"}
                             </p>
                         </button>
+
+                        {
+                            error ?
+                            <p style={{ color: 'red', fontSize: 16, marginTop: 20, textAlign: 'center' }}>
+                                {error}
+                            </p>
+                            : null
+                        }
 
                     </div>
 

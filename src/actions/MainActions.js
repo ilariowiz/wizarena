@@ -436,18 +436,17 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 						if (i.damage.int > maxStats.damage) {
 							maxStats['damage'] = i.damage.int
 						}
-						if (i.hp.int > maxStats.hp) {
+						if (i.speed.int > maxStats.speed) {
 							maxStats['speed'] = i.speed.int
 						}
 						*/
-
 					})
 
 					/*
 					maxStats['hp'] += 24 //anello life
 					maxStats['defense'] += 6
 					maxStats['attack'] += 13 //6 anello, 7 spell
-					maxStats['damage'] += 19 //(12 anello, 7 spell)
+					maxStats['damage'] += 21 //(12 anello, 9 spell)
 					maxStats['speed'] += 12
 
 					console.log(maxStats);
