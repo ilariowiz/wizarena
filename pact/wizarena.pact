@@ -425,7 +425,8 @@
         (insert upgrade-stat-values "damage_ap_cost" {"value": 2.0})
 
         (insert upgrade-stat-values "speed" {"value": 1.0})
-        (insert upgrade-stat-values "speed_base_cost" {"value": 400.0})
+        (insert upgrade-stat-values "speed_base_cost" {"value": 200.0})
+        (insert upgrade-stat-values "speed_ap_cost" {"value": 2.0})
     )
 
  ; --------------------------------------------------------------------------
@@ -1560,6 +1561,12 @@
                                 (= stat "damage")
                                 (update stats idnft {
                                     "damage": (+ current-stat increase)
+                                })
+                            )
+                            (
+                                (= stat "speed")
+                                (update stats idnft {
+                                    "speed": (+ current-stat increase)
                                 })
                             )
                         "")
