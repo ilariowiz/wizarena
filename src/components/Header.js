@@ -526,7 +526,7 @@ class Header extends Component {
 										this.props.history.replace('/collection')
 									}}
 								>
-									HOME
+									MARKETPLACE
 								</a>
 
 								<a
