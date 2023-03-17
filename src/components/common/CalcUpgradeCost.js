@@ -11,7 +11,7 @@ const calcUpgradeCost = (statToUpgrade, key) => {
     const DEFENSE_BASE_WIZA = 700
     const ATTACK_BASE_WIZA = 700
     const DAMAGE_BASE_WIZA = 400
-    const SPEED_BASE_WIZA = 400
+    const SPEED_BASE_WIZA = 200
 
     const MAX_HP_VALUE = 61
     const MAX_DEFENSE_VALUE = 19
