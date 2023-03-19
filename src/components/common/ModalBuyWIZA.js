@@ -48,7 +48,7 @@ class ModalBuyWIZA extends Component {
             let poolKda = pool.leg0.reserve.decimal ? pool.leg0.reserve.decimal : pool.leg0.reserve
             let poolWiza = pool.leg1.reserve.decimal ? pool.leg1.reserve.decimal : pool.leg1.reserve
 
-            console.log(poolKda, poolWiza);
+            //console.log(poolKda, poolWiza);
 
             this.setState({ poolKda: parseFloat(poolKda), poolWiza: parseFloat(poolWiza) })
         })
