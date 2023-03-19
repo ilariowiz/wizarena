@@ -45,10 +45,12 @@ class ModalBuyWIZA extends Component {
 		this.props.getWizaKDAPool(chainId, gasPrice, gasLimit, networkUrl, (pool) => {
             //console.log(pool);
 
-            let poolKda = pool.leg0.reserve
-            let poolWiza = pool.leg1.reserve.decimal
+            let poolKda = pool.leg0.reserve.decimal ? pool.leg0.reserve.decimal : pool.leg0.reserve
+            let poolWiza = pool.leg1.reserve.decimal ? pool.leg1.reserve.decimal : pool.leg1.reserve
 
-            this.setState({ poolKda, poolWiza })
+            console.log(poolKda, poolWiza);
+
+            this.setState({ poolKda: parseFloat(poolKda), poolWiza: parseFloat(poolWiza) })
         })
     }
 
