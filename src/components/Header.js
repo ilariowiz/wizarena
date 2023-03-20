@@ -329,8 +329,23 @@ class Header extends Component {
 							</p>
 						</a>
 
-						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 20 }}>
+						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 15 }}>
 							Check your Cleric rarity
+						</p>
+
+						<a
+							href="https://www.kaderare.com/collection/DruidsArena"
+							target="_blank"
+							rel="noopener noreferrer"
+							style={{ marginBottom: 5, width: 'fit-content' }}
+						>
+							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
+								KadeRare Druids
+							</p>
+						</a>
+
+						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 20 }}>
+							Check your Druid rarity
 						</p>
 
 						{
