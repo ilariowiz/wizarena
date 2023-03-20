@@ -1,17 +1,17 @@
 import _ from 'lodash'
-const calcUpgradeCost = (statToUpgrade, key) => {
+const calcUpgradeCost = (statToUpgrade, key, wizaValue) => {
 
     //console.log(statToUpgrade, key);
 
-    if (statToUpgrade === undefined) {
+    if (statToUpgrade === undefined || !wizaValue) {
         return 0
     }
 
-    const HP_BASE_WIZA = 150
-    const DEFENSE_BASE_WIZA = 700
-    const ATTACK_BASE_WIZA = 700
-    const DAMAGE_BASE_WIZA = 400
-    const SPEED_BASE_WIZA = 200
+    const HP_BASE_WIZA = 1.87
+    const DEFENSE_BASE_WIZA = 8.75
+    const ATTACK_BASE_WIZA = 8.75
+    const DAMAGE_BASE_WIZA = 5
+    const SPEED_BASE_WIZA = 2.5
 
     const MAX_HP_VALUE = 61
     const MAX_DEFENSE_VALUE = 19
@@ -52,7 +52,7 @@ const calcUpgradeCost = (statToUpgrade, key) => {
     }
 
     //const wizaCost = (BASE_WIZA_SELECTED - (BASE_WIZA_SELECTED * diffFromMax / 100))
-    const wizaCost = (BASE_WIZA_SELECTED - ((100 * diffFromMax / MAX_SELECTED) * BASE_WIZA_SELECTED / 100))
+    const wizaCost = (wizaValue * (BASE_WIZA_SELECTED - ((100 * diffFromMax / MAX_SELECTED) * BASE_WIZA_SELECTED / 100)))
     //console.log("wiza cost", Math.ceil(wizaCost));
 
     return _.round(wizaCost, 2)

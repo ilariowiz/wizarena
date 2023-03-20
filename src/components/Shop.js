@@ -174,7 +174,7 @@ class Shop extends Component {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
 		this.props.getWizaValue(chainId, gasPrice, gasLimit, networkUrl, (wizaValue) => {
-            //console.log(wizaValue);
+            console.log(wizaValue);
             this.setState({ wizaValue })
         })
 	}
@@ -565,7 +565,7 @@ class Shop extends Component {
     }
 
     renderShopCard(key) {
-        const { increase } = this.state
+        const { increase, wizaValue } = this.state
 
         const wizard = this.getWizardSelected()
 
@@ -584,7 +584,7 @@ class Shop extends Component {
 
             //console.log(arrayLevelsTo);
             arrayLevelsTo.map(s => {
-                costo += calcUpgradeCost(s, key)
+                costo += calcUpgradeCost(s, key, wizaValue)
             })
 
             //console.log(arrayLevelsTo);

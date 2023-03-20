@@ -414,19 +414,19 @@
         (insert upgrade-stat-values "defense" {"value": 19.0})
         (insert upgrade-stat-values "attack" {"value": 9.0})
         (insert upgrade-stat-values "damage" {"value": 7.0})
-        (insert upgrade-stat-values "hp_base_cost" {"value": 150.0})
-        (insert upgrade-stat-values "defense_base_cost" {"value": 700.0})
-        (insert upgrade-stat-values "attack_base_cost" {"value": 700.0})
-        (insert upgrade-stat-values "damage_base_cost" {"value": 400.0})
+        (insert upgrade-stat-values "speed" {"value": 1.0})
 
         (insert upgrade-stat-values "hp_ap_cost" {"value": 1.0})
         (insert upgrade-stat-values "defense_ap_cost" {"value": 4.0})
         (insert upgrade-stat-values "attack_ap_cost" {"value": 4.0})
         (insert upgrade-stat-values "damage_ap_cost" {"value": 2.0})
-
-        (insert upgrade-stat-values "speed" {"value": 1.0})
-        (insert upgrade-stat-values "speed_base_cost" {"value": 200.0})
         (insert upgrade-stat-values "speed_ap_cost" {"value": 2.0})
+
+        (insert upgrade-stat-values "hp_base_cost" {"value": 1.87})
+        (insert upgrade-stat-values "defense_base_cost" {"value": 8.75})
+        (insert upgrade-stat-values "attack_base_cost" {"value": 8.75})
+        (insert upgrade-stat-values "damage_base_cost" {"value": 5.0})
+        (insert upgrade-stat-values "speed_base_cost" {"value": 2.5})
     )
 
  ; --------------------------------------------------------------------------
@@ -1639,6 +1639,7 @@
         (let (
                 (max-value (at "value" (read upgrade-stat-values stat ['value])))
                 (base-cost (at "value" (read upgrade-stat-values (+ stat "_base_cost") ['value])))
+                (wiza-value (get-wiza-value))
             )
             (if
                 (= (- max-value from) max-value)
@@ -1646,13 +1647,13 @@
                         (last-part (/ base-cost 100))
                         (diff (- max-value 1))
                     )
-                    (round (- base-cost (* (* 100 (/ diff max-value)) last-part )) 2)
+                    (round (* (- base-cost (* (* 100 (/ diff max-value)) last-part )) wiza-value) 2)
                 )
                 (let (
                         (last-part (/ base-cost 100))
                         (diff (- max-value from))
                     )
-                    (round (- base-cost (* (* 100 (/ diff max-value)) last-part )) 2)
+                    (round (* (- base-cost (* (* 100 (/ diff max-value)) last-part )) wiza-value) 2)
                 )
             )
         )
@@ -2056,7 +2057,7 @@
     ;;;;;; NON STATE MODIFYING HELPER FUNCTIONS ;;;;;;;;;
 
     (defun get-wiza-value ()
-        55.1
+        36.5464
         ;(free.wiz-dexinfo.get-wiza-value)
     )
 
