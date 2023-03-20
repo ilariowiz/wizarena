@@ -585,7 +585,7 @@ class PvP extends Component {
 		return ""
 	}
 
-    renderRowSub(item, index) {
+    renderRowSub(item, index, isMobile) {
         //console.log(item);
         const { userMintedNfts, pvpFightsStartDate } = this.state
 
@@ -632,11 +632,11 @@ class PvP extends Component {
         return (
             <div
                 key={index}
-                style={styles.boxSubscribed}
+                style={Object.assign({}, styles.boxSubscribed, { flexDirection: isMobile ? 'column' : 'row' })}
             >
                 <img
                     src={getImageUrl(item.id)}
-                    style={{ width: 120, height: 120, borderRadius: 2, borderColor: 'white', borderWidth: 1, borderStyle: 'solid', marginRight: 10 }}
+                    style={{ width: 120, height: 120, borderRadius: 2, borderColor: 'white', borderWidth: 1, borderStyle: 'solid', marginRight: 10, marginBottom: isMobile ? 7 : 0 }}
                     alt={item.id}
                 />
 
@@ -994,33 +994,35 @@ class PvP extends Component {
         const fightsStart = now.isAfter(pvpFightsStartDate)
         //console.log(fightsStart);
 
+        let fontSizeIntro = isMobile ? 16 : 19
+
         return (
             <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
 
                 <div style={{ marginBottom: 30 }}>
 
                     <div style={{  flexDirection: "column" }}>
-                        <p style={{ fontSize: 19, color: 'white', marginBottom: 10 }}>
+                        <p style={{ fontSize: fontSizeIntro, color: 'white', marginBottom: 10 }}>
                             PVP OPEN: {pvpOpen ? "YES" : "NO"}
                         </p>
 
-                        <p style={{ fontSize: 19, color: 'white' }}>
+                        <p style={{ fontSize: fontSizeIntro, color: 'white' }}>
                             PVP BUYIN: 1 KDA
                         </p>
                     </div>
 
-                    <div style={{  flexDirection: "column", marginLeft: 50 }}>
-                        <p style={{ fontSize: 19, color: 'white', marginBottom: 10 }}>
+                    <div style={{  flexDirection: "column", marginLeft: isMobile ? 10 : 50 }}>
+                        <p style={{ fontSize: fontSizeIntro, color: 'white', marginBottom: 10 }}>
                             SUBSCRIBERS {subscribers.length}
                         </p>
 
                         {
                             activeSubs && subscribers && subscribers.length > 0 ?
                             <div style={{ alignItems: 'center' }}>
-                                <p style={{ fontSize: 19, color: 'white', marginRight: 10 }}>
+                                <p style={{ fontSize: fontSizeIntro, color: 'white', marginRight: 10 }}>
                                     ACTIVE SUBS
                                 </p>
-                                <p style={{ fontSize: 19, color: "white" }}>
+                                <p style={{ fontSize: fontSizeIntro, color: "white" }}>
                                     {activeSubs}
                                 </p>
                             </div>
@@ -1028,21 +1030,21 @@ class PvP extends Component {
                         }
                     </div>
 
-                    <div style={{ flexDirection: 'column', marginLeft: 50 }}>
-                        <p style={{ fontSize: 19, color: 'white', marginBottom: 10 }}>
+                    <div style={{ flexDirection: 'column', marginLeft: isMobile ? 10 : 50 }}>
+                        <p style={{ fontSize: fontSizeIntro, color: 'white', marginBottom: 10 }}>
                             REWARD: +2 AP (min 30 fights to get the reward)
                         </p>
 
                         {
                             !fightsStart &&
-                            <p style={{ fontSize: 19, color: 'white' }}>
+                            <p style={{ fontSize: fontSizeIntro, color: 'white' }}>
                                 REGISTRATIONS CLOSE: {pvpFightsStart}
                             </p>
                         }
 
                         {
                             pvpWeekEnd && fightsStart &&
-                            <p style={{ fontSize: 19, color: 'white' }}>
+                            <p style={{ fontSize: fontSizeIntro, color: 'white' }}>
                                 PVP WEEK END: {pvpWeekEnd}
                             </p>
                         }
@@ -1058,11 +1060,11 @@ class PvP extends Component {
                     You will only fight wizards 25 levels higher or lower
                 </p>
 
-                <div style={{ flexDirection: 'row', overflow: 'scroll', marginBottom: 30, flexWrap: 'wrap' }}>
+                <div style={{ flexDirection: 'row', overflow: 'scroll', marginBottom: 30, flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
                     {
                         yourSubscribersResults && yourSubscribersResults.length > 0 &&
                         yourSubscribersResultsSorted.map((item, index) => {
-                            return this.renderRowSub(item, index)
+                            return this.renderRowSub(item, index, isMobile)
                         })
                     }
 
@@ -1085,7 +1087,7 @@ class PvP extends Component {
 
                 {
                     !fightsStart &&
-                    <div style={{ flexWrap: 'wrap', marginBottom: 30 }}>
+                    <div style={{ flexWrap: 'wrap', marginBottom: 30, justifyContent: isMobile ? 'center' : 'flex-start' }}>
                         {
                             sorted && sorted.length > 0 &&
                             sorted.map((item, index) => {
