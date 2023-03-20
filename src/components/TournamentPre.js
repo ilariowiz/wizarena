@@ -765,7 +765,7 @@ class Tournament extends Component {
 
                 <div style={{ alignItems: 'center', marginTop: 10 }}>
                     <p style={{ fontSize: 20, color: 'white', marginRight: 10 }}>
-                        Registrations open
+                        Registrations {tournament.canSubscribe ? "open" : "closed"}
                     </p>
 
                     {
@@ -920,7 +920,7 @@ class Tournament extends Component {
 
                 <div style={{ alignItems: 'center', marginTop: 10 }}>
                     <p style={{ fontSize: 20, color: 'white', marginRight: 10 }}>
-                        Registrations open
+                        Registrations {tournamentElite.canSubscribe ? "open" : "closed"}
                     </p>
 
                     {
@@ -1077,7 +1077,7 @@ class Tournament extends Component {
 
                 <div style={{ alignItems: 'center', marginTop: 10 }}>
                     <p style={{ fontSize: 20, color: 'white', marginRight: 10 }}>
-                        Registrations open
+                        Registrations {tournamentWiza.canSubscribe ? "open" : "closed"}
                     </p>
 
                     {
