@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Media from 'react-media';
 import { connect } from 'react-redux'
 import moment from 'moment'
+import _ from 'lodash'
 import { collection, getDocs } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import DotLoader from 'react-spinners/DotLoader';
@@ -29,7 +30,9 @@ import {
     getSubscriptions,
     changeSpellTournament,
     subscribeToTournamentMassELITE,
-    updateInfoTransactionModal
+    updateInfoTransactionModal,
+    fetchAccountDetails,
+    getWizaBalance
 } from '../actions'
 import '../css/Nft.css'
 import 'reactjs-popup/dist/index.css';
@@ -75,7 +78,25 @@ class Tournament extends Component {
             this.loadTournamentKda()
             this.loadTournamentWiza()
             this.loadTournamentElite()
+            this.refreshUser()
+            this.loadWizaBalance()
         }, 500)
+	}
+
+    refreshUser() {
+		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+			//console.log(this.props)
+		if (account && account.account) {
+			this.props.fetchAccountDetails(account.account, chainId, gasPrice, gasLimit, networkUrl)
+		}
+	}
+
+    loadWizaBalance() {
+		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		if (account && account.account) {
+			this.props.getWizaBalance(chainId, gasPrice, gasLimit, networkUrl, account.account)
+		}
 	}
 
     loadMinted(tournament, isResults, isSubs) {
@@ -576,6 +597,8 @@ class Tournament extends Component {
     }
 
     renderBtnSubscribe(tournament) {
+        const { account } = this.props
+
         return (
             <button
                 className='btnH'
@@ -593,6 +616,7 @@ class Tournament extends Component {
 
     renderFooterSubscribe(isMobile) {
 		const { toSubscribe, tournamentSubs } = this.state
+        const { account, wizaBalance } = this.props
 
 		let temp = []
 		toSubscribe.map(i => {
@@ -629,7 +653,7 @@ class Tournament extends Component {
 
 				<button
 					className="btnH"
-					style={{ width: 180, height: 40, justifyContent: 'center', alignItems: 'center', borderRadius: 2, backgroundColor: CTA_COLOR, marginRight: 20 }}
+					style={{ width: 180, height: 45, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderRadius: 2, backgroundColor: CTA_COLOR, marginRight: 20 }}
 					onClick={() => {
                         if (tournamentSubs.type === "weekly") {
                             this.subscribeMassKda()
@@ -643,9 +667,24 @@ class Tournament extends Component {
 
                     }}
 				>
-					<p style={{ fontSize: 17, color: 'white' }}>
+					<p style={{ fontSize: 16, color: 'white' }}>
 						SUBSCRIBE
 					</p>
+
+                    {
+                        account.account && tournamentSubs.coinBuyin === "KDA" &&
+                        <p style={{ fontSize: 13, color: 'white', marginTop: 3 }}>
+                            Balance: {_.floor(account.balance, 1)} KDA
+                        </p>
+                    }
+
+                    {
+                        account.account && tournamentSubs.coinBuyin === "WIZA" &&
+                        <p style={{ fontSize: 13, color: 'white', marginTop: 3 }}>
+                            Balance: {_.floor(wizaBalance, 1)} WIZA
+                        </p>
+                    }
+
 				</button>
 			</div>
 		)
@@ -1485,9 +1524,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts, wizaBalance } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts, wizaBalance };
 }
 
 export default connect(mapStateToProps, {
@@ -1504,5 +1543,7 @@ export default connect(mapStateToProps, {
     getSubscriptions,
     changeSpellTournament,
     subscribeToTournamentMassELITE,
-    updateInfoTransactionModal
+    updateInfoTransactionModal,
+    fetchAccountDetails,
+    getWizaBalance
 })(Tournament)

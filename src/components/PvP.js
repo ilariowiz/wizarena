@@ -850,6 +850,7 @@ class PvP extends Component {
 
     renderFooterSubscribe(isMobile) {
 		const { toSubscribe } = this.state
+        const { wizaBalance, account } = this.props
 
         let totWiza = 0
 
@@ -892,17 +893,25 @@ class PvP extends Component {
 
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginRight: 20 }}>
 
-                    <p style={{ fontSize: 15, color: 'white', marginBottom: 3 }}>
+                    <p style={{ fontSize: 15, color: 'white', marginBottom: 6 }}>
                         TOT WIZA {totWiza}
                     </p>
                     <button
     					className="btnH"
-    					style={{ width: 180, height: 40, justifyContent: 'center', alignItems: 'center', borderRadius: 2, backgroundColor: CTA_COLOR }}
+    					style={{ width: 180, height: 45, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderRadius: 2, backgroundColor: CTA_COLOR }}
     					onClick={() => this.subscribeMass()}
     				>
     					<p style={{ fontSize: 17, color: 'white' }}>
     						SUBSCRIBE
     					</p>
+
+                        {
+                            account.account &&
+                            <p style={{ fontSize: 13, color: 'white', marginTop: 3 }}>
+                                Balance: {_.floor(wizaBalance, 1)} WIZA
+                            </p>
+                        }
+
     				</button>
                 </div>
 			</div>
