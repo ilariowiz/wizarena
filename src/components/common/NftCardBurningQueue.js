@@ -57,6 +57,9 @@ class NftCardBurningQueue extends Component {
 		if (parseInt(id) > 1023 && parseInt(id) <= 2047) {
 			collection = "ClericsArena"
 		}
+		if (parseInt(id) > 2047 && parseInt(id) <= 3071) {
+			collection = "DruidsArena"
+		}
 
 		fetch(`https://us-central1-raritysniperkda.cloudfunctions.net/app/api/read/${collection}/${id}`)
 		.then(response => response.json())
