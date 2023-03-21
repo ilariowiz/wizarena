@@ -23,7 +23,10 @@ const analytics = getAnalytics(firebaseapp);
 
 //const firebasestorage = getStorage(firebaseapp)
 
-window.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+if (!process.env.NODE_ENV || process.env.NODE_ENV === 'development') {
+    window.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+}
+
 
 const appCheck = initializeAppCheck(firebaseapp, {
     provider: new ReCaptchaV3Provider(process.env.REACT_APP_WEB3CAPTCHA),
