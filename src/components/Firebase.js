@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore';
 import { getAnalytics } from "firebase/analytics";
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check"
 //import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -21,6 +22,13 @@ const firebasedb = getFirestore(firebaseapp)
 const analytics = getAnalytics(firebaseapp);
 
 //const firebasestorage = getStorage(firebaseapp)
+
+//window.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+
+const appCheck = initializeAppCheck(firebaseapp, {
+    provider: new ReCaptchaV3Provider(process.env.REACT_APP_WEB3CAPTCHA),
+    isTokenAutoRefreshEnabled: true
+})
 
 export { firebaseapp };
 
