@@ -12,7 +12,8 @@
 
 (env-chain-data {
     "chain-id": "1",
-    "block-height": 20
+    "block-height": 20,
+    "block-time": (time "2023-06-01T00:00:00Z")
 })
 
 (commit-tx)
@@ -1038,6 +1039,56 @@
 
 (commit-tx)
 
+
+
+(begin-tx "DECLINE OFFER")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.decline-offer "0")
+
+(commit-tx)
+
+(env-chain-data {
+    "chain-id": "1",
+    "block-height": 20,
+    "block-time": (time "2023-06-01T00:00:01Z")
+})
+
+(begin-tx "GET OFFER ID")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.get-offers-for-id "0")
+
+(commit-tx)
+
+(begin-tx "ACCEPT OFFER")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.accept-offer "0" free.wiza free.wiz-equipment)
+
+(commit-tx)
+
+
 (begin-tx "RETRAIN")
 
 (env-sigs [{
@@ -1114,6 +1165,18 @@
     free.wiza
 )
 
+(commit-tx)
+
+
+;; READ WALLET XP
+(begin-tx "READ WALLET XP")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": []
+}])
+
+(free.wiz-arena.get-wallet-xp "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
 
 (commit-tx)
 
