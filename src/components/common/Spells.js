@@ -155,7 +155,7 @@ const allSpells = [
 		name: "Wave of Nature",
 		atkBase: 4,
 		dmgBase: 3,
-		condition: { name: 'Confuse', effect: "skip", pct: 30 },
+		condition: { name: 'Confuse', effect: "skip", pct: 20 },
 		element: 'Wind'
 	},
 	{
