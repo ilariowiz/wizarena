@@ -5,7 +5,9 @@ import { firebasedb } from './Firebase';
 import { round } from 'lodash'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { AiOutlineMinus } from 'react-icons/ai'
+import { IoClose } from 'react-icons/io5'
 import Media from 'react-media';
+import Popup from 'reactjs-popup';
 import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
@@ -86,7 +88,10 @@ class Shop extends Component {
             decrease: { hp: 1, defense: 1, attack: 1, damage: 1, speed: 1},
             baseStats: undefined,
             wizaValue: 0,
-            loadingEquip: true
+            loadingEquip: true,
+            itemsToShow: [],
+            searchText: "",
+            searchedText: ""
         }
     }
 
@@ -273,6 +278,26 @@ class Shop extends Component {
 
         return undefined
     }
+
+    searchByName() {
+		const { searchText, equipment } = this.state
+
+        if (!searchText) {
+            return
+        }
+
+		let result = equipment.filter(i => i.name.toLowerCase().includes(searchText.toLowerCase()))
+
+        if (result.length === 0) {
+            result = equipment.filter(i => i.id === searchText)
+        }
+
+		this.setState({ itemsToShow: result, searchedText: searchText })
+	}
+
+    cancelSearch() {
+		this.setState({ searchedText: '', searchText: '', itemsToShow: [] })
+	}
 
     buyStat(stat, costo) {
         const { account, chainId, gasPrice, netId } = this.props
@@ -473,7 +498,6 @@ class Shop extends Component {
                         this.getBaseStats()
                     }, 200)
                 }}
-                onChange={() => this.props.setWizardSelectedShop(undefined)}
 			/>
 		)
 	}
@@ -494,7 +518,10 @@ class Shop extends Component {
 				key={index}
 				item={item}
 				width={w}
-                onChange={() => this.props.setWizardSelectedShop(undefined)}
+                onChange={() => {
+                    this.setState({ searchText: "", searchedText: "", itemsToShow: [], equipment: [], loadingEquip: true })
+                    this.props.setWizardSelectedShop(undefined)
+                }}
 			/>
 		)
 	}
@@ -1521,8 +1548,81 @@ class Shop extends Component {
         )
     }
 
+    renderListStat(item, index) {
+		return (
+			<button
+				key={index}
+				style={{ marginBottom: 15, marginLeft: 10 }}
+				onClick={() => {
+					this.listPopup.close()
+                    this.setState({ searchText: item }, () => {
+                        this.searchByName()
+                    })
+				}}
+			>
+				<p style={{ fontSize: 19 }}>
+					{item}
+				</p>
+			</button>
+		)
+	}
+
+    renderSearched() {
+		const { searchedText } = this.state
+
+		if (!searchedText) {
+			return null
+		}
+
+		return (
+			<div style={{ width: '100%', marginBottom: 20 }}>
+				<div style={{ backgroundColor: '#e5e8eb80', justifyContent: 'center', alignItems: 'center', height: 45, paddingLeft: 20, paddingRight: 20, borderRadius: 2 }}>
+					<p style={{ fontSize: 22, color: 'black', marginRight: 10 }}>
+						{searchedText}
+					</p>
+
+					<button
+						style={{ paddingTop: 5 }}
+						onClick={() => this.cancelSearch()}
+					>
+						<IoClose
+							color='black'
+							size={22}
+						/>
+					</button>
+				</div>
+			</div>
+		)
+	}
+
+    renderBoxSearchStat(statDisplay, list) {
+
+		let text = statDisplay.toUpperCase()
+
+		return (
+			<Popup
+				ref={ref => this.listPopup = ref}
+				trigger={
+					<button style={styles.btnStat}>
+						<p style={{ fontSize: 18, color: 'white' }}>{text}</p>
+					</button>
+				}
+				position="bottom left"
+				on="click"
+				closeOnDocumentClick
+				arrow={true}
+			>
+				<div style={{ flexDirection: 'column', paddingTop: 10 }}>
+					{list.map((item, index) => {
+						return this.renderListStat(item, index)
+					})}
+				</div>
+			</Popup>
+		)
+	}
+
     renderBody(isMobile) {
-        const { isConnected, showModalConnection, historyUpgrades, potionEquipped, equipment } = this.state
+        const { isConnected, showModalConnection, historyUpgrades, potionEquipped, equipment, itemsToShow, searchedText } = this.state
         const { account, wizaBalance } = this.props
 
         const { boxW, modalW } = getBoxWidth(isMobile)
@@ -1576,6 +1676,11 @@ class Shop extends Component {
             return this.renderChoises(boxW)
         }
 
+        //console.log(equipment);
+
+        const showMenuRings = equipment.length > 0 && !equipment[0].equipped
+        const ringsToShow = itemsToShow.length > 0 ? itemsToShow : equipment
+
         //WIZARD SELECTED
         return (
             <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
@@ -1625,9 +1730,25 @@ class Shop extends Component {
                         }
 
                         {
-                            equipment.length > 0 ?
+                            !this.state.loadingEquip && showMenuRings &&
+                            <div style={{ flexWrap: 'wrap', marginBottom: 10 }}>
+            					{this.renderBoxSearchStat("HP", ["Ring of HP +4", "Ring of HP +8", "Ring of HP +12", "Ring of HP +16", "Ring of HP +20", "Ring of Life", "Ring of Last Defense", "Ring of Power"].reverse())}
+                                {this.renderBoxSearchStat("DEFENSE", ["Ring of Defense +1", "Ring of Defense +2", "Ring of Defense +3", "Ring of Defense +4", "Ring of Defense +5", "Ring of Magic Shield", "Ring of Last Defense", "Ring of Power"].reverse())}
+                                {this.renderBoxSearchStat("ATTACK", ["Ring of Attack +1", "Ring of Attack +2", "Ring of Attack +3", "Ring of Attack +4", "Ring of Attack +5", "Ring of Accuracy", "Ring of Destruction", "Ring of Swift Death", "Ring of Power"].reverse())}
+                                {this.renderBoxSearchStat("DAMAGE", ["Ring of Damage +2", "Ring of Damage +4", "Ring of Damage +6", "Ring of Damage +8", "Ring of Damage +10", "Ring of Force", "Ring of Destruction", "Ring of Power"].reverse())}
+                                {this.renderBoxSearchStat("SPEED", ["Ring of Speed +2", "Ring of Speed +4", "Ring of Speed +6", "Ring of Speed +8", "Ring of Speed +10", "Ring of Lightning", "Ring of Swift Death", "Ring of Power"].reverse())}
+            				</div>
+                        }
+
+                        {
+                            !this.state.loadingEquip && showMenuRings &&
+                            this.renderSearched()
+                        }
+
+                        {
+                            ringsToShow.length > 0 ?
                             <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
-                                {equipment.map((item, index) => {
+                                {ringsToShow.map((item, index) => {
                                     return this.renderRingsCard(item, index)
                                 })}
                             </div>
@@ -1917,7 +2038,19 @@ const styles = {
         display: 'flex',
         marginRight: 20,
         marginBottom: 15
-    }
+    },
+    btnStat: {
+		padding: 10,
+		backgroundColor: CTA_COLOR,
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginRight: 10,
+		marginBottom: 10,
+		borderRadius: 2,
+		minWidth: 60,
+		display: 'flex',
+		flexDirection: 'row'
+	},
 }
 
 const mapStateToProps = (state) => {

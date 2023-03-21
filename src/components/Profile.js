@@ -67,7 +67,10 @@ class Profile extends Component {
 			offersEquipmentMade: [],
 			statSearched: [],
 			yourNfts: [],
-			loadingStake: true
+			loadingStake: true,
+			itemsToShow: [],
+            searchText: "",
+            searchedText: ""
 		}
 	}
 
@@ -238,6 +241,26 @@ class Profile extends Component {
 			})
 		}
     }
+
+	searchByNameEquip() {
+		const { searchText, equipment } = this.state
+
+        if (!searchText) {
+            return
+        }
+
+		let result = equipment.filter(i => i.name.toLowerCase().includes(searchText.toLowerCase()))
+
+        if (result.length === 0) {
+            result = equipment.filter(i => i.id === searchText)
+        }
+
+		this.setState({ itemsToShow: result, searchedText: searchText })
+	}
+
+    cancelEquipSearch() {
+		this.setState({ searchedText: '', searchText: '', itemsToShow: [] })
+	}
 
 	stakeNft(idnft) {
 		const { chainId, gasPrice, netId, account } = this.props
@@ -648,6 +671,79 @@ class Profile extends Component {
 		)
 	}
 
+	renderListEquip(item, index) {
+		return (
+			<button
+				key={index}
+				style={{ marginBottom: 15, marginLeft: 10 }}
+				onClick={() => {
+					this.listPopup.close()
+                    this.setState({ searchText: item }, () => {
+                        this.searchByNameEquip()
+                    })
+				}}
+			>
+				<p style={{ fontSize: 19 }}>
+					{item}
+				</p>
+			</button>
+		)
+	}
+
+    renderSearchedEquip() {
+		const { searchedText } = this.state
+
+		if (!searchedText) {
+			return null
+		}
+
+		return (
+			<div style={{ width: '100%', marginBottom: 20 }}>
+				<div style={{ backgroundColor: '#e5e8eb80', justifyContent: 'center', alignItems: 'center', height: 45, paddingLeft: 20, paddingRight: 20, borderRadius: 2 }}>
+					<p style={{ fontSize: 22, color: 'black', marginRight: 10 }}>
+						{searchedText}
+					</p>
+
+					<button
+						style={{ paddingTop: 5 }}
+						onClick={() => this.cancelEquipSearch()}
+					>
+						<IoClose
+							color='black'
+							size={22}
+						/>
+					</button>
+				</div>
+			</div>
+		)
+	}
+
+	renderBoxSearchEquip(statDisplay, list) {
+
+		let text = statDisplay.toUpperCase()
+
+		return (
+			<Popup
+				ref={ref => this.listPopup = ref}
+				trigger={
+					<button style={styles.btnStat}>
+						<p style={{ fontSize: 18, color: 'white' }}>{text}</p>
+					</button>
+				}
+				position="bottom left"
+				on="click"
+				closeOnDocumentClick
+				arrow={true}
+			>
+				<div style={{ flexDirection: 'column', paddingTop: 10 }}>
+					{list.map((item, index) => {
+						return this.renderListEquip(item, index)
+					})}
+				</div>
+			</Popup>
+		)
+	}
+
 	renderYourWizards(width) {
 		const { yourNfts, loading } = this.state
 		const { userMintedNfts } = this.props
@@ -695,20 +791,48 @@ class Profile extends Component {
 	}
 
 	renderYourEquip(width) {
-		const { equipment } = this.state
+		const { equipment, itemsToShow, loading } = this.state
+
+        const ringsToShow = itemsToShow.length > 0 ? itemsToShow : equipment
 
 		return (
-			<div style={{ flexWrap: 'wrap', width }}>
-				{equipment.map((item, index) => {
-					return (
-			            <EquipmentCard
-			                key={index}
-			                item={item}
-			                index={index}
-			                history={this.props.history}
-			            />
-			        )
-				})}
+			<div style={{ flexDirection: 'column' }}>
+
+				{
+					equipment.length > 0 &&
+					<div style={{ flexWrap: 'wrap', marginBottom: 10 }}>
+						{this.renderBoxSearchEquip("HP", ["Ring of HP +4", "Ring of HP +8", "Ring of HP +12", "Ring of HP +16", "Ring of HP +20", "Ring of Life", "Ring of Last Defense", "Ring of Power"].reverse())}
+						{this.renderBoxSearchEquip("DEFENSE", ["Ring of Defense +1", "Ring of Defense +2", "Ring of Defense +3", "Ring of Defense +4", "Ring of Defense +5", "Ring of Magic Shield", "Ring of Last Defense", "Ring of Power"].reverse())}
+						{this.renderBoxSearchEquip("ATTACK", ["Ring of Attack +1", "Ring of Attack +2", "Ring of Attack +3", "Ring of Attack +4", "Ring of Attack +5", "Ring of Accuracy", "Ring of Destruction", "Ring of Swift Death", "Ring of Power"].reverse())}
+						{this.renderBoxSearchEquip("DAMAGE", ["Ring of Damage +2", "Ring of Damage +4", "Ring of Damage +6", "Ring of Damage +8", "Ring of Damage +10", "Ring of Force", "Ring of Destruction", "Ring of Power"].reverse())}
+						{this.renderBoxSearchEquip("SPEED", ["Ring of Speed +2", "Ring of Speed +4", "Ring of Speed +6", "Ring of Speed +8", "Ring of Speed +10", "Ring of Lightning", "Ring of Swift Death", "Ring of Power"].reverse())}
+					</div>
+				}
+
+				{
+					equipment.length > 0 &&
+					this.renderSearchedEquip()
+				}
+
+				{
+					!loading &&
+					<p style={{ fontSize: 15, color: '#c2c0c0', marginBottom: 15 }}>
+						Items {ringsToShow.length}
+					</p>
+				}
+
+				<div style={{ flexWrap: 'wrap', width }}>
+					{ringsToShow.map((item, index) => {
+						return (
+				            <EquipmentCard
+				                key={index}
+				                item={item}
+				                index={index}
+				                history={this.props.history}
+				            />
+				        )
+					})}
+				</div>
 			</div>
 		)
 	}

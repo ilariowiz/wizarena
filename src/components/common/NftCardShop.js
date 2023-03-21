@@ -85,15 +85,7 @@ class NftCardShop extends Component {
                                 </p>
                             </button>
                             :
-                            <button
-                                className='btnH'
-                                style={styles.btnSubscribe}
-                                onClick={() => this.props.onChange()}
-                            >
-                                <p style={{ fontSize: 17, color: 'white' }}>
-                                    CHANGE
-                                </p>
-                            </button>
+                            null
                         }
 
                     </div>
