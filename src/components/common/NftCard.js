@@ -29,9 +29,10 @@ class NftCard extends Component {
 					alt={`#${item.id}`}
 				/>
 
-				<div style={{ justifyContent: 'space-between', width, height: 65, alignItems: 'center' }}>
+				<div style={{ flexDirection: 'column', justifyContent: 'center', width, height: 65, alignItems: 'center' }}>
 
-					<div style={{ width: '100%', justifyContent: 'space-between', flexDirection: 'column', flex: item.listed ? 0.7 : 1 }}>
+					<div style={{ width: '100%', marginBottom: 5 }}>
+
 						{
 							item.nickname ?
 							<p style={{ color: 'white', fontSize: 16, marginLeft: 10, lineHeight: 1 }}>
@@ -42,10 +43,12 @@ class NftCard extends Component {
 								{item.name}
 							</p>
 						}
+					</div>
 
+					<div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
 						{
 							item.level &&
-							<div style={{ alignItems: 'center', marginLeft: 10, marginTop: 5 }}>
+							<div style={{ alignItems: 'center', marginLeft: 10 }}>
 								<p style={{ color: "#c2c0c0", fontSize: 14, marginRight: 10 }}>
 									LEVEL
 								</p>
@@ -55,26 +58,26 @@ class NftCard extends Component {
 								</p>
 							</div>
 						}
-					</div>
 
-					{
-						item.listed ?
-						<div style={{ width: '100%', alignItems: 'center', justifyContent: 'flex-end', marginTop: 5, marginRight: 10, flex: 0.3 }}>
-							<div style={{ marginLeft: 10, alignItems: 'center' }}>
+						{
+							item.listed ?
+							<div style={{ width: '100%', alignItems: 'center', justifyContent: 'flex-end', marginRight: 10 }}>
+								<div style={{ alignItems: 'center' }}>
 
-								<img
-									style={{ width: 19, marginRight: 6, objectFit: 'contain', marginBottom: 6 }}
-									src={logoKda}
-									alt='Kadena logo'
-								/>
+									<img
+										style={{ width: 19, marginRight: 6, objectFit: 'contain', marginBottom: 6 }}
+										src={logoKda}
+										alt='Kadena logo'
+									/>
 
-								<p style={{ color: 'white', fontSize: 20, marginBottom: 2, lineHeight: 1 }}>
-									{item.price}
-								</p>
+									<p style={{ color: 'white', fontSize: 20, marginBottom: 2, lineHeight: 1 }}>
+										{item.price}
+									</p>
+								</div>
 							</div>
-						</div>
-						: null
-					}
+							: null
+						}
+					</div>
 
 				</div>
 			</a>
