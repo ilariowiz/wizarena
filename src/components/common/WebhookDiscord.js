@@ -28,6 +28,34 @@ export const sendMessage = (id, amount, expiration, owner) => {
     request.send(JSON.stringify(params));
 }
 
+export const sendMessageDeclineOffer = (info) => {
+    const request = new XMLHttpRequest()
+
+    request.open("POST", process.env.REACT_APP_DISCORD_WEBHOOK_URL)
+    request.setRequestHeader("Content-type", 'application/json')
+
+
+    const content = `The offer for #${info.id} of ${info.amount} KDA has been declined`
+
+    const params = {
+        username: `Wizard Bot`,
+        avatar_url: `https://storage.googleapis.com/wizarena/generated_imgs/${info.id}.png`,
+        //content
+        embeds: [
+            {
+                "title": `#${info.id}`,
+                "description": content,
+                "url": `https://www.wizardsarena.net/nft/${info.id}`,
+                "thumbnail": {
+                    "url": `https://storage.googleapis.com/wizarena/generated_imgs/${info.id}.png`
+                }
+            }
+        ]
+    }
+
+    request.send(JSON.stringify(params));
+}
+
 export const sendMessageOfferItem = (info) => {
     const request = new XMLHttpRequest()
 

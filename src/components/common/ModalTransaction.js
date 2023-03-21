@@ -5,7 +5,7 @@ import { firebasedb } from '../Firebase';
 import { IoClose } from 'react-icons/io5'
 import DotLoader from 'react-spinners/DotLoader';
 import Pact from "pact-lang-api";
-import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, sendMessageUpdateNickname, sendMessageUpgrade, sendMessageListedEquipment, sendMessageDelistedEquipment, sendMessageSalesEquipment, sendMessageOfferItem } from './WebhookDiscord'
+import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, sendMessageUpdateNickname, sendMessageUpgrade, sendMessageListedEquipment, sendMessageDelistedEquipment, sendMessageSalesEquipment, sendMessageOfferItem, sendMessageDeclineOffer } from './WebhookDiscord'
 import '../../css/Modal.css'
 import {
 	signTransaction,
@@ -98,6 +98,9 @@ class ModalTransaction extends Component {
 			}
 			else if (typeModal === "makeoffer") {
 				sendMessage(makeOfferValues.id, makeOfferValues.amount, makeOfferValues.duration, makeOfferValues.owner)
+			}
+			else if (typeModal === "declineoffer") {
+				sendMessageDeclineOffer(saleValues)
 			}
 			else if (typeModal === "makeofferitem") {
 				//console.log(makeOfferValues);

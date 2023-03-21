@@ -37,7 +37,8 @@ import {
 	withdrawEquipmentOffer,
 	getWizardsStakeInfo,
 	calculateRewardMass,
-	updateInfoTransactionModal
+	updateInfoTransactionModal,
+	declineOffer
 } from '../actions'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -450,6 +451,27 @@ class Profile extends Component {
 		this.props.acceptOffer(chainId, gasPrice, 5000, netId, offer.id, offer.refnft, account)
 	}
 
+	declineOffer(offer) {
+		const { account, chainId, gasPrice, netId } = this.props
+
+		//console.log(offer);
+		//return
+
+		//console.log(amount, duration);
+		let offerInfoRecap = `You are declining this offer`
+
+		let saleValues = { id: offer.refnft, amount: offer.amount }
+
+		this.props.updateInfoTransactionModal({
+			transactionToConfirmText: offerInfoRecap,
+			typeModal: 'declineoffer',
+			transactionOkText: `Offer declined!`,
+			saleValues
+		})
+
+		this.props.declineOffer(chainId, gasPrice, 3000, netId, offer.id, offer.refnft, account)
+	}
+
 	withdrawEquipmentOffer(offer) {
 		const { account, chainId, gasPrice, netId } = this.props
 
@@ -752,13 +774,7 @@ class Profile extends Component {
 			<div style={{ width, flexDirection: 'column' }}>
 
 				{
-					userMintedNfts && userMintedNfts.length === 0 && !loading ?
-					this.renderError()
-					: null
-				}
-
-				{
-					!loading &&
+					!loading && userMintedNfts && userMintedNfts.length > 0 &&
 					<div style={{ flexWrap: 'wrap', marginBottom: 10 }} id="filters">
 						{this.renderBoxSearchStat("hp", "HP", ["40 - 50", "51 - 60", "61 - 65", "66 - 70", "71 - 75", "76 - 80", "81 - 85", "86 - 90", "91 - 95", "96 - 100", "101 - 105", "106 - 110", "111 - 115", "116 - 120", "121 - 125"].reverse())}
 						{this.renderBoxSearchStat("defense", "DEFENSE", ["14 - 15", "16 - 17", "18 - 19", "20 - 21", "22 - 23", "24 - 25", "26 - 27", "28 - 29", "30 - 31", "32 - 33", "34 - 35", "36 - 37", "38 - 39", "40 - 41"].reverse())}
@@ -775,6 +791,12 @@ class Profile extends Component {
 					<p style={{ fontSize: 15, color: '#c2c0c0', marginBottom: 15 }}>
 						Wizards {yourNfts.length}
 					</p>
+				}
+
+				{
+					userMintedNfts && userMintedNfts.length === 0 && !loading ?
+					this.renderError()
+					: null
 				}
 
 				{
@@ -856,6 +878,7 @@ class Profile extends Component {
 							isMobile={isMobile}
 							history={this.props.history}
 							onAcceptOffer={() => this.acceptOffer(item)}
+							onDeclineOffer={() => this.declineOffer(item)}
 						/>
 					)
 				})}
@@ -1248,5 +1271,6 @@ export default connect(mapStateToProps, {
 	withdrawEquipmentOffer,
 	getWizardsStakeInfo,
 	calculateRewardMass,
-	updateInfoTransactionModal
+	updateInfoTransactionModal,
+	declineOffer
 })(Profile)

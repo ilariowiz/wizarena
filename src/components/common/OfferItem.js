@@ -154,7 +154,7 @@ class OfferItem extends Component {
                 {
                     !isMobile &&
                     <p style={{ fontSize: 15, color: 'white', flex: 1 }}>
-                        From {item.buyer.slice(0, 15)}...
+                        From {item.buyer.slice(0, 10)}...
                     </p>
                 }
 
@@ -170,6 +170,20 @@ class OfferItem extends Component {
 					>
 						<p style={{ fontSize: 17, color: 'white', fontWeight: '500' }}>
 							Accept
+						</p>
+					</button>
+					: null
+				}
+
+                {
+					isOwner ?
+					<button
+						className='btnH'
+						style={Object.assign({}, styles.btnAccept, { backgroundColor: 'transparent', marginLeft: 10 })}
+						onClick={() => this.props.onDeclineOffer()}
+					>
+						<p style={{ fontSize: 17, color: CTA_COLOR, fontWeight: '500' }}>
+							Decline
 						</p>
 					</button>
 					: null
