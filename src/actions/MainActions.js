@@ -925,7 +925,7 @@ export const getPotionEquipped = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimi
 	}
 }
 
-export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 70000, networkUrl, pvpWeek, callback) => {
+export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 90000, networkUrl, pvpWeek, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
