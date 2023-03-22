@@ -34,40 +34,17 @@ class NftCardTournament extends Component {
 		}
 	}
 
-	componentDidMount() {
-		//console.log("didmount", this.props.potionsEquipped);
-		//this.getPotionEquipped()
-		//this.getRingEquipped()
-	}
-
 	componentDidUpdate(prevProps)  {
 		//console.log(prevProps.ringsEquipped, this.props.ringsEquipped);
-		/*
-		if ((prevProps.potionsEquipped.length !== this.props.potionsEquipped) && !this.loadPotion) {
-			this.getPotionEquipped()
-		}
-
-		if ((prevProps.ringsEquipped !== this.props.ringsEquipped) && !this.loadRing) {
-			this.getRingEquipped()
-		}
-		*/
-
 		if (this.props.ringsEquipped.length > 0 && !this.loadRing) {
 			this.loadRing = true
-			//console.log(this.props.ringsEquipped);
 			this.getRingEquipped()
 		}
 
 		if (this.props.potionsEquipped.length > 0 && !this.loadPotion) {
 			this.loadPotion = true
-			//console.log(this.props.ringsEquipped);
 			this.getPotionEquipped()
 		}
-	}
-
-	test() {
-		this.loadRing = true
-		console.log(this.props.item);
 	}
 
 	getPotionEquipped() {
@@ -82,8 +59,6 @@ class NftCardTournament extends Component {
 
 		const key = `${tournamentName}_${item.id}`
 		const potion = potionsEquipped.find(i => i.key === key)
-
-		//return potion.potionEquipped
 
 		this.setState({ potion: potion.potionEquipped })
 	}
@@ -108,10 +83,7 @@ class NftCardTournament extends Component {
 			const infoEquipment = getRingBonuses(ring)
 
 			this.setState({ ring, infoEquipment })
-			//return ring
 		}
-		//console.log(ring);
-		//return ""
 	}
 
 	render() {
@@ -130,8 +102,6 @@ class NftCardTournament extends Component {
 		}
 
 		const level = calcLevelWizard(item)
-
-		//const potion = this.getPotionEquipped()
 
 		let imagePotion = vial_empty
 		let descPotion = ""
@@ -157,13 +127,6 @@ class NftCardTournament extends Component {
 			descPotion = "Vial of Speed +4"
 		}
 
-		//const ring = this.getRingEquipped()
-		/*
-		let infoEquipment;
-		if (ring) {
-			infoEquipment = getRingBonuses(ring)
-		}
-		*/
 
 		return (
 			<a
