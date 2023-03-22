@@ -78,6 +78,7 @@ export const setNetworkUrl = (netId, chainId) => {
 		}
 		else if (netId === MAIN_NET_ID) {
 			url = `https://api.chainweb.com/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
+			//url = `https://kadena2.app.runonflux.io/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
 		}
 
 		dispatch({ type: SET_NETWORK_URL, payload: url })
@@ -1155,7 +1156,7 @@ export const getFeeTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit
 	}
 }
 
-export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 150000, networkUrl, tournament, tournamentType, callback) => {
+export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, tournament, tournamentType, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
