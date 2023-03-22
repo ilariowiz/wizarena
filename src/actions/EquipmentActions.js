@@ -155,7 +155,7 @@ export const getEquipmentVolume = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 	}
 }
 
-export const getInfoItemEquippedMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 15000, networkUrl, idnfts, callback) => {
+export const getInfoItemEquippedMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 25000, networkUrl, idnfts, callback) => {
 	return (dispatch) => {
 
 		let cmd = {

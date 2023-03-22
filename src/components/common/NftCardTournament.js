@@ -21,9 +21,60 @@ const vial_empty = require('../../assets/vial_empty.png')
 
 
 class NftCardTournament extends Component {
+	constructor(props) {
+		super(props)
+
+		this.loadPotion = false
+		this.loadRing = false
+
+		this.state = {
+			potion: undefined,
+			ring: undefined,
+			infoEquipment: undefined
+		}
+	}
+
+	componentDidMount() {
+		//console.log("didmount", this.props.potionsEquipped);
+		//this.getPotionEquipped()
+		//this.getRingEquipped()
+	}
+
+	componentDidUpdate(prevProps)  {
+		//console.log(prevProps.ringsEquipped, this.props.ringsEquipped);
+		/*
+		if ((prevProps.potionsEquipped.length !== this.props.potionsEquipped) && !this.loadPotion) {
+			this.getPotionEquipped()
+		}
+
+		if ((prevProps.ringsEquipped !== this.props.ringsEquipped) && !this.loadRing) {
+			this.getRingEquipped()
+		}
+		*/
+
+		if (this.props.ringsEquipped.length > 0 && !this.loadRing) {
+			this.loadRing = true
+			//console.log(this.props.ringsEquipped);
+			this.getRingEquipped()
+		}
+
+		if (this.props.potionsEquipped.length > 0 && !this.loadPotion) {
+			this.loadPotion = true
+			//console.log(this.props.ringsEquipped);
+			this.getPotionEquipped()
+		}
+	}
+
+	test() {
+		this.loadRing = true
+		console.log(this.props.item);
+	}
 
 	getPotionEquipped() {
 		const { tournamentName, potionsEquipped, item } = this.props
+
+		this.loadPotion = true
+		//console.log(potionsEquipped);
 
 		if (!potionsEquipped || potionsEquipped.length === 0) {
 			return ""
@@ -32,30 +83,40 @@ class NftCardTournament extends Component {
 		const key = `${tournamentName}_${item.id}`
 		const potion = potionsEquipped.find(i => i.key === key)
 
-		return potion.potionEquipped
+		//return potion.potionEquipped
+
+		this.setState({ potion: potion.potionEquipped })
 	}
 
 	getRingEquipped() {
 		const { ringsEquipped, item } = this.props
 
+		//console.log(ringsEquipped);
+
 		if (!ringsEquipped || ringsEquipped.length === 0) {
 			return ""
 		}
+
+		this.loadRing = true
 
 		const ring = ringsEquipped.find(i => i.equippedToId === item.id)
 
 		//console.log(ring);
 
 		if (ring && ring.equipped) {
-			return ring
+
+			const infoEquipment = getRingBonuses(ring)
+
+			this.setState({ ring, infoEquipment })
+			//return ring
 		}
 		//console.log(ring);
-
-		return ""
+		//return ""
 	}
 
 	render() {
 		const { item, history, width, account, tournamentSeason } = this.props
+		const { potion, ring, infoEquipment } = this.state
 
 		//console.log(tournamentSeason);
 
@@ -70,7 +131,7 @@ class NftCardTournament extends Component {
 
 		const level = calcLevelWizard(item)
 
-		const potion = this.getPotionEquipped()
+		//const potion = this.getPotionEquipped()
 
 		let imagePotion = vial_empty
 		let descPotion = ""
@@ -96,11 +157,13 @@ class NftCardTournament extends Component {
 			descPotion = "Vial of Speed +4"
 		}
 
-		const ring = this.getRingEquipped()
+		//const ring = this.getRingEquipped()
+		/*
 		let infoEquipment;
 		if (ring) {
 			infoEquipment = getRingBonuses(ring)
 		}
+		*/
 
 		return (
 			<a
