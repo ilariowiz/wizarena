@@ -58,7 +58,6 @@ class PvP extends Component {
             subscribers: [],
             yourSubscribers: [],
             yourSubscribersResults: [],
-            userMintedNfts: [],
             activeSubs: 0,
             showModalSpellbook: false,
             showModalWizaPvP: false,
@@ -77,6 +76,7 @@ class PvP extends Component {
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
         setTimeout(() => {
+            this.loadMinted()
 			this.loadProfile()
 		}, 500)
 	}
@@ -100,6 +100,14 @@ class PvP extends Component {
             this.setState({ error: "Firebase/Firestore not available, check if you have an adblocker or firewall blocking the connection" })
         }
 	}
+
+    loadMinted() {
+        const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+        if (account.account) {
+            this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account)
+        }
+    }
 
     loadEquip() {
         const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
@@ -160,9 +168,10 @@ class PvP extends Component {
             //console.log(subs);
             this.setState({ subscribers: subs })
 
+            //console.log(this.props.userMintedNfts);
             if (account && account.account) {
-                this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
 
+                if (this.props.userMintedNfts && this.props.userMintedNfts.length > 0) {
                     let yourSubs = []
                     let activeSubs = 0
 
@@ -174,7 +183,7 @@ class PvP extends Component {
 
                         const idSub = i.idnft
 
-                        let yourSub = response.find(z => z.id === idSub)
+                        let yourSub = this.props.userMintedNfts.find(z => z.id === idSub)
                         if (yourSub) {
                             yourSub["spellSelected"] = i.spellSelected
                             yourSub["rounds"] = i.rounds.int
@@ -184,14 +193,40 @@ class PvP extends Component {
                             this.loadResultsYourSub(yourSub, dateFightsStart)
                         }
                     })
-                    //console.log(yourSubs);
-                    //console.log(activeSubs);
 
-    				this.setState({ loading: false, userMintedNfts: response, yourSubscribers: yourSubs, activeSubs })
-    			})
+                    this.setState({ loading: false, yourSubscribers: yourSubs, activeSubs })
+                }
+                else {
+                    this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
+
+                        let yourSubs = []
+                        let activeSubs = 0
+
+                        subs.map(i => {
+                            //console.log(i);
+                            if (i.fightsLeft && i.fightsLeft > 0) {
+                                activeSubs += 1
+                            }
+
+                            const idSub = i.idnft
+
+                            let yourSub = response.find(z => z.id === idSub)
+                            if (yourSub) {
+                                yourSub["spellSelected"] = i.spellSelected
+                                yourSub["rounds"] = i.rounds.int
+                                yourSub["fightsLeft"] = i.fightsLeft
+                                //console.log(yourSub, i);
+                                yourSubs.push(yourSub)
+                                this.loadResultsYourSub(yourSub, dateFightsStart)
+                            }
+                        })
+                        //console.log(yourSubs);
+                        //console.log(activeSubs);
+
+        				this.setState({ loading: false, yourSubscribers: yourSubs, activeSubs })
+        			})
+                }  
             }
-
-
         })
     }
 
@@ -499,7 +534,7 @@ class PvP extends Component {
     }
 
     openPopupChangeSpell(id) {
-        const { userMintedNfts } = this.state
+        const { userMintedNfts } = this.props
 
         const item = userMintedNfts.find(i => i.id === id)
 
@@ -587,11 +622,10 @@ class PvP extends Component {
 
     renderRowSub(item, index, isMobile) {
         //console.log(item);
-        const { userMintedNfts, pvpFightsStartDate } = this.state
+        const { pvpFightsStartDate } = this.state
+        const { userMintedNfts } = this.props
 
         const winRate = this.calcWinRate(item)
-
-        //console.log(userMintedNfts);
 
         const nftInfo = userMintedNfts.find(i => i.id === item.id)
 
@@ -919,8 +953,8 @@ class PvP extends Component {
 	}
 
     renderBody(isMobile) {
-        const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults, userMintedNfts, error, activeSubs, pvpWeekEnd, pvpFightsStart, pvpFightsStartDate } = this.state
-        const { account } = this.props
+        const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults, error, activeSubs, pvpWeekEnd, pvpFightsStart, pvpFightsStartDate } = this.state
+        const { account, userMintedNfts } = this.props
 
         const { boxW, modalW } = getBoxWidth(isMobile)
 
@@ -1259,9 +1293,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance, userMintedNfts } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance, userMintedNfts };
 }
 
 export default connect(mapStateToProps, {

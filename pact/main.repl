@@ -1074,19 +1074,19 @@
 
 (commit-tx)
 
-(begin-tx "ACCEPT OFFER")
-
-(env-sigs [{
-  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-  "caps": [
-    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
-    (coin.GAS)
-  ]
-}])
-
-(free.wiz-arena.accept-offer "0" free.wiza free.wiz-equipment)
-
-(commit-tx)
+; (begin-tx "ACCEPT OFFER")
+;
+; (env-sigs [{
+;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+;   "caps": [
+;     (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+;     (coin.GAS)
+;   ]
+; }])
+;
+; (free.wiz-arena.accept-offer "0" free.wiza free.wiz-equipment)
+;
+; (commit-tx)
 
 
 (begin-tx "RETRAIN")
@@ -1225,6 +1225,19 @@
 }])
 
 (free.wiz-arena.subscribe-pvp-mass [{"id":"w3_0", "week":"w3", "idnft":"0", "address":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "spellSelected":{"name":"Tornado"}, "wizaAmount":55}] "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" free.wiza)
+
+(commit-tx)
+
+(begin-tx "GET INFO PVP")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.get-all-subscription-for-pvpweek-full "w3")
 
 (commit-tx)
 

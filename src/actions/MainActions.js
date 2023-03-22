@@ -1,7 +1,7 @@
 import Pact from "pact-lang-api";
 import SignClient from "@walletconnect/sign-client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
-import { getDoc, doc, setDoc } from "firebase/firestore";
+import { getDoc, doc, setDoc, getDocs, query, collection, where, documentId } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import { calcLevelWizard } from '../components/common/CalcLevelWizard'
 import _ from 'lodash'
@@ -925,89 +925,70 @@ export const getPotionEquipped = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimi
 	}
 }
 
-export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 90000, networkUrl, pvpWeek, callback) => {
+export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, pvpWeek, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME}.get-all-subscription-for-pvpweek "${pvpWeek}")`,
+			pactCode: `(free.${CONTRACT_NAME}.get-all-subscription-for-pvpweek-full "${pvpWeek}")`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
-		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+		dispatch(readFromContract(cmd, true, networkUrl)).then(async (response) => {
 			//console.log(response)
 
-			let onlyId = []
-			response.map(i => {
-				onlyId.push(i.idnft)
-			})
+			let onlyWeekId = response.map(i => `${pvpWeek}_#${i.id}`)
 
-			Promise.resolve(dispatch(loadBlockNftsSubscribersPvP(chainId, gasPrice, gasLimit, networkUrl, onlyId))).then(async(response1) => {
-				//console.log(response1);
-
-				let levels = 0
-				response1.map(async(i, index) => {
-					const l = calcLevelWizard(i)
-					levels += l
-
-					const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_#${i.id}`)
-
-					const docSnap = await getDoc(docRef)
-					let data = docSnap.data()
-
-					//console.log(data);
-					let idx = response.findIndex(z => z.idnft === i.id)
-					//console.log(idx);
-
-
-					if (!data) {
-						//console.log(response[idx]);
-						setDoc(docRef, { "lose": 0, "win": 0, "maxFights": response[idx].rounds.int })
-					}
-
-
-					if (idx > -1) {
-						let obj = response[idx]
-						obj["level"] = l
-						obj["fightsLeft"] = obj.rounds.int - (data.win + data.lose)
-						response[idx] = obj
-						//console.log(response);
-					}
-
-					if (index === response1.length - 1) {
-						//console.log(response);
-						if (callback) {
-							callback(response)
-						}
-					}
-				})
-
-				if (response1.length === 0) {
-					if (callback) {
-						callback(response)
-					}
+			const onlyWeekIdBy10 = onlyWeekId.reduce((rows, item, index) => {
+				//console.log(index);
+				//se array row è piena, aggiungiamo una nuova row = [] alla lista
+				if (index % 10 === 0 && index > 0) {
+					rows.push([]);
 				}
 
-				const avgLevel = Math.round(levels / response1.length)
-				//console.log(avgLevel);
-				dispatch(setAvgLevelPvp(avgLevel))
+				//prendiamo l'ultima array della lista e aggiungiamo item
+				rows[rows.length - 1].push(item);
+				return rows;
+			}, [[]]);
 
-			})
+			//console.log(onlyWeekIdBy10);
 
+			let resultFirebase = await Promise.all(
+				onlyWeekIdBy10.map(async (chunks) => {
+					const results = await getDocs(
+						query(
+							collection(firebasedb, "pvp_results"),
+							where(documentId(), 'in', chunks)
+						)
+					)
+					return results.docs.filter(doc => doc.exists()).map(doc => {
+						//console.log(doc.id);
+						const data = doc.data()
+						let idnft = doc.id.replace(`${pvpWeek}_#`, "")
+						let idx = response.findIndex(z => z.idnft === idnft)
+
+						const l = calcLevelWizard(response[idx])
+						response[idx]["level"] = l
+						response[idx]["fightsLeft"] = response[idx].rounds.int - (data.win + data.lose)
+
+						if (!data) {
+							if (idx > -1) {
+								setDoc(doc.id, { "lose": 0, "win": 0, "maxFights": response[idx].rounds.int })
+							}
+						}
+
+						return { ...data, ...response[idx]}
+					})
+				})
+			)
+
+			resultFirebase = resultFirebase.flat(1)
+
+			//console.log(resultFirebase);
+
+			if (callback) {
+				callback(resultFirebase)
+			}
 		})
-	}
-}
-
-export const loadBlockNftsSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, block) => {
-	return async (dispatch) => {
-		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME}.get-wizard-fields-for-ids [${block}])`,
-			meta: defaultMeta(chainId, gasPrice, gasLimit)
-		}
-
-		const response = await dispatch(readFromContract(cmd, true, networkUrl))
-		//console.log(response);
-
-		return response
 	}
 }
 
