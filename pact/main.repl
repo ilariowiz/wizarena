@@ -1168,17 +1168,6 @@
 (commit-tx)
 
 
-;; READ WALLET XP
-(begin-tx "READ WALLET XP")
-
-(env-sigs [{
-  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-  "caps": []
-}])
-
-(free.wiz-arena.get-wallet-xp "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
-
-(commit-tx)
 
 ;;;; SUBSCRIBE TO TOURNAMENT
 (begin-tx "SUBSCRIBE Tournament KDA")
@@ -1201,6 +1190,7 @@
 )
 
 (commit-tx)
+
 
 ;; READ SUBSCRIPTION
 (begin-tx "READ SUBSCRIPTION")
@@ -1711,19 +1701,31 @@
 
 (commit-tx)
 
-; (begin-tx "UPGRADE WITH AP")
-;
-; (env-sigs [{
-;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-;   "caps": [
-;     (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
-;     (coin.GAS)
-;   ]
-; }])
-;
-; (free.wiz-arena.buy-upgrades-ap "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "attack" 2)
-;
-; (commit-tx)
+(begin-tx "UPGRADE WITH AP")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.buy-upgrades-ap "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "attack" 2)
+
+(commit-tx)
+
+;; READ WALLET XP
+(begin-tx "READ WALLET XP")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": []
+}])
+
+(free.wiz-arena.get-wallet-xp "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+
+(commit-tx)
 
 (begin-tx "GET DATA")
 

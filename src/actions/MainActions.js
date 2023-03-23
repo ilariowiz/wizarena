@@ -54,7 +54,8 @@ import {
 	LOAD_SUBSCRIBED_ELITE,
 	SET_KADENA_NAME,
 	SELECT_WIZARD,
-	UPDATE_TRANSACTION_TO_CONFIRM_TEXT
+	UPDATE_TRANSACTION_TO_CONFIRM_TEXT,
+	STORE_WALLET_XP
 } from './types'
 
 
@@ -78,7 +79,7 @@ export const setNetworkUrl = (netId, chainId) => {
 		}
 		else if (netId === MAIN_NET_ID) {
 			url = `https://api.chainweb.com/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
-			//url = `https://kadena2.app.runonflux.io/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
+			//url = `https://chainwebnode1679490025815.app.runonflux.io/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
 		}
 
 		dispatch({ type: SET_NETWORK_URL, payload: url })
@@ -1245,6 +1246,23 @@ export const checkAddressForPrice = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 			//console.log(response)
 			if (callback) {
 				callback(response)
+			}
+		})
+	}
+}
+
+export const getWalletXp = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 500, networkUrl, account) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-wallet-xp "${account.account}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (!response.status) {
+				dispatch({ type: STORE_WALLET_XP, payload: response })
 			}
 		})
 	}

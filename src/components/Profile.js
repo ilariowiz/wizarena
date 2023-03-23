@@ -38,7 +38,8 @@ import {
 	getWizardsStakeInfo,
 	calculateRewardMass,
 	updateInfoTransactionModal,
-	declineOffer
+	declineOffer,
+	getWalletXp
 } from '../actions'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -84,7 +85,6 @@ class Profile extends Component {
 		this.loadKadenaPrice()
 
 		setTimeout(() => {
-
 			this.loadProfile()
 		}, 500)
 	}
@@ -100,11 +100,20 @@ class Profile extends Component {
 	}
 
 	loadProfile() {
+		this.getWalletXp()
 		this.loadMinted()
 		this.loadWizaBalance()
 		this.loadEquip()
 		this.loadOffersMade()
 		this.loadOffersEquipmentMade()
+	}
+
+	getWalletXp() {
+		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		if (account && account.account) {
+			this.props.getWalletXp(chainId, gasPrice, gasLimit, networkUrl, account)
+		}
 	}
 
 	loadMinted() {
@@ -983,7 +992,7 @@ class Profile extends Component {
 	}
 
 	renderBody(isMobile) {
-		const { account, wizaBalance } = this.props
+		const { account, wizaBalance, walletXp } = this.props
 		const { showModalConnection, isConnected, section, loading, unclaimedWizaTotal, offersMade, offersReceived, offersEquipmentMade } = this.state
 
 		const { boxW, modalW } = getBoxWidth(isMobile)
@@ -1038,6 +1047,11 @@ class Profile extends Component {
 
 				<div style={{ alignItems: 'center', marginBottom: 30 }}>
 					<div style={{ flexDirection: 'column' }}>
+
+						<p style={{ fontSize: 24, color: TEXT_SECONDARY_COLOR, marginBottom: 10 }}>
+							WIZARD XP: {walletXp || 0.0}
+						</p>
+
 						<p style={{ fontSize: 24, color: TEXT_SECONDARY_COLOR, marginBottom: 10 }}>
 							$WIZA balance: {wizaBalance || 0.0}
 						</p>
@@ -1243,9 +1257,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, wizaBalance } = state.mainReducer;
+	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, wizaBalance, walletXp } = state.mainReducer;
 
-	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, wizaBalance };
+	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, wizaBalance, walletXp };
 }
 
 export default connect(mapStateToProps, {
@@ -1272,5 +1286,6 @@ export default connect(mapStateToProps, {
 	getWizardsStakeInfo,
 	calculateRewardMass,
 	updateInfoTransactionModal,
-	declineOffer
+	declineOffer,
+	getWalletXp
 })(Profile)

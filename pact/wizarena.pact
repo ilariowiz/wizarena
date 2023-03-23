@@ -22,10 +22,7 @@
     (defconst ADMIN_KEYSET "free.wizarena-keyset")
     (defconst ADMIN_ADDRESS "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb")
     (defconst CLERIC_MINT_ADDRESS "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
-    ;(defconst MAX_ITEMS_PER_OWNER "max-items-per-owner")
     (defconst WIZ_BANK:string "wiz-bank" "Account holding prizes")
-
-    ;(defconst WIZ_REVEAL "wiz-reveal")
 
     (defconst TOURNAMENT_OPEN "tournament_open")
 
@@ -193,11 +190,6 @@
         imageHash:string
     )
 
-    ; (defschema account-minted-schema
-    ;     @doc "keeps track of how many nfts an account has minted"
-    ;     minted:integer
-    ; )
-
     (defschema counts-schema
         @doc "Basic schema used for counting things"
         count:integer
@@ -212,11 +204,6 @@
         @doc "Basic schema used for storing basic values"
         value:string
     )
-
-    ; (defschema max-items-schema
-    ;     @doc "Max items schema during mint time"
-    ;     max:integer
-    ; )
 
     (defschema token-schema
         balance:decimal
@@ -233,10 +220,6 @@
         @doc "Buyin schema"
         value:decimal
     )
-
-    ; (defschema prizes-schema
-    ;     balance:decimal
-    ; )
 
     (defschema stats-schema
         id:string
@@ -331,17 +314,19 @@
         speed:integer
     )
 
+    (defschema wallet-xp-schema
+        xp:integer
+    )
+
     (deftable nfts:{nft-main-schema})
     (deftable nfts-market:{nft-listed-schema})
     (deftable creation:{creation-schema})
     (deftable counts:{counts-schema})
     (deftable values:{values-schema})
     (deftable volume:{volume-schema})
-    ;(deftable max-items:{max-items-schema})
     (deftable token-table:{token-schema})
     (deftable tournaments:{tournament-sub-schema})
     (deftable values-tournament:{values-tournament-schema})
-    ;(deftable prizes:{prizes-schema})
     (deftable stats:{stats-schema})
     (deftable upgrade-stat-values:{upgrade-stat-values-schema})
     (deftable burning-queue-table:{burning-queue-schema})
@@ -360,6 +345,8 @@
 
     (deftable wizards-base-stats:{wizards-base-stats-schema})
 
+    (deftable wallet-xp:{wallet-xp-schema})
+
     ; --------------------------------------------------------------------------
   ; Can only happen once
   ; --------------------------------------------------------------------------
@@ -374,10 +361,8 @@
         (insert values-tournament BUYIN_KEY {"value": 4.0})
         (insert values-tournament FEE_KEY {"value": 7.0})
         (insert values-tournament FEE_TOURNAMENT_KEY {"value": 20.0})
-        ;(insert max-items MAX_ITEMS_PER_OWNER {"max": 0})
         (insert values-tournament BUYIN_PVP {"value": 200.0})
 
-        ;(insert values WIZ_REVEAL {"value": "0"})
         (insert values TOURNAMENT_OPEN {"value": "0"})
 
         (coin.create-account WIZ_BANK (create-module-guard "wiz-holdings"))
@@ -659,6 +644,28 @@
         )
     )
 
+    ; (defun set-fight-medals (objects:list)
+    ;     (with-capability (ADMIN)
+    ;         (map
+    ;             (set-fight-medal)
+    ;             objects
+    ;         )
+    ;     )
+    ; )
+    ;
+    ; (defun set-fight-medal (item:object)
+    ;     (require-capability (ADMIN))
+    ;     (let
+    ;          (
+    ;              (id (at "id" item))
+    ;         )
+    ;         (update stats id
+    ;             {"fights": (at "fights" item),
+    ;             "medals": (at "medals" item)}
+    ;         )
+    ;     )
+    ; )
+
     (defun update-downgrades (objects-list:list)
         (with-capability (ADMIN)
             (map
@@ -884,84 +891,6 @@
         )
     )
 
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ;;;;;;;; MINT FUN ;;;;;;;;;;;;
-    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-    ; (defun set-max-items(max:integer)
-    ;     @doc "Set the max items per address"
-    ;     (with-capability (ADMIN)
-    ;         (update max-items MAX_ITEMS_PER_OWNER {"max": max})
-    ;     )
-    ; )
-    ;
-    ; (defun get-wizards (owner:string amount:integer)
-    ;     @doc "Mint part 1"
-    ;     (enforce (>= amount 1) "Must mint at least 1 wizard")
-    ;     (let (
-    ;             (wiz-minted (get-count MINTED_COUNT_KEY))
-    ;             (wiz-created (get-count NFTS_COUNT_KEY))
-    ;             (max-items (get-max-items))
-    ;         )
-    ;         (enforce (> max-items 0) "Too early to mint")
-    ;         (enforce (<= (+ wiz-minted amount) wiz-created) "Tried to mint more wiz then available! Please reduce the amount")
-    ;         (with-default-read account-minted owner
-    ;             {"minted": 0}
-    ;             {"minted":= minted }
-    ;             (enforce (>= (- max-items amount) minted) "Exceed max mint per wallet")
-    ;         )
-    ;     )
-    ;     (with-default-read account-minted owner
-    ;       {"minted": 0}
-    ;       {"minted":= minted }
-    ;       (write account-minted owner {"minted": (+ minted amount)})
-    ;     )
-    ;     (with-capability (ACCOUNT_GUARD owner)
-    ;         (with-capability (PRIVATE)
-    ;             (map
-    ;                 (get-wizard owner)
-    ;                 (make-list amount 1)
-    ;             )
-    ;         )
-    ;     )
-    ; )
-    ;
-    ; (defun get-wizard (owner:string number:integer)
-    ;     @doc "Mint part 2"
-    ;     (enforce (= number 1) "Number enforced to be 1 to avoid confusion but allow mapping to work")
-    ;     (require-capability (PRIVATE))
-    ;     (require-capability (ACCOUNT_GUARD owner))
-    ;     (let (
-    ;             (id (id-for-new-wizard))
-    ;         )
-    ;         (let (
-    ;                 (data (get-latest-wizard-data id))
-    ;             )
-    ;             (mint-wizard id {
-    ;                 "id": id,
-    ;                 "created": (at "block-time" (chain-data)),
-    ;                 "traits": (at "traits" data),
-    ;                 "owner": owner,
-    ;                 "name": (at "name" data),
-    ;                 "imageHash": (at "imageHash" data)
-    ;             })
-    ;         )
-    ;     )
-    ;     (increase-count MINTED_COUNT_KEY)
-    ; )
-    ;
-    ; (defun mint-wizard (id:string data:object)
-    ;     @doc "Mint part 3"
-    ;     (require-capability (PRIVATE))
-    ;     (insert nfts id data)
-    ;     (insert nfts-market id {
-    ;         "id": id,
-    ;         "price": 0.0,
-    ;         "listed": false
-    ;     })
-    ;     (increase-count MINTED_POST_COUNT_KEY)
-    ; )
-
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;; MARKTEPLACE FUN ;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1162,6 +1091,24 @@
       )
     )
 
+    (defun decline-offer (idoffer:string)
+        (with-read offers-table idoffer
+            {
+                "expiresat" := expiresat,
+                "refnft" := refnft
+            }
+            (enforce (>= expiresat (at "block-time" (chain-data))) "Offer expired.")
+            (let
+                (
+                    (data (get-wizard-fields-for-id (str-to-int refnft)))
+                )
+                (with-capability (OWNER (at "owner" data) refnft)
+                    (update offers-table idoffer { "expiresat": (at "block-time" (chain-data)) })
+                )
+            )
+        )
+    )
+
     (defun increase-volume-by (key:string amount:decimal)
         (require-capability (PRIVATE))
         (update volume key
@@ -1297,6 +1244,7 @@
                 (emit-event (TOURNAMENT_ELITE_SUBSCRIPTION idnft round))
             )
         "")
+        (add-xp-to-wallet address 3)
     )
 
     (defun send-prizes (winners:list)
@@ -1477,6 +1425,7 @@
             })
             (emit-event (PVP_SUBSCRIPTION idnft week (+ wiza 0.0)))
         )
+        (add-xp-to-wallet address 3)
     )
 
     (defun add-rounds-pvp (id:string wiza:decimal m:module{wiza1-interface-v1})
@@ -1516,6 +1465,23 @@
     (defun get-all-subscription-for-pvpweek (idweek:string)
         @doc "Get all subscribers for a pvp week"
         (select pvp-subscribers (where "pvpweek" (= idweek)))
+    )
+
+    (defun get-all-subscription-for-pvpweek-full (idweek:string)
+        (let (
+                (subs (select pvp-subscribers (where "pvpweek" (= idweek))))
+            )
+            (map (get-info-nft-pvp) subs)
+        )
+    )
+
+    (defun get-info-nft-pvp (item:object)
+        (let
+            (
+                (stat (read stats (at "idnft" item)))
+            )
+            (+ item stat)
+        )
     )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1575,6 +1541,9 @@
                 )
             )
         )
+        (with-capability (PRIVATE)
+            (add-xp-to-wallet account (* increase 2))
+        )
     )
 
     (defun buy-upgrades-ap (account:string idnft:string stat:string increase:integer)
@@ -1632,6 +1601,9 @@
                     )
                 )
             )
+        )
+        (with-capability (PRIVATE)
+            (add-xp-to-wallet account increase)
         )
     )
 
@@ -1719,6 +1691,9 @@
                     })
                 )
             )
+        )
+        (with-capability (PRIVATE)
+            (add-xp-to-wallet account 4)
         )
     )
 
@@ -1985,6 +1960,9 @@
                 (spend-wiza wiza-cost address m)
             )
         )
+        (with-capability (PRIVATE)
+            (add-xp-to-wallet address 3)
+        )
     )
 
     (defun transfer-wizard (id:string sender:string receiver:string m:module{wiza1-interface-v1} mequip:module{wizequipment-interface-v1})
@@ -2054,6 +2032,17 @@
         )
     )
 
+    (defun add-xp-to-wallet (account:string newxp:integer)
+        (require-capability (PRIVATE))
+        (with-default-read wallet-xp account
+            {"xp": 0}
+            {"xp":=xp}
+            (write wallet-xp account {
+                "xp": (+ xp newxp)
+            })
+        )
+    )
+
     ;;;;;; NON STATE MODIFYING HELPER FUNCTIONS ;;;;;;;;;
 
     (defun get-wiza-value ()
@@ -2075,10 +2064,6 @@
         (at "value" (read values key ['value]))
     )
 
-    ; (defun get-max-items()
-    ;     (at "max" (read max-items MAX_ITEMS_PER_OWNER ["max"]))
-    ; )
-
     (defun get-latest-wizard-data (id:string)
         (require-capability (PRIVATE))
         (let (
@@ -2099,10 +2084,6 @@
         @doc "Returns an id for a new wizard to be minted"
         (int-to-str 10 (get-count MINTED_POST_COUNT_KEY))
     )
-
-    ; (defun read-account-minted (address:string)
-    ;     (at "minted" (read account-minted address ['minted]))
-    ; )
 
     (defun wizard-owned-by (owner:string)
         @doc "all ids wizard from owner"
@@ -2171,11 +2152,8 @@
         )
     )
 
-    ;;;;;; GENERIC HELPER FUNCTIONS ;;;;;;;;;;
-
-    (defun curr-chain-id ()
-        @doc "Current chain id"
-        (at "chain-id" (chain-data))
+    (defun get-wallet-xp (account:string)
+        (at "xp" (read wallet-xp account ['xp]))
     )
 )
 
@@ -2186,15 +2164,12 @@
     (create-table nfts)
     (create-table nfts-market)
     (create-table creation)
-    ;(create-table account-minted)
     (create-table counts)
     (create-table values)
     (create-table volume)
-    ;(create-table max-items)
     (create-table token-table)
     (create-table tournaments)
     (create-table values-tournament)
-    ;(create-table prizes)
 
     (create-table coin.coin-table)
 
@@ -2214,6 +2189,8 @@
     (create-table potions-table)
 
     (create-table wizards-base-stats)
+
+    (create-table wallet-xp)
 
     (initialize)
     (insertValuesUpgrade)
