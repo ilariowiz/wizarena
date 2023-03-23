@@ -91,7 +91,8 @@ class Shop extends Component {
             loadingEquip: true,
             itemsToShow: [],
             searchText: "",
-            searchedText: ""
+            searchedText: "",
+            showModalBuy: false
         }
     }
 
@@ -1698,6 +1699,16 @@ class Shop extends Component {
                             $WIZA balance: {wizaBalance || 0.0}
                         </p>
 
+                        <button
+							className="btnH"
+							style={styles.btnBuyWiza}
+							onClick={() => this.setState({ showModalBuy: true })}
+						>
+							<p style={{ fontSize: 16, color: 'white' }}>
+								BUY WIZA
+							</p>
+						</button>
+
                         <div style={{ alignItems: 'center', marginBottom: 20 }}>
                             <p style={{ fontSize: 22, color: "white", marginRight: 10 }}>
                                 LEVEL CAP:
@@ -1922,6 +1933,7 @@ class Shop extends Component {
 
     renderTopHeader(isMobile) {
 		const { account } = this.props
+        const { showModalBuy } = this.state
 
 		return (
 			<div style={{ width: '100%' }}>
@@ -1931,6 +1943,8 @@ class Shop extends Component {
 					account={account}
 					isMobile={isMobile}
 					history={this.props.history}
+                    showModalBuyFromShop={showModalBuy}
+                    closeModalBuyOnShop={() => this.setState({ showModalBuy: false })}
 				/>
 			</div>
 		)
@@ -2051,6 +2065,15 @@ const styles = {
 		display: 'flex',
 		flexDirection: 'row'
 	},
+    btnBuyWiza: {
+        height: 40,
+        width: 180,
+        borderRadius: 2,
+        borderColor: TEXT_SECONDARY_COLOR,
+        borderWidth: 2,
+        borderStyle: 'solid',
+		marginBottom: 15,
+    }
 }
 
 const mapStateToProps = (state) => {

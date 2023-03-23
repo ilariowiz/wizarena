@@ -399,6 +399,8 @@ class Header extends Component {
 	render() {
 		const { section, account, page, isMobile, kadenaname } = this.props
 
+		//console.log(this.props.showModalBuyFromShop);
+
 		const { boxW, modalW } = getBoxWidth(isMobile)
 
 		let margin = isMobile ? 12 : 22
@@ -656,8 +658,13 @@ class Header extends Component {
 
 				<ModalBuyWIZA
 					width={modalW}
-					showModal={this.state.showModalBuy}
-					onCloseModal={() => this.setState({ showModalBuy: false })}
+					showModal={this.state.showModalBuy || this.props.showModalBuyFromShop}
+					onCloseModal={() => {
+						this.setState({ showModalBuy: false })
+						if (this.props.closeModalBuyOnShop) {
+							this.props.closeModalBuyOnShop()
+						}
+					}}
 					onSwap={(amount, estimatedWiza) => {
 						this.swap(amount, estimatedWiza)
 					}}
