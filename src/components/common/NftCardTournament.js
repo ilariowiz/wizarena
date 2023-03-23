@@ -59,8 +59,9 @@ class NftCardTournament extends Component {
 
 		const key = `${tournamentName}_${item.id}`
 		const potion = potionsEquipped.find(i => i.key === key)
-
-		this.setState({ potion: potion.potionEquipped })
+		if (potion && potion.potionEquipped) {
+			this.setState({ potion: potion.potionEquipped })
+		}
 	}
 
 	getRingEquipped() {
@@ -75,13 +76,9 @@ class NftCardTournament extends Component {
 		this.loadRing = true
 
 		const ring = ringsEquipped.find(i => i.equippedToId === item.id)
-
 		//console.log(ring);
-
 		if (ring && ring.equipped) {
-
 			const infoEquipment = getRingBonuses(ring)
-
 			this.setState({ ring, infoEquipment })
 		}
 	}
