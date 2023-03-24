@@ -962,21 +962,18 @@ export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 							where(documentId(), 'in', chunks)
 						)
 					)
-					return results.docs.filter(doc => doc.exists()).map(doc => {
+
+					return results.docs.map(doc => {
 						//console.log(doc.id);
 						const data = doc.data()
 						let idnft = doc.id.replace(`${pvpWeek}_#`, "")
 						let idx = response.findIndex(z => z.idnft === idnft)
 
+						//console.log(data);
+
 						const l = calcLevelWizard(response[idx])
 						response[idx]["level"] = l
 						response[idx]["fightsLeft"] = response[idx].rounds.int - (data.win + data.lose)
-
-						if (!data) {
-							if (idx > -1) {
-								setDoc(doc.id, { "lose": 0, "win": 0, "maxFights": response[idx].rounds.int })
-							}
-						}
 
 						return { ...data, ...response[idx]}
 					})
@@ -984,6 +981,25 @@ export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 			)
 
 			resultFirebase = resultFirebase.flat(1)
+
+			if (resultFirebase.length < response.length) {
+				response.map(n => {
+					//console.log(n);
+					const hasId = resultFirebase.some(s => s.id === n.id)
+					//console.log(hasId);
+
+					if (!hasId) {
+						const docRefPvP = doc(firebasedb, "pvp_results", `${pvpWeek}_#${n.id}`)
+						setDoc(docRefPvP, { "lose": 0, "win": 0, "maxFights": n.rounds.int })
+
+						const docRefPvPTraining = doc(firebasedb, "pvp_training", `${pvpWeek}_#${n.id}`)
+						setDoc(docRefPvPTraining, { "lose": 0, "win": 0, "maxFights": n.rounds.int })
+					}
+				})
+
+				dispatch(getAllSubscribersPvP(chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, pvpWeek, callback))
+				return
+			}
 
 			//console.log(resultFirebase);
 
