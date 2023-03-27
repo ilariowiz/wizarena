@@ -935,7 +935,7 @@ class Profile extends Component {
 						}
 					}}
 				>
-					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 1 ? CTA_COLOR : '#21c6e895' }}>
+					<p style={{ fontSize: isMobile ? 16 : 17, color: section === 1 ? CTA_COLOR : '#21c6e895' }}>
 						MY COLLECTION ({(userMintedNfts && userMintedNfts.length) || 0})
 					</p>
 				</button>
@@ -951,7 +951,7 @@ class Profile extends Component {
 						this.loadEquip()
 					}}
 				>
-					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 5 ? CTA_COLOR : '#21c6e895' }}>
+					<p style={{ fontSize: isMobile ? 16 : 17, color: section === 5 ? CTA_COLOR : '#21c6e895' }}>
 						EQUIPMENT {equipment.length > 0 ? `(${equipment.length})` : ""}
 					</p>
 				</button>
@@ -967,7 +967,7 @@ class Profile extends Component {
 						this.loadOffersMade()
 					}}
 				>
-					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 3 ? CTA_COLOR : '#21c6e895' }}>
+					<p style={{ fontSize: isMobile ? 16 : 17, color: section === 3 ? CTA_COLOR : '#21c6e895' }}>
 						{offersMade ? `OFFERS MADE (${offersMade.length + offersEquipmentMade.length})` : "OFFERS MADE"}
 					</p>
 				</button>
@@ -983,7 +983,7 @@ class Profile extends Component {
 						this.loadOffersReceived()
 					}}
 				>
-					<p style={{ fontSize: isMobile ? 17 : 18, color: section === 4 ? CTA_COLOR : '#21c6e895' }}>
+					<p style={{ fontSize: isMobile ? 16 : 17, color: section === 4 ? CTA_COLOR : '#21c6e895' }}>
 						{offersReceived ? `OFFERS RECEIVED (${offersReceived.length})` : "OFFERS RECEIVED"}
 					</p>
 				</button>
@@ -1227,7 +1227,7 @@ const styles = {
 		backgroundColor: 'transparent'
 	},
 	btnMenu: {
-		height: 45,
+		height: 35,
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
