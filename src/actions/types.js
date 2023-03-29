@@ -90,6 +90,8 @@ export const UPDATE_INFO_TRANSACTION_MODAL = 'UPDATE_INFO_TRANSACTION_MODAL'
 
 export const STORE_WALLET_XP = 'STORE_WALLET_XP'
 
+export const HIDE_NAV_BAR = 'HIDE_NAV_BAR'
+
 /////// equipment
 export const LOAD_ALL_ITEMS_IDS = 'LOAD_ALL_ITEMS_IDS'
 export const LOAD_ALL_ITEMS = 'LOAD_ALL_ITEMS'

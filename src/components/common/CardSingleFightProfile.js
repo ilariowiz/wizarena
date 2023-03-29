@@ -25,7 +25,7 @@ class CardSingleFightProfile extends Component {
             >
 				<img
 					src={getImageUrl(itemInfo.id)}
-					style={{ width: 140, height: 140, borderRadius: 2, marginRight: 15, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+					style={{ width: 110, height: 110, borderRadius: 2, marginRight: 15, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
 					alt={itemInfo.name}
 				/>
 
@@ -99,17 +99,17 @@ const styles = {
 		backgroundColor: '#ffffff15',
 		borderRadius: 2,
 		alignItems: 'center',
-		width: 275,
-		height: 170,
+		width: 235,
+		height: 150,
 		display: 'flex',
 		justifyContent: 'flex-start',
-		paddingLeft: 15,
+		paddingLeft: 10,
 		marginRight: 20,
 		marginBottom: 20
 	},
     btnChoice: {
         width: 100,
-        height: 40,
+        height: 38,
         borderRadius: 2,
         backgroundColor: CTA_COLOR,
         display: 'flex',
