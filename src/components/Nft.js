@@ -25,6 +25,7 @@ import traits_qty_druids from './common/Traits_qty_druids'
 import conditions from './common/Conditions'
 import allSpells from './common/Spells'
 import titles from './common/LeagueTitle'
+import getBoxWidth from './common/GetBoxW'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import 'reactjs-popup/dist/index.css';
 import {
@@ -1610,10 +1611,9 @@ class Nft extends Component {
 		const { nft, loading, infoBurn } = this.state
 		const { account } = this.props
 
-		let boxW = Math.floor(window.innerWidth * 90 / 100)
-		let imageWidth = boxW > 500 ? 500 : boxW - 30
+		const { boxW, modalW } = getBoxWidth(true)
 
-		let boxTopStyle = { width: boxW, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginTop: 25, marginBottom: 25 }
+		let imageWidth = boxW > 500 ? 500 : boxW - 30
 
 		let showOverlayBurn = infoBurn && infoBurn.burned
 
@@ -1621,9 +1621,16 @@ class Nft extends Component {
 		if (ctaWidth > 170) ctaWidth = 170
 
 		return (
-			<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+			<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 15, overflow: 'scroll', alignItems: 'center' }}>
 
-				<div style={boxTopStyle}>
+				{
+					loading &&
+					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
+						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+					</div>
+				}
+
+				<div style={{ width: boxW, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 25 }}>
 
 					<div style={{ position: 'relative' }}>
 						<img
@@ -1736,122 +1743,128 @@ class Nft extends Component {
 
 		//console.log(nft);
 
-		let boxW = Math.floor(window.innerWidth * 90 / 100)
-		if (boxW > 1100) boxW = 1100;
+		const { boxW, modalW } = getBoxWidth(false)
 
-		const boxWidthRight = boxW - 400
+		let insideWidth = boxW > 1200 ? 1200 : boxW
+
+		const boxWidthRight = insideWidth - 400
 		let ctaWidth = boxWidthRight * 40 / 100
 		if (ctaWidth > 250) ctaWidth = 250
-
-		let boxTopStyle = { width: boxW, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 25, marginBottom: 25 }
 
 		let showOverlayBurn = infoBurn && infoBurn.burned
 
 		return (
-			<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+			<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 25, overflow: 'scroll', alignItems: 'center' }}>
 
-				<div style={boxTopStyle}>
+				{
+					loading &&
+					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+					</div>
+				}
 
-					<div style={{ position: 'relative', marginRight: 30 }}>
-						<img
-							style={{ width: 370, height: 370, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
-							src={getImageUrl(nft.id)}
-							alt={nft.id}
-						/>
+				<div style={{ width: insideWidth, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 25 }}>
 
-						{
-							showOverlayBurn ?
+						<div style={{ position: 'relative', marginRight: 30 }}>
 							<img
-								style={{ width: 370, height: 370, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', position: 'absolute', top: 0, left: 0 }}
-								src={burn_overlay}
+								style={{ width: 370, height: 370, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+								src={getImageUrl(nft.id)}
 								alt={nft.id}
 							/>
-							: null
-						}
-					</div>
 
-					<div style={{ flexDirection: 'column', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
-
-						<div style={{ width: '100%', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
-
-							{this.renderBoxShare()}
+							{
+								showOverlayBurn ?
+								<img
+									style={{ width: 370, height: 370, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', position: 'absolute', top: 0, left: 0 }}
+									src={burn_overlay}
+									alt={nft.id}
+								/>
+								: null
+							}
 						</div>
 
+						<div style={{ flexDirection: 'column', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
 
-						{
-							//nft listato, in renderbtn buy gestiamo tutti i casi, anche account non connesso
-							nft.listed &&
-							<div style={Object.assign({}, styles.boxRightLarge, { width: boxWidthRight })}>
+							<div style={{ width: '100%', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
 
-								{this.renderLeftBoxPriceListed(nft.owner === account.account)}
-
-								{this.renderBtnBuy(ctaWidth, 15)}
-
+								{this.renderBoxShare()}
 							</div>
-						}
-
-						{
-							// nft non listato ma tu sei owner: SELL
-							!nft.listed && account && account.account && nft.owner === account.account ?
-							<div style={Object.assign({}, styles.boxRightLarge, { width: boxWidthRight })}>
-								{this.renderLeftBoxListing()}
-
-								{this.renderBtnSell(ctaWidth, 15)}
-
-							</div>
-							: null
-						}
 
 
-						{
-							//non sei il proprietario e l'nft non è listato
-							!nft.listed && !loading && account && account.account && nft.owner !== account.account ?
-							<div style={Object.assign({}, styles.boxRightLarge, { width: boxWidthRight })}>
+							{
+								//nft listato, in renderbtn buy gestiamo tutti i casi, anche account non connesso
+								nft.listed &&
+								<div style={Object.assign({}, styles.boxRightLarge, { width: boxWidthRight })}>
 
-								{this.renderLeftMakeOffer()}
+									{this.renderLeftBoxPriceListed(nft.owner === account.account)}
 
-								{
-									!showOverlayBurn ?
-									this.renderBtnMakeOffer(ctaWidth, 15)
-									: null
-								}
-							</div>
-							: null
-						}
+									{this.renderBtnBuy(ctaWidth, 15)}
 
-						{
-							//nft non listato ma account non connesso CONNECT WALLET
-							 !nft.listed && !loading && (!account || (account && !account.account)) ?
-							<div style={Object.assign({}, styles.boxRightLarge, { width: boxWidthRight })}>
+								</div>
+							}
 
-								{this.renderLeftMakeOffer()}
+							{
+								// nft non listato ma tu sei owner: SELL
+								!nft.listed && account && account.account && nft.owner === account.account ?
+								<div style={Object.assign({}, styles.boxRightLarge, { width: boxWidthRight })}>
+									{this.renderLeftBoxListing()}
 
-								{this.renderBtnConnect(ctaWidth, 15)}
-							</div>
-							: null
-						}
+									{this.renderBtnSell(ctaWidth, 15)}
 
-					</div>
+								</div>
+								: null
+							}
+
+
+							{
+								//non sei il proprietario e l'nft non è listato
+								!nft.listed && !loading && account && account.account && nft.owner !== account.account ?
+								<div style={Object.assign({}, styles.boxRightLarge, { width: boxWidthRight })}>
+
+									{this.renderLeftMakeOffer()}
+
+									{
+										!showOverlayBurn ?
+										this.renderBtnMakeOffer(ctaWidth, 15)
+										: null
+									}
+								</div>
+								: null
+							}
+
+							{
+								//nft non listato ma account non connesso CONNECT WALLET
+								 !nft.listed && !loading && (!account || (account && !account.account)) ?
+								<div style={Object.assign({}, styles.boxRightLarge, { width: boxWidthRight })}>
+
+									{this.renderLeftMakeOffer()}
+
+									{this.renderBtnConnect(ctaWidth, 15)}
+								</div>
+								: null
+							}
+
+						</div>
 
 				</div>
 
-				<div style={{ width: boxW, justifyContent: 'space-between' }}>
-					{this.renderBoxStats((boxW/2) - 10)}
+				<div style={{ width: insideWidth, justifyContent: 'space-between' }}>
+					{this.renderBoxStats((insideWidth/2) - 10)}
 
-					{this.renderBoxMedals((boxW/2) - 10)}
+					{this.renderBoxMedals((insideWidth/2) - 10)}
 				</div>
 
-				<div style={{ width: boxW, justifyContent: 'space-between' }}>
-					{this.renderBoxSpellbook(boxW/2 - 10)}
+				<div style={{ width: insideWidth, justifyContent: 'space-between' }}>
+					{this.renderBoxSpellbook(insideWidth/2 - 10)}
 
-					{this.renderBoxFights(boxW/2 - 10)}
+					{this.renderBoxFights(insideWidth/2 - 10)}
 				</div>
 
-				{this.renderBoxProperties(boxW)}
+				{this.renderBoxProperties(insideWidth)}
 
-				{this.renderBoxOffers(boxW, false)}
+				{this.renderBoxOffers(insideWidth, false)}
 
-				{this.renderBoxSales(boxW, false)}
+				{this.renderBoxSales(insideWidth, false)}
 
 			</div>
 		)
@@ -1861,7 +1874,7 @@ class Nft extends Component {
 		const { account } = this.props
 
 		return (
-			<div style={{ width: '100%' }}>
+			<div>
 				<Header
 					page='nft'
 					account={account}
@@ -1908,21 +1921,14 @@ class Nft extends Component {
 				/>
 
 				<Media
-					query="(max-width: 767px)"
+					query="(max-width: 1199px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 768px)"
+					query="(min-width: 1200px)"
 					render={() => this.renderTopHeader(false)}
 				/>
-
-				{
-					loading &&
-					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30 }}>
-						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
-					</div>
-				}
 
 				{
 					!error &&
@@ -1976,8 +1982,7 @@ class Nft extends Component {
 
 const styles = {
 	container: {
-		flexDirection: 'column',
-		alignItems: 'center',
+		flexDirection: 'row',
 		position: 'absolute',
 		top: 0,
 		left: 0,

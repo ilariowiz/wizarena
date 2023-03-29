@@ -544,7 +544,7 @@ class Mint extends Component {
 		let stageTxt = stage !== 'early' ? `${stage.toUpperCase()} MINT` : 'EARLY'
 
 		return (
-			<div style={{ flexDirection: 'column', width, marginTop: 30 }}>
+			<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
 				<div style={containerStyle}>
 
 					<div style={{ flex: 0.6, alignItems: 'center', justifyContent: 'flex-start', paddingTop: 20, marginBottom: 30 }}>
@@ -608,7 +608,7 @@ class Mint extends Component {
 		const { account } = this.props
 
 		return (
-			<div style={{ width: '100%' }}>
+			<div>
 				<Header
 					page='home'
 					section={2}
@@ -624,12 +624,12 @@ class Mint extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 767px)"
+					query="(max-width: 1199px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 768px)"
+					query="(min-width: 1200px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -649,8 +649,7 @@ class Mint extends Component {
 
 const styles = {
 	container: {
-		flexDirection: 'column',
-		alignItems: 'center',
+		flexDirection: 'row',
 		position: 'absolute',
 		top: 0,
 		left: 0,

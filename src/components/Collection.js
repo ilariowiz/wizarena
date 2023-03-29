@@ -446,9 +446,9 @@ class Collection extends Component {
 		let items = totalCountNfts || 0
 
 		return (
-			<div style={{ width: '100%', minHeight: 60, alignItems: 'center', marginTop: 20, marginBottom: 20, justifyContent: 'space-between', flexWrap: 'wrap' }}>
+			<div style={{ width: '100%', alignItems: 'center', marginBottom: 20, justifyContent: 'space-between', flexWrap: 'wrap' }}>
 
-				<div style={{ flexWrap: 'wrap', alignItems: 'center' }}>
+				<div style={{ flexWrap: 'wrap', alignItems: 'center', marginBottom: 10 }}>
 					{this.renderBoxHeader(items.toLocaleString(), 'items', isMobile)}
 
 					{this.renderBoxHeader(`${listed || 0}`, 'listed', isMobile)}
@@ -462,7 +462,7 @@ class Collection extends Component {
 					{this.renderBoxHeader(`${wizardsStaked || 0}`, 'staked', isMobile)}
 				</div>
 
-				<div style={{ alignItems: 'center' }}>
+				<div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
 					<a
 						href={`${window.location.protocol}//${window.location.host}/sales`}
 	                    style={styles.btnSales}
@@ -494,13 +494,13 @@ class Collection extends Component {
 		)
 	}
 
-	renderSearchBar() {
+	renderSearchBar(isMobile) {
 		const { searchText } = this.state
 
 		return (
 			<div style={{ width: '100%', height: 60, alignItems: 'center', marginBottom: 20 }}>
 				<input
-					style={styles.inputSearch}
+					style={Object.assign({}, styles.inputSearch, { width: isMobile ? 150 : 350 })}
 					placeholder='Search by #'
 					value={searchText}
 					onChange={(e) => this.setState({ searchText: e.target.value })}
@@ -736,11 +736,15 @@ class Collection extends Component {
 		}
 
 		return (
-			<div style={{ flexDirection: 'column', width: boxW }}>
+			<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+
+				<p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
+					Marketplace
+				</p>
 
 				{this.renderHeader(isMobile)}
 
-				{this.renderSearchBar()}
+				{this.renderSearchBar(isMobile)}
 
 				{this.renderSearched()}
 
@@ -801,7 +805,7 @@ class Collection extends Component {
 		const { account } = this.props
 
 		return (
-			<div style={{ width: '100%' }}>
+			<div>
 				<Header
 					page='home'
 					section={1}
@@ -817,12 +821,12 @@ class Collection extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 767px)"
+					query="(max-width: 1199px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 768px)"
+					query="(min-width: 1200px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -842,8 +846,7 @@ class Collection extends Component {
 
 const styles = {
 	container: {
-		flexDirection: 'column',
-		alignItems: 'center',
+		flexDirection: 'row',
 		position: 'absolute',
 		top: 0,
 		left: 0,
@@ -880,14 +883,14 @@ const styles = {
 		paddingBottom: 6
 	},
 	inputSearch: {
-		width: 390,
 		height: 43,
 		marginRight: 15,
-		color: 'black',
+		color: 'white',
 		borderRadius: 2,
-		borderColor: '#e5e8eb',
+		borderColor: 'white',
 		borderStyle: 'solid',
-		borderWidth: 2,
+		backgroundColor: BACKGROUND_COLOR,
+		borderWidth: 1,
 		fontSize: 19,
 		paddingLeft: 10,
 		WebkitAppearance: 'none',
@@ -911,6 +914,7 @@ const styles = {
 		width: 160,
 		height: 38,
 		marginRight: 10,
+		marginBottom: 5,
 		borderWidth: 2,
 		borderColor: 'white',
 		borderStyle: 'solid',
@@ -922,6 +926,7 @@ const styles = {
 	btnBurning: {
 		width: 160,
 		height: 38,
+		marginBottom: 5,
 		borderWidth: 2,
 		borderColor: '#840fb2',
 		borderStyle: 'solid',

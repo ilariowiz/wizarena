@@ -225,7 +225,7 @@ class PvP extends Component {
 
         				this.setState({ loading: false, yourSubscribers: yourSubs, activeSubs })
         			})
-                }  
+                }
             }
         })
     }
@@ -796,7 +796,7 @@ class PvP extends Component {
                                     this.chooseOpponent(item, level)
                                 }}
                             >
-                                <p style={{ fontSize: 17, color: 'white' }}>
+                                <p style={{ fontSize: 16, color: 'white' }}>
                                     TRAINING
                                 </p>
                             </button>
@@ -812,7 +812,7 @@ class PvP extends Component {
                                     this.openPopupChangeSpell(item.id)
                                 }}
                             >
-                                <p style={{ fontSize: 17, color: 'white' }}>
+                                <p style={{ fontSize: 16, color: 'white' }}>
                                     CHANGE SPELL
                                 </p>
                             </button>
@@ -833,7 +833,7 @@ class PvP extends Component {
                                     this.chooseOpponent(item, level)
                                 }}
                             >
-                                <p style={{ fontSize: 17, color: 'white' }}>
+                                <p style={{ fontSize: 16, color: 'white' }}>
                                     FIGHT
                                 </p>
                             </button>
@@ -849,7 +849,7 @@ class PvP extends Component {
                                     this.openPopupChangeSpell(item.id)
                                 }}
                             >
-                                <p style={{ fontSize: 17, color: 'white' }}>
+                                <p style={{ fontSize: 16, color: 'white' }}>
                                     CHANGE SPELL
                                 </p>
                             </button>
@@ -914,13 +914,8 @@ class PvP extends Component {
 			)
 		})
 
-		const styleBox = isMobile ?
-						{ flexDirection: 'column', alignItems: 'center', paddingBottom: 10, width: '100%' }
-						:
-						{ justifyContent: 'space-between', alignItems: 'center', flex: 1 }
-
 		return (
-			<div style={styleBox}>
+			<div style={{ justifyContent: 'space-between', alignItems: 'center', flex: 1 }}>
 				<div style={{ flexWrap: 'wrap', marginLeft: 20 }}>
 					{temp}
 				</div>
@@ -961,7 +956,11 @@ class PvP extends Component {
         if (!account || !account.account || !isConnected) {
 
 			return (
-				<div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: boxW, marginTop: 30 }}>
+				<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+
+                    <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
+                        PvP
+                    </p>
 
 					<img
 						src={getImageUrl(undefined)}
@@ -1000,7 +999,7 @@ class PvP extends Component {
 
         if (error) {
 			return (
-				<div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: boxW, marginTop: 30 }}>
+				<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
 
 					<img
 						src={getImageUrl(undefined)}
@@ -1031,7 +1030,19 @@ class PvP extends Component {
         let fontSizeIntro = isMobile ? 16 : 19
 
         return (
-            <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+
+                <p style={{ color: 'white', fontSize: 30, marginBottom: 20 }}>
+                    PvP
+                </p>
+
+                {
+					this.state.loading ?
+					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
+						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+					</div>
+					: null
+				}
 
                 <div style={{ marginBottom: 30 }}>
 
@@ -1094,7 +1105,7 @@ class PvP extends Component {
                     You will only fight wizards 25 levels higher or lower
                 </p>
 
-                <div style={{ flexDirection: 'row', overflow: 'scroll', marginBottom: 30, flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
+                <div style={{ flexDirection: 'row', marginBottom: 30, flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
                     {
                         yourSubscribersResults && yourSubscribersResults.length > 0 &&
                         yourSubscribersResultsSorted.map((item, index) => {
@@ -1112,14 +1123,6 @@ class PvP extends Component {
                 }
 
                 {
-					this.state.loading ?
-					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30, marginBottom: 30 }}>
-						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
-					</div>
-					: null
-				}
-
-                {
                     !fightsStart &&
                     <div style={{ flexWrap: 'wrap', marginBottom: 30, justifyContent: isMobile ? 'center' : 'flex-start' }}>
                         {
@@ -1134,7 +1137,7 @@ class PvP extends Component {
 
                 {
                     this.state.toSubscribe.length > 0 &&
-                    <div style={styles.footerSubscribe}>
+                    <div style={Object.assign({}, styles.footerSubscribe, { bottom: isMobile ? -15 : -25 })}>
 						{this.renderFooterSubscribe(isMobile)}
 					</div>
                 }
@@ -1177,7 +1180,7 @@ class PvP extends Component {
 		const { account } = this.props
 
 		return (
-			<div style={{ width: '100%' }}>
+			<div>
 				<Header
 					page='home'
 					section={7}
@@ -1199,12 +1202,12 @@ class PvP extends Component {
                 />
 
 				<Media
-					query="(max-width: 767px)"
+					query="(max-width: 1199px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 768px)"
+					query="(min-width: 1200px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -1224,8 +1227,7 @@ class PvP extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'column',
-		alignItems: 'center',
+		flexDirection: 'row',
 		position: 'absolute',
 		top: 0,
 		left: 0,
@@ -1245,8 +1247,8 @@ const styles = {
 	},
     btnPlay: {
         height: 35,
-        width: 150,
-        minWidth: 150,
+        width: 140,
+        minWidth: 140,
         borderRadius: 2,
         justifyContent: 'center',
         alignItems: 'center',
@@ -1276,7 +1278,6 @@ const styles = {
     },
     footerSubscribe: {
 		width: '100%',
-		minHeight: 90,
 		position: 'sticky',
 		bottom: 0,
 		left: 0,

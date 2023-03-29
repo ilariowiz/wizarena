@@ -1290,9 +1290,7 @@ class Tournament extends Component {
         const { tournament, tournamentWiza, tournamentElite, profileFights, error, showProfileFights, showSubs, yourSubs } = this.state
 
         let { boxW, modalW } = getBoxWidth(isMobile)
-        if (boxW > 1250) {
-            boxW = 1250
-        }
+        const insideWidth = boxW > 1250 ? 1250 : boxW
 
         if (!tournament.name || !tournamentWiza.name || !tournamentElite.name) {
             return (
@@ -1303,15 +1301,19 @@ class Tournament extends Component {
         }
 
         //console.log(tournament);
-        let boxTournamentWidth = isMobile ? (boxW * 90 / 100) : (boxW - 140) / 3
+        let boxTournamentWidth = isMobile ? (insideWidth * 90 / 100) : (insideWidth - 140) / 3
         if (boxTournamentWidth > 358) {
             boxTournamentWidth = 358
         }
 
         return (
-            <div style={{ width: boxW, flexDirection: 'column', justifyContent: 'center', flexWrap: 'wrap', paddingTop: 30 }}>
+            <div style={{ flexDirection: 'column', alignItems: 'center', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
 
-                <div style={{ width: boxW, flexDirection: 'row', justifyContent: isMobile ? 'center' : 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 30 }}>
+                <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
+                    Tournaments
+                </p>
+
+                <div style={{ width: insideWidth, flexDirection: 'row', justifyContent: isMobile ? 'center' : 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 30 }}>
                     {this.renderTournamentElite(boxTournamentWidth)}
 
                     {this.renderTournamentHigh(boxTournamentWidth)}
@@ -1321,7 +1323,7 @@ class Tournament extends Component {
 
                 {
 					this.state.loading ?
-					<div style={{ width: boxW, height: 50, justifyContent: 'center', alignItems: 'center' }} id="loading">
+					<div style={{ width: insideWidth, height: 50, justifyContent: 'center', alignItems: 'center' }} id="loading">
 						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
 					</div>
 					: null
@@ -1329,7 +1331,7 @@ class Tournament extends Component {
 
                 {
                     showProfileFights &&
-                    <div style={{ flexDirection: 'column', width: '100%' }}>
+                    <div style={{ flexDirection: 'column', width: insideWidth }}>
 
                         <div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
                             {profileFights && Object.keys(profileFights).length > 0 && Object.keys(profileFights).reverse().map(key => this.renderRoundFights(key))}
@@ -1343,7 +1345,7 @@ class Tournament extends Component {
 
                 {
                     showSubs &&
-                    <div style={{ flexWrap: 'wrap', marginBottom: 15 }} id="filters">
+                    <div style={{ flexWrap: 'wrap', marginBottom: 15, width: insideWidth, alignItems: 'flex-start' }} id="filters">
     					{this.renderBoxSearchStat("hp", "HP", ["40 - 50", "51 - 60", "61 - 65", "66 - 70", "71 - 75", "76 - 80", "81 - 85", "86 - 90", "91 - 95", "96 - 100", "101 - 105", "106 - 110", "111 - 115", "116 - 120", "121 - 125"].reverse())}
     					{this.renderBoxSearchStat("defense", "DEFENSE", ["14 - 15", "16 - 17", "18 - 19", "20 - 21", "22 - 23", "24 - 25", "26 - 27", "28 - 29", "30 - 31", "32 - 33", "34 - 35", "36 - 37", "38 - 39", "40 - 41"].reverse())}
     					{this.renderBoxSearchStat("element", "ELEMENT", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
@@ -1356,7 +1358,7 @@ class Tournament extends Component {
 
                 {
                     showSubs && yourSubs.length > 0 && yourSubs[0].length > 0 &&
-                    <div style={{ flexDirection: 'column', width: '100%' }}>
+                    <div style={{ flexDirection: 'column', width: insideWidth }}>
                         <p style={{ fontSize: 23, color: 'white', marginTop: 10, marginBottom: 15 }}>
                             Wizards subscribed
                         </p>
@@ -1369,7 +1371,7 @@ class Tournament extends Component {
 
                 {
                     showSubs && yourSubs.length > 0 && yourSubs[1].length > 0 &&
-                    <div style={{ flexDirection: 'column', width: '100%' }}>
+                    <div style={{ flexDirection: 'column', width: insideWidth }}>
                         <p style={{ fontSize: 23, color: 'white', marginTop: 10, marginBottom: 15 }}>
                             Wizards not subscribed
                         </p>
@@ -1385,7 +1387,7 @@ class Tournament extends Component {
 
                 {
                     this.state.toSubscribe.length > 0 &&
-                    <div style={styles.footerSubscribe}>
+                    <div style={Object.assign({}, styles.footerSubscribe, { bottom: isMobile ? -15 : -25, width: insideWidth })}>
 						{this.renderFooterSubscribe(isMobile)}
 					</div>
                 }
@@ -1412,7 +1414,7 @@ class Tournament extends Component {
 		const { account } = this.props
 
 		return (
-			<div style={{ width: '100%' }}>
+			<div>
 				<Header
 					page='home'
 					section={4}
@@ -1428,12 +1430,12 @@ class Tournament extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 767px)"
+					query="(max-width: 1199px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 768px)"
+					query="(min-width: 1200px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -1453,8 +1455,7 @@ class Tournament extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'column',
-		alignItems: 'center',
+		flexDirection: 'row',
 		position: 'absolute',
 		top: 0,
 		left: 0,
@@ -1494,8 +1495,6 @@ const styles = {
         marginBottom: 20
     },
     footerSubscribe: {
-		width: '100%',
-		minHeight: 90,
 		position: 'sticky',
 		bottom: 0,
 		left: 0,

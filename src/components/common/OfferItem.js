@@ -120,7 +120,7 @@ class OfferItem extends Component {
 
 		return (
 			<div
-                style={Object.assign({}, styles.boxSingleHistory, { borderWidth: !showImage ? 0 : 1, height: showImage ? 60 : 45 })}
+                style={Object.assign({}, styles.boxSingleHistory, { borderWidth: !showImage ? 0 : 1, justifyContent: isMobile ? 'center' : 'space-between' })}
                 key={item.id}
             >
 				{
@@ -168,7 +168,7 @@ class OfferItem extends Component {
 						style={Object.assign({}, styles.btnAccept, { backgroundColor: CTA_COLOR })}
 						onClick={() => this.props.onAcceptOffer(item.refnft, getImageUrl(item.refnft))}
 					>
-						<p style={{ fontSize: 17, color: 'white', fontWeight: '500' }}>
+						<p style={{ fontSize: 16, color: 'white' }}>
 							Accept
 						</p>
 					</button>
@@ -182,7 +182,7 @@ class OfferItem extends Component {
 						style={Object.assign({}, styles.btnAccept, { backgroundColor: 'transparent', marginLeft: 10 })}
 						onClick={() => this.props.onDeclineOffer()}
 					>
-						<p style={{ fontSize: 17, color: CTA_COLOR, fontWeight: '500' }}>
+						<p style={{ fontSize: 16, color: CTA_COLOR }}>
 							Decline
 						</p>
 					</button>
@@ -204,17 +204,18 @@ class OfferItem extends Component {
 
 const styles = {
 	boxSingleHistory: {
-		justifyContent: 'space-between',
 		alignItems: 'center',
 		borderWidth: 1,
         borderRadius: 2,
+        padding: 2,
 		borderColor: 'white',
 		borderStyle: 'solid',
         marginBottom: 10,
+        flexWrap: 'wrap'
 	},
 	btnAccept: {
 		width: 100,
-		height: 40,
+		height: 35,
 		borderWidth: 2,
 		borderColor: CTA_COLOR,
 		borderStyle: 'solid',

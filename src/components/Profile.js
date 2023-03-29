@@ -918,7 +918,7 @@ class Profile extends Component {
 		const { section, loading, equipment, offersMade, offersReceived, offersEquipmentMade } = this.state;
 		const { userMintedNfts } = this.props
 
-		const selStyle = { borderBottomWidth: 3, borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderColor: CTA_COLOR, borderStyle: 'solid' }
+		const selStyle = { borderBottomWidth: 3, borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderColor: 'white', borderStyle: 'solid' }
 		const unselStyle = { borderBottomWidth: 3, borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderColor: 'transparent', borderStyle: 'solid' }
 		const selectedStyle1 = section === 1 ? selStyle : unselStyle
 		const selectedStyle3 = section === 3 ? selStyle : unselStyle
@@ -926,7 +926,7 @@ class Profile extends Component {
 		const selectedStyle5 = section === 5 ? selStyle : unselStyle
 
 		return (
-			<div style={{ width: '100%', alignItems: 'center', marginBottom: 30, flexWrap: 'wrap' }}>
+			<div style={{ width: '100%', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap' }}>
 				<button
 					style={Object.assign({}, styles.btnMenu, selectedStyle1, { marginRight: 35 })}
 					onClick={() => {
@@ -935,7 +935,7 @@ class Profile extends Component {
 						}
 					}}
 				>
-					<p style={{ fontSize: isMobile ? 16 : 17, color: section === 1 ? CTA_COLOR : '#21c6e895' }}>
+					<p style={{ fontSize: isMobile ? 16 : 17, color: section === 1 ? 'white' : '#ffffff95' }}>
 						MY COLLECTION ({(userMintedNfts && userMintedNfts.length) || 0})
 					</p>
 				</button>
@@ -951,7 +951,7 @@ class Profile extends Component {
 						this.loadEquip()
 					}}
 				>
-					<p style={{ fontSize: isMobile ? 16 : 17, color: section === 5 ? CTA_COLOR : '#21c6e895' }}>
+					<p style={{ fontSize: isMobile ? 16 : 17, color: section === 5 ? 'white' : '#ffffff95' }}>
 						EQUIPMENT {equipment.length > 0 ? `(${equipment.length})` : ""}
 					</p>
 				</button>
@@ -967,7 +967,7 @@ class Profile extends Component {
 						this.loadOffersMade()
 					}}
 				>
-					<p style={{ fontSize: isMobile ? 16 : 17, color: section === 3 ? CTA_COLOR : '#21c6e895' }}>
+					<p style={{ fontSize: isMobile ? 16 : 17, color: section === 3 ? 'white' : '#ffffff95' }}>
 						{offersMade ? `OFFERS MADE (${offersMade.length + offersEquipmentMade.length})` : "OFFERS MADE"}
 					</p>
 				</button>
@@ -983,7 +983,7 @@ class Profile extends Component {
 						this.loadOffersReceived()
 					}}
 				>
-					<p style={{ fontSize: isMobile ? 16 : 17, color: section === 4 ? CTA_COLOR : '#21c6e895' }}>
+					<p style={{ fontSize: isMobile ? 16 : 17, color: section === 4 ? 'white' : '#ffffff95' }}>
 						{offersReceived ? `OFFERS RECEIVED (${offersReceived.length})` : "OFFERS RECEIVED"}
 					</p>
 				</button>
@@ -1005,15 +1005,15 @@ class Profile extends Component {
 		if (!account || !account.account || !isConnected) {
 
 			return (
-				<div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: boxW, marginTop: 30 }}>
+				<div style={{ flexDirection: 'column', alignItems: 'center', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
 
 					<img
 						src={getImageUrl(undefined)}
-						style={{ width: 340, height: 340, borderRadius: 2, marginBottom: 30 }}
+						style={{ width: 300, height: 300, borderRadius: 2, marginBottom: 30 }}
 						alt='Placeholder'
 					/>
 
-					<p style={{ fontSize: 23, color: 'white', textAlign: 'center', width: 340, marginBottom: 30, lineHeight: 1.2 }}>
+					<p style={{ fontSize: 19, color: 'white', textAlign: 'center', width: 300, marginBottom: 30, lineHeight: 1.2 }}>
 						Connect your wallet and enter the Arena
 					</p>
 
@@ -1043,20 +1043,24 @@ class Profile extends Component {
 		}
 
 		return (
-			<div style={{ flexDirection: 'column', width: boxW, marginTop: 30 }}>
+			<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+
+				<p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
+					Profile
+				</p>
 
 				<div style={{ alignItems: 'center', marginBottom: 30 }}>
 					<div style={{ flexDirection: 'column' }}>
 
-						<p style={{ fontSize: 24, color: TEXT_SECONDARY_COLOR, marginBottom: 10 }}>
+						<p style={{ fontSize: 24, color: 'white', marginBottom: 10 }}>
 							WIZARD XP: {walletXp || 0.0}
 						</p>
 
-						<p style={{ fontSize: 24, color: TEXT_SECONDARY_COLOR, marginBottom: 10 }}>
+						<p style={{ fontSize: 24, color: 'white', marginBottom: 10 }}>
 							$WIZA balance: {wizaBalance || 0.0}
 						</p>
 
-						<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
+						<p style={{ fontSize: 18, color: 'white' }}>
 							Unclaimed $WIZA: {unclW || 0.0}
 						</p>
 					</div>
@@ -1155,7 +1159,7 @@ class Profile extends Component {
 		const { account } = this.props
 
 		return (
-			<div style={{ width: '100%' }}>
+			<div>
 				<Header
 					page='home'
 					section={3}
@@ -1171,12 +1175,12 @@ class Profile extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 767px)"
+					query="(max-width: 1199px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 768px)"
+					query="(min-width: 1200px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -1196,8 +1200,7 @@ class Profile extends Component {
 
 const styles = {
 	container: {
-		flexDirection: 'column',
-		alignItems: 'center',
+		flexDirection: 'row',
 		position: 'absolute',
 		top: 0,
 		left: 0,
@@ -1206,7 +1209,7 @@ const styles = {
 		backgroundColor: BACKGROUND_COLOR
 	},
 	btnConnect: {
-		width: 340,
+		width: 300,
 		height: 45,
 		justifyContent: 'center',
 		alignItems: 'center',
@@ -1227,9 +1230,10 @@ const styles = {
 		backgroundColor: 'transparent'
 	},
 	btnMenu: {
-		height: 35,
+		height: 30,
 		justifyContent: 'center',
 		alignItems: 'center',
+		marginBottom: 10
 	},
 	btnClaimAll: {
 		width: 200,

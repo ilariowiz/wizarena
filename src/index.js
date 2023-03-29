@@ -6,9 +6,7 @@ import Collection from './components/Collection'
 import Mint from './components/Mint'
 import Profile from './components/Profile'
 import Nft from './components/Nft';
-import Settings from './components/Settings';
 import Fight from './components/Fight'
-import Rules from './components/Rules'
 
 import Sales from './components/Sales'
 import SalesEquipment from './components/SalesEquipment'
@@ -51,9 +49,7 @@ ReactDOM.render(
             <Route path="/mint" component={Mint} />
             <Route path="/me" component={Profile} />
             <Route path="/nft/" component={Nft} />
-            <Route path="/settings" component={Settings} />
             <Route path="/fight/" component={Fight} />
-            <Route path="/rules" component={Rules} />
             <Route path="/sales" component={Sales} />
             <Route path="/salesequipment" component={SalesEquipment} />
             <Route path="/magicshop" component={Shop} />

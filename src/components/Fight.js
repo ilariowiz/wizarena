@@ -9,6 +9,7 @@ import Header from './Header'
 import getImageUrl from './common/GetImageUrl'
 import cardStats from './common/CardStats'
 import getRingBonuses from './common/GetRingBonuses'
+import getBoxWidth from './common/GetBoxW'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import { MAIN_NET_ID, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import {
@@ -274,12 +275,6 @@ class Fight extends Component {
             const element = document.getElementById("mainBox")
 
             this.setState({ fightActions })
-            /*
-            setTimeout(() => {
-                //console.log(window.scrollY);
-                window.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
-            }, 100)
-            */
 
             setTimeout(() => {
                 this.stepFight()
@@ -445,19 +440,26 @@ class Fight extends Component {
     }
 
     renderBody(isMobile) {
-        const { u1, u2, actions, winner, error, showOnlyOne, actionsDict, showResult, showBar, fightActions } = this.state
+        const { u1, u2, actions, winner, error, showOnlyOne, actionsDict, showResult, showBar, fightActions, loading } = this.state
 
-        let boxW = Math.floor(window.innerWidth * (isMobile ? 90 : 70) / 100)
-		if (boxW > 900) boxW = 900;
+        const { boxW, modalW } = getBoxWidth(isMobile)
 
 		let spaceImage = (boxW / 2) - 40
         if (spaceImage > 400) {
             spaceImage = 400
         }
 
+        if (loading) {
+            return (
+                <div style={{ flexDirection: 'column', alignItems: 'center', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+                    <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+                </div>
+            )
+        }
+
         if (error) {
             return (
-                <div style={{ justifyContent: 'center', alignItems: 'center', marginTop: 50, width: boxW }}>
+                <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
                     <p style={{ fontSize: 22, color: 'white' }}>
                         {error}
                     </p>
@@ -467,7 +469,7 @@ class Fight extends Component {
 
         if (showOnlyOne && u1) {
             return (
-                <div style={{ flexDirection: 'column', width: boxW, marginTop: 30, alignItems: 'center' }}>
+                <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
 
                     <div style={{ width: boxW, justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
 
@@ -497,25 +499,29 @@ class Fight extends Component {
         }
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 30, alignItems: 'center' }} id="mainBox">
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }} id="mainBox">
 
-                <div style={{ width: boxW, justifyContent: 'space-between', alignItems: 'center', marginBottom: 30 }}>
+                <div style={{ width: boxW, justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
 
                     <div style={{ flexDirection: 'column', height: '100%' }}>
                         {this.renderSingleNft(u1, spaceImage)}
 
                         {
                             showBar &&
-                            <div style={{ width: spaceImage, height: 16, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', borderRadius: 2, alignItems: 'center' }}>
+                            <div style={{ width: spaceImage, height: 16, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', borderRadius: 2, alignItems: 'center', position: 'relative' }}>
                                 <div
                                     className="hpBar"
                                     style={{ width: this.calcWidthHp(spaceImage, actionsDict[`${u1.id}_initialhp`], this.dataCurrentHP[`#${u1.id}`]), height: 16, backgroundColor: this.getColorHpBar(this.dataCurrentHP[`#${u1.id}`], actionsDict[`${u1.id}_initialhp`]) }}
                                 />
+
+                                <p style={{ position: 'absolute', left: 5, fontSize: 14, color: 'white' }}>
+                                    {this.dataCurrentHP[`#${u1.id}`] < 0 ? 0 : this.dataCurrentHP[`#${u1.id}`]} / {actionsDict[`${u1.id}_initialhp`]}
+                                </p>
                             </div>
                         }
                     </div>
 
-                    <p style={{ fontSize: 28, color: TEXT_SECONDARY_COLOR }}>
+                    <p style={{ fontSize: 28, color: TEXT_SECONDARY_COLOR, marginLeft: 15, marginRight: 15 }}>
                         VS
                     </p>
 
@@ -524,11 +530,15 @@ class Fight extends Component {
 
                         {
                             showBar &&
-                            <div style={{ width: spaceImage, height: 16, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', borderRadius: 2 }}>
+                            <div style={{ width: spaceImage, height: 16, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', borderRadius: 2, position: 'relative' }}>
                                 <div
                                     className="hpBar"
                                     style={{ width: this.calcWidthHp(spaceImage, actionsDict[`${u2.id}_initialhp`], this.dataCurrentHP[`#${u2.id}`]), height: 16, backgroundColor: this.getColorHpBar(this.dataCurrentHP[`#${u2.id}`], actionsDict[`${u2.id}_initialhp`]) }}
                                 />
+
+                                <p style={{ position: 'absolute', left: 5, fontSize: 14, color: 'white' }}>
+                                    {this.dataCurrentHP[`#${u2.id}`] < 0 ? 0 : this.dataCurrentHP[`#${u2.id}`]} / {actionsDict[`${u2.id}_initialhp`]}
+                                </p>
                             </div>
                         }
                     </div>
@@ -536,7 +546,7 @@ class Fight extends Component {
 
                 {
                     !showResult && !showBar &&
-                    <div style={{ justifyContent: 'space-around', alignItems: 'center' }}>
+                    <div style={{ justifyContent: 'center', alignItems: 'center' }}>
                         <button
                             style={Object.assign({}, styles.btnChoice, { marginRight: 50 })}
                             onClick={() => this.setState({ showResult: true })}
@@ -616,7 +626,7 @@ class Fight extends Component {
 		const { account } = this.props
 
 		return (
-			<div style={{ width: '100%' }}>
+			<div>
 				<Header
 					page='settings'
 					account={account}
@@ -634,21 +644,14 @@ class Fight extends Component {
 			<div style={styles.container}>
 
 				<Media
-					query="(max-width: 767px)"
+					query="(max-width: 1199px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 768px)"
+					query="(min-width: 1200px)"
 					render={() => this.renderTopHeader(false)}
 				/>
-
-                {
-					loading &&
-					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30 }}>
-						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
-					</div>
-				}
 
 				<Media
 					query="(max-width: 767px)"
@@ -666,8 +669,7 @@ class Fight extends Component {
 
 const styles = {
 	container: {
-		flexDirection: 'column',
-		alignItems: 'center',
+		flexDirection: 'row',
 		position: 'absolute',
 		top: 0,
 		left: 0,

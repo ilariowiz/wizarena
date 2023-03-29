@@ -7,6 +7,7 @@ import Media from 'react-media';
 import Header from './Header'
 import DotLoader from 'react-spinners/DotLoader';
 import moment from 'moment'
+import getBoxWidth from './common/GetBoxW'
 import HistoryItem from './common/HistoryItem'
 import { BACKGROUND_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import {
@@ -129,7 +130,6 @@ class Sales extends Component {
         const { selectedSales } = this.state
 
         //console.log(item, selectedSales);
-
         return (
 			<HistoryItem
 				item={item}
@@ -145,12 +145,13 @@ class Sales extends Component {
     renderBody(isMobile) {
         const { loading, error, dataSales, selectedSales } = this.state
 
-        const boxW = Math.floor(window.innerWidth * (isMobile ? 85 : 92) / 100)
+        const { boxW } = getBoxWidth(isMobile)
 
         return (
-            <div style={{ width: boxW, alignItems: 'center', flexDirection: 'column', paddingTop: 30 }}>
-                <p style={{ fontSize: 28, color: 'white' }}>
-                    Last sales
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+
+                <p style={{ color: 'white', fontSize: 30, marginBottom: 20 }}>
+                    Sales
                 </p>
 
                 {
@@ -211,7 +212,7 @@ class Sales extends Component {
 		const { account } = this.props
 
 		return (
-			<div style={{ width: '100%' }}>
+			<div>
 				<Header
 					page='home'
 					section={6}
@@ -227,12 +228,12 @@ class Sales extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 767px)"
+					query="(max-width: 1199px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 768px)"
+					query="(min-width: 1200px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -252,8 +253,7 @@ class Sales extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'column',
-		alignItems: 'center',
+		flexDirection: 'row',
 		position: 'absolute',
 		top: 0,
 		left: 0,

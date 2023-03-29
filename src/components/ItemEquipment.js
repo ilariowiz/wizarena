@@ -10,6 +10,7 @@ import ModalTransfer from './common/ModalTransfer'
 import getRingBonuses from './common/GetRingBonuses'
 import getImageUrl from './common/GetImageUrl'
 import ringsRarity from './common/RankRings'
+import getBoxWidth from './common/GetBoxW'
 import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
 import {
     setNetworkSettings,
@@ -492,11 +493,11 @@ class ItemEquipment extends Component {
 		)
 	}
 
-    renderBoxEquipped(width) {
+    renderBoxEquipped(width, isMobile) {
 		const { equipment } = this.state
 
 		return (
-			<div style={Object.assign({}, styles.boxSection, { width, borderWidth: 0, alignItems: 'flex-end' })}>
+			<div style={Object.assign({}, styles.boxSection, { width, borderWidth: 0, alignItems: isMobile ? 'center' : 'flex-end' })}>
 
                 <div style={{ flexDirection: 'column', alignItems: 'center' }}>
                     <p style={{ marginBottom: 20, fontSize: 26, color: 'white' }}>
@@ -576,26 +577,33 @@ class ItemEquipment extends Component {
 		const { equipment, loading } = this.state
 		const { account } = this.props
 
-		let boxW = Math.floor(window.innerWidth * 90 / 100)
-		let imageWidth = boxW > 500 ? 500 : boxW - 30
+		const { boxW, modalW } = getBoxWidth(false)
+        let imageWidth = boxW > 500 ? 500 : boxW - 30
 
-		let boxTopStyle = { width: boxW, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginTop: 25, marginBottom: 25 }
+		let boxTopStyle = { width: boxW, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 25 }
 
 		let ctaWidth = boxW * 50 / 100
 		if (ctaWidth > 170) ctaWidth = 170
 
         return (
-            <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 15, overflow: 'scroll' }}>
+
+                {
+                    loading &&
+                    <div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30 }}>
+                        <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+                    </div>
+                }
+
                 <div style={boxTopStyle}>
 
                     <img
                         style={{ width: imageWidth, height: imageWidth, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
                         src={equipment.url}
-                        //src="https://storage.googleapis.com/wizarena/equipment/ring_atk_1.png"
                         alt={equipment.id}
                     />
 
-                    <div style={{ flexDirection: 'column', width: imageWidth, height: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }}>
+                    <div style={{ flexDirection: 'column', width: imageWidth, height: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: 20, marginBottom: 20 }}>
 
                         {
                                 //nft listato, in renderbtn buy gestiamo tutti i casi, anche account non connesso
@@ -652,17 +660,17 @@ class ItemEquipment extends Component {
 
                     </div>
 
+                    {this.renderBoxStats(imageWidth)}
+
+    				{
+                        equipment && equipment.equipped ?
+                        this.renderBoxEquipped(imageWidth, true)
+                        : null
+                    }
+
+                    {this.renderBoxSales(imageWidth)}
+
                 </div>
-
-                {this.renderBoxStats(imageWidth)}
-
-				{
-                    equipment && equipment.equipped ?
-                    this.renderBoxEquipped(imageWidth)
-                    : null
-                }
-
-                {this.renderBoxSales(imageWidth)}
 
             </div>
         )
@@ -674,42 +682,46 @@ class ItemEquipment extends Component {
 
 		//console.log(nft);
 
-		let boxW = Math.floor(window.innerWidth * 90 / 100)
-		if (boxW > 800) boxW = 800;
+		const { boxW, modalW } = getBoxWidth(false)
 
-		let ctaWidth = boxW * 30 / 100
+        let insideWidth = boxW > 900 ? 900 : boxW
+
+		let ctaWidth = insideWidth * 30 / 100
 		if (ctaWidth > 250) ctaWidth = 250
 
-		let boxTopStyle = { width: boxW, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginTop: 35, marginBottom: 35 }
-
         return (
-            <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
-                <div style={boxTopStyle}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 25, overflow: 'scroll' }}>
 
-                    <div style={{ alignItems: 'center', width: boxW, justifyContent: equipment && equipment.equipped ? 'space-between' : 'center' }}>
+                {
+                    loading &&
+                    <div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30, marginBottom: 30 }}>
+                        <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+                    </div>
+                }
+
+                <div style={{ width: boxW, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 35 }}>
+
+                    <div style={{ alignItems: 'center', width: insideWidth, justifyContent: equipment && equipment.equipped ? 'space-between' : 'center' }}>
 
                         <img
                             style={{ width: 300, height: 300, marginBottom: 30, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
                             src={equipment.url}
-                            //src="https://storage.googleapis.com/wizarena/equipment/ring_atk_1.png"
                             alt={equipment.id}
                         />
 
                         {
                             equipment && equipment.equipped ?
-                            this.renderBoxEquipped(300)
+                            this.renderBoxEquipped(300, false)
                             : null
                         }
                     </div>
 
                     <div style={{ flexDirection: 'column', justifyContent: 'center', marginBottom: 30 }}>
 
-                        {/*this.renderBoxStats((boxW/2) - 10) */}
-
                         {
                             //nft listato, in renderbtn buy gestiamo tutti i casi, anche account non connesso
                             equipment.listed &&
-                            <div style={Object.assign({}, styles.boxRightLarge, { width: boxW })}>
+                            <div style={Object.assign({}, styles.boxRightLarge, { width: insideWidth })}>
 
                                 {this.renderLeftBoxPriceListed(equipment.owner === account.account)}
 
@@ -721,7 +733,7 @@ class ItemEquipment extends Component {
                         {
 							// nft non listato ma tu sei owner: SELL
 							!equipment.listed && account && account.account && equipment.owner === account.account ?
-							<div style={Object.assign({}, styles.boxRightLarge, { width: boxW })}>
+							<div style={Object.assign({}, styles.boxRightLarge, { width: insideWidth })}>
 								{this.renderLeftBoxListing()}
 
 								{this.renderBtnSell(ctaWidth, 15)}
@@ -733,15 +745,9 @@ class ItemEquipment extends Component {
                         {
 							//non sei il proprietario e l'nft non è listato
 							!equipment.listed && !loading && account && account.account && equipment.owner !== account.account ?
-							<div style={Object.assign({}, styles.boxRightLarge, { width: boxW })}>
+							<div style={Object.assign({}, styles.boxRightLarge, { width: insideWidth })}>
 
 								{this.renderLeftMakeOffer()}
-
-								{/*
-									!showOverlayBurn ?
-									this.renderBtnMakeOffer(ctaWidth, 15)
-									: null
-								*/}
 							</div>
 							: null
 						}
@@ -749,7 +755,7 @@ class ItemEquipment extends Component {
                         {
 							//nft non listato ma account non connesso CONNECT WALLET
 							 !equipment.listed && !loading && (!account || (account && !account.account)) ?
-							<div style={Object.assign({}, styles.boxRightLarge, { width: boxW })}>
+							<div style={Object.assign({}, styles.boxRightLarge, { width: insideWidth })}>
 
 								{this.renderLeftMakeOffer()}
 
@@ -761,9 +767,9 @@ class ItemEquipment extends Component {
 
                     </div>
 
-                    {this.renderBoxStats(boxW)}
+                    {this.renderBoxStats(insideWidth)}
 
-                    {this.renderBoxSales(boxW)}
+                    {this.renderBoxSales(insideWidth)}
 
                 </div>
             </div>
@@ -774,7 +780,7 @@ class ItemEquipment extends Component {
 		const { account } = this.props
 
 		return (
-			<div style={{ width: '100%' }}>
+			<div>
                 <Header
                     page='nft'
                     account={account}
@@ -821,21 +827,14 @@ class ItemEquipment extends Component {
                 />
 
 				<Media
-					query="(max-width: 767px)"
+					query="(max-width: 1199px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 768px)"
+					query="(min-width: 1200px)"
 					render={() => this.renderTopHeader(false)}
 				/>
-
-                {
-					loading &&
-					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30 }}>
-						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
-					</div>
-				}
 
                 {
 					!error &&
@@ -882,8 +881,7 @@ class ItemEquipment extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'column',
-		alignItems: 'center',
+		flexDirection: 'row',
 		position: 'absolute',
 		top: 0,
 		left: 0,

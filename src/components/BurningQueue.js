@@ -102,7 +102,7 @@ class BurningQueue extends Component {
         const { boxW } = getBoxWidth(isMobile)
 
         return (
-            <div style={{ width: boxW, alignItems: 'center', flexDirection: 'column', paddingTop: 30 }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
                 <p style={{ fontSize: 28, color: 'white', marginBottom: 5 }}>
                     Burning Queue ({queue.length})
                 </p>
@@ -141,7 +141,7 @@ class BurningQueue extends Component {
 		const { account } = this.props
 
 		return (
-			<div style={{ width: '100%' }}>
+			<div>
 				<Header
 					page='nft'
 					section={32}
@@ -157,12 +157,12 @@ class BurningQueue extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 767px)"
+					query="(max-width: 1199px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 768px)"
+					query="(min-width: 1200px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -182,8 +182,7 @@ class BurningQueue extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'column',
-		alignItems: 'center',
+		flexDirection: 'row',
 		position: 'absolute',
 		top: 0,
 		left: 0,

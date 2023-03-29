@@ -330,8 +330,7 @@ class Tournament extends Component {
         const { avgLevel } = this.state
 
         return (
-            <div style={{ flexDirection: 'column', marginTop: 25 }}>
-
+            <div style={{ flexDirection: 'column', marginBottom: 20 }}>
                 {
                     avgLevel &&
                     <div style={{ marginBottom: 15, alignItems: 'center' }}>
@@ -452,6 +451,16 @@ class Tournament extends Component {
 
         const { boxW } = getBoxWidth(isMobile)
 
+        if (this.state.loading) {
+            return (
+                <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+                    <div style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                        <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+                    </div>
+                </div>
+            )
+        }
+
         if (!tournament.name) {
             return <div> </div>
         }
@@ -469,13 +478,15 @@ class Tournament extends Component {
             const dateStartTo = moment().to(dateStart)
 
 			return (
-				<div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
+				<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
 
                     {
                         tournament.showLeague ?
                         this.renderHeaderLeague()
                         :
-                        null
+                        <p style={{ fontSize: 30, color: 'white', marginBottom: 20 }}>
+                            The Weekly Tournament
+                        </p>
                     }
 
 					<div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 30 }}>
@@ -522,7 +533,7 @@ class Tournament extends Component {
 
                     {
                         subscribed && subscribed.length > 0 &&
-                        <div style={{ marginBottom: 30, flexWrap: 'wrap', marginTop: 15 }}>
+                        <div style={{ marginBottom: 30, flexWrap: 'wrap', width: boxW }}>
                             {subscribed.map((item, index) => {
                                 return this.renderRow(item, index, 230)
                             })}
@@ -547,13 +558,15 @@ class Tournament extends Component {
 			}
 
 			return (
-				<div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
+				<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
 
                     {
                         tournament.showLeague ?
                         this.renderHeaderLeague()
                         :
-                        null
+                        <p style={{ fontSize: 30, color: 'white', marginBottom: 20 }}>
+                            The Weekly Tournament
+                        </p>
                     }
 
 					<div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 30 }}>
@@ -578,7 +591,7 @@ class Tournament extends Component {
 
                     {
                         subscribed && subscribed.length > 0 &&
-                        <div style={{ marginBottom: 30, flexWrap: 'wrap', marginTop: 15 }}>
+                        <div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
                             {subscribed.map((item, index) => {
                                 return this.renderRow(item, index, 220)
                             })}
@@ -589,25 +602,27 @@ class Tournament extends Component {
 		}
 
         if (tournament && tournament.showPair && this.state.matchPair.length > 0) {
-            return this.renderMatchPair(boxW)
+            return this.renderMatchPair(boxW, isMobile)
         }
 
-        return this.renderRoundConcluso(boxW)
+        return this.renderRoundConcluso(boxW, isMobile)
     }
 
-    renderMatchPair(boxW) {
+    renderMatchPair(boxW, isMobile) {
         const { matchPair, tournament } = this.state
 
         const roundName = tournament.name.split("_")[1]
 
         return (
-            <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
 
                 {
                     tournament.showLeague ?
                     this.renderHeaderLeague()
                     :
-                    null
+                    <p style={{ fontSize: 30, color: 'white', marginBottom: 20 }}>
+                        The Weekly Tournament
+                    </p>
                 }
 
                 <div style={{ justifyContent: 'space-between', marginBottom: 30 }}>
@@ -722,7 +737,7 @@ class Tournament extends Component {
         )
     }
 
-    renderRoundConcluso(boxW) {
+    renderRoundConcluso(boxW, isMobile) {
         const { tournament, winners, yourStat } = this.state
 
         if (!winners || winners.length === 0) {
@@ -769,13 +784,15 @@ class Tournament extends Component {
 
 
         return (
-            <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
 
                 {
                     tournament.showLeague ?
                     this.renderHeaderLeague()
                     :
-                    null
+                    <p style={{ fontSize: 30, color: 'white', marginBottom: 20 }}>
+                        The Weekly Tournament
+                    </p>
                 }
 
                 <div style={{ justifyContent: 'space-between', marginBottom: 30 }}>
@@ -860,7 +877,7 @@ class Tournament extends Component {
 		const { account } = this.props
 
 		return (
-			<div style={{ width: '100%' }}>
+			<div>
                 <Header
                     page='nft'
                     account={account}
@@ -875,22 +892,14 @@ class Tournament extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 767px)"
+					query="(max-width: 1199px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 768px)"
+					query="(min-width: 1200px)"
 					render={() => this.renderTopHeader(false)}
 				/>
-
-                {
-					this.state.loading ?
-					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', paddingTop: 30 }}>
-						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
-					</div>
-					: null
-				}
 
 				<Media
 					query="(max-width: 767px)"
@@ -908,8 +917,7 @@ class Tournament extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'column',
-		alignItems: 'center',
+		flexDirection: 'row',
 		position: 'absolute',
 		top: 0,
 		left: 0,
@@ -920,6 +928,8 @@ const styles = {
     btnSubscribe: {
         width: 250,
 		height: 50,
+        minHeight: 50,
+        marginBottom: 20,
 		backgroundColor: CTA_COLOR,
 		justifyContent: 'center',
 		alignItems: 'center',

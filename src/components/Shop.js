@@ -1458,13 +1458,18 @@ class Shop extends Component {
         )
     }
 
-    renderChoises(width) {
+    renderChoises(width, isMobile) {
         const { userMintedNfts } = this.props
 
         const sorted = this.sortById()
 
         return (
-            <div style={{ width, flexDirection: 'column', paddingTop: 30 }}>
+            <div style={{ flexDirection: 'column', width, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+
+                <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
+                    Magic Shop
+                </p>
+
                 <p style={{ fontSize: 22, color: 'white', marginBottom: 10 }}>
                     Select the Wizard you want to improve
                 </p>
@@ -1634,15 +1639,15 @@ class Shop extends Component {
         if (!account || !account.account || !isConnected) {
 
 			return (
-				<div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: boxW, marginTop: 30 }}>
+				<div style={{ flexDirection: 'column', alignItems: 'center', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
 
 					<img
 						src={getImageUrl(undefined)}
-						style={{ width: 340, height: 340, borderRadius: 2, marginBottom: 30 }}
+						style={{ width: 300, height: 300, borderRadius: 2, marginBottom: 30 }}
 						alt='Placeholder'
 					/>
 
-					<p style={{ fontSize: 23, color: 'white', textAlign: 'center', width: 340, marginBottom: 30, lineHeight: 1.2 }}>
+					<p style={{ fontSize: 19, color: 'white', textAlign: 'center', width: 300, marginBottom: 30, lineHeight: 1.2 }}>
 						Connect your wallet and enter the Arena
 					</p>
 
@@ -1674,7 +1679,7 @@ class Shop extends Component {
 
         // LIST OF YOUR WIZARDS
         if (!wizard) {
-            return this.renderChoises(boxW)
+            return this.renderChoises(boxW, isMobile)
         }
 
         //console.log(equipment);
@@ -1684,7 +1689,11 @@ class Shop extends Component {
 
         //WIZARD SELECTED
         return (
-            <div style={{ width: boxW, flexDirection: 'column', paddingTop: 30 }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+
+                <p style={{ color: 'white', fontSize: 30, marginBottom: 20 }}>
+                    Magic Shop
+                </p>
 
                 <div style={{ flexDirection: 'column', marginBottom: 30 }}>
 
@@ -1727,9 +1736,11 @@ class Shop extends Component {
                             {this.renderBoxMenu("NICKNAME")}
                         </div>
 
-                        <p style={{ fontSize: 26, color: 'white', marginBottom: 10 }} id="shop-rings">
-                            RINGS
-                        </p>
+                        <div style={{ width: '100%', alignItems: 'center', padding: 5, marginBottom: 10, backgroundColor: "#2d2a42", borderRadius: 2 }}>
+                            <p style={{ fontSize: 26, color: 'white' }} id="shop-rings">
+                                RINGS
+                            </p>
+                        </div>
 
                         {
                             this.state.loadingEquip &&
@@ -1771,9 +1782,11 @@ class Shop extends Component {
                             </div>
                         }
 
-                        <p style={{ fontSize: 26, color: 'white', marginBottom: 10 }} id="shop-upgrades">
-                            UPGRADES
-                        </p>
+                        <div style={{ width: '100%', alignItems: 'center', padding: 5, marginBottom: 10, backgroundColor: "#2d2a42", borderRadius: 2 }}>
+                            <p style={{ fontSize: 26, color: 'white' }} id="shop-upgrades">
+                                UPGRADES
+                            </p>
+                        </div>
 
                         <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
                             {this.renderShopCard("hp")}
@@ -1788,11 +1801,13 @@ class Shop extends Component {
 
                         </div>
 
-                        <p style={{ fontSize: 26, color: 'white', marginBottom: 10 }} id="shop-ap">
-                            ATTRIBUTE POINTS
-                        </p>
+                        <div style={{ width: '100%', alignItems: 'center', padding: 5, marginBottom: 10, backgroundColor: "#2d2a42", borderRadius: 2 }}>
+                            <p style={{ fontSize: 26, color: 'white' }} id="shop-ap">
+                                ATTRIBUTE POINTS
+                            </p>
+                        </div>
 
-                        <p style={{ fontSize: 22, color: "white", marginBottom: 15 }}>
+                        <p style={{ fontSize: 20, color: "white", marginBottom: 15 }}>
                             AP available: {wizard.ap ? wizard.ap.int : 0}
                         </p>
 
@@ -1811,9 +1826,11 @@ class Shop extends Component {
 
                         </div>
 
-                        <p style={{ fontSize: 26, color: 'white', marginBottom: 10 }} id="shop-retrain">
-                            RETRAIN
-                        </p>
+                        <div style={{ width: '100%', alignItems: 'center', padding: 5, marginBottom: 10, backgroundColor: "#2d2a42", borderRadius: 2 }}>
+                            <p style={{ fontSize: 26, color: 'white' }} id="shop-retrain">
+                                RETRAIN
+                            </p>
+                        </div>
 
                         <p style={{ fontSize: 20, color: "white", marginBottom: 15 }}>
                             Rebuild your wizard, you can't go under the initial stat
@@ -1835,9 +1852,12 @@ class Shop extends Component {
                         {
                             !potionEquipped ?
                             <div style={{ flexDirection: 'column' }} id="shop-vials">
-                                <p style={{ fontSize: 26, color: 'white', marginBottom: 5 }}>
-                                    VIALS
-                                </p>
+
+                                <div style={{ width: '100%', alignItems: 'center', padding: 5, marginBottom: 5, backgroundColor: "#2d2a42", borderRadius: 2 }}>
+                                    <p style={{ fontSize: 26, color: 'white' }}>
+                                        VIALS
+                                    </p>
+                                </div>
 
                                 <p style={{ fontSize: 18, color: 'white', marginBottom: 10 }}>
                                     In each tournament you will be able to buy one vial to temporarily upgrade your wizard. The bonus will last the whole tournament.
@@ -1866,9 +1886,12 @@ class Shop extends Component {
                             </div>
                             :
                             <div style={{ flexDirection: 'column' }} id="shop-vials">
-                                <p style={{ fontSize: 26, color: 'white', marginBottom: 5 }}>
-                                    VIALS
-                                </p>
+
+                                <div style={{ width: '100%', alignItems: 'center', padding: 5, marginBottom: 5, backgroundColor: "#2d2a42", borderRadius: 2 }}>
+                                    <p style={{ fontSize: 26, color: 'white' }}>
+                                        VIALS
+                                    </p>
+                                </div>
 
                                 <p style={{ fontSize: 17, color: 'white', marginBottom: 10 }}>
                                     Vial Equipped
@@ -1878,9 +1901,12 @@ class Shop extends Component {
                         }
 
                         <div style={{ flexDirection: 'column' }} id="shop-nickname">
-                            <p style={{ fontSize: 26, color: 'white', marginBottom: 5 }}>
-                                NICKNAME
-                            </p>
+
+                            <div style={{ width: '100%', alignItems: 'center', padding: 5, marginBottom: 5, backgroundColor: "#2d2a42", borderRadius: 2 }}>
+                                <p style={{ fontSize: 26, color: 'white' }}>
+                                    NICKNAME
+                                </p>
+                            </div>
 
                             <p style={{ fontSize: 18, color: 'white', marginBottom: 10 }}>
                                 Want to give your wizard an epic nickname? Now you can!
@@ -1936,7 +1962,7 @@ class Shop extends Component {
         const { showModalBuy } = this.state
 
 		return (
-			<div style={{ width: '100%' }}>
+			<div>
 				<Header
 					page='home'
 					section={5}
@@ -1954,12 +1980,12 @@ class Shop extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 767px)"
+					query="(max-width: 1199px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 768px)"
+					query="(min-width: 1200px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -1979,8 +2005,7 @@ class Shop extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'column',
-		alignItems: 'center',
+		flexDirection: 'row',
 		position: 'absolute',
 		top: 0,
 		left: 0,
@@ -1989,7 +2014,7 @@ const styles = {
 		backgroundColor: BACKGROUND_COLOR
 	},
     btnConnect: {
-		width: 340,
+		width: 300,
 		height: 45,
 		justifyContent: 'center',
 		alignItems: 'center',

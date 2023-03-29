@@ -195,7 +195,12 @@ class Sales extends Component {
         const { boxW, modalW } = getBoxWidth(isMobile)
 
         return (
-            <div style={{ width: boxW, alignItems: 'center', flexDirection: 'column', paddingTop: 30 }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+
+                <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
+                    Equipment Offers
+                </p>
+
                 <p style={{ fontSize: 20, color: 'white', marginBottom: 30 }}>
                     You can make an offer for a type of ring, whoever owns that ring will be able to accept your offer.
                 </p>
@@ -246,7 +251,7 @@ class Sales extends Component {
 		const { account } = this.props
 
 		return (
-			<div style={{ width: '100%' }}>
+			<div>
 				<Header
 					page='home'
 					section={6}
@@ -262,12 +267,12 @@ class Sales extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 767px)"
+					query="(max-width: 1199px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 768px)"
+					query="(min-width: 1200px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -287,8 +292,7 @@ class Sales extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'column',
-		alignItems: 'center',
+		flexDirection: 'row',
 		position: 'absolute',
 		top: 0,
 		left: 0,

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import _ from 'lodash'
+import Popup from 'reactjs-popup';
 import { IoMenu } from 'react-icons/io5'
 import { IoClose } from 'react-icons/io5'
 import { SiDiscord } from 'react-icons/si'
@@ -21,8 +22,17 @@ import {
 	updateInfoTransactionModal
 } from '../actions'
 import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, MAIN_NET_ID } from '../actions/types'
+import 'reactjs-popup/dist/index.css';
 
-const logo_img = require('../assets/wiz_logo.png')
+const logo_img = require('../assets/wzlogo_bg_transparent.png')
+
+const market_icon = require('../assets/menu/marketplace.png')
+const equipment_icon = require('../assets/menu/equipment.png')
+const forge_icon = require('../assets/menu/forge.png')
+const profile_icon = require('../assets/menu/profile.png')
+const shop_icon = require('../assets/menu/shop.png')
+const pvp_icon = require('../assets/menu/pvp.png')
+const tournaments_icon = require('../assets/menu/tournaments.png')
 
 
 class Header extends Component {
@@ -396,265 +406,138 @@ class Header extends Component {
 		)
 	}
 
-	render() {
-		const { section, account, page, isMobile, kadenaname } = this.props
+	renderBtnMenu(goto, icon, title, id) {
+		const { section } = this.props
 
-		//console.log(this.props.showModalBuyFromShop);
+		let iconSize = 35
 
-		const { boxW, modalW } = getBoxWidth(isMobile)
-
-		let margin = isMobile ? 12 : 22
-
-		let viewAccountStyle = isMobile ?
-								{ width: '100%', flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'flex-end' }
-								:
-								{ height: 60, flexDirection: 'row', alignItems: 'flex-end',  justifyContent: 'flex-end' }
-
-		let btnPressedStyle = isMobile ? 'btnPressedMobile' : 'btnPressed'
-		let btnStyle = isMobile ? 'btnMobile' : 'btn'
-
-		let btnHeaderNft = isMobile ? 'btnPressedBlackMobile' : 'btnPressedBlack'
-
-		const hinside = isMobile ? { flexDirection: 'column', justifyContent: 'space-around', width: boxW } : { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: boxW }
+		const borderColor = section === id ? "white" : "transparent"
 
 		return (
-			<div className={isMobile ? 'homeheaderMobile' : 'homeheader'}>
+			<a
+				href={`${window.location.protocol}//${window.location.host}/${goto}`}
+				style={Object.assign({}, styles.boxBtnMenu, { borderColor })}
+				onClick={(e) => {
+					e.preventDefault()
+					this.props.history.replace(`/${goto}`)
+				}}
+			>
+				<img
+					style={{ width: iconSize, height: iconSize, marginRight: 10 }}
+					src={icon}
+				/>
+				<p style={{ fontSize: 18, color: 'white' }}>
+					{title}
+				</p>
+			</a>
+		)
+	}
 
-				<div style={hinside}>
-					<div style={{ alignItems: 'flex-end' }}>
+	renderDesktop() {
+		const { account, kadenaname } = this.props
 
-						<a
-							href={`${window.location.protocol}//${window.location.host}/collection`}
-						>
-							<img
-								src={logo_img}
-								style={{ height: isMobile ? 30 : 58, borderRadius: 2, marginRight: margin, cursor: 'pointer' }}
-								alt='Wizards'
-								onClick={(e) => {
-									e.preventDefault()
-									this.props.history.replace('/collection')
-								}}
-							/>
-						</a>
+		const { boxW, modalW } = getBoxWidth(false)
 
-						{
-							page === 'home' ?
-							<div style={{ height: 60, alignItems: 'flex-end', flexWrap: 'wrap' }}>
-								<a
-									href={`${window.location.protocol}//${window.location.host}/collection`}
-									className={section === 1 ? btnPressedStyle : btnStyle}
-									onClick={(e) => {
-										e.preventDefault()
-										this.props.history.replace('/collection')
-									}}
-								>
-									MARKETPLACE
-								</a>
+		return (
+			<div style={{ flexDirection: 'column', padding: 15, backgroundColor: '#2d2a42', position: 'relative', overflow: 'scroll' }} id="headerbox">
 
-								<a
-									href={`${window.location.protocol}//${window.location.host}/equipment`}
-									className={section === 8 ? btnPressedStyle : btnStyle}
-									onClick={(e) => {
-										e.preventDefault()
-										this.props.history.replace('/equipment')
-									}}
-								>
-									EQUIPMENT
-								</a>
-
-								{/*<a
-									href={`${window.location.protocol}//${window.location.host}/mint`}
-									className={section === 2 ? btnPressedStyle : btnStyle}
-									onClick={(e) => {
-										e.preventDefault()
-										this.props.history.replace('/mint')
-									}}
-								>
-									MINT
-								</a>*/}
-
-								<a
-									href={`${window.location.protocol}//${window.location.host}/forge`}
-									className={section === 9 ? btnPressedStyle : btnStyle}
-									onClick={(e) => {
-										e.preventDefault()
-										this.props.history.replace('/forge')
-									}}
-								>
-									FORGE
-								</a>
-
-								<a
-									href={`${window.location.protocol}//${window.location.host}/me`}
-									className={section === 3 ? btnPressedStyle : btnStyle}
-									onClick={(e) => {
-										e.preventDefault()
-										this.props.history.replace('/me')
-									}}
-								>
-									PROFILE
-								</a>
-
-								<a
-									href={`${window.location.protocol}//${window.location.host}/magicshop`}
-									className={section === 5 ? btnPressedStyle : btnStyle}
-									onClick={(e) => {
-										e.preventDefault()
-										this.props.history.replace('/magicshop')
-									}}
-								>
-									MAGIC SHOP
-								</a>
-
-								<a
-									href={`${window.location.protocol}//${window.location.host}/pvp`}
-									className={section === 7 ? btnPressedStyle : btnStyle}
-									onClick={(e) => {
-										e.preventDefault()
-										this.props.history.replace('/pvp')
-									}}
-								>
-									PVP
-								</a>
-
-
-								<a
-									href={`${window.location.protocol}//${window.location.host}/tournaments`}
-									className={section === 4 ? btnPressedStyle : btnStyle}
-									onClick={(e) => {
-										e.preventDefault()
-										this.props.history.replace('/tournaments')
-									}}
-								>
-									TOURNAMENTS
-								</a>
-							</div>
-							: null
-						}
-
-						{
-							page === 'nft' || page === 'settings' ?
-							<div style={{ height: 60, alignItems: 'flex-end', flexWrap: 'wrap' }}>
-								<a
-									href={`${window.location.protocol}//${window.location.host}/collection`}
-									className={btnHeaderNft}
-									onClick={(e) => {
-										e.preventDefault()
-										this.props.history.replace('/collection')
-									}}
-								>
-									MARKETPLACE
-								</a>
-
-								<a
-									href={`${window.location.protocol}//${window.location.host}/equipment`}
-									className={btnHeaderNft}
-									onClick={(e) => {
-										e.preventDefault()
-										this.props.history.replace('/equipment')
-									}}
-								>
-									EQUIPMENT
-								</a>
-
-								<a
-									href={`${window.location.protocol}//${window.location.host}/forge`}
-									className={btnHeaderNft}
-									onClick={(e) => {
-										e.preventDefault()
-										this.props.history.replace('/forge')
-									}}
-								>
-									FORGE
-								</a>
-
-								<a
-									href={`${window.location.protocol}//${window.location.host}/me`}
-									className={btnHeaderNft}
-									onClick={(e) => {
-										e.preventDefault()
-										this.props.history.replace('/me')
-									}}
-								>
-									PROFILE
-								</a>
-
-								<a
-									href={`${window.location.protocol}//${window.location.host}/magicshop`}
-									className={btnHeaderNft}
-									onClick={(e) => {
-										e.preventDefault()
-										this.props.history.replace('/magicshop')
-									}}
-								>
-									MAGIC SHOP
-								</a>
-
-								<a
-									href={`${window.location.protocol}//${window.location.host}/pvp`}
-									className={btnHeaderNft}
-									onClick={(e) => {
-										e.preventDefault()
-										this.props.history.replace('/pvp')
-									}}
-								>
-									PVP
-								</a>
-
-								<a
-									href={`${window.location.protocol}//${window.location.host}/tournaments`}
-									className={btnHeaderNft}
-									onClick={(e) => {
-										e.preventDefault()
-										this.props.history.replace('/tournaments')
-									}}
-								>
-									TOURNAMENTS
-								</a>
-							</div>
-							:
-							null
-						}
-
-					</div>
-
-					<div style={viewAccountStyle}>
-						{
-							account && account.account ?
-							<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 15, marginRight: isMobile ? 8 : 22, lineHeight: 1 }}>
-								{kadenaname ? kadenaname : `${account.account.slice(0, 10)}...`}
-							</p>
-							: null
-						}
-
-						<button
-							onClick={() => {
-								document.body.style.overflow = "hidden"
-								document.body.style.height = "100%"
-								this.setState({ showPanel: !this.state.showPanel })
-							}}
-							style={{ marginRight: isMobile ? 12 : 0, display: 'flex', alignItems: 'flex-end' }}
-						>
-							<IoMenu
-								color={TEXT_SECONDARY_COLOR}
-								size={28}
-							/>
-						</button>
-
-					</div>
-
-					<div
-						className={this.state.showPanel ? "bg-slide-on" : "bg-slide-off"}
-						onClick={() => {
-							document.body.style.overflow = "auto"
-							document.body.style.height = "auto"
-							this.setState({ showPanel: false })
-						}}
-						style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#00000090' }}
+				<div style={{ flexDirection: 'column', alignItems: 'flex-start', marginBottom: 20 }}>
+					<img
+						src={logo_img}
+						style={{ width: 50, marginRight: 10 }}
 					/>
 
-					{this.renderSlidePanel(boxW)}
+					<p style={styles.title}>
+						WizardsArena
+					</p>
 				</div>
+
+				{this.renderBtnMenu(
+					'collection',
+					market_icon,
+					"MARKETPLACE",
+					1)
+				}
+
+				{this.renderBtnMenu(
+					'equipment',
+					equipment_icon,
+					"EQUIPMENT",
+					8)
+				}
+
+				{this.renderBtnMenu(
+					'forge',
+					forge_icon,
+					"FORGE",
+					9)
+				}
+
+				{this.renderBtnMenu(
+					'me',
+					profile_icon,
+					"PROFILE",
+					3)
+				}
+
+				{this.renderBtnMenu(
+					'magicshop',
+					shop_icon,
+					"MAGIC SHOP",
+					5)
+				}
+
+				{this.renderBtnMenu(
+					'pvp',
+					pvp_icon,
+					"PVP",
+					7)
+				}
+
+				{this.renderBtnMenu(
+					'tournaments',
+					tournaments_icon,
+					"TOURNAMENTS",
+					4)
+				}
+
+				<button
+					onClick={() => {
+						//document.body.style.overflow = "hidden"
+						//document.body.style.height = "100%"
+						this.setState({ showPanel: !this.state.showPanel })
+					}}
+					style={{ display: 'flex', alignItems: 'center', borderWidth: 2, borderColor: 'transparent', borderStyle: 'solid', padding: 5 }}
+				>
+					<IoMenu
+						color='white'
+						size={35}
+						style={{ marginRight: 10 }}
+					/>
+					<p style={{ fontSize: 18, color: 'white' }}>
+						INFO
+					</p>
+				</button>
+
+				{
+					account && account.account ?
+					<p style={{ color: 'white', fontSize: 15, position: 'absolute', bottom: 25, left: 25 }}>
+						{kadenaname ? kadenaname : `${account.account.slice(0, 10)}...`}
+					</p>
+					: null
+				}
+
+				<div
+					className={this.state.showPanel ? "bg-slide-on" : "bg-slide-off"}
+					onClick={() => {
+						document.body.style.overflow = "auto"
+						document.body.style.height = "auto"
+						this.setState({ showPanel: false })
+					}}
+					style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#00000090', width: this.state.showPanel ? window.innerWidth : 0 }}
+				/>
+
+				{this.renderSlidePanel(boxW)}
 
 				<ModalBuyWIZA
 					width={modalW}
@@ -682,21 +565,172 @@ class Header extends Component {
 						window.location.reload()
 					}}
 				/>
-
 			</div>
 		)
+	}
+
+	renderBtnMenuMobile(goto, icon, id) {
+		const { section } = this.props
+
+		let iconSize = 35
+
+		const borderColor = section === id ? "white" : "transparent"
+
+		return (
+			<a
+				href={`${window.location.protocol}//${window.location.host}/${goto}`}
+				style={Object.assign({}, styles.boxBtnMenu, { borderColor })}
+				onClick={(e) => {
+					e.preventDefault()
+					this.props.history.replace(`/${goto}`)
+				}}
+			>
+				<img
+					style={{ width: iconSize, height: iconSize }}
+					src={icon}
+				/>
+			</a>
+		)
+	}
+
+	renderMobile() {
+		const { boxW, modalW } = getBoxWidth(true)
+
+		return (
+			<div style={{ flexDirection: 'column', padding: 15, backgroundColor: '#2d2a42', overflow: 'scroll' }} id="headerbox">
+
+				<div style={{ flexDirection: 'column', alignItems: 'flex-start', marginBottom: 20 }}>
+					<img
+						src={logo_img}
+						style={{ width: 50 }}
+					/>
+				</div>
+
+				{this.renderBtnMenuMobile(
+					'collection',
+					market_icon,
+					1)
+				}
+
+				{this.renderBtnMenuMobile(
+					'equipment',
+					equipment_icon,
+					8)
+				}
+
+				{this.renderBtnMenuMobile(
+					'forge',
+					forge_icon,
+					9)
+				}
+
+				{this.renderBtnMenuMobile(
+					'me',
+					profile_icon,
+					3)
+				}
+
+				{this.renderBtnMenuMobile(
+					'magicshop',
+					shop_icon,
+					5)
+				}
+
+				{this.renderBtnMenuMobile(
+					'pvp',
+					pvp_icon,
+					7)
+				}
+
+				{this.renderBtnMenuMobile(
+					'tournaments',
+					tournaments_icon,
+					4)
+				}
+
+				<button
+					onClick={() => {
+						document.body.style.overflow = "hidden"
+						document.body.style.height = "100%"
+						this.setState({ showPanel: !this.state.showPanel })
+					}}
+					style={{ display: 'flex', alignItems: 'center', borderWidth: 2, borderColor: 'transparent', borderStyle: 'solid', padding: 5 }}
+				>
+					<IoMenu
+						color='white'
+						size={35}
+					/>
+				</button>
+
+				<div
+					className={this.state.showPanel ? "bg-slide-on" : "bg-slide-off"}
+					onClick={() => {
+						document.body.style.overflow = "auto"
+						document.body.style.height = "auto"
+						this.setState({ showPanel: false })
+					}}
+					style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#00000090', width: this.state.showPanel ? window.innerWidth : 0 }}
+				/>
+
+				{this.renderSlidePanel(boxW)}
+
+				<ModalBuyWIZA
+					width={modalW}
+					showModal={this.state.showModalBuy || this.props.showModalBuyFromShop}
+					onCloseModal={() => {
+						this.setState({ showModalBuy: false })
+						if (this.props.closeModalBuyOnShop) {
+							this.props.closeModalBuyOnShop()
+						}
+					}}
+					onSwap={(amount, estimatedWiza) => {
+						this.swap(amount, estimatedWiza)
+					}}
+				/>
+
+				<ModalTransaction
+					showModal={this.props.showModalTx}
+					width={modalW}
+					mintSuccess={() => {
+						this.props.clearTransaction()
+						window.location.reload()
+					}}
+					mintFail={() => {
+						this.props.clearTransaction()
+						window.location.reload()
+					}}
+				/>
+			</div>
+		)
+	}
+
+	render() {
+		const { section, account, page, isMobile, kadenaname } = this.props
+
+		const { boxW, modalW } = getBoxWidth(isMobile)
+
+		if (!isMobile) {
+			return this.renderDesktop()
+		}
+
+		return this.renderMobile()
 	}
 }
 
 const styles = {
+	title: {
+		fontSize: 24,
+		color: '#ed0404',
+		textShadow: "0px  0px  10px  black"
+	},
 	panelShadow: {
 		justifyContent: 'flex-end',
-		position: 'absolute'
+		position: 'absolute',
 	},
 	panel: {
 		backgroundColor: BACKGROUND_COLOR,
 		flexDirection: 'column',
-		overflow: 'scroll'
+		overflow: 'scroll',
 	},
 	headerPanel: {
 		height: 90,
@@ -714,7 +748,21 @@ const styles = {
         borderWidth: 2,
         borderStyle: 'solid',
 		marginBottom: 40
-    }
+    },
+	boxBtnMenu: {
+		display: 'flex',
+		alignItems: 'center',
+		flexDirection: 'row',
+		cursor: 'pointer',
+		paddingTop: 5,
+		paddingBottom: 5,
+		paddingLeft: 8,
+		paddingRight: 8,
+		marginBottom: 10,
+		borderWidth: 0.5,
+		borderStyle: 'solid',
+		borderRadius: 4
+	}
 }
 
 const mapStateToProps = (state) => {

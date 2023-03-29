@@ -496,7 +496,7 @@ class Equipment extends Component {
 		let items = totalCountItems || 0
 
 		return (
-			<div style={{ width: '100%', flexDirection: 'column', alignItems: 'flex-start', marginTop: 35, marginBottom: 20, flexWrap: 'wrap' }}>
+			<div style={{ width: '100%', flexDirection: 'column', alignItems: 'flex-start', marginBottom: 20, flexWrap: 'wrap' }}>
 
                 {/*<div style={{ flexWrap: 'wrap', flexDirection: 'column', alignItems: isMobile ? "center" : 'flex-start'  }}>
 
@@ -517,7 +517,7 @@ class Equipment extends Component {
                 </div>*/}
 
                 <div style={{ width: '100%', alignItems: 'center', flexWrap: 'wrap' }}>
-    				<div style={{ flexWrap: 'wrap', alignItems: 'center' }}>
+    				<div style={{ flexWrap: 'wrap', alignItems: 'center', marginBottom: 10 }}>
     					{this.renderBoxHeader(items.toLocaleString(), 'items', isMobile)}
 
     					{this.renderBoxHeader(uniqueOwners.toLocaleString(), 'owners', isMobile)}
@@ -529,7 +529,7 @@ class Equipment extends Component {
     					{this.renderBoxHeader(`${equipped || 0}`, 'equipped', isMobile)}
     				</div>
 
-                    <div style={{ alignItems: 'center' }}>
+                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                         <a
                             href={`${window.location.protocol}//${window.location.host}/equipmentoffers`}
                             style={styles.btnOffers}
@@ -562,13 +562,13 @@ class Equipment extends Component {
 		)
 	}
 
-    renderSearchBar() {
+    renderSearchBar(isMobile) {
 		const { searchText } = this.state
 
 		return (
 			<div style={{ width: '100%', height: 60, alignItems: 'center', marginBottom: 20 }}>
 				<input
-					style={styles.inputSearch}
+					style={Object.assign({}, styles.inputSearch, { width: isMobile ? 150 : 350 })}
 					placeholder='Search by name or id'
 					value={searchText}
 					onChange={(e) => this.setState({ searchText: e.target.value })}
@@ -717,10 +717,15 @@ class Equipment extends Component {
         }
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+
+                <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
+                    Equipment
+                </p>
+
                 {this.renderHeader(isMobile)}
 
-                {this.renderSearchBar()}
+                {this.renderSearchBar(isMobile)}
 
 				{this.renderSearched()}
 
@@ -794,7 +799,7 @@ class Equipment extends Component {
 		const { account } = this.props
 
 		return (
-			<div style={{ width: '100%' }}>
+			<div>
 				<Header
 					page='home'
 					section={8}
@@ -810,12 +815,12 @@ class Equipment extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 767px)"
+					query="(max-width: 1199px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 768px)"
+					query="(min-width: 1200px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -835,8 +840,7 @@ class Equipment extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'column',
-		alignItems: 'center',
+		flexDirection: 'row',
 		position: 'absolute',
 		top: 0,
 		left: 0,
@@ -901,12 +905,13 @@ const styles = {
 		width: 390,
 		height: 43,
 		marginRight: 15,
-		color: 'black',
+		color: 'white',
 		borderRadius: 2,
-		borderColor: '#e5e8eb',
+		borderColor: 'white',
 		borderStyle: 'solid',
 		borderWidth: 2,
-		fontSize: 19,
+        backgroundColor: BACKGROUND_COLOR,
+		fontSize: 17,
 		paddingLeft: 10,
 		WebkitAppearance: 'none',
 		MozAppearance: 'none',
@@ -929,6 +934,7 @@ const styles = {
 		width: 160,
 		height: 38,
 		marginRight: 10,
+        marginBottom: 10,
 		borderRadius: 2,
         borderWidth: 2,
         borderColor: CTA_COLOR,
@@ -941,7 +947,7 @@ const styles = {
     btnSales: {
 		width: 160,
 		height: 38,
-		marginRight: 10,
+        marginBottom: 10,
 		borderWidth: 2,
 		borderColor: 'white',
 		borderStyle: 'solid',

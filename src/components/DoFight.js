@@ -5,7 +5,6 @@ import DotLoader from 'react-spinners/DotLoader';
 import { doc, updateDoc, collection, setDoc, increment } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Rainbow from 'rainbowvis.js'
-import Header from './Header'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
 import allSpells from './common/Spells'
@@ -350,7 +349,7 @@ class DoFight extends Component {
             //console.log(tiro);
 
             //se atktot è maggiore o uguale alla difesa, oppure il tiro è un 20 oppure il tiro non è un uno
-            if ((atkTot >= difesaDif || tiro === 20) && tiro !== 1) {
+            if ((atkTot >= difesaDif || tiro >= 18) && tiro !== 1) {
                 //console.log("hit");
 
                 const dannoBase = attaccante.damage
@@ -742,35 +741,9 @@ class DoFight extends Component {
         )
     }
 
-    renderTopHeader(isMobile) {
-		const { account } = this.props
-
-		return (
-			<div style={{ width: '100%' }}>
-				<Header
-					page='fightpvp'
-					section={1}
-					account={account}
-					isMobile={isMobile}
-					history={this.props.history}
-				/>
-			</div>
-		)
-	}
-
     render() {
 		return (
 			<div style={styles.container}>
-				<Media
-					query="(max-width: 600px)"
-					render={() => this.renderTopHeader(true)}
-				/>
-
-				<Media
-					query="(min-width: 601px)"
-					render={() => this.renderTopHeader(false)}
-				/>
-
 				<Media
 					query="(max-width: 600px)"
 					render={() => this.renderBody(true)}

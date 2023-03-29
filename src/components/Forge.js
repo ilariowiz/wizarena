@@ -199,12 +199,13 @@ class Forge extends Component {
         }
 
         return (
-            <div style={{ width: boxW, alignItems: 'center', flexDirection: 'column', paddingTop: 30 }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
 
-                <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center', position: 'relative', flexDirection: 'column', marginBottom: 20, maxWidth: 1100 }}>
-                    <p style={{ fontSize: 32, color: 'white', marginBottom: 10 }}>
-                        The Forge
-                    </p>
+                <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
+                    Forge
+                </p>
+
+                <div style={{ width: boxW, alignItems: 'center', justifyContent: 'center', position: 'relative', flexDirection: 'column', marginBottom: 20 }}>
 
                     {this.renderProgressLevel()}
 
@@ -408,7 +409,7 @@ class Forge extends Component {
 		const { account } = this.props
 
 		return (
-			<div style={{ width: '100%' }}>
+			<div>
 				<Header
 					page='home'
 					section={9}
@@ -424,12 +425,12 @@ class Forge extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 767px)"
+					query="(max-width: 1199px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 768px)"
+					query="(min-width: 1200px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -449,8 +450,7 @@ class Forge extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'column',
-		alignItems: 'center',
+		flexDirection: 'row',
 		position: 'absolute',
 		top: 0,
 		left: 0,
