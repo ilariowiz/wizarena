@@ -685,7 +685,7 @@ class PvP extends Component {
                         </p>
                     </div>
 
-                    <div style={{ alignItems: 'center', marginBottom: 10 }}>
+                    <div style={{ alignItems: 'center', marginBottom: 10, minWidth: 283 }}>
                         <p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
                             Win {item.win}
                         </p>
@@ -764,7 +764,7 @@ class PvP extends Component {
                         </p>
                     </div>
 
-                    <p style={{ fontSize: 17, color: 'white', marginBottom: 10 }}>
+                    <p style={{ fontSize: 15, color: 'white', marginBottom: 10 }}>
                         Spell selected: {item.spellSelected.name}
                     </p>
 
@@ -783,7 +783,7 @@ class PvP extends Component {
 
                     {
                         !this.state.loading && !fightsStart &&
-                        <div style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: isMobile ? 'space-around' : 'space-between' }}>
                             <button
                                 className="btnH"
                                 style={Object.assign({}, styles.btnPlay, { marginRight: 10 })}
@@ -820,7 +820,7 @@ class PvP extends Component {
 
                     {
                         !this.state.loading && totalFights < item.rounds && fightsStart ?
-                        <div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: isMobile ? 'space-around' : 'space-between' }}>
                             <button
                                 className="btnH"
                                 style={Object.assign({}, styles.btnPlay, { marginRight: 10 })}
@@ -906,7 +906,7 @@ class PvP extends Component {
 					position="top center"
 					on="hover"
 				>
-					<div style={{ padding: 10, fontSize: 16 }}>
+					<div style={{ padding: 10, fontSize: 15 }}>
 						#{i.idnft} <br /> Spell Selected: {i.spellSelected.name} <br /> WIZA: {i.wizaAmount}
 					</div>
 				</Popup>
@@ -955,7 +955,7 @@ class PvP extends Component {
         if (!account || !account.account || !isConnected) {
 
 			return (
-				<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+				<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
 
                     <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
                         PvP
@@ -1029,7 +1029,7 @@ class PvP extends Component {
         let fontSizeIntro = isMobile ? 16 : 19
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
 
                 <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
                     PvP

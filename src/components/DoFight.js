@@ -792,7 +792,8 @@ const styles = {
         borderRadius: 4,
         padding: 10,
         flexDirection: 'column',
-        overflow: 'scroll'
+        overflowY: 'scroll',
+        overflowX: 'hidden'
     },
     btnOverlay: {
         position: 'absolute',
