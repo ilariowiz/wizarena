@@ -1,19 +1,9 @@
 const getBoxWidth = (isMobile) => {
 
-	const headerW = document.getElementById("headerbox") ? document.getElementById("headerbox").offsetWidth : 205
+	const headerW = document.getElementById("headerbox") ? document.getElementById("headerbox").offsetWidth : 0
 	//console.log(headerW);
 
-	/*
-	//let boxW = Math.floor((window.innerWidth * 90 / 100) - 206)
-	let boxW = Math.floor(window.innerWidth - 256)
-
-	if (isMobile) {
-		//boxW = Math.floor((window.innerWidth * 90 / 100) - 80)
-		boxW = Math.floor(window.innerWidth - 112)
-	}
-	*/
-
-	const padding = isMobile ? 32 : 52
+	const padding = isMobile ? 30 : 56
 	let boxW = Math.floor(window.innerWidth - headerW - padding)
 
 	//console.log(isMobile, window.innerWidth, boxW);
