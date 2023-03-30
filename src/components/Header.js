@@ -442,7 +442,7 @@ class Header extends Component {
 		const { boxW, modalW } = getBoxWidth(false)
 
 		return (
-			<div style={{ flexDirection: 'column', padding: 15, backgroundColor: '#2d2a42', position: 'relative', overflow: 'scroll' }} id="headerbox">
+			<div style={{ flexDirection: 'column', padding: 15, backgroundColor: '#2d2a42', position: 'relative', overflowY: 'auto' }} id="headerbox">
 
 				<div style={{ flexDirection: 'column', alignItems: 'flex-start', marginBottom: 20 }}>
 					<img

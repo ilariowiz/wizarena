@@ -736,7 +736,7 @@ class Collection extends Component {
 		}
 
 		return (
-			<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+			<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
 
 				<p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
 					Marketplace
