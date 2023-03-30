@@ -80,7 +80,7 @@ export const setNetworkUrl = (netId, chainId) => {
 		}
 		else if (netId === MAIN_NET_ID) {
 			url = `https://api.chainweb.com/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
-			//url = `https://chainwebnode1679490025815.app.runonflux.io/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
+			//url = `https://chainwebnode1679490025815_31351.app.runonflux.io/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
 		}
 
 		dispatch({ type: SET_NETWORK_URL, payload: url })
@@ -984,6 +984,8 @@ export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 			resultFirebase = resultFirebase.flat(1)
 
 			if (resultFirebase.length < response.length) {
+
+				/*
 				response.map(n => {
 					//console.log(n);
 					const hasId = resultFirebase.some(s => s.id === n.id)
@@ -997,6 +999,7 @@ export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 						setDoc(docRefPvPTraining, { "lose": 0, "win": 0, "maxFights": n.rounds.int })
 					}
 				})
+				*/
 
 				dispatch(getAllSubscribersPvP(chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, pvpWeek, callback))
 				return
