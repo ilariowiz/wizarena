@@ -1621,7 +1621,7 @@ class Nft extends Component {
 		if (ctaWidth > 170) ctaWidth = 170
 
 		return (
-			<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 15, overflow: 'scroll', alignItems: 'center' }}>
+			<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 15, overflow: 'auto', alignItems: 'center' }}>
 
 				{
 					loading &&
@@ -1754,7 +1754,7 @@ class Nft extends Component {
 		let showOverlayBurn = infoBurn && infoBurn.burned
 
 		return (
-			<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 25, overflow: 'scroll', alignItems: 'center' }}>
+			<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 25, overflow: 'auto', alignItems: 'center' }}>
 
 				{
 					loading &&

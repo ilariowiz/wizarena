@@ -1464,7 +1464,7 @@ class Shop extends Component {
         const sorted = this.sortById()
 
         return (
-            <div style={{ flexDirection: 'column', width, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+            <div style={{ flexDirection: 'column', width, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
 
                 <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
                     Magic Shop
@@ -1639,7 +1639,7 @@ class Shop extends Component {
         if (!account || !account.account || !isConnected) {
 
 			return (
-				<div style={{ flexDirection: 'column', alignItems: 'center', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+				<div style={{ flexDirection: 'column', alignItems: 'center', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
 
 					<img
 						src={getImageUrl(undefined)}
@@ -1689,7 +1689,7 @@ class Shop extends Component {
 
         //WIZARD SELECTED
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
 
                 <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
                     Magic Shop

@@ -119,7 +119,7 @@ class ModalOpenItemsMinted extends Component {
     					: null
     				}
 
-                    <div style={{ flexWrap: 'wrap', marginBottom: 20, maxHeight, overflow: 'scroll' }}>
+                    <div style={{ flexWrap: 'wrap', marginBottom: 20, maxHeight, overflow: 'auto' }}>
                         {lastMinted.map((item, index) => {
                             return this.renderSingleChest(item, index)
                         })}

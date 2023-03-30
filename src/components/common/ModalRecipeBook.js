@@ -135,7 +135,7 @@ class ModalRecipeBook extends Component {
                         })}
                     </div>
 
-                    <div style={{ flexWrap: 'wrap', marginLeft: 100, marginRight: 100, justifyContent: 'center', alignItems: 'center', marginBottom: 10, height: '100%', width: '100%', overflow: 'scroll' }}>
+                    <div style={{ flexWrap: 'wrap', marginLeft: 100, marginRight: 100, justifyContent: 'center', alignItems: 'center', marginBottom: 10, height: '100%', width: '100%', overflow: 'auto' }}>
                         {capitoli[capitoloSelected].map((item, index) => {
                             return this.renderItem(item, index)
                         })}

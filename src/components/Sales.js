@@ -148,7 +148,7 @@ class Sales extends Component {
         const { boxW } = getBoxWidth(isMobile)
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
 
                 <p style={{ color: 'white', fontSize: 30, marginBottom: 20 }}>
                     Sales

@@ -544,7 +544,7 @@ class Mint extends Component {
 		let stageTxt = stage !== 'early' ? `${stage.toUpperCase()} MINT` : 'EARLY'
 
 		return (
-			<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+			<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
 				<div style={containerStyle}>
 
 					<div style={{ flex: 0.6, alignItems: 'center', justifyContent: 'flex-start', paddingTop: 20, marginBottom: 30 }}>

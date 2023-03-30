@@ -451,7 +451,7 @@ class Fight extends Component {
 
         if (loading) {
             return (
-                <div style={{ flexDirection: 'column', alignItems: 'center', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+                <div style={{ flexDirection: 'column', alignItems: 'center', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15 }}>
                     <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
                 </div>
             )
@@ -459,7 +459,7 @@ class Fight extends Component {
 
         if (error) {
             return (
-                <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+                <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
                     <p style={{ fontSize: 22, color: 'white' }}>
                         {error}
                     </p>
@@ -469,7 +469,7 @@ class Fight extends Component {
 
         if (showOnlyOne && u1) {
             return (
-                <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+                <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
 
                     <div style={{ width: boxW, justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
 
@@ -499,7 +499,7 @@ class Fight extends Component {
         }
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }} id="mainBox">
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }} id="mainBox">
 
                 <div style={{ width: boxW, justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
 

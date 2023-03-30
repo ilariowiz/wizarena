@@ -586,7 +586,7 @@ class ItemEquipment extends Component {
 		if (ctaWidth > 170) ctaWidth = 170
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 15, overflow: 'scroll' }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 15, overflow: 'auto' }}>
 
                 {
                     loading &&
@@ -690,7 +690,7 @@ class ItemEquipment extends Component {
 		if (ctaWidth > 250) ctaWidth = 250
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 25, overflow: 'scroll' }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 25, overflow: 'auto' }}>
 
                 {
                     loading &&

@@ -600,7 +600,7 @@ class Header extends Component {
 		const { boxW, modalW } = getBoxWidth(true)
 
 		return (
-			<div style={{ flexDirection: 'column', padding: 6, backgroundColor: '#2d2a42', overflow: 'scroll' }} id="headerbox">
+			<div style={{ flexDirection: 'column', padding: 6, backgroundColor: '#2d2a42', overflow: 'auto' }} id="headerbox">
 
 				<div style={{ flexDirection: 'column', alignItems: 'flex-start', marginBottom: 20 }}>
 					<img
@@ -787,7 +787,7 @@ const styles = {
 	panel: {
 		backgroundColor: BACKGROUND_COLOR,
 		flexDirection: 'column',
-		overflow: 'scroll',
+		overflow: 'auto',
 	},
 	headerPanel: {
 		height: 90,

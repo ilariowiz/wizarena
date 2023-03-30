@@ -270,7 +270,7 @@ class League extends Component {
         const { boxW } = getBoxWidth(isMobile)
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
 
                 <div style={{ marginBottom: 10, alignItems: 'center' }}>
                     <p style={{ fontSize: 32, color: 'white', marginRight: 10 }}>

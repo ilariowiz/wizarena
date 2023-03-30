@@ -34,7 +34,7 @@ class ModalForgeEquipment extends Component {
 						Your Rings:
 					</p>
 
-                    <div style={{ flexWrap: 'wrap', marginBottom: 20, maxHeight, overflow: 'scroll', justifyContent: 'center' }}>
+                    <div style={{ flexWrap: 'wrap', marginBottom: 20, maxHeight, overflow: 'auto', justifyContent: 'center' }}>
                         {rings.map((item, index) => {
                             return this.renderItem(item, index)
                         })}

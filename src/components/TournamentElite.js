@@ -367,7 +367,7 @@ class TournamentElite extends Component {
 
         if (this.state.loading) {
             return (
-                <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+                <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
                     <div style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
                         <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
                     </div>
@@ -392,7 +392,7 @@ class TournamentElite extends Component {
             const dateStartTo = moment().to(dateStart)
 
 			return (
-				<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+				<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
 
                     {this.renderHeaderLeague()}
 
@@ -465,7 +465,7 @@ class TournamentElite extends Component {
 			}
 
 			return (
-				<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+				<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
 
                     {this.renderHeaderLeague()}
 
@@ -514,7 +514,7 @@ class TournamentElite extends Component {
         const roundName = tournament.name.split("_")[1]
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
 
                 {this.renderHeaderLeague()}
 
@@ -663,7 +663,7 @@ class TournamentElite extends Component {
 
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
 
                 {this.renderHeaderLeague()}
 

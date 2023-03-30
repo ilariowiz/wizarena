@@ -102,7 +102,7 @@ class BurningQueue extends Component {
         const { boxW } = getBoxWidth(isMobile)
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
                 <p style={{ fontSize: 28, color: 'white', marginBottom: 5 }}>
                     Burning Queue ({queue.length})
                 </p>

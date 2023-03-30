@@ -144,7 +144,7 @@ class ModalMakeOfferItem extends Component {
 						closeOnDocumentClick
 						arrow={true}
 					>
-						<div style={{ flexDirection: 'column', paddingTop: 10, overflow: 'scroll', maxHeight: 300 }}>
+						<div style={{ flexDirection: 'column', paddingTop: 10, overflow: 'auto', maxHeight: 300 }}>
 							{listKeys.map((item, index) => {
 								return this.renderListTypeRing(item, index)
 							})}
