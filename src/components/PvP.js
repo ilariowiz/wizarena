@@ -446,6 +446,7 @@ class PvP extends Component {
                 return
             }
         }
+        /*
         //questo capita se durante la registrazione non hai aspettato la fine della transaction e quindi il BE non si è aggiornato
         else {
             await setDoc(docRef, { "lose": 0, "win": 0, "maxFights": item.rounds })
@@ -453,6 +454,7 @@ class PvP extends Component {
             window.location.reload()
             return
         }
+        */
 
 
         let maxL = level+25
@@ -514,9 +516,6 @@ class PvP extends Component {
         }
 
         //return
-
-
-
         const sfida = {
             player1: item,
             player2: opponent,

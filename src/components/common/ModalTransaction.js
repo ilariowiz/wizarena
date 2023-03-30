@@ -26,10 +26,25 @@ class ModalTransaction extends Component {
 	}
 
 	checkTransaction() {
-		const { transactionState } = this.props
+		const { transactionState, typeModal, toSubscribePvP, pvpWeek, nameNft, wizaAmount } = this.props
 
 		if (transactionState && transactionState.requestKey) {
 			console.log(transactionState.requestKey)
+
+			if (typeModal === "subscribe_pvp") {
+
+				toSubscribePvP.map(i => {
+					const docRef = doc(firebasedb, "pvp_results", `${i.week}_#${i.idnft}`)
+					setDoc(docRef, { "lose": 0, "win": 0, "maxFights": i.wizaAmount })
+
+					const docRefTraining = doc(firebasedb, "pvp_training", `${i.week}_#${i.idnft}`)
+					setDoc(docRefTraining, { "lose": 0, "win": 0 })
+				})
+			}
+			else if (typeModal === "increment_fight_pvp") {
+				const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_${nameNft}`)
+				updateDoc(docRef, {"maxFights": increment(wizaAmount) })
+			}
 
 			this.pollForTransaction()
 		}
@@ -81,20 +96,6 @@ class ModalTransaction extends Component {
 			else if (typeModal === "buyvial" && nameNft && statToUpgrade) {
 				const msg = `${nameNft} bought a ${statToUpgrade.toUpperCase()} vial`
 				sendMessageUpgrade(idNft, msg)
-			}
-			else if (typeModal === "subscribe_pvp") {
-
-				toSubscribePvP.map(i => {
-					const docRef = doc(firebasedb, "pvp_results", `${i.week}_#${i.idnft}`)
-					setDoc(docRef, { "lose": 0, "win": 0, "maxFights": i.wizaAmount })
-
-					const docRefTraining = doc(firebasedb, "pvp_training", `${i.week}_#${i.idnft}`)
-					setDoc(docRefTraining, { "lose": 0, "win": 0 })
-				})
-			}
-			else if (typeModal === "increment_fight_pvp") {
-				const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_${nameNft}`)
-				updateDoc(docRef, {"maxFights": increment(wizaAmount) })
 			}
 			else if (typeModal === "makeoffer") {
 				sendMessage(makeOfferValues.id, makeOfferValues.amount, makeOfferValues.duration, makeOfferValues.owner)
