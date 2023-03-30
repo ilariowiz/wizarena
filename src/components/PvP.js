@@ -773,7 +773,7 @@ class PvP extends Component {
                         <div
                             style={styles.btnPlay}
                         >
-                            <p style={{ fontSize: 17, color: 'white' }}>
+                            <p style={{ fontSize: 15, color: 'white' }}>
                                 LOADING...
                             </p>
                         </div>
@@ -795,7 +795,7 @@ class PvP extends Component {
                                     this.chooseOpponent(item, level)
                                 }}
                             >
-                                <p style={{ fontSize: 16, color: 'white' }}>
+                                <p style={{ fontSize: 15, color: 'white' }}>
                                     TRAINING
                                 </p>
                             </button>
@@ -811,7 +811,7 @@ class PvP extends Component {
                                     this.openPopupChangeSpell(item.id)
                                 }}
                             >
-                                <p style={{ fontSize: 16, color: 'white' }}>
+                                <p style={{ fontSize: 15, color: 'white' }}>
                                     CHANGE SPELL
                                 </p>
                             </button>
@@ -820,7 +820,7 @@ class PvP extends Component {
 
                     {
                         !this.state.loading && totalFights < item.rounds && fightsStart ?
-                        <div style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                             <button
                                 className="btnH"
                                 style={Object.assign({}, styles.btnPlay, { marginRight: 10 })}
@@ -832,7 +832,7 @@ class PvP extends Component {
                                     this.chooseOpponent(item, level)
                                 }}
                             >
-                                <p style={{ fontSize: 16, color: 'white' }}>
+                                <p style={{ fontSize: 15, color: 'white' }}>
                                     FIGHT
                                 </p>
                             </button>
@@ -848,7 +848,7 @@ class PvP extends Component {
                                     this.openPopupChangeSpell(item.id)
                                 }}
                             >
-                                <p style={{ fontSize: 16, color: 'white' }}>
+                                <p style={{ fontSize: 15, color: 'white' }}>
                                     CHANGE SPELL
                                 </p>
                             </button>
@@ -868,7 +868,7 @@ class PvP extends Component {
                                 this.openPopupIncrementFights(item.id)
                             }}
                         >
-                            <p style={{ fontSize: 17, color: 'white' }}>
+                            <p style={{ fontSize: 15, color: 'white' }}>
                                 INCREMENT MAX FIGHTS
                             </p>
                         </button>
@@ -1246,8 +1246,8 @@ const styles = {
 	},
     btnPlay: {
         height: 35,
-        width: 140,
-        minWidth: 140,
+        width: 110,
+        minWidth: 110,
         borderRadius: 2,
         justifyContent: 'center',
         alignItems: 'center',
