@@ -1691,7 +1691,7 @@ class Shop extends Component {
         return (
             <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'scroll' }}>
 
-                <p style={{ color: 'white', fontSize: 30, marginBottom: 20 }}>
+                <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
                     Magic Shop
                 </p>
 

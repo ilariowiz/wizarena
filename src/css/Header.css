@@ -114,3 +114,7 @@
     opacity: 1;
 	width: 100%;
 }
+
+.btn-show-shadow {
+	box-shadow: rgb(7 8 8 / 40%) 0px 0px 8px 4px;
+}

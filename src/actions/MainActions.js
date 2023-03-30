@@ -55,7 +55,8 @@ import {
 	SET_KADENA_NAME,
 	SELECT_WIZARD,
 	UPDATE_TRANSACTION_TO_CONFIRM_TEXT,
-	STORE_WALLET_XP
+	STORE_WALLET_XP,
+	HIDE_NAV_BAR
 } from './types'
 
 
@@ -3388,6 +3389,13 @@ export const selectWizard = (wizardId) => {
 	return {
 		type: SELECT_WIZARD,
 		payload: wizardId
+	}
+}
+
+export const setHideNavBar = (value) => {
+	return {
+		type: HIDE_NAV_BAR,
+		payload: value
 	}
 }
 

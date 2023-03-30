@@ -6,6 +6,8 @@ import { IoMenu } from 'react-icons/io5'
 import { IoClose } from 'react-icons/io5'
 import { SiDiscord } from 'react-icons/si'
 import { SiTwitter } from 'react-icons/si'
+import { AiOutlineEye } from 'react-icons/ai'
+import { AiOutlineEyeInvisible } from 'react-icons/ai'
 import ModalBuyWIZA from './common/ModalBuyWIZA'
 import ModalTransaction from './common/ModalTransaction'
 import getBoxWidth from './common/GetBoxW'
@@ -19,7 +21,8 @@ import {
 	getWizaNotClaimed,
 	swapKdaWiza,
 	clearTransaction,
-	updateInfoTransactionModal
+	updateInfoTransactionModal,
+	setHideNavBar
 } from '../actions'
 import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, MAIN_NET_ID } from '../actions/types'
 import 'reactjs-popup/dist/index.css';
@@ -597,7 +600,7 @@ class Header extends Component {
 		const { boxW, modalW } = getBoxWidth(true)
 
 		return (
-			<div style={{ flexDirection: 'column', padding: 15, backgroundColor: '#2d2a42', overflow: 'scroll' }} id="headerbox">
+			<div style={{ flexDirection: 'column', padding: 6, backgroundColor: '#2d2a42', overflow: 'scroll' }} id="headerbox">
 
 				<div style={{ flexDirection: 'column', alignItems: 'flex-start', marginBottom: 20 }}>
 					<img
@@ -674,6 +677,19 @@ class Header extends Component {
 
 				{this.renderSlidePanel(boxW)}
 
+				<button
+					style={{ position: 'absolute', left: 20, bottom: 20 }}
+					onClick={() => {
+						this.props.setHideNavBar(true)
+						//window.location.reload()
+					}}
+				>
+					<AiOutlineEyeInvisible
+						size={26}
+						color='white'
+					/>
+				</button>
+
 				<ModalBuyWIZA
 					width={modalW}
 					showModal={this.state.showModalBuy || this.props.showModalBuyFromShop}
@@ -704,13 +720,54 @@ class Header extends Component {
 		)
 	}
 
+	renderUnhideMobile() {
+
+		const { boxW, modalW } = getBoxWidth(true)
+
+		return (
+			<div>
+				<button
+					style={styles.btnShow}
+					className="btn-show-shadow"
+					onClick={() => this.props.setHideNavBar(false)}
+				>
+					<AiOutlineEye
+						size={26}
+						color='black'
+					/>
+				</button>
+
+				<ModalBuyWIZA
+					width={modalW}
+					showModal={this.state.showModalBuy || this.props.showModalBuyFromShop}
+					onCloseModal={() => {
+						this.setState({ showModalBuy: false })
+						if (this.props.closeModalBuyOnShop) {
+							this.props.closeModalBuyOnShop()
+						}
+					}}
+					onSwap={(amount, estimatedWiza) => {
+						this.swap(amount, estimatedWiza)
+					}}
+				/>
+			</div>
+		)
+
+	}
+
 	render() {
-		const { section, account, page, isMobile, kadenaname } = this.props
+		const { section, account, page, isMobile, kadenaname, hideNavBar } = this.props
+
+		//console.log(hideNavBar);
 
 		const { boxW, modalW } = getBoxWidth(isMobile)
 
 		if (!isMobile) {
 			return this.renderDesktop()
+		}
+
+		if (hideNavBar) {
+			return this.renderUnhideMobile()
 		}
 
 		return this.renderMobile()
@@ -762,14 +819,26 @@ const styles = {
 		borderWidth: 0.5,
 		borderStyle: 'solid',
 		borderRadius: 4
+	},
+	btnShow: {
+		position: 'absolute',
+		right: 20,
+		bottom: 20,
+		backgroundColor: '#ffffff',
+		width: 40,
+		height: 40,
+		borderRadius: 20,
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center'
 	}
 }
 
 const mapStateToProps = (state) => {
-	const { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx } = state.mainReducer
+	const { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar } = state.mainReducer
 	const { transactionToConfirmText, typeModal, transactionOkText } = state.modalTransactionReducer
 
-	return { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, transactionToConfirmText, typeModal, transactionOkText }
+	return { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, transactionToConfirmText, typeModal, transactionOkText }
 }
 
 export default connect(mapStateToProps, {
@@ -781,5 +850,6 @@ export default connect(mapStateToProps, {
 	getWizaNotClaimed,
 	swapKdaWiza,
 	clearTransaction,
-	updateInfoTransactionModal
+	updateInfoTransactionModal,
+	setHideNavBar
 })(Header);
