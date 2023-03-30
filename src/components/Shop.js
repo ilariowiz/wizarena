@@ -527,7 +527,7 @@ class Shop extends Component {
 		)
 	}
 
-    renderRingsCard(item, index) {
+    renderRingsCard(item, index, isMobile) {
 
         const bonusValues = item.bonus.split(",")
 
@@ -546,7 +546,7 @@ class Shop extends Component {
             <div
                 key={index}
                 className="cardShopShadow"
-                style={styles.cardShopStyle}
+                style={Object.assign({}, styles.cardShopStyle, { marginRight: isMobile ? 10 : 35, marginBottom: isMobile ? 10 : 35 })}
             >
                 <img
                     src={item.url}
@@ -592,7 +592,7 @@ class Shop extends Component {
         )
     }
 
-    renderShopCard(key) {
+    renderShopCard(key, isMobile) {
         const { increase, wizaValue } = this.state
 
         const wizard = this.getWizardSelected()
@@ -659,7 +659,7 @@ class Shop extends Component {
         return (
             <div
                 className="cardShopShadow"
-                style={styles.cardShopStyle}
+                style={Object.assign({}, styles.cardShopStyle, { marginRight: isMobile ? 10 : 35, marginBottom: isMobile ? 10 : 35 })}
             >
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
@@ -764,7 +764,7 @@ class Shop extends Component {
         )
     }
 
-    renderAPShopCard(key) {
+    renderAPShopCard(key, isMobile) {
         const { increase } = this.state
 
         const wizard = this.getWizardSelected()
@@ -841,7 +841,7 @@ class Shop extends Component {
         return (
             <div
                 className="cardShopShadow"
-                style={styles.cardShopStyle}
+                style={Object.assign({}, styles.cardShopStyle, { marginRight: isMobile ? 10 : 35, marginBottom: isMobile ? 10 : 35 })}
             >
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
@@ -946,7 +946,7 @@ class Shop extends Component {
         )
     }
 
-    renderAPBurnCard() {
+    renderAPBurnCard(isMobile) {
         const { apToBurn } = this.state
 
         const wizard = this.getWizardSelected()
@@ -954,7 +954,7 @@ class Shop extends Component {
         return (
             <div
                 className="cardShopShadow"
-                style={styles.cardShopStyle}
+                style={Object.assign({}, styles.cardShopStyle, { marginRight: isMobile ? 10 : 35, marginBottom: isMobile ? 10 : 35 })}
             >
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
@@ -1043,7 +1043,7 @@ class Shop extends Component {
         )
     }
 
-    renderRetrainShopCard(key) {
+    renderRetrainShopCard(key, isMobile) {
         const { decrease, baseStats } = this.state
 
         const wizard = this.getWizardSelected()
@@ -1132,7 +1132,7 @@ class Shop extends Component {
         return (
             <div
                 className="cardShopShadow"
-                style={styles.cardShopStyle}
+                style={Object.assign({}, styles.cardShopStyle, { marginRight: isMobile ? 10 : 35, marginBottom: isMobile ? 10 : 35 })}
             >
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
@@ -1311,7 +1311,7 @@ class Shop extends Component {
         return (
             <div
                 className="cardShopShadow"
-                style={Object.assign({}, styles.cardVialStyle, { marginRight: isMobile ? 15 : 35, marginBottom: isMobile ? 15 : 35 })}
+                style={Object.assign({}, styles.cardVialStyle, { marginRight: isMobile ? 10 : 35, marginBottom: isMobile ? 10 : 35 })}
             >
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
@@ -1771,7 +1771,7 @@ class Shop extends Component {
                             ringsToShow.length > 0 ?
                             <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
                                 {ringsToShow.map((item, index) => {
-                                    return this.renderRingsCard(item, index)
+                                    return this.renderRingsCard(item, index, isMobile)
                                 })}
                             </div>
                             :
@@ -1789,15 +1789,15 @@ class Shop extends Component {
                         </div>
 
                         <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
-                            {this.renderShopCard("hp")}
+                            {this.renderShopCard("hp", isMobile)}
 
-                            {this.renderShopCard("defense")}
+                            {this.renderShopCard("defense", isMobile)}
 
-                            {this.renderShopCard("attack")}
+                            {this.renderShopCard("attack", isMobile)}
 
-                            {this.renderShopCard("damage")}
+                            {this.renderShopCard("damage", isMobile)}
 
-                            {this.renderShopCard("speed")}
+                            {this.renderShopCard("speed", isMobile)}
 
                         </div>
 
@@ -1812,17 +1812,17 @@ class Shop extends Component {
                         </p>
 
                         <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
-                            {this.renderAPShopCard("hp")}
+                            {this.renderAPShopCard("hp", isMobile)}
 
-                            {this.renderAPShopCard("defense")}
+                            {this.renderAPShopCard("defense", isMobile)}
 
-                            {this.renderAPShopCard("attack")}
+                            {this.renderAPShopCard("attack", isMobile)}
 
-                            {this.renderAPShopCard("damage")}
+                            {this.renderAPShopCard("damage", isMobile)}
 
-                            {this.renderAPShopCard("speed")}
+                            {this.renderAPShopCard("speed", isMobile)}
 
-                            {this.renderAPBurnCard()}
+                            {this.renderAPBurnCard(isMobile)}
 
                         </div>
 
@@ -1837,15 +1837,15 @@ class Shop extends Component {
                         </p>
 
                         <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
-                            {this.renderRetrainShopCard("hp")}
+                            {this.renderRetrainShopCard("hp", isMobile)}
 
-                            {this.renderRetrainShopCard("defense")}
+                            {this.renderRetrainShopCard("defense", isMobile)}
 
-                            {this.renderRetrainShopCard("attack")}
+                            {this.renderRetrainShopCard("attack", isMobile)}
 
-                            {this.renderRetrainShopCard("damage")}
+                            {this.renderRetrainShopCard("damage", isMobile)}
 
-                            {this.renderRetrainShopCard("speed")}
+                            {this.renderRetrainShopCard("speed", isMobile)}
 
                         </div>
 
