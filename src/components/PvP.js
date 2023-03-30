@@ -619,7 +619,7 @@ class PvP extends Component {
 		return ""
 	}
 
-    renderRowSub(item, index, isMobile) {
+    renderRowSub(item, index, isMobile, maxWidth) {
         //console.log(item);
         const { pvpFightsStartDate } = this.state
         const { userMintedNfts } = this.props
@@ -665,7 +665,7 @@ class PvP extends Component {
         return (
             <div
                 key={index}
-                style={Object.assign({}, styles.boxSubscribed, { flexDirection: isMobile ? 'column' : 'row' })}
+                style={Object.assign({}, styles.boxSubscribed, { flexDirection: isMobile ? 'column' : 'row', maxWidth: maxWidth - 10, marginRight: isMobile ? 5 : 20 })}
             >
                 <img
                     src={getImageUrl(item.id)}
@@ -1104,11 +1104,11 @@ class PvP extends Component {
                     You will only fight wizards 25 levels higher or lower
                 </p>
 
-                <div style={{ flexDirection: 'row', marginBottom: 30, flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
+                <div style={{ flexDirection: 'row', width: boxW, marginBottom: 30, flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
                     {
                         yourSubscribersResults && yourSubscribersResults.length > 0 &&
                         yourSubscribersResultsSorted.map((item, index) => {
-                            return this.renderRowSub(item, index, isMobile)
+                            return this.renderRowSub(item, index, isMobile, boxW)
                         })
                     }
 
