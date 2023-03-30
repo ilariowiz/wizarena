@@ -597,10 +597,11 @@ class Header extends Component {
 	}
 
 	renderMobile() {
+		const { showPanel } = this.state
 		const { boxW, modalW } = getBoxWidth(true)
 
 		return (
-			<div style={{ flexDirection: 'column', padding: 6, backgroundColor: '#2d2a42', overflow: 'auto' }} id="headerbox">
+			<div style={{ flexDirection: 'column', padding: 6, backgroundColor: '#2d2a42', overflowY: 'auto' }} id="headerbox">
 
 				<div style={{ flexDirection: 'column', alignItems: 'flex-start', marginBottom: 20 }}>
 					<img
@@ -677,18 +678,21 @@ class Header extends Component {
 
 				{this.renderSlidePanel(boxW)}
 
-				<button
-					style={{ position: 'absolute', left: 20, bottom: 20 }}
-					onClick={() => {
-						this.props.setHideNavBar(true)
-						//window.location.reload()
-					}}
-				>
-					<AiOutlineEyeInvisible
-						size={26}
-						color='white'
-					/>
-				</button>
+				{
+					!showPanel &&
+					<button
+						style={{ position: 'absolute', left: 20, bottom: 20 }}
+						onClick={() => {
+							this.props.setHideNavBar(true)
+							//window.location.reload()
+						}}
+					>
+						<AiOutlineEyeInvisible
+							size={26}
+							color='white'
+						/>
+					</button>
+				}
 
 				<ModalBuyWIZA
 					width={modalW}

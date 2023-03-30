@@ -199,7 +199,7 @@ class Forge extends Component {
         }
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
 
                 <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
                     Forge

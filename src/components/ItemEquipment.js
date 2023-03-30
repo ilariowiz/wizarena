@@ -577,16 +577,14 @@ class ItemEquipment extends Component {
 		const { equipment, loading } = this.state
 		const { account } = this.props
 
-		const { boxW, modalW } = getBoxWidth(false)
+		const { boxW, modalW } = getBoxWidth(true)
         let imageWidth = boxW > 500 ? 500 : boxW - 30
-
-		let boxTopStyle = { width: boxW, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 25 }
 
 		let ctaWidth = boxW * 50 / 100
 		if (ctaWidth > 170) ctaWidth = 170
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 15, overflow: 'auto' }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 15, overflowY: 'auto', overflowX: 'hidden' }}>
 
                 {
                     loading &&
@@ -595,7 +593,7 @@ class ItemEquipment extends Component {
                     </div>
                 }
 
-                <div style={boxTopStyle}>
+                <div style={{ width: boxW, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 25 }}>
 
                     <img
                         style={{ width: imageWidth, height: imageWidth, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
@@ -690,7 +688,7 @@ class ItemEquipment extends Component {
 		if (ctaWidth > 250) ctaWidth = 250
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 25, overflow: 'auto' }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 25, overflowY: 'auto', overflowX: 'hidden' }}>
 
                 {
                     loading &&
