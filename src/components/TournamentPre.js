@@ -647,7 +647,7 @@ class Tournament extends Component {
 
 		return (
 			<div style={styleBox}>
-				<div style={{ flexWrap: 'wrap', marginLeft: 20 }}>
+				<div style={{ flexWrap: 'wrap', marginLeft: isMobile ? 0 : 20 }}>
 					{temp}
 				</div>
 
