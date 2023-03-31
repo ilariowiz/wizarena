@@ -914,8 +914,8 @@ class PvP extends Component {
 		})
 
 		return (
-			<div style={{ justifyContent: 'space-between', alignItems: 'center', flex: 1 }}>
-				<div style={{ flexWrap: 'wrap', marginLeft: 20 }}>
+			<div style={{ justifyContent: 'space-between', alignItems: 'center', flex: 1, flexDirection: isMobile ? 'column' : 'row' }}>
+				<div style={{ flexWrap: 'wrap', marginLeft: isMobile ? 0 : 20 }}>
 					{temp}
 				</div>
 
