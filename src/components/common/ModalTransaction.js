@@ -32,7 +32,6 @@ class ModalTransaction extends Component {
 			console.log(transactionState.requestKey)
 
 			if (typeModal === "subscribe_pvp") {
-
 				toSubscribePvP.map(i => {
 					const docRef = doc(firebasedb, "pvp_results", `${i.week}_#${i.idnft}`)
 					setDoc(docRef, { "lose": 0, "win": 0, "maxFights": i.wizaAmount })
@@ -52,7 +51,6 @@ class ModalTransaction extends Component {
 
 	pollForTransaction = async () => {
 		const { transactionState, networkUrl, nameNft, idNft, inputPrice, statToUpgrade, howMuchIncrement, typeModal, pvpWeek, makeOfferValues, saleValues, wizaAmount, nicknameToSet, ringToEquipName, toSubscribePvP } = this.props
-
 
 		const requestKey = transactionState.requestKey
 
