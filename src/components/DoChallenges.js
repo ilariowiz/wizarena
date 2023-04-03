@@ -315,7 +315,7 @@ class DoChallenges extends Component {
                     </p>
 
                     <p style={{ color: 'white', fontSize: 20 }}>
-                        Choose a wizard to start a challegne
+                        Choose a wizard to start a challenge
                     </p>
 
                 </div>
