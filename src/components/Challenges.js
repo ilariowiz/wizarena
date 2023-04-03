@@ -149,8 +149,10 @@ class Challenges extends Component {
             this.setState({ showModalLoading: false, textModalLoading: "" })
             this.props.setChallengeReplay(dataFightFirebase)
 
+            //console.log(dataFightFirebase);
+
             setTimeout(() => {
-                this.props.history.push("/challengereplay")
+                this.props.history.push(`/challengereplay/${dataFightFirebase.fightId}`)
             }, 300)
             //console.log("go to replay");
         }

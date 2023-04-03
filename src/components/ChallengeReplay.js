@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
-import { doc, updateDoc, collection, setDoc, increment } from "firebase/firestore";
+import { doc, updateDoc, collection, setDoc, increment, getDocs, where, query } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Rainbow from 'rainbowvis.js'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
@@ -46,25 +46,45 @@ class ChallengeReplay extends Component {
     componentDidMount() {
         const { challengeReplay } = this.props
 
-        //console.log(challengeReplay);
-
-        document.title = `Challenge ${challengeReplay.id} Replay - Wizards Arena`
+        document.title = `Challenge Replay - Wizards Arena`
 
         this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
-        if (!challengeReplay || !challengeReplay.fightId) {
-            this.props.history.replace("/challenges")
-            return
-        }
-
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        this.preloadFight()
+        if (!challengeReplay || !challengeReplay.fightId) {
+            this.loadFight()
+        }
+        else {
+            this.preloadFight(challengeReplay)
+        }
     }
 
-    preloadFight() {
-        const { challengeReplay } = this.props
+    async loadFight() {
+        const { pathname } = this.props.location;
+		const fightId = pathname.replace('/challengereplay/', '')
+
+        //console.log(fightId);
+
+        const q = query(collection(firebasedb, "fights_duels"), where("fightId", "==", fightId))
+        const querySnapshot = await getDocs(q)
+
+        let dataFightFirebase = undefined
+
+        querySnapshot.forEach(doc => {
+            dataFightFirebase = doc.data()
+        })
+
+        if (dataFightFirebase) {
+            this.preloadFight(dataFightFirebase)
+        }
+        else {
+            this.props.history.replace("/challenges")
+        }
+    }
+
+    preloadFight(challengeReplay) {
 
         this.player1 = challengeReplay.info1
         this.player2 = challengeReplay.info2

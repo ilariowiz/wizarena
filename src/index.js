@@ -71,7 +71,7 @@ ReactDOM.render(
             <Route path="/forge" component={Forge} />
             <Route path="/challenges" component={Challenges} />
             <Route path="/startchallenge" component={DoChallenges} />
-            <Route path="/challengereplay" component={ChallengeReplay} />
+            <Route path="/challengereplay/" component={ChallengeReplay} />
           </Switch>
         </div>
       </BrowserRouter>
