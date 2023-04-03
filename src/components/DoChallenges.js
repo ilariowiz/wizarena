@@ -318,6 +318,16 @@ class DoChallenges extends Component {
                         Choose a wizard to start a challenge
                     </p>
 
+                    <button
+                        style={styles.btnBack}
+                        className="btnH"
+                        onClick={() => this.props.history.replace("/challenges")}
+                    >
+                        <p style={{ fontSize: 16, color: 'white' }}>
+                            Check your active challenges
+                        </p>
+                    </button>
+
                 </div>
             )
         }
@@ -465,6 +475,18 @@ const styles = {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center'
+    },
+    btnBack: {
+        marginTop: 40,
+        width: 220,
+        paddingTop: 5,
+        paddingBottom: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: TEXT_SECONDARY_COLOR,
+        borderStyle: 'solid',
+        borderRadius: 2
     }
 }
 
