@@ -21,10 +21,15 @@ const saveSubsetRank = createFilter(
 	['ranks']
 )
 
+const saveSubsetChallenges = createFilter(
+	'challengesReducer',
+	['showWinnerChallenges']
+)
+
 const persistConfig = {
 	key: 'root',
 	storage,
-	transforms: [saveSubsetMain, saveSubsetSales, saveSubsetRank]
+	transforms: [saveSubsetMain, saveSubsetSales, saveSubsetRank, saveSubsetChallenges]
 }
 
 

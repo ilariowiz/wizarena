@@ -295,3 +295,31 @@ export const sendMessageUpgrade = (id, message) => {
 
     request.send(JSON.stringify(params));
 }
+
+export const sendMessageChallenge = (info) => {
+    const request = new XMLHttpRequest()
+
+    request.open("POST", process.env.REACT_APP_DISCORD_WEBHOOK_CHALLENGE)
+    request.setRequestHeader("Content-type", 'application/json')
+    //console.log(content);
+
+    const message = `There is a new challenge for **#${info.wiz2id}**: he was challenged by **#${info.wiz1id}** for **${info.amount}** KDA`
+
+    const params = {
+        username: `Wizard Bot`,
+        avatar_url: `https://storage.googleapis.com/wizarena/generated_imgs/${info.wiz2id}.png`,
+        //content: message
+        embeds: [
+            {
+                "title": `#${info.wiz2id}`,
+                "description": message,
+                "url": `https://www.wizardsarena.net/nft/${info.wiz2id}`,
+                "thumbnail": {
+                    "url": `https://storage.googleapis.com/wizarena/generated_imgs/${info.wiz2id}.png`
+                }
+            }
+        ]
+    }
+
+    request.send(JSON.stringify(params));
+}

@@ -36,7 +36,7 @@ const profile_icon = require('../assets/menu/profile.png')
 const shop_icon = require('../assets/menu/shop.png')
 const pvp_icon = require('../assets/menu/pvp.png')
 const tournaments_icon = require('../assets/menu/tournaments.png')
-
+const challenges_icon = require('../assets/menu/wand.png')
 
 class Header extends Component {
 	constructor(props) {
@@ -429,7 +429,7 @@ class Header extends Component {
 					style={{ width: iconSize, height: iconSize, marginRight: 10 }}
 					src={icon}
 				/>
-				<p style={{ fontSize: 18, color: 'white' }}>
+				<p style={{ fontSize: 17, color: 'white' }}>
 					{title}
 				</p>
 			</a>
@@ -502,6 +502,13 @@ class Header extends Component {
 					tournaments_icon,
 					"TOURNAMENTS",
 					4)
+				}
+
+				{this.renderBtnMenu(
+					'challenges',
+					challenges_icon,
+					"CHALLENGES",
+					23)
 				}
 
 				<button
@@ -650,6 +657,12 @@ class Header extends Component {
 					'tournaments',
 					tournaments_icon,
 					4)
+				}
+
+				{this.renderBtnMenuMobile(
+					'challenges',
+					challenges_icon,
+					23)
 				}
 
 				<button

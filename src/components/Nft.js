@@ -3,10 +3,9 @@ import { connect } from 'react-redux'
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import Popup from 'reactjs-popup';
-import { AiOutlineReload } from 'react-icons/ai';
-import { AiOutlineShareAlt } from 'react-icons/ai';
-import { IoEyeOffOutline } from 'react-icons/io5';
-import { IoEyeOutline } from 'react-icons/io5';
+import { AiOutlineReload, AiOutlineShareAlt } from 'react-icons/ai';
+import { IoEyeOffOutline, IoEyeOutline, IoFlash } from 'react-icons/io5';
+import { BsFillTagFill } from 'react-icons/bs'
 import moment from 'moment'
 import toast, { Toaster } from 'react-hot-toast';
 import { getDocs, collection, doc, getDoc, query, where } from "firebase/firestore";
@@ -42,14 +41,15 @@ import {
 	makeOffer,
 	acceptOffer,
 	getInfoItemEquipped,
-	updateInfoTransactionModal
+	updateInfoTransactionModal,
+	setWizardSfidato
 } from '../actions'
 import { MAIN_NET_ID, REVEAL_CAP, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
 
 const logoKda = require('../assets/kdalogo2.png')
 const burn_overlay = require('../assets/burn_overlay.png')
-
+const challenge_icon = require('../assets/wand_challenge.png')
 
 class Nft extends Component {
 	constructor(props) {
@@ -802,7 +802,7 @@ class Nft extends Component {
 	// SE NFT é LISTATO ******************************************
 	// GESTIAMO I CASI: Connect Wallet, Cancel Listing, Buy Now, Make Offer
 	renderBtnBuy(width, marginRight, isMobile) {
-		const { nft } = this.state;
+		const { nft, equipment } = this.state;
 		const { account } = this.props
 
 		if (!account || (account && !account.account)) {
@@ -859,16 +859,21 @@ class Nft extends Component {
 
 		let style = isMobile ? { height: '100%', flexDirection: 'column', marginLeft: 15, marginTop: 10, justifyContent: 'space-between' }
 								:
-								{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around' }
+								{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between' }
 
 		return (
 			<div style={style}>
 
 				<button
 					className='btnH'
-					style={Object.assign({}, styles.btnBuy, { width, marginRight })}
+					style={Object.assign({}, styles.btnBuy, { width, marginRight, marginBottom: 15 })}
 					onClick={() => this.setState({ showModalOffer: true })}
 				>
+					<BsFillTagFill
+						size={20}
+						color='white'
+						style={{ marginRight: 7 }}
+					/>
 					<p style={styles.btnBuyText}>
 						Make offer
 					</p>
@@ -876,11 +881,37 @@ class Nft extends Component {
 
 				<button
 					className='btnH'
-					style={Object.assign({}, styles.btnBuy, { width, marginRight })}
+					style={Object.assign({}, styles.btnBuy, { width, marginRight, marginBottom: 15 })}
 					onClick={() => this.buy()}
 				>
+					<IoFlash
+						size={20}
+						color='white'
+						style={{ marginRight: 7 }}
+					/>
+
 					<p style={styles.btnBuyText}>
 						Buy now
+					</p>
+				</button>
+
+				<button
+					className='btnH'
+					style={Object.assign({}, styles.btnBuy, { width, marginRight })}
+					onClick={() => {
+						let nftCopy = Object.assign({}, nft)
+						nftCopy['equipment'] = equipment
+						console.log(nftCopy);
+						this.props.setWizardSfidato(nftCopy)
+						this.props.history.push(`/startchallenge`)
+					}}
+				>
+					<img
+						src={challenge_icon}
+						style={{ width: 26, height: 26, marginRight: 7 }}
+					/>
+					<p style={styles.btnBuyText}>
+						Challenge
 					</p>
 				</button>
 			</div>
@@ -888,21 +919,47 @@ class Nft extends Component {
 	}
 
 	renderBtnMakeOffer(width, marginRight, isMobile) {
+		const { nft, equipment } = this.state
 
-		let style = isMobile ? { height: '100%', flexDirection: 'column', marginLeft: 15, justifyContent: 'flex-end' }
+		let style = isMobile ? { height: '100%', flexDirection: 'column', marginLeft: 15, justifyContent: 'space-between' }
 								:
-								{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }
+								{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between' }
 
 		return (
 			<div style={style}>
 
 				<button
 					className='btnH'
-					style={Object.assign({}, styles.btnBuy, { width, marginRight })}
+					style={Object.assign({}, styles.btnBuy, { width, marginRight, marginBottom: 15 })}
 					onClick={() => this.setState({ showModalOffer: true })}
 				>
+					<BsFillTagFill
+						size={20}
+						color='white'
+						style={{ marginRight: 7 }}
+					/>
 					<p style={styles.btnBuyText}>
 						Make offer
+					</p>
+				</button>
+
+				<button
+					className='btnH'
+					style={Object.assign({}, styles.btnBuy, { width, marginRight })}
+					onClick={() => {
+						let nftCopy = Object.assign({}, nft)
+						nftCopy['equipment'] = equipment
+						//console.log(nftCopy);
+						this.props.setWizardSfidato(nftCopy)
+						this.props.history.push(`/startchallenge`)
+					}}
+				>
+					<img
+						src={challenge_icon}
+						style={{ width: 26, height: 26, marginRight: 7 }}
+					/>
+					<p style={styles.btnBuyText}>
+						Challenge
 					</p>
 				</button>
 			</div>
@@ -2026,7 +2083,6 @@ const styles = {
 	boxRightLarge: {
 		width: '100%',
 		flexDirection: 'row',
-		alignItems: 'center',
 		justifyContent: 'space-between',
 		borderRadius: 2,
 		paddingTop: 16,
@@ -2054,9 +2110,11 @@ const styles = {
 		justifyContent: 'center',
 		alignItems: 'center',
 		borderRadius: 2,
+		flexDirection: 'row',
+		display: 'flex'
 	},
 	btnBuyText: {
-		fontSize: 21,
+		fontSize: 19,
 		color: 'white',
 	},
 	boxSection: {
@@ -2147,5 +2205,6 @@ export default connect(mapStateToProps, {
 	makeOffer,
 	acceptOffer,
 	getInfoItemEquipped,
-	updateInfoTransactionModal
+	updateInfoTransactionModal,
+	setWizardSfidato
 })(Nft);

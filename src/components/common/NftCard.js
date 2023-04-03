@@ -35,7 +35,7 @@ class NftCard extends Component {
 
 						{
 							item.nickname ?
-							<p style={{ color: 'white', fontSize: 16, marginLeft: 10, lineHeight: 1 }}>
+							<p style={{ color: 'white', fontSize: 15, marginLeft: 10, lineHeight: 1 }}>
 								{item.name} {item.nickname}
 							</p>
 							:

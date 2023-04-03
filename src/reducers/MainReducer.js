@@ -37,7 +37,9 @@ import {
 	SET_KADENA_NAME,
 	SELECT_WIZARD,
 	STORE_WALLET_XP,
-	HIDE_NAV_BAR
+	HIDE_NAV_BAR,
+	SET_CHALLENGES_SENT,
+	SET_CHALLENGES_RECEIVED
 } from '../actions/types'
 
 
@@ -82,7 +84,9 @@ const INITIAL_STATE = {
 	kadenaname: "",
 	nftSelected: undefined,
 	walletXp: 0,
-	hideNavBar: false
+	hideNavBar: false,
+	challengesReceived: [],
+	challengesSent: []
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -191,6 +195,10 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, walletXp: action.payload }
 		case HIDE_NAV_BAR:
 			return { ...state, hideNavBar: action.payload }
+		case SET_CHALLENGES_RECEIVED:
+			return { ...state, challengesReceived: action.payload }
+		case SET_CHALLENGES_SENT:
+			return { ...state, challengesSent: action.payload }
 		case LOGOUT:
 			return { ...state, account: {}, transactionState: {}, showModalTx: false, isConnectWallet: false, isXWallet: false, isQRWalletConnect: false, userMintedNfts: [], wizaBalance: 0, wizardsStaked: 0, qrWalletConnectClient: undefined, kadenaname:""}
 		default:

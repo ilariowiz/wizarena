@@ -3,6 +3,7 @@ import SignClient from "@walletconnect/sign-client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import { getDoc, doc, setDoc, getDocs, query, collection, where, documentId } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
+import moment from 'moment'
 import { calcLevelWizard } from '../components/common/CalcLevelWizard'
 import _ from 'lodash'
 import {
@@ -56,7 +57,9 @@ import {
 	SELECT_WIZARD,
 	UPDATE_TRANSACTION_TO_CONFIRM_TEXT,
 	STORE_WALLET_XP,
-	HIDE_NAV_BAR
+	HIDE_NAV_BAR,
+	SET_CHALLENGES_SENT,
+	SET_CHALLENGES_RECEIVED
 } from './types'
 
 
@@ -1003,7 +1006,7 @@ export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 				return
 				*/
 			}
-			
+
 			//console.log(resultFirebase);
 
 			if (callback) {
@@ -2673,6 +2676,189 @@ export const swapKdaWiza = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, amount
 	}
 }
 
+/*********************************
+CHALLENGES FUNCTIONS
+**********************************/
+
+export const sendChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, nft1id, nft2id, account, amount) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.send-challenge "${nft1id}" "${nft2id}" ${_.round(amount).toFixed(1)})`;
+
+		let cmd = {
+			pactCode,
+			caps: [
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME}.OWNER`,
+          			[account.account, nft1id]
+        		),
+				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+			],
+			sender: account.account,
+			gasLimit: 3000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("sendChallenge", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const acceptChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, challengeid, nft2id, account) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.accept-challenge "${challengeid}")`;
+
+		let cmd = {
+			pactCode,
+			caps: [
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME}.OWNER`,
+          			[account.account, nft2id]
+        		),
+				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+			],
+			sender: account.account,
+			gasLimit: 3000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("acceptChallenge", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const doResultChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, challengeid, fightId, account) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.do-result-challenge "${challengeid}" "${fightId}" "${account.account}")`;
+
+		let cmd = {
+			pactCode,
+			caps: [
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
+          			[account.account]
+        		),
+				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+			],
+			sender: account.account,
+			gasLimit: 5000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("doResultChallenge", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const cancelChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, challengeid, account) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.cancel-challenge "${challengeid}")`;
+
+		let cmd = {
+			pactCode,
+			caps: [
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
+          			[account.account]
+        		),
+				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+			],
+			sender: account.account,
+			gasLimit: 5000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("cancelChallenge", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const getChallengesSent = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 75000, networkUrl, address, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-sent-challenges "${address}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+
+			dispatch({ type: SET_CHALLENGES_SENT, payload: response })
+			if (callback) {
+				callback()
+			}
+		})
+	}
+}
+
+export const getChallengesReceived = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 75000, networkUrl, address, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-received-challenges "${address}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+
+			dispatch({ type: SET_CHALLENGES_RECEIVED, payload: response })
+			if (callback) {
+				callback()
+			}
+		})
+	}
+}
+
+
 /************************************************************************
 
 WIZA TOKEN FUNCTIONS
@@ -3239,8 +3425,6 @@ export const signTransaction = (cmdToSign, isXWallet, isQRWalletConnect, qrWalle
 
 			dispatch(updateTransactionState("requestKey", requestKey))
 			dispatch(updateTransactionState("sentCmd", signedCmd))
-
-			//await pollForTransaction(requestKey)
 		}
 		else {
 			let e = `Couldn't sign the transaction`

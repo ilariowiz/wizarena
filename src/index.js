@@ -28,6 +28,10 @@ import TournamentElite from './components/TournamentElite'
 
 import Forge from './components/Forge'
 
+import Challenges from './components/Challenges'
+import DoChallenges from './components/DoChallenges'
+import ChallengeReplay from './components/ChallengeReplay'
+
 //import DoFightTEST from './components/DoFightTEST'
 
 import { Provider } from 'react-redux';
@@ -65,7 +69,9 @@ ReactDOM.render(
             <Route path="/tournamentW" component={TournamentWiza} />
             <Route path="/tournamentE" component={TournamentElite} />
             <Route path="/forge" component={Forge} />
-
+            <Route path="/challenges" component={Challenges} />
+            <Route path="/startchallenge" component={DoChallenges} />
+            <Route path="/challengereplay" component={ChallengeReplay} />
           </Switch>
         </div>
       </BrowserRouter>
