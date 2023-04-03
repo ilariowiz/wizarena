@@ -58,6 +58,8 @@ class NftCardChoiceDuel extends Component {
 	render() {
 		const { item, width, canSubscribe, toSubscribe, subscriptionsInfo } = this.props
 
+        //console.log(item);
+
         let isSubscribed;
         if (subscriptionsInfo && subscriptionsInfo.id) {
             isSubscribed = subscriptionsInfo.id === item.id
@@ -128,7 +130,8 @@ class NftCardChoiceDuel extends Component {
                             <button
                                 className='btnSubscribe'
                                 style={styles.btnSubscribe}
-                                onClick={() => this.setState({ showModalSpellbook: true })}
+                                //onClick={() => this.setState({ showModalSpellbook: true })}
+                                onClick={() => this.onSubscribe(item.spellSelected)}
                             >
                                 <p style={{ fontSize: 16, color: 'white' }}>
                                     SELECT
