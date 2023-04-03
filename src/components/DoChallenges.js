@@ -297,12 +297,29 @@ class DoChallenges extends Component {
 
     renderBody(isMobile) {
         const { loading, error, yourNfts, showYourNfts } = this.state
+        const { wizardSfidato } = this.props
 
         const { boxW, modalW } = getBoxWidth(isMobile)
 
         let spaceImage = isMobile ? (boxW * 95 / 100) : (boxW / 2) - 100
         if (spaceImage > 220 && !isMobile) {
             spaceImage = 220
+        }
+
+        if (!wizardSfidato) {
+            return (
+                <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+
+                    <p style={{ color: 'white', fontSize: 30, marginBottom: 20 }}>
+                        Start Challenge
+                    </p>
+
+                    <p style={{ color: 'white', fontSize: 20 }}>
+                        Choose a wizard to start a challegne
+                    </p>
+
+                </div>
+            )
         }
 
         return (
