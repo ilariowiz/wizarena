@@ -284,7 +284,7 @@ const turno = (attaccante, difensore) => {
             }
         }
 
-        if ((atkTot >= difesaDif || tiro >= 18) && tiro !== 1) {
+        if ((atkTot >= difesaDif || tiro >= 19) && tiro !== 1) {
 
             const dannoBase = attaccante.damage
             let dannoSpell = dannoBase + attaccante.spellSelected.dmgBase
