@@ -10,7 +10,10 @@ import '../../css/Modal.css'
 import {
 	signTransaction,
 	updateTransactionState,
-	pollForTransaction
+	pollForTransaction,
+	hideModalTx,
+	addTxKeyToInfo,
+	clearTransactionByPactCode
 } from '../../actions'
 import { TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../../actions/types'
 import '../../css/Nft.css'
@@ -21,16 +24,47 @@ import '../../css/Nft.css'
 class ModalTransaction extends Component {
 
 	componentDidMount() {
+		const { transactionsState, txListen } = this.props
+
 		//sendMessageUpgrade("866", "#866 Joneleth Irenicus", "hp", 1)
 		//sendMessage("866", 32, 3, "k:461ae9f3c9c255112ac3797f6b15699c656c9bc44ed089551a0f792085ef9504")
 		//sendMessageUpdateNickname("555", "Test")
+
+		//console.log(transactionsState, txListen);
+		if (transactionsState && transactionsState.length > 0) {
+
+			transactionsState.map(i => {
+				if (!i.requestKey) {
+					this.props.clearTransactionByPactCode(i.cmdToConfirm.pactCode)
+				}
+
+				if (!txListen && i.requestKey) {
+					setTimeout(() => {
+						this.props.pollForTransaction(this.props, i.requestKey)
+					}, 500)
+				}
+				else if (i.requestKey && !txListen.includes(i.requestKey)) {
+					setTimeout(() => {
+						this.props.pollForTransaction(this.props, i.requestKey)
+					}, 500)
+				}
+			})
+		}
 	}
 
 	checkTransaction() {
-		const { transactionState, typeModal, toSubscribePvP, pvpWeek, nameNft, wizaAmount } = this.props
+		const { transactionsState, txInfo } = this.props
 
-		if (transactionState && transactionState.requestKey) {
-			console.log(transactionState.requestKey)
+		const txState = transactionsState && transactionsState.length > 0 ? transactionsState[transactionsState.length-1] : {}
+
+		if (txState && txState.requestKey) {
+			//console.log(txState.requestKey)
+
+			const typeModal = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1].typeModal : ""
+			const toSubscribePvP = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1].toSubscribePvP : ""
+			const pvpWeek = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1].pvpWeek : ""
+			const nameNft = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1].nameNft : ""
+			const wizaAmount = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1].wizaAmount : ""
 
 			if (typeModal === "subscribe_pvp") {
 				toSubscribePvP.map(i => {
@@ -46,14 +80,17 @@ class ModalTransaction extends Component {
 				updateDoc(docRef, {"maxFights": increment(wizaAmount) })
 			}
 
-			this.props.pollForTransaction(this.props)
+			this.props.addTxKeyToInfo(txState.requestKey)
+			this.props.pollForTransaction(this.props, txState.requestKey)
+			this.props.hideModalTx()
 		}
 	}
 
 	getContent() {
-		const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, idNft, transactionToConfirmText, transactionOkText } = this.props
+		const { transactionsState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, txInfo } = this.props
 
-		//CASO INIZIALE, signingCmd != null in transactionState
+		//console.log(transactionsState);
+		//CASO INIZIALE, signingCmd != null in txState
 		let title = 'Signing transaction'
 		let body = 'Check your wallet to sign transaction'
 		let buttonText = 'Test'
@@ -61,21 +98,27 @@ class ModalTransaction extends Component {
 		let loading = false
 		let canCancel = false
 
+		const txState = transactionsState && transactionsState.length > 0 ? transactionsState[transactionsState.length-1] : {}
+
 		//console.log(transactionToConfirmText, typeModal);
 
-		if (transactionState) {
+		if (txState) {
 
-			if (transactionState.cmdToConfirm != null) {
+			if (txState.cmdToConfirm != null) {
+
+				const transactionToConfirmText = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1].transactionToConfirmText : ""
+				const idNft = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1].idNft : ""
+
 				title = 'Review transaction'
 				body = transactionToConfirmText
 
 				buttonText = 'Open Wallet'
-				action = async () => this.props.signTransaction(transactionState.cmdToConfirm, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, idNft, () => this.checkTransaction())
+				action = async () => this.props.signTransaction(txState.cmdToConfirm, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, idNft, () => this.checkTransaction())
 				loading = false
 				canCancel = true
 			}
 
-			if (transactionState.signingCmd != null) {
+			if (txState.signingCmd != null) {
 				title = 'Signing transaction...'
 				body = 'Check your wallet to sign transaction'
 				buttonText = ''
@@ -84,7 +127,7 @@ class ModalTransaction extends Component {
 				canCancel = false
 			}
 
-			if (transactionState.signedCmd != null) {
+			if (txState.signedCmd != null) {
 				title = 'Submitting the transaction...'
 				body = ''
 				buttonText = ''
@@ -93,30 +136,39 @@ class ModalTransaction extends Component {
 				canCancel = false
 			}
 
-			if (transactionState.sentCmd != null) {
+			if (txState.sentCmd != null) {
 				title = 'Checking transaction...'
-				body = `Transaction key: ${transactionState.requestKey}`
+				body = `Transaction key: ${txState.requestKey}`
 				buttonText = ''
 				action = null
 				loading = true
 				canCancel = false
 			}
 
-			if (transactionState.success != null) {
+			if (txState.success != null) {
+
+				let transactionOkText = ""
+				if (txInfo && txInfo.length > 0) {
+					const info = txInfo.find(i => i.requestKey === txState.requestKey)
+					if (info) {
+						transactionOkText = info.transactionOkText
+					}
+				}
+
 				title = 'Transaction completed!'
 				body = transactionOkText
 				buttonText = 'Close'
 
-				action = () => this.props.mintSuccess()
+				action = () => this.props.mintSuccess(txState.requestKey)
 				loading = false
 				canCancel = false
 			}
 
-			if (transactionState.error != null) {
+			if (txState.error != null) {
 				title = 'Failed Transaction...'
-				body = transactionState.error
+				body = txState.error
 				buttonText = 'Close'
-				action = () => this.props.mintFail()
+				action = () => this.props.mintFail(txState.cmdToConfirm.pactCode, txState.requestKey)
 				loading = false
 				canCancel = false
 			}
@@ -207,15 +259,18 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, gasPrice, gasLimit } = state.mainReducer
-	const { transactionToConfirmText, typeModal, transactionOkText, nameNft, saleValues, howMuchIncrement, statToUpgrade, idNft, nicknameToSet, ringToEquipName, wizaAmount, toSubscribePvP, inputPrice, makeOfferValues } = state.modalTransactionReducer
+	const { transactionsState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, gasPrice, gasLimit } = state.mainReducer
+	const { txInfo, txListen, txSucceed } = state.modalTransactionReducer
 
 
-	return { transactionState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, gasPrice, gasLimit, transactionToConfirmText, typeModal, transactionOkText, nameNft, saleValues, howMuchIncrement, statToUpgrade, idNft, nicknameToSet, ringToEquipName, wizaAmount, toSubscribePvP, inputPrice, makeOfferValues }
+	return { transactionsState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, gasPrice, gasLimit, txInfo, txListen, txSucceed }
 }
 
 export default connect(mapStateToProps, {
 	signTransaction,
 	updateTransactionState,
-	pollForTransaction
+	pollForTransaction,
+	hideModalTx,
+	addTxKeyToInfo,
+	clearTransactionByPactCode
 })(ModalTransaction);

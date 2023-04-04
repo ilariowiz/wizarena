@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import Popup from 'reactjs-popup';
+import BounceLoader from 'react-spinners/BounceLoader';
 import { IoMenu } from 'react-icons/io5'
 import { IoClose } from 'react-icons/io5'
 import { SiDiscord } from 'react-icons/si'
@@ -22,7 +23,9 @@ import {
 	swapKdaWiza,
 	clearTransaction,
 	updateInfoTransactionModal,
-	setHideNavBar
+	setHideNavBar,
+	removeInfo,
+	clearTransactionByPactCode
 } from '../actions'
 import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, MAIN_NET_ID } from '../actions/types'
 import 'reactjs-popup/dist/index.css';
@@ -437,7 +440,7 @@ class Header extends Component {
 	}
 
 	renderDesktop() {
-		const { account, kadenaname } = this.props
+		const { account, kadenaname, transactionsState, showModalTx } = this.props
 
 		const { boxW, modalW } = getBoxWidth(false)
 
@@ -530,8 +533,32 @@ class Header extends Component {
 				</button>
 
 				{
+					transactionsState && transactionsState.length > 0 && !showModalTx &&
+					<div style={{ justifyContent: 'center', alignItems: 'center', padding: 5, marginTop: 15 }}>
+						<Popup
+							trigger={open => (
+								<div>
+									<BounceLoader
+										color='white'
+										size={26}
+									/>
+								</div>
+							)}
+							position="right center"
+							on="hover"
+						>
+							<div style={{ width: 200, overflowWrap: "anywhere" }}>
+								<p style={{ color: "black", fontSize: 16 }}>
+									{transactionsState[transactionsState.length-1].requestKey}
+								</p>
+							</div>
+						</Popup>
+					</div>
+				}
+
+				{
 					account && account.account ?
-					<p style={{ color: 'white', fontSize: 15, position: 'absolute', bottom: 25, left: 25 }}>
+					<p style={{ color: 'white', fontSize: 15, marginTop: 30, marginLeft: 12 }}>
 						{kadenaname ? kadenaname : `${account.account.slice(0, 10)}...`}
 					</p>
 					: null
@@ -563,19 +590,37 @@ class Header extends Component {
 					}}
 				/>
 
-				<ModalTransaction
-					showModal={this.props.showModalTx}
-					width={modalW}
-					mintSuccess={() => {
-						this.props.clearTransaction()
-						window.location.reload()
-					}}
-					mintFail={() => {
-						this.props.clearTransaction()
-						window.location.reload()
-					}}
-				/>
+				{this.renderModalTx(modalW)}
 			</div>
+		)
+	}
+
+	renderModalTx(width) {
+		return (
+			<ModalTransaction
+				showModal={this.props.showModalTx}
+				width={width}
+				mintSuccess={(requestKey) => {
+					this.props.clearTransaction(requestKey)
+					this.props.removeInfo(requestKey)
+					window.location.reload()
+				}}
+				mintFail={(pactCode, requestKey) => {
+					//console.log(pactCode);
+
+					if (!requestKey) {
+						this.props.clearTransactionByPactCode(pactCode)
+					}
+					else {
+						this.props.clearTransaction(requestKey)
+						this.props.removeInfo(requestKey)
+					}
+
+					setTimeout(() => {
+						window.location.reload()
+					}, 100)
+				}}
+			/>
 		)
 	}
 
@@ -605,6 +650,8 @@ class Header extends Component {
 
 	renderMobile() {
 		const { showPanel } = this.state
+		const { transactionsState, showModalTx } = this.props
+
 		const { boxW, modalW } = getBoxWidth(true)
 
 		return (
@@ -692,9 +739,33 @@ class Header extends Component {
 				{this.renderSlidePanel(boxW)}
 
 				{
+					transactionsState && transactionsState.length > 0 && !showModalTx &&
+					<div style={{ justifyContent: 'center', alignItems: 'center', padding: 5, marginTop: 15 }}>
+						<Popup
+							trigger={open => (
+								<div>
+									<BounceLoader
+										color='white'
+										size={26}
+									/>
+								</div>
+							)}
+							position="right center"
+							on="hover"
+						>
+							<div style={{ width: 200, overflowWrap: "anywhere" }}>
+								<p style={{ color: "black", fontSize: 16 }}>
+									{transactionsState[transactionsState.length-1].requestKey}
+								</p>
+							</div>
+						</Popup>
+					</div>
+				}
+
+				{
 					!showPanel &&
 					<button
-						style={{ position: 'absolute', left: 20, bottom: 20 }}
+						style={{ marginTop: 30 }}
 						onClick={() => {
 							this.props.setHideNavBar(true)
 							//window.location.reload()
@@ -721,18 +792,7 @@ class Header extends Component {
 					}}
 				/>
 
-				<ModalTransaction
-					showModal={this.props.showModalTx}
-					width={modalW}
-					mintSuccess={() => {
-						this.props.clearTransaction()
-						window.location.reload()
-					}}
-					mintFail={() => {
-						this.props.clearTransaction()
-						window.location.reload()
-					}}
-				/>
+				{this.renderModalTx(modalW)}
 			</div>
 		)
 	}
@@ -852,10 +912,10 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar } = state.mainReducer
+	const { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, transactionsState } = state.mainReducer
 	const { transactionToConfirmText, typeModal, transactionOkText } = state.modalTransactionReducer
 
-	return { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, transactionToConfirmText, typeModal, transactionOkText }
+	return { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, transactionToConfirmText, typeModal, transactionOkText, transactionsState }
 }
 
 export default connect(mapStateToProps, {
@@ -868,5 +928,7 @@ export default connect(mapStateToProps, {
 	swapKdaWiza,
 	clearTransaction,
 	updateInfoTransactionModal,
-	setHideNavBar
+	setHideNavBar,
+	removeInfo,
+	clearTransactionByPactCode
 })(Header);

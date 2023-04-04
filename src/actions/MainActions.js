@@ -59,7 +59,9 @@ import {
 	STORE_WALLET_XP,
 	HIDE_NAV_BAR,
 	SET_CHALLENGES_SENT,
-	SET_CHALLENGES_RECEIVED
+	SET_CHALLENGES_RECEIVED,
+	HIDE_MODAL_TX,
+	CLEAR_TRANSACTION_STATE_PACT_CODE
 } from './types'
 
 
@@ -3537,9 +3539,23 @@ export const updateTransactionState = (key, value) => {
 }
 
 
-export const clearTransaction = () => {
+export const clearTransaction = (requestKey) => {
 	return {
-		type: CLEAR_TRANSACTION_STATE
+		type: CLEAR_TRANSACTION_STATE,
+		payload: requestKey
+	}
+}
+
+export const clearTransactionByPactCode = (pactCode) => {
+	return {
+		type: CLEAR_TRANSACTION_STATE_PACT_CODE,
+		payload: pactCode
+	}
+}
+
+export const hideModalTx = () => {
+	return {
+		type: HIDE_MODAL_TX
 	}
 }
 

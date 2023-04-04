@@ -8,7 +8,7 @@ import reducers from './reducers';
 
 const saveSubsetMain = createFilter(
 	'mainReducer',
-	['account', 'chainId', 'isXWallet', 'isQRWalletConnect', 'qrWalletConnectClient', 'wizardSelectedIdShop', 'kadenaname', 'hideNavBar']
+	['account', 'chainId', 'isXWallet', 'isQRWalletConnect', 'qrWalletConnectClient', 'wizardSelectedIdShop', 'kadenaname', 'hideNavBar', 'transactionsState']
 )
 
 const saveSubsetSales = createFilter(
@@ -26,10 +26,15 @@ const saveSubsetChallenges = createFilter(
 	['showWinnerChallenges']
 )
 
+const saveSubsetTx = createFilter(
+	'modalTransactionReducer',
+	['txInfo', 'txSucceed']
+)
+
 const persistConfig = {
 	key: 'root',
 	storage,
-	transforms: [saveSubsetMain, saveSubsetSales, saveSubsetRank, saveSubsetChallenges]
+	transforms: [saveSubsetMain, saveSubsetSales, saveSubsetRank, saveSubsetChallenges, saveSubsetTx]
 }
 
 

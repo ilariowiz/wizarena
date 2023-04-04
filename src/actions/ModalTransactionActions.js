@@ -2,9 +2,13 @@ import Pact from "pact-lang-api";
 import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, sendMessageUpdateNickname, sendMessageUpgrade, sendMessageListedEquipment, sendMessageDelistedEquipment, sendMessageSalesEquipment, sendMessageOfferItem, sendMessageDeclineOffer, sendMessageChallenge } from '../components/common/WebhookDiscord'
 import { updateTransactionState } from './index'
 import {
-    UPDATE_INFO_TRANSACTION_MODAL
+    UPDATE_INFO_TRANSACTION_MODAL,
+    ADD_TX_KEY_TO_INFO,
+    REMOVE_INFO_TX,
+    ADD_TX_TO_SUCCEED
 } from './types'
 
+/*
 export const updateInfoTransactionModal = (dict) => {
     return {
         type: UPDATE_INFO_TRANSACTION_MODAL,
@@ -26,12 +30,45 @@ export const updateInfoTransactionModal = (dict) => {
         }
     }
 }
+*/
 
-export const pollForTransaction = (props) => {
+export const updateInfoTransactionModal = (dict) => {
+    return {
+        type: UPDATE_INFO_TRANSACTION_MODAL,
+        payload: dict
+    }
+}
+
+export const addTxKeyToInfo = (tx) => {
+    return {
+        type: ADD_TX_KEY_TO_INFO,
+        payload: tx
+    }
+}
+
+export const removeInfo = (tx) => {
+    return {
+        type: REMOVE_INFO_TX,
+        payload: tx
+    }
+}
+
+export const addTxToSucceed = (tx) => {
+    return {
+        type: ADD_TX_TO_SUCCEED,
+        payload: tx
+    }
+}
+
+export const pollForTransaction = (props, requestKey) => {
     return async (dispatch) => {
-        const { transactionState, networkUrl, nameNft, idNft, inputPrice, statToUpgrade, howMuchIncrement, typeModal, pvpWeek, makeOfferValues, saleValues, wizaAmount, nicknameToSet, ringToEquipName, toSubscribePvP } = props
+        const { transactionsState, networkUrl, txInfo, txSucceed } = props
 
-        const requestKey = transactionState.requestKey
+        const txState = transactionsState && transactionsState.length > 0 ? transactionsState.find(i => i.requestKey === requestKey) : undefined
+
+        //const requestKey = txState ? txState.requestKey : ""
+
+        //console.log(requestKey, txState);
 
         let pollRes = null
 
@@ -50,6 +87,28 @@ export const pollForTransaction = (props) => {
 
         if (pollRes.result.status === "success") {
             dispatch(updateTransactionState("success", 1))
+
+            if (txSucceed && txSucceed.includes(requestKey)) {
+                return
+            }
+            dispatch(addTxToSucceed(requestKey))
+
+            let currentInfo = undefined
+            if (txInfo && txInfo.length > 0) {
+                currentInfo = txInfo.find(i => i.requestKey === requestKey)
+            }
+
+            const typeModal = currentInfo ? currentInfo.typeModal : ""
+            const nameNft = currentInfo ? currentInfo.nameNft : ""
+            const statToUpgrade = currentInfo ? currentInfo.statToUpgrade : ""
+            const howMuchIncrement = currentInfo ? currentInfo.howMuchIncrement : ""
+            const idNft = currentInfo ? currentInfo.idNft : ""
+            const makeOfferValues = currentInfo ? currentInfo.makeOfferValues : ""
+            const saleValues = currentInfo ? currentInfo.saleValues : ""
+            const inputPrice = currentInfo ? currentInfo.inputPrice : ""
+            const ringToEquipName = currentInfo ? currentInfo.ringToEquipName : ""
+            const nicknameToSet = currentInfo ? currentInfo.nicknameToSet : ""
+
 
             if (typeModal === "upgrade" && nameNft && statToUpgrade && howMuchIncrement) {
                 const msg = `${nameNft} upgrade ${statToUpgrade.toUpperCase()} by ${howMuchIncrement}`

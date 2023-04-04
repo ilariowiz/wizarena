@@ -8,6 +8,7 @@ import { AiOutlineMinus } from 'react-icons/ai'
 import { IoClose } from 'react-icons/io5'
 import Media from 'react-media';
 import Popup from 'reactjs-popup';
+import toast, { Toaster } from 'react-hot-toast';
 import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
@@ -301,8 +302,13 @@ class Shop extends Component {
 	}
 
     buyStat(stat, costo) {
-        const { account, chainId, gasPrice, netId } = this.props
+        const { account, chainId, gasPrice, netId, txListen } = this.props
         const { increase } = this.state
+
+        if (txListen && txListen.length > 0) {
+            toast.error('You cannot upgrade if there is a transaction in progress')
+            return
+        }
 
         const wizard = this.getWizardSelected()
 
@@ -325,8 +331,13 @@ class Shop extends Component {
     }
 
     buyStatWithAP(stat, costo) {
-        const { account, chainId, gasPrice, netId } = this.props
+        const { account, chainId, gasPrice, netId, txListen } = this.props
         const { increase } = this.state
+
+        if (txListen && txListen.length > 0) {
+            toast.error('You cannot upgrade if there is a transaction in progress')
+            return
+        }
 
         const wizard = this.getWizardSelected()
 
@@ -349,8 +360,13 @@ class Shop extends Component {
     }
 
     burnAP() {
-        const { account, chainId, gasPrice, netId } = this.props
+        const { account, chainId, gasPrice, netId, txListen } = this.props
         const { apToBurn } = this.state
+
+        if (txListen && txListen.length > 0) {
+            toast.error('You cannot burn AP if there is a transaction in progress')
+            return
+        }
 
         const wizard = this.getWizardSelected()
 
@@ -364,8 +380,13 @@ class Shop extends Component {
     }
 
     downgrade(stat, costo) {
-        const { account, chainId, gasPrice, netId } = this.props
+        const { account, chainId, gasPrice, netId, txListen } = this.props
         const { decrease } = this.state
+
+        if (txListen && txListen.length > 0) {
+            toast.error('You cannot downgrade if there is a transaction in progress')
+            return
+        }
 
         const wizard = this.getWizardSelected()
 
@@ -388,8 +409,13 @@ class Shop extends Component {
     }
 
     buyVial(potion, costo) {
-        const { account, chainId, gasPrice, netId } = this.props
+        const { account, chainId, gasPrice, netId, txListen } = this.props
         const { tournamentName } = this.state
+
+        if (txListen && txListen.length > 0) {
+            toast.error('You cannot buy a vial if there is a transaction in progress')
+            return
+        }
 
         const wizard = this.getWizardSelected()
 
@@ -413,7 +439,12 @@ class Shop extends Component {
     }
 
     buyNickname(nickname) {
-        const { account, chainId, gasPrice, netId } = this.props
+        const { account, chainId, gasPrice, netId, txListen } = this.props
+
+        if (txListen && txListen.length > 0) {
+            toast.error('You cannot set a nickname if there is a transaction in progress')
+            return
+        }
 
         const wizard = this.getWizardSelected()
 
@@ -430,7 +461,12 @@ class Shop extends Component {
     }
 
     equipEquipment(id, name) {
-        const { account, chainId, gasPrice, netId } = this.props
+        const { account, chainId, gasPrice, netId, txListen } = this.props
+
+        if (txListen && txListen.length > 0) {
+            toast.error('You cannot equip if there is a transaction in progress')
+            return
+        }
 
         const wizard = this.getWizardSelected()
 
@@ -447,7 +483,12 @@ class Shop extends Component {
     }
 
     unequipEquipment(id, name) {
-        const { account, chainId, gasPrice, netId } = this.props
+        const { account, chainId, gasPrice, netId, txListen } = this.props
+
+        if (txListen && txListen.length > 0) {
+            toast.error('You cannot unequip if there is a transaction in progress')
+            return
+        }
 
         const wizard = this.getWizardSelected()
 
@@ -1979,6 +2020,11 @@ class Shop extends Component {
     render() {
 		return (
 			<div style={styles.container}>
+                <Toaster
+                    position="top-center"
+                    reverseOrder={false}
+                />
+
 				<Media
 					query="(max-width: 1199px)"
 					render={() => this.renderTopHeader(true)}
@@ -2103,8 +2149,9 @@ const styles = {
 
 const mapStateToProps = (state) => {
 	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, wizaBalance, wizardSelectedIdShop } = state.mainReducer;
+    const { txListen } = state.modalTransactionReducer
 
-	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, wizaBalance, wizardSelectedIdShop };
+	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, wizaBalance, wizardSelectedIdShop, txListen };
 }
 
 export default connect(mapStateToProps, {

@@ -39,7 +39,9 @@ import {
 	STORE_WALLET_XP,
 	HIDE_NAV_BAR,
 	SET_CHALLENGES_SENT,
-	SET_CHALLENGES_RECEIVED
+	SET_CHALLENGES_RECEIVED,
+	HIDE_MODAL_TX,
+	CLEAR_TRANSACTION_STATE_PACT_CODE
 } from '../actions/types'
 
 
@@ -49,7 +51,7 @@ const INITIAL_STATE = {
 	gasPrice: DEFAULT_GAS_PRICE,
 	netId: '',
 	networkUrl: '',
-	transactionState: {},
+	transactionsState: [],
 	showModalTx: false,
 	isConnectWallet: false,
 	isXWallet: '',
@@ -131,14 +133,54 @@ export default (state = INITIAL_STATE, action) => {
 		case UPDATE_TRANSACTION_STATE: {
 			const { key, value } = action.payload
 
-			let oldTState = Object.assign({}, state.transactionState)
+			//console.log(key, value);
 
-			oldTState[key] = value
+			let oldTState = Object.assign([], state.transactionsState)
 
-			return { ...state, transactionState: oldTState, showModalTx: true }
+			if (key === "cmdToConfirm") {
+				const lastTransaction = {}
+				lastTransaction[key] = value
+				oldTState.push(lastTransaction)
+			}
+			else {
+				let lastTransaction = oldTState && oldTState.length > 0 ? oldTState[oldTState.length-1] : undefined
+				if (lastTransaction) {
+					lastTransaction[key] = value
+					oldTState[oldTState.length-1] = lastTransaction
+				}
+				else {
+					lastTransaction = {}
+					lastTransaction[key] = value
+					oldTState.push(lastTransaction)
+				}
+			}
+
+			//oldTState[key] = value
+
+			return { ...state, transactionsState: oldTState, showModalTx: true }
 		}
-		case CLEAR_TRANSACTION_STATE:
-			return { ...state, transactionState: {}, showModalTx: false }
+		case CLEAR_TRANSACTION_STATE: {
+			let oldTState = Object.assign([], state.transactionsState)
+
+			const txIdx = oldTState.findIndex(i => i.requestKey === action.payload)
+			if (txIdx > -1) {
+				oldTState.splice(txIdx, 1)
+			}
+
+			return { ...state, transactionsState: oldTState, showModalTx: false }
+		}
+		case CLEAR_TRANSACTION_STATE_PACT_CODE: {
+			let oldTState = Object.assign([], state.transactionsState)
+
+			const txIdx = oldTState.findIndex(i => i.cmdToConfirm.pactCode === action.payload)
+			if (txIdx > -1) {
+				oldTState.splice(txIdx, 1)
+			}
+
+			return { ...state, transactionsState: oldTState, showModalTx: false }
+		}
+		case HIDE_MODAL_TX:
+			return { ...state, showModalTx: false }
 		case COUNT_MINTED:
 			return { ...state, countMinted: action.payload }
 		case LOAD_BUYIN:
@@ -200,7 +242,7 @@ export default (state = INITIAL_STATE, action) => {
 		case SET_CHALLENGES_SENT:
 			return { ...state, challengesSent: action.payload }
 		case LOGOUT:
-			return { ...state, account: {}, transactionState: {}, showModalTx: false, isConnectWallet: false, isXWallet: false, isQRWalletConnect: false, userMintedNfts: [], wizaBalance: 0, wizardsStaked: 0, qrWalletConnectClient: undefined, kadenaname:""}
+			return { ...state, account: {}, transactionsState: [], showModalTx: false, isConnectWallet: false, isXWallet: false, isQRWalletConnect: false, userMintedNfts: [], wizaBalance: 0, wizardsStaked: 0, qrWalletConnectClient: undefined, kadenaname:""}
 		default:
 			return state
 	}
