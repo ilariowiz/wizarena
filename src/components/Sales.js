@@ -114,10 +114,24 @@ class Sales extends Component {
                         const [selectedItem] = selection
                         const dataTable = chartWrapper.getDataTable()
                         const { row } = selectedItem
-                        //console.log(dataTable.Wf[row].c[0].v);
-                        //console.log(this.state.allSales[dataTable.Wf[row].c[0].v]);
+                        //console.log(row);
+                        //console.log(data[row+1]);
 
-                        this.setState({ selectedSales: this.state.allSales[dataTable.Wf[row].c[0].v] })
+                        const rowInfo = data[row+1]
+
+                        //console.log(rowInfo[0]);
+
+                        //console.log(this.state.allSales);
+
+                        const sales = this.state.allSales[rowInfo[0]]
+
+                        //console.log(sales);
+                        //console.log(this.state.allSales);
+
+                        //console.log(this.state.allSales[dataTable.Wf[row].c[0].v]);
+                        //this.state.allSales[dataTable.Wf[row].c[0].v]
+
+                        this.setState({ selectedSales: sales })
                     }
                 }
             }
