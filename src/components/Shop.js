@@ -305,10 +305,12 @@ class Shop extends Component {
         const { account, chainId, gasPrice, netId, txListen } = this.props
         const { increase } = this.state
 
+        /*
         if (txListen && txListen.length > 0) {
             toast.error('You cannot upgrade if there is a transaction in progress')
             return
         }
+        */
 
         const wizard = this.getWizardSelected()
 
@@ -334,10 +336,12 @@ class Shop extends Component {
         const { account, chainId, gasPrice, netId, txListen } = this.props
         const { increase } = this.state
 
+        /*
         if (txListen && txListen.length > 0) {
             toast.error('You cannot upgrade if there is a transaction in progress')
             return
         }
+        */
 
         const wizard = this.getWizardSelected()
 
@@ -363,10 +367,12 @@ class Shop extends Component {
         const { account, chainId, gasPrice, netId, txListen } = this.props
         const { apToBurn } = this.state
 
+        /*
         if (txListen && txListen.length > 0) {
             toast.error('You cannot burn AP if there is a transaction in progress')
             return
         }
+        */
 
         const wizard = this.getWizardSelected()
 
@@ -383,10 +389,12 @@ class Shop extends Component {
         const { account, chainId, gasPrice, netId, txListen } = this.props
         const { decrease } = this.state
 
+        /*
         if (txListen && txListen.length > 0) {
             toast.error('You cannot downgrade if there is a transaction in progress')
             return
         }
+        */
 
         const wizard = this.getWizardSelected()
 
@@ -412,10 +420,12 @@ class Shop extends Component {
         const { account, chainId, gasPrice, netId, txListen } = this.props
         const { tournamentName } = this.state
 
+        /*
         if (txListen && txListen.length > 0) {
             toast.error('You cannot buy a vial if there is a transaction in progress')
             return
         }
+        */
 
         const wizard = this.getWizardSelected()
 
@@ -441,10 +451,12 @@ class Shop extends Component {
     buyNickname(nickname) {
         const { account, chainId, gasPrice, netId, txListen } = this.props
 
+        /*
         if (txListen && txListen.length > 0) {
             toast.error('You cannot set a nickname if there is a transaction in progress')
             return
         }
+        */
 
         const wizard = this.getWizardSelected()
 
@@ -463,10 +475,12 @@ class Shop extends Component {
     equipEquipment(id, name) {
         const { account, chainId, gasPrice, netId, txListen } = this.props
 
+        /*
         if (txListen && txListen.length > 0) {
             toast.error('You cannot equip if there is a transaction in progress')
             return
         }
+        */
 
         const wizard = this.getWizardSelected()
 
@@ -485,10 +499,12 @@ class Shop extends Component {
     unequipEquipment(id, name) {
         const { account, chainId, gasPrice, netId, txListen } = this.props
 
+        /*
         if (txListen && txListen.length > 0) {
             toast.error('You cannot unequip if there is a transaction in progress')
             return
         }
+        */
 
         const wizard = this.getWizardSelected()
 
