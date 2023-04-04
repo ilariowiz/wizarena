@@ -9,13 +9,14 @@ import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, 
 import '../../css/Modal.css'
 import {
 	signTransaction,
-	updateTransactionState
+	updateTransactionState,
+	pollForTransaction
 } from '../../actions'
 import { TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../../actions/types'
 import '../../css/Nft.css'
 
 
-const POLL_INTERVAL_S = 3
+//const POLL_INTERVAL_S = 4
 
 class ModalTransaction extends Component {
 
@@ -45,104 +46,8 @@ class ModalTransaction extends Component {
 				updateDoc(docRef, {"maxFights": increment(wizaAmount) })
 			}
 
-			this.pollForTransaction()
+			this.props.pollForTransaction(this.props)
 		}
-	}
-
-	pollForTransaction = async () => {
-		const { transactionState, networkUrl, nameNft, idNft, inputPrice, statToUpgrade, howMuchIncrement, typeModal, pvpWeek, makeOfferValues, saleValues, wizaAmount, nicknameToSet, ringToEquipName, toSubscribePvP } = this.props
-
-		const requestKey = transactionState.requestKey
-
-		let time_spent_polling_s = 0;
-		let pollRes = null
-
-		while (time_spent_polling_s < 240) {
-			await this.wait(POLL_INTERVAL_S * 3000)
-
-			try {
-				pollRes = await Pact.fetch.poll(
-					{ requestKeys: [requestKey] },
-					networkUrl
-				)
-			}
-			catch (e) {
-				console.log(e)
-				console.log("Had trouble getting transaction update, will try again")
-				continue
-			}
-
-			if (Object.keys(pollRes).length !== 0) {
-				break
-			}
-
-			time_spent_polling_s += POLL_INTERVAL_S
-		}
-
-
-		if (pollRes[requestKey].result.status === "success") {
-			this.props.updateTransactionState("success", 1)
-
-			if (typeModal === "upgrade" && nameNft && statToUpgrade && howMuchIncrement) {
-				const msg = `${nameNft} upgrade ${statToUpgrade.toUpperCase()} by ${howMuchIncrement}`
-				sendMessageUpgrade(idNft, msg)
-			}
-			else if (typeModal === "downgrade" && nameNft && statToUpgrade && howMuchIncrement) {
-				const msg = `${nameNft} downgrade ${statToUpgrade.toUpperCase()} by ${howMuchIncrement}`
-				sendMessageUpgrade(idNft, msg)
-			}
-			else if (typeModal === "buyvial" && nameNft && statToUpgrade) {
-				const msg = `${nameNft} bought a ${statToUpgrade.toUpperCase()} vial`
-				sendMessageUpgrade(idNft, msg)
-			}
-			else if (typeModal === "makeoffer") {
-				sendMessage(makeOfferValues.id, makeOfferValues.amount, makeOfferValues.duration, makeOfferValues.owner)
-			}
-			else if (typeModal === "declineoffer") {
-				sendMessageDeclineOffer(saleValues)
-			}
-			else if (typeModal === "makeofferitem") {
-				//console.log(makeOfferValues);
-				sendMessageOfferItem(makeOfferValues)
-			}
-			else if (typeModal === "acceptoffer" || typeModal === "buy") {
-				sendMessageSales(saleValues.id, saleValues.amount)
-			}
-			else if (typeModal === "buyequipment" || typeModal === "acceptofferequipment") {
-				sendMessageSalesEquipment(saleValues)
-			}
-			else if (typeModal === "list") {
-				sendMessageListed(idNft, inputPrice)
-			}
-			else if (typeModal === 'listequipment') {
-				sendMessageListedEquipment(saleValues)
-			}
-			else if (typeModal === "delist") {
-				sendMessageDelisted(nameNft.replace("#", ""))
-			}
-			else if (typeModal === "delistequipment") {
-				sendMessageDelistedEquipment(saleValues)
-			}
-			else if (typeModal === "equip") {
-				const msg = `${nameNft} wore the ${ringToEquipName}`
-				sendMessageUpgrade(nameNft.replace("#", ""), msg)
-			}
-			else if (typeModal === "buynickname") {
-				sendMessageUpdateNickname(nameNft.replace("#", ""), nicknameToSet)
-			}
-			else if (typeModal === "sendchallenge") {
-				 sendMessageChallenge(makeOfferValues)
-			}
-		}
-		else {
-			this.props.updateTransactionState("error", `Cannot complete transaction\n${requestKey}`)
-		}
-	}
-
-	wait = async (timeout) => {
-		return new Promise((resolve) => {
-			setTimeout(resolve, timeout)
-		})
 	}
 
 	getContent() {
@@ -311,5 +216,6 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
 	signTransaction,
-	updateTransactionState
+	updateTransactionState,
+	pollForTransaction
 })(ModalTransaction);
