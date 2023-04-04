@@ -5,7 +5,8 @@ import {
     UPDATE_INFO_TRANSACTION_MODAL,
     ADD_TX_KEY_TO_INFO,
     REMOVE_INFO_TX,
-    ADD_TX_TO_SUCCEED
+    ADD_TX_TO_SUCCEED,
+    ADD_TX_KEY_TO_LISTEN
 } from './types'
 
 /*
@@ -56,6 +57,13 @@ export const removeInfo = (tx) => {
 export const addTxToSucceed = (tx) => {
     return {
         type: ADD_TX_TO_SUCCEED,
+        payload: tx
+    }
+}
+
+export const addTxKeyToListed = (tx) => {
+    return {
+        type: ADD_TX_KEY_TO_LISTEN,
         payload: tx
     }
 }

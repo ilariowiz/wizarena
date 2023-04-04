@@ -2,7 +2,8 @@ import {
     UPDATE_INFO_TRANSACTION_MODAL,
     ADD_TX_KEY_TO_INFO,
     REMOVE_INFO_TX,
-    ADD_TX_TO_SUCCEED
+    ADD_TX_TO_SUCCEED,
+    ADD_TX_KEY_TO_LISTEN
 } from '../actions/types'
 
 const INITIAL_STATE = {
@@ -71,6 +72,12 @@ export default (state = INITIAL_STATE, action) => {
             oldListen.push(action.payload)
 
             return { ...state, txInfo: oldInfos, txListen: oldListen }
+        }
+        case ADD_TX_KEY_TO_LISTEN: {
+            let oldListen = Object.assign([], state.txListen)
+            oldListen.push(action.payload)
+
+            return { ...state, txListen: oldListen }
         }
         case REMOVE_INFO_TX: {
             let oldInfos = Object.assign([], state.txInfo)

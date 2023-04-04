@@ -13,7 +13,8 @@ import {
 	pollForTransaction,
 	hideModalTx,
 	addTxKeyToInfo,
-	clearTransactionByPactCode
+	clearTransactionByPactCode,
+	addTxKeyToListed
 } from '../../actions'
 import { TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../../actions/types'
 import '../../css/Nft.css'
@@ -30,7 +31,7 @@ class ModalTransaction extends Component {
 		//sendMessage("866", 32, 3, "k:461ae9f3c9c255112ac3797f6b15699c656c9bc44ed089551a0f792085ef9504")
 		//sendMessageUpdateNickname("555", "Test")
 
-		//console.log(transactionsState, txListen);
+		console.log(transactionsState, txListen);
 		if (transactionsState && transactionsState.length > 0) {
 
 			transactionsState.map(i => {
@@ -41,11 +42,13 @@ class ModalTransaction extends Component {
 				if (!txListen && i.requestKey) {
 					setTimeout(() => {
 						this.props.pollForTransaction(this.props, i.requestKey)
+						this.props.addTxKeyToListed(i.requestKey)
 					}, 500)
 				}
 				else if (i.requestKey && !txListen.includes(i.requestKey)) {
 					setTimeout(() => {
 						this.props.pollForTransaction(this.props, i.requestKey)
+						this.props.addTxKeyToListed(i.requestKey)
 					}, 500)
 				}
 			})
@@ -272,5 +275,6 @@ export default connect(mapStateToProps, {
 	pollForTransaction,
 	hideModalTx,
 	addTxKeyToInfo,
-	clearTransactionByPactCode
+	clearTransactionByPactCode,
+	addTxKeyToListed
 })(ModalTransaction);
