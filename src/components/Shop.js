@@ -1115,6 +1115,8 @@ class Shop extends Component {
             speed_gain: 1
         }
 
+        const downgradesLeft = wizard.downgrades ? wizard.downgrades.int : 0
+
         let statToDowngrade;
 
         const baseApGain = apGain[`${key}_gain`]
@@ -1122,6 +1124,10 @@ class Shop extends Component {
         //console.log(decreaseTo, key, baseApGain);
 
         let gain = Math.floor(decreaseTo * baseApGain);
+        if (gain > downgradesLeft) {
+            gain = downgradesLeft
+        }
+        
         let newLevel;
 
         if (wizard && wizard.id) {
@@ -1889,8 +1895,12 @@ class Shop extends Component {
                             </p>
                         </div>
 
-                        <p style={{ fontSize: 20, color: "white", marginBottom: 15 }}>
+                        <p style={{ fontSize: 20, color: "white", marginBottom: 10 }}>
                             Rebuild your wizard, you can't go under the initial stat
+                        </p>
+
+                        <p style={{ fontSize: 20, color: "white", marginBottom: 15 }}>
+                            Downgrade points: {wizard.downgrades ? wizard.downgrades.int : 0}
                         </p>
 
                         <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>

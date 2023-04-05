@@ -847,7 +847,7 @@
     "damage": 2,
     "defense": 15,
     "speed": 0,
-    "hp": 61
+    "hp": 11
 },
 {
     "id": "1",
@@ -1180,7 +1180,7 @@
   ]
 }])
 
-(free.wiz-arena.retrain "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "defense" 1 free.wiza)
+(free.wiz-arena.retrain "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "hp" 20 free.wiza)
 
 (commit-tx)
 
