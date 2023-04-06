@@ -11,11 +11,14 @@ import Popup from 'reactjs-popup';
 import toast, { Toaster } from 'react-hot-toast';
 import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
+import ModalSwapSpell from './common/ModalSwapSpell'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import ModalSetName from './common/ModalSetName'
 import NftCardShop from './common/NftCardShop'
 import NftCardShopSelected from './common/NftCardShopSelected'
 import calcUpgradeCost from './common/CalcUpgradeCost'
+import allSpells from './common/Spells'
+import conditions from './common/Conditions'
 import { calcLevelWizardAfterUpgrade, getColorTextBasedOnLevel, calcLevelWizardAfterDowngrade } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
@@ -37,7 +40,8 @@ import {
     unequipItem,
     buyDowngrade,
     getWizaValue,
-    updateInfoTransactionModal
+    updateInfoTransactionModal,
+    swapSpell
 } from '../actions'
 import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, MAX_LEVEL, TEST_NET_ID } from '../actions/types'
 import '../css/Nft.css'
@@ -66,6 +70,8 @@ const retrain_dmg = require('../assets/retrain_dmg.png')
 const retrain_speed = require('../assets/retrain_speed.png')
 const retrain_hp = require('../assets/retrain_hp.png')
 
+const book_shop = require('../assets/book_shop.png')
+
 
 class Shop extends Component {
     constructor(props) {
@@ -93,7 +99,9 @@ class Shop extends Component {
             itemsToShow: [],
             searchText: "",
             searchedText: "",
-            showModalBuy: false
+            showModalBuy: false,
+            showModalSwapSpell: false,
+            newSpellToLearn: {}
         }
     }
 
@@ -518,6 +526,21 @@ class Shop extends Component {
 		})
 
         this.props.unequipItem(chainId, gasPrice, netId, id, account, wizard.id)
+    }
+
+    swapSpell(oldspell) {
+        const { account, chainId, gasPrice, netId } = this.props
+        const { newSpellToLearn } = this.state
+
+        const wizard = this.getWizardSelected()
+
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will swap ${oldspell.name} to ${newSpellToLearn.name}`,
+			typeModal: 'swapspell',
+			transactionOkText: `Spell swapped successfully!`
+		})
+
+        this.props.swapSpell(chainId, gasPrice, netId, account, wizard.id, oldspell.name, newSpellToLearn.name)
     }
 
     sortById() {
@@ -1127,7 +1150,7 @@ class Shop extends Component {
         if (gain > downgradesLeft) {
             gain = downgradesLeft
         }
-        
+
         let newLevel;
 
         if (wizard && wizard.id) {
@@ -1562,33 +1585,163 @@ class Shop extends Component {
         )
     }
 
+    renderSpellUnkown(isMobile) {
+
+        const wizard = this.getWizardSelected()
+
+        if (!wizard || !wizard.id) {
+            return <div />
+        }
+
+        //console.log(wizard);
+
+        if (wizard.spellbook.length < 4) {
+            return (
+                <div style={{ marginTop: 20, marginBottom: 20 }}>
+                    <p style={{ fontSize: 17, color: 'white' }}>
+                        Your wizard must know at least 4 spells in order to learn another
+                    </p>
+                </div>
+            )
+        }
+
+        const wizardSpellbook = wizard.spellbook
+
+        let spellMancanti = []
+
+        const spellsWizardElement = allSpells.filter(i => i.element === wizard.element)
+        //console.log(spellsWizardElement);
+
+        spellsWizardElement.map(i => {
+            const alreadyHas = wizardSpellbook.some(s => s.name === i.name)
+            if (!alreadyHas) {
+                spellMancanti.push(i)
+            }
+        })
+
+        //console.log(spellMancanti);
+
+        return (
+            <div style={{ marginTop: 20, marginBottom: 20, flexDirection: 'column' }}>
+                {spellMancanti.map((spell, index) => {
+                    return this.renderSpell(spell, index)
+                })}
+            </div>
+        )
+    }
+
+    renderSpell(spell, index) {
+        const { wizaValue } = this.state
+
+		const marginRight = 12
+
+		//console.log(item);
+		let condDesc;
+		if (spell.condition && spell.condition.name) {
+			let condInfo = conditions.find(i => i.name === spell.condition.name)
+			if (condInfo) {
+				condDesc = `${condInfo.effect} - Chance of success: ${spell.condition.pct}%`
+			}
+		}
+
+		return (
+			<div key={index} style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
+
+                <button
+                    className="btnH"
+                    style={styles.btnSwap}
+                    onClick={() => this.setState({ showModalSwapSpell: true, newSpellToLearn: spell })}
+                >
+                    <p style={{ fontSize: 14, color: 'white', marginBottom: 3 }}>
+                        {round((wizaValue * 10), 2)} WIZA
+                    </p>
+                    <p style={{ fontSize: 16, color: 'white' }}>
+                        SWAP
+                    </p>
+                </button>
+
+				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
+					NAME
+				</p>
+				<p style={{ color: "white", fontSize: 20, marginRight }}>
+					{spell.name}
+				</p>
+				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
+					PERK
+				</p>
+
+				{
+					spell.condition && spell.condition.name ?
+					<Popup
+						trigger={open => (
+							<button style={{ color: "white", fontSize: 20, marginRight }}>
+								{spell.condition.name}
+							</button>
+						)}
+						position="top center"
+						on="hover"
+					>
+						<div style={{ padding: 10, fontSize: 16 }}>
+							{condDesc}
+						</div>
+					</Popup>
+					:
+					<p style={{ color: "white", fontSize: 20, marginRight }}>
+						-
+					</p>
+				}
+
+
+
+				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
+					BASE ATK
+				</p>
+				<p style={{ color: "white", fontSize: 20, marginRight }}>
+					{spell.atkBase}
+				</p>
+
+				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
+					BASE DMG
+				</p>
+				<p style={{ color: "white", fontSize: 20 }}>
+					{spell.dmgBase}
+				</p>
+
+			</div>
+		)
+	}
+
     renderBoxMenu(key) {
 
         let img;
         let imgStyle;
         if (key === "UPGRADES") {
             img = potion_hp
-            imgStyle = { height: 70 }
+            imgStyle = { height: 62 }
         }
         else if (key === "AP") {
             img = potion_dmg
-            imgStyle = { height: 70 }
+            imgStyle = { height: 62 }
         }
         else if (key === "RETRAIN") {
             img = retrain_def
-            imgStyle = { height: 70 }
+            imgStyle = { height: 62 }
         }
         else if (key === "VIALS") {
             img = vial_atk
-            imgStyle = { height: 50 }
+            imgStyle = { height: 42 }
         }
         else if (key === "NICKNAME") {
             img = banner_nickname
-            imgStyle = { height: 60 }
+            imgStyle = { height: 52 }
         }
         else if (key === "RINGS") {
             img = ring_dmg
-            imgStyle = { height: 58 }
+            imgStyle = { height: 50 }
+        }
+        else if (key === "SPELLBOOK") {
+            img = book_shop
+            imgStyle = { height: 40 }
         }
 
         let divId = `shop-${key.toLowerCase()}`
@@ -1601,7 +1754,7 @@ class Shop extends Component {
                     document.getElementById(divId).scrollIntoView({ behavior: 'smooth' })
                 }}
             >
-                <div style={{ width: 70, height: 70, marginBottom: 3, justifyContent: 'center', alignItems: 'center' }}>
+                <div style={{ width: 62, height: 62, marginBottom: 3, justifyContent: 'center', alignItems: 'center' }}>
                     <img
                         src={img}
                         style={imgStyle}
@@ -1609,7 +1762,7 @@ class Shop extends Component {
                     />
                 </div>
 
-                <p style={{ fontSize: 18, color: 'white' }}>
+                <p style={{ fontSize: 16, color: 'white' }}>
                     {key}
                 </p>
 
@@ -1796,6 +1949,7 @@ class Shop extends Component {
                             {this.renderBoxMenu("AP")}
                             {this.renderBoxMenu("RETRAIN")}
                             {this.renderBoxMenu("VIALS")}
+                            {this.renderBoxMenu("SPELLBOOK")}
                             {this.renderBoxMenu("NICKNAME")}
                         </div>
 
@@ -1967,6 +2121,21 @@ class Shop extends Component {
                             </div>
                         }
 
+                        <div style={{ flexDirection: 'column' }} id="shop-spellbook">
+
+                            <div style={{ width: '100%', alignItems: 'center', padding: 5, marginBottom: 5, backgroundColor: "#2d2a42", borderRadius: 2 }}>
+                                <p style={{ fontSize: 26, color: 'white' }}>
+                                    SPELLBOOK
+                                </p>
+                            </div>
+
+                            <p style={{ fontSize: 18, color: 'white', marginBottom: 10 }}>
+                                Swap a spell you know for a new one
+                            </p>
+
+                            {this.renderSpellUnkown(isMobile)}
+                        </div>
+
                         <div style={{ flexDirection: 'column' }} id="shop-nickname">
 
                             <div style={{ width: '100%', alignItems: 'center', padding: 5, marginBottom: 5, backgroundColor: "#2d2a42", borderRadius: 2 }}>
@@ -2019,6 +2188,20 @@ class Shop extends Component {
                         this.setState({ showModalSetName: false })
                     }}
                 />
+
+                {
+                    this.state.showModalSwapSpell &&
+                    <ModalSwapSpell
+                        showModal={this.state.showModalSwapSpell}
+                        onCloseModal={() => this.setState({ showModalSwapSpell: false })}
+                        width={modalW}
+                        stats={wizard}
+                        onSwap={(spellSelected) => {
+                            this.swapSpell(spellSelected)
+                            this.setState({ showModalSwapSpell: false })
+                        }}
+                    />
+                }
 
             </div>
         )
@@ -2140,14 +2323,14 @@ const styles = {
         alignItems: 'center'
     },
     boxMenu: {
-        width: 125,
-        height: 100,
-        borderRadius: 8,
+        width: 90,
+        height: 90,
+        borderRadius: 4,
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
         display: 'flex',
-        marginRight: 20,
+        marginRight: 15,
         marginBottom: 15
     },
     btnStat: {
@@ -2170,6 +2353,21 @@ const styles = {
         borderWidth: 2,
         borderStyle: 'solid',
 		marginBottom: 15,
+    },
+    btnSwap: {
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingTop: 5,
+        paddingBottom: 5,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: CTA_COLOR,
+        borderRadius: 2,
+        marginRight: 20,
+        marginBottom: 5,
+        marginTop: 5
     }
 }
 
@@ -2198,5 +2396,6 @@ export default connect(mapStateToProps, {
     unequipItem,
     buyDowngrade,
     getWizaValue,
-    updateInfoTransactionModal
+    updateInfoTransactionModal,
+    swapSpell
 })(Shop)

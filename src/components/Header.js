@@ -440,9 +440,11 @@ class Header extends Component {
 	}
 
 	renderDesktop() {
-		const { account, kadenaname, transactionsState, showModalTx } = this.props
+		const { account, kadenaname, transactionsState, showModalTx, txInfo } = this.props
 
 		const { boxW, modalW } = getBoxWidth(false)
+
+		const textToConfirm = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1].transactionToConfirmText : ""
 
 		return (
 			<div style={{ flexDirection: 'column', padding: 15, backgroundColor: '#2d2a42', position: 'relative', overflowY: 'auto' }} id="headerbox">
@@ -549,7 +551,7 @@ class Header extends Component {
 						>
 							<div style={{ width: 200, overflowWrap: "anywhere" }}>
 								<p style={{ color: "black", fontSize: 16 }}>
-									{transactionsState[transactionsState.length-1].requestKey}
+									{textToConfirm}.<br /> Request key: {transactionsState[transactionsState.length-1].requestKey}
 								</p>
 							</div>
 						</Popup>
@@ -913,9 +915,9 @@ const styles = {
 
 const mapStateToProps = (state) => {
 	const { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, transactionsState } = state.mainReducer
-	const { transactionToConfirmText, typeModal, transactionOkText } = state.modalTransactionReducer
+	const { txInfo } = state.modalTransactionReducer
 
-	return { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, transactionToConfirmText, typeModal, transactionOkText, transactionsState }
+	return { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, txInfo, transactionsState }
 }
 
 export default connect(mapStateToProps, {

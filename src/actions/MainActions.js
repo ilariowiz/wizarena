@@ -2555,6 +2555,41 @@ export const buyNickname = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, accoun
 	}
 }
 
+export const swapSpell = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft, oldspellname, newspellname) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.swap-spell "${idnft}" "${account.account}" "${oldspellname}" "${newspellname}" free.wiza)`;
+
+		let cmd = {
+			pactCode,
+			caps: [
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME}.OWNER`,
+          			[account.account, idnft]
+        		),
+				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+			],
+			sender: account.account,
+			gasLimit: 5000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("swapSpell", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
 export const equipItem = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, iditem, account, idnft) => {
 	return (dispatch) => {
 

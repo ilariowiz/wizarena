@@ -345,6 +345,14 @@
         blockTime:time
     )
 
+    (defschema spells-schema
+        element:string
+        atkBase:integer
+        dmgBase:integer
+        condition:object
+        name:string
+    )
+
     (deftable nfts:{nft-main-schema})
     (deftable nfts-market:{nft-listed-schema})
     (deftable creation:{creation-schema})
@@ -371,6 +379,8 @@
     (deftable wallet-xp:{wallet-xp-schema})
 
     (deftable challenges:{challenges-schema})
+
+    (deftable spells:{spells-schema})
 
     ; --------------------------------------------------------------------------
   ; Can only happen once
@@ -591,6 +601,31 @@
                 "defense": (at "defense" item),
                 "hp": (at "hp" item),
                 "speed": (at "speed" item)}
+            )
+        )
+    )
+
+    (defun add-spells (objects-list:list)
+        (with-capability (ADMIN)
+            (map
+                (add-spell)
+                objects-list
+            )
+        )
+    )
+
+    (defun add-spell (item:object)
+        (require-capability (ADMIN))
+        (let
+            (
+                (name (at "name" item))
+            )
+            (insert spells name
+                {"name": name,
+                "atkBase": (at "atkBase" item),
+                "dmgBase": (at "dmgBase" item),
+                "element": (at "element" item),
+                "condition": (at "condition" item)}
             )
         )
     )
@@ -1867,6 +1902,55 @@
     )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;; SWAP SPELL ;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (defun swap-spell (idnft:string account:string oldspell:string newspell:string m:module{wiza1-interface-v1})
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+        (let (
+                (data (get-wizard-fields-for-id (str-to-int idnft)))
+                (account-xp (get-wallet-xp account))
+                (oldspell-info (get-spell-info oldspell))
+                (newspell-info (get-spell-info newspell))
+                (wiza-cost (* (get-wiza-value) 10))
+            )
+            (enforce (= (length (at "spellbook" data)) 4) "The wizard must have 4 spells to do the swap")
+            (enforce (>= account-xp 250) "You must have at least 250 xp to do the swap")
+            (enforce (= (at "element" data) (at "element" newspell-info)) "You cannot learn this spell")
+            (let (
+                    (contain-oldspell (check-spellbook-contain-spell (at "spellbook" data) oldspell-info))
+                    (contain-newspell (check-spellbook-contain-spell (at "spellbook" data) newspell-info))
+                    (newspellbook (create-new-spellbook (at "spellbook" data) oldspell-info newspell-info))
+                )
+                (enforce (= contain-oldspell true) "This wizard does not have the old spell")
+                (enforce (= contain-newspell false) "You already know this spell")
+                (with-capability (OWNER account idnft)
+                    (update stats idnft
+                        {"spellbook": newspellbook }
+                    )
+                    (spend-wiza wiza-cost account m)
+                )
+            )
+        )
+    )
+
+    (defun check-spellbook-contain-spell (spellbook:list spell:object)
+        (contains spell spellbook)
+    )
+
+    (defun create-new-spellbook (spellbook:list oldspell:object newspell:object)
+        (let (
+                (newspellbook (+ (filter (where 'name (!= (at "name" oldspell))) spellbook) (make-list 1 newspell)))
+            )
+            newspellbook
+        )
+    )
+
+    (defun get-spell-info (spell:string)
+        (read spells spell)
+    )
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;; BURN ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -2383,6 +2467,8 @@
     (create-table wallet-xp)
 
     (create-table challenges)
+
+    (create-table spells)
 
     (initialize)
     (insertValuesUpgrade)

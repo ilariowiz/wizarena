@@ -637,7 +637,7 @@
     "medals": {},
     "resistance": "ice",
     "spellSelected": {"atkBase":6, "condition":{}, "dmgBase":6, "element":"Dark","name":"Unholy Nova"},
-    "spellbook":[{"atkBase":6, "condition":{}, "dmgBase":6, "element":"Dark","name":"Unholy Nova"}],
+    "spellbook":[{"atkBase":6, "condition":{}, "dmgBase":6, "element":"Dark","name":"Unholy Nova"}, {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}, {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Avalance"}, {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Dark","name":"Bho"}],
     "ap": 0
 },
 {
@@ -834,6 +834,10 @@
 }
 ])
 
+;(free.wiz-arena.check-spellbook-contain-spell [{"atkBase":6, "condition":{}, "dmgBase":6, "element":"Dark","name":"Unholy Nova"}] {"atkBase":6, "condition":{}, "dmgBase":6, "element":"Dark","name":"Unholy Nova"})
+
+;(free.wiz-arena.create-new-spellbook [{"atkBase":6, "condition":{}, "dmgBase":6, "element":"Dark","name":"Unholy Nova"}, {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}] {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"} {"atkBase":3, "condition":{}, "dmgBase":7, "element":"Dark","name":"Hex"})
+
 (commit-tx)
 
 
@@ -857,6 +861,8 @@
     "speed": 2,
     "hp": 44
 }])
+
+(free.wiz-arena.add-spells [{"atkBase":6, "condition":{}, "dmgBase":6, "element":"Dark","name":"Unholy Nova"}, {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}, {"atkBase":3, "condition":{}, "dmgBase":7, "element":"Dark","name":"Hex"}, {"atkBase":5, "condition":{}, "dmgBase":5, "element":"Ice","name":"Avalance"}])
 
 (commit-tx)
 
@@ -979,6 +985,20 @@
 }])
 
 (free.wiz-arena.get-druids "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" 2)
+
+(commit-tx)
+
+(begin-tx "SWAP SPELL")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.swap-spell "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "Fireball" "Hex" free.wiza)
 
 (commit-tx)
 
