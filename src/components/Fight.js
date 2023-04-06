@@ -444,7 +444,9 @@ class Fight extends Component {
 
         const { boxW, modalW } = getBoxWidth(isMobile)
 
-		let spaceImage = (boxW / 2) - 40
+        let maxWidth = boxW > 1000 ? 1000 : boxW
+
+		let spaceImage = (maxWidth / 2) - 40
         if (spaceImage > 400) {
             spaceImage = 400
         }
@@ -469,9 +471,9 @@ class Fight extends Component {
 
         if (showOnlyOne && u1) {
             return (
-                <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+                <div style={{ flexDirection: 'column', width: boxW, alignItems: 'center', marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                    <div style={{ width: boxW, justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
+                    <div style={{ width: maxWidth, justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
 
                         {this.renderSingleNft(u1, spaceImage)}
                     </div>
@@ -480,7 +482,7 @@ class Fight extends Component {
                         ACTIONS
                     </p>
 
-                    {actions && actions.map((item, index) => this.renderAction(item, index, boxW))}
+                    {actions && actions.map((item, index) => this.renderAction(item, index, maxWidth))}
 
                     <p style={{ fontSize: 22, marginTop: 10, marginBottom: 10, color: TEXT_SECONDARY_COLOR }}>
                         WINNER
@@ -499,9 +501,9 @@ class Fight extends Component {
         }
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }} id="mainBox">
+            <div style={{ flexDirection: 'column', width: boxW, alignItems: 'center', marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }} id="mainBox">
 
-                <div style={{ width: boxW, justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
+                <div style={{ width: maxWidth, justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
 
                     <div style={{ flexDirection: 'column', height: '100%' }}>
                         {this.renderSingleNft(u1, spaceImage)}
@@ -581,7 +583,7 @@ class Fight extends Component {
                             ACTIONS
                         </p>
 
-                        {actions && actions.map((item, index) => this.renderAction(item, index, boxW))}
+                        {actions && actions.map((item, index) => this.renderAction(item, index, maxWidth))}
 
                         <p style={{ fontSize: 22, marginTop: 10, marginBottom: 10, color: TEXT_SECONDARY_COLOR }}>
                             WINNER
@@ -600,7 +602,7 @@ class Fight extends Component {
                             ACTIONS
                         </p>
 
-                        {fightActions && fightActions.map((item, index) => this.renderActionFight(item, index, boxW))}
+                        {fightActions && fightActions.map((item, index) => this.renderActionFight(item, index, maxWidth))}
 
                         {
                             fightActions.length === actions.length &&
