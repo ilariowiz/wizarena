@@ -99,75 +99,7 @@ export const pollForTransaction = (props, requestKey) => {
             if (txSucceed && txSucceed.includes(requestKey)) {
                 return
             }
-            dispatch(addTxToSucceed(requestKey))
-
-            let currentInfo = undefined
-            if (txInfo && txInfo.length > 0) {
-                currentInfo = txInfo.find(i => i.requestKey === requestKey)
-            }
-
-            const typeModal = currentInfo ? currentInfo.typeModal : ""
-            const nameNft = currentInfo ? currentInfo.nameNft : ""
-            const statToUpgrade = currentInfo ? currentInfo.statToUpgrade : ""
-            const howMuchIncrement = currentInfo ? currentInfo.howMuchIncrement : ""
-            const idNft = currentInfo ? currentInfo.idNft : ""
-            const makeOfferValues = currentInfo ? currentInfo.makeOfferValues : ""
-            const saleValues = currentInfo ? currentInfo.saleValues : ""
-            const inputPrice = currentInfo ? currentInfo.inputPrice : ""
-            const ringToEquipName = currentInfo ? currentInfo.ringToEquipName : ""
-            const nicknameToSet = currentInfo ? currentInfo.nicknameToSet : ""
-
-
-            if (typeModal === "upgrade" && nameNft && statToUpgrade && howMuchIncrement) {
-                const msg = `${nameNft} upgrade ${statToUpgrade.toUpperCase()} by ${howMuchIncrement}`
-                sendMessageUpgrade(idNft, msg)
-            }
-            else if (typeModal === "downgrade" && nameNft && statToUpgrade && howMuchIncrement) {
-                const msg = `${nameNft} downgrade ${statToUpgrade.toUpperCase()} by ${howMuchIncrement}`
-                sendMessageUpgrade(idNft, msg)
-            }
-            else if (typeModal === "buyvial" && nameNft && statToUpgrade) {
-                const msg = `${nameNft} bought a ${statToUpgrade.toUpperCase()} vial`
-                sendMessageUpgrade(idNft, msg)
-            }
-            else if (typeModal === "makeoffer") {
-                sendMessage(makeOfferValues.id, makeOfferValues.amount, makeOfferValues.duration, makeOfferValues.owner)
-            }
-            else if (typeModal === "declineoffer") {
-                sendMessageDeclineOffer(saleValues)
-            }
-            else if (typeModal === "makeofferitem") {
-                //console.log(makeOfferValues);
-                sendMessageOfferItem(makeOfferValues)
-            }
-            else if (typeModal === "acceptoffer" || typeModal === "buy") {
-                sendMessageSales(saleValues.id, saleValues.amount)
-            }
-            else if (typeModal === "buyequipment" || typeModal === "acceptofferequipment") {
-                sendMessageSalesEquipment(saleValues)
-            }
-            else if (typeModal === "list") {
-                sendMessageListed(idNft, inputPrice)
-            }
-            else if (typeModal === 'listequipment') {
-                sendMessageListedEquipment(saleValues)
-            }
-            else if (typeModal === "delist") {
-                sendMessageDelisted(nameNft.replace("#", ""))
-            }
-            else if (typeModal === "delistequipment") {
-                sendMessageDelistedEquipment(saleValues)
-            }
-            else if (typeModal === "equip") {
-                const msg = `${nameNft} wore the ${ringToEquipName}`
-                sendMessageUpgrade(nameNft.replace("#", ""), msg)
-            }
-            else if (typeModal === "buynickname") {
-                sendMessageUpdateNickname(nameNft.replace("#", ""), nicknameToSet)
-            }
-            else if (typeModal === "sendchallenge") {
-                 sendMessageChallenge(makeOfferValues)
-            }
+            dispatch(addTxToSucceed(requestKey))            
         }
         else {
             dispatch(updateTransactionState("error", `Cannot complete transaction\n${requestKey}`))

@@ -63,11 +63,23 @@ class ModalTransaction extends Component {
 		if (txState && txState.requestKey) {
 			//console.log(txState.requestKey)
 
-			const typeModal = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1].typeModal : ""
-			const toSubscribePvP = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1].toSubscribePvP : ""
-			const pvpWeek = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1].pvpWeek : ""
-			const nameNft = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1].nameNft : ""
-			const wizaAmount = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1].wizaAmount : ""
+			const info = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1] : {}
+
+
+			const typeModal = info.typeModal || ""
+			const toSubscribePvP = info.toSubscribePvP || ""
+			const pvpWeek = info.pvpWeek || ""
+			const nameNft = info.nameNft || ""
+			const wizaAmount = info.wizaAmount || ""
+
+            const statToUpgrade = info.statToUpgrade || ""
+            const howMuchIncrement = info.howMuchIncrement || ""
+            const idNft = info.idNft || ""
+            const makeOfferValues = info.makeOfferValues || ""
+            const saleValues = info.saleValues || ""
+            const inputPrice = info.inputPrice || ""
+            const ringToEquipName = info.ringToEquipName || ""
+            const nicknameToSet = info.nicknameToSet || ""
 
 			if (typeModal === "subscribe_pvp") {
 				toSubscribePvP.map(i => {
@@ -82,6 +94,56 @@ class ModalTransaction extends Component {
 				const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_${nameNft}`)
 				updateDoc(docRef, {"maxFights": increment(wizaAmount) })
 			}
+			else if (typeModal === "upgrade" && nameNft && statToUpgrade && howMuchIncrement) {
+                const msg = `${nameNft} upgrade ${statToUpgrade.toUpperCase()} by ${howMuchIncrement}`
+                sendMessageUpgrade(idNft, msg)
+            }
+            else if (typeModal === "downgrade" && nameNft && statToUpgrade && howMuchIncrement) {
+                const msg = `${nameNft} downgrade ${statToUpgrade.toUpperCase()} by ${howMuchIncrement}`
+                sendMessageUpgrade(idNft, msg)
+            }
+            else if (typeModal === "buyvial" && nameNft && statToUpgrade) {
+                const msg = `${nameNft} bought a ${statToUpgrade.toUpperCase()} vial`
+                sendMessageUpgrade(idNft, msg)
+            }
+            else if (typeModal === "makeoffer") {
+                sendMessage(makeOfferValues.id, makeOfferValues.amount, makeOfferValues.duration, makeOfferValues.owner)
+            }
+            else if (typeModal === "declineoffer") {
+                sendMessageDeclineOffer(saleValues)
+            }
+            else if (typeModal === "makeofferitem") {
+                //console.log(makeOfferValues);
+                sendMessageOfferItem(makeOfferValues)
+            }
+            else if (typeModal === "acceptoffer" || typeModal === "buy") {
+                sendMessageSales(saleValues.id, saleValues.amount)
+            }
+            else if (typeModal === "buyequipment" || typeModal === "acceptofferequipment") {
+                sendMessageSalesEquipment(saleValues)
+            }
+            else if (typeModal === "list") {
+                sendMessageListed(idNft, inputPrice)
+            }
+            else if (typeModal === 'listequipment') {
+                sendMessageListedEquipment(saleValues)
+            }
+            else if (typeModal === "delist") {
+                sendMessageDelisted(nameNft.replace("#", ""))
+            }
+            else if (typeModal === "delistequipment") {
+                sendMessageDelistedEquipment(saleValues)
+            }
+            else if (typeModal === "equip") {
+                const msg = `${nameNft} wore the ${ringToEquipName}`
+                sendMessageUpgrade(nameNft.replace("#", ""), msg)
+            }
+            else if (typeModal === "buynickname") {
+                sendMessageUpdateNickname(nameNft.replace("#", ""), nicknameToSet)
+            }
+            else if (typeModal === "sendchallenge") {
+                 sendMessageChallenge(makeOfferValues)
+            }
 
 			this.props.addTxKeyToInfo(txState.requestKey)
 			this.props.pollForTransaction(this.props, txState.requestKey)
