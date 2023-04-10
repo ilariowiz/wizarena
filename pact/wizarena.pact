@@ -44,7 +44,7 @@
     (defconst BUYIN_WIZA_KEY "buyin-wiza-key")
     (defconst FEE_TOURNAMENT_WIZA_KEY "fee-tournament-wiza-key")
     (defconst TOURNAMENT_WIZA_OPEN "tournament_wiza_open")
-    (defconst TOURNAMENT_WIZA_LEVEL_CAP 225)
+    (defconst TOURNAMENT_WIZA_LEVEL_CAP 250)
 
     (defconst TOURNAMENT_NAME "tournament-name")
     (defconst TOURNAMENT_WIZA_NAME "tournament-wiza-name")
