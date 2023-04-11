@@ -2383,7 +2383,7 @@ export const buyUpgrade = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account
 export const buyUpgradeWithAp = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft, stat, increase) => {
 	return (dispatch) => {
 
-		let pactCode = `(free.${CONTRACT_NAME}.buy-upgrades-ap "${account.account}" "${idnft}" "${stat}" ${increase})`;
+		let pactCode = `(free.${CONTRACT_NAME}.buy-upgrades-ap "${account.account}" "${idnft}" "${stat}" ${increase} free.wiza)`;
 
 		let cmd = {
 			pactCode,

@@ -845,7 +845,7 @@ class Shop extends Component {
     }
 
     renderAPShopCard(key, isMobile) {
-        const { increase } = this.state
+        const { increase, wizaValue } = this.state
 
         const wizard = this.getWizardSelected()
 
@@ -864,6 +864,7 @@ class Shop extends Component {
         const baseApCost = apCosts[`${key}_cost`]
 
         let costo = increaseTo * baseApCost;
+        let costoWiza = 0
         let newLevel;
 
         if (wizard && wizard.id) {
@@ -873,6 +874,11 @@ class Shop extends Component {
             for (let i = 0; i < increaseTo; i++) {
                 arrayLevelsTo.push(statToUpgrade + i)
             }
+
+            //console.log(arrayLevelsTo);
+            arrayLevelsTo.map(s => {
+                costoWiza += calcUpgradeCost(s, key, wizaValue)
+            })
 
             //console.log(arrayLevelsTo);
 
@@ -894,6 +900,9 @@ class Shop extends Component {
             //console.log(copySelected);
             newLevel = calcLevelWizardAfterUpgrade(copySelected, key)
         }
+
+        costoWiza = round((costoWiza * 9 / 100), 2)
+        //console.log(costoWiza);
 
         let colorTextLevel = getColorTextBasedOnLevel(newLevel)
         if (newLevel > MAX_LEVEL) {
@@ -990,12 +999,26 @@ class Shop extends Component {
 						</button>
                     </div>
 
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        AP
-                    </p>
-                    <p style={{ fontSize: 21, color: 'white', marginBottom: 15 }}>
-                        {costo}
-                    </p>
+                    <div style={{ alignItems: 'center', justifyContent: 'space-around', width: '100%',  marginBottom: 15 }}>
+                        <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                            <p style={{ fontSize: 17, color: 'white' }}>
+                                AP
+                            </p>
+                            <p style={{ fontSize: 20, color: 'white' }}>
+                                {costo}
+                            </p>
+                        </div>
+
+                        <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                            <p style={{ fontSize: 17, color: 'white' }}>
+                                $WIZA
+                            </p>
+                            <p style={{ fontSize: 20, color: 'white' }}>
+                                {costoWiza}
+                            </p>
+                        </div>
+
+                    </div>
 
                     <p style={{ fontSize: 17, color: 'white' }}>
                         NEW LEVEL
@@ -1093,8 +1116,8 @@ class Shop extends Component {
 						</button>
                     </div>
 
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        $WIZA
+                    <p style={{ fontSize: 16, color: 'white' }}>
+                        $WIZA GAINED
                     </p>
                     <p style={{ fontSize: 21, color: 'white', marginBottom: 15 }}>
                         {apToBurn * 15}
