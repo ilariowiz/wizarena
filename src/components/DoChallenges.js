@@ -88,13 +88,13 @@ class DoChallenges extends Component {
         const { yourChampion, inputPrice } = this.state
         const { wizardSfidato, chainId, gasPrice, netId, account } = this.props
 
-        /*
+
         if (!this.onlyNumbers(inputPrice) || !inputPrice || parseInt(inputPrice) < 0) {
 			//console.log('price bad format')
 			toast.error('Please enter a valid amount')
 			return
 		}
-        */
+
 
         if (!yourChampion.id) {
             toast.error('Please select your wizard')
@@ -110,10 +110,10 @@ class DoChallenges extends Component {
 			transactionToConfirmText: `Your #${yourChampion.id} will challenge #${wizardSfidato.id}`,
 			typeModal: 'sendchallenge',
 			transactionOkText: `Challenge sent!`,
-            makeOfferValues: { wiz1id: yourChampion.id, wiz2id: wizardSfidato.id, amount: 0 }
+            makeOfferValues: { wiz1id: yourChampion.id, wiz2id: wizardSfidato.id, amount: inputPrice }
 		})
 
-        this.props.sendChallenge(chainId, gasPrice, netId, yourChampion.id, wizardSfidato.id, account, 0)
+        this.props.sendChallenge(chainId, gasPrice, netId, yourChampion.id, wizardSfidato.id, account, inputPrice)
     }
 
     renderSelectYourChampion(width, isMobile) {
@@ -241,16 +241,12 @@ class DoChallenges extends Component {
                     KDA amount
                 </p>
 
-                {/*<input
+                <input
                     style={styles.inputPriceStyle}
                     placeholder='KDA'
                     value={inputPrice}
                     onChange={(e) => this.setState({ inputPrice: e.target.value })}
-                />*/}
-
-                <p style={{ fontSize: 16, color: 'white', marginBottom: 40 }}>
-                    Testing phase, no KDA will be sent
-                </p>
+                />
 
                 <p style={{ fontSize: 17, color: 'white', margin: 15, textAlign: 'center' }}>
                     Your opponent will have 3 days to accept the challenge. If he doesn't accept it, you can collect the KDAs in the Challenges tab

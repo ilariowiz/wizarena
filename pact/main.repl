@@ -1014,19 +1014,19 @@
 (commit-tx)
 
 
-(begin-tx "SWAP SPELL")
-
-(env-sigs [{
-  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-  "caps": [
-    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
-    (coin.GAS)
-  ]
-}])
-
-(free.wiz-arena.swap-spell "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "Fireball" "Hex" free.wiza)
-
-(commit-tx)
+; (begin-tx "SWAP SPELL")
+;
+; (env-sigs [{
+;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+;   "caps": [
+;     (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+;     (coin.GAS)
+;   ]
+; }])
+;
+; (free.wiz-arena.swap-spell "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "Fireball" "Hex" free.wiza)
+;
+; (commit-tx)
 
 (begin-tx "SEND CHALLENGE")
 
