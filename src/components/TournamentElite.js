@@ -392,7 +392,7 @@ class TournamentElite extends Component {
             const dateStartTo = moment().to(dateStart)
 
 			return (
-				<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+				<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
 
                     {this.renderHeaderLeague()}
 
@@ -465,7 +465,7 @@ class TournamentElite extends Component {
 			}
 
 			return (
-				<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+				<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
 
                     {this.renderHeaderLeague()}
 
@@ -514,7 +514,7 @@ class TournamentElite extends Component {
         const roundName = tournament.name.split("_")[1]
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
 
                 {this.renderHeaderLeague()}
 
@@ -663,7 +663,7 @@ class TournamentElite extends Component {
 
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
 
                 {this.renderHeaderLeague()}
 
