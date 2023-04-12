@@ -1517,7 +1517,7 @@ class Shop extends Component {
                     $WIZA
                 </p>
                 <p style={{ fontSize: 21, color: 'white', marginBottom: 20 }}>
-                    {round(wizaValue * 1.4, 2)}
+                    {round(wizaValue * 0.4, 2)}
                 </p>
 
                 <button

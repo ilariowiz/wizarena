@@ -2239,7 +2239,7 @@
     (defun update-nickname (id:string address:string nickname:string m:module{wiza1-interface-v1})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (let (
-                (wiza-cost (* (get-wiza-value) 1.4))
+                (wiza-cost (round (* (get-wiza-value) 0.4) 2))
             )
             (with-capability (OWNER address id)
                 (update nfts id {
@@ -2249,7 +2249,7 @@
             )
         )
         (with-capability (PRIVATE)
-            (add-xp-to-wallet address 3)
+            (add-xp-to-wallet address 1)
         )
     )
 
