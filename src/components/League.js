@@ -40,11 +40,6 @@ class League extends Component {
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
         this.loadTournament()
-
-		setTimeout(() => {
-			this.loadAll()
-		}, 500)
-
 	}
 
     async loadTournament() {
@@ -53,7 +48,11 @@ class League extends Component {
         querySnapshot.forEach(doc => {
             //console.log(doc.data());
 			const tournament = doc.data()
-            this.setState({ tournament })
+            this.setState({ tournament }, () => {
+                setTimeout(() => {
+        			this.loadAll()
+        		}, 500)
+            })
         })
     }
 
@@ -76,13 +75,15 @@ class League extends Component {
 
                 //console.log(medals);
 
-                nft["totMedals"] = medals
-                if (!places[`${medals}`]) {
-                    places[`${medals}`] = []
-                }
+                if (medals > 0) {
+                    nft["totMedals"] = medals
+                    if (!places[`${medals}`]) {
+                        places[`${medals}`] = []
+                    }
 
-                if (places[`${medals}`]) {
-                    places[`${medals}`].push(nft)
+                    if (places[`${medals}`]) {
+                        places[`${medals}`].push(nft)
+                    }
                 }
             }
 
