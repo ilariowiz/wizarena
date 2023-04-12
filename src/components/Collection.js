@@ -174,8 +174,19 @@ class Collection extends Component {
 		const { allNfts } = this.props
 		const { searchText } = this.state
 
-		let searchTextFinal = searchText.includes("#") ? searchText : `#${searchText}`
-		const result = allNfts.filter(i => i.name === searchTextFinal)
+		if (!allNfts || (allNfts && allNfts.length === 0)) {
+			return undefined
+		}
+
+		//let searchTextFinal = searchText.includes("#") ? searchText : `#${searchText}`
+		const result = allNfts.filter(i => {
+			//console.log(i);
+			if (i.name.includes(searchText) || (i.nickname && i.nickname.toLowerCase().includes(searchText.toLowerCase()))) {
+				return i
+			}
+		})
+
+		//console.log(result);
 
 		this.props.storeFiltersStats([])
 		this.setState({ loading: false, nftsToShow: result, searchedText: searchText })
@@ -501,7 +512,7 @@ class Collection extends Component {
 			<div style={{ width: '100%', height: 60, alignItems: 'center', marginBottom: 20 }}>
 				<input
 					style={Object.assign({}, styles.inputSearch, { width: isMobile ? 150 : 350 })}
-					placeholder='Search by #'
+					placeholder='Search by # or nickname'
 					value={searchText}
 					onChange={(e) => this.setState({ searchText: e.target.value })}
 				/>
@@ -720,14 +731,14 @@ class Collection extends Component {
 
 		let numberOfWiz = allNfts ? allNfts.length : 0;
 		if (searchedText.length > 0) {
-			numberOfWiz = 1
+			numberOfWiz = nftsToShow.length
 		}
 		else if (statSearched && statSearched.length > 0) {
 			numberOfWiz = nftsToShow.length
 		}
 
 		let showPageCounter = false
-		if (allNftsIds && allNfts && allNfts.length > 0 && nftsToShow.length > 0) {
+		if (allNftsIds && allNfts && allNfts.length > 0 && nftsToShow.length > 0 && !searchedText) {
 			showPageCounter = true
 		}
 
