@@ -41,7 +41,8 @@ import {
 	SET_CHALLENGES_SENT,
 	SET_CHALLENGES_RECEIVED,
 	HIDE_MODAL_TX,
-	CLEAR_TRANSACTION_STATE_PACT_CODE
+	CLEAR_TRANSACTION_STATE_PACT_CODE,
+	SET_TIME_TO_HALVENING
 } from '../actions/types'
 
 
@@ -88,7 +89,8 @@ const INITIAL_STATE = {
 	walletXp: 0,
 	hideNavBar: false,
 	challengesReceived: [],
-	challengesSent: []
+	challengesSent: [],
+	timeToHalvening: "Loading how long for halvening..."
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -241,6 +243,8 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, challengesReceived: action.payload }
 		case SET_CHALLENGES_SENT:
 			return { ...state, challengesSent: action.payload }
+		case SET_TIME_TO_HALVENING:
+			return { ...state, timeToHalvening: action.payload }
 		case LOGOUT:
 			return { ...state, account: {}, transactionsState: [], showModalTx: false, isConnectWallet: false, isXWallet: false, isQRWalletConnect: false, userMintedNfts: [], wizaBalance: 0, wizardsStaked: 0, qrWalletConnectClient: undefined, kadenaname:""}
 		default:

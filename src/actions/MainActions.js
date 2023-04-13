@@ -61,7 +61,8 @@ import {
 	SET_CHALLENGES_SENT,
 	SET_CHALLENGES_RECEIVED,
 	HIDE_MODAL_TX,
-	CLEAR_TRANSACTION_STATE_PACT_CODE
+	CLEAR_TRANSACTION_STATE_PACT_CODE,
+	SET_TIME_TO_HALVENING
 } from './types'
 
 
@@ -2923,7 +2924,7 @@ export const getWizaBalance = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit =
 	}
 }
 
-export const getTotalMined = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 50000, networkUrl) => {
+export const getTotalMined = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 50000, networkUrl, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -2935,6 +2936,10 @@ export const getTotalMined = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 			//console.log(response)
 			if (response) {
 				dispatch({ type: STORE_TOTAL_MINED, payload: _.floor(response.decimal, 2) })
+
+				if (callback) {
+					callback()
+				}
 			}
 
 		})
@@ -2959,7 +2964,7 @@ export const getCirculatingSupply = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 	}
 }
 
-export const getWizaNotClaimed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl) => {
+export const getWizaNotClaimed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -2979,14 +2984,20 @@ export const getWizaNotClaimed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimi
 				//console.log(total);
 
 				dispatch({ type: STORE_WIZA_NOT_CLAIMED, payload: _.floor(total, 2) })
+
+				if (callback) {
+					callback()
+				}
 			}
 
 		})
 	}
 }
 
-export const getWizardsStakeInfo = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 5000, networkUrl, nfts, callback) => {
+export const getWizardsStakeInfo = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, nfts, callback) => {
 	return (dispatch) => {
+
+		//console.log(nfts);
 
 		let cmd = {
 			pactCode: `(free.${CONTRACT_NAME_WIZA}.get-nft-staked-mass ${JSON.stringify(nfts)})`,
@@ -3633,6 +3644,13 @@ export const setHideNavBar = (value) => {
 	return {
 		type: HIDE_NAV_BAR,
 		payload: value
+	}
+}
+
+export const setTimeToHalvening = (time) => {
+	return {
+		type: SET_TIME_TO_HALVENING,
+		payload: time
 	}
 }
 

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import _ from 'lodash'
+import moment from 'moment'
 import Popup from 'reactjs-popup';
 import BounceLoader from 'react-spinners/BounceLoader';
 import { IoMenu } from 'react-icons/io5'
@@ -25,10 +26,15 @@ import {
 	updateInfoTransactionModal,
 	setHideNavBar,
 	removeInfo,
-	clearTransactionByPactCode
+	clearTransactionByPactCode,
+	getWizardsStakeInfo,
+	loadAllNftsIds,
+	setTimeToHalvening
 } from '../actions'
 import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, MAIN_NET_ID } from '../actions/types'
 import 'reactjs-popup/dist/index.css';
+
+require('moment-countdown');
 
 const logo_img = require('../assets/wzlogo_bg_transparent.png')
 
@@ -47,7 +53,7 @@ class Header extends Component {
 
 		this.state = {
 			showPanel: false,
-			showModalBuy: false,
+			showModalBuy: false
 		}
 	}
 
@@ -61,7 +67,6 @@ class Header extends Component {
 			setTimeout(() => {
 				this.getMined()
 				this.getSupply()
-				this.getWizaNotClaimed()
 			}, 1000)
 		}
 	}
@@ -69,7 +74,9 @@ class Header extends Component {
 	getMined() {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-		this.props.getTotalMined(chainId, gasPrice, gasLimit, networkUrl)
+		this.props.getTotalMined(chainId, gasPrice, gasLimit, networkUrl, () => {
+			this.getWizaNotClaimed()
+		})
 	}
 
 	getSupply() {
@@ -92,7 +99,58 @@ class Header extends Component {
 	getWizaNotClaimed() {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-		this.props.getWizaNotClaimed(chainId, gasPrice, gasLimit, networkUrl)
+		this.props.getWizaNotClaimed(chainId, gasPrice, gasLimit, networkUrl, () => {
+			this.calcMinutesToHalvening()
+		})
+	}
+
+	calcMinutesToHalvening() {
+		const { wizaNotClaimed, totalMined, allNftsIds, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		const halvening = 6620000
+
+		if (allNftsIds && allNftsIds.length > 0) {
+			this.props.getWizardsStakeInfo(chainId, gasPrice, gasLimit, networkUrl, allNftsIds, (response) => {
+
+				let avgMultiplier = 0
+				let staked = 0
+				response.map(i => {
+					if (i.staked) {
+						staked++
+						avgMultiplier += i.multiplier.int
+					}
+				})
+
+				avgMultiplier = _.round((avgMultiplier / staked), 2)
+				//console.log(avgMultiplier);
+
+				const wizaDaily = avgMultiplier * 4 * staked
+				const wizaMinute = _.round(((wizaDaily / 24) / 60), 2)
+				//console.log(wizaDaily, wizaMinute);
+
+				//console.log(wizaNotClaimed);
+
+				//const dayremaining = (halvening - totalMined - wizaNotClaimed) / wizaDaily
+				const minuteremaining = (halvening - totalMined - wizaNotClaimed) / wizaMinute
+				//console.log(_.round(dayremaining, 2), _.round(minuteremaining));
+
+				const dateHalvening = moment().add(minuteremaining, "minutes")
+				//console.log(dateHalvening);
+
+				//console.log(dateHalvening.countdown().toString());
+
+				this.props.setTimeToHalvening(`${dateHalvening.countdown().toString()} to $WIZA staking rewards halvening`)
+				//1 month, 27 days, 10 hours, 13 minutes and 14 seconds
+			})
+		}
+		else {
+			this.props.loadAllNftsIds(chainId, gasPrice, gasLimit, networkUrl, () => {
+				setTimeout(() => {
+					this.getMined()
+				}, 3000)
+			})
+		}
+
 	}
 
 	swap(amount, estimatedWiza) {
@@ -122,7 +180,7 @@ class Header extends Component {
 
 	renderSlidePanel(boxW) {
 		const { showPanel } = this.state
-		const { isMobile, circulatingSupply, wizaNotClaimed, totalMined, account, netId, isXWallet, isQRWalletConnect } = this.props
+		const { isMobile, circulatingSupply, wizaNotClaimed, totalMined, account, netId, isXWallet, isQRWalletConnect, timeToHalvening } = this.props
 
 		const panelWidth = isMobile ? "100%" : boxW * 60 / 100
 
@@ -301,7 +359,7 @@ class Header extends Component {
 							</p>
 						</div>
 
-						<div style={{ alignItems: 'center', marginBottom: 30 }}>
+						<div style={{ alignItems: 'center', marginBottom: 25 }}>
 							<p style={{ fontSize: 18, color: 'white', marginRight: 20 }}>
 								$WIZA not claimed
 							</p>
@@ -312,6 +370,12 @@ class Header extends Component {
 
 							<p style={{ fontSize: 18, color: 'white' }}>
 								({this.getPct(wizaNotClaimed)})
+							</p>
+						</div>
+
+						<div style={{ alignItems: 'center', marginBottom: 30 }}>
+							<p style={{ fontSize: 16, color: 'white', marginRight: 20, lineHeight: 1.5 }}>
+								{timeToHalvening || "Loading how long for halvening..."}
 							</p>
 						</div>
 
@@ -914,10 +978,10 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, transactionsState } = state.mainReducer
+	const { allNftsIds, timeToHalvening, totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, transactionsState } = state.mainReducer
 	const { txInfo } = state.modalTransactionReducer
 
-	return { totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, txInfo, transactionsState }
+	return { allNftsIds, timeToHalvening, totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, txInfo, transactionsState }
 }
 
 export default connect(mapStateToProps, {
@@ -932,5 +996,8 @@ export default connect(mapStateToProps, {
 	updateInfoTransactionModal,
 	setHideNavBar,
 	removeInfo,
-	clearTransactionByPactCode
+	clearTransactionByPactCode,
+	getWizardsStakeInfo,
+	loadAllNftsIds,
+	setTimeToHalvening
 })(Header);
