@@ -2869,10 +2869,42 @@ export const getChallengesSent = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimi
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
 
-			dispatch({ type: SET_CHALLENGES_SENT, payload: response })
-			if (callback) {
-				callback()
+			response = response.filter(i => i.amount > 0)
+
+			let pending = []
+			let replay = []
+			let fight = []
+
+			if (response && response.length > 0) {
+				response.map((item) => {
+					if (item.fightId) {
+						replay.push(item)
+					}
+
+					if (item.status === "accepted" && !item.fightId) {
+						fight.push(item)
+					}
+
+					if (item.status === "pending") {
+						pending.push(item)
+					}
+				})
+
+				replay.sort((a, b) => {
+					return parseInt(b.id) - parseInt(a.id)
+				})
+
+				let final = []
+				final.push(...fight)
+				final.push(...pending)
+				final.push(...replay)
+
+				dispatch({ type: SET_CHALLENGES_SENT, payload: final })
+				if (callback) {
+					callback()
+				}
 			}
+
 		})
 	}
 }
@@ -2888,10 +2920,42 @@ export const getChallengesReceived = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
 
-			dispatch({ type: SET_CHALLENGES_RECEIVED, payload: response })
-			if (callback) {
-				callback()
+			response = response.filter(i => i.amount > 0)
+
+			let replay = []
+			let toaccept = []
+			let fight = []
+
+			if (response && response.length > 0) {
+				response.map((item) => {
+					if (item.fightId) {
+						replay.push(item)
+					}
+
+					if (item.status === "accepted" && !item.fightId) {
+						fight.push(item)
+					}
+
+					if (item.status === "pending") {
+						toaccept.push(item)
+					}
+				})
+
+				replay.sort((a, b) => {
+					return parseInt(b.id) - parseInt(a.id)
+				})
+
+				let final = []
+				final.push(...fight)
+				final.push(...toaccept)
+				final.push(...replay)
+
+				dispatch({ type: SET_CHALLENGES_RECEIVED, payload: final })
+				if (callback) {
+					callback()
+				}
 			}
+
 		})
 	}
 }

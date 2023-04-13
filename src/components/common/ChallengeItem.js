@@ -34,7 +34,7 @@ class ChallengeItem extends Component {
 		}
 
 		return (
-			<p style={{ fontSize: isMobile ? 14 : 17, marginRight: 5, color: 'white', marginLeft: 10 }}>
+			<p style={{ fontSize: isMobile ? 14 : 16, color: 'white', marginBottom: 7 }}>
 				Expiration {diff}
 			</p>
 		)
@@ -131,7 +131,7 @@ class ChallengeItem extends Component {
 
                         {
                             showWinnerChallenges.includes(item.id) &&
-                            <p style={{ fontSize: 15, marginBottom: 4, color: "white" }}>
+                            <p style={{ fontSize: 15, marginBottom: 4, color: "gold" }}>
                                 WINNER: #{winner}
                             </p>
                         }
@@ -178,12 +178,17 @@ class ChallengeItem extends Component {
     }
 
 	render() {
-		const { item, isMobile } = this.props
+		const { item, isMobile, showWinnerChallenges } = this.props
+
+        let winner = ""
+        if (item.status === "accepted" && item.fightId && showWinnerChallenges.includes(item.id)) {
+            winner = this.getWinner()
+        }
 
 		return (
 			<div style={styles.container}  key={item.id}>
 
-                <div style={{ alignItems: 'center', marginLeft: 10, marginBottom: isMobile ? 5 : 0 }}>
+                <div style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 7 }}>
 
                     <a
                         href={`${window.location.protocol}//${window.location.host}/nft/${item.wiz1id}`}
@@ -199,42 +204,42 @@ class ChallengeItem extends Component {
                             style={styles.img}
                         />
 
-                        <p style={{ fontSize: 17, color: 'white', textAlign: 'center', marginLeft: 5 }}>
+                        <p style={{ fontSize: 16, color: winner === item.wiz1id ? "gold" : "white", textAlign: 'center' }}>
                             #{item.wiz1id}
                         </p>
                     </a>
 
-                    <p style={{ fontSize: 17, color: 'white', marginLeft: 15, marginRight: 15 }}>
+                    <p style={{ fontSize: 17, color: 'white', marginLeft: 10, marginRight: 10 }}>
                         VS
                     </p>
 
                     <a
                         href={`${window.location.protocol}//${window.location.host}/nft/${item.wiz2id}`}
-                        style={Object.assign({}, styles.btnImage, { alignItems: 'flex-end' })}
+                        style={styles.btnImage}
                         className="btnH"
                         onClick={(e) => {
                             e.preventDefault()
                             this.props.history.push(`./nft/${item.wiz2id}`)
                         }}
                     >
-                        <p style={{ fontSize: 17, color: 'white', textAlign: 'center', marginRight: 5 }}>
-                            #{item.wiz2id}
-                        </p>
                         <img
                             src={getImageUrl(item.wiz2id)}
                             style={styles.img}
                         />
+                        <p style={{ fontSize: 16, color: winner === item.wiz2id ? "gold" : "white", textAlign: 'center' }}>
+                            #{item.wiz2id}
+                        </p>
                     </a>
 
                 </div>
 
 				{
 					item.amount ?
-					<p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
+					<p style={{ fontSize: 18, color: 'white', marginBottom: 9 }}>
 						KDA {item.amount}
 					</p>
 					:
-					<p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
+					<p style={{ fontSize: 18, color: 'white', marginBottom: 9 }}>
                         KDA 0
 					</p>
 				}
@@ -243,6 +248,10 @@ class ChallengeItem extends Component {
 
                 {this.renderCta()}
 
+                <p style={{ fontSize: 13, color: 'white' }}>
+                    Challenge ID: {item.id}
+                </p>
+
 			</div>
 		)
 	}
@@ -250,28 +259,29 @@ class ChallengeItem extends Component {
 
 const styles = {
 	container: {
-		justifyContent: 'space-between',
+        flexDirection: 'column',
+		justifyContent: 'center',
 		alignItems: 'center',
 		borderWidth: 1,
 		borderColor: 'white',
 		borderStyle: 'solid',
-		width: '100%',
         flexWrap: 'wrap',
         marginBottom: 15,
-        paddingTop: 10,
-        paddingBottom: 10
+        padding: 7,
+        marginRight: 15,
+        minWidth: 223
 	},
     btnImage: {
         display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'flex-start',
+        flexDirection: 'column',
+        alignItems: 'center',
         cursor: 'pointer'
     },
     img: {
         width: 70,
         height: 70,
         borderRadius: 2,
-        marginBottom: 4,
+        marginBottom: 3,
         borderWidth: 1,
         borderColor: 'white',
         borderStyle: 'solid',
@@ -279,14 +289,13 @@ const styles = {
     btnCta: {
         backgroundColor: CTA_COLOR,
         width: 120,
-        height: 40,
+        height: 34,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 2,
-        marginRight: 10,
-        marginLeft: 10
+        marginBottom: 7
     }
 }
 

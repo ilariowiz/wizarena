@@ -254,11 +254,10 @@ class Challenges extends Component {
 
         if (array && array.length > 0) {
             return (
-                <div style={{ flexDirection: 'column' }}>
+                <div style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                     {array.map((item, index) => {
 
                         //console.log(item);
-
                         return (
                             <ChallengeItem
                                 item={item}
