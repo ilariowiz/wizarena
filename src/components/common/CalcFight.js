@@ -48,10 +48,10 @@ const fight = (s1, s2, ev, callback) => {
         evento = Object.assign({}, ev)
     }
 
-    let iniziativa1 = Math.floor(Math.random() * 20) + 1; //da 1 a 20
+    let iniziativa1 = Math.floor(Math.random() * 15) + 1; //da 1 a 15
     iniziativa1 = iniziativa1 + s1copy.speed
 
-    let iniziativa2 = Math.floor(Math.random() * 20) + 1; //da 1 a 20
+    let iniziativa2 = Math.floor(Math.random() * 15) + 1; //da 1 a 15
     iniziativa2 = iniziativa2 + s2copy.speed
 
     //console.log(iniziativa1, iniziativa2);
