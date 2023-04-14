@@ -11,6 +11,7 @@ import allSpells from './common/Spells'
 import {
     setNetworkSettings,
     setNetworkUrl,
+    showWinnerChallenge
 } from '../actions'
 import { BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID, REVEAL_CAP } from '../actions/types'
 
@@ -85,6 +86,8 @@ class ChallengeReplay extends Component {
     }
 
     preloadFight(challengeReplay) {
+        //console.log(challengeReplay);
+        this.props.showWinnerChallenge(challengeReplay.challengeid)
 
         this.player1 = challengeReplay.info1
         this.player2 = challengeReplay.info2
@@ -412,4 +415,5 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
     setNetworkSettings,
     setNetworkUrl,
+    showWinnerChallenge
 })(ChallengeReplay)

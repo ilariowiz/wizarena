@@ -141,15 +141,12 @@ class ChallengeItem extends Component {
                             style={styles.btnCta}
                             onClick={() => {
                                 this.props.onShowResult()
-                                this.props.showWinnerChallenge(item.id)
                             }}
                         >
-
                             <MdOutlineReplay
                                 color='white'
                                 size={20}
                             />
-
                             <p style={{ fontSize: 16, color: 'white', marginLeft: 6, marginTop: 2 }}>
                                 Replay
                             </p>
