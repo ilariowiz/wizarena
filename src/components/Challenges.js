@@ -37,7 +37,9 @@ class Challenges extends Component {
             loadingReceived: true,
             error: "",
             showModalLoading: false,
-            textModalLoading: ""
+            textModalLoading: "",
+            resultsSent: undefined,
+            resultsReceived: undefined
         }
     }
 
@@ -57,7 +59,11 @@ class Challenges extends Component {
         const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
         if (account && account.account) {
-			this.props.getChallengesSent(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
+			this.props.getChallengesSent(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
+
+                //console.log(response);
+                this.calcStats(response, true)
+
                 this.setState({ loadingSent: false })
             })
 		}
@@ -67,10 +73,48 @@ class Challenges extends Component {
         const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
         if (account && account.account) {
-			this.props.getChallengesReceived(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
+			this.props.getChallengesReceived(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
+
+                this.calcStats(response, false)
+
                 this.setState({ loadingReceived: false })
             })
 		}
+    }
+
+    calcStats(array, isSent) {
+        let wins = 0
+        let lose = 0
+        let winKda = 0
+        let loseKda = 0
+
+        array.map(i => {
+            if (i.fightId) {
+                const decode = atob(i.fightId)
+                const winner = decode.substring(20)
+
+                const yourWiz = isSent ? i.wiz1id : i.wiz2id
+
+                if (winner === yourWiz) {
+                    winKda += i.amount
+                    wins++
+                }
+                else {
+                    loseKda += i.amount
+                    lose++
+                }
+            }
+        })
+
+        const obj = { wins, lose, winKda, loseKda }
+        //console.log(obj);
+
+        if (isSent) {
+            this.setState({ resultsSent: obj })
+        }
+        else {
+            this.setState({ resultsReceived: obj })
+        }
     }
 
     onWithdraw(challengeid) {
@@ -285,7 +329,7 @@ class Challenges extends Component {
     }
 
     renderBody(isMobile) {
-        const { loadingSent, loadingReceived, error } = this.state
+        const { loadingSent, loadingReceived, error, resultsSent, resultsReceived } = this.state
         const { challengesReceived, challengesSent } = this.props
 
         const { boxW } = getBoxWidth(isMobile)
@@ -302,6 +346,13 @@ class Challenges extends Component {
                 </p>
 
                 {
+                    resultsReceived &&
+                    <p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
+                        Win <span style={{ color: TEXT_SECONDARY_COLOR, marginRight: 12 }}>{resultsReceived.wins}</span> Lose <span style={{ color: '#ed0404', marginRight: 12 }}>{resultsReceived.lose}</span> KDA won <span style={{ color: resultsReceived.winKda - resultsReceived.loseKda > 0 ? TEXT_SECONDARY_COLOR : '#ed0404' }}>{resultsReceived.winKda - resultsReceived.loseKda}</span>
+                    </p>
+                }
+
+                {
 					loadingReceived ?
 					<div style={{ height: 50, justifyContent: 'flex-start', alignItems: 'center' }}>
 						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
@@ -315,6 +366,14 @@ class Challenges extends Component {
                 <p style={{ fontSize: 20, color: 'white', marginTop: 30, marginBottom: 10 }}>
                     Challenges sent
                 </p>
+
+                {
+                    resultsSent &&
+                    <p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
+                        Win <span style={{ color: TEXT_SECONDARY_COLOR, marginRight: 12 }}>{resultsSent.wins}</span> Lose <span style={{ color: '#ed0404', marginRight: 12 }}>{resultsSent.lose}</span> KDA won <span style={{ color: resultsSent.winKda - resultsSent.loseKda > 0 ? TEXT_SECONDARY_COLOR : '#ed0404' }}>{resultsSent.winKda - resultsSent.loseKda}</span>
+                    </p>
+                }
+
 
                 {
 					loadingReceived ?

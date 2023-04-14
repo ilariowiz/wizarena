@@ -2901,7 +2901,7 @@ export const getChallengesSent = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimi
 
 				dispatch({ type: SET_CHALLENGES_SENT, payload: final })
 				if (callback) {
-					callback()
+					callback(final)
 				}
 			}
 
@@ -2952,7 +2952,7 @@ export const getChallengesReceived = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 
 				dispatch({ type: SET_CHALLENGES_RECEIVED, payload: final })
 				if (callback) {
-					callback()
+					callback(final)
 				}
 			}
 
