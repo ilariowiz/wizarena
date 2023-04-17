@@ -501,6 +501,8 @@ export const loadBlockNftsSplit = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 const calcRanges = (maxStats) => {
 	return (dispatch) => {
 
+		console.log(maxStats);
+
 		const ranges = {}
 
 		ranges["hp"] = []
@@ -510,7 +512,7 @@ const calcRanges = (maxStats) => {
 			let start = 40 + (i * 10)
 			let end = start + 9
 
-			if (start < maxStats["hp"]) {
+			if (start <= maxStats["hp"]) {
 				ranges['hp'].push(`${start} - ${end}`)
 			}
 		}
@@ -524,7 +526,7 @@ const calcRanges = (maxStats) => {
 			let start = 14 + (i * 2)
 			let end = start + 1
 
-			if (start < maxStats["defense"]) {
+			if (start <= maxStats["defense"]) {
 				ranges['defense'].push(`${start} - ${end}`)
 			}
 		}
@@ -532,13 +534,13 @@ const calcRanges = (maxStats) => {
 		ranges["defense"] = ranges["defense"].reverse()
 
 		ranges["attack"] = []
-		const rangeAtk = Math.round(maxStats["attack"] / 2)
+		const rangeAtk = Math.round(maxStats["attack"] / 2) + 1
 		//console.log(rangeHp);
 		for (var i = 0; i < rangeAtk; i++) {
 			let start = (i * 2)
 			let end = start + 1
 
-			if (start < maxStats["attack"]) {
+			if (start <= maxStats["attack"] + 1) {
 				ranges['attack'].push(`${start} - ${end}`)
 			}
 		}
@@ -546,13 +548,13 @@ const calcRanges = (maxStats) => {
 		ranges["attack"] = ranges["attack"].reverse()
 
 		ranges["damage"] = []
-		const rangeDmg = Math.round(maxStats["damage"] / 2)
-		//console.log(rangeHp);
+		const rangeDmg = Math.round(maxStats["damage"] / 2) + 1
+		//console.log(rangeDmg);
 		for (var i = 0; i < rangeDmg; i++) {
 			let start = (i * 2)
 			let end = start + 1
 
-			if (start < maxStats["damage"]) {
+			if (start <= maxStats["damage"] + 1) {
 				ranges['damage'].push(`${start} - ${end}`)
 			}
 		}
@@ -560,13 +562,13 @@ const calcRanges = (maxStats) => {
 		ranges["damage"] = ranges["damage"].reverse()
 
 		ranges["speed"] = []
-		const rangeSpe = Math.round(maxStats["speed"] / 2)
+		const rangeSpe = Math.round(maxStats["speed"] / 2) + 1
 		//console.log(rangeHp);
 		for (var i = 0; i < rangeSpe; i++) {
 			let start = (i * 2)
 			let end = start + 1
 
-			if (start < maxStats["speed"]) {
+			if (start <= maxStats["speed"] + 1) {
 				ranges['speed'].push(`${start} - ${end}`)
 			}
 		}
