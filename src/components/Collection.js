@@ -276,6 +276,36 @@ class Collection extends Component {
 					})
 				}
 
+				if (i.stat === "attack") {
+					const values = i.value.split(" - ")
+					const minV = parseInt(values[0])
+					const maxV = parseInt(values[1])
+
+					newData = newData.filter(n => {
+						return n.attack && n.attack.int >= minV && n.attack.int <= maxV
+					})
+				}
+
+				if (i.stat === "damage") {
+					const values = i.value.split(" - ")
+					const minV = parseInt(values[0])
+					const maxV = parseInt(values[1])
+
+					newData = newData.filter(n => {
+						return n.damage && n.damage.int >= minV && n.damage.int <= maxV
+					})
+				}
+
+				if (i.stat === "speed") {
+					const values = i.value.split(" - ")
+					const minV = parseInt(values[0])
+					const maxV = parseInt(values[1])
+
+					newData = newData.filter(n => {
+						return n.speed && n.speed.int >= minV && n.speed.int <= maxV
+					})
+				}
+
 				if (i.stat === "element") {
 					//console.log(newData);
 					newData = newData.filter(n => {
@@ -595,7 +625,7 @@ class Collection extends Component {
 				ref={ref => this.listPopup = ref}
 				trigger={
 					<button style={styles.btnStat}>
-						<p style={{ fontSize: 18, color: 'white' }}>{text}</p>
+						<p style={{ fontSize: 16, color: 'white' }}>{text}</p>
 						{
 							findItem &&
 							<IoClose
@@ -714,7 +744,7 @@ class Collection extends Component {
 	}
 
 	renderBody(isMobile) {
-		const { allNfts, allNftsIds, statSearched } = this.props
+		const { allNfts, allNftsIds, statSearched, filtriRanges } = this.props
 		const { loading, nftsToShow, searchedText } = this.state
 
 		//console.log(allNftsIds)
@@ -759,16 +789,22 @@ class Collection extends Component {
 
 				{this.renderSearched()}
 
-				<div style={{ flexWrap: 'wrap', marginBottom: 10 }}>
-					{this.renderBoxSearchStat("collection", "COLLECTION", ["Wizards", "Clerics", "Druids"])}
-					{this.renderBoxSearchStat("hp", "HP", ["40 - 50", "51 - 60", "61 - 65", "66 - 70", "71 - 75", "76 - 80", "81 - 85", "86 - 90", "91 - 95", "96 - 100", "101 - 105", "106 - 110", "111 - 115", "116 - 120", "121 - 125"].reverse())}
-					{this.renderBoxSearchStat("defense", "DEFENSE", ["14 - 15", "16 - 17", "18 - 19", "20 - 21", "22 - 23", "24 - 25", "26 - 27", "28 - 29", "30 - 31", "32 - 33", "34 - 35", "36 - 37", "38 - 39", "40 - 41"].reverse())}
-					{this.renderBoxSearchStat("element", "ELEMENT", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
-					{this.renderBoxSearchStat("resistance", "RESISTANCE", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
-					{this.renderBoxSearchStat("weakness", "WEAKNESS", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
-					{this.renderBoxSearchStat("spellbook", "SPELLBOOK", [1, 2, 3, 4])}
-					{this.renderBoxSearchStat("level", "LEVEL", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 275", "276 - 300", "301 - 325", "326 - 350"].reverse())}
-				</div>
+				{
+					filtriRanges && Object.keys(filtriRanges).length > 0 &&
+					<div style={{ flexWrap: 'wrap', marginBottom: 10 }}>
+						{this.renderBoxSearchStat("collection", "COLLECTION", ["Wizards", "Clerics", "Druids"])}
+						{this.renderBoxSearchStat("hp", "HP", filtriRanges["hp"])}
+						{this.renderBoxSearchStat("defense", "DEFENSE", filtriRanges["defense"])}
+						{this.renderBoxSearchStat("attack", "ATTACK", filtriRanges["attack"])}
+						{this.renderBoxSearchStat("damage", "DAMAGE", filtriRanges["damage"])}
+						{this.renderBoxSearchStat("speed", "SPEED", filtriRanges["speed"])}
+						{this.renderBoxSearchStat("element", "ELEMENT", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
+						{this.renderBoxSearchStat("resistance", "RESISTANCE", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
+						{this.renderBoxSearchStat("weakness", "WEAKNESS", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
+						{this.renderBoxSearchStat("spellbook", "SPELLBOOK", [1, 2, 3, 4])}
+						{this.renderBoxSearchStat("level", "LEVEL", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 275", "276 - 300", "301 - 325", "326 - 350"].reverse())}
+					</div>
+				}
 
 				<p style={{ marginBottom: 15, fontSize: 16, color: 'white' }}>
 					{numberOfWiz} Wizards
@@ -910,12 +946,12 @@ const styles = {
 		outline: 'none'
 	},
 	btnStat: {
-		padding: 10,
+		padding: 9,
 		backgroundColor: CTA_COLOR,
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginRight: 10,
-		marginBottom: 10,
+		marginRight: 8,
+		marginBottom: 8,
 		borderRadius: 2,
 		minWidth: 60,
 		display: 'flex',
@@ -949,9 +985,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, statSearched, wizardsStaked } = state.mainReducer;
+	const { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, statSearched, wizardsStaked, filtriRanges } = state.mainReducer;
 
-	return { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, statSearched, wizardsStaked };
+	return { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, statSearched, wizardsStaked, filtriRanges };
 }
 
 export default connect(mapStateToProps, {

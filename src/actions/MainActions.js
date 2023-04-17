@@ -426,13 +426,13 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 
 					let totalCountNfts = final.length
 
-					//let maxStats = { hp: 0, defense: 0, attack: 0, damage: 0, speed: 0 }
+					let maxStats = { hp: 0, defense: 0, attack: 0, damage: 0, speed: 0 }
 
 					final.map(i => {
 						const level = calcLevelWizard(i)
 						i.level = level
 
-						/*
+
 						if (i.hp.int > maxStats.hp) {
 							maxStats['hp'] = i.hp.int
 						}
@@ -448,8 +448,11 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 						if (i.speed.int > maxStats.speed) {
 							maxStats['speed'] = i.speed.int
 						}
-						*/
 					})
+
+
+					const ranges = dispatch(calcRanges(maxStats))
+					//console.log(ranges);
 
 					/*
 					maxStats['hp'] += 24 //anello life
@@ -469,7 +472,7 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 
 					dispatch({
 						type: LOAD_ALL_NFTS,
-						payload: { allNfts: final, nftsBlockId: 0, totalCountNfts }
+						payload: { allNfts: final, nftsBlockId: 0, totalCountNfts, ranges }
 					})
 
 					if (callback) {
@@ -495,6 +498,84 @@ export const loadBlockNftsSplit = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 	}
 }
 
+const calcRanges = (maxStats) => {
+	return (dispatch) => {
+
+		const ranges = {}
+
+		ranges["hp"] = []
+		const rangeHp = Math.round(maxStats["hp"] / 10)
+		//console.log(rangeHp);
+		for (var i = 0; i < rangeHp; i++) {
+			let start = 40 + (i * 10)
+			let end = start + 9
+
+			if (start < maxStats["hp"]) {
+				ranges['hp'].push(`${start} - ${end}`)
+			}
+		}
+
+		ranges["hp"] = ranges["hp"].reverse()
+
+		ranges["defense"] = []
+		const rangeDef = Math.round(maxStats["defense"] / 2)
+		//console.log(rangeHp);
+		for (var i = 0; i < rangeDef; i++) {
+			let start = 14 + (i * 2)
+			let end = start + 1
+
+			if (start < maxStats["defense"]) {
+				ranges['defense'].push(`${start} - ${end}`)
+			}
+		}
+
+		ranges["defense"] = ranges["defense"].reverse()
+
+		ranges["attack"] = []
+		const rangeAtk = Math.round(maxStats["attack"] / 2)
+		//console.log(rangeHp);
+		for (var i = 0; i < rangeAtk; i++) {
+			let start = (i * 2)
+			let end = start + 1
+
+			if (start < maxStats["attack"]) {
+				ranges['attack'].push(`${start} - ${end}`)
+			}
+		}
+
+		ranges["attack"] = ranges["attack"].reverse()
+
+		ranges["damage"] = []
+		const rangeDmg = Math.round(maxStats["damage"] / 2)
+		//console.log(rangeHp);
+		for (var i = 0; i < rangeDmg; i++) {
+			let start = (i * 2)
+			let end = start + 1
+
+			if (start < maxStats["damage"]) {
+				ranges['damage'].push(`${start} - ${end}`)
+			}
+		}
+
+		ranges["damage"] = ranges["damage"].reverse()
+
+		ranges["speed"] = []
+		const rangeSpe = Math.round(maxStats["speed"] / 2)
+		//console.log(rangeHp);
+		for (var i = 0; i < rangeSpe; i++) {
+			let start = (i * 2)
+			let end = start + 1
+
+			if (start < maxStats["speed"]) {
+				ranges['speed'].push(`${start} - ${end}`)
+			}
+		}
+
+		ranges["speed"] = ranges["speed"].reverse()
+
+		return ranges
+	}
+}
 
 export const loadBlockNftsSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, block, tournamentType, callbackSubscribed) => {
 	return (dispatch) => {
@@ -2904,6 +2985,11 @@ export const getChallengesSent = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimi
 					callback(final)
 				}
 			}
+			else {
+				if (callback) {
+					callback(undefined)
+				}
+			}
 
 		})
 	}
@@ -2953,6 +3039,11 @@ export const getChallengesReceived = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 				dispatch({ type: SET_CHALLENGES_RECEIVED, payload: final })
 				if (callback) {
 					callback(final)
+				}
+			}
+			else {
+				if (callback) {
+					callback(undefined)
 				}
 			}
 

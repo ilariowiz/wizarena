@@ -90,7 +90,8 @@ const INITIAL_STATE = {
 	hideNavBar: false,
 	challengesReceived: [],
 	challengesSent: [],
-	timeToHalvening: "Loading how long for halvening..."
+	timeToHalvening: "Loading how long for halvening...",
+	filtriRanges: {}
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -119,14 +120,14 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, allNftsIds }
 		}
 		case LOAD_ALL_NFTS: {
-			const { allNfts, nftsBlockId, totalCountNfts } = action.payload
+			const { allNfts, nftsBlockId, totalCountNfts, ranges } = action.payload
 
 			let oldNftsBlockId = state.nftsBlockId
 			if (!oldNftsBlockId) {
 				oldNftsBlockId = nftsBlockId
 			}
 
-			return { ...state, allNfts, nftsBlockId: oldNftsBlockId, totalCountNfts }
+			return { ...state, allNfts, nftsBlockId: oldNftsBlockId, totalCountNfts, filtriRanges: ranges }
 		}
 		case SET_BLOCK_ID:
 			return { ...state, nftsBlockId: action.payload }

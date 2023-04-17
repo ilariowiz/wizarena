@@ -62,9 +62,12 @@ class Challenges extends Component {
 			this.props.getChallengesSent(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
 
                 //console.log(response);
-                this.calcStats(response, true)
-
-                this.setState({ loadingSent: false })
+                if (response) {
+                    this.calcStats(response, true)
+                }
+                else {
+                    this.setState({ loadingSent: false })
+                }
             })
 		}
     }
@@ -74,10 +77,14 @@ class Challenges extends Component {
 
         if (account && account.account) {
 			this.props.getChallengesReceived(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
+                //console.log(response);
+                if (response) {
+                    this.calcStats(response, false)
+                }
+                else {
+                    this.setState({ loadingReceived: false })
+                }
 
-                this.calcStats(response, false)
-
-                this.setState({ loadingReceived: false })
             })
 		}
     }
@@ -109,11 +116,13 @@ class Challenges extends Component {
         const obj = { wins, lose, winKda, loseKda }
         //console.log(obj);
 
+        //console.log(isSent);
+
         if (isSent) {
-            this.setState({ resultsSent: obj })
+            this.setState({ resultsSent: obj, loadingSent: false })
         }
         else {
-            this.setState({ resultsReceived: obj })
+            this.setState({ resultsReceived: obj, loadingReceived: false })
         }
     }
 
@@ -288,6 +297,9 @@ class Challenges extends Component {
     }
 
     renderChallenges(array, loading, isReceived, isMobile) {
+
+        //console.log(loading);
+
         if (loading) {
             return (
                 <p style={{ fontSize: 16, color: 'white' }}>
@@ -376,7 +388,7 @@ class Challenges extends Component {
 
 
                 {
-					loadingReceived ?
+					loadingSent ?
 					<div style={{ height: 50, justifyContent: 'flex-start', alignItems: 'center' }}>
 						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
 					</div>
