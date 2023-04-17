@@ -26,6 +26,8 @@ class Collection extends Component {
 	constructor(props) {
 		super(props)
 
+		console.log(window.innerWidth);
+
 		this.state = {
 			loading: true,
 			volume: 0,
@@ -34,7 +36,8 @@ class Collection extends Component {
 			uniqueOwners: 1,
 			searchText: '',
 			searchedText: '',
-			listed: 0
+			listed: 0,
+			showFilters: window.innerWidth > 767
 		}
 	}
 
@@ -541,7 +544,7 @@ class Collection extends Component {
 		return (
 			<div style={{ width: '100%', height: 60, alignItems: 'center', marginBottom: 20 }}>
 				<input
-					style={Object.assign({}, styles.inputSearch, { width: isMobile ? 150 : 350 })}
+					style={Object.assign({}, styles.inputSearch, { width: isMobile ? 150 : 350, fontSize: isMobile ? 15 : 19 })}
 					placeholder='Search by # or nickname'
 					value={searchText}
 					onChange={(e) => this.setState({ searchText: e.target.value })}
@@ -745,7 +748,7 @@ class Collection extends Component {
 
 	renderBody(isMobile) {
 		const { allNfts, allNftsIds, statSearched, filtriRanges } = this.props
-		const { loading, nftsToShow, searchedText } = this.state
+		const { loading, nftsToShow, searchedText, showFilters } = this.state
 
 		//console.log(allNftsIds)
 		const { boxW } = getBoxWidth(isMobile)
@@ -790,7 +793,7 @@ class Collection extends Component {
 				{this.renderSearched()}
 
 				{
-					filtriRanges && Object.keys(filtriRanges).length > 0 &&
+					filtriRanges && Object.keys(filtriRanges).length > 0 && showFilters &&
 					<div style={{ flexWrap: 'wrap', marginBottom: 10 }}>
 						{this.renderBoxSearchStat("collection", "COLLECTION", ["Wizards", "Clerics", "Druids"])}
 						{this.renderBoxSearchStat("hp", "HP", filtriRanges["hp"])}
@@ -804,6 +807,19 @@ class Collection extends Component {
 						{this.renderBoxSearchStat("spellbook", "SPELLBOOK", [1, 2, 3, 4])}
 						{this.renderBoxSearchStat("level", "LEVEL", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 275", "276 - 300", "301 - 325", "326 - 350"].reverse())}
 					</div>
+				}
+
+				{
+					!showFilters &&
+					<button
+						className="btnH"
+						style={Object.assign({}, styles.btnStat, { width: 'fit-content', marginBottom: 12 })}
+						onClick={() => this.setState({ showFilters: true })}
+					>
+						<p style={{ fontSize: 17, color: 'white' }}>
+							Show filters
+						</p>
+					</button>
 				}
 
 				<p style={{ marginBottom: 15, fontSize: 16, color: 'white' }}>
