@@ -336,8 +336,8 @@ class Tournament extends Component {
             yourPossibleSubs = userMintedNfts.filter(i => i.level <= levelCap)
         }
 
-        //console.log(yourSubs);
         let yourSubs = this.setYourSub(yourPossibleSubs)
+        //console.log(yourSubs);
 
         this.setState({ yourSubs, showSubs: true, showProfileFights: false, tournamentSubs: tournament, loading: false }, () => {
             document.getElementById("filters").scrollIntoView({ behavior: 'smooth' })
@@ -484,45 +484,20 @@ class Tournament extends Component {
 
 			oldStat.map(i => {
 
-				if (i.stat === "hp") {
-
+                if (i.stat === "hp" || i.stat === "defense" || i.stat === "attack" || i.stat === "damage" || i.stat === "speed") {
 					const values = i.value.split(" - ")
 					const minV = parseInt(values[0])
 					const maxV = parseInt(values[1])
 
 					newData = newData.filter(n => {
-						return n.hp && n.hp.int >= minV && n.hp.int <= maxV
+						return n[i.stat] && n[i.stat].int >= minV && n[i.stat].int <= maxV
 					})
 				}
 
-				if (i.stat === "defense") {
-					const values = i.value.split(" - ")
-					const minV = parseInt(values[0])
-					const maxV = parseInt(values[1])
-
-					newData = newData.filter(n => {
-						return n.defense && n.defense.int >= minV && n.defense.int <= maxV
-					})
-				}
-
-				if (i.stat === "element") {
+                if (i.stat === "element" || i.stat === "resistance" || i.stat === "weakness") {
 					//console.log(newData);
 					newData = newData.filter(n => {
-						return n.element && n.element.toUpperCase() === i.value.toUpperCase()
-					})
-				}
-
-				if (i.stat === "resistance") {
-					//console.log(newData);
-					newData = newData.filter(n => {
-						return n.resistance && n.resistance.toUpperCase() === i.value.toUpperCase()
-					})
-				}
-
-				if (i.stat === "weakness") {
-					//console.log(newData);
-					newData = newData.filter(n => {
-						return n.weakness && n.weakness.toUpperCase() === i.value.toUpperCase()
+						return n[i.stat] && n[i.stat].toUpperCase() === i.value.toUpperCase()
 					})
 				}
 
@@ -769,7 +744,7 @@ class Tournament extends Component {
                     Level CAP: <span style={{ color: 'gold' }}>{tournament.levelCap}</span>
                 </p>
 
-                <p style={{ fontSize: 17, color: 'white', marginBottom }}>
+                <p style={{ fontSize: 17, color: 'white', marginBottom, height: 34 }}>
                     Structure: {tournament.structure}
                 </p>
 
@@ -924,7 +899,7 @@ class Tournament extends Component {
                     MIN Level: <span style={{ color: 'gold' }}>{tournamentElite.levelCap}</span>
                 </p>
 
-                <p style={{ fontSize: 17, color: 'white', marginBottom }}>
+                <p style={{ fontSize: 17, color: 'white', marginBottom, height: 34 }}>
                     Structure: {tournamentElite.structure}
                 </p>
 
@@ -1081,7 +1056,7 @@ class Tournament extends Component {
                     Level CAP: <span style={{ color: 'gold' }}>{tournamentWiza.levelCap}</span>
                 </p>
 
-                <p style={{ fontSize: 17, color: 'white', marginBottom }}>
+                <p style={{ fontSize: 17, color: 'white', marginBottom, height: 34 }}>
                     Structure: {tournamentWiza.structure}
                 </p>
 
@@ -1257,7 +1232,7 @@ class Tournament extends Component {
 				ref={ref => this.listPopup = ref}
 				trigger={
 					<button style={styles.btnStat}>
-						<p style={{ fontSize: 18, color: 'white' }}>{text}</p>
+						<p style={{ fontSize: 16, color: 'white' }}>{text}</p>
 						{
 							findItem &&
 							<IoClose
@@ -1288,6 +1263,7 @@ class Tournament extends Component {
 
     renderBody(isMobile) {
         const { tournament, tournamentWiza, tournamentElite, profileFights, error, showProfileFights, showSubs, yourSubs } = this.state
+        const { filtriProfileRanges } = this.props
 
         let { boxW, modalW } = getBoxWidth(isMobile)
         const insideWidth = boxW > 1250 ? 1250 : boxW
@@ -1344,10 +1320,13 @@ class Tournament extends Component {
                 }
 
                 {
-                    showSubs &&
+                    showSubs && filtriProfileRanges &&
                     <div style={{ flexWrap: 'wrap', marginBottom: 15, width: insideWidth, alignItems: 'flex-start' }} id="filters">
-    					{this.renderBoxSearchStat("hp", "HP", ["40 - 50", "51 - 60", "61 - 65", "66 - 70", "71 - 75", "76 - 80", "81 - 85", "86 - 90", "91 - 95", "96 - 100", "101 - 105", "106 - 110", "111 - 115", "116 - 120", "121 - 125"].reverse())}
-    					{this.renderBoxSearchStat("defense", "DEFENSE", ["14 - 15", "16 - 17", "18 - 19", "20 - 21", "22 - 23", "24 - 25", "26 - 27", "28 - 29", "30 - 31", "32 - 33", "34 - 35", "36 - 37", "38 - 39", "40 - 41"].reverse())}
+                        {this.renderBoxSearchStat("hp", "HP", filtriProfileRanges["hp"])}
+                        {this.renderBoxSearchStat("defense", "DEFENSE", filtriProfileRanges["defense"])}
+                        {this.renderBoxSearchStat("attack", "ATTACK", filtriProfileRanges["attack"])}
+                        {this.renderBoxSearchStat("damage", "DAMAGE", filtriProfileRanges["damage"])}
+                        {this.renderBoxSearchStat("speed", "SPEED", filtriProfileRanges["speed"])}
     					{this.renderBoxSearchStat("element", "ELEMENT", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
     					{this.renderBoxSearchStat("resistance", "RESISTANCE", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
     					{this.renderBoxSearchStat("weakness", "WEAKNESS", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
@@ -1509,12 +1488,12 @@ const styles = {
 		paddingTop: 10
 	},
     btnStat: {
-		padding: 10,
+		padding: 9,
 		backgroundColor: CTA_COLOR,
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginRight: 10,
-		marginBottom: 10,
+		marginRight: 8,
+		marginBottom: 8,
 		borderRadius: 2,
 		minWidth: 60,
 		display: 'flex',
@@ -1523,9 +1502,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts, wizaBalance } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts, wizaBalance, filtriProfileRanges } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts, wizaBalance };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts, wizaBalance, filtriProfileRanges };
 }
 
 export default connect(mapStateToProps, {

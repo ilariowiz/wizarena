@@ -522,75 +522,20 @@ class Profile extends Component {
 
 			oldStat.map(i => {
 
-				if (i.stat === "hp") {
-
+				if (i.stat === "hp" || i.stat === "defense" || i.stat === "attack" || i.stat === "damage" || i.stat === "speed") {
 					const values = i.value.split(" - ")
 					const minV = parseInt(values[0])
 					const maxV = parseInt(values[1])
 
 					newData = newData.filter(n => {
-						return n.hp && n.hp.int >= minV && n.hp.int <= maxV
+						return n[i.stat] && n[i.stat].int >= minV && n[i.stat].int <= maxV
 					})
 				}
 
-				if (i.stat === "defense") {
-					const values = i.value.split(" - ")
-					const minV = parseInt(values[0])
-					const maxV = parseInt(values[1])
-
-					newData = newData.filter(n => {
-						return n.defense && n.defense.int >= minV && n.defense.int <= maxV
-					})
-				}
-
-				if (i.stat === "attack") {
-					const values = i.value.split(" - ")
-					const minV = parseInt(values[0])
-					const maxV = parseInt(values[1])
-
-					newData = newData.filter(n => {
-						return n.attack && n.attack.int >= minV && n.attack.int <= maxV
-					})
-				}
-
-				if (i.stat === "damage") {
-					const values = i.value.split(" - ")
-					const minV = parseInt(values[0])
-					const maxV = parseInt(values[1])
-
-					newData = newData.filter(n => {
-						return n.damage && n.damage.int >= minV && n.damage.int <= maxV
-					})
-				}
-
-				if (i.stat === "speed") {
-					const values = i.value.split(" - ")
-					const minV = parseInt(values[0])
-					const maxV = parseInt(values[1])
-
-					newData = newData.filter(n => {
-						return n.speed && n.speed.int >= minV && n.speed.int <= maxV
-					})
-				}
-
-				if (i.stat === "element") {
+				if (i.stat === "element" || i.stat === "resistance" || i.stat === "weakness") {
 					//console.log(newData);
 					newData = newData.filter(n => {
-						return n.element && n.element.toUpperCase() === i.value.toUpperCase()
-					})
-				}
-
-				if (i.stat === "resistance") {
-					//console.log(newData);
-					newData = newData.filter(n => {
-						return n.resistance && n.resistance.toUpperCase() === i.value.toUpperCase()
-					})
-				}
-
-				if (i.stat === "weakness") {
-					//console.log(newData);
-					newData = newData.filter(n => {
-						return n.weakness && n.weakness.toUpperCase() === i.value.toUpperCase()
+						return n[i.stat] && n[i.stat].toUpperCase() === i.value.toUpperCase()
 					})
 				}
 

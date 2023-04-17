@@ -501,7 +501,7 @@ export const loadBlockNftsSplit = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 const calcRanges = (maxStats) => {
 	return (dispatch) => {
 
-		console.log(maxStats);
+		//console.log(maxStats);
 
 		const ranges = {}
 
