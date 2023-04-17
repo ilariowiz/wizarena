@@ -72,7 +72,8 @@ class Profile extends Component {
 			loadingStake: true,
 			itemsToShow: [],
             searchText: "",
-            searchedText: ""
+            searchedText: "",
+			showFilters: window.innerWidth > 767
 		}
 	}
 
@@ -542,6 +543,36 @@ class Profile extends Component {
 					})
 				}
 
+				if (i.stat === "attack") {
+					const values = i.value.split(" - ")
+					const minV = parseInt(values[0])
+					const maxV = parseInt(values[1])
+
+					newData = newData.filter(n => {
+						return n.attack && n.attack.int >= minV && n.attack.int <= maxV
+					})
+				}
+
+				if (i.stat === "damage") {
+					const values = i.value.split(" - ")
+					const minV = parseInt(values[0])
+					const maxV = parseInt(values[1])
+
+					newData = newData.filter(n => {
+						return n.damage && n.damage.int >= minV && n.damage.int <= maxV
+					})
+				}
+
+				if (i.stat === "speed") {
+					const values = i.value.split(" - ")
+					const minV = parseInt(values[0])
+					const maxV = parseInt(values[1])
+
+					newData = newData.filter(n => {
+						return n.speed && n.speed.int >= minV && n.speed.int <= maxV
+					})
+				}
+
 				if (i.stat === "element") {
 					//console.log(newData);
 					newData = newData.filter(n => {
@@ -673,7 +704,7 @@ class Profile extends Component {
 				ref={ref => this.listPopup = ref}
 				trigger={
 					<button style={styles.btnStat}>
-						<p style={{ fontSize: 18, color: 'white' }}>{text}</p>
+						<p style={{ fontSize: 16, color: 'white' }}>{text}</p>
 						{
 							findItem &&
 							<IoClose
@@ -758,7 +789,7 @@ class Profile extends Component {
 				ref={ref => this.listPopup = ref}
 				trigger={
 					<button style={styles.btnStat}>
-						<p style={{ fontSize: 18, color: 'white' }}>{text}</p>
+						<p style={{ fontSize: 16, color: 'white' }}>{text}</p>
 					</button>
 				}
 				position="bottom left"
@@ -776,23 +807,39 @@ class Profile extends Component {
 	}
 
 	renderYourWizards(width) {
-		const { yourNfts, loading } = this.state
-		const { userMintedNfts } = this.props
+		const { yourNfts, loading, showFilters } = this.state
+		const { userMintedNfts, filtriProfileRanges } = this.props
 
 		return (
 			<div style={{ width, flexDirection: 'column' }}>
 
 				{
-					!loading && userMintedNfts && userMintedNfts.length > 0 &&
+					!loading && userMintedNfts && userMintedNfts.length > 0 && filtriProfileRanges && showFilters &&
 					<div style={{ flexWrap: 'wrap', marginBottom: 10 }} id="filters">
-						{this.renderBoxSearchStat("hp", "HP", ["40 - 50", "51 - 60", "61 - 65", "66 - 70", "71 - 75", "76 - 80", "81 - 85", "86 - 90", "91 - 95", "96 - 100", "101 - 105", "106 - 110", "111 - 115", "116 - 120", "121 - 125"].reverse())}
-						{this.renderBoxSearchStat("defense", "DEFENSE", ["14 - 15", "16 - 17", "18 - 19", "20 - 21", "22 - 23", "24 - 25", "26 - 27", "28 - 29", "30 - 31", "32 - 33", "34 - 35", "36 - 37", "38 - 39", "40 - 41"].reverse())}
+						{this.renderBoxSearchStat("hp", "HP", filtriProfileRanges["hp"])}
+						{this.renderBoxSearchStat("defense", "DEFENSE", filtriProfileRanges["defense"])}
+						{this.renderBoxSearchStat("attack", "ATTACK", filtriProfileRanges["attack"])}
+						{this.renderBoxSearchStat("damage", "DAMAGE", filtriProfileRanges["damage"])}
+						{this.renderBoxSearchStat("speed", "SPEED", filtriProfileRanges["speed"])}
 						{this.renderBoxSearchStat("element", "ELEMENT", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
 						{this.renderBoxSearchStat("resistance", "RESISTANCE", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
 						{this.renderBoxSearchStat("weakness", "WEAKNESS", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
 						{this.renderBoxSearchStat("spellbook", "SPELLBOOK", [1, 2, 3, 4])}
 						{this.renderBoxSearchStat("level", "LEVEL", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 275", "276 - 300", "301 - 325", "326 - 350"].reverse())}
 					</div>
+				}
+
+				{
+					!showFilters &&
+					<button
+						className="btnH"
+						style={Object.assign({}, styles.btnStat, { width: 'fit-content', marginBottom: 12 })}
+						onClick={() => this.setState({ showFilters: true })}
+					>
+						<p style={{ fontSize: 17, color: 'white' }}>
+							Show filters
+						</p>
+					</button>
 				}
 
 				{
@@ -926,7 +973,7 @@ class Profile extends Component {
 		const selectedStyle5 = section === 5 ? selStyle : unselStyle
 
 		return (
-			<div style={{ width: '100%', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap' }}>
+			<div style={{ width: '100%', alignItems: 'center', marginBottom: 15, flexWrap: 'wrap' }}>
 				<button
 					style={Object.assign({}, styles.btnMenu, selectedStyle1, { marginRight: 35 })}
 					onClick={() => {
@@ -1247,12 +1294,12 @@ const styles = {
 		alignItems: 'center',
 	},
 	btnStat: {
-		padding: 10,
+		padding: 9,
 		backgroundColor: CTA_COLOR,
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginRight: 10,
-		marginBottom: 10,
+		marginRight: 8,
+		marginBottom: 8,
 		borderRadius: 2,
 		minWidth: 60,
 		display: 'flex',
@@ -1261,9 +1308,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, wizaBalance, walletXp } = state.mainReducer;
+	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, wizaBalance, walletXp, filtriProfileRanges } = state.mainReducer;
 
-	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, wizaBalance, walletXp };
+	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, wizaBalance, walletXp, filtriProfileRanges };
 }
 
 export default connect(mapStateToProps, {

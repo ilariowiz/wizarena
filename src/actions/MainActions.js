@@ -795,10 +795,32 @@ export const loadBlockUserMintedNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, g
 			//console.log(response)
 
 			if (response) {
+
+				let maxStats = { hp: 0, defense: 0, attack: 0, damage: 0, speed: 0 }
+
 				response.map(i => {
 					const level = calcLevelWizard(i)
 					i.level = level
+
+					if (i.hp.int > maxStats.hp) {
+						maxStats['hp'] = i.hp.int
+					}
+					if (i.defense.int > maxStats.defense) {
+						maxStats['defense'] = i.defense.int
+					}
+					if (i.attack.int > maxStats.attack) {
+						maxStats['attack'] = i.attack.int
+					}
+					if (i.damage.int > maxStats.damage) {
+						maxStats['damage'] = i.damage.int
+					}
+					if (i.speed.int > maxStats.speed) {
+						maxStats['speed'] = i.speed.int
+					}
 				})
+
+				const ranges = dispatch(calcRanges(maxStats))
+				//console.log(ranges);
 
 				response.sort((a, b) => {
 	                return parseInt(a.id) - parseInt(b.id)
@@ -812,7 +834,10 @@ export const loadBlockUserMintedNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, g
 
 				dispatch({
 					type: LOAD_USER_MINTED_NFTS,
-					payload: response
+					payload: {
+						userMintedNfts: response,
+						ranges
+					}
 				})
 
 				if (callback) {

@@ -91,7 +91,8 @@ const INITIAL_STATE = {
 	challengesReceived: [],
 	challengesSent: [],
 	timeToHalvening: "Loading how long for halvening...",
-	filtriRanges: {}
+	filtriRanges: {},
+	filtriProfileRanges: {}
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -132,7 +133,7 @@ export default (state = INITIAL_STATE, action) => {
 		case SET_BLOCK_ID:
 			return { ...state, nftsBlockId: action.payload }
 		case LOAD_USER_MINTED_NFTS:
-			return { ...state, userMintedNfts: action.payload }
+			return { ...state, userMintedNfts: action.payload.userMintedNfts, filtriProfileRanges: action.payload.ranges }
 		case UPDATE_TRANSACTION_STATE: {
 			const { key, value } = action.payload
 
