@@ -292,7 +292,7 @@ class FlashTournaments extends Component {
         const createdAt = moment(item.createdAt)
         const diff = moment().to(createdAt)
 
-        const totalWiza = item.buyin * item.nPlayers
+        const totalWiza = item.buyin * item.nPlayers.int
         const fee = 5 * totalWiza / 100
         const prizeWiza = totalWiza - fee
 
@@ -375,7 +375,7 @@ class FlashTournaments extends Component {
                         </p>
 
                         <p style={{ fontSize: 21, color: 'white', textAlign: 'center' }}>
-                            <span style={{ fontSize: 16 }}>Max Level</span><br />{item.maxLevel}
+                            <span style={{ fontSize: 16 }}>Max Level</span><br />{item.maxLevel.int}
                         </p>
                     </div>
 
