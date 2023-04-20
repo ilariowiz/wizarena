@@ -530,6 +530,20 @@ class Equipment extends Component {
     				</div>
 
                     <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+
+                        <a
+                            href={`${window.location.protocol}//${window.location.host}/forge`}
+                            style={styles.btnOffers}
+                            onClick={(e) => {
+                                e.preventDefault()
+                                this.props.history.push('/forge')
+                            }}
+                        >
+                            <p style={{ fontSize: 17, color: 'white' }}>
+                                Forge
+                            </p>
+                        </a>
+
                         <a
                             href={`${window.location.protocol}//${window.location.host}/equipmentoffers`}
                             style={styles.btnOffers}

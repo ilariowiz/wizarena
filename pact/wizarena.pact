@@ -22,6 +22,7 @@
     (defconst ADMIN_KEYSET "free.wizarena-keyset")
     (defconst ADMIN_ADDRESS "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb")
     (defconst CLERIC_MINT_ADDRESS "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+    (defconst DEV_ADDRESS "k:aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1")
     (defconst WIZ_BANK:string "wiz-bank" "Account holding prizes")
 
     (defconst TOURNAMENT_OPEN "tournament_open")
@@ -55,6 +56,9 @@
     (defconst BUYIN_ELITE_KEY "buyin-elite-key")
 
     (defconst WIZARDS_CHALLENGES_COUNT_KEY "wizards-challenges-count-key")
+
+    (defconst AUTO_TOURNAMENTS_ID "auto-tournaments-id")
+    (defconst WIZ_AUTO_TOURNAMENTS_BANK:string "wiz-auto-tournaments-bank" "Account holding auto tournaments buyins")
 
 ; --------------------------------------------------------------------------
 ; Capabilities
@@ -97,6 +101,12 @@
         (enforce-keyset ADMIN_KEYSET)
         (compose-capability (PRIVATE))
         (compose-capability (ACCOUNT_GUARD ADMIN_ADDRESS))
+    )
+
+    (defcap DEV () ; Used for admin functions
+        @doc "Only allows dev to call these"
+        (compose-capability (PRIVATE))
+        (compose-capability (ACCOUNT_GUARD DEV_ADDRESS))
     )
 
     (defun create-BANK-guard ()
@@ -353,6 +363,19 @@
         name:string
     )
 
+    (defschema auto-tournaments-schema
+        id:string
+        createdBy:string
+        createdAt:time
+        players:list
+        wallets:list
+        buyin:decimal
+        maxLevel:integer
+        completed:bool
+        fights:object
+        nPlayers:integer
+    )
+
     (deftable nfts:{nft-main-schema})
     (deftable nfts-market:{nft-listed-schema})
     (deftable creation:{creation-schema})
@@ -381,6 +404,8 @@
     (deftable challenges:{challenges-schema})
 
     (deftable spells:{spells-schema})
+
+    (deftable auto-tournaments:{auto-tournaments-schema})
 
     ; --------------------------------------------------------------------------
   ; Can only happen once
@@ -429,6 +454,10 @@
         (insert values TOURNAMENT_ELITE_NAME {"value": "t3000"})
 
         (insert counts WIZARDS_CHALLENGES_COUNT_KEY {"count": 0})
+
+        (insert counts AUTO_TOURNAMENTS_ID {"count": 0})
+        (coin.create-account WIZ_AUTO_TOURNAMENTS_BANK (create-BANK-guard))
+        (create-account WIZ_AUTO_TOURNAMENTS_BANK (create-BANK-guard))
     )
 
     (defun insertValuesUpgrade ()
@@ -1916,6 +1945,117 @@
     )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;; AUTO TOURNAMENTS ;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (defun create-tournament (idnft:string account:string buyin:decimal maxLevel:integer m:module{wiza1-interface-v2})
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+        (enforce (> buyin 0.0) "Buyin must be greater than 0")
+        (enforce (> maxLevel 0) "Max Level must be greater than 0")
+        (with-capability (OWNER account idnft)
+            (let (
+                    (current-level (calculate-level idnft))
+                    (new-tournament-id (int-to-str 10 (get-count AUTO_TOURNAMENTS_ID)))
+                    (playerlist (make-list 1 idnft))
+                    (wallets (make-list 1 account))
+                    (bank-guard (at "guard" (coin.details WIZ_AUTO_TOURNAMENTS_BANK)))
+                )
+                (enforce (<= current-level maxLevel) "Your wizard has a level greater than the max level")
+                (write auto-tournaments new-tournament-id
+                    {"id": new-tournament-id,
+                    "createdBy": account,
+                    "createdAt": (at "block-time" (chain-data)),
+                    "players": playerlist,
+                    "wallets": wallets,
+                    "buyin":buyin,
+                    "maxLevel": maxLevel,
+                    "completed": false,
+                    "fights":{},
+                    "nPlayers": 8}
+                )
+                (install-capability (m::TRANSFER account WIZ_AUTO_TOURNAMENTS_BANK buyin))
+                (m::transfer-create account WIZ_AUTO_TOURNAMENTS_BANK bank-guard buyin)
+                (with-capability (PRIVATE)
+                  (increase-count AUTO_TOURNAMENTS_ID)
+                )
+            )
+        )
+    )
+
+    (defun join-tournament (tournamentid:string idnft:string account:string m:module{wiza1-interface-v2})
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+        (with-capability (OWNER account idnft)
+            (let (
+                    (current-level (calculate-level idnft))
+                    (playerlist (make-list 1 idnft))
+                    (wallets (make-list 1 account))
+                    (bank-guard (at "guard" (coin.details WIZ_AUTO_TOURNAMENTS_BANK)))
+                )
+                (with-read auto-tournaments tournamentid
+                    {
+                        "players":=subscribers,
+                        "wallets":=subscriberwallets,
+                        "buyin":=buyin,
+                        "maxLevel":=maxLevel,
+                        "completed":=completed,
+                        "nPlayers":=nPlayers
+                    }
+                    (enforce (= completed false) "Can't join a completed tournament")
+                    (enforce (< (length subscribers) nPlayers) "Tournament is full")
+                    (enforce (<= current-level maxLevel) "Your wizard has a level greater than the max level")
+                    (enforce (= (contains idnft subscribers) false) "This wizard is already subscribed")
+                    (enforce (= (contains account subscriberwallets) false) "You cannot have multiple wizards in the same tournament")
+                    (update auto-tournaments tournamentid
+                        {
+                            "players": (+ subscribers (make-list 1 idnft)),
+                            "wallets": (+ subscriberwallets (make-list 1 account))
+                        }
+                    )
+                    (install-capability (m::TRANSFER account WIZ_AUTO_TOURNAMENTS_BANK buyin))
+                    (m::transfer-create account WIZ_AUTO_TOURNAMENTS_BANK bank-guard buyin)
+                )
+            )
+        )
+    )
+
+    (defun complete-tournament (tournamentid:string winner:string fights:object m:module{wiza1-interface-v2})
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+        (with-capability (DEV)
+            (with-read auto-tournaments tournamentid
+                {
+                    "buyin":=buyin,
+                    "nPlayers":=nPlayers
+                }
+                (let (
+                        (prize (* buyin nPlayers))
+                        (fee (/ (* (* buyin nPlayers) 5) 100))
+                        (winner-guard (at "guard" (coin.details winner)))
+                        (admin-guard (at "guard" (coin.details ADMIN_ADDRESS)))
+                    )
+                    (install-capability (m::TRANSFER WIZ_AUTO_TOURNAMENTS_BANK winner (- prize fee)))
+                    (m::transfer-create WIZ_AUTO_TOURNAMENTS_BANK winner winner-guard (- prize fee))
+                    (install-capability (m::TRANSFER WIZ_AUTO_TOURNAMENTS_BANK ADMIN_ADDRESS fee))
+                    (m::transfer-create WIZ_AUTO_TOURNAMENTS_BANK ADMIN_ADDRESS admin-guard fee)
+                )
+                (update auto-tournaments tournamentid
+                    {
+                        "completed":true,
+                        "fights":fights
+                    }
+                )
+            )
+        )
+    )
+
+    (defun get-pending-auto-tournaments ()
+        (select auto-tournaments (where "completed" (= false)))
+    )
+
+    (defun get-completed-auto-tournaments ()
+        (select auto-tournaments (where "completed" (= true)))
+    )
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;; SWAP SPELL ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -2483,6 +2623,8 @@
     (create-table challenges)
 
     (create-table spells)
+
+    (create-table auto-tournaments)
 
     (initialize)
     (insertValuesUpgrade)

@@ -3081,6 +3081,83 @@ export const getChallengesReceived = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 
 /************************************************************************
 
+AUTO TOURNAMENT FUNCTIONS
+
+*************************************************************************/
+
+export const createTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, idnft, account, buyin, maxLevel) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.create-tournament "${idnft}" "${account.account}" ${_.round(buyin).toFixed(1)} ${maxLevel} free.wiza)`;
+
+		let cmd = {
+			pactCode,
+			caps: [
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME}.OWNER`,
+          			[account.account, idnft]
+        		),
+				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+			],
+			sender: account.account,
+			gasLimit: 3000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("createTournament", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const joinTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, tournamentid, idnft, account) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.join-tournament "${tournamentid}" "${idnft}" "${account.account}" free.wiza)`;
+
+		let cmd = {
+			pactCode,
+			caps: [
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME}.OWNER`,
+          			[account.account, idnft]
+        		),
+				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+			],
+			sender: account.account,
+			gasLimit: 3000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("joinTournament", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+
+/************************************************************************
+
 WIZA TOKEN FUNCTIONS
 
 *************************************************************************/

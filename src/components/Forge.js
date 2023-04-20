@@ -412,7 +412,7 @@ class Forge extends Component {
 			<div>
 				<Header
 					page='home'
-					section={9}
+					section={19}
 					account={account}
 					isMobile={isMobile}
 					history={this.props.history}

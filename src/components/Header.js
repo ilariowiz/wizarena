@@ -40,7 +40,7 @@ const logo_img = require('../assets/wzlogo_bg_transparent.png')
 
 const market_icon = require('../assets/menu/marketplace.png')
 const equipment_icon = require('../assets/menu/equipment.png')
-const forge_icon = require('../assets/menu/forge.png')
+const flash_icon = require('../assets/menu/flash_tournament.png')
 const profile_icon = require('../assets/menu/profile.png')
 const shop_icon = require('../assets/menu/shop.png')
 const pvp_icon = require('../assets/menu/pvp.png')
@@ -511,7 +511,7 @@ class Header extends Component {
 		const textToConfirm = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1].transactionToConfirmText : ""
 
 		return (
-			<div style={{ flexDirection: 'column', padding: 15, backgroundColor: '#2d2a42', position: 'relative', overflowY: 'auto' }} id="headerbox">
+			<div style={{ flexDirection: 'column', maxWidth: 205, padding: 15, backgroundColor: '#2d2a42', position: 'relative', overflowY: 'auto' }} id="headerbox">
 
 				<div style={{ flexDirection: 'column', alignItems: 'flex-start', marginBottom: 20 }}>
 					<img
@@ -536,13 +536,6 @@ class Header extends Component {
 					equipment_icon,
 					"EQUIPMENT",
 					8)
-				}
-
-				{this.renderBtnMenu(
-					'forge',
-					forge_icon,
-					"FORGE",
-					9)
 				}
 
 				{this.renderBtnMenu(
@@ -571,6 +564,13 @@ class Header extends Component {
 					tournaments_icon,
 					"TOURNAMENTS",
 					4)
+				}
+
+				{this.renderBtnMenu(
+					'flashtournaments',
+					flash_icon,
+					"FLASH TOURNAMENTS",
+					9)
 				}
 
 				{this.renderBtnMenu(
@@ -743,12 +743,6 @@ class Header extends Component {
 				}
 
 				{this.renderBtnMenuMobile(
-					'forge',
-					forge_icon,
-					9)
-				}
-
-				{this.renderBtnMenuMobile(
 					'me',
 					profile_icon,
 					3)
@@ -770,6 +764,12 @@ class Header extends Component {
 					'tournaments',
 					tournaments_icon,
 					4)
+				}
+
+				{this.renderBtnMenuMobile(
+					'flashtournaments',
+					flash_icon,
+					9)
 				}
 
 				{this.renderBtnMenuMobile(

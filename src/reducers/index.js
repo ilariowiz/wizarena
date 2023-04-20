@@ -5,6 +5,7 @@ import RankReducer from './RankReducer'
 import EquipmentReducer from './EquipmentReducer'
 import ModalTransactionReducer from './ModalTransactionReducer'
 import ChallengesReducer from './ChallengesReducer'
+import FlashTournamentsReducer from './FlashTournamentsReducer'
 
 const rootRed = combineReducers({
 	mainReducer: MainReducer,
@@ -12,7 +13,8 @@ const rootRed = combineReducers({
 	rankReducer: RankReducer,
 	equipmentReducer: EquipmentReducer,
 	modalTransactionReducer: ModalTransactionReducer,
-	challengesReducer: ChallengesReducer
+	challengesReducer: ChallengesReducer,
+	flashTournamentsReducer: FlashTournamentsReducer
 });
 
 export default rootRed;

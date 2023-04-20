@@ -1152,6 +1152,37 @@
 
 (commit-tx)
 
+(begin-tx "CREATE TOURNAMENT")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.create-tournament "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" 50.0 350 free.wiza)
+
+(commit-tx)
+
+(begin-tx "JOIN TOURNAMENT")
+
+(env-sigs [{
+  "key": "94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd",
+  "caps": [
+    (free.wiz-arena.OWNER "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" "2"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.join-tournament "0" "2" "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" free.wiza)
+
+(free.wiz-arena.get-pending-auto-tournaments)
+
+(commit-tx)
+
+
 (begin-tx "MAKE OFFER")
 
 (env-sigs [{
@@ -1838,7 +1869,7 @@
   ]
 }])
 
-(free.wiz-arena.buy-upgrades-ap "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "attack" 2)
+(free.wiz-arena.buy-upgrades-ap "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "attack" 2 free.wiza)
 
 (commit-tx)
 
