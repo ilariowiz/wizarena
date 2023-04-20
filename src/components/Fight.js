@@ -75,7 +75,7 @@ class Fight extends Component {
         const docRef = doc(firebasedb, "fights", idFight)
         const docSnap = await getDoc(docRef)
 
-        //console.log(docSnap.data());
+        console.log(docSnap.data());
 
         const data = docSnap.data()
 
@@ -286,7 +286,7 @@ class Fight extends Component {
         const { tournament } = this.state
         //console.log(tournament);
 
-        let tournamentNumber = tournament.split("_")[0].replace("t", "")
+        let tournamentNumber = tournament ? tournament.split("_")[0].replace("t", "") : ""
 
         //console.log(info);
 
