@@ -51,6 +51,7 @@ class FlashTournaments extends Component {
             showModalFights: false,
             showModalCreate: false,
             showModalChooseWizard: false,
+            maxLevelChooseWizard: 0,
             fights: {},
             tournamentid: "",
             equipment: [],
@@ -184,6 +185,8 @@ class FlashTournaments extends Component {
 
         const imgWidth = isMobile ? 36 : 70
 
+        //console.log(item.maxLevel.int);
+
         return (
             <div style={Object.assign({}, styles.rowTournament, { flexDirection: isMobile ? 'column' : 'row' })} key={index}>
 
@@ -274,7 +277,7 @@ class FlashTournaments extends Component {
                         <button
                             style={Object.assign({}, styles.btnMenu, { backgroundColor: TEXT_SECONDARY_COLOR, width: 130, height: 35 })}
                             className="btnH"
-                            onClick={() => this.setState({ joinTournamentid:item.id, showModalChooseWizard: true })}
+                            onClick={() => this.setState({ joinTournamentid:item.id, showModalChooseWizard: true, maxLevelChooseWizard: item.maxLevel.int })}
                         >
                             <p style={{ fontSize: 17, color: 'white' }}>
                                 JOIN
@@ -435,12 +438,17 @@ class FlashTournaments extends Component {
     }
 
     renderBody(isMobile) {
-        const { error, section } = this.state
-        const { loadingCompleted, loadingPending, pendingTournaments, completedTournaments } = this.props
+        const { error, section, maxLevelChooseWizard, showModalChooseWizard } = this.state
+        const { loadingCompleted, loadingPending, pendingTournaments, completedTournaments, userMintedNfts } = this.props
 
         const { boxW, modalW } = getBoxWidth(isMobile)
 
-        //console.log(loadingPending);
+        //console.log(userMintedNfts);
+
+        let wizardsPool = []
+        if (showModalChooseWizard && maxLevelChooseWizard && userMintedNfts && userMintedNfts.length > 0) {
+            wizardsPool = userMintedNfts.filter(i => i.level <= maxLevelChooseWizard)
+        }
 
         return (
             <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
@@ -530,7 +538,7 @@ class FlashTournaments extends Component {
                     width={modalW}
                     wizaBalance={this.props.wizaBalance}
                     equipment={this.state.equipment}
-                    yourWizards={this.props.userMintedNfts}
+                    yourWizards={userMintedNfts}
                     createTournament={(idnft, buyin, maxLevel) => {
                         this.setState({ showModalCreate: false })
                         this.createTournament(idnft, buyin, maxLevel)
@@ -538,10 +546,10 @@ class FlashTournaments extends Component {
                 />
 
                 <ModalChooseWizard
-                    showModal={this.state.showModalChooseWizard}
+                    showModal={showModalChooseWizard}
                     onCloseModal={() => this.setState({ showModalChooseWizard: false })}
                     equipment={this.state.equipment}
-                    yourWizards={this.props.userMintedNfts}
+                    yourWizards={wizardsPool}
                     onSelect={(id) => {
                         this.setState({ showModalChooseWizard: false })
                         this.joinTournament(id)
