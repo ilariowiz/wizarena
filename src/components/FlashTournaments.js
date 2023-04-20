@@ -180,7 +180,7 @@ class FlashTournaments extends Component {
         const createdAt = moment(item.createdAt.timep)
         const diff = moment().to(createdAt)
 
-        const isFull = item.nPlayers === item.players.length
+        const isFull = item.nPlayers.int === item.players.length
 
         return (
             <div style={styles.rowTournament} key={index}>
