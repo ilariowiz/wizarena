@@ -174,7 +174,7 @@ class FlashTournaments extends Component {
         )
     }
 
-    renderPendingTournament(item, index) {
+    renderPendingTournament(item, index, isMobile) {
         const { account } = this.props
 
         const createdAt = moment(item.createdAt.timep)
@@ -182,15 +182,17 @@ class FlashTournaments extends Component {
 
         const isFull = item.nPlayers.int === item.players.length
 
-        return (
-            <div style={styles.rowTournament} key={index}>
+        const imgWidth = isMobile ? 36 : 70
 
-                <div style={{ flexDirection: 'column', justifyContent: 'center', marginLeft: 15 }}>
-                    <p style={{ fontSize: 15, color: 'white', marginBottom: 7 }}>
+        return (
+            <div style={Object.assign({}, styles.rowTournament, { flexDirection: isMobile ? 'column' : 'row' })} key={index}>
+
+                <div style={{ flexDirection: 'column', justifyContent: 'center', marginLeft: isMobile ? 0 : 15 }}>
+                    <p style={{ fontSize: 15, color: 'white', marginBottom: 7, textAlign: isMobile ? 'center' : 'left' }}>
                         ID: {item.id}
                     </p>
 
-                    <p style={{ fontSize: 15, color: 'white', opacity: 0.6 }}>
+                    <p style={{ fontSize: 15, color: 'white', opacity: 0.6, textAlign: isMobile ? 'center' : 'left' }}>
                         Created: <br />{diff}
                     </p>
                 </div>
@@ -213,7 +215,7 @@ class FlashTournaments extends Component {
                                         <div style={{ alignItems: 'center' }}>
                                             <img
                                                 src={getImageUrl(wiz)}
-                                                style={{ width: 70, height: 70, borderRadius: 35, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+                                                style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
                                                 alt={wiz}
                                             />
                                         </div>
@@ -232,7 +234,7 @@ class FlashTournaments extends Component {
                     })}
                 </div>
 
-                <div style={{ flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', marginRight: 15 }}>
+                <div style={{ flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-end', justifyContent: 'center', marginRight: isMobile ? 0 : 15 }}>
 
                     <div style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
 
@@ -286,8 +288,7 @@ class FlashTournaments extends Component {
     }
 
     renderCompletedTournament(item, index, isMobile) {
-
-        console.log(item);
+        //console.log(item);
 
         const createdAt = moment(item.createdAt)
         const diff = moment().to(createdAt)
@@ -296,15 +297,17 @@ class FlashTournaments extends Component {
         const fee = 5 * totalWiza / 100
         const prizeWiza = totalWiza - fee
 
-        return (
-            <div style={styles.rowTournament} key={index}>
+        const imgWidth = isMobile ? 36 : 50
 
-                <div style={{ flexDirection: 'column', justifyContent: 'center', marginLeft: 15 }}>
-                    <p style={{ fontSize: 15, color: 'white', marginBottom: 7 }}>
+        return (
+            <div style={Object.assign({}, styles.rowTournament, { flexDirection: isMobile ? 'column' : 'row' })} key={index}>
+
+                <div style={{ flexDirection: 'column', justifyContent: 'center', marginLeft: isMobile ? 0 : 15 }}>
+                    <p style={{ fontSize: 15, color: 'white', marginBottom: 7, textAlign: isMobile ? 'center' : 'left' }}>
                         ID: {item.id}
                     </p>
 
-                    <p style={{ fontSize: 15, color: 'white', opacity: 0.6 }}>
+                    <p style={{ fontSize: 15, color: 'white', opacity: 0.6, textAlign: isMobile ? 'center' : 'left' }}>
                         Created: <br />{diff}
                     </p>
                 </div>
@@ -329,7 +332,7 @@ class FlashTournaments extends Component {
                                             <div style={{ alignItems: 'center' }}>
                                                 <img
                                                     src={getImageUrl(wiz)}
-                                                    style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+                                                    style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
                                                     alt={wiz}
                                                 />
                                             </div>
@@ -495,7 +498,7 @@ class FlashTournaments extends Component {
                     {
                         section === 1 ?
                         pendingTournaments.map((item, index) => {
-                            return this.renderPendingTournament(item, index)
+                            return this.renderPendingTournament(item, index, isMobile)
                         })
                         :
                         completedTournaments.map((item, index) => {
