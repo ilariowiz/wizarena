@@ -1,5 +1,6 @@
 import Pact from "pact-lang-api";
 import _ from 'lodash'
+import moment from 'moment'
 import {
     CONTRACT_NAME,
     DEFAULT_GAS_PRICE,
@@ -22,6 +23,10 @@ export const getPendingTournaments = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
 
+            response.sort((a, b) => {
+                return moment(b.createdAt.timep) - moment(a.createdAt.timep)
+            })
+            
             if (response) {
                 dispatch({
                     type: SET_PENDING_TOURNAMENTS,
@@ -48,6 +53,10 @@ export const getCompletedTournaments = (chainId, gasPrice = DEFAULT_GAS_PRICE, g
 
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
+
+            response.sort((a, b) => {
+                return moment(b.createdAt.timep) - moment(a.createdAt.timep)
+            })
 
             if (response) {
                 dispatch({

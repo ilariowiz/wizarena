@@ -290,7 +290,7 @@ class FlashTournaments extends Component {
     renderCompletedTournament(item, index, isMobile) {
         //console.log(item);
 
-        const createdAt = moment(item.createdAt)
+        const createdAt = moment(item.createdAt.timep)
         const diff = moment().to(createdAt)
 
         const totalWiza = item.buyin * item.nPlayers.int
