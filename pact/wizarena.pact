@@ -367,6 +367,7 @@
         id:string
         createdBy:string
         createdAt:time
+        completedAt:time
         players:list
         wallets:list
         buyin:decimal
@@ -1965,6 +1966,7 @@
                     {"id": new-tournament-id,
                     "createdBy": account,
                     "createdAt": (at "block-time" (chain-data)),
+                    "completedAt": (at "block-time" (chain-data)),
                     "players": playerlist,
                     "wallets": wallets,
                     "buyin":buyin,
@@ -2040,7 +2042,8 @@
                 (update auto-tournaments tournamentid
                     {
                         "completed":true,
-                        "fights":fights
+                        "fights":fights,
+                        "completedAt": (at "block-time" (chain-data))
                     }
                 )
             )

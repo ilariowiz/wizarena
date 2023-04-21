@@ -60,7 +60,11 @@ export const getCompletedTournaments = (chainId, gasPrice = DEFAULT_GAS_PRICE, g
 			//console.log(response)
 
             response.sort((a, b) => {
-                return moment(b.createdAt.timep) - moment(a.createdAt.timep)
+
+                const moment1 = b.completedAt ? moment(b.completedAt.timep) : moment(b.createdAt.timep)
+                const moment2 = a.completedAt ? moment(a.completedAt.timep) : moment(a.createdAt.timep)
+
+                return moment1 - moment2
             })
 
             if (response) {
