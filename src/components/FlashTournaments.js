@@ -211,7 +211,7 @@ class FlashTournaments extends Component {
         }
 
         return (
-            <div style={{ alignItems: 'center', margin: 5 }}>
+            <div style={{ alignItems: 'center', margin: 5 }} key={wiz}>
                 <img
                     src={img}
                     style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
