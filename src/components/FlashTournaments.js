@@ -166,8 +166,21 @@ class FlashTournaments extends Component {
     }
 
     renderImgPlayer(wiz, idx, isFull, imgWidth) {
+        const { userMintedNfts } = this.props
 
-        if (isFull) {
+        let isMine = false
+
+        if (userMintedNfts) {
+            for (var i = 0; i < userMintedNfts.length; i++) {
+                if (userMintedNfts[i].id === wiz) {
+                    isMine = true
+                    break
+                }
+            }
+        }
+
+
+        if (isFull || isMine) {
             return (
                 <a
                     key={wiz}
