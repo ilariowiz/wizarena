@@ -27,23 +27,13 @@ import {
 } from '../actions'
 import 'reactjs-popup/dist/index.css';
 
-const ring_placeholder = require('../assets/ring_placeholder.png')
-const recipe_book = require('../assets/book.png')
+const placeholder = require('../assets/placeholder.png')
+const placeholder_druid = require('../assets/placeholder_druid.png')
+const placeholder_cleric = require('../assets/placeholder_cleric.png')
 
 class FlashTournaments extends Component {
     constructor(props) {
         super(props)
-
-        /*
-        this.completed = [{"buyin": 10.0,"completed": false,"createdAt": "2023-04-19T08:56:53Z","createdBy": "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb","fights": {"0_r1": [{"fightId": "yExn3HPRHq3bsyqCTfm3","s1": "0","s2": "6","winnerId": "6"}, {"fightId": "IupG0rv1YBBhOXeql8dx","s1": "3","s2": "7","winnerId": "7"}, {"fightId": "RUcbYCtMTAfRpHmqsPFU","s1": "2","s2": "4","winnerId": "1"}, {"fightId": "UGHUf6hzuPWL73YIuXIZ","s1": "1","s2": "5","winnerId": "5"}],"0_r2": [{"fightId": "s4F2W4FJpYSr6UZMKz93","s1": "7","s2": "5","winnerId": "7"}, {"fightId": "5ZpPRmMjfHCtVc58kJ2V","s1": "1","s2": "6","winnerId": "6"}],"0_r3": [{"fightId": "w5Qnq0XNoaW54yqDXq5p","s1": "6","s2": "7","winnerId": "6"}], "winner": "6"},"id": "0","maxLevel": 330,"nPlayers": 8,"players": ["0", "2", "3", "1", "6", "7", "5", "4"],"wallets": ["k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb"]}]
-
-        this.pending = [
-            {"buyin": 10.0,"completed": false,"createdAt": "2023-04-19T08:56:53Z","createdBy": "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb","fights": {},"id": "0","maxLevel": 330,"nPlayers": 8,"players": ["0", "2", "3", "1"],"wallets": ["k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb"]},
-            {"buyin": 40.0,"completed": false,"createdAt": "2023-04-19T18:56:53Z","createdBy": "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb","fights": {},"id": "1","maxLevel": 250,"nPlayers": 8,"players": ["100", "2881", "301", "1055", "99", "748"],"wallets": ["k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb"]},
-            {"buyin": 110.0,"completed": false,"createdAt": "2023-04-19T23:56:53Z","createdBy": "k:461ae9f3c9c255112ac3797f6b15699c656c9bc44ed089551a0f792085ef9504","fights": {},"id": "2","maxLevel": 350,"nPlayers": 8,"players": ["1044", "2551",],"wallets": ["k:461ae9f3c9c255112ac3797f6b15699c656c9bc44ed089551a0f792085ef9504"]},
-            {"buyin": 1000.0,"completed": false,"createdAt": "2023-04-19T12:56:53Z","createdBy": "k:461ae9f3c9c255112ac3797f6b15699c656c9bc44ed089551a0f792085ef9504","fights": {},"id": "3","maxLevel": 190,"nPlayers": 8,"players": ["10", "324", "1223", "911", "707", "544", "1111", "1200"],"wallets": ["k:461ae9f3c9c255112ac3797f6b15699c656c9bc44ed089551a0f792085ef9504"]}
-        ]
-        */
 
         this.state = {
             error: "",
@@ -175,6 +165,61 @@ class FlashTournaments extends Component {
         )
     }
 
+    renderImgPlayer(wiz, idx, isFull, imgWidth) {
+
+        if (isFull) {
+            return (
+                <a
+                    key={wiz}
+                    href={`${window.location.protocol}//${window.location.host}/nft/${wiz}`}
+                    style={{ cursor: 'pointer', margin: 5 }}
+                    onClick={(e) => {
+                        e.preventDefault()
+                        this.props.selectWizard(wiz)
+                        this.props.history.push(`/nft/${wiz}`)
+                    }}
+                >
+                    <Popup
+                        trigger={open => (
+                            <div style={{ alignItems: 'center' }}>
+                                <img
+                                    src={getImageUrl(wiz)}
+                                    style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+                                    alt={wiz}
+                                />
+                            </div>
+                        )}
+                        position="top center"
+                        on="hover"
+                    >
+                        <div style={{ padding: 5, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+                            <p style={{ fontSize: 18, textAlign: 'center' }}>
+                                Wizard #{wiz}
+                            </p>
+                        </div>
+                    </Popup>
+                </a>
+            )
+        }
+
+        let img = placeholder;
+        if (parseInt(wiz) >= 1024 && parseInt(wiz) < 2048) {
+            img = placeholder_cleric
+        }
+        else if (parseInt(wiz) >= 2048 && parseInt(wiz) < 3072) {
+            img = placeholder_druid
+        }
+
+        return (
+            <div style={{ alignItems: 'center', margin: 5 }}>
+                <img
+                    src={img}
+                    style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+                />
+            </div>
+        )
+    }
+
     renderPendingTournament(item, index, isMobile) {
         const { account } = this.props
 
@@ -202,38 +247,7 @@ class FlashTournaments extends Component {
 
                 <div style={{ alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', flex: 1, marginLeft: 10, marginRight: 10 }}>
                     {item.players.map((wiz, idx) => {
-                        return (
-                            <a
-                                key={wiz}
-                				href={`${window.location.protocol}//${window.location.host}/nft/${wiz}`}
-                                style={{ cursor: 'pointer', margin: 5 }}
-                				onClick={(e) => {
-                					e.preventDefault()
-                					this.props.selectWizard(wiz)
-                					this.props.history.push(`/nft/${wiz}`)
-                				}}
-                			>
-                                <Popup
-                                    trigger={open => (
-                                        <div style={{ alignItems: 'center' }}>
-                                            <img
-                                                src={getImageUrl(wiz)}
-                                                style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
-                                                alt={wiz}
-                                            />
-                                        </div>
-                                    )}
-                                    position="top center"
-                                    on="hover"
-                                >
-                                    <div style={{ padding: 5, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-                                        <p style={{ fontSize: 18, textAlign: 'center' }}>
-                                            Wizard #{wiz}
-                                        </p>
-                                    </div>
-                                </Popup>
-                            </a>
-                        )
+                        return this.renderImgPlayer(wiz, idx, isFull, imgWidth)
                     })}
                 </div>
 

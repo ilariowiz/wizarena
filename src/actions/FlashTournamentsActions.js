@@ -23,10 +23,15 @@ export const getPendingTournaments = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
 
+            /*
             response.sort((a, b) => {
                 return moment(b.createdAt.timep) - moment(a.createdAt.timep)
             })
-            
+            */
+            response.sort((a, b) => {
+                return b.players.length - a.players.length
+            })
+
             if (response) {
                 dispatch({
                     type: SET_PENDING_TOURNAMENTS,
