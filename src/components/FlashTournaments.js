@@ -320,8 +320,10 @@ class FlashTournaments extends Component {
     renderCompletedTournament(item, index, isMobile) {
         //console.log(item);
 
-        const createdAt = moment(item.createdAt.timep)
-        const diff = moment().to(createdAt)
+        const timeFromBlock = item.completedAt ? item.completedAt.timep : item.createdAt.timep
+
+        const time = moment(timeFromBlock)
+        const diff = moment().to(time)
 
         const totalWiza = item.buyin * item.nPlayers.int
         const fee = 5 * totalWiza / 100
@@ -338,7 +340,7 @@ class FlashTournaments extends Component {
                     </p>
 
                     <p style={{ fontSize: 15, color: 'white', opacity: 0.6, textAlign: isMobile ? 'center' : 'left' }}>
-                        Created: <br />{diff}
+                        {item.completedAt ? "Completed" : "Created"}: <br />{diff}
                     </p>
                 </div>
 
