@@ -189,7 +189,7 @@ class Header extends Component {
 
 				<div
 					className={showPanel ? "slide-panel-container-on" : "slide-panel-container-off"}
-					style={Object.assign({}, styles.panel, { width: showPanel ? panelWidth : 0 })}
+					style={Object.assign({}, styles.panel, { width: showPanel ? panelWidth : 0, zIndex: 1000 })}
 				>
 
 					<div style={styles.headerPanel}>
@@ -637,7 +637,7 @@ class Header extends Component {
 						document.body.style.height = "auto"
 						this.setState({ showPanel: false })
 					}}
-					style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#00000090', width: this.state.showPanel ? window.innerWidth : 0 }}
+					style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#00000090', width: this.state.showPanel ? window.innerWidth : 0, zIndex: 999 }}
 				/>
 
 				{this.renderSlidePanel(boxW)}
