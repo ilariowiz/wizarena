@@ -318,7 +318,9 @@ class FlashTournaments extends Component {
     }
 
     renderCompletedTournament(item, index, isMobile) {
-        //console.log(item);
+        const { userMintedNfts, account } = this.props
+
+        //console.log(userMintedNfts);
 
         const timeFromBlock = item.completedAt ? item.completedAt.timep : item.createdAt.timep
 
@@ -331,8 +333,16 @@ class FlashTournaments extends Component {
 
         const imgWidth = isMobile ? 36 : 50
 
+        let youSubbed = false
+        for (var i = 0; i < item.wallets.length; i++) {
+            const w = item.wallets[i]
+            if (account && w === account.account) {
+                youSubbed = true
+            }
+        }
+
         return (
-            <div style={Object.assign({}, styles.rowTournament, { flexDirection: isMobile ? 'column' : 'row' })} key={index}>
+            <div style={Object.assign({}, styles.rowTournament, { flexDirection: isMobile ? 'column' : 'row', borderColor: youSubbed ? 'gold' : 'white' })} key={index}>
 
                 <div style={{ flexDirection: 'column', justifyContent: 'center', marginLeft: isMobile ? 0 : 15 }}>
                     <p style={{ fontSize: 15, color: 'white', marginBottom: 7, textAlign: isMobile ? 'center' : 'left' }}>
@@ -348,6 +358,14 @@ class FlashTournaments extends Component {
 
                     <div style={{ alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', flex: 1, marginLeft: 10, marginRight: 10, marginBottom: 10 }}>
                         {item.players.map((wiz, idx) => {
+
+                            let isYour = false
+                            for (let i = 0; i < userMintedNfts.length; i++) {
+                                if (userMintedNfts[i].id === wiz) {
+                                    isYour = true
+                                }
+                            }
+
                             return (
                                 <a
                                     key={wiz}
@@ -364,7 +382,7 @@ class FlashTournaments extends Component {
                                             <div style={{ alignItems: 'center' }}>
                                                 <img
                                                     src={getImageUrl(wiz)}
-                                                    style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+                                                    style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: isYour ? 2 : 1, borderColor: isYour ? 'gold' : 'white', borderStyle: 'solid' }}
                                                     alt={wiz}
                                                 />
                                             </div>
