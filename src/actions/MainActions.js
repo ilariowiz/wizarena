@@ -3031,7 +3031,7 @@ export const getChallengesReceived = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 		}
 
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
-			console.log(response)
+			//console.log(response)
 
 			response = response.filter(i => i.amount > 0)
 
