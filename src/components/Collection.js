@@ -182,7 +182,9 @@ class Collection extends Component {
 		//let searchTextFinal = searchText.includes("#") ? searchText : `#${searchText}`
 		const result = allNfts.filter(i => {
 			//console.log(i);
-			if (i.name.includes(searchText) || (i.nickname && i.nickname.toLowerCase().includes(searchText.toLowerCase()))) {
+			if (i.name.includes(searchText) ||
+				(i.nickname && i.nickname.toLowerCase().includes(searchText.toLowerCase())) ||
+				(i.owner.includes(searchText.toLowerCase()))) {
 				return i
 			}
 		})
