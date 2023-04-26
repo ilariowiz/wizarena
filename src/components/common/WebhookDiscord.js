@@ -361,13 +361,13 @@ export const sendMessageFlashTSub = (info) => {
     request.setRequestHeader("Content-type", 'application/json')
     //console.log(content);
 
-    let message = `A new wizard join Flash tournament ${info.id}! Buyin **${info.buyin}** WIZA, Max level **${info.maxLevel.int}**.`
+    let message = `A wizard join Flash tournament **${info.id}**! Buyin **${info.buyin}** WIZA, Max level **${info.maxLevel.int}**.`
     if (info.players.length === (info.nPlayers.int - 1)) {
-        message = `${message} The tournament will start in a few minutes.`
+        message = `${message} *The tournament will start in a few minutes.*`
     }
     else {
         const pLeft = info.nPlayers.int - 1 - info.players.length
-        message = `${message} ${pLeft} wizards left to start the tournament.`
+        message = `${message} *${pLeft} wizards left to start the tournament.*`
     }
 
     const params = {
