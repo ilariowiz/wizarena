@@ -353,3 +353,40 @@ export const sendMessageFlashT = (info) => {
 
     request.send(JSON.stringify(params));
 }
+
+export const sendMessageFlashTSub = (info) => {
+    const request = new XMLHttpRequest()
+
+    request.open("POST", process.env.REACT_APP_DISCORD_WEBHOOK_FLASHT)
+    request.setRequestHeader("Content-type", 'application/json')
+    //console.log(content);
+
+    let message = `A new wizard join Flash tournament ${info.id}! Buyin **${info.buyin}** WIZA, Max level **${info.maxLevel.int}**.`
+    if (info.players.length === (info.nPlayers.int - 1)) {
+        message = `${message} The tournament will start in a few minutes.`
+    }
+    else {
+        const pLeft = info.nPlayers.int - 1 - info.players.length
+        message = `${message} ${pLeft} wizards left to start the tournament.`
+    }
+
+    const params = {
+        username: `Wizard Bot`,
+        avatar_url: `https://storage.googleapis.com/wizarena/wiz_logo_centrale.png`,
+        content: message
+        /*
+        embeds: [
+            {
+                "title": `#${info.wiz2id}`,
+                "description": message,
+                "url": `https://www.wizardsarena.net/nft/${info.wiz2id}`,
+                "thumbnail": {
+                    "url": `https://storage.googleapis.com/wizarena/generated_imgs/${info.wiz2id}.png`
+                }
+            }
+        ]
+        */
+    }
+
+    request.send(JSON.stringify(params));
+}

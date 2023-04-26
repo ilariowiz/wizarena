@@ -5,7 +5,7 @@ import { firebasedb } from '../Firebase';
 import { IoClose } from 'react-icons/io5'
 import DotLoader from 'react-spinners/DotLoader';
 import Pact from "pact-lang-api";
-import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, sendMessageUpdateNickname, sendMessageUpgrade, sendMessageListedEquipment, sendMessageDelistedEquipment, sendMessageSalesEquipment, sendMessageOfferItem, sendMessageDeclineOffer, sendMessageChallenge, sendMessageFlashT } from './WebhookDiscord'
+import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, sendMessageUpdateNickname, sendMessageUpgrade, sendMessageListedEquipment, sendMessageDelistedEquipment, sendMessageSalesEquipment, sendMessageOfferItem, sendMessageDeclineOffer, sendMessageChallenge, sendMessageFlashT, sendMessageFlashTSub } from './WebhookDiscord'
 import '../../css/Modal.css'
 import {
 	signTransaction,
@@ -146,6 +146,9 @@ class ModalTransaction extends Component {
             }
 			else if (typeModal === "createtournament") {
 				sendMessageFlashT(makeOfferValues)
+			}
+			else if (typeModal === "jointournament") {
+				sendMessageFlashTSub(makeOfferValues)
 			}
 
 			this.props.addTxKeyToInfo(txState.requestKey)
