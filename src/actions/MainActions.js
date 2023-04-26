@@ -3031,9 +3031,19 @@ export const getChallengesReceived = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 		}
 
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
-			//console.log(response)
+			console.log(response)
 
 			response = response.filter(i => i.amount > 0)
+
+			response = response.filter(i => {
+				const now = moment()
+				const expiresat = moment(i.expiresat.timep)
+				//console.log(now.isBefore(expiresat));
+				if (i.status === 'pending') {
+					return now.isBefore(expiresat)
+				}
+				return true
+			})
 
 			let replay = []
 			let toaccept = []

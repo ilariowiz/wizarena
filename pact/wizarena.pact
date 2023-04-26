@@ -2020,6 +2020,39 @@
         )
     )
 
+    ; (defun unsub-from-tournament (tournamentid:string idnft:string account:string m:module{wiza1-interface-v2})
+    ;     (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+    ;     (with-capability (OWNER account idnft)
+    ;         (with-read auto-tournaments tournamentid
+    ;             {
+    ;                 "players":=subscribers,
+    ;                 "wallets":=subscriberwallets,
+    ;                 "buyin":=buyin,
+    ;                 "completed":=completed,
+    ;                 "nPlayers":=nPlayers
+    ;             }
+    ;             (enforce (= completed false) "You cannot unsubscribe from a completed tournament")
+    ;             (enforce (< (length subscribers) nPlayers) "you cannot unsubscribe from a tournament that is about to start")
+    ;             (enforce (= (contains idnft subscribers) true) "This wizard is not subscribed")
+    ;             (enforce (= (contains account subscriberwallets) true) "Your account is not registered for the tournament")
+    ;             (let (
+    ;                     (newplayerslist (filter (!= idnft) subscribers))
+    ;                     (newwalletslist (filter (!= account) subscriberwallets))
+    ;                     (account-guard (at "guard" (coin.details account)))
+    ;                 )
+    ;                 (update auto-tournaments tournamentid
+    ;                     {
+    ;                         "players": newplayerslist,
+    ;                         "wallets": newwalletslist
+    ;                     }
+    ;                     (install-capability (m::TRANSFER WIZ_AUTO_TOURNAMENTS_BANK account buyin))
+    ;                     (m::transfer-create WIZ_AUTO_TOURNAMENTS_BANK account account-guard buyin)
+    ;                 )
+    ;             )
+    ;         )
+    ;     )
+    ; )
+
     (defun complete-tournament (tournamentid:string winner:string fights:object m:module{wiza1-interface-v2})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (with-capability (DEV)
@@ -2371,7 +2404,7 @@
         (select challenges
             (and?
                 (where "wiz2owner" (= account))
-                (where "expiresat" (< (at "block-time" (chain-data))))
+                (where "status" (!= "canceled"))
             ))
     )
 
