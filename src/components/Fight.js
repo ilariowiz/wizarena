@@ -75,7 +75,7 @@ class Fight extends Component {
         const docRef = doc(firebasedb, "fights", idFight)
         const docSnap = await getDoc(docRef)
 
-        console.log(docSnap.data());
+        //console.log(docSnap.data());
 
         const data = docSnap.data()
 

@@ -337,7 +337,7 @@ class FlashTournaments extends Component {
         let youSubbed = false
         for (var i = 0; i < item.wallets.length; i++) {
             const w = item.wallets[i]
-            if (account && w === account.account) {
+            if (account && account.account && w === account.account) {
                 youSubbed = true
             }
         }
