@@ -403,6 +403,7 @@ class PvP extends Component {
 
         const fightsStart = moment().isAfter(pvpFightsStartDate)
 
+        /*
         if (!fightsStart) {
             const docRefT = doc(firebasedb, "pvp_training", `${pvpWeek}_#${item.id}`)
             const docSnapT = await getDoc(docRefT)
@@ -414,107 +415,114 @@ class PvP extends Component {
                 await setDoc(docRefTraining, { "lose": 0, "win": 0 })
             }
         }
-
-
-        const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_#${item.id}`)
-        const docSnap = await getDoc(docRef)
-        let data = docSnap.data()
-
-        //console.log(item);
-
-        //se per caso hai fatto un update rounds ma nel BE non si sono aggiornati, li aggiorniamo e facciamo un refresh della pagina
-        if (data && data.maxFights < item.rounds) {
-            await updateDoc(docRef, {"maxFights": item.rounds })
-            window.location.reload()
-            return
-        }
-
-        //questo non ho ancora chiaro quando capita ma nel BE non dovresti avere più rounds di quelli che hai nel contratto
-        if (data && data.maxFights > item.rounds) {
-            await updateDoc(docRef, {"maxFights": item.rounds })
-            window.location.reload()
-            return
-        }
-
-        if (data) {
-            //questo può capitare se ti stanno sfidando e hai lasciato la pagina aperta
-            //quando vai a sfidare tu non si è aggiornata la pagina e quindi ti sembra che puoi ancora fare fights
-            //quindi facciamo il check con i fights dal BE e se sono >= dei tuoi rounds allora facciamo un refresh
-            const fightsDone = data.win + data.lose
-            if (fightsDone >= item.rounds) {
-                window.location.reload()
-                return
-            }
-        }
-        /*
-        //questo capita se durante la registrazione non hai aspettato la fine della transaction e quindi il BE non si è aggiornato
-        else {
-            await setDoc(docRef, { "lose": 0, "win": 0, "maxFights": item.rounds })
-            //toast.error('Something goes wrong... please try again')
-            window.location.reload()
-            return
-        }
         */
-
 
         let maxL = level+25
         let minL = level-25
+        let validSubs = []
 
-        //rimuoviamo se stessi
-        //se vengono dallo stesso account
-        // se il livello è compreso tra max e min
-        //se ha ancora fights left
-        let subs = subscribers.filter(i => {
-            return i.idnft !== item.id
-                && i.address !== account.account
-                && i.level >= minL && i.level <= maxL
-                && i.fightsLeft > 0
-        })
+        if (fightsStart) {
+            const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_#${item.id}`)
+            const docSnap = await getDoc(docRef)
+            let data = docSnap.data()
+
+            //console.log(item);
+
+            //se per caso hai fatto un update rounds ma nel BE non si sono aggiornati, li aggiorniamo e facciamo un refresh della pagina
+            if (data && data.maxFights < item.rounds) {
+                await updateDoc(docRef, {"maxFights": item.rounds })
+                window.location.reload()
+                return
+            }
+
+            //questo non ho ancora chiaro quando capita ma nel BE non dovresti avere più rounds di quelli che hai nel contratto
+            if (data && data.maxFights > item.rounds) {
+                await updateDoc(docRef, {"maxFights": item.rounds })
+                window.location.reload()
+                return
+            }
+
+            if (data) {
+                //questo può capitare se ti stanno sfidando e hai lasciato la pagina aperta
+                //quando vai a sfidare tu non si è aggiornata la pagina e quindi ti sembra che puoi ancora fare fights
+                //quindi facciamo il check con i fights dal BE e se sono >= dei tuoi rounds allora facciamo un refresh
+                const fightsDone = data.win + data.lose
+                if (fightsDone >= item.rounds) {
+                    window.location.reload()
+                    return
+                }
+            }
+
+            //rimuoviamo se stessi
+            //se vengono dallo stesso account
+            // se il livello è compreso tra max e min
+            //se ha ancora fights left
+            validSubs = subscribers.filter(i => {
+                return i.idnft !== item.id
+                    && i.address !== account.account
+                    && i.level >= minL && i.level <= maxL
+                    && i.fightsLeft > 0
+            })
+        }
+        else {
+            //rimuoviamo se stessi
+            //se vengono dallo stesso account
+            // se il livello è compreso tra max e min
+            validSubs = subscribers.filter(i => {
+                return i.idnft !== item.id
+                    && i.address !== account.account
+                    && i.level >= minL && i.level <= maxL
+            })
+        }
+
 
         //console.log(subs);
         //return
 
-        if (subs.length === 0) {
+        if (validSubs.length === 0) {
             this.setState({ loading: false })
             toast.error('No opponent found, please try again')
             return
         }
 
-        const idxRandom = Math.floor(Math.random() * subs.length) //da 0 a subs.length -1
+        const idxRandom = Math.floor(Math.random() * validSubs.length) //da 0 a validSubs.length -1
 
-        let opponent = subs[idxRandom]
+        let opponent = validSubs[idxRandom]
 
         //console.log(opponent);
 
-        const docRefOpponent = doc(firebasedb, "pvp_results", `${pvpWeek}_#${opponent.idnft}`)
-        const docSnapOppo = await getDoc(docRefOpponent)
-        let dataOppo = docSnapOppo.data()
+        if (fightsStart) {
+            const docRefOpponent = doc(firebasedb, "pvp_results", `${pvpWeek}_#${opponent.idnft}`)
+            const docSnapOppo = await getDoc(docRefOpponent)
+            let dataOppo = docSnapOppo.data()
 
-        if (dataOppo) {
+            if (dataOppo) {
 
-            //facciamo un refresh per aggiornare i dati sia su FE che su BE
-            if (dataOppo.maxFights < opponent.rounds.int) {
-                await updateDoc(docRefOpponent, {"maxFights": opponent.rounds.int })
-                window.location.reload()
-                return
+                //facciamo un refresh per aggiornare i dati sia su FE che su BE
+                if (dataOppo.maxFights < opponent.rounds.int) {
+                    await updateDoc(docRefOpponent, {"maxFights": opponent.rounds.int })
+                    window.location.reload()
+                    return
+                }
+                //vuol dire che il FE non è aggiornato con gli ultimi dati
+                else if (dataOppo.maxFights > opponent.rounds.int) {
+                    window.location.reload()
+                    return
+                }
+
+                const fightsDone = dataOppo.win + dataOppo.lose
+                if (fightsDone >= opponent.rounds.int) {
+                    window.location.reload()
+                    return
+                }
             }
-            //vuol dire che il FE non è aggiornato con gli ultimi dati
-            else if (dataOppo.maxFights > opponent.rounds.int) {
-                window.location.reload()
-                return
-            }
-
-            const fightsDone = dataOppo.win + dataOppo.lose
-            if (fightsDone >= opponent.rounds.int) {
+            else {
                 window.location.reload()
                 return
             }
         }
-        else {
-            window.location.reload()
-            return
-        }
 
+        
         //return
         const sfida = {
             player1: item,
