@@ -107,7 +107,8 @@ class FlashTournaments extends Component {
         this.props.updateInfoTransactionModal({
             transactionToConfirmText: 'You are about to create a tournament.',
             typeModal: 'createtournament',
-            transactionOkText: 'Tournament created successfully'
+            transactionOkText: 'Tournament created successfully',
+            makeOfferValues: { buyin, maxLevel }
         })
 
         this.props.createTournament(chainId, gasPrice, netId, idnft, account, buyin, maxLevel)
