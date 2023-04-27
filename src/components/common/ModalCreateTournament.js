@@ -15,7 +15,9 @@ class ModalCreateTournament extends Component {
             idnft: "",
 			buyin: 0,
             maxLevel: 0,
-            showChooseWizard: false
+            showChooseWizard: false,
+            winners: 1,
+            name: ""
 		}
 	}
 
@@ -24,7 +26,9 @@ class ModalCreateTournament extends Component {
 	}
 
     create() {
-        const { idnft, buyin, maxLevel } = this.state
+        const { idnft, buyin, maxLevel, name, winners } = this.state
+
+        //console.log(winners);
 
         if (!idnft || !buyin || !maxLevel) {
             return
@@ -40,7 +44,7 @@ class ModalCreateTournament extends Component {
 
         let finalLevel = parseInt(maxLevel) > 350 ? 350 : parseInt(maxLevel)
 
-        this.props.createTournament(idnft, buyin, finalLevel)
+        this.props.createTournament(idnft, buyin, finalLevel, name, winners)
     }
 
 	render() {
@@ -105,6 +109,24 @@ class ModalCreateTournament extends Component {
 
                             <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
                                 <p style={{ fontSize: 16, color: 'white' }}>
+                                    Flash Tournament Name
+                                </p>
+                            </div>
+
+                            <input
+                                style={styles.input}
+                                type='text'
+                                placeholder='Enter a Name (optional)'
+                                value={this.state.name}
+                                onChange={(e) => this.setState({ name: e.target.value })}
+                            />
+
+                        </div>
+
+                        <div style={styles.box}>
+
+                            <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
+                                <p style={{ fontSize: 16, color: 'white' }}>
                                     Buyin
                                 </p>
 
@@ -138,6 +160,48 @@ class ModalCreateTournament extends Component {
                                 value={this.state.maxLevel}
                                 onChange={(e) => this.setState({ maxLevel: e.target.value })}
                             />
+
+                        </div>
+
+                        <div style={styles.box}>
+
+                            <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
+                                <p style={{ fontSize: 16, color: 'white' }}>
+                                    Prizes
+                                </p>
+                            </div>
+
+                            <div style={{ alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingBottom: 10 }}>
+                                <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+
+                                    <p style={{ fontSize: 15, color: 'white' }}>
+                                        Winner takes all
+                                    </p>
+
+                                    <input
+                                        //style={styles.input}
+                                        type='radio'
+                                        value={1}
+                                        checked={this.state.winners === 1}
+                                        onChange={(e) => this.setState({ winners: 1 })}
+                                    />
+                                </div>
+
+                                <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+
+                                    <p style={{ fontSize: 15, color: 'white' }}>
+                                        70% 1st, 30% 2nd
+                                    </p>
+
+                                    <input
+                                        //style={styles.input}
+                                        type='radio'
+                                        value={2}
+                                        checked={this.state.winners === 2}
+                                        onChange={(e) => this.setState({ winners: 2 })}
+                                    />
+                                </div>
+                            </div>
 
                         </div>
 
@@ -202,7 +266,7 @@ const styles = {
 	},
 	input: {
 		width: '100%',
-		height: 40,
+		height: 30,
 		borderWidth: 1,
 		borderColor: 'lightgrey',
 		borderStyle: 'solid',
@@ -227,13 +291,13 @@ const styles = {
     box: {
         flexDirection: 'column',
         backgroundColor: '#1b1930',
-        paddingTop: 12,
-        paddingBottom: 12,
+        paddingTop: 8,
+        paddingBottom: 2,
         paddingLeft: 24,
         paddingRight: 24,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 15,
         width: '100%',
         borderRadius: 2
     }

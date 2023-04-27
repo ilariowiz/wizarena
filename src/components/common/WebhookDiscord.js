@@ -331,24 +331,21 @@ export const sendMessageFlashT = (info) => {
     request.setRequestHeader("Content-type", 'application/json')
     //console.log(content);
 
-    const message = `There is a new Flash tournament! Buyin **${info.buyin}** WIZA, Max level **${info.maxLevel}**. *(it will be visible in about 30 seconds)*`
+    const winners = info.winners === 1 ? "Winner takes all" : "70% 1st, 30% 2nd"
+
+    const message = `There is a new Flash tournament! Buyin **${info.buyin}** WIZA, Max level **${info.maxLevel}**, Prizes: ${winners}. *(it will be visible in about 30 seconds)*`
 
     const params = {
         username: `Wizard Bot`,
         avatar_url: `https://storage.googleapis.com/wizarena/wiz_logo_centrale.png`,
-        content: message
-        /*
+        //content: message
         embeds: [
             {
-                "title": `#${info.wiz2id}`,
+                "title": `${info.name || "Flash Tournament"}`,
                 "description": message,
-                "url": `https://www.wizardsarena.net/nft/${info.wiz2id}`,
-                "thumbnail": {
-                    "url": `https://storage.googleapis.com/wizarena/generated_imgs/${info.wiz2id}.png`
-                }
+                "url": `https://www.wizardsarena.net/flashtournaments`,
             }
         ]
-        */
     }
 
     request.send(JSON.stringify(params));
@@ -373,19 +370,14 @@ export const sendMessageFlashTSub = (info) => {
     const params = {
         username: `Wizard Bot`,
         avatar_url: `https://storage.googleapis.com/wizarena/wiz_logo_centrale.png`,
-        content: message
-        /*
+        //content: message
         embeds: [
             {
-                "title": `#${info.wiz2id}`,
+                "title": `Flash Tournament ${info.id}`,
                 "description": message,
-                "url": `https://www.wizardsarena.net/nft/${info.wiz2id}`,
-                "thumbnail": {
-                    "url": `https://storage.googleapis.com/wizarena/generated_imgs/${info.wiz2id}.png`
-                }
+                "url": `https://www.wizardsarena.net/flashtournaments`,
             }
         ]
-        */
     }
 
     request.send(JSON.stringify(params));

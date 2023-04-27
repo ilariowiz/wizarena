@@ -375,6 +375,8 @@
         completed:bool
         fights:object
         nPlayers:integer
+        name:string
+        winners:integer
     )
 
     (deftable nfts:{nft-main-schema})
@@ -1949,10 +1951,11 @@
     ;;;;;; AUTO TOURNAMENTS ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun create-tournament (idnft:string account:string buyin:decimal maxLevel:integer m:module{wiza1-interface-v2})
+    (defun create-tournament (idnft:string account:string buyin:decimal maxLevel:integer name:string winners:integer m:module{wiza1-interface-v2})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (enforce (> buyin 0.0) "Buyin must be greater than 0")
         (enforce (> maxLevel 0) "Max Level must be greater than 0")
+        (enforce (contains winners [1 2]) "invalid number of winners")
         (with-capability (OWNER account idnft)
             (let (
                     (current-level (calculate-level idnft))
@@ -1973,7 +1976,9 @@
                     "maxLevel": maxLevel,
                     "completed": false,
                     "fights":{},
-                    "nPlayers": 8}
+                    "nPlayers": 8,
+                    "name": name,
+                    "winners": winners}
                 )
                 (install-capability (m::TRANSFER account WIZ_AUTO_TOURNAMENTS_BANK buyin))
                 (m::transfer-create account WIZ_AUTO_TOURNAMENTS_BANK bank-guard buyin)
@@ -2053,7 +2058,7 @@
     ;     )
     ; )
 
-    (defun complete-tournament (tournamentid:string winner:string fights:object m:module{wiza1-interface-v2})
+    (defun complete-tournament (tournamentid:string winner:string winner2:string fights:object m:module{wiza1-interface-v2})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (with-capability (DEV)
             (with-read auto-tournaments tournamentid
@@ -2061,17 +2066,42 @@
                     "buyin":=buyin,
                     "nPlayers":=nPlayers
                 }
-                (let (
-                        (prize (* buyin nPlayers))
-                        (fee (/ (* (* buyin nPlayers) 5) 100))
-                        (winner-guard (at "guard" (coin.details winner)))
-                        (admin-guard (at "guard" (coin.details ADMIN_ADDRESS)))
-                    )
-                    (install-capability (m::TRANSFER WIZ_AUTO_TOURNAMENTS_BANK winner (- prize fee)))
-                    (m::transfer-create WIZ_AUTO_TOURNAMENTS_BANK winner winner-guard (- prize fee))
-                    (install-capability (m::TRANSFER WIZ_AUTO_TOURNAMENTS_BANK ADMIN_ADDRESS fee))
-                    (m::transfer-create WIZ_AUTO_TOURNAMENTS_BANK ADMIN_ADDRESS admin-guard fee)
+                (if
+                    (= (length winner2) 0)
+                    [
+                        (let (
+                                (prize (* buyin nPlayers))
+                                (fee (/ (* (* buyin nPlayers) 5) 100))
+                                (winner-guard (at "guard" (coin.details winner)))
+                                (admin-guard (at "guard" (coin.details ADMIN_ADDRESS)))
+                            )
+                            (install-capability (m::TRANSFER WIZ_AUTO_TOURNAMENTS_BANK winner (- prize fee)))
+                            (m::transfer-create WIZ_AUTO_TOURNAMENTS_BANK winner winner-guard (- prize fee))
+                            (install-capability (m::TRANSFER WIZ_AUTO_TOURNAMENTS_BANK ADMIN_ADDRESS fee))
+                            (m::transfer-create WIZ_AUTO_TOURNAMENTS_BANK ADMIN_ADDRESS admin-guard fee)
+                        )
+                    ]
+                    [
+                        (let (
+                                (prize1 (/ (* (* buyin nPlayers) 70) 100))
+                                (prize2 (/ (* (* buyin nPlayers) 30) 100))
+                                (fee (/ (* (* buyin nPlayers) 5) 100))
+                                (winner-guard (at "guard" (coin.details winner)))
+                                (winner2-guard (at "guard" (coin.details winner2)))
+                                (admin-guard (at "guard" (coin.details ADMIN_ADDRESS)))
+                            )
+                            (install-capability (m::TRANSFER WIZ_AUTO_TOURNAMENTS_BANK winner (- prize1 (/ fee 2))))
+                            (m::transfer-create WIZ_AUTO_TOURNAMENTS_BANK winner winner-guard (- prize1 (/ fee 2)))
+
+                            (install-capability (m::TRANSFER WIZ_AUTO_TOURNAMENTS_BANK winner2 (- prize2 (/ fee 2))))
+                            (m::transfer-create WIZ_AUTO_TOURNAMENTS_BANK winner2 winner2-guard (- prize2 (/ fee 2)))
+
+                            (install-capability (m::TRANSFER WIZ_AUTO_TOURNAMENTS_BANK ADMIN_ADDRESS fee))
+                            (m::transfer-create WIZ_AUTO_TOURNAMENTS_BANK ADMIN_ADDRESS admin-guard fee)
+                        )
+                    ]
                 )
+
                 (update auto-tournaments tournamentid
                     {
                         "completed":true,

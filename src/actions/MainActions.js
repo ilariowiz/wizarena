@@ -3095,10 +3095,10 @@ AUTO TOURNAMENT FUNCTIONS
 
 *************************************************************************/
 
-export const createTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, idnft, account, buyin, maxLevel) => {
+export const createTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, idnft, account, buyin, maxLevel, name, winners) => {
 	return (dispatch) => {
 
-		let pactCode = `(free.${CONTRACT_NAME}.create-tournament "${idnft}" "${account.account}" ${_.round(buyin).toFixed(1)} ${maxLevel} free.wiza)`;
+		let pactCode = `(free.${CONTRACT_NAME}.create-tournament "${idnft}" "${account.account}" ${_.round(buyin).toFixed(1)} ${maxLevel} "${name}" ${winners} free.wiza)`;
 
 		let cmd = {
 			pactCode,

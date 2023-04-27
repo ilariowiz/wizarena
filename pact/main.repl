@@ -7,6 +7,7 @@
   "wiza-token-keyset" : {"keys": ["90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb"], "pred": "keys-all"},
   "wiza-token2-keyset" : {"keys": ["90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb"], "pred": "keys-all"},
   "wizequipment-keyset" : {"keys": ["90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb"], "pred": "keys-all"},
+   "dev-keyset" : {"keys": ["aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1"], "pred": "keys-all"},
   'upgrade: false
 })
 
@@ -55,6 +56,7 @@
 (begin-tx "create all nfts")
 
 (coin.create-account "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb" (read-keyset "wizarena-keyset"))
+(coin.create-account "k:aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1" (read-keyset "dev-keyset"))
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
@@ -1162,7 +1164,7 @@
   ]
 }])
 
-(free.wiz-arena.create-tournament "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" 50.0 350 free.wiza)
+(free.wiz-arena.create-tournament "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" 50.0 350 "" 2 free.wiza)
 
 (commit-tx)
 
@@ -1180,7 +1182,27 @@
 
 (free.wiz-arena.get-pending-auto-tournaments)
 
+(free.wiza.get-user-balance "wiz-auto-tournaments-bank")
+
 (commit-tx)
+
+; (begin-tx "COMPLETE TOURNAMENT")
+;
+; (env-sigs [{
+;   "key": "aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1",
+;   "caps": [
+;     (free.wiz-arena.DEV),
+;     (coin.GAS)
+;   ]
+; }])
+;
+; (free.wiza.get-user-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+;
+; (free.wiz-arena.complete-tournament "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "" {} free.wiza)
+;
+; (free.wiza.get-user-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+;
+; (commit-tx)
 
 
 (begin-tx "MAKE OFFER")
