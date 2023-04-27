@@ -358,7 +358,9 @@ export const sendMessageFlashTSub = (info) => {
     request.setRequestHeader("Content-type", 'application/json')
     //console.log(content);
 
-    let message = `A wizard join Flash tournament **${info.id}**! Buyin **${info.buyin}** WIZA, Max level **${info.maxLevel.int}**.`
+    let name = info.name ? `Flash tournament **${info.name}**, ID **${info.id}**` : `Flash tournament **${info.id}**`
+
+    let message = `A wizard join ${info.name}! Buyin **${info.buyin}** WIZA, Max level **${info.maxLevel.int}**.`
     if (info.players.length === (info.nPlayers.int - 1)) {
         message = `${message} *The tournament will start in a few minutes.*`
     }
