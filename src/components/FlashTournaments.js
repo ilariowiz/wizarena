@@ -250,72 +250,95 @@ class FlashTournaments extends Component {
 
         //console.log(item.maxLevel.int);
 
+        let prizes = "Winner takes all"
+        if (item.winners && item.winners.int && item.winners.int === 2) {
+            prizes = "70% 1st, 30% 2nd"
+        }
+
         return (
-            <div style={Object.assign({}, styles.rowTournament, { flexDirection: isMobile ? 'column' : 'row' })} key={index}>
+            <div style={Object.assign({}, styles.rowTournament, { flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start' })} key={index}>
 
-                <div style={{ flexDirection: 'column', justifyContent: 'center', marginLeft: isMobile ? 0 : 15 }}>
-                    <p style={{ fontSize: 15, color: 'white', marginBottom: 7, textAlign: isMobile ? 'center' : 'left' }}>
-                        ID: {item.id}
+                {
+                    item.name ?
+                    <p style={{ fontSize: 17, color: 'white', marginBottom: 4, textAlign: isMobile ? 'center' : 'left', marginLeft: isMobile ? 0 : 15  }}>
+                        {item.name}
                     </p>
+                    : null
+                }
 
-                    <p style={{ fontSize: 15, color: 'white', opacity: 0.6, textAlign: isMobile ? 'center' : 'left' }}>
-                        Created: <br />{diff}
-                    </p>
-                </div>
+                <div style={{ flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
 
-                <div style={{ alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', flex: 1, marginLeft: 10, marginRight: 10 }}>
-                    {item.players.map((wiz, idx) => {
-                        return this.renderImgPlayer(wiz, idx, isFull, imgWidth)
-                    })}
-                </div>
-
-                <div style={{ flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-end', justifyContent: 'center', marginRight: isMobile ? 0 : 15 }}>
-
-                    <div style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
-
-                        <p style={{ fontSize: 21, color: 'white', textAlign: 'center', marginRight: 12 }}>
-                            <span style={{ fontSize: 16 }}>Wizards</span><br />{item.players.length}/{item.nPlayers.int}
+                    <div style={{ flexDirection: 'column', justifyContent: 'center', marginLeft: isMobile ? 0 : 15 }}>
+                        <p style={{ fontSize: 15, color: 'white', marginBottom: 7, textAlign: isMobile ? 'center' : 'left' }}>
+                            ID: {item.id}
                         </p>
 
-                        <p style={{ fontSize: 21, color: 'white', textAlign: 'center', marginRight: 12 }}>
-                            <span style={{ fontSize: 16 }}>Buyin</span><br />{item.buyin} <span style={{ fontSize: 16 }}>WIZA</span>
-                        </p>
-
-                        <p style={{ fontSize: 21, color: 'white', textAlign: 'center' }}>
-                            <span style={{ fontSize: 16 }}>Max Level</span><br />{item.maxLevel.int}
+                        <p style={{ fontSize: 15, color: 'white', opacity: 0.6, textAlign: isMobile ? 'center' : 'left' }}>
+                            Created: <br />{diff}
                         </p>
                     </div>
 
-                    {
-                        isFull &&
-                        <div style={Object.assign({}, styles.btnMenu, { width: 130, height: 35, cursor: 'default' })}>
-                            <p style={{ fontSize: 14, color: 'white' }}>
-                                ABOUT TO START
+                    <div style={{ alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', flex: 1, marginLeft: 10, marginRight: 10 }}>
+                        {item.players.map((wiz, idx) => {
+                            return this.renderImgPlayer(wiz, idx, isFull, imgWidth)
+                        })}
+                    </div>
+
+                    <div style={{ flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-end', justifyContent: 'center', marginRight: isMobile ? 0 : 15 }}>
+
+                        <div style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 7 }}>
+
+                            <p style={{ fontSize: 21, color: 'white', textAlign: 'center', marginRight: 12 }}>
+                                <span style={{ fontSize: 16 }}>Wizards</span><br />{item.players.length}/{item.nPlayers.int}
+                            </p>
+
+                            <p style={{ fontSize: 21, color: 'white', textAlign: 'center', marginRight: 12 }}>
+                                <span style={{ fontSize: 16 }}>Buyin</span><br />{item.buyin} <span style={{ fontSize: 16 }}>WIZA</span>
+                            </p>
+
+                            <p style={{ fontSize: 21, color: 'white', textAlign: 'center' }}>
+                                <span style={{ fontSize: 16 }}>Max Level</span><br />{item.maxLevel.int}
                             </p>
                         </div>
-                    }
 
-                    {
-                        item.wallets.includes(account.account) && !isFull &&
-                        <div style={Object.assign({}, styles.btnMenu, { width: 130, height: 35, cursor: 'default' })}>
-                            <p style={{ fontSize: 16, color: 'white' }}>
-                                JOINED
-                            </p>
-                        </div>
-                    }
-
-                    {
-                        !item.wallets.includes(account.account) && !isFull &&
-                        <button
-                            style={Object.assign({}, styles.btnMenu, { backgroundColor: TEXT_SECONDARY_COLOR, width: 130, height: 35 })}
-                            className="btnH"
-                            onClick={() => this.setState({ joinTournamentid:item.id, showModalChooseWizard: true, maxLevelChooseWizard: item.maxLevel.int })}
-                        >
+                        <div style={{ alignItems: 'center', marginBottom: 10 }}>
                             <p style={{ fontSize: 17, color: 'white' }}>
-                                JOIN
+                                Prizes: {prizes}
                             </p>
-                        </button>
-                    }
+                        </div>
+
+                        {
+                            isFull &&
+                            <div style={Object.assign({}, styles.btnMenu, { width: 130, height: 35, cursor: 'default' })}>
+                                <p style={{ fontSize: 14, color: 'white' }}>
+                                    ABOUT TO START
+                                </p>
+                            </div>
+                        }
+
+                        {
+                            item.wallets.includes(account.account) && !isFull &&
+                            <div style={Object.assign({}, styles.btnMenu, { width: 130, height: 35, cursor: 'default' })}>
+                                <p style={{ fontSize: 16, color: 'white' }}>
+                                    JOINED
+                                </p>
+                            </div>
+                        }
+
+                        {
+                            !item.wallets.includes(account.account) && !isFull &&
+                            <button
+                                style={Object.assign({}, styles.btnMenu, { backgroundColor: TEXT_SECONDARY_COLOR, width: 130, height: 35 })}
+                                className="btnH"
+                                onClick={() => this.setState({ joinTournamentid:item.id, showModalChooseWizard: true, maxLevelChooseWizard: item.maxLevel.int })}
+                            >
+                                <p style={{ fontSize: 17, color: 'white' }}>
+                                    JOIN
+                                </p>
+                            </button>
+                        }
+
+                    </div>
 
                 </div>
             </div>
@@ -334,7 +357,14 @@ class FlashTournaments extends Component {
 
         const totalWiza = item.buyin * item.nPlayers.int
         const fee = 5 * totalWiza / 100
-        const prizeWiza = totalWiza - fee
+        let prizeWiza = totalWiza - fee
+
+        let prizes = "Winner takes all"
+
+        if (item.winners && item.winners.int && item.winners.int === 2) {
+            prizeWiza = (totalWiza * 70 / 100) - (fee/2)
+            prizes = "70% 1st, 30% 2nd"
+        }
 
         const imgWidth = isMobile ? 36 : 50
 
@@ -347,144 +377,161 @@ class FlashTournaments extends Component {
         }
 
         return (
-            <div style={Object.assign({}, styles.rowTournament, { flexDirection: isMobile ? 'column' : 'row', borderColor: youSubbed ? 'gold' : 'white' })} key={index}>
+            <div style={Object.assign({}, styles.rowTournament, { flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start', borderColor: youSubbed ? 'gold' : 'white' })} key={index}>
 
-                <div style={{ flexDirection: 'column', justifyContent: 'center', marginLeft: isMobile ? 0 : 15 }}>
-                    <p style={{ fontSize: 15, color: 'white', marginBottom: 7, textAlign: isMobile ? 'center' : 'left' }}>
-                        ID: {item.id}
+                {
+                    item.name ?
+                    <p style={{ fontSize: 17, color: 'white', marginBottom: 4, textAlign: isMobile ? 'center' : 'left', marginLeft: isMobile ? 0 : 15  }}>
+                        {item.name}
                     </p>
+                    : null
+                }
 
-                    <p style={{ fontSize: 15, color: 'white', opacity: 0.6, textAlign: isMobile ? 'center' : 'left' }}>
-                        {item.completedAt ? "Completed" : "Created"}: <br />{diff}
-                    </p>
-                </div>
+                <div style={{ flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
 
-                <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ flexDirection: 'column', justifyContent: 'center', marginLeft: isMobile ? 0 : 15 }}>
+                        <p style={{ fontSize: 15, color: 'white', marginBottom: 7, textAlign: isMobile ? 'center' : 'left' }}>
+                            ID: {item.id}
+                        </p>
 
-                    <div style={{ alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', flex: 1, marginLeft: 10, marginRight: 10, marginBottom: 10 }}>
-                        {item.players.map((wiz, idx) => {
+                        <p style={{ fontSize: 15, color: 'white', opacity: 0.6, textAlign: isMobile ? 'center' : 'left' }}>
+                            {item.completedAt ? "Completed" : "Created"}: <br />{diff}
+                        </p>
+                    </div>
 
-                            let isYour = false
-                            for (let i = 0; i < userMintedNfts.length; i++) {
-                                if (userMintedNfts[i].id === wiz) {
-                                    isYour = true
+                    <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+
+                        <div style={{ alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', flex: 1, marginLeft: 10, marginRight: 10, marginBottom: 10 }}>
+                            {item.players.map((wiz, idx) => {
+
+                                let isYour = false
+                                for (let i = 0; i < userMintedNfts.length; i++) {
+                                    if (userMintedNfts[i].id === wiz) {
+                                        isYour = true
+                                    }
                                 }
-                            }
 
-                            return (
+                                return (
+                                    <a
+                                        key={wiz}
+                                        href={`${window.location.protocol}//${window.location.host}/nft/${wiz}`}
+                                        style={{ cursor: 'pointer', margin: 5 }}
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            this.props.selectWizard(wiz)
+                                            this.props.history.push(`/nft/${wiz}`)
+                                        }}
+                                    >
+                                        <Popup
+                                            trigger={open => (
+                                                <div style={{ alignItems: 'center' }}>
+                                                    <img
+                                                        src={getImageUrl(wiz)}
+                                                        style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: isYour ? 2 : 1, borderColor: isYour ? 'gold' : 'white', borderStyle: 'solid' }}
+                                                        alt={wiz}
+                                                    />
+                                                </div>
+                                            )}
+                                            position="top center"
+                                            on="hover"
+                                        >
+                                            <div style={{ padding: 5, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+                                                <p style={{ fontSize: 18, textAlign: 'center' }}>
+                                                    Wizard #{wiz}
+                                                </p>
+                                            </div>
+                                        </Popup>
+                                    </a>
+                                )
+                            })}
+                        </div>
+
+                        {
+                            !isMobile &&
+                            <button
+                                style={Object.assign({}, styles.btnMenu, { backgroundColor: TEXT_SECONDARY_COLOR, width: 130, height: 35 })}
+                                className="btnH"
+                                onClick={() => this.setState({ fights: item.fights, tournamentid: item.id, showModalFights: true })}
+                            >
+                                <p style={{ fontSize: 17, color: 'white' }}>
+                                    FIGHTS
+                                </p>
+                            </button>
+                        }
+                    </div>
+
+                    <div style={{ flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', marginRight: 15 }}>
+
+                        <div style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
+
+                            <p style={{ fontSize: 21, color: 'white', textAlign: 'center', marginRight: 12 }}>
+                                <span style={{ fontSize: 16 }}>Wizards</span><br />{item.players.length}
+                            </p>
+
+                            <p style={{ fontSize: 21, color: 'white', textAlign: 'center', marginRight: 12 }}>
+                                <span style={{ fontSize: 16 }}>Buyin</span><br />{item.buyin} <span style={{ fontSize: 16 }}>WIZA</span>
+                            </p>
+
+                            <p style={{ fontSize: 21, color: 'white', textAlign: 'center' }}>
+                                <span style={{ fontSize: 16 }}>Max Level</span><br />{item.maxLevel.int}
+                            </p>
+                        </div>
+
+                        <div style={{ alignItems: 'center', marginBottom: 10 }}>
+                            <p style={{ fontSize: 17, color: 'white' }}>
+                                Prizes: {prizes}
+                            </p>
+                        </div>
+
+
+                        <div>
+                            <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
+                                <p style={{ fontSize: 18, color: 'white' }}>
+                                    WINNER
+                                </p>
+
+                                <p style={{ fontSize: 14, color: 'white', opacity: 0.8 }}>
+                                    {prizeWiza} WIZA
+                                </p>
+                            </div>
+
+                            <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
                                 <a
-                                    key={wiz}
-                                    href={`${window.location.protocol}//${window.location.host}/nft/${wiz}`}
-                                    style={{ cursor: 'pointer', margin: 5 }}
+                                    href={`${window.location.protocol}//${window.location.host}/nft/${item.fights.winner}`}
+                                    style={{ cursor: 'pointer' }}
                                     onClick={(e) => {
                                         e.preventDefault()
-                                        this.props.selectWizard(wiz)
-                                        this.props.history.push(`/nft/${wiz}`)
+                                        this.props.selectWizard(item.fights.winner)
+                                        this.props.history.push(`/nft/${item.fights.winner}`)
                                     }}
                                 >
                                     <Popup
                                         trigger={open => (
                                             <div style={{ alignItems: 'center' }}>
                                                 <img
-                                                    src={getImageUrl(wiz)}
-                                                    style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: isYour ? 2 : 1, borderColor: isYour ? 'gold' : 'white', borderStyle: 'solid' }}
-                                                    alt={wiz}
+                                                    src={getImageUrl(item.fights.winner)}
+                                                    style={{ width: 60, height: 60, borderRadius: 30, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+                                                    alt={item.fights.winner}
                                                 />
                                             </div>
                                         )}
-                                        position="top center"
+                                        position="left center"
                                         on="hover"
                                     >
                                         <div style={{ padding: 5, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
                                             <p style={{ fontSize: 18, textAlign: 'center' }}>
-                                                Wizard #{wiz}
+                                                Wizard #{item.fights.winner}
                                             </p>
                                         </div>
                                     </Popup>
                                 </a>
-                            )
-                        })}
-                    </div>
+                            </div>
 
-                    {
-                        !isMobile &&
-                        <button
-                            style={Object.assign({}, styles.btnMenu, { backgroundColor: TEXT_SECONDARY_COLOR, width: 130, height: 35 })}
-                            className="btnH"
-                            onClick={() => this.setState({ fights: item.fights, tournamentid: item.id, showModalFights: true })}
-                        >
-                            <p style={{ fontSize: 17, color: 'white' }}>
-                                FIGHTS
-                            </p>
-                        </button>
-                    }
-                </div>
-
-                <div style={{ flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', marginRight: 15 }}>
-
-                    <div style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 5 }}>
-
-                        <p style={{ fontSize: 21, color: 'white', textAlign: 'center', marginRight: 12 }}>
-                            <span style={{ fontSize: 16 }}>Wizards</span><br />{item.players.length}
-                        </p>
-
-                        <p style={{ fontSize: 21, color: 'white', textAlign: 'center', marginRight: 12 }}>
-                            <span style={{ fontSize: 16 }}>Buyin</span><br />{item.buyin} <span style={{ fontSize: 16 }}>WIZA</span>
-                        </p>
-
-                        <p style={{ fontSize: 21, color: 'white', textAlign: 'center' }}>
-                            <span style={{ fontSize: 16 }}>Max Level</span><br />{item.maxLevel.int}
-                        </p>
-                    </div>
-
-
-                    <div>
-                        <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
-                            <p style={{ fontSize: 18, color: 'white' }}>
-                                WINNER
-                            </p>
-
-                            <p style={{ fontSize: 14, color: 'white', opacity: 0.8 }}>
-                                {prizeWiza} WIZA
-                            </p>
-                        </div>
-
-                        <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
-                            <a
-                                href={`${window.location.protocol}//${window.location.host}/nft/${item.fights.winner}`}
-                                style={{ cursor: 'pointer' }}
-                                onClick={(e) => {
-                                    e.preventDefault()
-                                    this.props.selectWizard(item.fights.winner)
-                                    this.props.history.push(`/nft/${item.fights.winner}`)
-                                }}
-                            >
-                                <Popup
-                                    trigger={open => (
-                                        <div style={{ alignItems: 'center' }}>
-                                            <img
-                                                src={getImageUrl(item.fights.winner)}
-                                                style={{ width: 60, height: 60, borderRadius: 30, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
-                                                alt={item.fights.winner}
-                                            />
-                                        </div>
-                                    )}
-                                    position="left center"
-                                    on="hover"
-                                >
-                                    <div style={{ padding: 5, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-                                        <p style={{ fontSize: 18, textAlign: 'center' }}>
-                                            Wizard #{item.fights.winner}
-                                        </p>
-                                    </div>
-                                </Popup>
-                            </a>
                         </div>
 
                     </div>
 
                 </div>
-
             </div>
         )
     }
