@@ -359,8 +359,8 @@ export const sendMessageFlashTSub = (info) => {
     //console.log(content);
 
     let name = info.name ? `Flash tournament **${info.name}**, ID **${info.id}**` : `Flash tournament **${info.id}**`
+    let message = `A wizard join ${name}! Buyin **${info.buyin}** WIZA, Max level **${info.maxLevel.int}**.`
 
-    let message = `A wizard join ${info.name}! Buyin **${info.buyin}** WIZA, Max level **${info.maxLevel.int}**.`
     if (info.players.length === (info.nPlayers.int - 1)) {
         message = `${message} *The tournament will start in a few minutes.*`
     }
@@ -369,13 +369,15 @@ export const sendMessageFlashTSub = (info) => {
         message = `${message} *${pLeft} wizards left to start the tournament.*`
     }
 
+    let title = info.name ? `Flash Tournament ${info.name}` : `Flash Tournament ${info.id}`
+
     const params = {
         username: `Wizard Bot`,
         avatar_url: `https://storage.googleapis.com/wizarena/wiz_logo_centrale.png`,
         //content: message
         embeds: [
             {
-                "title": `Flash Tournament ${info.id}`,
+                "title": title,
                 "description": message,
                 "url": `https://www.wizardsarena.net/flashtournaments`,
             }
