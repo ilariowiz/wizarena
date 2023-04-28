@@ -6,6 +6,7 @@ import DotLoader from 'react-spinners/DotLoader';
 import Popup from 'reactjs-popup';
 import moment from 'moment'
 import { AiOutlinePlus } from 'react-icons/ai'
+import { TbSortAscendingNumbers, TbSortDescendingNumbers } from 'react-icons/tb'
 import ModalFightsFlashTournament from './common/ModalFightsFlashTournament'
 import ModalCreateTournament from './common/ModalCreateTournament'
 import ModalChooseWizard from './common/ModalChooseWizard'
@@ -23,7 +24,8 @@ import {
     updateInfoTransactionModal,
     selectWizard,
     createTournament,
-    joinTournament
+    joinTournament,
+    sortPendingByKey
 } from '../actions'
 import 'reactjs-popup/dist/index.css';
 
@@ -45,7 +47,8 @@ class FlashTournaments extends Component {
             fights: {},
             tournamentid: "",
             equipment: [],
-            joinTournamentid: ""
+            joinTournamentid: "",
+            pendingSortBy: "playersDesc"
         }
     }
 
@@ -536,6 +539,113 @@ class FlashTournaments extends Component {
         )
     }
 
+    sortBy(key) {
+        const { pendingTournaments } = this.props
+
+        if (!pendingTournaments) {
+            return
+        }
+
+        this.setState({ pendingSortBy: key }, () => {
+            this.props.sortPendingByKey(key)
+        })
+    }
+
+    renderFiltri() {
+        const { pendingSortBy } = this.state
+
+        const marginRight = 20
+
+        return (
+            <div style={{ alignItems: 'center', marginBottom: 20, flexWrap: 'wrap' }}>
+
+                <div style={{ alignItems: 'center', marginRight, marginBottom: 7 }}>
+
+                    <p style={{ fontSize: 16, color: 'white', marginRight: 5 }}>
+                        Players
+                    </p>
+
+                    <button
+                        style={Object.assign({}, styles.btnSort, { backgroundColor: pendingSortBy === 'playersDesc' ? CTA_COLOR : 'transparent' })}
+                        onClick={() => this.sortBy('playersDesc')}
+                    >
+                        <TbSortDescendingNumbers
+                            color='white'
+                            size={23}
+                        />
+                    </button>
+
+                    <button
+                        style={Object.assign({}, styles.btnSort, { backgroundColor: pendingSortBy === 'playersAsc' ? CTA_COLOR : 'transparent' })}
+                        onClick={() => this.sortBy('playersAsc')}
+                    >
+                        <TbSortAscendingNumbers
+                            color='white'
+                            size={23}
+                        />
+                    </button>
+
+                </div>
+
+                <div style={{ alignItems: 'center', marginRight, marginBottom: 7 }}>
+
+                    <p style={{ fontSize: 16, color: 'white', marginRight: 5 }}>
+                        Buyin
+                    </p>
+
+                    <button
+                        style={Object.assign({}, styles.btnSort, { backgroundColor: pendingSortBy === 'buyinDesc' ? CTA_COLOR : 'transparent' })}
+                        onClick={() => this.sortBy('buyinDesc')}
+                    >
+                        <TbSortDescendingNumbers
+                            color='white'
+                            size={23}
+                        />
+                    </button>
+
+                    <button
+                        style={Object.assign({}, styles.btnSort, { backgroundColor: pendingSortBy === 'buyinAsc' ? CTA_COLOR : 'transparent' })}
+                        onClick={() => this.sortBy('buyinAsc')}
+                    >
+                        <TbSortAscendingNumbers
+                            color='white'
+                            size={23}
+                        />
+                    </button>
+
+                </div>
+
+                <div style={{ alignItems: 'center', marginBottom: 7 }}>
+
+                    <p style={{ fontSize: 16, color: 'white', marginRight: 5 }}>
+                        Level
+                    </p>
+
+                    <button
+                        style={Object.assign({}, styles.btnSort, { backgroundColor: pendingSortBy === 'levelDesc' ? CTA_COLOR : 'transparent' })}
+                        onClick={() => this.sortBy('levelDesc')}
+                    >
+                        <TbSortDescendingNumbers
+                            color='white'
+                            size={23}
+                        />
+                    </button>
+
+                    <button
+                        style={Object.assign({}, styles.btnSort, { backgroundColor: pendingSortBy === 'levelAsc' ? CTA_COLOR : 'transparent' })}
+                        onClick={() => this.sortBy('levelAsc')}
+                    >
+                        <TbSortAscendingNumbers
+                            color='white'
+                            size={23}
+                        />
+                    </button>
+
+                </div>
+            </div>
+        )
+    }
+
     renderBody(isMobile) {
         const { error, section, maxLevelChooseWizard, showModalChooseWizard } = this.state
         const { loadingCompleted, loadingPending, pendingTournaments, completedTournaments, userMintedNfts } = this.props
@@ -599,6 +709,11 @@ class FlashTournaments extends Component {
                     }
 
                 </div>
+
+                {
+                    !isMobile &&
+                    this.renderFiltri()
+                }
 
                 <div style={{ width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
@@ -736,6 +851,18 @@ const styles = {
         width: '100%',
         maxWidth: 1200,
         marginBottom: 15
+    },
+    btnSort: {
+        width: 34,
+        height: 34,
+        justifyContent: 'center',
+        alignItems: 'center',
+        display: 'flex',
+        marginRight: 5,
+        borderRadius: 2,
+        borderColor: CTA_COLOR,
+        borderWidth: 1,
+        borderStyle: 'solid'
     }
 }
 
@@ -757,5 +884,6 @@ export default connect(mapStateToProps, {
     updateInfoTransactionModal,
     selectWizard,
     createTournament,
-    joinTournament
+    joinTournament,
+    sortPendingByKey
 })(FlashTournaments)

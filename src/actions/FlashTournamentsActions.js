@@ -7,7 +7,8 @@ import {
     SET_PENDING_TOURNAMENTS,
     SET_COMPLETED_TOURNAMENTS,
     SET_LOADING_PENDING_TOURNAMENTS,
-    SET_LOADING_COMPLETED_TOURNAMENTS
+    SET_LOADING_COMPLETED_TOURNAMENTS,
+    SORT_PENDING_TOURNAMENTS
 } from './types'
 
 export const getPendingTournaments = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 150000, networkUrl, callback) => {
@@ -22,12 +23,6 @@ export const getPendingTournaments = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
-
-            /*
-            response.sort((a, b) => {
-                return moment(b.createdAt.timep) - moment(a.createdAt.timep)
-            })
-            */
             response.sort((a, b) => {
                 return b.players.length - a.players.length
             })
@@ -92,6 +87,13 @@ const setLoadingCompleted = (value) => {
     return {
         type: SET_LOADING_COMPLETED_TOURNAMENTS,
         payload: value
+    }
+}
+
+export const sortPendingByKey = (key) => {
+    return {
+        type: SORT_PENDING_TOURNAMENTS,
+        payload: key
     }
 }
 
