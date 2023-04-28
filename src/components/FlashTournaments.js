@@ -557,7 +557,7 @@ class FlashTournaments extends Component {
         const marginRight = 20
 
         return (
-            <div style={{ alignItems: 'center', marginBottom: 20, flexWrap: 'wrap' }}>
+            <div style={{ alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', maxWidth: 1200, width: '100%' }}>
 
                 <div style={{ alignItems: 'center', marginRight, marginBottom: 7 }}>
 
@@ -710,12 +710,11 @@ class FlashTournaments extends Component {
 
                 </div>
 
-                {
-                    !isMobile &&
-                    this.renderFiltri()
-                }
-
                 <div style={{ width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                    {
+                        !isMobile &&
+                        this.renderFiltri()
+                    }
 
                     {
                         section === 1 ?
