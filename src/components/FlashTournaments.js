@@ -712,7 +712,7 @@ class FlashTournaments extends Component {
 
                 <div style={{ width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                     {
-                        !isMobile &&
+                        !isMobile && section === 1 && 
                         this.renderFiltri()
                     }
 
