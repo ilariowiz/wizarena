@@ -174,7 +174,7 @@ class ModalCreateTournament extends Component {
                             <div style={{ alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingBottom: 10 }}>
                                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
-                                    <p style={{ fontSize: 15, color: 'white' }}>
+                                    <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }}>
                                         Winner takes all
                                     </p>
 
@@ -189,7 +189,7 @@ class ModalCreateTournament extends Component {
 
                                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
-                                    <p style={{ fontSize: 15, color: 'white' }}>
+                                    <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }}>
                                         70% 1st, 30% 2nd
                                     </p>
 
