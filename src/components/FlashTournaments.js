@@ -25,7 +25,7 @@ import {
     selectWizard,
     createTournament,
     joinTournament,
-    sortPendingByKey
+    sortAutoByKey
 } from '../actions'
 import 'reactjs-popup/dist/index.css';
 
@@ -48,7 +48,7 @@ class FlashTournaments extends Component {
             tournamentid: "",
             equipment: [],
             joinTournamentid: "",
-            pendingSortBy: "playersDesc"
+            sortByKey: "playersDesc"
         }
     }
 
@@ -149,7 +149,9 @@ class FlashTournaments extends Component {
                     style={Object.assign({}, styles.btnMenu, { marginRight: 50, backgroundColor: section === 1 ? TEXT_SECONDARY_COLOR : 'transparent', borderColor: section === 1 ? TEXT_SECONDARY_COLOR : 'white' })}
                     className="btnH"
                     onClick={() => {
-                        this.setState({ section: 1 })
+                        this.setState({ section: 1, sortByKey: 'playersDesc' }, () => {
+                            this.sortBy('playersDesc')
+                        })
                     }}
                 >
                     <p style={{ fontSize: 17, color: 'white' }}>
@@ -161,7 +163,9 @@ class FlashTournaments extends Component {
                     style={Object.assign({}, styles.btnMenu, { backgroundColor: section === 2 ? TEXT_SECONDARY_COLOR : 'transparent', borderColor: section === 2 ? TEXT_SECONDARY_COLOR : 'white' })}
                     className="btnH"
                     onClick={() => {
-                        this.setState({ section: 2 })
+                        this.setState({ section: 2, sortByKey: 'completedAt' }, () => {
+                            this.sortBy('completedAt')
+                        })
                     }}
                 >
                     <p style={{ fontSize: 17, color: 'white' }}>
@@ -540,52 +544,60 @@ class FlashTournaments extends Component {
     }
 
     sortBy(key) {
-        const { pendingTournaments } = this.props
+        const { section } = this.state
+        const { pendingTournaments, completedTournaments } = this.props
 
-        if (!pendingTournaments) {
+        if (section === 1 && !pendingTournaments) {
             return
         }
 
-        this.setState({ pendingSortBy: key }, () => {
-            this.props.sortPendingByKey(key)
+        if (section === 2 && !completedTournaments) {
+            return
+        }
+
+        this.setState({ sortByKey: key }, () => {
+            this.props.sortAutoByKey(key, section)
         })
     }
 
     renderFiltri() {
-        const { pendingSortBy } = this.state
+        const { sortByKey, section } = this.state
 
         const marginRight = 20
 
         return (
             <div style={{ alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', maxWidth: 1200, width: '100%' }}>
 
-                <div style={{ alignItems: 'center', marginRight, marginBottom: 7 }}>
+                {
+                    section === 1 &&
+                    <div style={{ alignItems: 'center', marginRight, marginBottom: 7 }}>
 
-                    <p style={{ fontSize: 16, color: 'white', marginRight: 5 }}>
-                        Players
-                    </p>
+                        <p style={{ fontSize: 16, color: 'white', marginRight: 5 }}>
+                            Players
+                        </p>
 
-                    <button
-                        style={Object.assign({}, styles.btnSort, { backgroundColor: pendingSortBy === 'playersDesc' ? CTA_COLOR : 'transparent' })}
-                        onClick={() => this.sortBy('playersDesc')}
-                    >
-                        <TbSortDescendingNumbers
-                            color='white'
-                            size={23}
-                        />
-                    </button>
+                        <button
+                            style={Object.assign({}, styles.btnSort, { backgroundColor: sortByKey === 'playersDesc' ? CTA_COLOR : 'transparent' })}
+                            onClick={() => this.sortBy('playersDesc')}
+                        >
+                            <TbSortDescendingNumbers
+                                color='white'
+                                size={23}
+                            />
+                        </button>
 
-                    <button
-                        style={Object.assign({}, styles.btnSort, { backgroundColor: pendingSortBy === 'playersAsc' ? CTA_COLOR : 'transparent' })}
-                        onClick={() => this.sortBy('playersAsc')}
-                    >
-                        <TbSortAscendingNumbers
-                            color='white'
-                            size={23}
-                        />
-                    </button>
+                        <button
+                            style={Object.assign({}, styles.btnSort, { backgroundColor: sortByKey === 'playersAsc' ? CTA_COLOR : 'transparent' })}
+                            onClick={() => this.sortBy('playersAsc')}
+                        >
+                            <TbSortAscendingNumbers
+                                color='white'
+                                size={23}
+                            />
+                        </button>
 
-                </div>
+                    </div>
+                }
 
                 <div style={{ alignItems: 'center', marginRight, marginBottom: 7 }}>
 
@@ -594,7 +606,7 @@ class FlashTournaments extends Component {
                     </p>
 
                     <button
-                        style={Object.assign({}, styles.btnSort, { backgroundColor: pendingSortBy === 'buyinDesc' ? CTA_COLOR : 'transparent' })}
+                        style={Object.assign({}, styles.btnSort, { backgroundColor: sortByKey === 'buyinDesc' ? CTA_COLOR : 'transparent' })}
                         onClick={() => this.sortBy('buyinDesc')}
                     >
                         <TbSortDescendingNumbers
@@ -604,7 +616,7 @@ class FlashTournaments extends Component {
                     </button>
 
                     <button
-                        style={Object.assign({}, styles.btnSort, { backgroundColor: pendingSortBy === 'buyinAsc' ? CTA_COLOR : 'transparent' })}
+                        style={Object.assign({}, styles.btnSort, { backgroundColor: sortByKey === 'buyinAsc' ? CTA_COLOR : 'transparent' })}
                         onClick={() => this.sortBy('buyinAsc')}
                     >
                         <TbSortAscendingNumbers
@@ -622,7 +634,7 @@ class FlashTournaments extends Component {
                     </p>
 
                     <button
-                        style={Object.assign({}, styles.btnSort, { backgroundColor: pendingSortBy === 'levelDesc' ? CTA_COLOR : 'transparent' })}
+                        style={Object.assign({}, styles.btnSort, { backgroundColor: sortByKey === 'levelDesc' ? CTA_COLOR : 'transparent' })}
                         onClick={() => this.sortBy('levelDesc')}
                     >
                         <TbSortDescendingNumbers
@@ -632,7 +644,7 @@ class FlashTournaments extends Component {
                     </button>
 
                     <button
-                        style={Object.assign({}, styles.btnSort, { backgroundColor: pendingSortBy === 'levelAsc' ? CTA_COLOR : 'transparent' })}
+                        style={Object.assign({}, styles.btnSort, { backgroundColor: sortByKey === 'levelAsc' ? CTA_COLOR : 'transparent' })}
                         onClick={() => this.sortBy('levelAsc')}
                     >
                         <TbSortAscendingNumbers
@@ -712,7 +724,7 @@ class FlashTournaments extends Component {
 
                 <div style={{ width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                     {
-                        !isMobile && section === 1 && 
+                        !isMobile &&
                         this.renderFiltri()
                     }
 
@@ -884,5 +896,5 @@ export default connect(mapStateToProps, {
     selectWizard,
     createTournament,
     joinTournament,
-    sortPendingByKey
+    sortAutoByKey
 })(FlashTournaments)

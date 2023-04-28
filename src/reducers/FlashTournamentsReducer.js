@@ -1,9 +1,10 @@
+import moment from 'moment'
 import {
     SET_PENDING_TOURNAMENTS,
     SET_COMPLETED_TOURNAMENTS,
     SET_LOADING_PENDING_TOURNAMENTS,
     SET_LOADING_COMPLETED_TOURNAMENTS,
-    SORT_PENDING_TOURNAMENTS
+    SORT_AUTO_TOURNAMENTS
 } from '../actions/types'
 
 const INITIAL_STATE = {
@@ -23,46 +24,70 @@ export default (state = INITIAL_STATE, action) => {
             return { ...state, loadingCompleted: action.payload }
         case SET_COMPLETED_TOURNAMENTS:
             return { ...state, completedTournaments: action.payload, loadingCompleted: false }
-        case SORT_PENDING_TOURNAMENTS: {
-            const oldPending = Object.assign([], state.pendingTournaments)
+        case SORT_AUTO_TOURNAMENTS: {
+            const { key, section } = action.payload
+            //console.log(key, section);
 
-            if (action.payload === 'playersDesc') {
+            let oldPending;
+            if (section === 1) {
+                oldPending = Object.assign([], state.pendingTournaments)
+            }
+            else {
+                oldPending = Object.assign([], state.completedTournaments)
+            }
+
+            if (key === 'playersDesc') {
                 oldPending.sort((a, b) => {
                     return b.players.length - a.players.length
                 })
             }
 
-            if (action.payload === 'playersAsc') {
+            if (key === 'playersAsc') {
                 oldPending.sort((a, b) => {
                     return a.players.length - b.players.length
                 })
             }
 
-            if (action.payload === 'buyinDesc') {
+            if (key === 'buyinDesc') {
                 oldPending.sort((a, b) => {
                     return b.buyin - a.buyin
                 })
             }
 
-            if (action.payload === 'buyinAsc') {
+            if (key === 'buyinAsc') {
                 oldPending.sort((a, b) => {
                     return a.buyin - b.buyin
                 })
             }
 
-            if (action.payload === 'levelDesc') {
+            if (key === 'levelDesc') {
                 oldPending.sort((a, b) => {
                     return b.maxLevel.int - a.maxLevel.int
                 })
             }
 
-            if (action.payload === 'levelAsc') {
+            if (key === 'levelAsc') {
                 oldPending.sort((a, b) => {
                     return a.maxLevel.int - b.maxLevel.int
                 })
             }
 
-            return { ...state, pendingTournaments: oldPending }
+            if (key === 'completedAt') {
+                oldPending.sort((a, b) => {
+
+                    const moment1 = b.completedAt ? moment(b.completedAt.timep) : moment(b.createdAt.timep)
+                    const moment2 = a.completedAt ? moment(a.completedAt.timep) : moment(a.createdAt.timep)
+
+                    return moment1 - moment2
+                })
+            }
+
+            //console.log(oldPending);
+
+            if (section === 1) {
+                return { ...state, pendingTournaments: oldPending }
+            }
+            return { ...state, completedTournaments: oldPending }
         }
         default:
     		return state

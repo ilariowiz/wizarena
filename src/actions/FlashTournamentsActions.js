@@ -8,7 +8,7 @@ import {
     SET_COMPLETED_TOURNAMENTS,
     SET_LOADING_PENDING_TOURNAMENTS,
     SET_LOADING_COMPLETED_TOURNAMENTS,
-    SORT_PENDING_TOURNAMENTS
+    SORT_AUTO_TOURNAMENTS
 } from './types'
 
 export const getPendingTournaments = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 150000, networkUrl, callback) => {
@@ -90,10 +90,10 @@ const setLoadingCompleted = (value) => {
     }
 }
 
-export const sortPendingByKey = (key) => {
+export const sortAutoByKey = (key, section) => {
     return {
-        type: SORT_PENDING_TOURNAMENTS,
-        payload: key
+        type: SORT_AUTO_TOURNAMENTS,
+        payload: {key, section}
     }
 }
 
