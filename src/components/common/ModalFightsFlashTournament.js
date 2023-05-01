@@ -50,12 +50,56 @@ class ModalFightsFlashTournament extends Component {
 		)
 	}
 
+	renderFightMobile(item, index, showHorizontal) {
+
+		const imgWidth = 40
+
+		return (
+			<a
+				key={index}
+				href={`${window.location.protocol}//${window.location.host}/fight/${item.fightId}`}
+				style={Object.assign({}, styles.boxFight, { flexDirection: showHorizontal ? 'row' : 'column' })}
+				onClick={(e) => {
+					e.preventDefault()
+					this.props.history.push(`/fight/${item.fightId}`)
+				}}
+			>
+				<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+					<img
+						src={getImageUrl(item.s1)}
+						style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', marginBottom: 4 }}
+						alt={item.s1}
+					/>
+
+					<p style={{ fontSize: 15, color: 'white', textAlign: 'center' }}>
+						#{item.s1}
+					</p>
+				</div>
+
+				<p style={{ fontSize: 14, color: 'white', marginRight: 8, marginLeft: 8 }}>
+					VS
+				</p>
+
+				<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+					<img
+						src={getImageUrl(item.s2)}
+						style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', marginBottom: 4 }}
+						alt={item.s2}
+					/>
+					<p style={{ fontSize: 15, color: 'white', textAlign: 'center' }}>
+						#{item.s2}
+					</p>
+				</div>
+			</a>
+		)
+	}
+
 	render() {
-		const { showModal, width, fights, tournamentid } = this.props;
+		const { showModal, width, fights, tournamentInfo, isMobile } = this.props;
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 
-		if (!tournamentid) {
+		if (!tournamentInfo.id) {
 			return <div />
 		}
 
@@ -63,34 +107,59 @@ class ModalFightsFlashTournament extends Component {
 		//console.log(fights);
 		//console.log(fights[`${tournamentid}_r1`]);
 
+		const tournamentid = tournamentInfo.id
+
+		let howManyFights = 3
+		if (tournamentInfo.nPlayers === 4) {
+			howManyFights = 2
+		}
+		else if (tournamentInfo.nPlayers === 2) {
+			howManyFights = 1
+		}
+
+
 		return (
 			<div className={classContainer}>
 				<div style={Object.assign({}, styles.subcontainer, { width: '80%' })}>
 
-
 					<div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', marginBottom: 25 }}>
 						{
 							fights && fights[`${tournamentid}_r1`].map((item, index) => {
+								if (isMobile) {
+									return this.renderFightMobile(item, index, howManyFights === 1 ? true : false)
+								}
 								return this.renderFight(item, index)
 							})
 						}
 					</div>
 
-					<div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', marginBottom: 15 }}>
-						{
-							fights && fights[`${tournamentid}_r2`].map((item, index) => {
-								return this.renderFight(item, index)
-							})
-						}
-					</div>
+					{
+						howManyFights >= 2 &&
+						<div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', marginBottom: 15 }}>
+							{
+								fights && fights[`${tournamentid}_r2`].map((item, index) => {
+									if (isMobile) {
+										return this.renderFightMobile(item, index, howManyFights === 2 ? true : false)
+									}
+									return this.renderFight(item, index)
+								})
+							}
+						</div>
+					}
 
-					<div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', marginBottom: 25 }}>
-						{
-							fights && fights[`${tournamentid}_r3`].map((item, index) => {
-								return this.renderFight(item, index)
-							})
-						}
-					</div>
+					{
+						howManyFights === 3 &&
+						<div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', marginBottom: 25 }}>
+							{
+								fights && fights[`${tournamentid}_r3`].map((item, index) => {
+									if (isMobile) {
+										return this.renderFightMobile(item, index, true)
+									}
+									return this.renderFight(item, index)
+								})
+							}
+						</div>
+					}
 
 					<a
 						href={`${window.location.protocol}//${window.location.host}/nft/${fights.winner}`}
