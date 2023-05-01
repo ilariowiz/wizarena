@@ -5,6 +5,7 @@ import Header from './Header'
 import DotLoader from 'react-spinners/DotLoader';
 import Popup from 'reactjs-popup';
 import moment from 'moment'
+import _ from 'lodash'
 import { AiOutlinePlus } from 'react-icons/ai'
 import { TbSortAscendingNumbers, TbSortDescendingNumbers } from 'react-icons/tb'
 import ModalFightsFlashTournament from './common/ModalFightsFlashTournament'
@@ -371,8 +372,8 @@ class FlashTournaments extends Component {
         let prizes = "Winner takes all"
 
         if (item.winners && item.winners.int && item.winners.int === 2) {
-            prizeWiza = (totalWiza * 70 / 100) - (fee/2)
-            prizeWiza2 = (totalWiza * 30 / 100) - (fee/2)
+            prizeWiza = _.round((totalWiza * 70 / 100) - (fee/2), 1)
+            prizeWiza2 = _.round((totalWiza * 30 / 100) - (fee/2), 1)
             prizes = "70% 1st, 30% 2nd"
 
             let secondKey = "r3"
@@ -514,7 +515,7 @@ class FlashTournaments extends Component {
                                     WINNER
                                 </p>
 
-                                <p style={{ fontSize: 14, color: 'white', opacity: 0.8 }}>
+                                <p style={{ fontSize: 14, color: 'white', opacity: 0.8, textAlign: 'center' }}>
                                     {prizeWiza} WIZA
                                 </p>
                             </div>
@@ -559,7 +560,7 @@ class FlashTournaments extends Component {
                                             2nd
                                         </p>
 
-                                        <p style={{ fontSize: 13, color: 'white', opacity: 0.8 }}>
+                                        <p style={{ fontSize: 13, color: 'white', opacity: 0.8, textAlign: 'center' }}>
                                             {prizeWiza2} WIZA
                                         </p>
                                     </div>
