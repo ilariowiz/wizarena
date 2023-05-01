@@ -45,7 +45,7 @@ class FlashTournaments extends Component {
             showModalChooseWizard: false,
             maxLevelChooseWizard: 0,
             fights: {},
-            tournamentid: "",
+            tournamentInfo: {},
             equipment: [],
             joinTournamentid: "",
             sortByKey: "playersDesc"
@@ -355,7 +355,7 @@ class FlashTournaments extends Component {
     renderCompletedTournament(item, index, isMobile) {
         const { userMintedNfts, account } = this.props
 
-        //console.log(userMintedNfts);
+        //console.log(item);
 
         const timeFromBlock = item.completedAt ? item.completedAt.timep : item.createdAt.timep
 
@@ -365,12 +365,26 @@ class FlashTournaments extends Component {
         const totalWiza = item.buyin * item.nPlayers.int
         const fee = 5 * totalWiza / 100
         let prizeWiza = totalWiza - fee
+        let prizeWiza2 = 0
+        let secondPlaceId = ""
 
         let prizes = "Winner takes all"
 
         if (item.winners && item.winners.int && item.winners.int === 2) {
             prizeWiza = (totalWiza * 70 / 100) - (fee/2)
+            prizeWiza2 = (totalWiza * 30 / 100) - (fee/2)
             prizes = "70% 1st, 30% 2nd"
+
+            let secondKey = "r3"
+            if (item.nPlayers.int === 4) {
+                secondKey = "r2"
+            }
+            if (item.nPlayers.int === 2) {
+                secondKey = "r1"
+            }
+
+            const lastFight = item.fights[`${item.id}_${secondKey}`]
+            secondPlaceId = lastFight[0].s1 === lastFight[0].winnerId ? lastFight[0].s2 : lastFight[0].s1
         }
 
         const imgWidth = isMobile ? 36 : 50
@@ -412,11 +426,14 @@ class FlashTournaments extends Component {
                             {item.players.map((wiz, idx) => {
 
                                 let isYour = false
-                                for (let i = 0; i < userMintedNfts.length; i++) {
-                                    if (userMintedNfts[i].id === wiz) {
-                                        isYour = true
+                                if (userMintedNfts) {
+                                    for (let i = 0; i < userMintedNfts.length; i++) {
+                                        if (userMintedNfts[i].id === wiz) {
+                                            isYour = true
+                                        }
                                     }
                                 }
+
 
                                 return (
                                     <a
@@ -458,7 +475,7 @@ class FlashTournaments extends Component {
                             <button
                                 style={Object.assign({}, styles.btnMenu, { backgroundColor: TEXT_SECONDARY_COLOR, width: 130, height: 35 })}
                                 className="btnH"
-                                onClick={() => this.setState({ fights: item.fights, tournamentid: item.id, showModalFights: true })}
+                                onClick={() => this.setState({ fights: item.fights, tournamentInfo: item, showModalFights: true })}
                             >
                                 <p style={{ fontSize: 17, color: 'white' }}>
                                     FIGHTS
@@ -467,7 +484,7 @@ class FlashTournaments extends Component {
                         }
                     </div>
 
-                    <div style={{ flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', marginRight: 15 }}>
+                    <div style={{ flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', marginRight: isMobile ? 0 : 15 }}>
 
                         <div style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
 
@@ -502,7 +519,7 @@ class FlashTournaments extends Component {
                                 </p>
                             </div>
 
-                            <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
+                            <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: isMobile ? 0 : 10 }}>
                                 <a
                                     href={`${window.location.protocol}//${window.location.host}/nft/${item.fights.winner}`}
                                     style={{ cursor: 'pointer' }}
@@ -534,9 +551,69 @@ class FlashTournaments extends Component {
                                 </a>
                             </div>
 
+                            {
+                                item.winners && item.winners.int && item.winners.int === 2 &&
+                                <div>
+                                    <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginLeft: 10, marginRight: 5 }}>
+                                        <p style={{ fontSize: 15, color: 'white' }}>
+                                            2nd
+                                        </p>
+
+                                        <p style={{ fontSize: 13, color: 'white', opacity: 0.8 }}>
+                                            {prizeWiza2} WIZA
+                                        </p>
+                                    </div>
+
+                                    <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: isMobile ? 0 : 10 }}>
+                                        <a
+                                            href={`${window.location.protocol}//${window.location.host}/nft/${secondPlaceId}`}
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={(e) => {
+                                                e.preventDefault()
+                                                this.props.selectWizard(secondPlaceId)
+                                                this.props.history.push(`/nft/${secondPlaceId}`)
+                                            }}
+                                        >
+                                            <Popup
+                                                trigger={open => (
+                                                    <div style={{ alignItems: 'center' }}>
+                                                        <img
+                                                            src={getImageUrl(secondPlaceId)}
+                                                            style={{ width: 40, height: 40, borderRadius: 20, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+                                                            alt={secondPlaceId}
+                                                        />
+                                                    </div>
+                                                )}
+                                                position="left center"
+                                                on="hover"
+                                            >
+                                                <div style={{ padding: 5, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+                                                    <p style={{ fontSize: 15, textAlign: 'center' }}>
+                                                        Wizard #{secondPlaceId}
+                                                    </p>
+                                                </div>
+                                            </Popup>
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+
                         </div>
 
                     </div>
+
+                    {
+                        isMobile &&
+                        <button
+                            style={Object.assign({}, styles.btnMenu, { backgroundColor: TEXT_SECONDARY_COLOR, width: 130, height: 35, marginTop: 12 })}
+                            className="btnH"
+                            onClick={() => this.setState({ fights: item.fights, tournamentInfo: item, showModalFights: true })}
+                        >
+                            <p style={{ fontSize: 16, color: 'white' }}>
+                                FIGHTS
+                            </p>
+                        </button>
+                    }
 
                 </div>
             </div>
@@ -753,8 +830,9 @@ class FlashTournaments extends Component {
                     showModal={this.state.showModalFights}
                     onCloseModal={() => this.setState({ showModalFights: false })}
                     fights={this.state.fights}
-                    tournamentid={this.state.tournamentid}
+                    tournamentInfo={this.state.tournamentInfo}
                     history={this.props.history}
+                    isMobile={isMobile}
                 />
 
                 <ModalCreateTournament
