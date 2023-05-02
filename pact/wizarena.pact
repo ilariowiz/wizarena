@@ -2008,6 +2008,7 @@
                         "nPlayers":=nPlayers
                     }
                     (enforce (= completed false) "Can't join a completed tournament")
+                    (enforce (> nPlayers 0) "Tournament has been cancelled")
                     (enforce (< (length subscribers) nPlayers) "Tournament is full")
                     (enforce (<= current-level maxLevel) "Your wizard has a level greater than the max level")
                     (enforce (= (contains idnft subscribers) false) "This wizard is already subscribed")
@@ -2025,38 +2026,34 @@
         )
     )
 
-    ; (defun unsub-from-tournament (tournamentid:string idnft:string account:string m:module{wiza1-interface-v2})
-    ;     (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
-    ;     (with-capability (OWNER account idnft)
-    ;         (with-read auto-tournaments tournamentid
-    ;             {
-    ;                 "players":=subscribers,
-    ;                 "wallets":=subscriberwallets,
-    ;                 "buyin":=buyin,
-    ;                 "completed":=completed,
-    ;                 "nPlayers":=nPlayers
-    ;             }
-    ;             (enforce (= completed false) "You cannot unsubscribe from a completed tournament")
-    ;             (enforce (< (length subscribers) nPlayers) "you cannot unsubscribe from a tournament that is about to start")
-    ;             (enforce (= (contains idnft subscribers) true) "This wizard is not subscribed")
-    ;             (enforce (= (contains account subscriberwallets) true) "Your account is not registered for the tournament")
-    ;             (let (
-    ;                     (newplayerslist (filter (!= idnft) subscribers))
-    ;                     (newwalletslist (filter (!= account) subscriberwallets))
-    ;                     (account-guard (at "guard" (coin.details account)))
-    ;                 )
-    ;                 (update auto-tournaments tournamentid
-    ;                     {
-    ;                         "players": newplayerslist,
-    ;                         "wallets": newwalletslist
-    ;                     }
-    ;                     (install-capability (m::TRANSFER WIZ_AUTO_TOURNAMENTS_BANK account buyin))
-    ;                     (m::transfer-create WIZ_AUTO_TOURNAMENTS_BANK account account-guard buyin)
-    ;                 )
-    ;             )
-    ;         )
-    ;     )
-    ; )
+    (defun cancel-tournament (tournamentid:string m:module{wiza1-interface-v2})
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+        (with-capability (DEV)
+            (with-read auto-tournaments tournamentid
+                {
+                    "wallets":=subscriberwallets,
+                    "buyin":=buyin
+                }
+                (map (refund-single-wallet buyin m) subscriberwallets)
+                (update auto-tournaments tournamentid
+                    {
+                        "nPlayers": 0
+                    }
+                )
+            )
+        )
+    )
+
+    (defun refund-single-wallet (buyin:decimal m:module{wiza1-interface-v2} account:string)
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+        (require-capability (PRIVATE))
+        (let (
+                (account-guard (at "guard" (coin.details account)))
+            )
+            (install-capability (m::TRANSFER WIZ_AUTO_TOURNAMENTS_BANK account buyin))
+            (m::transfer-create WIZ_AUTO_TOURNAMENTS_BANK account account-guard buyin)
+        )
+    )
 
     (defun complete-tournament (tournamentid:string winner:string winner2:string fights:object m:module{wiza1-interface-v2})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
@@ -2114,7 +2111,10 @@
     )
 
     (defun get-pending-auto-tournaments ()
-        (select auto-tournaments (where "completed" (= false)))
+        (select auto-tournaments (and?
+            (where "completed" (= false))
+            (where "nPlayers" (< 0))
+        ))
     )
 
     (defun get-completed-auto-tournaments ()
