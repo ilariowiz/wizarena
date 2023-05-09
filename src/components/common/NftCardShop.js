@@ -26,7 +26,7 @@ class NftCardShop extends Component {
     }
 
 	render() {
-		const { item, width, isSelect } = this.props
+		const { item, width, isSelect, mainTextColor } = this.props
         //console.log(item)
 
         //const numberOfTotalMedals = this.calcMedals()
@@ -38,7 +38,7 @@ class NftCardShop extends Component {
 				className='containerChoice'
 			>
 				<img
-					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
+					style={{ width, height: width, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
 					src={getImageUrl(item.id)}
 					alt={`#${item.id}`}
 				/>
@@ -46,7 +46,7 @@ class NftCardShop extends Component {
 				<div style={{ flexDirection: 'column', width, alignItems: 'center' }}>
 
 					<div style={{ width: '90%', justifyContent: 'space-between', alignItems: 'center', marginTop: 5, marginBottom: 10 }}>
-						<p style={{ color: 'white', fontSize: 17 }}>
+						<p style={{ color: mainTextColor, fontSize: 15 }} className="text-medium">
 							{item.name}
 						</p>
 					</div>
@@ -54,24 +54,24 @@ class NftCardShop extends Component {
 					<div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
                         <div style={{ width: '90%', alignItems: 'center', marginBottom: 8 }}>
-                            <p style={{ color: '#c2c0c0', fontSize: 16, marginRight: 10 }}>
-                                LEVEL
+                            <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
+                                Level
                             </p>
-                            <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 18 }}>
+                            <p style={{ color: mainTextColor, fontSize: 16 }} className="text-medium">
                                 {level}
                             </p>
                         </div>
 
                         <div style={{ width: '90%', alignItems: 'center', marginBottom: 8 }}>
-                            <p style={{ color: '#c2c0c0', fontSize: 16, marginRight: 10 }}>
-                                AP
+                            <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
+                                Ap
                             </p>
-                            <p style={{ color: "white", fontSize: 18 }}>
+                            <p style={{ color: mainTextColor, fontSize: 16 }}>
                                 {item.ap.int}
                             </p>
                         </div>
 
-                        {cardStatsShop(item, undefined)}
+                        {cardStatsShop(item, undefined, undefined, mainTextColor)}
 
                         {
                             isSelect ?
@@ -80,8 +80,8 @@ class NftCardShop extends Component {
                                 style={styles.btnSubscribe}
                                 onClick={() => this.props.onSelect()}
                             >
-                                <p style={{ fontSize: 17, color: 'white' }}>
-                                    SELECT
+                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                    Select
                                 </p>
                             </button>
                             :
@@ -98,20 +98,11 @@ class NftCardShop extends Component {
 }
 
 const styles = {
-    statsTitleStyle: {
-        fontSize: 15,
-        color: '#c2c0c0',
-        marginRight: 8
-    },
-    statsStyle: {
-        fontSize: 15,
-        color: 'white'
-    },
     btnSubscribe: {
-        height: 45,
+        height: 40,
         width: '100%',
-        borderBottomLeftRadius: 2,
-        borderBottomRightRadius: 2,
+        borderBottomLeftRadius: 4,
+        borderBottomRightRadius: 4,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: CTA_COLOR
@@ -119,9 +110,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl } = state.mainReducer
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor } = state.mainReducer
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl }
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor }
 }
 
 export default connect(mapStateToProps)(NftCardShop);

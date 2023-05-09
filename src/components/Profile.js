@@ -622,7 +622,7 @@ class Profile extends Component {
 					this.searchByStat({ stat: statName, value: item })
 				}}
 			>
-				<p style={{ fontSize: 19 }}>
+				<p style={{ fontSize: 16, color: this.props.mainTextColor }}>
 					{item}
 				</p>
 			</button>
@@ -631,12 +631,13 @@ class Profile extends Component {
 
 	renderBoxSearchStat(statName, statDisplay, list) {
 		const { statSearched } = this.state
+		const { mainTextColor } = this.props
 
 		//console.log(statSearched);
 
 		const findItem = statSearched && statSearched.length > 0 ? statSearched.find(i => i.stat === statName) : undefined
 
-		let text = statDisplay.toUpperCase()
+		let text = statDisplay
 		if (findItem) {
 			//console.log(findItem);
 
@@ -649,11 +650,11 @@ class Profile extends Component {
 				ref={ref => this.listPopup = ref}
 				trigger={
 					<button style={styles.btnStat}>
-						<p style={{ fontSize: 16, color: 'white' }}>{text}</p>
+						<p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">{text}</p>
 						{
 							findItem &&
 							<IoClose
-								color='red'
+								color={mainTextColor}
 								size={22}
 								style={{ marginLeft: 5 }}
 								onClick={(e) => {
@@ -664,7 +665,7 @@ class Profile extends Component {
 						}
 					</button>
 				}
-				position="bottom left"
+				position="right center"
 				on="click"
 				closeOnDocumentClick
 				arrow={true}
@@ -697,47 +698,35 @@ class Profile extends Component {
 		)
 	}
 
-    renderSearchedEquip() {
+	renderBoxSearchEquip(statDisplay, list) {
 		const { searchedText } = this.state
 
-		if (!searchedText) {
-			return null
+		let text = statDisplay
+		if (searchedText && list.includes(searchedText)) {
+			text = `${text} = ${searchedText}`
 		}
-
-		return (
-			<div style={{ width: '100%', marginBottom: 20 }}>
-				<div style={{ backgroundColor: '#e5e8eb80', justifyContent: 'center', alignItems: 'center', height: 45, paddingLeft: 20, paddingRight: 20, borderRadius: 2 }}>
-					<p style={{ fontSize: 22, color: 'black', marginRight: 10 }}>
-						{searchedText}
-					</p>
-
-					<button
-						style={{ paddingTop: 5 }}
-						onClick={() => this.cancelEquipSearch()}
-					>
-						<IoClose
-							color='black'
-							size={22}
-						/>
-					</button>
-				</div>
-			</div>
-		)
-	}
-
-	renderBoxSearchEquip(statDisplay, list) {
-
-		let text = statDisplay.toUpperCase()
 
 		return (
 			<Popup
 				ref={ref => this.listPopup = ref}
 				trigger={
 					<button style={styles.btnStat}>
-						<p style={{ fontSize: 16, color: 'white' }}>{text}</p>
+						<p style={{ fontSize: 15, color: this.props.mainTextColor }} className="text-medium">{text}</p>
+						{
+							searchedText && list.includes(searchedText) &&
+							<IoClose
+								color={this.props.mainTextColor}
+								size={22}
+								style={{ marginLeft: 5 }}
+								onClick={(e) => {
+									e.stopPropagation()
+									this.cancelEquipSearch()
+								}}
+							/>
+						}
 					</button>
 				}
-				position="bottom left"
+				position="right center"
 				on="click"
 				closeOnDocumentClick
 				arrow={true}
@@ -751,48 +740,51 @@ class Profile extends Component {
 		)
 	}
 
-	renderYourWizards(width) {
+	renderYourWizards(width, isMobile) {
 		const { yourNfts, loading, showFilters } = this.state
 		const { userMintedNfts, filtriProfileRanges } = this.props
 
+		const widthSide = 180
+		const widthNfts = isMobile ? width : width - widthSide
+
 		return (
-			<div style={{ width, flexDirection: 'column' }}>
+			<div style={{ width }}>
 
 				{
-					!loading && userMintedNfts && userMintedNfts.length > 0 && filtriProfileRanges && showFilters &&
-					<div style={{ flexWrap: 'wrap', marginBottom: 10 }} id="filters">
-						{this.renderBoxSearchStat("hp", "HP", filtriProfileRanges["hp"])}
-						{this.renderBoxSearchStat("defense", "DEFENSE", filtriProfileRanges["defense"])}
-						{this.renderBoxSearchStat("attack", "ATTACK", filtriProfileRanges["attack"])}
-						{this.renderBoxSearchStat("damage", "DAMAGE", filtriProfileRanges["damage"])}
-						{this.renderBoxSearchStat("speed", "SPEED", filtriProfileRanges["speed"])}
-						{this.renderBoxSearchStat("element", "ELEMENT", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
-						{this.renderBoxSearchStat("resistance", "RESISTANCE", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
-						{this.renderBoxSearchStat("weakness", "WEAKNESS", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
-						{this.renderBoxSearchStat("spellbook", "SPELLBOOK", [1, 2, 3, 4])}
-						{this.renderBoxSearchStat("level", "LEVEL", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 275", "276 - 300", "301 - 325", "326 - 350"].reverse())}
+					!loading && userMintedNfts && userMintedNfts.length > 0 && filtriProfileRanges && !isMobile &&
+					<div style={{ width: widthSide, flexDirection: 'column' }} id="filters">
+						{this.renderBoxSearchStat("hp", "Hp", filtriProfileRanges["hp"])}
+						{this.renderBoxSearchStat("defense", "Defense", filtriProfileRanges["defense"])}
+						{this.renderBoxSearchStat("attack", "Attack", filtriProfileRanges["attack"])}
+						{this.renderBoxSearchStat("damage", "Damage", filtriProfileRanges["damage"])}
+						{this.renderBoxSearchStat("speed", "Speed", filtriProfileRanges["speed"])}
+						{this.renderBoxSearchStat("element", "Element", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
+						{this.renderBoxSearchStat("resistance", "Resistance", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
+						{this.renderBoxSearchStat("weakness", "Weakness", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
+						{this.renderBoxSearchStat("spellbook", "Spellbook", [1, 2, 3, 4])}
+						{this.renderBoxSearchStat("level", "Level", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 275", "276 - 300", "301 - 325", "326 - 350"].reverse())}
 					</div>
 				}
 
-				{
+				{/*
 					!showFilters &&
 					<button
 						className="btnH"
 						style={Object.assign({}, styles.btnStat, { width: 'fit-content', marginBottom: 12 })}
 						onClick={() => this.setState({ showFilters: true })}
 					>
-						<p style={{ fontSize: 17, color: 'white' }}>
+						<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
 							Show filters
 						</p>
 					</button>
-				}
+				*/}
 
-				{
+				{/*
 					!loading &&
-					<p style={{ fontSize: 15, color: '#c2c0c0', marginBottom: 15 }}>
+					<p style={{ fontSize: 15, color: '#707070', marginBottom: 15 }} className="text-medium">
 						Wizards {yourNfts.length}
 					</p>
-				}
+				*/}
 
 				{
 					userMintedNfts && userMintedNfts.length === 0 && !loading ?
@@ -802,7 +794,7 @@ class Profile extends Component {
 
 				{
 					yourNfts && yourNfts.length > 0 ?
-					<div style={{ alignItems: 'center', flexWrap: 'wrap', width: '100%' }}>
+					<div style={{ flexWrap: 'wrap', width: widthNfts, justifyContent: isMobile ? 'center': 'flex-start' }}>
 						{yourNfts.map((item, index) => {
 							return this.renderRow(item, index);
 						})}
@@ -813,38 +805,36 @@ class Profile extends Component {
 		)
 	}
 
-	renderYourEquip(width) {
+	renderYourEquip(width, isMobile) {
 		const { equipment, itemsToShow, loading } = this.state
 
         const ringsToShow = itemsToShow.length > 0 ? itemsToShow : equipment
 
+		const widthSide = 180
+		const widthNfts = isMobile ? width : width - widthSide
+
 		return (
-			<div style={{ flexDirection: 'column' }}>
+			<div style={{ width }}>
 
 				{
-					equipment.length > 0 &&
-					<div style={{ flexWrap: 'wrap', marginBottom: 10 }}>
-						{this.renderBoxSearchEquip("HP", ["Ring of HP +4", "Ring of HP +8", "Ring of HP +12", "Ring of HP +16", "Ring of HP +20", "Ring of Life", "Ring of Last Defense", "Ring of Power"].reverse())}
-						{this.renderBoxSearchEquip("DEFENSE", ["Ring of Defense +1", "Ring of Defense +2", "Ring of Defense +3", "Ring of Defense +4", "Ring of Defense +5", "Ring of Magic Shield", "Ring of Last Defense", "Ring of Power"].reverse())}
-						{this.renderBoxSearchEquip("ATTACK", ["Ring of Attack +1", "Ring of Attack +2", "Ring of Attack +3", "Ring of Attack +4", "Ring of Attack +5", "Ring of Accuracy", "Ring of Destruction", "Ring of Swift Death", "Ring of Power"].reverse())}
-						{this.renderBoxSearchEquip("DAMAGE", ["Ring of Damage +2", "Ring of Damage +4", "Ring of Damage +6", "Ring of Damage +8", "Ring of Damage +10", "Ring of Force", "Ring of Destruction", "Ring of Power"].reverse())}
-						{this.renderBoxSearchEquip("SPEED", ["Ring of Speed +2", "Ring of Speed +4", "Ring of Speed +6", "Ring of Speed +8", "Ring of Speed +10", "Ring of Lightning", "Ring of Swift Death", "Ring of Power"].reverse())}
+					equipment.length > 0 && !isMobile &&
+					<div style={{ width: widthSide, flexDirection: 'column' }}>
+						{this.renderBoxSearchEquip("Hp", ["Ring of HP +4", "Ring of HP +8", "Ring of HP +12", "Ring of HP +16", "Ring of HP +20", "Ring of Life", "Ring of Last Defense", "Ring of Power"].reverse())}
+						{this.renderBoxSearchEquip("Defense", ["Ring of Defense +1", "Ring of Defense +2", "Ring of Defense +3", "Ring of Defense +4", "Ring of Defense +5", "Ring of Magic Shield", "Ring of Last Defense", "Ring of Power"].reverse())}
+						{this.renderBoxSearchEquip("Attack", ["Ring of Attack +1", "Ring of Attack +2", "Ring of Attack +3", "Ring of Attack +4", "Ring of Attack +5", "Ring of Accuracy", "Ring of Destruction", "Ring of Swift Death", "Ring of Power"].reverse())}
+						{this.renderBoxSearchEquip("Damage", ["Ring of Damage +2", "Ring of Damage +4", "Ring of Damage +6", "Ring of Damage +8", "Ring of Damage +10", "Ring of Force", "Ring of Destruction", "Ring of Power"].reverse())}
+						{this.renderBoxSearchEquip("Speed", ["Ring of Speed +2", "Ring of Speed +4", "Ring of Speed +6", "Ring of Speed +8", "Ring of Speed +10", "Ring of Lightning", "Ring of Swift Death", "Ring of Power"].reverse())}
 					</div>
 				}
 
-				{
-					equipment.length > 0 &&
-					this.renderSearchedEquip()
-				}
-
-				{
+				{/*
 					!loading &&
 					<p style={{ fontSize: 15, color: '#c2c0c0', marginBottom: 15 }}>
 						Items {ringsToShow.length}
 					</p>
-				}
+				*/}
 
-				<div style={{ flexWrap: 'wrap', width }}>
+				<div style={{ flexWrap: 'wrap', width: widthNfts, justifyContent: isMobile ? 'center': 'flex-start' }}>
 					{ringsToShow.map((item, index) => {
 						return (
 				            <EquipmentCard
@@ -865,7 +855,7 @@ class Profile extends Component {
 		const { kadenaPrice } = this.state
 
 		return (
-			<div style={{ flexDirection: 'column' }}>
+			<div style={{ flexDirection: 'column', width }}>
 				{offers.map((item, index) => {
 					return (
 						<OfferItem
@@ -891,7 +881,7 @@ class Profile extends Component {
 		const { offersEquipmentMade } = this.state
 
 		return (
-			<div style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+			<div style={{ flexDirection: 'row', flexWrap: 'wrap', width }}>
 				{offersEquipmentMade.map((item, index) => {
 					return (
 						<OfferEquipmentItem
@@ -908,32 +898,26 @@ class Profile extends Component {
 
 	renderMenu(isMobile) {
 		const { section, loading, equipment, offersMade, offersReceived, offersEquipmentMade } = this.state;
-		const { userMintedNfts } = this.props
-
-		const selStyle = { borderBottomWidth: 3, borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderColor: 'white', borderStyle: 'solid' }
-		const unselStyle = { borderBottomWidth: 3, borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderColor: 'transparent', borderStyle: 'solid' }
-		const selectedStyle1 = section === 1 ? selStyle : unselStyle
-		const selectedStyle3 = section === 3 ? selStyle : unselStyle
-		const selectedStyle4 = section === 4 ? selStyle : unselStyle
-		const selectedStyle5 = section === 5 ? selStyle : unselStyle
+		const { userMintedNfts, mainTextColor } = this.props
 
 		return (
-			<div style={{ width: '100%', alignItems: 'center', marginBottom: 15, flexWrap: 'wrap' }}>
+			<div style={{ alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', borderColor: '#d7d7d7', borderStyle: 'solid', borderRadius: 4, borderWidth: 1, padding: 6, marginBottom: 30, marginTop: 20 }}>
+
 				<button
-					style={Object.assign({}, styles.btnMenu, selectedStyle1, { marginRight: 35 })}
+					style={Object.assign({}, styles.btnMenu, { backgroundColor: section === 1 ? mainTextColor : 'white' })}
 					onClick={() => {
 						if (this.state.section !== 1) {
 							this.setState({ section: 1 })
 						}
 					}}
 				>
-					<p style={{ fontSize: isMobile ? 16 : 17, color: section === 1 ? 'white' : '#ffffff95' }}>
-						MY COLLECTION ({(userMintedNfts && userMintedNfts.length) || 0})
+					<p style={{ fontSize: 14, color: section === 1 ? "white" : mainTextColor }} className="text-medium">
+						Collection {userMintedNfts ? `(${userMintedNfts.length})` : ""}
 					</p>
 				</button>
 
 				<button
-					style={Object.assign({}, styles.btnMenu, selectedStyle5, { marginRight: 35 })}
+					style={Object.assign({}, styles.btnMenu, { backgroundColor: section === 5 ? mainTextColor : 'white' })}
 					onClick={() => {
 						if (loading) {
 							return
@@ -943,13 +927,13 @@ class Profile extends Component {
 						this.loadEquip()
 					}}
 				>
-					<p style={{ fontSize: isMobile ? 16 : 17, color: section === 5 ? 'white' : '#ffffff95' }}>
-						EQUIPMENT {equipment.length > 0 ? `(${equipment.length})` : ""}
+					<p style={{ fontSize: 14, color: section === 5 ? "white" : mainTextColor }} className="text-medium">
+						Equipment {equipment && equipment.length > 0 ? `(${equipment.length})` : ""}
 					</p>
 				</button>
 
 				<button
-					style={Object.assign({}, styles.btnMenu, selectedStyle3, { marginRight: 35 })}
+					style={Object.assign({}, styles.btnMenu, { backgroundColor: section === 3 ? mainTextColor : 'white' })}
 					onClick={() => {
 						if (loading || !userMintedNfts) {
 							return
@@ -959,13 +943,13 @@ class Profile extends Component {
 						this.loadOffersMade()
 					}}
 				>
-					<p style={{ fontSize: isMobile ? 16 : 17, color: section === 3 ? 'white' : '#ffffff95' }}>
-						{offersMade ? `OFFERS MADE (${offersMade.length + offersEquipmentMade.length})` : "OFFERS MADE"}
+					<p style={{ fontSize: 14, color: section === 3 ? "white" : mainTextColor }} className="text-medium">
+						{offersMade && offersMade.length + offersEquipmentMade.length > 0 ? `Offers made (${offersMade.length + offersEquipmentMade.length})` : "Offers made"}
 					</p>
 				</button>
 
 				<button
-					style={Object.assign({}, styles.btnMenu, selectedStyle4, { marginRight: 35 })}
+					style={Object.assign({}, styles.btnMenu, { backgroundColor: section === 4 ? mainTextColor : 'white' })}
 					onClick={() => {
 						if (loading || !userMintedNfts) {
 							return
@@ -975,19 +959,20 @@ class Profile extends Component {
 						this.loadOffersReceived()
 					}}
 				>
-					<p style={{ fontSize: isMobile ? 16 : 17, color: section === 4 ? 'white' : '#ffffff95' }}>
-						{offersReceived ? `OFFERS RECEIVED (${offersReceived.length})` : "OFFERS RECEIVED"}
+					<p style={{ fontSize: 14, color: section === 4 ? "white" : mainTextColor }} className="text-medium">
+						{offersReceived && offersReceived.length > 0 ? `Offers received (${offersReceived.length})` : "Offers received"}
 					</p>
 				</button>
+
 			</div>
 		)
 	}
 
 	renderBody(isMobile) {
-		const { account, wizaBalance, walletXp } = this.props
+		const { account, wizaBalance, walletXp, mainTextColor } = this.props
 		const { showModalConnection, isConnected, section, loading, unclaimedWizaTotal, offersMade, offersReceived, offersEquipmentMade } = this.state
 
-		const { boxW, modalW } = getBoxWidth(isMobile)
+		const { boxW, modalW, padding } = getBoxWidth(isMobile)
 
 		let unclW = 0;
 		if (unclaimedWizaTotal) {
@@ -997,7 +982,7 @@ class Profile extends Component {
 		if (!account || !account.account || !isConnected) {
 
 			return (
-				<div style={{ flexDirection: 'column', alignItems: 'center', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+				<div style={{ flexDirection: 'column', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden', alignItems: 'center' }}>
 
 					<img
 						src={getImageUrl(undefined)}
@@ -1005,7 +990,7 @@ class Profile extends Component {
 						alt='Placeholder'
 					/>
 
-					<p style={{ fontSize: 19, color: 'white', textAlign: 'center', width: 300, marginBottom: 30, lineHeight: 1.2 }}>
+					<p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center', width: 300, marginBottom: 30, lineHeight: 1.2 }}>
 						Connect your wallet and enter the Arena
 					</p>
 
@@ -1014,7 +999,7 @@ class Profile extends Component {
 						style={styles.btnConnect}
 						onClick={() => this.setState({ showModalConnection: true })}
 					>
-						<p style={{ fontSize: 19, color: TEXT_SECONDARY_COLOR }}>
+						<p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
 							Connect wallet
 						</p>
 					</button>
@@ -1034,83 +1019,99 @@ class Profile extends Component {
 			)
 		}
 
+		let boxStatsW = isMobile ? boxW - 40 : boxW * 50 / 100
+
 		return (
-			<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
+			<div style={{ flexDirection: 'column', alignItems: 'center', width: boxW, marginTop: 5, paddingLeft: padding, paddingRight: padding, paddingBottom: padding, paddingTop: 20, overflowY: 'auto', overflowX: 'hidden' }}>
 
-				<p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
-					Profile
-				</p>
+				<div style={{ flexWrap: 'wrap', alignItems: 'center', justifyContent: isMobile ? 'space-between' : 'space-around', marginBottom: 10, width: boxStatsW }}>
 
-				<div style={{ alignItems: 'center', marginBottom: 30 }}>
-					<div style={{ flexDirection: 'column' }}>
-
-						<p style={{ fontSize: 24, color: 'white', marginBottom: 10 }}>
-							WIZARD XP: {walletXp || 0.0}
+					<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+						<p style={{ fontSize: 16, color: "#707070" }}>
+							Wizard Xp
 						</p>
-
-						<p style={{ fontSize: 24, color: 'white', marginBottom: 10 }}>
-							$WIZA balance: {wizaBalance || 0.0}
-						</p>
-
-						<p style={{ fontSize: 18, color: 'white' }}>
-							Unclaimed $WIZA: {unclW || 0.0}
+						<p style={{ fontSize: 16, color: mainTextColor }} className="text-bold">
+							{walletXp || 0.0}
 						</p>
 					</div>
-				</div>
 
-				<div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 15 }}>
-					<button
-						className="btnH"
-						style={styles.btnClaimAll}
-						onClick={() => this.claimAll()}
-					>
-						<p style={{ fontSize: 17, color: 'white' }}>
-							CLAIM ALL
+					<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+						<p style={{ fontSize: 16, color: "#707070" }}>
+							$WIZA balance
 						</p>
-					</button>
+						<p style={{ fontSize: 16, color: mainTextColor }} className="text-bold">
+							{wizaBalance || 0.0}
+						</p>
+					</div>
 
-					<button
-						className="btnH"
-						style={styles.btnClaimAll}
-						onClick={() => this.unstakeAndClaimAll()}
-					>
-						<p style={{ fontSize: 17, color: 'white' }}>
-							UNSTAKE & CLAIM ALL
+					<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+						<p style={{ fontSize: 16, color: "#707070" }}>
+							Unclaimed $WIZA
 						</p>
-					</button>
-
-					<button
-						className="btnH"
-						style={styles.btnClaimAll}
-						onClick={() => this.stakeAll()}
-					>
-						<p style={{ fontSize: 17, color: 'white' }}>
-							STAKE ALL
+						<p style={{ fontSize: 16, color: mainTextColor }} className="text-bold">
+							{unclW || 0.0}
 						</p>
-					</button>
+					</div>
 
 				</div>
 
 				{this.renderMenu(isMobile)}
 
+				{/*<div style={{ minHeight: 1, height: 1, backgroundColor: '#d7d7d7', width: boxW, marginBottom: 20 }} />*/}
+
+				{
+					section === 1 &&
+					<div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 20, justifyContent: 'center' }}>
+						<button
+							className="btnH"
+							style={styles.btnClaimAll}
+							onClick={() => this.claimAll()}
+						>
+							<p style={{ fontSize: 14, color: "white" }} className="text-bold">
+								Claim all
+							</p>
+						</button>
+
+						<button
+							className="btnH"
+							style={styles.btnClaimAll}
+							onClick={() => this.unstakeAndClaimAll()}
+						>
+							<p style={{ fontSize: 14, color: "white" }} className="text-bold">
+								Claim all & Unstake
+							</p>
+						</button>
+
+						<button
+							className="btnH"
+							style={styles.btnClaimAll}
+							onClick={() => this.stakeAll()}
+						>
+							<p style={{ fontSize: 14, color: "white" }} className="text-bold">
+								Stake all
+							</p>
+						</button>
+					</div>
+				}
+
 				{
 					this.state.loading ?
 					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
-						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+						<DotLoader size={25} color={mainTextColor} />
 					</div>
 					: null
 				}
 
 				{
 					section === 1 ?
-					this.renderYourWizards(boxW)
+					this.renderYourWizards(boxW, isMobile)
 					:
 					null
 				}
 
 				{
-					section === 2 && !loading ?
-					this.renderTournament(boxW, modalW)
+					section === 5 ?
+					this.renderYourEquip(boxW, isMobile)
 					:
 					null
 				}
@@ -1132,13 +1133,6 @@ class Profile extends Component {
 				{
 					section === 4 && !loading && offersReceived ?
 					this.renderOffers(boxW, offersReceived, false, isMobile)
-					:
-					null
-				}
-
-				{
-					section === 5 ?
-					this.renderYourEquip(boxW)
 					:
 					null
 				}
@@ -1167,12 +1161,12 @@ class Profile extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 1199px)"
+					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 1200px)"
+					query="(min-width: 1000px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -1192,22 +1186,22 @@ class Profile extends Component {
 
 const styles = {
 	container: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: "white"
 	},
 	btnConnect: {
 		width: 300,
-		height: 45,
+		height: 40,
 		justifyContent: 'center',
 		alignItems: 'center',
-		borderRadius: 2,
-		borderColor: CTA_COLOR,
-		borderWidth: 2,
+		borderRadius: 4,
+		borderColor: "#d7d7d7",
+		borderWidth: 1,
 		borderStyle: 'solid'
 	},
 	btnWithdraw: {
@@ -1222,30 +1216,35 @@ const styles = {
 		backgroundColor: 'transparent'
 	},
 	btnMenu: {
-		height: 30,
+		height: 32,
+		borderRadius: 4,
+		display: 'flex',
+		width: 125,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	btnClaimAll: {
+		width: 150,
+		height: 36,
+		backgroundColor: CTA_COLOR,
+		borderRadius: 4,
+		marginRight: 12,
+		borderStyle: 'solid',
 		justifyContent: 'center',
 		alignItems: 'center',
 		marginBottom: 10
 	},
-	btnClaimAll: {
-		width: 200,
-		height: 40,
-		backgroundColor: CTA_COLOR,
-		borderRadius: 2,
-		marginRight: 15,
-		marginBottom: 15,
-		borderStyle: 'solid',
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
 	btnStat: {
 		padding: 9,
-		backgroundColor: CTA_COLOR,
+		backgroundColor: 'white',
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginRight: 8,
-		marginBottom: 8,
-		borderRadius: 2,
+		marginBottom: 20,
+		marginRight: 15,
+		borderRadius: 4,
+		borderColor: '#d7d7d7',
+		borderStyle: 'solid',
+		borderWidth: 1,
 		minWidth: 60,
 		display: 'flex',
 		flexDirection: 'row'
@@ -1253,9 +1252,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, wizaBalance, walletXp, filtriProfileRanges } = state.mainReducer;
+	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, wizaBalance, walletXp, filtriProfileRanges, mainTextColor } = state.mainReducer;
 
-	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, wizaBalance, walletXp, filtriProfileRanges };
+	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, wizaBalance, walletXp, filtriProfileRanges, mainTextColor };
 }
 
 export default connect(mapStateToProps, {

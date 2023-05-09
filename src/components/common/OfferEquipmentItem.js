@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import moment from 'moment'
 import itemToUrl from './ItemToUrl'
 import { CTA_COLOR } from '../../actions/types'
@@ -25,7 +26,7 @@ class OfferEquipmentItem extends Component {
 	}
 
     render() {
-        const { item, index, isMobile } = this.props
+        const { item, index, isMobile, mainTextColor } = this.props
 
         const diff = moment().to(this.getExpire(item))
 
@@ -41,29 +42,29 @@ class OfferEquipmentItem extends Component {
                         alt='ring'
                     />
 
-                    <p style={{ fontSize: isMobile ? 17 : 20, color: 'white', alignItems: 'center' }}>
+                    <p style={{ fontSize: 15, color: mainTextColor, alignItems: 'center' }}>
                         {item.itemtype}
                     </p>
                 </div>
 
-                <p style={{ fontSize: 17, color: 'white' }}>
-                    <span style={{ color: 'gold' }}>{item.amount}</span> WIZA
+                <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
+                    {item.amount} $WIZA
                 </p>
 
-                <p style={{ fontSize: isMobile ? 14 : 17, color: 'white' }}>
+                <p style={{ fontSize: 14, color: mainTextColor }}>
                     Expiration {diff}
                 </p>
 
                 {
                     offerState === 'valid' &&
-                    <p style={{ color: 'white', fontSize: 17, marginRight: isMobile ? 5 : 15 }}>
+                    <p style={{ color: mainTextColor, fontSize: 15, marginRight: isMobile ? 5 : 15 }}>
                         Pending
                     </p>
                 }
 
                 {
                     offerState === 'iswithdrew' &&
-                    <p style={{ color: 'white', fontSize: 17, marginRight: isMobile ? 5 : 15 }}>
+                    <p style={{ color: mainTextColor, fontSize: 15, marginRight: isMobile ? 5 : 15 }}>
                         {item.status}
                     </p>
                 }
@@ -71,11 +72,12 @@ class OfferEquipmentItem extends Component {
                 {
                     offerState === "expired" &&
                     <button
+                        className="btnH"
                         style={styles.btnAccept}
                         onClick={() => this.props.withdrawOffer()}
                     >
-                        <p style={{ fontSize: 17, color: 'white' }}>
-                            WITHDRAW
+                        <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                            Withdraw
                         </p>
                     </button>
                 }
@@ -91,22 +93,28 @@ const styles = {
         alignItems: 'center',
         justifyContent: 'space-between',
         borderWidth: 1,
-        borderColor: 'white',
+        borderColor: '#d7d7d7',
         borderStyle: 'solid',
-        borderRadius: 2,
+        borderRadius: 4,
         marginBottom: 20,
         width: '100%',
     },
     btnAccept: {
-        width: 160,
-        height: 40,
+        width: 90,
+        height: 35,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 2,
+        borderRadius: 4,
         backgroundColor: CTA_COLOR,
         marginRight: 15
     }
 }
 
-export default OfferEquipmentItem
+const mapStateToProps = (state) => {
+	const { mainTextColor } = state.mainReducer
+
+	return { mainTextColor }
+}
+
+export default connect(mapStateToProps)(OfferEquipmentItem)

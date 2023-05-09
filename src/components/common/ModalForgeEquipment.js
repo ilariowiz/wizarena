@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 import EquipmentCardForge from './EquipmentCardForge'
 import '../../css/Modal.css'
 import '../../css/ItemCard.css'
@@ -19,7 +20,7 @@ class ModalForgeEquipment extends Component {
     }
 
 	render() {
-		const { showModal, rings } = this.props;
+		const { showModal, rings, mainTextColor } = this.props;
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 
@@ -30,7 +31,7 @@ class ModalForgeEquipment extends Component {
 			<div className={classContainer}>
 				<div style={Object.assign({}, styles.subcontainer, { width, maxHeight })}>
 
-					<p style={{ color: 'white', fontSize: 22, marginBottom: 20, marginTop: 20 }}>
+					<p style={{ color: mainTextColor, fontSize: 20, marginBottom: 20, marginTop: 20 }} className="text-medium">
 						Your Rings:
 					</p>
 
@@ -47,8 +48,8 @@ class ModalForgeEquipment extends Component {
                             this.props.onCloseModal()
                         }}
                     >
-                        <p style={{ fontSize: 17, color: 'white' }}>
-                            CLOSE
+                        <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                            Close
                         </p>
                     </button>
 
@@ -61,11 +62,11 @@ class ModalForgeEquipment extends Component {
 
 const styles = {
 	subcontainer: {
-		backgroundColor: BACKGROUND_COLOR,
-		borderRadius: 2,
-		borderColor: TEXT_SECONDARY_COLOR,
+		backgroundColor: "white",
+		borderRadius: 4,
+		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
-		borderWidth: 2,
+		borderWidth: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 		flexDirection: 'column',
@@ -79,11 +80,17 @@ const styles = {
         width: 150,
         minWidth: 100,
         marginBottom: 15,
-        borderRadius: 2,
+        borderRadius: 4,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: CTA_COLOR
     },
 }
 
-export default ModalForgeEquipment;
+const mapStateToProps = (state) => {
+    const { mainTextColor } = state.mainReducer
+
+    return { mainTextColor }
+}
+
+export default connect(mapStateToProps)(ModalForgeEquipment);

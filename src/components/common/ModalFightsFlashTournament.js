@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 import getImageUrl from './GetImageUrl'
 import '../../css/Modal.css'
 import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, CTA_COLOR } from '../../actions/types'
@@ -7,6 +8,7 @@ import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, CTA_COLOR } from '../../actions
 class ModalFightsFlashTournament extends Component {
 
 	renderFight(item, index) {
+		const { mainTextColor } = this.props
 
 		const imgWidth = 60
 
@@ -23,26 +25,26 @@ class ModalFightsFlashTournament extends Component {
 				<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
 					<img
 						src={getImageUrl(item.s1)}
-						style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', marginBottom: 4 }}
+						style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', marginBottom: 4 }}
 						alt={item.s1}
 					/>
 
-					<p style={{ fontSize: 15, color: 'white', textAlign: 'center' }}>
+					<p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center' }} className="text-medium">
 						#{item.s1}
 					</p>
 				</div>
 
-				<p style={{ fontSize: 14, color: 'white', marginRight: 8, marginLeft: 8 }}>
+				<p style={{ fontSize: 13, color: mainTextColor, marginRight: 8, marginLeft: 8 }}>
 					VS
 				</p>
 
 				<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
 					<img
 						src={getImageUrl(item.s2)}
-						style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', marginBottom: 4 }}
+						style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', marginBottom: 4 }}
 						alt={item.s2}
 					/>
-					<p style={{ fontSize: 15, color: 'white', textAlign: 'center' }}>
+					<p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center' }} className="text-medium">
 						#{item.s2}
 					</p>
 				</div>
@@ -51,6 +53,7 @@ class ModalFightsFlashTournament extends Component {
 	}
 
 	renderFightMobile(item, index, showHorizontal) {
+		const { mainTextColor } = this.props
 
 		const imgWidth = 40
 
@@ -67,26 +70,26 @@ class ModalFightsFlashTournament extends Component {
 				<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
 					<img
 						src={getImageUrl(item.s1)}
-						style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', marginBottom: 4 }}
+						style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', marginBottom: 4 }}
 						alt={item.s1}
 					/>
 
-					<p style={{ fontSize: 15, color: 'white', textAlign: 'center' }}>
+					<p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center' }} className="text-medium">
 						#{item.s1}
 					</p>
 				</div>
 
-				<p style={{ fontSize: 14, color: 'white', marginRight: 8, marginLeft: 8 }}>
+				<p style={{ fontSize: 13, color: mainTextColor, marginRight: 8, marginLeft: 8 }}>
 					VS
 				</p>
 
 				<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
 					<img
 						src={getImageUrl(item.s2)}
-						style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', marginBottom: 4 }}
+						style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', marginBottom: 4 }}
 						alt={item.s2}
 					/>
-					<p style={{ fontSize: 15, color: 'white', textAlign: 'center' }}>
+					<p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center' }} className="text-medium">
 						#{item.s2}
 					</p>
 				</div>
@@ -95,7 +98,7 @@ class ModalFightsFlashTournament extends Component {
 	}
 
 	render() {
-		const { showModal, width, fights, tournamentInfo, isMobile } = this.props;
+		const { showModal, width, fights, tournamentInfo, isMobile, mainTextColor } = this.props;
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 
@@ -171,11 +174,11 @@ class ModalFightsFlashTournament extends Component {
 					>
 						<img
 							src={getImageUrl(fights.winner)}
-							style={{ width: 100, height: 100, borderRadius: 50, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', marginBottom: 4 }}
+							style={{ width: 100, height: 100, borderRadius: 50, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', marginBottom: 4 }}
 							alt={fights.winner}
 						/>
 
-						<p style={{ fontSize: 16, color: 'white', marginBottom: 20 }}>
+						<p style={{ fontSize: 15, color: mainTextColor, marginBottom: 20 }} className="text-bold">
 							#{fights.winner}
 						</p>
 					</a>
@@ -185,7 +188,7 @@ class ModalFightsFlashTournament extends Component {
                         style={styles.btnConnect}
                         onClick={() => this.props.onCloseModal()}
                     >
-                        <p style={{ color: 'white', fontSize: 16 }}>
+                        <p style={{ color: 'white', fontSize: 15 }} className="text-medium">
                             Close
                         </p>
                     </button>
@@ -199,11 +202,11 @@ class ModalFightsFlashTournament extends Component {
 
 const styles = {
 	subcontainer: {
-		backgroundColor: BACKGROUND_COLOR,
-		borderRadius: 2,
-		borderColor: TEXT_SECONDARY_COLOR,
+		backgroundColor: "white",
+		borderRadius: 4,
+		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
-		borderWidth: 2,
+		borderWidth: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 		flexDirection: 'column',
@@ -213,9 +216,9 @@ const styles = {
 	},
 	btnConnect: {
 		width: 120,
-		height: 35,
+		height: 34,
 		backgroundColor: CTA_COLOR,
-		borderRadius: 2,
+		borderRadius: 4,
 	},
 	boxFight: {
 		cursor: 'pointer',
@@ -224,9 +227,15 @@ const styles = {
 		alignItems: 'center',
 		justifyContent: 'center',
 		display: 'flex',
-		backgroundColor: '#ffffff10',
-		borderRadius: 2
+		backgroundColor: '#e9e9e9',
+		borderRadius: 4
 	}
 }
 
-export default ModalFightsFlashTournament;
+const mapStateToProps = (state) => {
+	const { mainTextColor } = state.mainReducer
+
+	return { mainTextColor }
+}
+
+export default connect(mapStateToProps)(ModalFightsFlashTournament);

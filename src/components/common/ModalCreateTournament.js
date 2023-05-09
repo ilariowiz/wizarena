@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 import _ from 'lodash'
 import { IoClose } from 'react-icons/io5'
 import ModalChooseWizard from './ModalChooseWizard'
@@ -48,7 +49,7 @@ class ModalCreateTournament extends Component {
     }
 
 	render() {
-		const { showModal, onCloseModal, width, wizaBalance } = this.props;
+		const { showModal, onCloseModal, width, wizaBalance, mainTextColor } = this.props;
         const { idnft, buyin, maxLevel } = this.state
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
@@ -59,7 +60,7 @@ class ModalCreateTournament extends Component {
 			<div className={classContainer}>
 				<div style={Object.assign({}, styles.subcontainer, { width })}>
 
-					<p style={{ color: 'white', fontSize: 22, textAlign: 'center', marginBottom: 10, marginTop: 10 }}>
+					<p style={{ color: mainTextColor, fontSize: 20, textAlign: 'center', marginBottom: 10, marginTop: 10 }} className="text-medium">
 						Create Tournament
 					</p>
 
@@ -73,10 +74,10 @@ class ModalCreateTournament extends Component {
 
                                     <img
                                         src={getImageUrl(idnft)}
-                                        style={{ width: 120, height: 120, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', marginBottom: 5 }}
+                                        style={{ width: 120, height: 120, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', marginBottom: 5 }}
                                     />
 
-                                    <p style={{ fontSize: 17, color: 'white', marginBottom: 10 }}>
+                                    <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10 }} className="text-bold">
                                         #{idnft}
                                     </p>
 
@@ -85,7 +86,7 @@ class ModalCreateTournament extends Component {
                                         className="btnH"
                                         onClick={() => this.setState({ showChooseWizard: true })}
                                     >
-                                        <p style={{ fontSize: 16, color: 'white' }}>
+                                        <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
                                             Change
                                         </p>
                                     </button>
@@ -96,7 +97,7 @@ class ModalCreateTournament extends Component {
                                     className="btnH"
                                     onClick={() => this.setState({ showChooseWizard: true })}
                                 >
-                                    <p style={{ fontSize: 16, color: 'white' }}>
+                                    <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
                                         Choose your Wizard
                                     </p>
                                 </button>
@@ -108,7 +109,7 @@ class ModalCreateTournament extends Component {
                         <div style={styles.box}>
 
                             <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
-                                <p style={{ fontSize: 16, color: 'white' }}>
+                                <p style={{ fontSize: 16, color: mainTextColor }}>
                                     Flash Tournament Name
                                 </p>
                             </div>
@@ -126,12 +127,12 @@ class ModalCreateTournament extends Component {
                         <div style={styles.box}>
 
                             <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
-                                <p style={{ fontSize: 16, color: 'white' }}>
+                                <p style={{ fontSize: 16, color: mainTextColor }}>
                                     Buyin
                                 </p>
 
-                                <p style={{ fontSize: 16, color: '#c2c0c0' }}>
-                                    balance: {_.floor(wizaBalance, 1)} WIZA
+                                <p style={{ fontSize: 14, color: mainTextColor }}>
+                                    balance: {_.floor(wizaBalance, 1)} $WIZA
                                 </p>
                             </div>
 
@@ -148,8 +149,8 @@ class ModalCreateTournament extends Component {
                         <div style={styles.box}>
 
                             <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
-                                <p style={{ fontSize: 16, color: 'white' }}>
-                                    MAX Level
+                                <p style={{ fontSize: 16, color: mainTextColor }}>
+                                    Max level
                                 </p>
                             </div>
 
@@ -166,7 +167,7 @@ class ModalCreateTournament extends Component {
                         <div style={styles.box}>
 
                             <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
-                                <p style={{ fontSize: 16, color: 'white' }}>
+                                <p style={{ fontSize: 16, color: mainTextColor }}>
                                     Prizes
                                 </p>
                             </div>
@@ -174,7 +175,7 @@ class ModalCreateTournament extends Component {
                             <div style={{ alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingBottom: 10 }}>
                                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
-                                    <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }}>
+                                    <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }}>
                                         Winner takes all
                                     </p>
 
@@ -189,7 +190,7 @@ class ModalCreateTournament extends Component {
 
                                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
-                                    <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }}>
+                                    <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }}>
                                         70% 1st, 30% 2nd
                                     </p>
 
@@ -210,8 +211,8 @@ class ModalCreateTournament extends Component {
                             style={Object.assign({}, styles.btnConnect, { marginBottom: 10 })}
                             onClick={() => this.create()}
                         >
-                            <p style={{ color: 'white', fontSize: 18 }}>
-                                CREATE
+                            <p style={{ color: 'white', fontSize: 15 }} className="text-medium">
+                                Create
                             </p>
                         </button>
 
@@ -222,7 +223,7 @@ class ModalCreateTournament extends Component {
 						onClick={onCloseModal}
 					>
 						<IoClose
-							color='white'
+							color={mainTextColor}
 							size={25}
 						/>
 					</button>
@@ -245,11 +246,11 @@ class ModalCreateTournament extends Component {
 
 const styles = {
 	subcontainer: {
-		backgroundColor: BACKGROUND_COLOR,
-		borderRadius: 2,
-		borderColor: TEXT_SECONDARY_COLOR,
+		backgroundColor: "white",
+		borderRadius: 4,
+		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
-		borderWidth: 2,
+		borderWidth: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 		flexDirection: 'column',
@@ -268,11 +269,12 @@ const styles = {
 		width: '100%',
 		height: 30,
 		borderWidth: 1,
-		borderColor: 'lightgrey',
+		borderColor: '#d7d7d7',
 		borderStyle: 'solid',
-		borderRadius: 2,
+		borderRadius: 4,
 		fontSize: 15,
-		color: 'white',
+		color: 'black',
+        fontFamily: 'FigtreeMedium',
 		paddingLeft: 8,
 		paddingRight: 8,
 		WebkitAppearance: 'none',
@@ -286,11 +288,11 @@ const styles = {
 		width: 200,
 		height: 40,
 		backgroundColor: CTA_COLOR,
-		borderRadius: 2,
+		borderRadius: 4,
 	},
     box: {
         flexDirection: 'column',
-        backgroundColor: '#1b1930',
+        backgroundColor: '#f2f2f2',
         paddingTop: 8,
         paddingBottom: 2,
         paddingLeft: 24,
@@ -299,8 +301,14 @@ const styles = {
         alignItems: 'center',
         marginBottom: 15,
         width: '100%',
-        borderRadius: 2
+        borderRadius: 4
     }
 }
 
-export default ModalCreateTournament
+const mapStateToProps = (state) => {
+    const { mainTextColor } = state.mainReducer
+
+    return { mainTextColor }
+}
+
+export default connect(mapStateToProps)(ModalCreateTournament)

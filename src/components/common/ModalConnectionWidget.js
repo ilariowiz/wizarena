@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 import ConnectionWidget from './ConnectionWidget'
 import { IoClose } from 'react-icons/io5'
 import '../../css/Modal.css'
@@ -7,7 +8,7 @@ import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR } from '../../actions/types'
 
 class ModalConnectionWidget extends Component {
 	render() {
-		const { showModal, onCloseModal, width } = this.props;
+		const { showModal, onCloseModal, width, mainTextColor } = this.props;
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 
@@ -24,7 +25,7 @@ class ModalConnectionWidget extends Component {
 						onClick={onCloseModal}
 					>
 						<IoClose
-							color='white'
+							color={mainTextColor}
 							size={25}
 						/>
 					</button>
@@ -39,11 +40,11 @@ class ModalConnectionWidget extends Component {
 const styles = {
 	subcontainer: {
 		minHeight: 300,
-		backgroundColor: BACKGROUND_COLOR,
-		borderRadius: 2,
-		borderColor: TEXT_SECONDARY_COLOR,
+		backgroundColor: "white",
+		borderRadius: 4,
+		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
-		borderWidth: 2,
+		borderWidth: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 		flexDirection: 'column',
@@ -51,4 +52,10 @@ const styles = {
 	}
 }
 
-export default ModalConnectionWidget;
+const mapStateToProps = (state) => {
+	const { mainTextColor } = state.mainReducer
+
+	return { mainTextColor }
+}
+
+export default connect(mapStateToProps)(ModalConnectionWidget);

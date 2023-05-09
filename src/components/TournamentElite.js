@@ -8,6 +8,9 @@ import DotLoader from 'react-spinners/DotLoader';
 import Popup from 'reactjs-popup';
 import NftCardTournament from './common/NftCardTournament'
 import Header from './Header'
+import boxPairTournament from './common/tournament/BoxPairTournament'
+import renderInfoTournament from './common/tournament/InfoTournament'
+import graphSubscribers from './common/tournament/GraphSubscribers'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import convertMedalName from './common/ConvertMedalName'
@@ -81,8 +84,8 @@ class TournamentElite extends Component {
             const tournament = {
                 canSubscribe: false,
                 nRounds: 6,
-                name: "t7_r1",
-                roundEnded: "0",
+                name: "t7_r4",
+                roundEnded: "3",
                 showPair: true,
                 start: {seconds: 1671715800, nanoseconds: 843000000},
                 tournamentEnd: false
@@ -216,6 +219,18 @@ class TournamentElite extends Component {
         return Math.round(sum / array.length)
     }
 
+    calcMontepremi() {
+        const { buyinElite, subscribedElite } = this.props
+
+        if (buyinElite && subscribedElite) {
+            let montepremi = subscribedElite.length * buyinElite
+
+            return montepremi
+        }
+
+        return ""
+    }
+
     renderRow(item, index, width) {
         const { potionsEquipped, tournament, ringsEquipped } = this.state
 
@@ -236,140 +251,19 @@ class TournamentElite extends Component {
         )
     }
 
-    renderInfoTournament(width) {
-		const { tournament } = this.state
-
-		const tname = convertMedalName(tournament.name)
-
-		return (
-			<div style={{ width, flexDirection: 'column', marginLeft: 15 }}>
-
-                <p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
-					{tname.torneo.toUpperCase()}
-				</p>
-
-				<p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
-					{tname.round.toUpperCase()}
-				</p>
-
-                <p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
-					NUMBER OF ROUNDS {tournament.nRounds}
-				</p>
-
-                <a
-                    style={styles.btnRules}
-                    href="https://wizardsarena.gitbook.io/wizards-arena/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        Rules
-                    </p>
-                </a>
-			</div>
-		)
-	}
-
-    renderSingleGraph(color, name) {
-        const { subscribedEliteSpellGraph } = this.props
-        const { subscribed } = this.state
-
-        //console.log(subscribedWizaSpellGraph);
-
-        if (!subscribedEliteSpellGraph) {
-            return <div />
-        }
-
-        let number = 0
-        let pct = 0
-
-        if (subscribedEliteSpellGraph[name]) {
-            number = subscribedEliteSpellGraph[name]
-            pct = number / subscribed.length * 100
-        }
-
-        return (
-            <div style={{ alignItems: 'center', marginRight: 10, marginBottom: 10 }}>
-                <div style={{ height: 20, width: 20, borderRadius: 2, backgroundColor: color, marginRight: 8 }} />
-
-                <p style={{ color: 'white', fontSize: 16, marginRight: 8 }}>
-                    {name}
-                </p>
-
-                <p style={{ color: 'white', fontSize: 16 }}>
-                    {number} ({pct.toFixed(1)}%)
-                </p>
-            </div>
-        )
-    }
-
-    renderGraph() {
-        const { avgLevel } = this.state
-
-        return (
-            <div style={{ flexDirection: 'column', marginBottom: 20 }}>
-
-                {
-                    avgLevel &&
-                    <div style={{ marginBottom: 15, alignItems: 'center' }}>
-                        <p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
-                            AVERAGE LEVEL
-                        </p>
-                        <p style={{ fontSize: 22, color: getColorTextBasedOnLevel(avgLevel) }}>
-                            {avgLevel}
-                        </p>
-                    </div>
-                }
-
-                <div style={{ flexWrap: 'wrap', alignItems: 'center' }}>
-                    {this.renderSingleGraph('#88f71e', 'Acid')}
-                    {this.renderSingleGraph('#5b30b7', 'Dark')}
-                    {this.renderSingleGraph('#503631', 'Earth')}
-                    {this.renderSingleGraph('#cc1919', 'Fire')}
-                    {this.renderSingleGraph('#11c8ee', 'Ice')}
-                    {this.renderSingleGraph('#840fb2', 'Psycho')}
-                    {this.renderSingleGraph('#b2e5ef', 'Spirit')}
-                    {this.renderSingleGraph('#faf000', 'Sun')}
-                    {this.renderSingleGraph('#e6dc0c', 'Thunder')}
-                    {this.renderSingleGraph('#4b0082', 'Undead')}
-                    {this.renderSingleGraph('#15a3c7', 'Water')}
-                    {this.renderSingleGraph('#afb9cc', 'Wind')}
-
-                </div>
-            </div>
-        )
-    }
-
-    renderHeaderLeague() {
-        return (
-            <div style={{ alignItems: 'center', marginBottom: 40 }}>
-
-                <div style={{ flexDirection: 'column' }}>
-
-                    <div style={{ alignItems: 'center', marginBottom: 10 }}>
-                        <p style={{ fontSize: 30, color: 'white', marginRight: 15 }}>
-                            The Elite Tournament
-                        </p>
-                    </div>
-                </div>
-
-            </div>
-        )
-    }
-
     renderBody(isMobile) {
-        const { tournament, subscribed } = this.state
-        const { buyinElite, subscribedElite } = this.props
+        const { tournament, subscribed, avgLevel } = this.state
+        const { buyinElite, subscribedElite, mainTextColor, subscribedEliteSpellGraph } = this.props
 
         //console.log(subscribedWiza, tournament);
 
-        const { boxW, modalW } = getBoxWidth(isMobile)
+        const { boxW, modalW, padding } = getBoxWidth(isMobile)
 
         if (this.state.loading) {
             return (
-                <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+                <div style={{ flexDirection: 'column', alignItems: 'center', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden' }}>
                     <div style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                        <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+                        <DotLoader size={25} color={mainTextColor} />
                     </div>
                 </div>
             )
@@ -392,50 +286,13 @@ class TournamentElite extends Component {
             const dateStartTo = moment().to(dateStart)
 
 			return (
-				<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
+				<div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                    {this.renderHeaderLeague()}
-
-					<div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 30 }}>
-
-						<div style={{ flexDirection: 'column', width: '100%' }}>
-							<p style={{ fontSize: 19, color: 'white', marginBottom: 20 }}>
-								Registration for the tournament is open. The tournament will start:
-							</p>
-
-                            <p style={{ fontSize: 19, color: 'white', marginBottom: 5 }}>
-								{dateStartTo}
-							</p>
-                            <p style={{ fontSize: 16, color: 'white', marginBottom: 20 }}>
-								{dateStartString}
-							</p>
-
-							<p style={{ fontSize: 22, color: 'white', marginBottom: 20 }}>
-								BUY-IN {buyinElite || '...'} WIZA
-							</p>
-
-                            <p style={{ fontSize: 17, color: 'white', marginBottom: 15 }}>
-            					Participation reward (for each wizard) {tournament.reward}
-            				</p>
-						</div>
-
-						{this.renderInfoTournament(boxW)}
-					</div>
-
-
-					<button
-                        className='btnH'
-                        style={styles.btnSubscribe}
-                        onClick={() => this.props.history.replace('/tournaments')}
-                    >
-                        <p style={{ fontSize: 17, color: 'white' }}>
-                            Subscribe your wizards
-                        </p>
-                    </button>
+                    {renderInfoTournament(tournament, this.calcMontepremi(), buyinElite, subscribedElite, mainTextColor, undefined, this.props.history)}
 
                     {
                         subscribedElite && subscribedElite.length > 0 &&
-                        this.renderGraph()
+                        graphSubscribers(avgLevel, mainTextColor, subscribed, subscribedEliteSpellGraph)
                     }
 
                     {
@@ -465,28 +322,13 @@ class TournamentElite extends Component {
 			}
 
 			return (
-				<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
+				<div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                    {this.renderHeaderLeague()}
-
-					<div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 30 }}>
-
-						<div style={{ flexDirection: 'column', width: '100%' }}>
-							<p style={{ fontSize: 18, color: 'white', marginBottom: 20 }}>
-								Registration for the tournament is closed!
-							</p>
-
-							<p style={{ fontSize: 18, color: 'white' }}>
-								{text}
-							</p>
-						</div>
-
-						{this.renderInfoTournament(boxW)}
-					</div>
+                    {renderInfoTournament(tournament, this.calcMontepremi(), buyinElite, subscribedElite, mainTextColor, text, this.props.history)}
 
                     {
                         subscribed && subscribed.length > 0 &&
-                        this.renderGraph()
+                        graphSubscribers(avgLevel, mainTextColor, subscribed, subscribedEliteSpellGraph)
                     }
 
                     {
@@ -502,136 +344,38 @@ class TournamentElite extends Component {
 		}
 
         if (tournament && tournament.showPair && this.state.matchPair.length > 0) {
-            return this.renderMatchPair(boxW, isMobile)
+            return this.renderMatchPair(boxW, isMobile, padding)
         }
 
-        return this.renderRoundConcluso(boxW, isMobile)
+        return this.renderRoundConcluso(boxW, isMobile, padding)
     }
 
-    renderMatchPair(boxW, isMobile) {
-        const { matchPair, tournament } = this.state
+    renderMatchPair(boxW, isMobile, padding) {
+        const { matchPair, tournament, userMinted, subscribed } = this.state
+        const { mainTextColor, buyinElite, subscribedElite } = this.props
 
+        //console.log(subscribed);
         const roundName = tournament.name.split("_")[1]
 
+        const infoText = `Pairings of round ${roundName.replace("r", "")}`
+
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
+             <div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                {this.renderHeaderLeague()}
-
-                <div style={{ justifyContent: 'space-between', marginBottom: 30 }}>
-
-                    <div style={{ flexDirection: 'column', width: '100%', justifyContent: 'flex-end' }}>
-                        <p style={{ fontSize: 24, color: 'white' }}>
-                            Pairings of round {roundName.replace("r", "")}
-                        </p>
-                    </div>
-
-                    {this.renderInfoTournament(boxW)}
-
-                </div>
+                {renderInfoTournament(tournament, this.calcMontepremi(), buyinElite, subscribedElite, mainTextColor, infoText, this.props.history)}
 
                 <div style={{ width: boxW, flexWrap: 'wrap' }}>
                     {matchPair.map((item, index) => {
-                        return this.renderBoxPair(item, index)
+                        return boxPairTournament(item, index, userMinted, mainTextColor, subscribed)
                     })}
                 </div>
             </div>
         )
     }
 
-    renderBoxPair(item, index) {
-        const { userMinted } = this.state
-
-        //console.log(userMinted);
-
-        let is1mine = false
-        let is2mine = false
-        let borderColor = 'white'
-
-        for (let i = 0; i < userMinted.length; i++) {
-            const s = userMinted[i]
-
-            if (s.id === item.s1.id) {
-                is1mine = true
-                borderColor = 'gold'
-            }
-
-            if (item.s2 && item.s2.id && s.id === item.s2.id) {
-                is2mine = true
-                borderColor = 'gold'
-            }
-        }
-
-        const widthImage = 120
-
-        return (
-            <div
-                style={Object.assign({}, styles.boxPair, { borderColor } )}
-                key={index}
-            >
-                <div style={{ flexDirection: 'column', alignItems: 'center', marginRight: 5 }}>
-                    <a
-                        href={`${window.location.protocol}//${window.location.host}/nft/${item.s1.id}`}
-                        onClick={(e) => {
-                            e.preventDefault()
-                            this.props.history.push(`/nft/${item.s1.id}`)
-                        }}
-                    >
-                        <img
-                            style={{ width: widthImage, height: widthImage, borderRadius: 2, borderWidth: 1, borderColor: is1mine ? 'gold' : 'white', borderStyle: 'solid', marginBottom: 4 }}
-                            src={getImageUrl(item.s1.id)}
-                            alt={`#${item.s1.id}`}
-                        />
-                    </a>
-
-                    <p style={{ fontSize: 20, color: is1mine ? 'gold' : 'white' }}>
-                        #{item.s1.id}
-                    </p>
-                </div>
-
-                <p style={{ fontSize: 21, color: 'white', marginRight: 5 }}>
-                    VS
-                </p>
-
-                {
-                    item.s2 && item.s2.id ?
-                    <div style={{ flexDirection: 'column', alignItems: 'center' }}>
-
-                        <a
-                            href={`${window.location.protocol}//${window.location.host}/nft/${item.s2.id}`}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                this.props.history.push(`/nft/${item.s2.id}`)
-                            }}
-                        >
-                            <img
-                                style={{ width: widthImage, height: widthImage, borderRadius: 2, borderWidth: 1, borderColor: is2mine ? 'gold' : 'white', borderStyle: 'solid', marginBottom: 4 }}
-                                src={getImageUrl(item.s2.id)}
-                                alt={`#${item.s2.id}`}
-                            />
-                        </a>
-
-                        <p style={{ fontSize: 20, color: is2mine ? 'gold' : 'white' }}>
-                            #{item.s2.id}
-                        </p>
-                    </div>
-                    :
-                    <div style={{ flexDirection: 'column', alignItems: 'center' }}>
-
-                        <div style={{ width: widthImage, height: widthImage, marginBottom: 4 }}>
-                        </div>
-
-                        <p style={{ fontSize: 15, color: 'white' }}>
-                            Opponent disappeared
-                        </p>
-                    </div>
-                }
-            </div>
-        )
-    }
-
-    renderRoundConcluso(boxW, isMobile) {
+    renderRoundConcluso(boxW, isMobile, padding) {
         const { tournament, subscribed, yourStat } = this.state
+        const { mainTextColor, buyinElite, subscribedElite } = this.props
 
         if (!subscribed || subscribed.length === 0) {
             return <div />
@@ -646,10 +390,10 @@ class TournamentElite extends Component {
         const start = moment(tournament.start.seconds * 1000) //milliseconds
         let text;
         if (moment().isBefore(start)) {
-            text = `The round ${roundValue} will start ${start.fromNow()}`
+            text = `Round ${roundValue} will start ${start.fromNow()}`
         }
         else {
-            text = `The round started ${start.fromNow()}`
+            text = `Round started ${start.fromNow()}`
         }
 
         //console.log(winners);
@@ -659,50 +403,33 @@ class TournamentElite extends Component {
         let titleText = tournament.tournamentEnd ?
                         "The tournament is over! Let's see who the winners are"
                         :
-                        `Partial results of this tournament (round ${roundEnded}/${tournament.nRounds} concluded)`
+                        `${text}. Partial results of this tournament (round ${roundEnded}/${tournament.nRounds} concluded)`
 
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
+            <div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                {this.renderHeaderLeague()}
-
-                <div style={{ justifyContent: 'space-between', marginBottom: 30 }}>
-
-                    <div style={{ flexDirection: 'column', width: '100%' }}>
-                        <p style={{ fontSize: 20, color: 'white', marginBottom: 25 }}>
-                            {titleText}
-                        </p>
-
-                        {
-                            !tournament.tournamentEnd &&
-                            <p style={{ fontSize: 18, color: 'white' }}>
-                                {text}
-                            </p>
-                        }
-                    </div>
-
-                    {this.renderInfoTournament(boxW)}
-
-                </div>
+                {renderInfoTournament(tournament, this.calcMontepremi(), buyinElite, subscribedElite, mainTextColor, titleText, this.props.history)}
 
                 {
                     yourStat &&
-                    <p style={{ fontSize: 19, color: 'white', marginBottom: 25 }}>
+                    <p style={{ fontSize: 17, color: mainTextColor, marginBottom: 20, textAlign: 'center' }}>
                         {yourStat}
                     </p>
                 }
 
-                <div style={Object.assign({}, styles.boxPodio, { borderColor: '#CD7F32' })}>
-                    <p style={{ fontSize: 20, color: 'white' }}>
-                        {subtitleText}
-                    </p>
-                </div>
+                <div style={{ flexDirection: 'column', marginBottom: 60, alignItems: 'center' }}>
+                    <div style={Object.assign({}, styles.boxPodio, { borderColor: '#CD7F32' })}>
+                        <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
+                            {subtitleText}
+                        </p>
+                    </div>
 
-                <div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
-                    {subscribed.map((item, index) => {
-                        return this.renderRow(item, index, 260);
-                    })}
+                    <div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
+                        {subscribed.map((item, index) => {
+                            return this.renderRow(item, index, 260);
+                        })}
+                    </div>
                 </div>
 
             </div>
@@ -715,7 +442,8 @@ class TournamentElite extends Component {
 		return (
 			<div>
                 <Header
-                    page='nft'
+                    page='home'
+                    section={7}
                     account={account}
                     isMobile={isMobile}
                     history={this.props.history}
@@ -728,12 +456,12 @@ class TournamentElite extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 1199px)"
+					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 1200px)"
+					query="(min-width: 1000px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -753,28 +481,28 @@ class TournamentElite extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: "white"
 	},
     btnSubscribe: {
         width: 250,
-		height: 50,
-        minHeight: 50,
+		height: 40,
+        minHeight: 40,
         marginBottom: 20,
 		backgroundColor: CTA_COLOR,
 		justifyContent: 'center',
 		alignItems: 'center',
-		borderRadius: 2,
+		borderRadius: 4,
 	},
     boxPodio: {
         padding: 10,
         borderWidth: 2,
-        borderRadius: 2,
+        borderRadius: 4,
         borderStyle: 'solid',
         marginBottom: 15,
         width: "fit-content"
@@ -783,9 +511,9 @@ const styles = {
         width: 100,
         height: 32,
         borderWidth: 1,
-        borderColor: 'white',
+        borderColor: '#d7d7d7',
         borderStyle: 'solid',
-        borderRadius: 2,
+        borderRadius: 4,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center'
@@ -814,9 +542,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinElite, subscribedElite, subscribedEliteSpellGraph } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinElite, subscribedElite, subscribedEliteSpellGraph, mainTextColor } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinElite, subscribedElite, subscribedEliteSpellGraph };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinElite, subscribedElite, subscribedEliteSpellGraph, mainTextColor };
 }
 
 export default connect(mapStateToProps, {

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 import { IoClose } from 'react-icons/io5'
 import '../../css/Modal.css'
 import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, CTA_COLOR } from '../../actions/types'
@@ -25,7 +26,7 @@ class ModalWizaPvP extends Component {
     }
 
 	render() {
-		const { showModal, onCloseModal, width } = this.props;
+		const { showModal, onCloseModal, width, mainTextColor } = this.props;
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 
@@ -34,11 +35,11 @@ class ModalWizaPvP extends Component {
 				<div style={Object.assign({}, styles.subcontainer, { width })}>
 
 					<div style={styles.boxWallet}>
-                        <p style={{ color: 'white', fontSize: 20, marginBottom: 15, textAlign: 'center', marginTop: 10 }}>
+                        <p style={{ color: mainTextColor, fontSize: 18, marginBottom: 15, textAlign: 'center', marginTop: 10 }}>
                             Give your wizard an epic name
                         </p>
 
-                        <p style={{ color: 'white', fontSize: 18, marginBottom: 10, textAlign: 'center' }}>
+                        <p style={{ color: mainTextColor, fontSize: 15, marginBottom: 10, textAlign: 'center' }} className="text-medium">
                             WIZA balance: {this.props.wizaBalance}
                         </p>
 
@@ -55,8 +56,8 @@ class ModalWizaPvP extends Component {
                             style={styles.btnConnect}
                             onClick={() => this.subscribe()}
                         >
-                            <p style={{ color: 'white', fontSize: 19 }}>
-                                SET NAME
+                            <p style={{ color: 'white', fontSize: 15 }} className="text-medium">
+                                Set Name
                             </p>
                         </button>
 
@@ -67,7 +68,7 @@ class ModalWizaPvP extends Component {
 						onClick={onCloseModal}
 					>
 						<IoClose
-							color='white'
+							color={mainTextColor}
 							size={25}
 						/>
 					</button>
@@ -82,11 +83,11 @@ class ModalWizaPvP extends Component {
 const styles = {
 	subcontainer: {
 		minHeight: 300,
-		backgroundColor: BACKGROUND_COLOR,
-		borderRadius: 2,
-		borderColor: TEXT_SECONDARY_COLOR,
+		backgroundColor: "white",
+		borderRadius: 4,
+		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
-		borderWidth: 2,
+		borderWidth: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 		flexDirection: 'column',
@@ -100,11 +101,11 @@ const styles = {
 	},
 	input: {
 		width: 240,
-		height: 45,
+		height: 40,
 		borderWidth: 1,
-		borderColor: 'lightgrey',
+		borderColor: '#d7d7d7',
 		borderStyle: 'solid',
-		borderRadius: 2,
+		borderRadius: 4,
 		fontSize: 16,
 		color: 'black',
 		paddingLeft: 16,
@@ -118,11 +119,17 @@ const styles = {
 	},
 	btnConnect: {
 		width: 272,
-		height: 45,
+		height: 40,
 		backgroundColor: CTA_COLOR,
-		borderRadius: 2,
+		borderRadius: 4,
         marginBottom: 10
 	},
 }
 
-export default ModalWizaPvP;
+const mapStateToProps = (state) => {
+    const { mainTextColor } = state.mainReducer
+
+    return { mainTextColor }
+}
+
+export default connect(mapStateToProps)(ModalWizaPvP);

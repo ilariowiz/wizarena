@@ -6,7 +6,7 @@ import { TEST_NET_ID, CTA_COLOR } from '../../actions/types'
 
 class HistoryItemNft extends Component {
 	render() {
-		const { item, index, nftH, netId, isMobile, type } = this.props
+		const { item, index, nftH, netId, isMobile, type, mainTextColor } = this.props
 
 		let removeBorder = index + 1 === nftH.length
 
@@ -24,24 +24,24 @@ class HistoryItemNft extends Component {
 		return (
 			<div style={Object.assign({}, styles.boxSingleHistory, { borderBottomWidth: removeBorder ? 0 : 1 })} key={item.blockHash}>
 
-				<p style={{ fontSize: 17, color: 'white', width: '15%', marginLeft: 20 }}>
+				<p style={{ fontSize: 15, color: mainTextColor, width: '15%', marginLeft: 20 }}>
 					{type}
 				</p>
 
 				{
 					item.amount ?
-					<p style={{ fontSize: 17, color: 'white', width: '15%' }}>
+					<p style={{ fontSize: 16, color: mainTextColor, width: '15%' }}>
 						KDA {item.amount}
 					</p>
 					:
-					<p style={{ fontSize: 17, color: 'white', width: '15%' }}>
+					<p style={{ fontSize: 16, color: mainTextColor, width: '15%' }}>
 
 					</p>
 				}
 
 				{
 					item.owner ?
-					<p style={{ fontSize: 14, color: 'white', width: '24%' }}>
+					<p style={{ fontSize: 14, color: mainTextColor, width: '24%' }}>
 						Owner {item.owner.slice(0, 10)}...
 					</p>
 					:
@@ -51,14 +51,14 @@ class HistoryItemNft extends Component {
 
 				{
 					!isMobile && item.from &&
-					<p style={{ fontSize: 14, color: 'white', width: '24%' }}>
+					<p style={{ fontSize: 14, color: mainTextColor, width: '24%' }}>
 						From {item.from.slice(0, 10)}...
 					</p>
 				}
 
 				{
 					item.to ?
-					<p style={{ fontSize: 14, color: 'white', width: '24%' }}>
+					<p style={{ fontSize: 14, color: mainTextColor, width: '24%' }}>
 						To {item.to.slice(0, 10)}...
 					</p>
 					:
@@ -67,7 +67,7 @@ class HistoryItemNft extends Component {
 
 				{
 					!item.to && !isMobile &&
-					<p style={{ fontSize: 15, color: 'white', width: '24%' }}>
+					<p style={{ fontSize: 14, color: mainTextColor, width: '24%' }}>
 
 					</p>
 				}
@@ -118,9 +118,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { netId } = state.mainReducer
+	const { netId, mainTextColor } = state.mainReducer
 
-	return { netId }
+	return { netId, mainTextColor }
 }
 
 export default connect(mapStateToProps)(HistoryItemNft)

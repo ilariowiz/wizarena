@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 import moment from 'moment'
 import { IoClose } from 'react-icons/io5'
 import { AiOutlineCheck } from 'react-icons/ai'
@@ -81,7 +82,7 @@ class ModalMakeOfferItem extends Component {
 	}
 
 	render() {
-		const { showModal, onCloseModal, width } = this.props;
+		const { showModal, onCloseModal, width, mainTextColor } = this.props;
 		const { inputOffer, duration, acceptCondition, error, ringType } = this.state
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
@@ -96,7 +97,7 @@ class ModalMakeOfferItem extends Component {
 			<div className={classContainer}>
 				<div style={Object.assign({}, styles.subcontainer, { width })}>
 
-					<p style={{ color: 'white', fontSize: 24, marginBottom: 10 }}>
+					<p style={{ color: mainTextColor, fontSize: 18, marginBottom: 10 }} className="text-medium">
 						Make an offer
 					</p>
 
@@ -136,7 +137,7 @@ class ModalMakeOfferItem extends Component {
 						ref={ref => this.listPopup = ref}
 						trigger={
 							<button style={styles.btnTypeRing}>
-								<p style={{ fontSize: 18, color: 'white' }}>RING TYPE</p>
+								<p style={{ fontSize: 15, color: 'white' }} className="text-medium">RING TYPE</p>
 							</button>
 						}
 						position="bottom center"
@@ -151,7 +152,7 @@ class ModalMakeOfferItem extends Component {
 						</div>
 					</Popup>
 
-					<p style={{ fontSize: 19, color: 'white' ,marginBottom: 5, paddingLeft: 10, paddingRight: 10, textAlign: 'center' }}>
+					<p style={{ fontSize: 16, color: mainTextColor ,marginBottom: 5, paddingLeft: 10, paddingRight: 10, textAlign: 'center' }} className="text-medium">
 						Offer: {inputOffer || '__'} WIZA, expire in {duration || '__'} days, for {ringType || '__'}
 					</p>
 
@@ -163,11 +164,11 @@ class ModalMakeOfferItem extends Component {
 						: null
 					}
 
-					<p style={{ fontSize: 20, color: 'white', textAlign: 'center', marginBottom: 10 }}>
+					<p style={{ fontSize: 17, color: mainTextColor, textAlign: 'center', marginBottom: 10 }} className="text-medium">
 						IMPORTANT
 					</p>
 
-					<p style={{ fontSize: 15, color: 'white', width: pW, textAlign: 'center', lineHeight: 1.5 }}>
+					<p style={{ fontSize: 15, color: mainTextColor, width: pW, textAlign: 'center', lineHeight: 1.5 }}>
 						When you submit an offer, the amount of the offer will be withdrawn from your wallet and deposited in the contract. This amount can be only withdrawn by you in your profile if the offer expires, or by the owner of the NFT if he accepts the offer before the expiration date.
 					</p>
 
@@ -185,14 +186,14 @@ class ModalMakeOfferItem extends Component {
 							}
 						</button>
 
-						<p style={{ fontSize: 16, color: 'white', marginLeft: 10 }}>
+						<p style={{ fontSize: 15, color: mainTextColor, marginLeft: 10 }}>
 							I understand the conditions for making an offer
 						</p>
 					</div>
 
 					{
 						error &&
-						<p style={{ fontSize: 16, color: 'red', marginBottom: 10, width: '80%', textAlign: 'center' }}>
+						<p style={{ fontSize: 15, color: 'red', marginBottom: 10, width: '80%', textAlign: 'center' }}>
 							{error}
 						</p>
 					}
@@ -202,7 +203,7 @@ class ModalMakeOfferItem extends Component {
 						style={styles.btnStyle}
 						onClick={() => this.submitOffer()}
 					>
-						<p style={{ fontSize: 18, color: 'white' }}>
+						<p style={{ fontSize: 16, color: 'white' }} className="text-medium">
 							Submit offer
 						</p>
 					</button>
@@ -212,7 +213,7 @@ class ModalMakeOfferItem extends Component {
 						onClick={onCloseModal}
 					>
 						<IoClose
-							color='white'
+							color={mainTextColor}
 							size={25}
 						/>
 					</button>
@@ -228,11 +229,11 @@ const styles = {
 	subcontainer: {
 		paddingTop: 15,
 		paddingBottom: 15,
-		backgroundColor: BACKGROUND_COLOR,
-		borderRadius: 2,
-		borderColor: TEXT_SECONDARY_COLOR,
+		backgroundColor: "white",
+		borderRadius: 4,
+		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
-		borderWidth: 2,
+		borderWidth: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 		flexDirection: 'column',
@@ -240,12 +241,12 @@ const styles = {
 	},
 	input: {
 		width: 260,
-		height: 45,
+		height: 40,
 		borderWidth: 1,
-		borderColor: '#ededed',
+		borderColor: '#d7d7d7',
 		borderStyle: 'solid',
-		borderRadius: 2,
-		fontSize: 17,
+		borderRadius: 4,
+		fontSize: 16,
 		color: 'black',
 		paddingLeft: 16,
 		paddingRight: 16,
@@ -253,13 +254,13 @@ const styles = {
 		WebkitAppearance: 'none',
 		MozAppearance: 'none',
 		appearance: 'none',
-		fontWeight: '500',
+		fontFamily: 'FigtreeMedium',
 		outline: 'none'
 	},
 	btnStyle: {
 		width: 295,
-		height: 45,
-		borderRadius: 2,
+		height: 40,
+		borderRadius: 4,
 		backgroundColor: CTA_COLOR,
 		justifyContent: 'center',
 		alignItems: 'center',
@@ -267,13 +268,19 @@ const styles = {
 	},
 	btnTypeRing: {
         width: 200,
-		height: 45,
+		height: 40,
 		backgroundColor: CTA_COLOR,
 		justifyContent: 'center',
 		alignItems: 'center',
-		borderRadius: 2,
+		borderRadius: 4,
         marginBottom: 15
 	}
 }
 
-export default ModalMakeOfferItem;
+const mapStateToProps = (state) => {
+	const { mainTextColor } = state.mainReducer
+
+	return { mainTextColor }
+}
+
+export default connect(mapStateToProps)(ModalMakeOfferItem);

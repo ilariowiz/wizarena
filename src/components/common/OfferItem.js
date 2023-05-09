@@ -23,7 +23,7 @@ class OfferItem extends Component {
                 }}
             >
     			<img
-    				style={{ width: 56, height: 56, marginTop: 3, borderRadius: 2, marginLeft: isMobile ? 5 : 20, cursor: 'pointer' }}
+    				style={{ width: 56, height: 56, marginTop: 3, borderRadius: 4, marginLeft: isMobile ? 5 : 20, cursor: 'pointer' }}
     				src={getImageUrl(item.refnft)}
     				alt={`#${item.refnft}`}
     			/>
@@ -32,13 +32,13 @@ class OfferItem extends Component {
 	}
 
 	renderBuyer() {
-		const { item, account, chainId, gasPrice, netId } = this.props
+		const { item, account, chainId, gasPrice, netId, mainTextColor } = this.props
 
 		const offerState = this.checkOfferState()
 
 		if (offerState === 'iswithdrew') {
 			return (
-				<p style={{ fontSize: 18, color: 'white' }}>
+				<p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
 					{item.status === 'accepted' ? 'Offer accepted' : 'Already withdrawn'}
 				</p>
 			)
@@ -48,7 +48,7 @@ class OfferItem extends Component {
 			return (
 				<button
 					className='btnH'
-					style={styles.btnAccept}
+					style={Object.assign({}, styles.btnAccept, { backgroundColor: CTA_COLOR })}
 					onClick={() => {
                         this.props.updateInfoTransactionModal({
                 			transactionToConfirmText: 'You will withdraw funds from this offer',
@@ -59,7 +59,7 @@ class OfferItem extends Component {
                         this.props.withdrawOffer(chainId, gasPrice, 5000, netId, item.id, account)
                     }}
 				>
-					<p style={{ fontSize: 17, color: CTA_COLOR }}>
+					<p style={{ fontSize: 15, color: CTA_COLOR }} className="text-medium">
 						Withdraw
 					</p>
 				</button>
@@ -68,7 +68,7 @@ class OfferItem extends Component {
 
         //pending
 		return (
-			<p style={{ fontSize: 18, color: 'white' }}>
+			<p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
 				{item.status.slice(0,1).toUpperCase() + item.status.slice(1, item.status.length)}
 			</p>
 		)
@@ -96,7 +96,7 @@ class OfferItem extends Component {
 	}
 
 	renderExpiration() {
-		const { item, isMobile } = this.props
+		const { item, isMobile, mainTextColor } = this.props
 
 		const diff = moment().to(this.getExpire())
 
@@ -109,14 +109,14 @@ class OfferItem extends Component {
 		}
 
 		return (
-			<p style={{ fontSize: isMobile ? 14 : 17, marginRight: 5, color: 'white', flex: 1 }}>
+			<p style={{ fontSize: 14, marginRight: 5, color: mainTextColor, flex: 1 }} className="text-medium">
 				Expiration {diff}
 			</p>
 		)
 	}
 
 	render() {
-		const { item, kadenaPrice, isOwner, isBuyer, showImage, isMobile } = this.props
+		const { item, kadenaPrice, isOwner, isBuyer, showImage, isMobile, mainTextColor } = this.props
 
 		return (
 			<div
@@ -131,20 +131,20 @@ class OfferItem extends Component {
 
 				{
 					showImage ?
-					<p style={{ fontSize: 19, color: 'white', marginLeft: 9 }}>
+					<p style={{ fontSize: 16, color: mainTextColor, marginLeft: 9 }}>
 						#{item.refnft}
 					</p>
 					: null
 				}
 
                 <div style={{ alignItems: 'center', flex: 1 }}>
-    				<p style={{ fontSize: isMobile ? 18 : 22, color: 'white', marginLeft: isMobile ? 10 : 20 }}>
+    				<p style={{ fontSize: 16, color: mainTextColor, marginLeft: isMobile ? 10 : 20 }}>
     					KDA {item.amount}
     				</p>
 
     				{
     					!isMobile && kadenaPrice && kadenaPrice > 0 ?
-    					<p style={{ fontSize: 15, color: 'white', marginLeft: 10 }}>
+    					<p style={{ fontSize: 13, color: '#707070', marginLeft: 10 }}>
     						(USD ${(kadenaPrice * item.amount).toFixed(2)})
     					</p>
                         : null
@@ -153,7 +153,7 @@ class OfferItem extends Component {
 
                 {
                     !isMobile &&
-                    <p style={{ fontSize: 15, color: 'white', flex: 1 }}>
+                    <p style={{ fontSize: 13, color: mainTextColor, flex: 1 }}>
                         From {item.buyer.slice(0, 10)}...
                     </p>
                 }
@@ -168,7 +168,7 @@ class OfferItem extends Component {
 						style={Object.assign({}, styles.btnAccept, { backgroundColor: CTA_COLOR })}
 						onClick={() => this.props.onAcceptOffer(item.refnft, getImageUrl(item.refnft))}
 					>
-						<p style={{ fontSize: 16, color: 'white' }}>
+						<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
 							Accept
 						</p>
 					</button>
@@ -179,10 +179,10 @@ class OfferItem extends Component {
 					isOwner ?
 					<button
 						className='btnH'
-						style={Object.assign({}, styles.btnAccept, { backgroundColor: 'transparent', marginLeft: 10 })}
+						style={Object.assign({}, styles.btnAccept, { marginLeft: 10 })}
 						onClick={() => this.props.onDeclineOffer()}
 					>
-						<p style={{ fontSize: 16, color: CTA_COLOR }}>
+						<p style={{ fontSize: 15, color: "white" }} className="text-medium">
 							Decline
 						</p>
 					</button>
@@ -206,29 +206,29 @@ const styles = {
 	boxSingleHistory: {
 		alignItems: 'center',
 		borderWidth: 1,
-        borderRadius: 2,
+        borderRadius: 4,
         padding: 2,
-		borderColor: 'white',
+		borderColor: '#d7d7d7',
 		borderStyle: 'solid',
         marginBottom: 10,
         flexWrap: 'wrap'
 	},
 	btnAccept: {
-		width: 100,
+		width: 90,
 		height: 35,
-		borderWidth: 2,
+		borderWidth: 1,
 		borderColor: CTA_COLOR,
 		borderStyle: 'solid',
-		borderRadius: 2,
+		borderRadius: 4,
 		justifyContent: 'center',
 		alignItems: 'center',
 	}
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, gasPrice, gasLimit, netId, networkUrl } = state.mainReducer
+	const { account, chainId, gasPrice, gasLimit, netId, networkUrl, mainTextColor } = state.mainReducer
 
-	return { account, chainId, gasPrice, gasLimit, netId, networkUrl }
+	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, mainTextColor }
 }
 
 export default connect(mapStateToProps, {

@@ -10,7 +10,7 @@ import {
     showWinnerChallenge
 } from '../../actions'
 
-import { CTA_COLOR } from '../../actions/types'
+import { CTA_COLOR, TEXT_SECONDARY_COLOR } from '../../actions/types'
 
 
 class ChallengeItem extends Component {
@@ -21,20 +21,20 @@ class ChallengeItem extends Component {
 	}
 
     renderExpiration() {
-		const { item, isMobile } = this.props
+		const { item, mainTextColor } = this.props
 
 		const diff = moment().to(this.getExpire())
 
 		if (item.status === 'accepted') {
 			return (
-				<p style={{ fontSize: 16, color: 'white' }}>
+				<p style={{ fontSize: 16, color: mainTextColor }}>
 
 				</p>
 			)
 		}
 
 		return (
-			<p style={{ fontSize: isMobile ? 14 : 16, color: 'white', marginBottom: 7 }}>
+			<p style={{ fontSize: 14, color: mainTextColor, marginBottom: 7 }}>
 				Expiration {diff}
 			</p>
 		)
@@ -55,7 +55,7 @@ class ChallengeItem extends Component {
     }
 
     renderCta() {
-        const { item, isMobile, isReceived, showWinnerChallenges } = this.props
+        const { item, isMobile, isReceived, showWinnerChallenges, mainTextColor } = this.props
 
         //console.log(item.fightId);
 
@@ -77,7 +77,7 @@ class ChallengeItem extends Component {
                             color='white'
                             size={20}
                         />
-                        <p style={{ fontSize: 16, color: 'white', marginLeft: 6, marginTop: 2 }}>
+                        <p style={{ fontSize: 15, color: 'white', marginLeft: 6 }} className="text-medium">
                             Withdraw
                         </p>
                     </button>
@@ -87,14 +87,14 @@ class ChallengeItem extends Component {
             //non scaduta
             return (
                 <div
-                    style={Object.assign({}, styles.btnCta, { backgroundColor: 'transparent' })}
+                    style={Object.assign({}, styles.btnCta, { backgroundColor: 'transparent', borderColor: "#d7d7d7" })}
                 >
                     <BiTimeFive
-                        color='white'
+                        color={mainTextColor}
                         size={20}
                     />
 
-                    <p style={{ fontSize: 16, color: 'white', marginLeft: 6, marginTop: 2 }}>
+                    <p style={{ fontSize: 15, color: mainTextColor, marginLeft: 6 }} className="text-medium">
                         Pending
                     </p>
                 </div>
@@ -113,7 +113,7 @@ class ChallengeItem extends Component {
                         size={20}
                     />
 
-                    <p style={{ fontSize: 16, color: 'white', marginLeft: 6, marginTop: 2 }}>
+                    <p style={{ fontSize: 15, color: 'white', marginLeft: 6 }} className="text-medium">
                         Accept
                     </p>
                 </button>
@@ -131,8 +131,8 @@ class ChallengeItem extends Component {
 
                         {
                             showWinnerChallenges.includes(item.id) &&
-                            <p style={{ fontSize: 15, marginBottom: 4, color: "gold" }}>
-                                WINNER: #{winner}
+                            <p style={{ fontSize: 15, marginBottom: 4, color: TEXT_SECONDARY_COLOR }} className="text-medium">
+                                Winner: #{winner}
                             </p>
                         }
 
@@ -147,7 +147,7 @@ class ChallengeItem extends Component {
                                 color='white'
                                 size={20}
                             />
-                            <p style={{ fontSize: 16, color: 'white', marginLeft: 6, marginTop: 2 }}>
+                            <p style={{ fontSize: 15, color: 'white', marginLeft: 6 }} className="text-medium">
                                 Replay
                             </p>
                         </button>
@@ -166,7 +166,7 @@ class ChallengeItem extends Component {
                         size={20}
                     />
 
-                    <p style={{ fontSize: 16, color: 'white', marginLeft: 6, marginTop: 2 }}>
+                    <p style={{ fontSize: 15, color: 'white', marginLeft: 6 }} className="text-medium">
                         Fight
                     </p>
                 </button>
@@ -175,7 +175,7 @@ class ChallengeItem extends Component {
     }
 
 	render() {
-		const { item, isMobile, showWinnerChallenges } = this.props
+		const { item, isMobile, showWinnerChallenges, mainTextColor } = this.props
 
         let winner = ""
         if (item.status === "accepted" && item.fightId && showWinnerChallenges.includes(item.id)) {
@@ -201,12 +201,12 @@ class ChallengeItem extends Component {
                             style={styles.img}
                         />
 
-                        <p style={{ fontSize: 16, color: winner === item.wiz1id ? "gold" : "white", textAlign: 'center' }}>
+                        <p style={{ fontSize: 16, color: winner === item.wiz1id ? TEXT_SECONDARY_COLOR : mainTextColor, textAlign: 'center' }} className="text-medium">
                             #{item.wiz1id}
                         </p>
                     </a>
 
-                    <p style={{ fontSize: 17, color: 'white', marginLeft: 10, marginRight: 10 }}>
+                    <p style={{ fontSize: 15, color: mainTextColor, marginLeft: 10, marginRight: 10 }}>
                         VS
                     </p>
 
@@ -223,7 +223,7 @@ class ChallengeItem extends Component {
                             src={getImageUrl(item.wiz2id)}
                             style={styles.img}
                         />
-                        <p style={{ fontSize: 16, color: winner === item.wiz2id ? "gold" : "white", textAlign: 'center' }}>
+                        <p style={{ fontSize: 16, color: winner === item.wiz2id ? TEXT_SECONDARY_COLOR : mainTextColor, textAlign: 'center' }} className="text-medium">
                             #{item.wiz2id}
                         </p>
                     </a>
@@ -232,20 +232,18 @@ class ChallengeItem extends Component {
 
 				{
 					item.amount ?
-					<p style={{ fontSize: 18, color: 'white', marginBottom: 9 }}>
-						KDA {item.amount}
+					<p style={{ fontSize: 15, color: mainTextColor, marginBottom: 9 }} className="text-bold">
+						$KDA {item.amount}
 					</p>
 					:
-					<p style={{ fontSize: 18, color: 'white', marginBottom: 9 }}>
-                        KDA 0
-					</p>
+					undefined
 				}
 
                 {this.renderExpiration()}
 
                 {this.renderCta()}
 
-                <p style={{ fontSize: 13, color: 'white' }}>
+                <p style={{ fontSize: 13, color: mainTextColor }}>
                     Challenge ID: {item.id}
                 </p>
 
@@ -260,8 +258,9 @@ const styles = {
 		justifyContent: 'center',
 		alignItems: 'center',
 		borderWidth: 1,
-		borderColor: 'white',
+		borderColor: '#d7d7d7',
 		borderStyle: 'solid',
+        borderRadius: 4,
         flexWrap: 'wrap',
         marginBottom: 15,
         padding: 7,
@@ -277,10 +276,10 @@ const styles = {
     img: {
         width: 70,
         height: 70,
-        borderRadius: 2,
+        borderRadius: 4,
         marginBottom: 3,
         borderWidth: 1,
-        borderColor: 'white',
+        borderColor: '#d7d7d7',
         borderStyle: 'solid',
     },
     btnCta: {
@@ -291,15 +290,19 @@ const styles = {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 2,
+        borderRadius: 4,
+        borderWidth: 1,
+        borderColor: CTA_COLOR,
+        borderStyle: 'solid',
         marginBottom: 7
     }
 }
 
 const mapStateToProps = (state) => {
 	const { showWinnerChallenges } = state.challengesReducer
+    const { mainTextColor } = state.mainReducer
 
-	return { showWinnerChallenges }
+	return { showWinnerChallenges, mainTextColor }
 }
 
 export default connect(mapStateToProps, {

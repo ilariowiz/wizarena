@@ -3,8 +3,8 @@ import { connect } from 'react-redux'
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import Popup from 'reactjs-popup';
-import { AiOutlineReload, AiOutlineShareAlt } from 'react-icons/ai';
-import { IoEyeOffOutline, IoEyeOutline, IoFlash } from 'react-icons/io5';
+import { AiOutlineReload, AiOutlineShareAlt, AiOutlineUnorderedList } from 'react-icons/ai';
+import { IoEyeOffOutline, IoEyeOutline, IoFlash, IoMedalOutline, IoClose } from 'react-icons/io5';
 import { BsFillTagFill } from 'react-icons/bs'
 import moment from 'moment'
 import toast, { Toaster } from 'react-hot-toast';
@@ -51,6 +51,7 @@ const logoKda = require('../assets/kdalogo2.png')
 const burn_overlay = require('../assets/burn_overlay.png')
 const challenge_icon = require('../assets/wand_challenge.png')
 
+
 class Nft extends Component {
 	constructor(props) {
 		super(props)
@@ -79,7 +80,9 @@ class Nft extends Component {
 			offerInfoRecap: "",
 			saleValues: {},
 			equipment: {},
-			maxStats: undefined
+			maxStats: undefined,
+			showMedals: false,
+			showFights: false
 		}
 	}
 
@@ -547,17 +550,17 @@ class Nft extends Component {
 
 		return (
 			<div style={styles.boxSingleTrait} key={index}>
-				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 15 }}>
-					{item.trait_type.toUpperCase()}
+				<p style={{ color: '#707070', fontSize: 15 }}>
+					{item.trait_type}
 				</p>
 
-				<p style={{ color: 'white', fontSize: 18 }}>
+				<p style={{ color: this.props.mainTextColor, fontSize: 16 }}>
 					{item.value}
 				</p>
 
 				{
 					percentString ?
-					<p style={{ color: '#8d8b8b', fontSize: 14 }}>
+					<p style={{ color: '#707070', fontSize: 13 }}>
 						{percentString.toFixed(2)}% have this trait
 					</p>
 					: null
@@ -584,10 +587,10 @@ class Nft extends Component {
 
 		return (
 			<div style={styles.boxSingleTrait} key={item}>
-				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 13, marginBottom: 5 }}>
-					TOURNAMENT {item.replace("t", "")}
+				<p style={{ color: '#707070', fontSize: 13, marginBottom: 5 }}>
+					Tournament {item.replace("t", "")}
 				</p>
-				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 20 }}>
+				<p style={{ color: this.props.mainTextColor, fontSize: 16 }}>
 					{numbersOfMedals} / {maxMedals.maxMedals}
 				</p>
 
@@ -596,7 +599,7 @@ class Nft extends Component {
 	}
 
 	renderSpell(item, index) {
-
+		const { mainTextColor } = this.props
 		const marginRight = 12
 
 		//console.log(item);
@@ -612,22 +615,22 @@ class Nft extends Component {
 		}
 
 		return (
-			<div key={index} style={{ alignItems: 'flex-end', flexWrap: 'wrap', marginBottom: 20 }}>
-				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
-					NAME
+			<div key={index} style={{ alignItems: 'flex-end', flexWrap: 'wrap', marginBottom: 30 }}>
+				<p style={{ color: '#707070', fontSize: 15, marginRight: 5, marginBottom: 1 }}>
+					Name
 				</p>
-				<p style={{ color: "white", fontSize: 20, marginRight }}>
+				<p style={{ color: mainTextColor, fontSize: 17, marginRight }}>
 					{spell.name}
 				</p>
-				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
-					PERK
+				<p style={{ color: '#707070', fontSize: 15, marginRight: 5, marginBottom: 1 }}>
+					Perk
 				</p>
 
 				{
 					spell.condition && spell.condition.name ?
 					<Popup
 						trigger={open => (
-							<button style={{ color: "white", fontSize: 20, marginRight }}>
+							<button style={{ color: mainTextColor, fontSize: 17, marginRight }}>
 								{spell.condition.name}
 							</button>
 						)}
@@ -639,24 +642,24 @@ class Nft extends Component {
 						</div>
 					</Popup>
 					:
-					<p style={{ color: "white", fontSize: 20, marginRight }}>
+					<p style={{ color: mainTextColor, fontSize: 17, marginRight }}>
 						-
 					</p>
 				}
 
 
 
-				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
-					BASE ATK
+				<p style={{ color: '#707070', fontSize: 15, marginRight: 5, marginBottom: 1 }}>
+					Base Atk
 				</p>
-				<p style={{ color: "white", fontSize: 20, marginRight }}>
+				<p style={{ color: mainTextColor, fontSize: 17, marginRight }}>
 					{spell.atkBase}
 				</p>
 
-				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
-					BASE DMG
+				<p style={{ color: '#707070', fontSize: 15, marginRight: 5, marginBottom: 1 }}>
+					Base Dmg
 				</p>
-				<p style={{ color: "white", fontSize: 20 }}>
+				<p style={{ color: mainTextColor, fontSize: 17 }}>
 					{spell.dmgBase}
 				</p>
 
@@ -666,6 +669,7 @@ class Nft extends Component {
 
 	renderMainFight(key, index) {
 		const { nft, openFightsSection } = this.state
+		const { mainTextColor } = this.props
 
 		//console.log(key, index);
 
@@ -693,20 +697,20 @@ class Nft extends Component {
 							this.setState({ openFightsSection: openFightsSectionCopy })
 						}}
 					>
-						<p style={{ fontSize: 14, color: '#eae9e9', marginRight: 15 }}>
-							TOURNAMENT <span style={{ fontSize: 18, color: 'white' }}>{key.replace("t","")}</span>
+						<p style={{ fontSize: 15, color: '#707070', marginRight: 15 }}>
+							Tournament <span style={{ fontSize: 16, color: mainTextColor }}>{key.replace("t","")}</span>
 						</p>
 
 						{
 							openFightsSection.includes(key) ?
 							<IoEyeOffOutline
 								size={20}
-								color="white"
+								color={mainTextColor}
 							/>
 							:
 							<IoEyeOutline
 								size={20}
-								color="white"
+								color={mainTextColor}
 							/>
 						}
 
@@ -737,24 +741,24 @@ class Nft extends Component {
 		//let tournament = item.tournament.split("_")[0]
 		let round = item.tournament.split("_")[1]
 
-		const textWinner = item.winner === nft.id ? "WINNER" : "LOSER"
-		const textWinnerColor = textWinner === "WINNER" ? TEXT_SECONDARY_COLOR : "#0587a2"
+		const textWinner = item.winner === nft.id ? "Winner" : "Loser"
+		const textWinnerColor = textWinner === "Winner" ? this.props.mainTextColor : "#707070"
 
 		return (
 			<a
 				href={`${window.location.protocol}//${window.location.host}/fight/${item.fightId}`}
 				className='btnH'
-				style={styles.boxSingleTrait}
+				style={Object.assign({}, styles.boxSingleTrait, { backgroundColor: "#dfdfdf" })}
 				key={index}
 				onClick={(e) => {
 					e.preventDefault()
 					this.props.history.push(`/fight/${item.fightId}`)
 				}}
 			>
-				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginBottom: 5 }}>
-					round {round.replace("r", "")}
+				<p style={{ color: '#707070', fontSize: 14, marginBottom: 5 }}>
+					Round {round.replace("r", "")}
 				</p>
-				<p style={{ color: textWinnerColor, fontSize: 17 }}>
+				<p style={{ color: textWinnerColor, fontSize: 15 }}>
 					{textWinner}
 				</p>
 			</a>
@@ -807,18 +811,18 @@ class Nft extends Component {
 
 		if (!account || (account && !account.account)) {
 
-			let style = isMobile ? { height: '100%', flexDirection: 'column', marginLeft: 15, justifyContent: 'flex-end' }
+			let style = isMobile ? { height: '100%', flexDirection: 'row', marginLeft: 15, marginRight: 15, marginTop: 10, justifyContent: 'center' }
 									:
-									{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }
+									{ paddingLeft: 12, paddingRight: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }
 
 			return (
 				<div style={style}>
 					<button
 						className='btnH'
-						style={Object.assign({}, styles.btnBuy, { width, marginRight })}
+						style={Object.assign({}, styles.btnBuy, { width })}
 						onClick={() => this.setState({ showModalConnection: true })}
 					>
-						<p style={Object.assign({}, styles.btnBuyText, { fontSize: 19 })}>
+						<p style={styles.btnBuyText} className="text-medium">
 							Connect wallet
 						</p>
 					</button>
@@ -828,45 +832,46 @@ class Nft extends Component {
 
 		if (nft.owner === account.account) {
 
-			let style = isMobile ? { height: '100%', flexDirection: 'column', marginLeft: 15, justifyContent: 'flex-end' }
+			let style = isMobile ? { height: '100%', flexDirection: 'row', marginLeft: 15, marginRight: 15, marginTop: 10, justifyContent: 'space-between' }
 									:
-									{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end' }
+									{ width: width*2, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }
 
 			return (
 				<div style={style}>
+
 					<button
 						className='btnH'
-						style={Object.assign({}, styles.btnBuy, { width, marginRight, marginBottom: 20 })}
-						onClick={() => this.list()}
+						style={Object.assign({}, styles.btnBuy, { width: width-10 })}
+						onClick={() => this.delist()}
 					>
-						<p style={styles.btnBuyText}>
-							Update price
+						<p style={styles.btnBuyText} className="text-medium">
+							Cancel listing
 						</p>
 					</button>
 
 					<button
 						className='btnH'
-						style={Object.assign({}, styles.btnBuy, { width, marginRight })}
-						onClick={() => this.delist()}
+						style={Object.assign({}, styles.btnBuy, { width: width-10 })}
+						onClick={() => this.list()}
 					>
-						<p style={styles.btnBuyText}>
-							Cancel listing
+						<p style={styles.btnBuyText} className="text-medium">
+							Update price
 						</p>
 					</button>
 				</div>
 			)
 		}
 
-		let style = isMobile ? { height: '100%', flexDirection: 'column', marginLeft: 15, marginTop: 10, justifyContent: 'space-between' }
+		let style = isMobile ? { height: '100%', flexDirection: 'row', marginLeft: 15, marginRight: 15, marginTop: 10, justifyContent: 'space-between' }
 								:
-								{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between' }
+								{ width: width*2, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }
 
 		return (
 			<div style={style}>
 
 				<button
 					className='btnH'
-					style={Object.assign({}, styles.btnBuy, { width, marginRight, marginBottom: 15 })}
+					style={Object.assign({}, styles.btnBuy, { width: width-10 })}
 					onClick={() => this.setState({ showModalOffer: true })}
 				>
 					<BsFillTagFill
@@ -874,14 +879,14 @@ class Nft extends Component {
 						color='white'
 						style={{ marginRight: 7 }}
 					/>
-					<p style={styles.btnBuyText}>
+					<p style={styles.btnBuyText} className="text-medium">
 						Make offer
 					</p>
 				</button>
 
 				<button
 					className='btnH'
-					style={Object.assign({}, styles.btnBuy, { width, marginRight, marginBottom: 15 })}
+					style={Object.assign({}, styles.btnBuy, { width: width-10 })}
 					onClick={() => this.buy()}
 				>
 					<IoFlash
@@ -890,28 +895,204 @@ class Nft extends Component {
 						style={{ marginRight: 7 }}
 					/>
 
-					<p style={styles.btnBuyText}>
+					<p style={styles.btnBuyText} className="text-medium">
 						Buy now
 					</p>
 				</button>
 
-				<button
-					className='btnH'
-					style={Object.assign({}, styles.btnBuy, { width, marginRight })}
-					onClick={() => {
-						let nftCopy = Object.assign({}, nft)
-						nftCopy['equipment'] = equipment
-						console.log(nftCopy);
-						this.props.setWizardSfidato(nftCopy)
-						this.props.history.push(`/startchallenge`)
-					}}
+			</div>
+		)
+	}
+
+	renderBtnChallenge(width) {
+		const { nft, equipment } = this.state
+
+		return (
+			<button
+				className='btnH'
+				style={Object.assign({}, styles.btnBuy, { width, marginBottom: 20 })}
+				onClick={() => {
+					let nftCopy = Object.assign({}, nft)
+					nftCopy['equipment'] = equipment
+					//console.log(nftCopy);
+					this.props.setWizardSfidato(nftCopy)
+					this.props.history.push(`/startchallenge`)
+				}}
+			>
+				<img
+					src={challenge_icon}
+					style={{ width: 26, height: 26, marginRight: 7 }}
+				/>
+				<p style={styles.btnBuyText} className="text-medium">
+					Challenge
+				</p>
+			</button>
+		)
+	}
+
+	renderSlidePanelMedals(boxW, isMobile) {
+		const { showMedals, nft } = this.state
+		const { mainTextColor } = this.props
+
+		const panelWidth = isMobile ? '90%' : "50%"
+
+		//console.log(nft.medals)
+
+		let sortedKeyMedals = []
+		if (nft.medals) {
+			sortedKeyMedals = Object.keys(nft.medals).sort((a, b) => {
+				return parseInt(a.replace("t","")) - parseInt(b.replace("t", ""))
+			})
+		}
+
+		return (
+			<div style={styles.panelShadow}>
+
+				<div
+					className={showMedals ? "slide-panel-container-on" : "slide-panel-container-off"}
+					style={Object.assign({}, styles.panel, { width: showMedals ? panelWidth : 0, zIndex: 997 })}
 				>
-					<img
-						src={challenge_icon}
-						style={{ width: 26, height: 26, marginRight: 7 }}
+
+					<div style={styles.headerPanel}>
+
+						<p style={{ fontSize: 24, color: mainTextColor, marginLeft: 30 }} className="text-bold">
+							Medals
+						</p>
+
+						<div style={{ alignItems: 'center', justifyContent: 'flex-end' }}>
+							<button
+								onClick={() => {
+									document.body.style.overflow = "auto"
+									document.body.style.height = "auto"
+									this.setState({ showMedals: false })
+								}}
+								style={{ marginRight: 30 }}
+							>
+								<IoClose
+									color={mainTextColor}
+									size={34}
+								/>
+							</button>
+						</div>
+
+					</div>
+
+					<div style={{ width: "80%", flexDirection: 'row', marginLeft: 30, flexWrap: 'wrap' }}>
+					{
+						!nft || !nft.medals || Object.keys(nft.medals).length === 0 ?
+						<p style={{ fontSize: 16, color: this.props.mainTextColor, margin: 15 }}>
+							This wizard has not yet won a medal
+						</p>
+						:
+						nft && nft.medals && sortedKeyMedals.map((key) => {
+							return this.renderMedal(key)
+						})
+					}
+					</div>
+				</div>
+			</div>
+		)
+	}
+
+	renderSlidePanelFights(boxW, isMobile) {
+		const { showFights, nft } = this.state
+		const { mainTextColor } = this.props
+
+		const panelWidth = isMobile ? '90%' : "50%"
+
+		//console.log(nft.medals)
+
+		let sortedKeyMedals = []
+		if (nft.medals) {
+			sortedKeyMedals = Object.keys(nft.medals).sort((a, b) => {
+				return parseInt(a.replace("t","")) - parseInt(b.replace("t", ""))
+			})
+		}
+
+		return (
+			<div style={styles.panelShadow}>
+
+				<div
+					className={showFights ? "slide-panel-container-on" : "slide-panel-container-off"}
+					style={Object.assign({}, styles.panel, { width: showFights ? panelWidth : 0, zIndex: 997 })}
+				>
+
+					<div style={styles.headerPanel}>
+
+						<p style={{ fontSize: 24, color: mainTextColor, marginLeft: 30 }} className="text-bold">
+							Fights history
+						</p>
+
+						<div style={{ alignItems: 'center', justifyContent: 'flex-end' }}>
+							<button
+								onClick={() => {
+									document.body.style.overflow = "auto"
+									document.body.style.height = "auto"
+									this.setState({ showFights: false })
+								}}
+								style={{ marginRight: 30 }}
+							>
+								<IoClose
+									color={mainTextColor}
+									size={34}
+								/>
+							</button>
+						</div>
+
+					</div>
+
+					<div style={{ width: "80%", flexDirection: 'row', marginLeft: 30, flexWrap: 'wrap' }}>
+					{
+						!nft || !nft.fights || (nft && nft.fights.length === 0) ?
+						<p style={{ fontSize: 16, color: this.props.mainTextColor, margin: 15 }}>
+							This wizard hasn't participated in any fight yet
+						</p>
+						:
+						nft && nft.groupedFights && Object.keys(nft.groupedFights).map((key, index) => {
+							//console.log(key, index);
+							return this.renderMainFight(key, index)
+						})
+					}
+					</div>
+				</div>
+			</div>
+		)
+	}
+
+	renderBtnsMedalsFights(width) {
+		const { mainTextColor } = this.props
+
+		const btnW = (width/2) - 10
+
+		return (
+			<div style={{ width, alignItems: 'center', justifyContent: 'space-between' }}>
+				<button
+					className="btnH"
+					style={Object.assign({}, styles.btnMedals, { width: btnW })}
+					onClick={() => this.setState({ showMedals: true })}
+				>
+					<IoMedalOutline
+						color={mainTextColor}
+						size={20}
 					/>
-					<p style={styles.btnBuyText}>
-						Challenge
+
+					<p style={{ fontSize: 15, color: mainTextColor, marginLeft: 4 }}>
+						Medals
+					</p>
+				</button>
+
+				<button
+					className="btnH"
+					style={Object.assign({}, styles.btnMedals, { width: btnW })}
+					onClick={() => this.setState({ showFights: true })}
+				>
+					<AiOutlineUnorderedList
+						color={mainTextColor}
+						size={20}
+					/>
+
+					<p style={{ fontSize: 15, color: mainTextColor, marginLeft: 4 }}>
+						Fights
 					</p>
 				</button>
 			</div>
@@ -921,16 +1102,16 @@ class Nft extends Component {
 	renderBtnMakeOffer(width, marginRight, isMobile) {
 		const { nft, equipment } = this.state
 
-		let style = isMobile ? { height: '100%', flexDirection: 'column', marginLeft: 15, justifyContent: 'space-between' }
+		let style = isMobile ? { height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }
 								:
-								{ height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between' }
+								{ height: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }
 
 		return (
 			<div style={style}>
 
 				<button
 					className='btnH'
-					style={Object.assign({}, styles.btnBuy, { width, marginRight, marginBottom: 15 })}
+					style={Object.assign({}, styles.btnBuy, { width: width*2 })}
 					onClick={() => this.setState({ showModalOffer: true })}
 				>
 					<BsFillTagFill
@@ -938,28 +1119,8 @@ class Nft extends Component {
 						color='white'
 						style={{ marginRight: 7 }}
 					/>
-					<p style={styles.btnBuyText}>
+					<p style={styles.btnBuyText} className="text-medium">
 						Make offer
-					</p>
-				</button>
-
-				<button
-					className='btnH'
-					style={Object.assign({}, styles.btnBuy, { width, marginRight })}
-					onClick={() => {
-						let nftCopy = Object.assign({}, nft)
-						nftCopy['equipment'] = equipment
-						//console.log(nftCopy);
-						this.props.setWizardSfidato(nftCopy)
-						this.props.history.push(`/startchallenge`)
-					}}
-				>
-					<img
-						src={challenge_icon}
-						style={{ width: 26, height: 26, marginRight: 7 }}
-					/>
-					<p style={styles.btnBuyText}>
-						Challenge
 					</p>
 				</button>
 			</div>
@@ -968,9 +1129,9 @@ class Nft extends Component {
 
 	renderBtnConnect(width, marginRight, isMobile) {
 
-		let style = isMobile ? { marginLeft: 15 }
+		let style = isMobile ? { alignItems: 'center', justifyContent: 'center' }
 								:
-								{ alignItems: 'center', justifyContent: 'center', marginRight }
+								{ alignItems: 'center', justifyContent: 'center', marginLeft: marginRight }
 
 		return (
 			<div style={style}>
@@ -979,7 +1140,7 @@ class Nft extends Component {
 					style={Object.assign({}, styles.btnBuy, { width })}
 					onClick={() => this.setState({ showModalConnection: true })}
 				>
-					<p style={Object.assign({}, styles.btnBuyText, { fontSize: 18 })}>
+					<p style={styles.btnBuyText} className="text-medium">
 						Connect wallet
 					</p>
 				</button>
@@ -989,11 +1150,11 @@ class Nft extends Component {
 
 	renderBtnSell(width, marginRight, isMobile) {
 		const { nft } = this.state
-		const { account } = this.props
+		const { account, mainTextColor } = this.props
 
-		let style = isMobile ? { flexDirection: 'column', height: '100%', marginLeft: 15, marginTop: 10, justifyContent: 'space-between' }
+		let style = isMobile ? { flexDirection: 'row', height: '100%', marginTop: 10, justifyContent: 'space-between' }
 								:
-								{ flexDirection: 'column', height: '100%', alignItems: 'flex-end', justifyContent: 'space-between' }
+								{ width: width*2, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }
 
 		return (
 			<div style={style}>
@@ -1001,10 +1162,10 @@ class Nft extends Component {
 					!nft.listed && account && account.account && nft.owner === account.account ?
 					<button
 						className="btnH"
-						style={Object.assign({}, styles.btnTransfer, { marginRight })}
+						style={Object.assign({}, styles.btnBuy, { width: width-10 })}
 						onClick={() => this.setState({ showModalTransfer: true })}
 					>
-						<p style={{ color: 'white', fontSize: 17 }}>
+						<p style={styles.btnBuyText} className="text-medium">
 							Transfer
 						</p>
 					</button>
@@ -1013,10 +1174,10 @@ class Nft extends Component {
 
 				<button
 					className='btnH'
-					style={Object.assign({}, styles.btnBuy, { width, marginRight })}
+					style={Object.assign({}, styles.btnBuy, { width: width-10 })}
 					onClick={() => this.list()}
 				>
-					<p style={styles.btnBuyText}>
+					<p style={styles.btnBuyText} className="text-medium">
 						Sell
 					</p>
 				</button>
@@ -1041,11 +1202,11 @@ class Nft extends Component {
 			<div style={{ flexDirection: 'column', marginBottom }}>
 				{
 					nft.nickname ?
-					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 26, lineHeight: 1 }}>
+					<p style={{ color: 'black', fontSize: 24 }} className="text-bold">
 						{nft.name} {nft.nickname}
 					</p>
 					:
-					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 30, lineHeight: 1 }}>
+					<p style={{ color: 'black', fontSize: 24 }} className="text-bold">
 						{type} {nft.name}
 					</p>
 				}
@@ -1059,7 +1220,7 @@ class Nft extends Component {
 							alt="Cup"
 						/>
 
-						<p style={{ fontSize: 22, color: title.textColor }}>
+						<p style={{ fontSize: 18, color: title.textColor }}>
 							{title.title}
 						</p>
 					</div>
@@ -1069,40 +1230,41 @@ class Nft extends Component {
 		)
 	}
 
-	renderLeftBoxPriceListed(isOwner) {
+	renderLeftBoxPriceListed(isOwner, width) {
 		const { nft, kadenaPrice, inputPrice } = this.state
+		const { mainTextColor } = this.props
 
 		return (
-			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
+			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', width, marginBottom: 25 }}>
 
-				{this.renderName(24)}
+				<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
 
-				<div style={{ flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-end', marginTop: 15 }}>
-					<p style={{ color: '#c2c0c0', fontSize: 17, marginBottom: 4 }}>
+					<p style={{ color: mainTextColor, fontSize: 17, marginBottom: 4 }} className="text-medium">
 						Current price
 					</p>
 
-					<div>
+					<div style={{ alignItems: 'center' }}>
 						<img
-							style={{ width: 20, height: 20, marginRight: 5 }}
+							style={{ width: 20, marginRight: 5 }}
 							src={logoKda}
 							alt={nft.id}
 						/>
 
-						<p style={{ fontSize: 24, color: 'white', lineHeight: 1, marginTop: 2 }}>
+						<p style={{ fontSize: 23, color: mainTextColor, marginRight: 7 }} className="text-bold">
 							{nft.price}
+						</p>
+
+						<p style={{ color: '#707070', fontSize: 14 }}>
+							(${(kadenaPrice * nft.price).toFixed(2)})
 						</p>
 					</div>
 
-					<p style={{ color: '#c2c0c0', fontSize: 16 }}>
-						(${(kadenaPrice * nft.price).toFixed(2)})
-					</p>
 				</div>
 
 				{
 					isOwner &&
-					<div style={{ flexDirection: 'column', marginTop: 15 }}>
-						<p style={{ color: '#c2c0c0', fontSize: 17 }}>
+					<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginTop: 20 }}>
+						<p style={{ color: mainTextColor, fontSize: 16, marginBottom: 4 }} className="text-medium">
 							Update price
 						</p>
 
@@ -1118,31 +1280,25 @@ class Nft extends Component {
 		)
 	}
 
-	renderLeftBoxListing() {
+	renderLeftBoxListing(width) {
 		const { inputPrice, kadenaPrice } = this.state
 
 		return (
-			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
+			<div style={{ width, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+				<p style={{ color: this.props.mainTextColor, fontSize: 17, marginBottom: 4 }} className="text-medium">
+					Set price
+				</p>
 
-				{this.renderName(24)}
+				<input
+					style={styles.inputPrice}
+					placeholder='KDA'
+					value={inputPrice}
+					onChange={(e) => this.setState({ inputPrice: e.target.value })}
+				/>
 
-				<div style={{ flexDirection: 'column', marginTop: 15 }}>
-					<p style={{ color: '#c2c0c0', fontSize: 17 }}>
-						Set price
-					</p>
-
-					<p style={{ color: '#c2c0c0', fontSize: 16, marginTop: 5 }}>
-						${(kadenaPrice * inputPrice).toFixed(2)}
-					</p>
-
-					<input
-						style={styles.inputPrice}
-						placeholder='KDA'
-						value={inputPrice}
-						onChange={(e) => this.setState({ inputPrice: e.target.value })}
-					/>
-				</div>
-
+				<p style={{ color: '#707070', fontSize: 14, marginTop: 3 }}>
+					${(kadenaPrice * inputPrice).toFixed(2)}
+				</p>
 			</div>
 		)
 	}
@@ -1153,12 +1309,10 @@ class Nft extends Component {
 		const isBurned = infoBurn && infoBurn.burned
 
 		return (
-			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
-				{this.renderName(0)}
-
+			<div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 				{
 					isBurned &&
-					<p style={{ fontSize: 22, color: "white", marginTop: 10 }}>
+					<p style={{ fontSize: 18, color: this.props.mainTextColor, marginTop: 15, marginBottom: 15 }}>
 						BURNED
 					</p>
 				}
@@ -1166,42 +1320,14 @@ class Nft extends Component {
 		)
 	}
 
-	renderBoxShare() {
-		return (
-			<div style={styles.boxShare}>
-				<button
-					style={styles.btnReload}
-					onClick={() => this.getPathNft()}
-				>
-					<AiOutlineReload
-						size={23}
-						color={CTA_COLOR}
-					/>
-				</button>
-
-				<div style={{ height: 40, width: 2, backgroundColor: CTA_COLOR }} />
-
-				<button
-					style={styles.btnShare}
-					onClick={() => this.copyLink()}
-				>
-					<AiOutlineShareAlt
-						size={25}
-						color={CTA_COLOR}
-					/>
-				</button>
-			</div>
-		)
-	}
-
 	renderUpgrade(item, index) {
 		return (
 			<div style={{ alignItems: 'center', marginBottom: 8, marginRight: 15 }} key={index}>
-				<p style={{ fontSize: 18, color: '#8d8b8b', marginRight: 5 }}>
+				<p style={{ fontSize: 16, color: '#707070', marginRight: 5 }}>
 					{item.stat}
 				</p>
 
-				<p style={{ fontSize: 18, color: 'white' }}>
+				<p style={{ fontSize: 17, color: this.props.mainTextColor }}>
 					+{item.value}
 				</p>
 			</div>
@@ -1210,12 +1336,13 @@ class Nft extends Component {
 
 	renderStat(title, value) {
 		const { equipment, maxStats } = this.state
+		const { mainTextColor } = this.props
 
 		//console.log(equipment);
 
 		let fixedValue = value
 
-		if (title === "SPELL PERK") {
+		if (title === "Spell Perk") {
 			let condDesc;
 			if (fixedValue && fixedValue !== "-") {
 
@@ -1239,17 +1366,17 @@ class Nft extends Component {
 						condDesc ?
 						<Popup
 							trigger={open => (
-								<button style={styles.textValueStat}>{fixedValue}</button>
+								<button style={Object.assign({}, styles.textValueStat, { color: mainTextColor })}>{fixedValue}</button>
 							)}
 							position="top center"
 							on="hover"
 						>
-							<div style={{ padding: 10, fontSize: 16 }}>
+							<div style={{ padding: 10, fontSize: 15 }}>
 								{condDesc}
 							</div>
 						</Popup>
 						:
-						<p style={styles.textValueStat}>{fixedValue}</p>
+						<p style={Object.assign({}, styles.textValueStat, { color: mainTextColor })}>{fixedValue}</p>
 					}
 
 				</div>
@@ -1269,19 +1396,19 @@ class Nft extends Component {
 			max = maxStats[title.toLowerCase()]
 			widthIn = fixedValue * 100 / max
 
-			if (title === "HP") {
+			if (title === "Hp") {
 				bgColorIn = '#58af04'
 			}
-			else if (title === 'DEFENSE') {
+			else if (title === 'Defense') {
 				bgColorIn = '#14c3e8'
 			}
-			else if (title === 'ATTACK') {
+			else if (title === 'Attack') {
 				bgColorIn = '#a10ed8'
 			}
-			else if (title === 'DAMAGE') {
+			else if (title === 'Damage') {
 				bgColorIn = '#f80303'
 			}
-			else if (title === 'SPEED') {
+			else if (title === 'Speed') {
 				bgColorIn = '#f1e711'
 			}
 		}
@@ -1292,12 +1419,12 @@ class Nft extends Component {
 
 				{
 					maxStats && maxStats[title.toLowerCase()] &&
-					<div style={{ position: 'relative', height: 8, width: 100, backgroundColor: '#ffffff10', borderRadius: 4, overflow: 'hidden', marginRight: 9 }}>
+					<div style={{ position: 'relative', height: 8, width: 100, backgroundColor: '#d8d7d7', borderRadius: 4, overflow: 'hidden', marginRight: 9 }}>
 						<div style={{ width: `${widthIn}%`, backgroundColor: bgColorIn }} />
 					</div>
 				}
 
-				<p style={styles.textValueStat}>{fixedValue}{max ? `/${max}` : ''}</p>
+				<p style={Object.assign({}, styles.textValueStat, { color: mainTextColor })}>{fixedValue}{max ? `/${max}` : ''}</p>
 			</div>
 		)
 	}
@@ -1315,6 +1442,7 @@ class Nft extends Component {
 
 	renderBoxStats(width) {
 		const { nft, historyUpgrades, level, equipment } = this.state
+		const { mainTextColor } = this.props
 
 		let rev = false
 		if (parseInt(nft.id) < REVEAL_CAP) {
@@ -1326,8 +1454,8 @@ class Nft extends Component {
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
-				<div style={{ backgroundColor: '#ffffff15', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
-					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, color: 'white' }}>
+				<div style={{ backgroundColor: '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
+					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 20, color: 'black' }} className="text-medium">
 						Stats
 					</p>
 				</div>
@@ -1335,7 +1463,7 @@ class Nft extends Component {
 				<div style={Object.assign({}, styles.boxTraits, { width })}>
 					{
 						!rev ?
-						<p style={{ fontSize: 18, color: 'white', margin: 15 }}>
+						<p style={{ fontSize: 16, color: mainTextColor, margin: 15 }}>
 							The stats will be visible after the reveal
 						</p>
 						: null
@@ -1346,35 +1474,33 @@ class Nft extends Component {
 						<div style={Object.assign({}, styles.boxTraits, { width })}>
 
 							<div style={{ width: '100%', alignItems: 'center', marginBottom: 8 }}>
-								<p style={{ fontSize: 19, color: 'white', marginRight: 10 }}>
-									LEVEL
+								<p style={{ fontSize: 17, color: mainTextColor, marginRight: 10 }}>
+									Level
 								</p>
-								<p style={{ fontSize: 26, color: getColorTextBasedOnLevel(level) }}>
+								<p style={{ fontSize: 22, color: mainTextColor }}>
 									{level}
 								</p>
 							</div>
 
-							{this.renderStat("HP", nft.hp.int)}
-							{this.renderStat("DEFENSE", nft.defense.int)}
+							{this.renderStat("Hp", nft.hp.int)}
+							{this.renderStat("Defense", nft.defense.int)}
 
-							{this.renderStat("ATTACK", nft.attack.int + spellSelected.atkBase)}
-							{this.renderStat("DAMAGE", nft.damage.int + spellSelected.dmgBase)}
-							{this.renderStat("SPEED", nft.speed ? nft.speed.int : 0)}
+							{this.renderStat("Attack", nft.attack.int + spellSelected.atkBase)}
+							{this.renderStat("Damage", nft.damage.int + spellSelected.dmgBase)}
+							{this.renderStat("Speed", nft.speed ? nft.speed.int : 0)}
 
-							{this.renderStat("AP", nft.ap.int)}
+							{this.renderStat("Ap", nft.ap.int)}
 
-							{this.renderStat("DOWNGRADES POINTS", nft.downgrades.int)}
+							{this.renderStat("Downgrade Points", nft.downgrades.int)}
 
-							{this.renderStat("ELEMENT", nft.element.toUpperCase())}
+							{this.renderStat("Element", nft.element.toUpperCase())}
 
-							{this.renderStat("SPELL", spellSelected.name.toUpperCase())}
+							{this.renderStat("Spell", spellSelected.name.toUpperCase())}
 
-							{this.renderStat("SPELL PERK", spellSelected.condition.name ? spellSelected.condition.name.toUpperCase() : '-')}
+							{this.renderStat("Spell Perk", spellSelected.condition.name ? spellSelected.condition.name.toUpperCase() : '-')}
 
-							{this.renderStat("RESISTANCE", nft.resistance.toUpperCase())}
-							{this.renderStat("WEAKNESS", nft.weakness.toUpperCase())}
-
-
+							{this.renderStat("Resistance", nft.resistance.toUpperCase())}
+							{this.renderStat("Weakness", nft.weakness.toUpperCase())}
 
 						</div>
 						: null
@@ -1383,7 +1509,7 @@ class Nft extends Component {
 					{
 						historyUpgrades.length > 0 ?
 						<div style={{ paddingLeft: 10, paddingBottom: 10, flexDirection: 'column' }}>
-							<p style={{ fontSize: 19, color: 'white', marginBottom: 5 }}>
+							<p style={{ fontSize: 17, color: mainTextColor, marginBottom: 5 }}>
 								Upgrades
 							</p>
 
@@ -1423,8 +1549,8 @@ class Nft extends Component {
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
-				<div style={{ backgroundColor: '#ffffff15', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
-					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, color: 'white' }}>
+				<div style={{ backgroundColor: '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
+					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 20, color: 'black' }} className="text-medium">
 						Medals
 					</p>
 				</div>
@@ -1432,7 +1558,7 @@ class Nft extends Component {
 				<div style={Object.assign({}, styles.boxTraits, { width })}>
 					{
 						!nft || !nft.medals || Object.keys(nft.medals).length === 0 ?
-						<p style={{ fontSize: 18, color: 'white', margin: 15 }}>
+						<p style={{ fontSize: 16, color: this.props.mainTextColor, margin: 15 }}>
 							This wizard has not yet won a medal
 						</p>
 						:
@@ -1455,8 +1581,8 @@ class Nft extends Component {
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
-				<div style={{ backgroundColor: '#ffffff15', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
-					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, color: 'white' }}>
+				<div style={{ backgroundColor: '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
+					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 20, color: 'black' }} className="text-medium">
 						Fights
 					</p>
 				</div>
@@ -1464,7 +1590,7 @@ class Nft extends Component {
 				<div style={styles.boxTraits}>
 					{
 						!nft || !nft.fights || (nft && nft.fights.length === 0) ?
-						<p style={{ fontSize: 18, color: 'white', margin: 15 }}>
+						<p style={{ fontSize: 16, color: this.props.mainTextColor, margin: 15 }}>
 							This wizard hasn't participated in any fight yet
 						</p>
 						:
@@ -1491,8 +1617,8 @@ class Nft extends Component {
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
-				<div style={{ backgroundColor: '#ffffff15', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
-					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, color: 'white' }}>
+				<div style={{ backgroundColor: '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
+					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 20, color: 'black' }} className="text-medium">
 						Spellbook
 					</p>
 				</div>
@@ -1500,7 +1626,7 @@ class Nft extends Component {
 				<div style={Object.assign({}, styles.boxTraits, { width, flexDirection: 'column' })}>
 					{
 						!nft || !nft.spellbook || (nft && nft.spellbook.length === 0) || !rev ?
-						<p style={{ fontSize: 18, color: 'white', margin: 15 }}>
+						<p style={{ fontSize: 16, color: this.props.mainTextColor, margin: 15 }}>
 							The Spellbook is empty...
 						</p>
 						:
@@ -1535,8 +1661,8 @@ class Nft extends Component {
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
-				<div style={{ backgroundColor: '#ffffff15', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
-					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, color: 'white' }}>
+				<div style={{ backgroundColor: '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
+					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 20, color: 'black' }} className="text-medium">
 						Properties
 					</p>
 				</div>
@@ -1544,7 +1670,7 @@ class Nft extends Component {
 				<div style={Object.assign({}, styles.boxTraits, { width: width - 20 })}>
 					{
 						!rev ?
-						<p style={{ fontSize: 18, color: 'white', margin: 15 }}>
+						<p style={{ fontSize: 16, color: this.props.mainTextColor, margin: 15 }}>
 							The properties will be visible after the reveal
 						</p>
 						:
@@ -1567,8 +1693,8 @@ class Nft extends Component {
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
-				<div style={{ backgroundColor: '#ffffff15', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
-					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, color: 'white' }}>
+				<div style={{ backgroundColor: '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
+					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 20, color: 'black' }} className="text-medium">
 						Item offers
 					</p>
 				</div>
@@ -1581,7 +1707,7 @@ class Nft extends Component {
 
 					{
 						offers && offers.length === 0 ?
-						<p style={{ fontSize: 18, color: 'white', marginLeft: 15, marginBottom: 15, marginTop: 15 }}>
+						<p style={{ fontSize: 16, color: this.props.mainTextColor, marginLeft: 15, marginBottom: 15, marginTop: 15 }}>
 							{loadingOffers ? "Loading..." : "No offers"}
 						</p>
 						: null
@@ -1599,8 +1725,8 @@ class Nft extends Component {
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
-				<div style={{ backgroundColor: '#ffffff15', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
-					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, color: 'white' }}>
+				<div style={{ backgroundColor: '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
+					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 20, color: 'black' }} className="text-medium">
 						Item sales
 					</p>
 				</div>
@@ -1613,7 +1739,7 @@ class Nft extends Component {
 
 					{
 						nftH && nftH.length === 0 ?
-						<p style={{ fontSize: 18, color: 'white', marginLeft: 15, marginBottom: 15, marginTop: 15 }}>
+						<p style={{ fontSize: 16, color: this.props.mainTextColor, marginLeft: 15, marginBottom: 15, marginTop: 15 }}>
 							{loadingHistory ? "Loading..." : "No sales"}
 						</p>
 						: null
@@ -1628,6 +1754,7 @@ class Nft extends Component {
 
 	renderBoxEquipment(width) {
 		const { equipment } = this.state
+		const { mainTextColor } = this.props
 
 		const infoEquipment = getRingBonuses(equipment)
 		//console.log(infoEquipment);
@@ -1637,23 +1764,23 @@ class Nft extends Component {
 		return (
 			<div style={{ width: width - 20 }}>
 				<div style={styles.subBoxEquipment}>
-					<p style={{ fontSize: 20, color: 'white' }}>
-						EQUIPMENT
+					<p style={{ fontSize: 18, color: mainTextColor }}>
+						Equipment
 					</p>
 
 					<div style={{ alignItems: 'center' }}>
 						<img
 							src={equipment.url}
-							style={{ width: 100 }}
+							style={{ width: 90 }}
 							alt="Equipment"
 						/>
 
 						<div style={{ flexDirection: 'column' }}>
-							<p style={{ fontSize: 19, color: 'white', marginBottom: 5 }}>
+							<p style={{ fontSize: 16, color: mainTextColor, marginBottom: 5 }}>
 								#{equipment.id} {equipment.name}
 							</p>
 
-							<p style={{ fontSize: 18, color: 'white' }}>
+							<p style={{ fontSize: 15, color: mainTextColor }}>
 								{infoEquipment.bonusesText.join(", ")}
 							</p>
 						</div>
@@ -1668,21 +1795,21 @@ class Nft extends Component {
 		const { nft, loading, infoBurn } = this.state
 		const { account } = this.props
 
-		const { boxW, modalW } = getBoxWidth(true)
+		const { boxW, modalW, padding } = getBoxWidth(true)
 
 		let imageWidth = boxW > 500 ? 500 : boxW - 30
 
 		let showOverlayBurn = infoBurn && infoBurn.burned
 
-		let ctaWidth = boxW * 50 / 100
-		if (ctaWidth > 170) ctaWidth = 170
+		let ctaWidth = boxW * 40 / 100
+		if (ctaWidth > 150) ctaWidth = 150
 
 		return (
-			<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 15, overflowY: 'auto', overflowX: 'hidden', alignItems: 'center' }}>
+			<div style={{ flexDirection: 'column', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden', alignItems: 'center' }}>
 
 				{
 					loading &&
-					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
+					<div style={{ width: boxW, justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
 						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
 					</div>
 				}
@@ -1709,18 +1836,26 @@ class Nft extends Component {
 
 					<div style={{ flexDirection: 'column', width: imageWidth, height: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }}>
 
-						<div style={{ width: '100%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 20 }}>
-							{this.renderBoxShare()}
+						<div style={{ width: imageWidth, flexDirection: 'column', alignItems: 'center', marginBottom: 20 }}>
+							{this.renderName(20)}
+
+							{
+								account && account.account !== nft.owner ?
+								this.renderBtnChallenge(200)
+								: null
+							}
+
+							{this.renderBtnsMedalsFights(200)}
 						</div>
 
 						{
-								//nft listato, in renderbtn buy gestiamo tutti i casi, anche account non connesso
+							//nft listato, in renderbtn buy gestiamo tutti i casi, anche account non connesso
 							nft.listed &&
 							<div style={styles.boxRightMobile}>
 
-								{this.renderLeftBoxPriceListed(nft.owner === account.account)}
+								{this.renderLeftBoxPriceListed(nft.owner === account.account, imageWidth)}
 
-								<div style={{ height: 15 }} />
+								<div style={{ height: 10 }} />
 
 								{this.renderBtnBuy(ctaWidth, 15, true)}
 
@@ -1733,7 +1868,7 @@ class Nft extends Component {
 							<div style={styles.boxRightMobile}>
 								{this.renderLeftBoxListing()}
 
-								<div style={{ height: 15 }} />
+								<div style={{ height: 10 }} />
 
 								{this.renderBtnSell(ctaWidth, 15, true)}
 
@@ -1748,11 +1883,11 @@ class Nft extends Component {
 
 								{this.renderLeftMakeOffer()}
 
-								<div style={{ height: 15 }} />
+								<div style={{ height: 10 }} />
 
 								{
 									!showOverlayBurn ?
-									this.renderBtnMakeOffer(ctaWidth, 15, true)
+									this.renderBtnMakeOffer(ctaWidth, 0, true)
 									: null
 								}
 							</div>
@@ -1766,7 +1901,7 @@ class Nft extends Component {
 
 								{this.renderLeftMakeOffer()}
 
-								<div style={{ height: 15 }} />
+								<div style={{ height: 10 }} />
 
 								{this.renderBtnConnect(ctaWidth, 15, true)}
 							</div>
@@ -1781,15 +1916,29 @@ class Nft extends Component {
 
 				{this.renderBoxSpellbook(imageWidth)}
 
-				{this.renderBoxMedals(imageWidth)}
+				{/*{this.renderBoxMedals(imageWidth)}
 
-				{this.renderBoxFights(imageWidth)}
+				{this.renderBoxFights(imageWidth)} */}
 
 				{this.renderBoxProperties(imageWidth)}
 
 				{this.renderBoxOffers(imageWidth, true)}
 
 				{this.renderBoxSales(imageWidth, true)}
+
+				<div
+					className={this.state.showMedals || this.state.showFights ? "bg-slide-on" : "bg-slide-off"}
+					onClick={() => {
+						document.body.style.overflow = "auto"
+						document.body.style.height = "auto"
+						this.setState({ showMedals: false, showFights: false })
+					}}
+					style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#00000090', width: this.state.showMedals || this.state.showFights ? window.innerWidth : 0 }}
+				/>
+
+				{this.renderSlidePanelMedals(boxW, true)}
+
+				{this.renderSlidePanelFights(boxW, true)}
 			</div>
 		)
 	}
@@ -1800,22 +1949,22 @@ class Nft extends Component {
 
 		//console.log(nft);
 
-		const { boxW, modalW } = getBoxWidth(false)
+		const { boxW, modalW, padding } = getBoxWidth(false)
 
-		let insideWidth = boxW > 1200 ? 1200 : boxW
+		let insideWidth = boxW > 1000 ? 1000 : boxW
 
-		const boxWidthRight = insideWidth - 400
-		let ctaWidth = boxWidthRight * 40 / 100
-		if (ctaWidth > 250) ctaWidth = 250
+		const boxWidthRight = insideWidth - 430
+		let ctaWidth = boxWidthRight * 30 / 100
+		//if (ctaWidth > 250) ctaWidth = 250
 
 		let showOverlayBurn = infoBurn && infoBurn.burned
 
 		return (
-			<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 25, overflowY: 'auto', overflowX: 'hidden', alignItems: 'center' }}>
+			<div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: padding/2, overflowY: 'auto', overflowX: 'hidden', alignItems: 'center' }}>
 
 				{
 					loading &&
-					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginBottom: 50 }}>
 						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
 					</div>
 				}
@@ -1824,7 +1973,7 @@ class Nft extends Component {
 
 						<div style={{ position: 'relative', marginRight: 30 }}>
 							<img
-								style={{ width: 370, height: 370, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+								style={{ width: 400, height: 400, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid' }}
 								src={getImageUrl(nft.id)}
 								alt={nft.id}
 							/>
@@ -1832,7 +1981,7 @@ class Nft extends Component {
 							{
 								showOverlayBurn ?
 								<img
-									style={{ width: 370, height: 370, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', position: 'absolute', top: 0, left: 0 }}
+									style={{ width: 370, height: 370, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', position: 'absolute', top: 0, left: 0 }}
 									src={burn_overlay}
 									alt={nft.id}
 								/>
@@ -1840,22 +1989,30 @@ class Nft extends Component {
 							}
 						</div>
 
-						<div style={{ flexDirection: 'column', width: '100%', height: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
+						<div style={{ flexDirection: 'column', width: '100%', height: '100%', justifyContent: 'space-between' }}>
 
-							<div style={{ width: '100%', flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
+							<div style={{ width: boxWidthRight, flexDirection: 'column', alignItems: 'center' }}>
+								{this.renderName(20)}
 
-								{this.renderBoxShare()}
+								<div style={{ width: boxWidthRight, alignItems: 'center', flexDirection: 'column' }}>
+									{
+										account && account.account !== nft.owner && !nft.listed ?
+										this.renderBtnChallenge(ctaWidth*2)
+										: null
+									}
+
+									{this.renderBtnsMedalsFights(ctaWidth*2)}
+								</div>
 							</div>
-
 
 							{
 								//nft listato, in renderbtn buy gestiamo tutti i casi, anche account non connesso
 								nft.listed &&
 								<div style={Object.assign({}, styles.boxRightLarge, { width: boxWidthRight })}>
 
-									{this.renderLeftBoxPriceListed(nft.owner === account.account)}
+									{this.renderLeftBoxPriceListed(nft.owner === account.account, boxWidthRight)}
 
-									{this.renderBtnBuy(ctaWidth, 15)}
+									{this.renderBtnBuy(ctaWidth, 0)}
 
 								</div>
 							}
@@ -1864,9 +2021,10 @@ class Nft extends Component {
 								// nft non listato ma tu sei owner: SELL
 								!nft.listed && account && account.account && nft.owner === account.account ?
 								<div style={Object.assign({}, styles.boxRightLarge, { width: boxWidthRight })}>
-									{this.renderLeftBoxListing()}
 
-									{this.renderBtnSell(ctaWidth, 15)}
+									{this.renderLeftBoxListing(boxWidthRight)}
+
+									{this.renderBtnSell(ctaWidth, 0)}
 
 								</div>
 								: null
@@ -1882,7 +2040,7 @@ class Nft extends Component {
 
 									{
 										!showOverlayBurn ?
-										this.renderBtnMakeOffer(ctaWidth, 15)
+										this.renderBtnMakeOffer(ctaWidth)
 										: null
 									}
 								</div>
@@ -1896,7 +2054,7 @@ class Nft extends Component {
 
 									{this.renderLeftMakeOffer()}
 
-									{this.renderBtnConnect(ctaWidth, 15)}
+									{this.renderBtnConnect(ctaWidth, 0)}
 								</div>
 								: null
 							}
@@ -1908,20 +2066,35 @@ class Nft extends Component {
 				<div style={{ width: insideWidth, justifyContent: 'space-between' }}>
 					{this.renderBoxStats((insideWidth/2) - 10)}
 
-					{this.renderBoxMedals((insideWidth/2) - 10)}
-				</div>
-
-				<div style={{ width: insideWidth, justifyContent: 'space-between' }}>
 					{this.renderBoxSpellbook(insideWidth/2 - 10)}
 
-					{this.renderBoxFights(insideWidth/2 - 10)}
 				</div>
+
+				{/*<div style={{ width: insideWidth, justifyContent: 'space-between' }}>
+					{this.renderBoxMedals((insideWidth/2) - 10)}
+
+					{this.renderBoxFights(insideWidth/2 - 10)}
+				</div>*/}
 
 				{this.renderBoxProperties(insideWidth)}
 
 				{this.renderBoxOffers(insideWidth, false)}
 
 				{this.renderBoxSales(insideWidth, false)}
+
+				<div
+					className={this.state.showMedals || this.state.showFights ? "bg-slide-on" : "bg-slide-off"}
+					onClick={() => {
+						document.body.style.overflow = "auto"
+						document.body.style.height = "auto"
+						this.setState({ showMedals: false, showFights: false })
+					}}
+					style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#00000090', width: this.state.showMedals || this.state.showFights ? window.innerWidth : 0 }}
+				/>
+
+				{this.renderSlidePanelMedals(boxW, false)}
+
+				{this.renderSlidePanelFights(boxW, false)}
 
 			</div>
 		)
@@ -1978,12 +2151,12 @@ class Nft extends Component {
 				/>
 
 				<Media
-					query="(max-width: 1199px)"
+					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 1200px)"
+					query="(min-width: 1000px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -2039,22 +2212,22 @@ class Nft extends Component {
 
 const styles = {
 	container: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: 'white'
 	},
 	boxShare: {
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'center',
 		borderWidth: 2,
-		borderColor: CTA_COLOR,
+		borderColor: '#1d1d1f',
 		borderStyle: 'solid',
-		borderRadius: 2
+		borderRadius: 4
 	},
 	btnReload: {
 		width: 45,
@@ -2073,55 +2246,52 @@ const styles = {
 	subBoxEquipment: {
 		width: 'fit-content',
 		flexDirection: 'column',
-		borderRadius: 2,
+		borderRadius: 4,
 		paddingTop: 10,
 		paddingLeft: 10,
 		paddingRight: 10,
-		backgroundColor: '#ffffff15',
+		backgroundColor: '#f4f4f4',
 		marginBottom: 10
 	},
 	boxRightLarge: {
 		width: '100%',
-		flexDirection: 'row',
+		flexDirection: 'column',
 		justifyContent: 'space-between',
-		borderRadius: 2,
-		paddingTop: 16,
-		paddingBottom: 16,
-		backgroundColor: '#ffffff15'
+		alignItems: 'center'
 	},
 	boxRightMobile: {
 		width: '100%',
 		flexDirection: 'column',
 		justifyContent: 'space-between',
-		borderRadius: 2,
+		borderRadius: 4,
 		paddingTop: 16,
 		paddingBottom: 16,
-		backgroundColor: '#ffffff15'
+		backgroundColor: '#f4f4f4'
 	},
 	boxPrice: {
-		borderRadius: 2,
+		borderRadius: 4,
 		paddingTop: 16,
 		paddingBottom: 16,
-		backgroundColor: '#ffffff15'
+		backgroundColor: '#f4f4f4'
 	},
 	btnBuy: {
-		height: 50,
+		height: 40,
 		backgroundColor: CTA_COLOR,
 		justifyContent: 'center',
 		alignItems: 'center',
-		borderRadius: 2,
+		borderRadius: 4,
 		flexDirection: 'row',
 		display: 'flex'
 	},
 	btnBuyText: {
-		fontSize: 19,
+		fontSize: 16,
 		color: 'white',
 	},
 	boxSection: {
 		flexDirection: 'column',
-		borderRadius: 2,
+		borderRadius: 4,
 		borderWidth: 1,
-		borderColor: '#ffffff15',
+		borderColor: '#f4f4f4',
 		borderStyle: 'solid',
 		marginBottom: 15
 	},
@@ -2132,12 +2302,12 @@ const styles = {
 	},
 	boxSingleTrait: {
 		flexDirection: 'column',
-		borderRadius: 2,
+		borderRadius: 4,
 		margin: 7,
 		padding: 7,
 		alignItems: 'center',
 		justifyContent: 'center',
-		backgroundColor: '#ffffff15',
+		backgroundColor: '#f4f4f4',
 	},
 	boxHistory: {
 		flexDirection: 'column',
@@ -2146,14 +2316,14 @@ const styles = {
 		paddingBottom: 5,
 	},
 	inputPrice: {
-		width: 130,
-		height: 40,
+		width: 140,
+		height: 36,
 		color: 'black',
-		borderRadius: 2,
-		borderColor: '#b9b7b7',
+		borderRadius: 4,
+		borderColor: '#d7d7d7',
 		borderStyle: 'solid',
-		borderWidth: 2,
-		fontSize: 19,
+		borderWidth: 1,
+		fontSize: 16,
 		paddingLeft: 10,
 		WebkitAppearance: 'none',
 		MozAppearance: 'none',
@@ -2161,34 +2331,62 @@ const styles = {
 		outline: 'none'
 	},
 	textTitleStat: {
-		color: '#8d8b8b',
-		fontSize: 16,
+		color: '#707070',
+		fontSize: 15,
 		marginRight: 9,
 	},
 	textValueStat: {
-		color: 'white',
-		fontSize: 18,
+		fontSize: 17,
 		marginRight: 24
 	},
 	btnTransfer: {
-		height: 35,
+		height: 34,
 		maxWidth: 154,
 		justifyContent: 'center',
 		alignItems: 'center',
-		borderWidth: 2,
-		borderColor: CTA_COLOR,
-		borderRadius: 2,
+		borderWidth: 1,
+		borderColor: '#707070',
+		borderRadius: 4,
 		borderStyle: 'solid',
 		marginTop: 5,
 		paddingLeft: 11,
 		paddingRight: 11
-	}
+	},
+	btnMedals: {
+		height: 40,
+		justifyContent: 'center',
+		alignItems: 'center',
+		display: 'flex',
+		flexDirection: 'row',
+		borderRadius: 4,
+		borderWidth: 1,
+		borderColor: '#707070',
+		borderStyle: 'solid',
+		cursor: 'pointer'
+	},
+	panelShadow: {
+		justifyContent: 'flex-end',
+		position: 'absolute',
+	},
+	panel: {
+		backgroundColor: 'white',
+		flexDirection: 'column',
+		overflow: 'auto',
+	},
+	headerPanel: {
+		height: 90,
+		width: '100%',
+		paddingTop: 10,
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		marginBottom: 30
+	},
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, nftSelected, userMintedNfts, subscribed, subscribedWiza } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, nftSelected, userMintedNfts, subscribed, subscribedWiza, mainTextColor } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, nftSelected, userMintedNfts, subscribed, subscribedWiza };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, nftSelected, userMintedNfts, subscribed, subscribedWiza, mainTextColor };
 }
 
 export default connect(mapStateToProps, {

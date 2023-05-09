@@ -11,7 +11,7 @@ const logoKda = require('../../assets/kdalogo2.png')
 
 class NftCard extends Component {
 	render() {
-		const { item, history, width } = this.props
+		const { item, history, width, mainTextColor } = this.props
 
 		return (
 			<a
@@ -24,7 +24,7 @@ class NftCard extends Component {
 				}}
 			>
 				<img
-					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
+					style={{ width, height: width, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
 					src={getImageUrl(item.id)}
 					alt={`#${item.id}`}
 				/>
@@ -35,11 +35,11 @@ class NftCard extends Component {
 
 						{
 							item.nickname ?
-							<p style={{ color: 'white', fontSize: 15, marginLeft: 10, lineHeight: 1 }}>
+							<p style={{ color: mainTextColor, fontSize: 13, marginLeft: 10 }} className="text-medium">
 								{item.name} {item.nickname}
 							</p>
 							:
-							<p style={{ color: 'white', fontSize: 18, marginLeft: 10, lineHeight: 1 }}>
+							<p style={{ color: mainTextColor, fontSize: 14, marginLeft: 10 }} className="text-medium">
 								{item.name}
 							</p>
 						}
@@ -49,11 +49,11 @@ class NftCard extends Component {
 						{
 							item.level &&
 							<div style={{ alignItems: 'center', marginLeft: 10 }}>
-								<p style={{ color: "#c2c0c0", fontSize: 14, marginRight: 10 }}>
-									LEVEL
+								<p style={{ color: mainTextColor, fontSize: 13, marginRight: 10 }}>
+									Level
 								</p>
 
-								<p style={{ color: getColorTextBasedOnLevel(item.level), fontSize: 17 }}>
+								<p style={{ color: mainTextColor, fontSize: 15 }} className="text-medium">
 									{item.level}
 								</p>
 							</div>
@@ -65,12 +65,12 @@ class NftCard extends Component {
 								<div style={{ alignItems: 'center' }}>
 
 									<img
-										style={{ width: 19, marginRight: 6, objectFit: 'contain', marginBottom: 6 }}
+										style={{ width: 14, marginRight: 6, objectFit: 'contain' }}
 										src={logoKda}
 										alt='Kadena logo'
 									/>
 
-									<p style={{ color: 'white', fontSize: 20, marginBottom: 2, lineHeight: 1 }}>
+									<p style={{ color: mainTextColor, fontSize: 17 }} className="text-bold">
 										{item.price}
 									</p>
 								</div>
@@ -85,6 +85,12 @@ class NftCard extends Component {
 	}
 }
 
-export default connect(null, {
+const mapStateToProps = (state) => {
+	const { mainTextColor } = state.mainReducer
+
+	return { mainTextColor }
+}
+
+export default connect(mapStateToProps, {
 	selectWizard
 })(NftCard)

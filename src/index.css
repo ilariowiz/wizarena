@@ -4,20 +4,44 @@
   src: local('PerfectDOS'), url(./fonts/PerfectDOS.ttf) format('truetype');
 }
 
+@font-face {
+  font-family: "FigtreeRegular";
+  font-weight: 400;
+  src: local('Figtree-Regular'), url(./fonts/Figtree-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: "FigtreeLight";
+  font-weight: 300;
+  src: local('Figtree-Light'), url(./fonts/Figtree-Light.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: "FigtreeMedium";
+  font-weight: 500;
+  src: local('Figtree-Medium'), url(./fonts/Figtree-Medium.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: "FigtreeBold";
+  font-weight: 700;
+  src: local('Figtree-Bold'), url(./fonts/Figtree-Bold.ttf) format('truetype');
+}
+
 
 body {
-  font-family: "PerfectDOS", -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: "FigtreeMedium", "PerfectDOS", -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   /*-webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale; */
+  -moz-osx-font-smoothing: grayscale;*/
   margin: 0;
-  background-color: #222034;
+  background-color: white;
 }
 
 button {
   outline: 0 /* ///per levare il bordo blu dal bottone */;
-  font-family: "PerfectDOS", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+  font-family: "FigtreeRegular", "PerfectDOS", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   padding: 0;
@@ -28,7 +52,7 @@ button {
 }
 
 input {
-  font-family: "PerfectDOS", -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: "FigtreeRegular", "PerfectDOS", -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
 }
@@ -45,6 +69,19 @@ p {
 
 a {
     text-decoration: none;
+    outline: none;
+}
+
+.text-regular {
+    font-family: FigtreeRegular;
+}
+
+.text-medium {
+    font-family: FigtreeMedium;
+}
+
+.text-bold {
+    font-family: FigtreeBold
 }
 
 #walletconnect-wrapper div {
@@ -58,6 +95,7 @@ a {
 .walletconnect-modal__mobile__toggle {
     display: flex !important;
 }
+
 
 /* Works on Firefox */
 * {

@@ -95,7 +95,7 @@ class ModalBuyWIZA extends Component {
 
 
 	render() {
-		const { showModal, onCloseModal, width, account } = this.props;
+		const { showModal, onCloseModal, width, account, mainTextColor } = this.props;
         const { loading, estimatedWiza, wizaValue, amount } = this.state
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
@@ -106,7 +106,7 @@ class ModalBuyWIZA extends Component {
 			<div className={classContainer}>
 				<div style={Object.assign({}, styles.subcontainer, { width })}>
 
-					<p style={{ color: 'white', fontSize: 22, textAlign: 'center', marginBottom: 10 }}>
+					<p style={{ color: mainTextColor, fontSize: 18, textAlign: 'center', marginBottom: 10 }}>
 						Swap
 					</p>
 
@@ -115,11 +115,11 @@ class ModalBuyWIZA extends Component {
                         <div style={styles.box}>
 
                             <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
-                                <p style={{ fontSize: 14, color: 'white' }}>
+                                <p style={{ fontSize: 14, color: mainTextColor }}>
                                     from KDA
                                 </p>
 
-                                <p style={{ fontSize: 14, color: '#c2c0c0' }}>
+                                <p style={{ fontSize: 14, color: mainTextColor }} className="text-bold">
                                     balance: {_.floor(account.balance, 4)}
                                 </p>
                             </div>
@@ -127,7 +127,7 @@ class ModalBuyWIZA extends Component {
                             <input
                                 style={styles.input}
                                 type='text'
-                                placeholder='enter amount'
+                                placeholder='Enter amount'
                                 value={this.state.amount}
                                 onChange={(e) => this.changeValue(e.target.value)}
                             />
@@ -137,37 +137,33 @@ class ModalBuyWIZA extends Component {
                         <div style={styles.box}>
 
                             <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
-                                <p style={{ fontSize: 14, color: 'white' }}>
+                                <p style={{ fontSize: 14, color: mainTextColor }}>
                                     to (estimated) WIZA
                                 </p>
-
-
                             </div>
 
-                            <div
-                                style={Object.assign({}, styles.input, { alignItems: 'center' })}
-                            >
+                            <div style={Object.assign({}, styles.input, { alignItems: 'center' })}>
                                 {estimatedWiza}
                             </div>
 
                         </div>
 
                         <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
-                            <p style={{ fontSize: 15, color: 'white' }}>
+                            <p style={{ fontSize: 14, color: mainTextColor }}>
                                 Price
                             </p>
 
-                            <p style={{ fontSize: 15, color: 'white' }}>
+                            <p style={{ fontSize: 14, color: mainTextColor }}>
                                 {wizaValue} KDA per WIZA
                             </p>
                         </div>
 
                         <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 20 }}>
-                            <p style={{ fontSize: 15, color: 'white' }}>
+                            <p style={{ fontSize: 14, color: mainTextColor }}>
                                 Max Splippage
                             </p>
 
-                            <p style={{ fontSize: 15, color: 'white' }}>
+                            <p style={{ fontSize: 14, color: mainTextColor }}>
                                 0.05%
                             </p>
                         </div>
@@ -178,8 +174,8 @@ class ModalBuyWIZA extends Component {
                             style={styles.btnConnect}
                             onClick={() => this.props.onSwap(amount, estimatedWiza)}
                         >
-                            <p style={{ color: 'white', fontSize: 19 }}>
-                                {loading ? "Loading..." : "SWAP"}
+                            <p style={{ color: 'white', fontSize: 15 }} className="text-medium">
+                                {loading ? "Loading..." : "Swap"}
                             </p>
                         </button>
 
@@ -190,7 +186,7 @@ class ModalBuyWIZA extends Component {
 						onClick={onCloseModal}
 					>
 						<IoClose
-							color='white'
+							color={mainTextColor}
 							size={25}
 						/>
 					</button>
@@ -205,11 +201,11 @@ class ModalBuyWIZA extends Component {
 const styles = {
 	subcontainer: {
 		height: 400,
-		backgroundColor: BACKGROUND_COLOR,
-		borderRadius: 2,
-		borderColor: TEXT_SECONDARY_COLOR,
+		backgroundColor: "white",
+		borderRadius: 4,
+		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
-		borderWidth: 2,
+		borderWidth: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 		flexDirection: 'column',
@@ -228,11 +224,12 @@ const styles = {
 		width: '100%',
 		height: 40,
 		borderWidth: 1,
-		borderColor: 'lightgrey',
+		borderColor: '#d7d7d7',
 		borderStyle: 'solid',
-		borderRadius: 2,
-		fontSize: 15,
-		color: 'white',
+		borderRadius: 4,
+		fontSize: 16,
+		color: 'black',
+        fontFamily: 'FigtreeMedium',
 		paddingLeft: 8,
 		paddingRight: 8,
 		WebkitAppearance: 'none',
@@ -246,11 +243,11 @@ const styles = {
 		width: 200,
 		height: 40,
 		backgroundColor: CTA_COLOR,
-		borderRadius: 2,
+		borderRadius: 4,
 	},
     box: {
         flexDirection: 'column',
-        backgroundColor: '#1b1930',
+        borderColor: '#d7d7d7',
         paddingTop: 12,
         paddingBottom: 12,
         paddingLeft: 24,
@@ -259,14 +256,16 @@ const styles = {
         alignItems: 'center',
         marginBottom: 20,
         width: '100%',
-        borderRadius: 2
+        borderRadius: 4,
+        borderWidth: 1,
+        borderStyle: 'solid'
     }
 }
 
 const mapStateToProps = (state) => {
-    const { account, chainId, gasPrice, gasLimit, networkUrl, netId } = state.mainReducer
+    const { account, chainId, gasPrice, gasLimit, networkUrl, netId, mainTextColor } = state.mainReducer
 
-    return { account, chainId, gasPrice, gasLimit, networkUrl, netId }
+    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, mainTextColor }
 }
 
 export default connect(mapStateToProps, {

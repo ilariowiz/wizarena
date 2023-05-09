@@ -78,20 +78,20 @@ class Sales extends Component {
 
     renderBody(isMobile) {
         const { loading, error } = this.state
-        const { salesEquipment } = this.props
+        const { salesEquipment, mainTextColor } = this.props
 
-        const { boxW, modalW } = getBoxWidth(isMobile)
+        const { boxW, modalW, padding } = getBoxWidth(isMobile)
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
-                <p style={{ fontSize: 28, color: 'white', marginBottom: 30 }}>
-                    Last sales
+            <div style={{ flexDirection: 'column', textAlign: 'center', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden' }}>
+                <p style={{ color: mainTextColor, fontSize: 24, marginBottom: 20 }} className="text-medium">
+                    Sales
                 </p>
 
                 {
 					loading ?
 					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', paddingTop: 30 }}>
-						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+						<DotLoader size={25} color={mainTextColor} />
 					</div>
 					: null
 				}
@@ -104,7 +104,7 @@ class Sales extends Component {
 
                 {
                     error &&
-                    <p style={{ fontSize: 17, color: 'white' }}>
+                    <p style={{ fontSize: 15, color: 'red' }}>
                         {error}
                     </p>
                 }
@@ -132,12 +132,12 @@ class Sales extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 1199px)"
+					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 1200px)"
+					query="(min-width: 1000px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -157,20 +157,21 @@ class Sales extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: "white"
 	},
 }
 
 const mapStateToProps = (state) => {
+    const { mainTextColor } = state.mainReducer
     const { salesEquipment, lastTimeUpdateSalesEquipment } = state.salesReducer
 
-    return { salesEquipment, lastTimeUpdateSalesEquipment }
+    return { salesEquipment, lastTimeUpdateSalesEquipment, mainTextColor }
 }
 
 export default connect(mapStateToProps, {

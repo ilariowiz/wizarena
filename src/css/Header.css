@@ -113,6 +113,7 @@
 	transition-delay: 0s;
     opacity: 1;
 	width: 100%;
+	z-index: 995;
 }
 
 .btn-show-shadow {

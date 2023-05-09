@@ -8,8 +8,6 @@ import { IoMenu } from 'react-icons/io5'
 import { IoClose } from 'react-icons/io5'
 import { SiDiscord } from 'react-icons/si'
 import { SiTwitter } from 'react-icons/si'
-import { AiOutlineEye } from 'react-icons/ai'
-import { AiOutlineEyeInvisible } from 'react-icons/ai'
 import ModalBuyWIZA from './common/ModalBuyWIZA'
 import ModalTransaction from './common/ModalTransaction'
 import getBoxWidth from './common/GetBoxW'
@@ -29,23 +27,23 @@ import {
 	clearTransactionByPactCode,
 	getWizardsStakeInfo,
 	loadAllNftsIds,
-	setTimeToHalvening
+	setTimeToHalvening,
+	setVisualColors
 } from '../actions'
-import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, MAIN_NET_ID } from '../actions/types'
+import { TEXT_SECONDARY_COLOR, MAIN_NET_ID } from '../actions/types'
 import 'reactjs-popup/dist/index.css';
 
 require('moment-countdown');
 
 const logo_img = require('../assets/wzlogo_bg_transparent.png')
 
-const market_icon = require('../assets/menu/marketplace.png')
-const equipment_icon = require('../assets/menu/equipment.png')
-const flash_icon = require('../assets/menu/flash_tournament.png')
-const profile_icon = require('../assets/menu/profile.png')
-const shop_icon = require('../assets/menu/shop.png')
-const pvp_icon = require('../assets/menu/pvp.png')
-const tournaments_icon = require('../assets/menu/tournaments.png')
-const challenges_icon = require('../assets/menu/wand.png')
+const market_icon = require('../assets/menu/black/marketplace.png')
+const flash_icon = require('../assets/menu/black/flash_tournament.png')
+const profile_icon = require('../assets/menu/black/profile.png')
+const shop_icon = require('../assets/menu/black/shop.png')
+const pvp_icon = require('../assets/menu/black/pvp.png')
+const tournaments_icon = require('../assets/menu/black/tournaments.png')
+const challenges_icon = require('../assets/menu/black/wand.png')
 
 class Header extends Component {
 	constructor(props) {
@@ -53,15 +51,17 @@ class Header extends Component {
 
 		this.state = {
 			showPanel: false,
-			showModalBuy: false
+			showModalBuy: false,
+			showPopupMenu: false
 		}
 	}
 
 	componentDidMount() {
-		const { circulatingSupply } = this.props
+		const { circulatingSupply, isDarkmode } = this.props
 
 		this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
+		this.props.setVisualColors(isDarkmode)
 
 		if (!circulatingSupply) {
 			setTimeout(() => {
@@ -180,7 +180,7 @@ class Header extends Component {
 
 	renderSlidePanel(boxW) {
 		const { showPanel } = this.state
-		const { isMobile, circulatingSupply, wizaNotClaimed, totalMined, account, netId, isXWallet, isQRWalletConnect, timeToHalvening } = this.props
+		const { isMobile, circulatingSupply, wizaNotClaimed, totalMined, account, netId, isXWallet, isQRWalletConnect, timeToHalvening, mainTextColor } = this.props
 
 		const panelWidth = isMobile ? "100%" : boxW * 60 / 100
 
@@ -194,7 +194,7 @@ class Header extends Component {
 
 					<div style={styles.headerPanel}>
 
-						<p style={{ fontSize: 28, color: 'white', marginLeft: 30 }}>
+						<p style={{ fontSize: 24, color: mainTextColor, marginLeft: 30 }} className="text-bold">
 							Wizards Arena
 						</p>
 
@@ -204,7 +204,7 @@ class Header extends Component {
 								style={{ marginRight: 20 }}
 							>
 								<SiDiscord
-									color="white"
+									color={mainTextColor}
 									size={28}
 								/>
 							</button>
@@ -214,7 +214,7 @@ class Header extends Component {
 								style={{ marginRight: 18 }}
 							>
 								<SiTwitter
-									color="white"
+									color={mainTextColor}
 									size={28}
 								/>
 							</button>
@@ -228,7 +228,7 @@ class Header extends Component {
 								style={{ marginRight: 30 }}
 							>
 								<IoClose
-									color="white"
+									color={mainTextColor}
 									size={34}
 								/>
 							</button>
@@ -238,7 +238,7 @@ class Header extends Component {
 
 					<div style={{ flexDirection: 'column', paddingLeft: 50, paddingRight: 30 }}>
 
-						<p style={{ fontSize: 26, color: 'white', marginBottom: 20 }}>
+						<p style={{ fontSize: 22, color: mainTextColor, marginBottom: 20 }}>
 							What is Wizards Arena?
 						</p>
 
@@ -248,17 +248,17 @@ class Header extends Component {
 							rel="noopener noreferrer"
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
-							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
+							<p style={{ fontSize: 16, color: TEXT_SECONDARY_COLOR }} className="text-medium">
 								Player's Handbook
 							</p>
 						</a>
 
-						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 30 }}>
+						<p style={{ fontSize: 14, color: "#707070", marginBottom: 30 }}>
 							All you need to know about the game
 						</p>
 
 
-						<p style={{ fontSize: 26, color: 'white', marginBottom: 20 }}>
+						<p style={{ fontSize: 22, color: mainTextColor, marginBottom: 20 }}>
 							About $WIZA
 						</p>
 
@@ -268,21 +268,21 @@ class Header extends Component {
 							rel="noopener noreferrer"
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
-							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
+							<p style={{ fontSize: 16, color: TEXT_SECONDARY_COLOR }} className="text-medium">
 								What is $WIZA?
 							</p>
 						</a>
 
-						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 20 }}>
+						<p style={{ fontSize: 14, color: "#707070", marginBottom: 20 }}>
 							All you need to know about WIZA
 						</p>
 
 						<button
 							className="btnH"
-							style={Object.assign({}, styles.btnLogout, { borderColor: TEXT_SECONDARY_COLOR, marginBottom: 20, width: 180, height: 40 })}
+							style={Object.assign({}, styles.btnLogout, { borderColor: '#1d1d1f', marginBottom: 20, width: 180, height: 36 })}
 							onClick={() => this.setState({ showModalBuy: true })}
 						>
-							<p style={{ fontSize: 16, color: 'white' }}>
+							<p style={{ fontSize: 14, color: mainTextColor }} className="text-medium">
 								BUY WIZA
 							</p>
 						</button>
@@ -293,12 +293,12 @@ class Header extends Component {
 							rel="noopener noreferrer"
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
-							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
+							<p style={{ fontSize: 16, color: TEXT_SECONDARY_COLOR }} className="text-medium">
 								Earn $WIZA
 							</p>
 						</a>
 
-						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 30 }}>
+						<p style={{ fontSize: 14, color: "#707070", marginBottom: 30 }}>
 							Read ways to earn WIZA
 						</p>
 
@@ -308,12 +308,12 @@ class Header extends Component {
 							rel="noopener noreferrer"
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
-							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
+							<p style={{ fontSize: 16, color: TEXT_SECONDARY_COLOR }} className="text-medium">
 								Buy/Sell WIZA
 							</p>
 						</a>
 
-						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 30 }}>
+						<p style={{ fontSize: 14, color: "#707070", marginBottom: 30 }}>
 							KDA/WIZA liquidity pool
 						</p>
 
@@ -323,63 +323,63 @@ class Header extends Component {
 							rel="noopener noreferrer"
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
-							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
+							<p style={{ fontSize: 16, color: TEXT_SECONDARY_COLOR }} className="text-medium">
 								Spend $WIZA
 							</p>
 						</a>
 
-						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 30 }}>
+						<p style={{ fontSize: 14, color: "#707070", marginBottom: 30 }}>
 							Read ways to spend WIZA
 						</p>
 
 						<div style={{ alignItems: 'center', marginBottom: 10 }}>
-							<p style={{ fontSize: 18, color: 'white', marginRight: 20 }}>
+							<p style={{ fontSize: 15, color: mainTextColor, marginRight: 15 }}>
 								$WIZA mined
 							</p>
 
-							<p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
+							<p style={{ fontSize: 15, color: mainTextColor, marginRight: 10 }} className="text-medium">
 								{totalMined ? totalMined.toLocaleString() : '...'}
 							</p>
-							<p style={{ fontSize: 18, color: 'white' }}>
+							<p style={{ fontSize: 13, color: '#707070' }}>
 								({this.getPct(totalMined)})
 							</p>
 						</div>
 
 						<div style={{ alignItems: 'center', marginBottom: 10 }}>
-							<p style={{ fontSize: 18, color: 'white', marginRight: 20 }}>
+							<p style={{ fontSize: 15, color: mainTextColor, marginRight: 15 }}>
 								$WIZA circulating
 							</p>
 
-							<p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
+							<p style={{ fontSize: 15, color: mainTextColor, marginRight: 10 }} className="text-medium">
 								{circulatingSupply ? circulatingSupply.toLocaleString() : '...'}
 							</p>
 
-							<p style={{ fontSize: 18, color: 'white' }}>
+							<p style={{ fontSize: 13, color: '#707070' }}>
 								({this.getPct(circulatingSupply)})
 							</p>
 						</div>
 
 						<div style={{ alignItems: 'center', marginBottom: 25 }}>
-							<p style={{ fontSize: 18, color: 'white', marginRight: 20 }}>
+							<p style={{ fontSize: 15, color: mainTextColor, marginRight: 15 }}>
 								$WIZA not claimed
 							</p>
 
-							<p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
+							<p style={{ fontSize: 15, color: mainTextColor, marginRight: 10 }} className="text-medium">
 								{wizaNotClaimed ? wizaNotClaimed.toLocaleString() : '...'}
 							</p>
 
-							<p style={{ fontSize: 18, color: 'white' }}>
+							<p style={{ fontSize: 13, color: '#707070' }}>
 								({this.getPct(wizaNotClaimed)})
 							</p>
 						</div>
 
 						<div style={{ alignItems: 'center', marginBottom: 30 }}>
-							<p style={{ fontSize: 16, color: 'white', marginRight: 20, lineHeight: 1.5 }}>
+							<p style={{ fontSize: 14, color: mainTextColor, marginRight: 15, lineHeight: 1.5 }} className="text-medium">
 								{timeToHalvening || "Loading how long for halvening..."}
 							</p>
 						</div>
 
-						<p style={{ fontSize: 26, color: 'white', marginBottom: 20 }}>
+						<p style={{ fontSize: 22, color: mainTextColor, marginBottom: 20 }}>
 							Tools
 						</p>
 
@@ -389,12 +389,12 @@ class Header extends Component {
 							rel="noopener noreferrer"
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
-							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
+							<p style={{ fontSize: 16, color: TEXT_SECONDARY_COLOR }} className="text-medium">
 								KadeRare Wizards
 							</p>
 						</a>
 
-						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 15 }}>
+						<p style={{ fontSize: 14, color: "#707070", marginBottom: 15 }}>
 							Check your Wizard rarity
 						</p>
 
@@ -404,12 +404,12 @@ class Header extends Component {
 							rel="noopener noreferrer"
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
-							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
+							<p style={{ fontSize: 16, color: TEXT_SECONDARY_COLOR }} className="text-medium">
 								KadeRare Clerics
 							</p>
 						</a>
 
-						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 15 }}>
+						<p style={{ fontSize: 14, color: "#707070", marginBottom: 15 }}>
 							Check your Cleric rarity
 						</p>
 
@@ -419,37 +419,37 @@ class Header extends Component {
 							rel="noopener noreferrer"
 							style={{ marginBottom: 5, width: 'fit-content' }}
 						>
-							<p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR }}>
+							<p style={{ fontSize: 16, color: TEXT_SECONDARY_COLOR }} className="text-medium">
 								KadeRare Druids
 							</p>
 						</a>
 
-						<p style={{ fontSize: 16, color: "#c2c0c0", marginBottom: 20 }}>
+						<p style={{ fontSize: 14, color: "#707070", marginBottom: 20 }}>
 							Check your Druid rarity
 						</p>
 
 						{
 							account.account &&
 							<div style={{ flexDirection: 'column', marginTop: 30 }}>
-								<p style={{ fontSize: 21, color: 'white', marginBottom: 10 }}>
+								<p style={{ fontSize: 16, color: mainTextColor, marginBottom: 5 }}>
 									Wallet address
 								</p>
 
-								<p style={{ fontSize: 15, color: 'white', overflowWrap: 'anywhere', marginBottom: 10 }}>
+								<p style={{ fontSize: 15, color: mainTextColor, overflowWrap: 'anywhere', marginBottom: 10 }}>
 									{account.account}
 								</p>
 
 								{
 									isXWallet &&
-									<p style={{ fontSize: 16, color: 'white', marginBottom: 10 }}>
-										<i>Connected to eckoWallet</i>
+									<p style={{ fontSize: 15, color: '#707070', marginBottom: 10 }}>
+										Connected to eckoWallet
 									</p>
 								}
 
 								{
 									isQRWalletConnect &&
-									<p style={{ fontSize: 16, color: 'white', marginBottom: 10 }}>
-										<i>Connected to Wallet Connect</i>
+									<p style={{ fontSize: 15, color: '#707070', marginBottom: 10 }}>
+										Connected to Wallet Connect
 									</p>
 								}
 
@@ -462,7 +462,7 @@ class Header extends Component {
 			                            this.props.history.replace('/collection')
 			                        }}
 			                    >
-			                        <p style={{ fontSize: 18, color: 'red' }}>
+			                        <p style={{ fontSize: 16, color: 'red' }} className="text-medium">
 			                            Logout
 			                        </p>
 			                    </button>
@@ -476,108 +476,166 @@ class Header extends Component {
 		)
 	}
 
-	renderBtnMenu(goto, icon, title, id) {
-		const { section } = this.props
+	renderSlidePanelPlay(isMobile) {
+		const { showPopupMenu } = this.state
+		const { mainTextColor } = this.props
 
-		let iconSize = 35
+		const panelWidth = isMobile ? "70%" : "30%"
 
-		const borderColor = section === id ? "white" : "transparent"
+		return (
+			<div style={styles.panelShadow}>
+
+				<div
+					className={showPopupMenu ? "slide-panel-container-on" : "slide-panel-container-off"}
+					style={Object.assign({}, styles.panel, { width: showPopupMenu ? panelWidth : 0, zIndex: 997 })}
+				>
+
+					<div style={styles.headerPanel}>
+
+						<p style={{ fontSize: 24, color: mainTextColor, marginLeft: 30 }} className="text-bold">
+							Play
+						</p>
+
+						<div style={{ alignItems: 'center', justifyContent: 'flex-end' }}>
+							<button
+								onClick={() => {
+									document.body.style.overflow = "auto"
+									document.body.style.height = "auto"
+									this.setState({ showPopupMenu: false })
+								}}
+								style={{ marginRight: 30 }}
+							>
+								<IoClose
+									color={mainTextColor}
+									size={34}
+								/>
+							</button>
+						</div>
+
+					</div>
+
+					<div style={{ width: "80%", flexDirection: 'row', marginLeft: isMobile ? 15 : 30, flexWrap: 'wrap' }}>
+					{
+						this.renderPlayMenu()
+					}
+					</div>
+				</div>
+			</div>
+		)
+	}
+
+	renderPlayMenu() {
+		return (
+			<div style={{ flexDirection: "column", flexWrap: 'wrap' }}>
+
+				{this.renderBtnMenu(
+					'pvp',
+					pvp_icon,
+					"PvP",
+					99,
+					16)
+				}
+
+				{this.renderBtnMenu(
+					'flashtournaments',
+					flash_icon,
+					"Flash Tournaments",
+					99,
+					16)
+				}
+
+				{this.renderBtnMenu(
+					'tournaments',
+					tournaments_icon,
+					"Weekly Tournaments",
+					99,
+					16)
+				}
+
+
+				{this.renderBtnMenu(
+					'challenges',
+					challenges_icon,
+					"Challenges",
+					99,
+					16)
+				}
+			</div>
+		)
+	}
+
+	renderBtnMenu(goto, icon, title, id, fontSize) {
+		const { section, mainTextColor } = this.props
+
+		let iconSize = 28
+
+		const className = section === id ? 'text-bold' : 'text-medium'
+
+		if (title.toLowerCase() === "play") {
+			return (
+				<Popup
+					trigger={open => (
+						<div
+							style={styles.boxBtnMenu}
+						>
+							<img
+								style={{ width: iconSize, height: iconSize, marginRight: 5 }}
+								src={icon}
+								alt={title}
+							/>
+							<p style={{ fontSize: 14, color: mainTextColor }} className={className}>
+								{title}
+							</p>
+						</div>
+					)}
+					position="bottom center"
+					on="hover"
+				>
+					<div style={{ width: 200, overflowWrap: "anywhere", padding: 12 }}>
+						{this.renderPlayMenu(false)}
+					</div>
+				</Popup>
+			)
+		}
 
 		return (
 			<a
 				href={`${window.location.protocol}//${window.location.host}/${goto}`}
-				style={Object.assign({}, styles.boxBtnMenu, { borderColor })}
+				style={styles.boxBtnMenu}
 				onClick={(e) => {
 					e.preventDefault()
 					this.props.history.replace(`/${goto}`)
 				}}
 			>
 				<img
-					style={{ width: iconSize, height: iconSize, marginRight: 10 }}
+					style={{ width: iconSize, height: iconSize, marginRight: 5 }}
 					src={icon}
+					alt={title}
 				/>
-				<p style={{ fontSize: 17, color: 'white' }}>
+				<p style={{ fontSize, color: mainTextColor }} className={className}>
 					{title}
 				</p>
 			</a>
 		)
 	}
 
-	renderDesktop() {
-		const { account, kadenaname, transactionsState, showModalTx, txInfo } = this.props
-
-		const { boxW, modalW } = getBoxWidth(false)
-
-		const textToConfirm = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1].transactionToConfirmText : ""
+	renderBtnRight(isMobile) {
+		const { account, kadenaname, mainTextColor } = this.props
 
 		return (
-			<div style={{ flexDirection: 'column', maxWidth: 205, padding: 15, backgroundColor: '#2d2a42', position: 'relative', overflowY: 'auto' }} id="headerbox">
+			<div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
 
-				<div style={{ flexDirection: 'column', alignItems: 'flex-start', marginBottom: 20 }}>
-					<img
-						src={logo_img}
-						style={{ width: 50, marginRight: 10 }}
-					/>
-
-					<p style={styles.title}>
-						WizardsArena
+				{
+					account && account.account && !isMobile ?
+					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14 }}>
+						{kadenaname ? kadenaname : `${account.account.slice(0, 10)}...`}
 					</p>
-				</div>
-
-				{this.renderBtnMenu(
-					'collection',
-					market_icon,
-					"MARKETPLACE",
-					1)
+					: null
 				}
 
-				{this.renderBtnMenu(
-					'equipment',
-					equipment_icon,
-					"EQUIPMENT",
-					8)
-				}
-
-				{this.renderBtnMenu(
-					'me',
-					profile_icon,
-					"PROFILE",
-					3)
-				}
-
-				{this.renderBtnMenu(
-					'magicshop',
-					shop_icon,
-					"MAGIC SHOP",
-					5)
-				}
-
-				{this.renderBtnMenu(
-					'pvp',
-					pvp_icon,
-					"PVP",
-					7)
-				}
-
-				{this.renderBtnMenu(
-					'tournaments',
-					tournaments_icon,
-					"TOURNAMENTS",
-					4)
-				}
-
-				{this.renderBtnMenu(
-					'flashtournaments',
-					flash_icon,
-					"FLASH TOURNAMENTS",
-					9)
-				}
-
-				{this.renderBtnMenu(
-					'challenges',
-					challenges_icon,
-					"CHALLENGES",
-					23)
+				{
+					!isMobile &&
+					<div style={{ width: 1, height: 20, backgroundColor: "#d7d7d7", marginLeft: 8, marginRight: 8 }} />
 				}
 
 				<button
@@ -586,49 +644,97 @@ class Header extends Component {
 						//document.body.style.height = "100%"
 						this.setState({ showPanel: !this.state.showPanel })
 					}}
-					style={{ display: 'flex', alignItems: 'center', borderWidth: 2, borderColor: 'transparent', borderStyle: 'solid', padding: 5 }}
+					style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}
 				>
 					<IoMenu
-						color='white'
-						size={35}
-						style={{ marginRight: 10 }}
+						color={mainTextColor}
+						size={26}
 					/>
-					<p style={{ fontSize: 18, color: 'white' }}>
-						INFO
-					</p>
 				</button>
 
+
+			</div>
+		)
+	}
+
+	renderLogo() {
+		const { transactionsState, showModalTx, txInfo, mainTextColor } = this.props
+
+		const textToConfirm = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1].transactionToConfirmText : ""
+
+		return (
+			<div style={{ alignItems: 'center' }}>
+
 				{
-					transactionsState && transactionsState.length > 0 && !showModalTx &&
-					<div style={{ justifyContent: 'center', alignItems: 'center', padding: 5, marginTop: 15 }}>
+					transactionsState && transactionsState.length > 0 && !showModalTx ?
+					<div style={{ justifyContent: 'center', alignItems: 'center', padding: 5 }}>
 						<Popup
 							trigger={open => (
 								<div>
 									<BounceLoader
-										color='white'
-										size={26}
+										color={TEXT_SECONDARY_COLOR}
+										size={31}
 									/>
 								</div>
 							)}
-							position="right center"
+							position="right top"
 							on="hover"
 						>
-							<div style={{ width: 200, overflowWrap: "anywhere" }}>
-								<p style={{ color: "black", fontSize: 16 }}>
+							<div style={{ width: 200, overflowWrap: "anywhere", padding: 8 }}>
+								<p style={{ color: mainTextColor, fontSize: 15, lineHeight: 1.3 }}>
 									{textToConfirm}.<br /> Request key: {transactionsState[transactionsState.length-1].requestKey}
 								</p>
 							</div>
 						</Popup>
 					</div>
+					:
+					<img
+						src={logo_img}
+						style={{ width: 50 }}
+						alt='logo'
+					/>
 				}
+			</div>
+		)
+	}
 
-				{
-					account && account.account ?
-					<p style={{ color: 'white', fontSize: 15, marginTop: 30, marginLeft: 12 }}>
-						{kadenaname ? kadenaname : `${account.account.slice(0, 10)}...`}
-					</p>
-					: null
-				}
+	renderDesktop() {
+		const { boxW, modalW, padding } = getBoxWidth(false)
+
+		return (
+			<div style={{ flexDirection: 'row', width: '100%', paddingLeft: padding, paddingRight: padding, paddingTop: 8, paddingBottom: 8, backgroundColor: 'white', position: 'relative', alignItems: 'center', justifyContent: 'space-between' }} id="headerbox">
+
+				{this.renderLogo()}
+
+				<div style={{ alignItems: 'center', justifyContent: 'center' }}>
+					{this.renderBtnMenu(
+						'collection',
+						market_icon,
+						"Marketplace",
+						1,
+						14)
+					}
+
+					{this.renderBtnMenu(
+						'me',
+						profile_icon,
+						"Profile",
+						3,
+						14)
+					}
+
+					{this.renderBtnMenu(
+						'magicshop',
+						shop_icon,
+						"Magic shop",
+						5,
+						14)
+					}
+
+					{this.renderBtnPlay(false, 7, "Play")}
+				</div>
+
+				{this.renderBtnRight(false)}
 
 				<div
 					className={this.state.showPanel ? "bg-slide-on" : "bg-slide-off"}
@@ -657,6 +763,10 @@ class Header extends Component {
 				/>
 
 				{this.renderModalTx(modalW)}
+
+				<div
+					style={{ height: 1, backgroundColor: '#d7d7d7', position: 'absolute', bottom: 0, left: 0, right: 0, marginLeft: padding, marginRight: padding }}
+				/>
 			</div>
 		)
 	}
@@ -690,17 +800,87 @@ class Header extends Component {
 		)
 	}
 
+	renderBtnPlay(isMobile, id, title) {
+		const { showPopupMenu } = this.state
+		const { section, mainTextColor } = this.props
+
+		let iconSize = isMobile ? 35 : 28
+
+		const className = section === id ? 'text-bold' : 'text-medium'
+
+		return (
+			<div>
+				<div
+					style={styles.boxBtnMenu}
+					onClick={() => this.setState({ showPopupMenu: true })}
+				>
+					<img
+						style={{ width: iconSize, height: iconSize }}
+						src={pvp_icon}
+						alt={title}
+					/>
+					{
+						!isMobile &&
+						<p style={{ fontSize: 14, color: mainTextColor }} className={className}>
+							{title}
+						</p>
+					}
+				</div>
+
+				<div
+					className={showPopupMenu ? "bg-slide-on" : "bg-slide-off"}
+					onClick={() => {
+						document.body.style.overflow = "auto"
+						document.body.style.height = "auto"
+						this.setState({ showPopupMenu: false })
+					}}
+					style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#00000090', width: showPopupMenu ? window.innerWidth : 0 }}
+				/>
+
+				{this.renderSlidePanelPlay(false)}
+			</div>
+		)
+	}
+
 	renderBtnMenuMobile(goto, icon, id) {
-		const { section } = this.props
+		const { showPopupMenu } = this.state
 
 		let iconSize = 35
 
-		const borderColor = section === id ? "white" : "transparent"
+		if (goto.toLowerCase() === "play") {
+			return (
+				<div>
+					<div
+						style={styles.boxBtnMenu}
+						onClick={() => this.setState({ showPopupMenu: true })}
+					>
+						<img
+							style={{ width: iconSize, height: iconSize }}
+							src={icon}
+							alt={goto}
+						/>
+					</div>
+
+
+					<div
+						className={showPopupMenu ? "bg-slide-on" : "bg-slide-off"}
+						onClick={() => {
+							document.body.style.overflow = "auto"
+							document.body.style.height = "auto"
+							this.setState({ showPopupMenu: false })
+						}}
+						style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#00000090', width: showPopupMenu ? window.innerWidth : 0 }}
+					/>
+
+					{this.renderSlidePanelPlay(true)}
+				</div>
+			)
+		}
 
 		return (
 			<a
 				href={`${window.location.protocol}//${window.location.host}/${goto}`}
-				style={Object.assign({}, styles.boxBtnMenu, { borderColor })}
+				style={styles.boxBtnMenu}
 				onClick={(e) => {
 					e.preventDefault()
 					this.props.history.replace(`/${goto}`)
@@ -709,6 +889,7 @@ class Header extends Component {
 				<img
 					style={{ width: iconSize, height: iconSize }}
 					src={icon}
+					alt={goto}
 				/>
 			</a>
 		)
@@ -716,81 +897,42 @@ class Header extends Component {
 
 	renderMobile() {
 		const { showPanel } = this.state
-		const { transactionsState, showModalTx } = this.props
+		const { transactionsState, showModalTx, mainTextColor } = this.props
 
-		const { boxW, modalW } = getBoxWidth(true)
+		const { boxW, modalW, padding } = getBoxWidth(true)
 
 		return (
-			<div style={{ flexDirection: 'column', padding: 6, backgroundColor: '#2d2a42', overflowY: 'auto' }} id="headerbox">
+			<div style={{ flexDirection: 'row', width: '100%', paddingLeft: padding, paddingRight: padding, paddingTop: 8, paddingBottom: 8, backgroundColor: 'white', position: 'relative', alignItems: 'center', justifyContent: 'space-between' }} id="headerbox">
 
-				<div style={{ flexDirection: 'column', alignItems: 'flex-start', marginBottom: 20 }}>
-					<img
-						src={logo_img}
-						style={{ width: 50 }}
-					/>
+				{this.renderLogo()}
+
+				<div style={{ alignItems: 'center', justifyContent: 'center' }}>
+					{this.renderBtnMenuMobile(
+						'collection',
+						market_icon,
+						1)
+					}
+
+					{this.renderBtnMenuMobile(
+						'me',
+						profile_icon,
+						3)
+					}
+
+					{this.renderBtnMenuMobile(
+						'magicshop',
+						shop_icon,
+						5)
+					}
+
+					{this.renderBtnMenuMobile(
+						'play',
+						pvp_icon,
+						7)
+					}
 				</div>
 
-				{this.renderBtnMenuMobile(
-					'collection',
-					market_icon,
-					1)
-				}
-
-				{this.renderBtnMenuMobile(
-					'equipment',
-					equipment_icon,
-					8)
-				}
-
-				{this.renderBtnMenuMobile(
-					'me',
-					profile_icon,
-					3)
-				}
-
-				{this.renderBtnMenuMobile(
-					'magicshop',
-					shop_icon,
-					5)
-				}
-
-				{this.renderBtnMenuMobile(
-					'pvp',
-					pvp_icon,
-					7)
-				}
-
-				{this.renderBtnMenuMobile(
-					'tournaments',
-					tournaments_icon,
-					4)
-				}
-
-				{this.renderBtnMenuMobile(
-					'flashtournaments',
-					flash_icon,
-					9)
-				}
-
-				{this.renderBtnMenuMobile(
-					'challenges',
-					challenges_icon,
-					23)
-				}
-
-				<button
-					onClick={() => {
-						document.body.style.overflow = "hidden"
-						document.body.style.height = "100%"
-						this.setState({ showPanel: !this.state.showPanel })
-					}}
-					style={{ display: 'flex', alignItems: 'center', borderWidth: 2, borderColor: 'transparent', borderStyle: 'solid', padding: 5 }}
-				>
-					<IoMenu
-						color='white'
-						size={35}
-					/>
-				</button>
+				{this.renderBtnRight(true)}
 
 				<div
 					className={this.state.showPanel ? "bg-slide-on" : "bg-slide-off"}
@@ -799,7 +941,7 @@ class Header extends Component {
 						document.body.style.height = "auto"
 						this.setState({ showPanel: false })
 					}}
-					style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#00000090', width: this.state.showPanel ? window.innerWidth : 0 }}
+					style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#00000090', width: showPanel ? window.innerWidth : 0 }}
 				/>
 
 				{this.renderSlidePanel(boxW)}
@@ -811,7 +953,7 @@ class Header extends Component {
 							trigger={open => (
 								<div>
 									<BounceLoader
-										color='white'
+										color={mainTextColor}
 										size={26}
 									/>
 								</div>
@@ -820,28 +962,12 @@ class Header extends Component {
 							on="hover"
 						>
 							<div style={{ width: 200, overflowWrap: "anywhere" }}>
-								<p style={{ color: "black", fontSize: 16 }}>
+								<p style={{ color: mainTextColor, fontSize: 16 }}>
 									{transactionsState[transactionsState.length-1].requestKey}
 								</p>
 							</div>
 						</Popup>
 					</div>
-				}
-
-				{
-					!showPanel &&
-					<button
-						style={{ marginTop: 30 }}
-						onClick={() => {
-							this.props.setHideNavBar(true)
-							//window.location.reload()
-						}}
-					>
-						<AiOutlineEyeInvisible
-							size={26}
-							color='white'
-						/>
-					</button>
 				}
 
 				<ModalBuyWIZA
@@ -859,58 +985,19 @@ class Header extends Component {
 				/>
 
 				{this.renderModalTx(modalW)}
-			</div>
-		)
-	}
 
-	renderUnhideMobile() {
-
-		const { boxW, modalW } = getBoxWidth(true)
-
-		return (
-			<div>
-				<button
-					style={styles.btnShow}
-					className="btn-show-shadow"
-					onClick={() => this.props.setHideNavBar(false)}
-				>
-					<AiOutlineEye
-						size={26}
-						color='black'
-					/>
-				</button>
-
-				<ModalBuyWIZA
-					width={modalW}
-					showModal={this.state.showModalBuy || this.props.showModalBuyFromShop}
-					onCloseModal={() => {
-						this.setState({ showModalBuy: false })
-						if (this.props.closeModalBuyOnShop) {
-							this.props.closeModalBuyOnShop()
-						}
-					}}
-					onSwap={(amount, estimatedWiza) => {
-						this.swap(amount, estimatedWiza)
-					}}
+				<div
+					style={{ height: 1, backgroundColor: '#d7d7d7', position: 'absolute', bottom: 0, left: 0, right: 0, marginLeft: padding, marginRight: padding }}
 				/>
 			</div>
 		)
-
 	}
 
 	render() {
-		const { section, account, page, isMobile, kadenaname, hideNavBar } = this.props
-
-		//console.log(hideNavBar);
-
-		const { boxW, modalW } = getBoxWidth(isMobile)
+		const { isMobile } = this.props
 
 		if (!isMobile) {
 			return this.renderDesktop()
-		}
-
-		if (hideNavBar) {
-			return this.renderUnhideMobile()
 		}
 
 		return this.renderMobile()
@@ -928,7 +1015,7 @@ const styles = {
 		position: 'absolute',
 	},
 	panel: {
-		backgroundColor: BACKGROUND_COLOR,
+		backgroundColor: 'white',
 		flexDirection: 'column',
 		overflow: 'auto',
 	},
@@ -941,11 +1028,11 @@ const styles = {
 		marginBottom: 30
 	},
 	btnLogout: {
-        height: 35,
+        height: 32,
         width: 120,
-        borderRadius: 2,
+        borderRadius: 4,
         borderColor: 'red',
-        borderWidth: 2,
+        borderWidth: 1,
         borderStyle: 'solid',
 		marginBottom: 40
     },
@@ -954,34 +1041,15 @@ const styles = {
 		alignItems: 'center',
 		flexDirection: 'row',
 		cursor: 'pointer',
-		paddingTop: 5,
-		paddingBottom: 5,
-		paddingLeft: 8,
-		paddingRight: 8,
-		marginBottom: 10,
-		borderWidth: 0.5,
-		borderStyle: 'solid',
-		borderRadius: 4
+		padding: 16
 	},
-	btnShow: {
-		position: 'absolute',
-		right: 20,
-		bottom: 20,
-		backgroundColor: '#ffffff',
-		width: 40,
-		height: 40,
-		borderRadius: 20,
-		display: 'flex',
-		justifyContent: 'center',
-		alignItems: 'center'
-	}
 }
 
 const mapStateToProps = (state) => {
-	const { allNftsIds, timeToHalvening, totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, transactionsState } = state.mainReducer
+	const { allNftsIds, timeToHalvening, totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, transactionsState, isDarkmode, mainTextColor } = state.mainReducer
 	const { txInfo } = state.modalTransactionReducer
 
-	return { allNftsIds, timeToHalvening, totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, txInfo, transactionsState }
+	return { allNftsIds, timeToHalvening, totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, txInfo, transactionsState, isDarkmode, mainTextColor }
 }
 
 export default connect(mapStateToProps, {
@@ -999,5 +1067,6 @@ export default connect(mapStateToProps, {
 	clearTransactionByPactCode,
 	getWizardsStakeInfo,
 	loadAllNftsIds,
-	setTimeToHalvening
+	setTimeToHalvening,
+	setVisualColors
 })(Header);

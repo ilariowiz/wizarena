@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCardChoice.css'
 import cardStats from './CardStats'
@@ -28,7 +29,7 @@ class NftCardChoiceFlashT extends Component {
 	}
 
 	render() {
-		const { item, width } = this.props
+		const { item, width, mainTextColor } = this.props
 
         const level = calcLevelWizard(item)
 
@@ -43,7 +44,7 @@ class NftCardChoiceFlashT extends Component {
 				className='containerChoice'
 			>
 				<img
-					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
+					style={{ width, height: width, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
 					src={getImageUrl(item.id)}
 					alt={`#${item.id}`}
 				/>
@@ -51,7 +52,7 @@ class NftCardChoiceFlashT extends Component {
 				<div style={{ flexDirection: 'column', width, alignItems: 'center' }}>
 
 					<div style={{ width: '90%', justifyContent: 'space-between', alignItems: 'center', marginTop: 5, marginBottom: 10 }}>
-						<p style={{ color: 'white', fontSize: 17 }}>
+						<p style={{ color: mainTextColor, fontSize: 15 }} className="text-bold">
 							{item.name}
 						</p>
 					</div>
@@ -61,10 +62,10 @@ class NftCardChoiceFlashT extends Component {
                         {
                             level ?
                             <div style={{ width: '90%', alignItems: 'center', marginBottom: 8 }}>
-                                <p style={{ color: '#c2c0c0', fontSize: 16, marginRight: 10 }}>
-                                    LEVEL
+                                <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
+                                    Level
                                 </p>
-                                <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 18 }}>
+                                <p style={{ color: mainTextColor, fontSize: 17 }} className="text-bold">
                                     {level}
                                 </p>
                             </div>
@@ -73,7 +74,7 @@ class NftCardChoiceFlashT extends Component {
 
                         {
                             item.hp ?
-                            cardStats(item, undefined, undefined, infoEquipment ? infoEquipment.bonusesDict : undefined)
+                            cardStats(item, undefined, undefined, infoEquipment ? infoEquipment.bonusesDict : undefined, mainTextColor)
                             :
                             null
                         }
@@ -86,8 +87,8 @@ class NftCardChoiceFlashT extends Component {
                                 this.props.onSelect(item.id)
                             }}
                         >
-                            <p style={{ fontSize: 16, color: 'white' }}>
-                                SELECT
+                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                Select
                             </p>
                         </button>
 
@@ -101,24 +102,21 @@ class NftCardChoiceFlashT extends Component {
 }
 
 const styles = {
-    statsTitleStyle: {
-        fontSize: 15,
-        color: '#c2c0c0',
-        marginRight: 8
-    },
-    statsStyle: {
-        fontSize: 15,
-        color: 'white'
-    },
     btnSubscribe: {
-        height: 45,
+        height: 40,
         width: '100%',
-        borderBottomLeftRadius: 2,
-        borderBottomRightRadius: 2,
+        borderBottomLeftRadius: 4,
+        borderBottomRightRadius: 4,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: CTA_COLOR
     }
 }
 
-export default NftCardChoiceFlashT
+const mapStateToProps = (state) => {
+    const { mainTextColor } = state.mainReducer
+
+    return { mainTextColor }
+}
+
+export default connect(mapStateToProps)(NftCardChoiceFlashT)

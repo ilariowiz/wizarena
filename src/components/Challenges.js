@@ -302,7 +302,7 @@ class Challenges extends Component {
 
         if (loading) {
             return (
-                <p style={{ fontSize: 16, color: 'white' }}>
+                <p style={{ fontSize: 16, color: this.props.mainTextColor }}>
                     Loading...
                 </p>
             )
@@ -333,7 +333,7 @@ class Challenges extends Component {
 
         return (
             <div>
-                <p style={{ fontSize: 16, color: 'white' }}>
+                <p style={{ fontSize: 16, color: this.props.mainTextColor }}>
                     No challenges...
                 </p>
             </div>
@@ -342,25 +342,25 @@ class Challenges extends Component {
 
     renderBody(isMobile) {
         const { loadingSent, loadingReceived, error, resultsSent, resultsReceived } = this.state
-        const { challengesReceived, challengesSent } = this.props
+        const { challengesReceived, challengesSent, mainTextColor } = this.props
 
-        const { boxW } = getBoxWidth(isMobile)
+        let { boxW, padding } = getBoxWidth(isMobile)
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
+            <div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: padding/2, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 30 }}>
+                <p style={{ color: mainTextColor, fontSize: 24, marginBottom: 30 }} className="text-medium">
                     Challenges
                 </p>
 
-                <p style={{ fontSize: 20, color: 'white', marginBottom: 10 }}>
+                <p style={{ fontSize: 18, color: mainTextColor, marginBottom: 10 }}>
                     Challenges received
                 </p>
 
                 {
                     resultsReceived &&
-                    <p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
-                        Win <span style={{ color: TEXT_SECONDARY_COLOR, marginRight: 12 }}>{resultsReceived.wins}</span> Lose <span style={{ color: '#ed0404', marginRight: 12 }}>{resultsReceived.lose}</span> KDA won <span style={{ color: resultsReceived.winKda - resultsReceived.loseKda > 0 ? TEXT_SECONDARY_COLOR : '#ed0404' }}>{resultsReceived.winKda - resultsReceived.loseKda}</span>
+                    <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15 }}>
+                        Win <span style={{ color: TEXT_SECONDARY_COLOR, marginRight: 12 }} className="text-bold">{resultsReceived.wins}</span> Lose <span style={{ color: '#ed0404', marginRight: 12 }} className="text-bold">{resultsReceived.lose}</span> $KDA won <span style={{ color: resultsReceived.winKda - resultsReceived.loseKda > 0 ? TEXT_SECONDARY_COLOR : '#ed0404' }} className="text-bold">{resultsReceived.winKda - resultsReceived.loseKda}</span>
                     </p>
                 }
 
@@ -375,14 +375,14 @@ class Challenges extends Component {
                 {this.renderChallenges(challengesReceived, loadingReceived, true, isMobile)}
 
 
-                <p style={{ fontSize: 20, color: 'white', marginTop: 30, marginBottom: 10 }}>
+                <p style={{ fontSize: 18, color: mainTextColor, marginTop: 30, marginBottom: 10 }}>
                     Challenges sent
                 </p>
 
                 {
                     resultsSent &&
-                    <p style={{ fontSize: 18, color: 'white', marginBottom: 15 }}>
-                        Win <span style={{ color: TEXT_SECONDARY_COLOR, marginRight: 12 }}>{resultsSent.wins}</span> Lose <span style={{ color: '#ed0404', marginRight: 12 }}>{resultsSent.lose}</span> KDA won <span style={{ color: resultsSent.winKda - resultsSent.loseKda > 0 ? TEXT_SECONDARY_COLOR : '#ed0404' }}>{resultsSent.winKda - resultsSent.loseKda}</span>
+                    <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15 }}>
+                        Win <span style={{ color: TEXT_SECONDARY_COLOR, marginRight: 12 }} className="text-bold">{resultsSent.wins}</span> Lose <span style={{ color: '#ed0404', marginRight: 12 }} className="text-bold">{resultsSent.lose}</span> KDA won <span style={{ color: resultsSent.winKda - resultsSent.loseKda > 0 ? TEXT_SECONDARY_COLOR : '#ed0404' }} className="text-bold">{resultsSent.winKda - resultsSent.loseKda}</span>
                     </p>
                 }
 
@@ -400,7 +400,7 @@ class Challenges extends Component {
 
                 {
                     error &&
-                    <p style={{ fontSize: 17, color: 'white' }}>
+                    <p style={{ fontSize: 15, color: 'red' }}>
                         {error}
                     </p>
                 }
@@ -420,8 +420,8 @@ class Challenges extends Component {
 		return (
 			<div>
 				<Header
-					page='home'
-					section={23}
+                    page='home'
+                    section={7}
 					account={account}
 					isMobile={isMobile}
 					history={this.props.history}
@@ -434,12 +434,12 @@ class Challenges extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 1199px)"
+					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 1200px)"
+					query="(min-width: 1000px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -459,20 +459,20 @@ class Challenges extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: "white"
 	},
 }
 
 const mapStateToProps = (state) => {
-    const { account, chainId, gasPrice, gasLimit, networkUrl, netId, challengesReceived, challengesSent } = state.mainReducer
+    const { account, chainId, gasPrice, gasLimit, networkUrl, netId, challengesReceived, challengesSent, mainTextColor } = state.mainReducer
 
-    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, challengesReceived, challengesSent }
+    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, challengesReceived, challengesSent, mainTextColor }
 }
 
 export default connect(mapStateToProps, {

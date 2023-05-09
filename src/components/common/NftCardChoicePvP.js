@@ -83,7 +83,7 @@ class NftCardChoicePvP extends Component {
     }
 
 	render() {
-		const { item, width, canSubscribe, toSubscribe } = this.props
+		const { item, width, canSubscribe, toSubscribe, mainTextColor } = this.props
         const { isSubscribed, loading } = this.state
 
         //console.log(tournament)
@@ -106,7 +106,7 @@ class NftCardChoicePvP extends Component {
 				className='containerChoice'
 			>
 				<img
-					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
+					style={{ width, height: width, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
 					src={getImageUrl(item.id)}
 					alt={`#${item.id}`}
 				/>
@@ -114,7 +114,7 @@ class NftCardChoicePvP extends Component {
 				<div style={{ flexDirection: 'column', width, alignItems: 'center' }}>
 
 					<div style={{ width: '90%', justifyContent: 'space-between', alignItems: 'center', marginTop: 5, marginBottom: 10 }}>
-						<p style={{ color: 'white', fontSize: 17 }}>
+						<p style={{ color: mainTextColor, fontSize: 16 }} className="text-medium">
 							{item.name}
 						</p>
 					</div>
@@ -124,10 +124,10 @@ class NftCardChoicePvP extends Component {
                         {
                             level ?
                             <div style={{ width: '90%', alignItems: 'center', marginBottom: 8 }}>
-                                <p style={{ color: '#c2c0c0', fontSize: 16, marginRight: 10 }}>
-                                    LEVEL
+                                <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
+                                    Level
                                 </p>
-                                <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 18 }}>
+                                <p style={{ color: mainTextColor, fontSize: 16 }} className="text-bold">
                                     {level}
                                 </p>
                             </div>
@@ -136,7 +136,7 @@ class NftCardChoicePvP extends Component {
 
                         {
                             item.hp ?
-                            cardStats(item, undefined, undefined, infoEquipment ? infoEquipment.bonusesDict : undefined)
+                            cardStats(item, undefined, undefined, infoEquipment ? infoEquipment.bonusesDict : undefined, mainTextColor)
                             :
                             null
                         }
@@ -144,10 +144,10 @@ class NftCardChoicePvP extends Component {
                         {
                             loading ?
                             <div
-                                style={Object.assign({}, styles.btnSubscribe, { backgroundColor: '#014766'})}
+                                style={styles.btnSubscribe}
                             >
-                                <p style={{ fontSize: 17, color: 'white' }}>
-                                    LOADING
+                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                    Loading
                                 </p>
                             </div>
                             : null
@@ -161,8 +161,8 @@ class NftCardChoicePvP extends Component {
                                 style={styles.btnSubscribe}
                                 onClick={() => this.setState({ showModalSpellbook: true })}
                             >
-                                <p style={{ fontSize: 16, color: 'white' }}>
-                                    SELECT TO SUBSCRIBE
+                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                    Select to subscribe
                                 </p>
                             </button>
                             :
@@ -173,9 +173,9 @@ class NftCardChoicePvP extends Component {
                         {
                             !isSubscribed && !canSubscribe && !loading ?
                             <div
-                                style={Object.assign({}, styles.btnSubscribe, { backgroundColor: '#014766'})}
+                                style={styles.btnSubscribe}
                             >
-                                <p style={{ fontSize: 15, color: 'white' }}>
+                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
                                     Registrations closed
                                 </p>
                             </div>
@@ -187,9 +187,9 @@ class NftCardChoicePvP extends Component {
                         {
                             isSubscribed && !loading ?
                             <div
-                                style={Object.assign({}, styles.btnSubscribe, { backgroundColor: '#014766'})}
+                                style={styles.btnSubscribe}
                             >
-                                <p style={{ fontSize: 17, color: 'white' }}>
+                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
                                     Already subscribed
                                 </p>
                             </div>
@@ -200,11 +200,11 @@ class NftCardChoicePvP extends Component {
                             inToSubscribe && !isSubscribed && canSubscribe && !loading ?
                             <button
                                 className='btnSubscribe'
-                                style={Object.assign({}, styles.btnSubscribe, { backgroundColor: '#014766'})}
+                                style={styles.btnSubscribe}
                                 onClick={() => this.props.removeFromSubscribers(item.id)}
                             >
-                                <p style={{ fontSize: 16, color: 'white' }}>
-                                    REMOVE TO SUBSCRIBERS
+                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                    Remove from subscribers
                                 </p>
                             </button>
                             : null
@@ -252,10 +252,10 @@ class NftCardChoicePvP extends Component {
 
 const styles = {
     btnSubscribe: {
-        height: 45,
+        height: 40,
         width: '100%',
-        borderBottomLeftRadius: 2,
-        borderBottomRightRadius: 2,
+        borderBottomLeftRadius: 4,
+        borderBottomRightRadius: 4,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: CTA_COLOR
@@ -263,9 +263,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl } = state.mainReducer
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor } = state.mainReducer
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl }
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor }
 }
 
 export default connect(mapStateToProps, {

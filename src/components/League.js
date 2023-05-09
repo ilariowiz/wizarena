@@ -109,7 +109,7 @@ class League extends Component {
 	}
 
     renderSingleCard(item, index, widthNft) {
-        const { account } = this.props
+        const { account, mainTextColor } = this.props
 
         //console.log(item);
         const isOwner = account.account === item.owner
@@ -126,15 +126,15 @@ class League extends Component {
             >
                 <img
                     src={getImageUrl(item.id)}
-                    style={{ width: widthNft, height: widthNft, borderWidth: 1, borderColor: isOwner ? 'gold' : 'white', borderRadius: 2, borderStyle: "solid" }}
+                    style={{ width: widthNft, height: widthNft, borderWidth: 1, borderColor: isOwner ? '#840fb2' : "#d7d7d7", borderRadius: 4, borderStyle: "solid" }}
                     alt={`#${item.id}`}
                 />
-                <p style={{ fontSize: 16, color: isOwner ? 'gold' : 'white', marginTop: 5 }}>
+                <p style={{ fontSize: 14, color: mainTextColor, marginTop: 2 }}>
                     {item.name}
                 </p>
                 {
                     item.nickname &&
-                    <p style={{ fontSize: 14, color: isOwner ? 'gold' : 'white', marginTop: 3, textAlign: 'center', maxWidth: widthNft }}>
+                    <p style={{ fontSize: 13, color: mainTextColor, marginTop: 3, marginBottom: 3, textAlign: 'center', maxWidth: widthNft, wordBreak: "break-word" }}>
                         {item.nickname}
                     </p>
                 }
@@ -242,14 +242,14 @@ class League extends Component {
                         />
                     </div>
 
-                    <p style={{ fontSize: 30, color: borderColor, marginLeft: 9 }}>
+                    <p style={{ fontSize: 26, color: borderColor, marginLeft: 9 }} className="text-bold">
                         {nMedals}
                     </p>
-                    <p style={{ fontSize: 18, color: borderColor, marginLeft: 9 }}>
-                        MEDALS
+                    <p style={{ fontSize: 16, color: borderColor, marginLeft: 9 }}>
+                        medals
                     </p>
 
-                    <p style={{ fontSize: 16, color: borderColor, marginLeft: 9, width: 100, textAlign: 'center' }}>
+                    <p style={{ fontSize: 16, color: borderColor, marginLeft: 9, width: 100, textAlign: 'center' }} className="text-bold">
                         {this.renderPlace(index+1)}
                     </p>
                 </div>
@@ -267,26 +267,27 @@ class League extends Component {
 
     renderBody(isMobile) {
         const { loading, error, ranking, tournament } = this.state
+        const { mainTextColor } = this.props
 
-        const { boxW } = getBoxWidth(isMobile)
+        const { boxW, padding } = getBoxWidth(isMobile)
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
+            <div style={{ flexDirection: 'column', width: boxW, alignItems: 'center', padding, overflowY: 'auto', overflowX: 'hidden' }}>
 
                 <div style={{ marginBottom: 10, alignItems: 'center' }}>
-                    <p style={{ fontSize: 32, color: 'white', marginRight: 10 }}>
+                    <p style={{ fontSize: 24, color: mainTextColor, marginRight: 10 }}>
                         The Twelve League
                     </p>
 
                     {
                         tournament && tournament.leagueTournament &&
-                        <p style={{ fontSize: 22, color: 'white' }}>
+                        <p style={{ fontSize: 16, color: mainTextColor }}>
                             ({tournament.leagueTournament})
                         </p>
                     }
                 </div>
 
-                <p style={{ fontSize: 24, color: 'white', marginBottom: 30 }}>
+                <p style={{ fontSize: 20, color: mainTextColor, marginBottom: 30 }}>
                     Ranking
                 </p>
 
@@ -306,7 +307,7 @@ class League extends Component {
 
                 {
                     error &&
-                    <p style={{ fontSize: 17, color: 'white' }}>
+                    <p style={{ fontSize: 15, color: 'red' }}>
                         {error}
                     </p>
                 }
@@ -321,7 +322,7 @@ class League extends Component {
 			<div>
 				<Header
 					page='home'
-					section={6}
+					section={7}
 					account={account}
 					isMobile={isMobile}
 					history={this.props.history}
@@ -334,12 +335,12 @@ class League extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 1199px)"
+					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 1200px)"
+					query="(min-width: 1000px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -359,19 +360,19 @@ class League extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: "white"
 	},
     row: {
         alignItems: 'center',
         width: '100%',
         paddingTop: 10,
-        borderRadius: 2,
+        borderRadius: 4,
         borderWidth: 2,
         borderStyle: 'solid',
         marginBottom: 20
@@ -382,14 +383,18 @@ const styles = {
         flexDirection: 'column',
         alignItems: 'center',
         display: 'flex',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        borderRadius: 4,
+        borderColor: "#d7d7d7",
+        borderWidth: 1,
+        borderStyle: "solid"
     }
 }
 
 const mapStateToProps = (state) => {
-    const { chainId, gasPrice, gasLimit, networkUrl, account } = state.mainReducer
+    const { chainId, gasPrice, gasLimit, networkUrl, account, mainTextColor } = state.mainReducer
 
-    return { chainId, gasPrice, gasLimit, networkUrl, account }
+    return { chainId, gasPrice, gasLimit, networkUrl, account, mainTextColor }
 }
 
 export default connect(mapStateToProps, {

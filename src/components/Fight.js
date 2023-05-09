@@ -40,7 +40,8 @@ class Fight extends Component {
             showResult: false,
             showBar: false,
             fightActions: [],
-            levels: {}
+            levels: {},
+            showStat: false
         }
     }
 
@@ -340,7 +341,8 @@ class Fight extends Component {
     }
 
     renderSingleNft(info, width) {
-        const { levels } = this.state
+        const { levels, showStat } = this.state
+        const { mainTextColor } = this.props
 
         //console.log(info);
 
@@ -357,42 +359,57 @@ class Fight extends Component {
                     alt={`#${info.id}`}
                 />
 
-                <div style={{ width: '80%', marginBottom: 5 }}>
+                <div style={{ width: '90%', marginBottom: 5 }}>
                     {
                         info.nickname ?
-                        <p style={{ color: 'white', fontSize: 18 }}>
+                        <p style={{ color: mainTextColor, fontSize: 16 }}>
                             {info.name} {info.nickname}
                         </p>
                         :
-                        <p style={{ color: 'white', fontSize: 19 }}>
+                        <p style={{ color: mainTextColor, fontSize: 16 }}>
                             {info.name}
                         </p>
                     }
                 </div>
 
-                <div style={{ width: '80%', marginBottom: 5, alignItems: 'center' }}>
-                    <p style={{ color: '#c2c0c0', fontSize: 16, marginRight: 8 }}>
-                        LEVEL
-                    </p>
+                <div style={{ width: '90%', marginBottom: 5, alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ alignItems: 'center' }}>
+                        <p style={{ color: mainTextColor, fontSize: 15, marginRight: 8 }}>
+                            level
+                        </p>
 
-                    <p style={{ color: getColorTextBasedOnLevel(levels[info.id]), fontSize: 20 }}>
-                        {levels[info.id]}
-                    </p>
+                        <p style={{ color: mainTextColor, fontSize: 18 }} className="text-bold">
+                            {levels[info.id]}
+                        </p>
+                    </div>
+
+                    <button
+                        style={styles.showStatsBtn}
+                        onClick={() => this.setState({ showStat: !this.state.showStat })}
+                    >
+                        <p style={{ fontSize: 15, color: mainTextColor }}>
+                            Show stats
+                        </p>
+                    </button>
                 </div>
 
-                {cardStats(info, undefined, '80%', infoEquipment ? infoEquipment.bonusesDict : undefined)}
+                {   showStat &&
+                    cardStats(info, undefined, '90%', infoEquipment ? infoEquipment.bonusesDict : undefined, mainTextColor)
+                }
             </div>
         )
     }
 
     renderAction(item, index, boxW) {
+        const { mainTextColor } = this.props
+
         return (
             <div key={index} style={{ width: boxW, marginBottom: 15 }}>
                 <p style={{ fontSize: 14, color: TEXT_SECONDARY_COLOR, width: 78, minWidth: 78 }}>
                     turn {index+1}:
                 </p>
 
-                <p style={{ fontSize: 16, color: 'white' }}>
+                <p style={{ fontSize: 15, color: mainTextColor }}>
                     {item.trim()}
                 </p>
             </div>
@@ -400,13 +417,15 @@ class Fight extends Component {
     }
 
     renderActionFight(item, index, boxW) {
+        const { mainTextColor } = this.props
+
         return (
             <div key={index} style={{ width: boxW, marginBottom: 15 }}>
                 <p style={{ fontSize: 14, color: TEXT_SECONDARY_COLOR, width: 78, minWidth: 78 }}>
                     turn {item.turn}:
                 </p>
 
-                <p style={{ fontSize: 16, color: 'white' }}>
+                <p style={{ fontSize: 15, color: mainTextColor }}>
                     {item.action.trim()}
                 </p>
             </div>
@@ -441,19 +460,20 @@ class Fight extends Component {
 
     renderBody(isMobile) {
         const { u1, u2, actions, winner, error, showOnlyOne, actionsDict, showResult, showBar, fightActions, loading } = this.state
+        const { mainTextColor } = this.props
 
-        const { boxW, modalW } = getBoxWidth(isMobile)
+        const { boxW, modalW, padding } = getBoxWidth(isMobile)
 
-        let maxWidth = boxW > 1000 ? 1000 : boxW
+        let maxWidth = boxW > 900 ? 900 : boxW
 
 		let spaceImage = (maxWidth / 2) - 40
-        if (spaceImage > 400) {
-            spaceImage = 400
+        if (spaceImage > 300) {
+            spaceImage = 300
         }
 
         if (loading) {
             return (
-                <div style={{ flexDirection: 'column', alignItems: 'center', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15 }}>
+                <div style={{ flexDirection: 'column', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden', alignItems: 'center' }}>
                     <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
                 </div>
             )
@@ -461,8 +481,8 @@ class Fight extends Component {
 
         if (error) {
             return (
-                <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
-                    <p style={{ fontSize: 22, color: 'white' }}>
+                <div style={{ flexDirection: 'column', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden', alignItems: 'center' }}>
+                    <p style={{ fontSize: 18, color: 'red' }}>
                         {error}
                     </p>
                 </div>
@@ -471,24 +491,24 @@ class Fight extends Component {
 
         if (showOnlyOne && u1) {
             return (
-                <div style={{ flexDirection: 'column', width: boxW, alignItems: 'center', marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
+                <div style={{ flexDirection: 'column', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden', alignItems: 'center' }}>
 
                     <div style={{ width: maxWidth, justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
 
                         {this.renderSingleNft(u1, spaceImage)}
                     </div>
 
-                    <p style={{ fontSize: 22, marginBottom: 15, color: TEXT_SECONDARY_COLOR }}>
-                        ACTIONS
+                    <p style={{ fontSize: 18, marginBottom: 15, color: TEXT_SECONDARY_COLOR }}>
+                        Actions
                     </p>
 
                     {actions && actions.map((item, index) => this.renderAction(item, index, maxWidth))}
 
-                    <p style={{ fontSize: 22, marginTop: 10, marginBottom: 10, color: TEXT_SECONDARY_COLOR }}>
+                    <p style={{ fontSize: 18, marginTop: 10, marginBottom: 10, color: TEXT_SECONDARY_COLOR }}>
                         WINNER
                     </p>
 
-                    <p style={{ fontSize: 32, color: TEXT_SECONDARY_COLOR, marginBottom: 30  }}>
+                    <p style={{ fontSize: 22, color: TEXT_SECONDARY_COLOR, marginBottom: 30  }} className="text-bold">
                         #{winner}
                     </p>
 
@@ -501,29 +521,29 @@ class Fight extends Component {
         }
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, alignItems: 'center', marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }} id="mainBox">
+            <div style={{ flexDirection: 'column', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden', alignItems: 'center' }} id="mainBox">
 
-                <div style={{ width: maxWidth, justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
+                <div style={{ width: maxWidth, justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
 
                     <div style={{ flexDirection: 'column', height: '100%' }}>
                         {this.renderSingleNft(u1, spaceImage)}
 
                         {
                             showBar &&
-                            <div style={{ width: spaceImage, height: 16, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', borderRadius: 2, alignItems: 'center', position: 'relative' }}>
+                            <div style={{ width: spaceImage, height: 16, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', borderRadius: 4, alignItems: 'center', position: 'relative' }}>
                                 <div
                                     className="hpBar"
                                     style={{ width: this.calcWidthHp(spaceImage, actionsDict[`${u1.id}_initialhp`], this.dataCurrentHP[`#${u1.id}`]), height: 16, backgroundColor: this.getColorHpBar(this.dataCurrentHP[`#${u1.id}`], actionsDict[`${u1.id}_initialhp`]) }}
                                 />
 
-                                <p style={{ position: 'absolute', left: 5, fontSize: 14, color: 'white' }}>
+                                <p style={{ position: 'absolute', left: 5, fontSize: 13, color: mainTextColor }} className="text-bold">
                                     {this.dataCurrentHP[`#${u1.id}`] < 0 ? 0 : this.dataCurrentHP[`#${u1.id}`]} / {actionsDict[`${u1.id}_initialhp`]}
                                 </p>
                             </div>
                         }
                     </div>
 
-                    <p style={{ fontSize: 28, color: TEXT_SECONDARY_COLOR, marginLeft: 15, marginRight: 15 }}>
+                    <p style={{ fontSize: 18, color: mainTextColor, marginLeft: 15, marginRight: 15 }}>
                         VS
                     </p>
 
@@ -532,13 +552,13 @@ class Fight extends Component {
 
                         {
                             showBar &&
-                            <div style={{ width: spaceImage, height: 16, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', borderRadius: 2, position: 'relative' }}>
+                            <div style={{ width: spaceImage, height: 16, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', borderRadius: 4, position: 'relative' }}>
                                 <div
                                     className="hpBar"
                                     style={{ width: this.calcWidthHp(spaceImage, actionsDict[`${u2.id}_initialhp`], this.dataCurrentHP[`#${u2.id}`]), height: 16, backgroundColor: this.getColorHpBar(this.dataCurrentHP[`#${u2.id}`], actionsDict[`${u2.id}_initialhp`]) }}
                                 />
 
-                                <p style={{ position: 'absolute', left: 5, fontSize: 14, color: 'white' }}>
+                                <p style={{ position: 'absolute', left: 5, fontSize: 13, color: mainTextColor }} className="text-bold">
                                     {this.dataCurrentHP[`#${u2.id}`] < 0 ? 0 : this.dataCurrentHP[`#${u2.id}`]} / {actionsDict[`${u2.id}_initialhp`]}
                                 </p>
                             </div>
@@ -548,13 +568,13 @@ class Fight extends Component {
 
                 {
                     !showResult && !showBar &&
-                    <div style={{ justifyContent: 'center', alignItems: 'center' }}>
+                    <div style={{ width: (spaceImage*2)+56, alignItems: 'center', justifyContent: 'space-around' }}>
                         <button
-                            style={Object.assign({}, styles.btnChoice, { marginRight: 50 })}
+                            style={styles.btnChoice}
                             onClick={() => this.setState({ showResult: true })}
                         >
-                            <p style={{ fontSize: 17, color: 'white' }}>
-                                SHOW RESULT
+                            <p style={{ fontSize: 15, color: 'white' }}>
+                                Show result
                             </p>
                         </button>
 
@@ -569,8 +589,8 @@ class Fight extends Component {
 
                             }}
                         >
-                            <p style={{ fontSize: 17, color: 'white' }}>
-                                REPLAY
+                            <p style={{ fontSize: 15, color: 'white' }}>
+                                Replay
                             </p>
                         </button>
                     </div>
@@ -579,17 +599,17 @@ class Fight extends Component {
                 {
                     showResult &&
                     <div style={{ flexDirection: 'column', alignItems: 'center' }}>
-                        <p style={{ fontSize: 22, marginBottom: 15, color: TEXT_SECONDARY_COLOR }}>
-                            ACTIONS
+                        <p style={{ fontSize: 18, marginBottom: 15, color: TEXT_SECONDARY_COLOR }}>
+                            Actions
                         </p>
 
                         {actions && actions.map((item, index) => this.renderAction(item, index, maxWidth))}
 
-                        <p style={{ fontSize: 22, marginTop: 10, marginBottom: 10, color: TEXT_SECONDARY_COLOR }}>
+                        <p style={{ fontSize: 18, marginTop: 10, marginBottom: 10, color: TEXT_SECONDARY_COLOR }}>
                             WINNER
                         </p>
 
-                        <p style={{ fontSize: 32, color: TEXT_SECONDARY_COLOR, marginBottom: 30  }}>
+                        <p style={{ fontSize: 22, color: TEXT_SECONDARY_COLOR, marginBottom: 30  }} className="text-bold">
                             #{winner}
                         </p>
                     </div>
@@ -598,8 +618,8 @@ class Fight extends Component {
                 {
                     showBar &&
                     <div style={{ flexDirection: 'column', alignItems: 'center' }}>
-                        <p style={{ fontSize: 22, marginBottom: 15, color: TEXT_SECONDARY_COLOR }}>
-                            ACTIONS
+                        <p style={{ fontSize: 18, marginBottom: 15, color: TEXT_SECONDARY_COLOR }}>
+                            Actions
                         </p>
 
                         {fightActions && fightActions.map((item, index) => this.renderActionFight(item, index, maxWidth))}
@@ -607,11 +627,11 @@ class Fight extends Component {
                         {
                             fightActions.length === actions.length &&
                             <div style={{ flexDirection: 'column' }}>
-                                <p style={{ fontSize: 22, marginTop: 10, marginBottom: 10, color: TEXT_SECONDARY_COLOR }}>
+                                <p style={{ fontSize: 18, marginTop: 10, marginBottom: 10, color: TEXT_SECONDARY_COLOR }}>
                                     WINNER
                                 </p>
 
-                                <p style={{ fontSize: 32, color: TEXT_SECONDARY_COLOR, marginBottom: 30  }}>
+                                <p style={{ fontSize: 22, color: TEXT_SECONDARY_COLOR, marginBottom: 30  }} className="text-bold">
                                     #{winner}
                                 </p>
                             </div>
@@ -630,7 +650,8 @@ class Fight extends Component {
 		return (
 			<div>
 				<Header
-					page='settings'
+					page='home'
+                    section={7}
 					account={account}
 					isMobile={isMobile}
                     history={this.props.history}
@@ -646,12 +667,12 @@ class Fight extends Component {
 			<div style={styles.container}>
 
 				<Media
-					query="(max-width: 1199px)"
+					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 1200px)"
+					query="(min-width: 1000px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -671,29 +692,39 @@ class Fight extends Component {
 
 const styles = {
 	container: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: "white"
 	},
     btnChoice: {
-        width: 180,
+        width: 140,
         height: 40,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: CTA_COLOR,
-        borderRadius: 2
+        borderRadius: 4
+    },
+    showStatsBtn: {
+        height: 30,
+        width: 100,
+        borderRadius: 4,
+        borderColor: "#d7d7d7",
+        borderWidth: 1,
+        borderStyle: 'solid',
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 }
 
 const mapStateToProps = (state) => {
-	const { account, netId, chainId, gasPrice, gasLimit, networkUrl } = state.mainReducer;
+	const { account, netId, chainId, gasPrice, gasLimit, networkUrl, mainTextColor } = state.mainReducer;
 
-	return { account, netId, chainId, gasPrice, gasLimit, networkUrl };
+	return { account, netId, chainId, gasPrice, gasLimit, networkUrl, mainTextColor };
 }
 
 export default connect(mapStateToProps, {

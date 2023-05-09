@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 import { IoClose } from 'react-icons/io5'
 import allSpells from './Spells'
 import '../../css/Modal.css'
@@ -15,7 +16,7 @@ class ModalSwapSpell extends Component {
     }
 
     renderSpell(item, index, width) {
-        const { stats } = this.props
+        const { stats, mainTextColor } = this.props
 
         const spell = allSpells.find(i => i.name === item.name)
 
@@ -52,26 +53,26 @@ class ModalSwapSpell extends Component {
 
                     <div style={{ justifyContent: 'space-between', marginBottom: 6, flexWrap: 'wrap' }}>
                         <div style={{ marginBottom: 5 }}>
-                            <p style={{ color: '#c2c0c0', fontSize: 17, marginRight: 10 }}>
-                                NAME
+                            <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
+                                Name
                             </p>
-                            <p style={{  color: 'white', fontSize: 17 }}>
+                            <p style={{  color: mainTextColor, fontSize: 17 }} className="text-medium">
                                 {spell.name}
                             </p>
                         </div>
 
                         <div style={{ justifyContent: 'flex-end' }}>
-                            <p style={{ color: '#c2c0c0', fontSize: 17, marginRight: 10 }}>
-                                ATTACK
+                            <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
+                                Attack
                             </p>
-                            <p style={{  color: 'white', fontSize: 17, marginRight: 15 }}>
+                            <p style={{  color: mainTextColor, fontSize: 17, marginRight: 15 }} className="text-medium">
                                 {atkFinal}
                             </p>
 
-                            <p style={{ color: '#c2c0c0', fontSize: 17, marginRight: 10 }}>
-                                DAMAGE
+                            <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
+                                Damage
                             </p>
-                            <p style={{  color: 'white', fontSize: 17 }}>
+                            <p style={{ color: mainTextColor, fontSize: 17 }} className="text-medium">
                                 {dmgFinal}
                             </p>
                         </div>
@@ -80,10 +81,10 @@ class ModalSwapSpell extends Component {
 
                     <div style={{ justifyContent: 'space-between' }}>
                         <div>
-                            <p style={{ color: '#c2c0c0', fontSize: 17, marginRight: 10 }}>
-                                PERK
+                            <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
+                                Perk
                             </p>
-                            <p style={{  color: 'white', fontSize: 17, marginRight: 10, whiteSpace: 'nowrap' }}>
+                            <p style={{ color: mainTextColor, fontSize: 17, marginRight: 10, whiteSpace: 'nowrap' }} className="text-medium">
                                 {spell.condition.name || "-"}
                             </p>
                         </div>
@@ -91,7 +92,7 @@ class ModalSwapSpell extends Component {
                         {
                             spell.condition.name ?
                             <div style={{ justifyContent: 'flex-end' }}>
-                                <p style={{ color: 'white', fontSize: 15 }}>
+                                <p style={{ color: mainTextColor, fontSize: 14 }}>
                                     {textPerk}
                                 </p>
                             </div>
@@ -106,7 +107,7 @@ class ModalSwapSpell extends Component {
     }
 
 	render() {
-		const { showModal, onCloseModal, width, stats } = this.props;
+		const { showModal, onCloseModal, width, stats, mainTextColor } = this.props;
 
         let spellbook = stats.spellbook
 
@@ -118,11 +119,11 @@ class ModalSwapSpell extends Component {
 			<div className={classContainer}>
 				<div style={Object.assign({}, styles.subcontainer, { width })}>
 
-                    <p style={{ fontSize: 20, color: 'white', marginTop: 30, marginBottom: 15 }}>
+                    <p style={{ fontSize: 18, color: mainTextColor, marginTop: 30, marginBottom: 15 }} className="text-medium">
                         SPELLBOOK
                     </p>
 
-                    <p style={{ fontSize: 18, color: 'white', marginBottom: 30 }}>
+                    <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 30 }}>
                         Choose the spell you want to swap
                     </p>
 
@@ -134,8 +135,8 @@ class ModalSwapSpell extends Component {
                         style={styles.btnSub}
                         onClick={() => this.props.onSwap(this.state.selected)}
                     >
-                        <p style={{ color: 'white', fontSize: 17 }}>
-                            SWAP
+                        <p style={{ color: 'white', fontSize: 15 }} className="text-medium">
+                            Swap
                         </p>
                     </button>
 
@@ -144,7 +145,7 @@ class ModalSwapSpell extends Component {
 						onClick={onCloseModal}
 					>
 						<IoClose
-							color='white'
+							color={mainTextColor}
 							size={25}
 						/>
 					</button>
@@ -159,11 +160,11 @@ class ModalSwapSpell extends Component {
 const styles = {
 	subcontainer: {
 		minHeight: 300,
-		backgroundColor: BACKGROUND_COLOR,
-		borderRadius: 2,
-		borderColor: TEXT_SECONDARY_COLOR,
+		backgroundColor: "white",
+		borderRadius: 4,
+		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
-		borderWidth: 2,
+		borderWidth: 1,
 		alignItems: 'center',
 		flexDirection: 'column',
 		position: 'relative'
@@ -180,15 +181,21 @@ const styles = {
         marginRight: 15,
     },
     btnSub: {
-		height: 50,
+		height: 40,
         width: 220,
 		backgroundColor: CTA_COLOR,
 		justifyContent: 'center',
 		alignItems: 'center',
-		borderRadius: 2,
+		borderRadius: 4,
         marginTop: 40,
         marginBottom: 30
     },
 }
 
-export default ModalSwapSpell;
+const mapStateToProps = (state) => {
+    const { mainTextColor } = state.mainReducer
+
+    return { mainTextColor }
+}
+
+export default connect(mapStateToProps)(ModalSwapSpell);

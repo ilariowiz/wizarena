@@ -93,6 +93,7 @@ class ConnectionWidget extends Component {
 
 	render() {
 		const { error, loading, showInput, chainweaverInfo } = this.state
+		const { mainTextColor } = this.props
 
 		if (loading) {
 			return (
@@ -101,7 +102,7 @@ class ConnectionWidget extends Component {
 
 					{
 						chainweaverInfo &&
-						<p style={{ fontSize: 18, color: 'white', marginTop: 30 }}>
+						<p style={{ fontSize: 18, color: mainTextColor, marginTop: 30 }}>
 							{chainweaverInfo}
 						</p>
 					}
@@ -122,7 +123,7 @@ class ConnectionWidget extends Component {
 						this.connectXWallet()
 					}}
 				>
-					<p style={{ fontSize: 17, color: 'black' }}>
+					<p style={{ fontSize: 14, color: 'black' }} className="text-medium">
 						eckoWALLET
 					</p>
 				</button>
@@ -132,7 +133,7 @@ class ConnectionWidget extends Component {
 					style={Object.assign({}, styles.btnOption, { backgroundColor: "#57b5e1" })}
 					onClick={() => this.setState({ showInput: true })}
 				>
-					<p style={{ fontSize: 17, color: 'black' }}>
+					<p style={{ fontSize: 14, color: 'black' }} className="text-medium">
 						CHAINWEAVER / ZELCORE
 					</p>
 				</button>
@@ -142,7 +143,7 @@ class ConnectionWidget extends Component {
 					style={Object.assign({}, styles.btnOption, { backgroundColor: "#3396ff", marginBottom: 0 })}
 					onClick={() => this.connectWalletConnect()}
 				>
-					<p style={{ fontSize: 17, color: 'black' }}>
+					<p style={{ fontSize: 14, color: 'black' }} className="text-medium">
 						WALLETCONNECT
 					</p>
 				</button>
@@ -160,10 +161,10 @@ class ConnectionWidget extends Component {
 
 						<button
 							className="btnH"
-							style={Object.assign({}, styles.btnOption, { width: 70 })}
+							style={Object.assign({}, styles.btnOption, { width: 80 })}
 							onClick={() => this.connectChainweaver()}
 						>
-							<p style={{ fontSize: 14, color: 'white' }}>
+							<p style={{ fontSize: 13, color: mainTextColor }} className="text-medium">
 								CONNECT
 							</p>
 						</button>
@@ -197,9 +198,9 @@ const styles = {
 		width: 166,
 		height: 40,
 		borderWidth: 1,
-		borderColor: 'lightgrey',
+		borderColor: '#d7d7d7',
 		borderStyle: 'solid',
-		borderRadius: 2,
+		borderRadius: 4,
 		fontSize: 14,
 		color: 'black',
 		paddingLeft: 16,
@@ -216,32 +217,24 @@ const styles = {
 		backgroundColor: CTA_COLOR,
 		borderRadius: 2,
 	},
-	boxSwitch: {
-		width: 60,
-		height: 30,
-		backgroundColor: 'lightgrey',
-		borderRadius: 15,
-		position: 'relative',
-		cursor: 'pointer'
-	},
 	btnOption: {
 		display: 'flex',
 		justifyContent: 'center',
 		alignItems: 'center',
 		width: 272,
 		height: 44,
-		borderWidth: 2,
-		borderRadius: 2,
-		borderColor: CTA_COLOR,
+		borderWidth: 1,
+		borderRadius: 4,
+		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
 		marginBottom: 20
 	}
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, gasPrice, gasLimit, networkUrl, netId } = state.mainReducer;
+	const { account, chainId, gasPrice, gasLimit, networkUrl, netId, mainTextColor } = state.mainReducer;
 
-	return { account, chainId, gasPrice, gasLimit, networkUrl, netId };
+	return { account, chainId, gasPrice, gasLimit, networkUrl, netId, mainTextColor };
 }
 
 export default connect(mapStateToProps, {

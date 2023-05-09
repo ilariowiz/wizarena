@@ -49,7 +49,8 @@ class FlashTournaments extends Component {
             tournamentInfo: {},
             equipment: [],
             joinTournamentid: "",
-            sortByKey: "playersDesc"
+            sortByKey: "playersDesc",
+            completedToShowAmount: 15
         }
     }
 
@@ -143,34 +144,34 @@ class FlashTournaments extends Component {
 
     renderMenu() {
         const { section } = this.state
+        const { mainTextColor } = this.props
 
         return (
-            <div style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
+            <div style={{ alignItems: 'center', justifyContent: 'center', borderColor: '#d7d7d7', borderStyle: 'solid', borderRadius: 4, borderWidth: 1, padding: 6, marginBottom: 40 }}>
+
                 <button
-                    style={Object.assign({}, styles.btnMenu, { marginRight: 50, backgroundColor: section === 1 ? TEXT_SECONDARY_COLOR : 'transparent', borderColor: section === 1 ? TEXT_SECONDARY_COLOR : 'white' })}
-                    className="btnH"
+                    style={{ justifyContent: 'center', alignItems: 'center', width: 100, height: 32, borderRadius: 4, backgroundColor: section === 1 ? mainTextColor : 'white' }}
                     onClick={() => {
                         this.setState({ section: 1, sortByKey: 'playersDesc' }, () => {
                             this.sortBy('playersDesc')
                         })
                     }}
                 >
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        PENDING
+                    <p style={{ fontSize: 15, color: section === 1 ? 'white' : mainTextColor }} className="text-medium">
+                        Pending
                     </p>
                 </button>
 
                 <button
-                    style={Object.assign({}, styles.btnMenu, { backgroundColor: section === 2 ? TEXT_SECONDARY_COLOR : 'transparent', borderColor: section === 2 ? TEXT_SECONDARY_COLOR : 'white' })}
-                    className="btnH"
+                    style={{ justifyContent: 'center', alignItems: 'center', width: 100, height: 32, borderRadius: 4, backgroundColor: section === 2 ? mainTextColor : 'white' }}
                     onClick={() => {
                         this.setState({ section: 2, sortByKey: 'completedAt' }, () => {
                             this.sortBy('completedAt')
                         })
                     }}
                 >
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        COMPLETED
+                    <p style={{ fontSize: 15, color: section === 2 ? 'white' : mainTextColor }} className="text-medium">
+                        Completed
                     </p>
                 </button>
 
@@ -210,7 +211,7 @@ class FlashTournaments extends Component {
                             <div style={{ alignItems: 'center' }}>
                                 <img
                                     src={getImageUrl(wiz)}
-                                    style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+                                    style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid' }}
                                     alt={wiz}
                                 />
                             </div>
@@ -219,7 +220,7 @@ class FlashTournaments extends Component {
                         on="hover"
                     >
                         <div style={{ padding: 5, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-                            <p style={{ fontSize: 18, textAlign: 'center' }}>
+                            <p style={{ fontSize: 16, textAlign: 'center' }}>
                                 Wizard #{wiz}
                             </p>
                         </div>
@@ -240,14 +241,33 @@ class FlashTournaments extends Component {
             <div style={{ alignItems: 'center', margin: 5 }} key={idx}>
                 <img
                     src={img}
-                    style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+                    style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid' }}
                 />
             </div>
         )
     }
 
+    renderInfoRecap(mainTextColor, item) {
+        return (
+            <div style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 7 }}>
+
+                <p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center', marginRight: 12 }}>
+                    Wizards<br /><span style={{ fontSize: 16 }} className="text-bold">{item.players.length}/{item.nPlayers.int}</span>
+                </p>
+
+                <p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center', marginRight: 12 }}>
+                    Buyin<br /><span style={{ fontSize: 16 }} className="text-bold">{item.buyin}</span> $WIZA
+                </p>
+
+                <p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center' }}>
+                    Max level<br /><span style={{ fontSize: 16 }} className="text-bold">{item.maxLevel.int}</span>
+                </p>
+            </div>
+        )
+    }
+
     renderPendingTournament(item, index, isMobile) {
-        const { account } = this.props
+        const { account, mainTextColor } = this.props
 
         const createdAt = moment(item.createdAt.timep)
         const diff = moment().to(createdAt)
@@ -268,7 +288,7 @@ class FlashTournaments extends Component {
 
                 {
                     item.name ?
-                    <p style={{ fontSize: 17, color: 'white', marginBottom: 4, textAlign: isMobile ? 'center' : 'left', marginLeft: isMobile ? 0 : 15  }}>
+                    <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 4, textAlign: isMobile ? 'center' : 'left', marginLeft: isMobile ? 0 : 15  }} className="text-bold">
                         {item.name}
                     </p>
                     : null
@@ -277,11 +297,11 @@ class FlashTournaments extends Component {
                 <div style={{ flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
 
                     <div style={{ flexDirection: 'column', justifyContent: 'center', marginLeft: isMobile ? 0 : 15 }}>
-                        <p style={{ fontSize: 15, color: 'white', marginBottom: 7, textAlign: isMobile ? 'center' : 'left' }}>
-                            ID: {item.id}
+                        <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 7, textAlign: isMobile ? 'center' : 'left' }}>
+                            ID: <span className="text-bold">{item.id}</span>
                         </p>
 
-                        <p style={{ fontSize: 15, color: 'white', opacity: 0.6, textAlign: isMobile ? 'center' : 'left' }}>
+                        <p style={{ fontSize: 14, color: mainTextColor, opacity: 0.8, textAlign: isMobile ? 'center' : 'left' }}>
                             Created: <br />{diff}
                         </p>
                     </div>
@@ -294,41 +314,28 @@ class FlashTournaments extends Component {
 
                     <div style={{ flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-end', justifyContent: 'center', marginRight: isMobile ? 0 : 15 }}>
 
-                        <div style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 7 }}>
-
-                            <p style={{ fontSize: 21, color: 'white', textAlign: 'center', marginRight: 12 }}>
-                                <span style={{ fontSize: 16 }}>Wizards</span><br />{item.players.length}/{item.nPlayers.int}
-                            </p>
-
-                            <p style={{ fontSize: 21, color: 'white', textAlign: 'center', marginRight: 12 }}>
-                                <span style={{ fontSize: 16 }}>Buyin</span><br />{item.buyin} <span style={{ fontSize: 16 }}>WIZA</span>
-                            </p>
-
-                            <p style={{ fontSize: 21, color: 'white', textAlign: 'center' }}>
-                                <span style={{ fontSize: 16 }}>Max Level</span><br />{item.maxLevel.int}
-                            </p>
-                        </div>
+                        {this.renderInfoRecap(mainTextColor, item)}
 
                         <div style={{ alignItems: 'center', marginBottom: 10 }}>
-                            <p style={{ fontSize: 17, color: 'white' }}>
+                            <p style={{ fontSize: 14, color: mainTextColor }}>
                                 Prizes: {prizes}
                             </p>
                         </div>
 
                         {
                             isFull &&
-                            <div style={Object.assign({}, styles.btnMenu, { width: 130, height: 35, cursor: 'default' })}>
-                                <p style={{ fontSize: 14, color: 'white' }}>
-                                    ABOUT TO START
+                            <div style={styles.btnInfo}>
+                                <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
+                                    About to start
                                 </p>
                             </div>
                         }
 
                         {
                             item.wallets.includes(account.account) && !isFull &&
-                            <div style={Object.assign({}, styles.btnMenu, { width: 130, height: 35, cursor: 'default' })}>
-                                <p style={{ fontSize: 16, color: 'white' }}>
-                                    JOINED
+                            <div style={styles.btnInfo}>
+                                <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
+                                    Joined
                                 </p>
                             </div>
                         }
@@ -336,12 +343,12 @@ class FlashTournaments extends Component {
                         {
                             !item.wallets.includes(account.account) && !isFull &&
                             <button
-                                style={Object.assign({}, styles.btnMenu, { backgroundColor: TEXT_SECONDARY_COLOR, width: 130, height: 35 })}
+                                style={Object.assign({}, styles.btnMenu, { width: 130, height: 34 })}
                                 className="btnH"
                                 onClick={() => this.setState({ joinTournamentid:item.id, showModalChooseWizard: true, maxLevelChooseWizard: item.maxLevel.int })}
                             >
-                                <p style={{ fontSize: 17, color: 'white' }}>
-                                    JOIN
+                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                    Join
                                 </p>
                             </button>
                         }
@@ -354,7 +361,7 @@ class FlashTournaments extends Component {
     }
 
     renderCompletedTournament(item, index, isMobile) {
-        const { userMintedNfts, account } = this.props
+        const { userMintedNfts, account, mainTextColor } = this.props
 
         //console.log(item);
 
@@ -399,11 +406,11 @@ class FlashTournaments extends Component {
         }
 
         return (
-            <div style={Object.assign({}, styles.rowTournament, { flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start', borderColor: youSubbed ? 'gold' : 'white' })} key={index}>
+            <div style={Object.assign({}, styles.rowTournament, { flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start', borderColor: youSubbed ? '#840fb2' : '#d7d7d7', borderWidth: youSubbed ? 2 : 1 })} key={index}>
 
                 {
                     item.name ?
-                    <p style={{ fontSize: 17, color: 'white', marginBottom: 4, textAlign: isMobile ? 'center' : 'left', marginLeft: isMobile ? 0 : 15  }}>
+                    <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 4, textAlign: isMobile ? 'center' : 'left', marginLeft: isMobile ? 0 : 15  }} className="text-bold">
                         {item.name}
                     </p>
                     : null
@@ -412,11 +419,11 @@ class FlashTournaments extends Component {
                 <div style={{ flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
 
                     <div style={{ flexDirection: 'column', justifyContent: 'center', marginLeft: isMobile ? 0 : 15 }}>
-                        <p style={{ fontSize: 15, color: 'white', marginBottom: 7, textAlign: isMobile ? 'center' : 'left' }}>
-                            ID: {item.id}
+                        <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 7, textAlign: isMobile ? 'center' : 'left' }}>
+                            ID: <span className="text-bold">{item.id}</span>
                         </p>
 
-                        <p style={{ fontSize: 15, color: 'white', opacity: 0.6, textAlign: isMobile ? 'center' : 'left' }}>
+                        <p style={{ fontSize: 14, color: mainTextColor, opacity: 0.8, textAlign: isMobile ? 'center' : 'left' }}>
                             {item.completedAt ? "Completed" : "Created"}: <br />{diff}
                         </p>
                     </div>
@@ -452,7 +459,7 @@ class FlashTournaments extends Component {
                                                 <div style={{ alignItems: 'center' }}>
                                                     <img
                                                         src={getImageUrl(wiz)}
-                                                        style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: isYour ? 2 : 1, borderColor: isYour ? 'gold' : 'white', borderStyle: 'solid' }}
+                                                        style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: isYour ? 2 : 1, borderColor: isYour ? '#840fb2' : '#d7d7d7', borderStyle: 'solid' }}
                                                         alt={wiz}
                                                     />
                                                 </div>
@@ -461,7 +468,7 @@ class FlashTournaments extends Component {
                                             on="hover"
                                         >
                                             <div style={{ padding: 5, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-                                                <p style={{ fontSize: 18, textAlign: 'center' }}>
+                                                <p style={{ fontSize: 16, textAlign: 'center' }}>
                                                     Wizard #{wiz}
                                                 </p>
                                             </div>
@@ -474,12 +481,12 @@ class FlashTournaments extends Component {
                         {
                             !isMobile &&
                             <button
-                                style={Object.assign({}, styles.btnMenu, { backgroundColor: TEXT_SECONDARY_COLOR, width: 130, height: 35 })}
+                                style={Object.assign({}, styles.btnMenu, { width: 130, height: 35 })}
                                 className="btnH"
                                 onClick={() => this.setState({ fights: item.fights, tournamentInfo: item, showModalFights: true })}
                             >
-                                <p style={{ fontSize: 17, color: 'white' }}>
-                                    FIGHTS
+                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                    Fights
                                 </p>
                             </button>
                         }
@@ -487,23 +494,10 @@ class FlashTournaments extends Component {
 
                     <div style={{ flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'center', marginRight: isMobile ? 0 : 15 }}>
 
-                        <div style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}>
-
-                            <p style={{ fontSize: 21, color: 'white', textAlign: 'center', marginRight: 12 }}>
-                                <span style={{ fontSize: 16 }}>Wizards</span><br />{item.players.length}
-                            </p>
-
-                            <p style={{ fontSize: 21, color: 'white', textAlign: 'center', marginRight: 12 }}>
-                                <span style={{ fontSize: 16 }}>Buyin</span><br />{item.buyin} <span style={{ fontSize: 16 }}>WIZA</span>
-                            </p>
-
-                            <p style={{ fontSize: 21, color: 'white', textAlign: 'center' }}>
-                                <span style={{ fontSize: 16 }}>Max Level</span><br />{item.maxLevel.int}
-                            </p>
-                        </div>
+                        {this.renderInfoRecap(mainTextColor, item)}
 
                         <div style={{ alignItems: 'center', marginBottom: 10 }}>
-                            <p style={{ fontSize: 17, color: 'white' }}>
+                            <p style={{ fontSize: 14, color: mainTextColor }}>
                                 Prizes: {prizes}
                             </p>
                         </div>
@@ -511,12 +505,12 @@ class FlashTournaments extends Component {
 
                         <div>
                             <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
-                                <p style={{ fontSize: 18, color: 'white' }}>
-                                    WINNER
+                                <p style={{ fontSize: 16, color: mainTextColor }} className="text-bold">
+                                    Winner
                                 </p>
 
-                                <p style={{ fontSize: 14, color: 'white', opacity: 0.8, textAlign: 'center' }}>
-                                    {prizeWiza} WIZA
+                                <p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center' }}>
+                                    {prizeWiza} $WIZA
                                 </p>
                             </div>
 
@@ -535,7 +529,7 @@ class FlashTournaments extends Component {
                                             <div style={{ alignItems: 'center' }}>
                                                 <img
                                                     src={getImageUrl(item.fights.winner)}
-                                                    style={{ width: 60, height: 60, borderRadius: 30, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+                                                    style={{ width: 60, height: 60, borderRadius: 30, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid' }}
                                                     alt={item.fights.winner}
                                                 />
                                             </div>
@@ -544,7 +538,7 @@ class FlashTournaments extends Component {
                                         on="hover"
                                     >
                                         <div style={{ padding: 5, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-                                            <p style={{ fontSize: 18, textAlign: 'center' }}>
+                                            <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center' }}>
                                                 Wizard #{item.fights.winner}
                                             </p>
                                         </div>
@@ -556,12 +550,12 @@ class FlashTournaments extends Component {
                                 item.winners && item.winners.int && item.winners.int === 2 &&
                                 <div>
                                     <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginLeft: 10, marginRight: 5 }}>
-                                        <p style={{ fontSize: 15, color: 'white' }}>
+                                        <p style={{ fontSize: 15, color: mainTextColor }}>
                                             2nd
                                         </p>
 
-                                        <p style={{ fontSize: 13, color: 'white', opacity: 0.8, textAlign: 'center' }}>
-                                            {prizeWiza2} WIZA
+                                        <p style={{ fontSize: 13, color: mainTextColor, textAlign: 'center' }}>
+                                            {prizeWiza2} $WIZA
                                         </p>
                                     </div>
 
@@ -580,7 +574,7 @@ class FlashTournaments extends Component {
                                                     <div style={{ alignItems: 'center' }}>
                                                         <img
                                                             src={getImageUrl(secondPlaceId)}
-                                                            style={{ width: 40, height: 40, borderRadius: 20, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+                                                            style={{ width: 40, height: 40, borderRadius: 20, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid' }}
                                                             alt={secondPlaceId}
                                                         />
                                                     </div>
@@ -589,7 +583,7 @@ class FlashTournaments extends Component {
                                                 on="hover"
                                             >
                                                 <div style={{ padding: 5, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-                                                    <p style={{ fontSize: 15, textAlign: 'center' }}>
+                                                    <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center' }}>
                                                         Wizard #{secondPlaceId}
                                                     </p>
                                                 </div>
@@ -606,12 +600,12 @@ class FlashTournaments extends Component {
                     {
                         isMobile &&
                         <button
-                            style={Object.assign({}, styles.btnMenu, { backgroundColor: TEXT_SECONDARY_COLOR, width: 130, height: 35, marginTop: 12 })}
+                            style={Object.assign({}, styles.btnMenu, { width: 130, height: 35, marginTop: 12 })}
                             className="btnH"
                             onClick={() => this.setState({ fights: item.fights, tournamentInfo: item, showModalFights: true })}
                         >
-                            <p style={{ fontSize: 16, color: 'white' }}>
-                                FIGHTS
+                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                Fights
                             </p>
                         </button>
                     }
@@ -640,6 +634,7 @@ class FlashTournaments extends Component {
 
     renderFiltri() {
         const { sortByKey, section } = this.state
+        const { mainTextColor } = this.props
 
         const marginRight = 20
 
@@ -650,7 +645,7 @@ class FlashTournaments extends Component {
                     section === 1 &&
                     <div style={{ alignItems: 'center', marginRight, marginBottom: 7 }}>
 
-                        <p style={{ fontSize: 16, color: 'white', marginRight: 5 }}>
+                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 5 }} className="text-medium">
                             Players
                         </p>
 
@@ -659,7 +654,7 @@ class FlashTournaments extends Component {
                             onClick={() => this.sortBy('playersDesc')}
                         >
                             <TbSortDescendingNumbers
-                                color='white'
+                                color={sortByKey === 'playersDesc' ? 'white' : CTA_COLOR }
                                 size={23}
                             />
                         </button>
@@ -669,7 +664,7 @@ class FlashTournaments extends Component {
                             onClick={() => this.sortBy('playersAsc')}
                         >
                             <TbSortAscendingNumbers
-                                color='white'
+                                color={sortByKey === 'playersAsc' ? 'white' : CTA_COLOR }
                                 size={23}
                             />
                         </button>
@@ -679,7 +674,7 @@ class FlashTournaments extends Component {
 
                 <div style={{ alignItems: 'center', marginRight, marginBottom: 7 }}>
 
-                    <p style={{ fontSize: 16, color: 'white', marginRight: 5 }}>
+                    <p style={{ fontSize: 16, color: mainTextColor, marginRight: 5 }} className="text-medium">
                         Buyin
                     </p>
 
@@ -688,7 +683,7 @@ class FlashTournaments extends Component {
                         onClick={() => this.sortBy('buyinDesc')}
                     >
                         <TbSortDescendingNumbers
-                            color='white'
+                            color={sortByKey === 'buyinDesc' ? 'white' : CTA_COLOR }
                             size={23}
                         />
                     </button>
@@ -698,7 +693,7 @@ class FlashTournaments extends Component {
                         onClick={() => this.sortBy('buyinAsc')}
                     >
                         <TbSortAscendingNumbers
-                            color='white'
+                            color={sortByKey === 'buyinAsc' ? 'white' : CTA_COLOR }
                             size={23}
                         />
                     </button>
@@ -707,7 +702,7 @@ class FlashTournaments extends Component {
 
                 <div style={{ alignItems: 'center', marginBottom: 7 }}>
 
-                    <p style={{ fontSize: 16, color: 'white', marginRight: 5 }}>
+                    <p style={{ fontSize: 16, color: mainTextColor, marginRight: 5 }} className="text-medium">
                         Level
                     </p>
 
@@ -716,7 +711,7 @@ class FlashTournaments extends Component {
                         onClick={() => this.sortBy('levelDesc')}
                     >
                         <TbSortDescendingNumbers
-                            color='white'
+                            color={sortByKey === 'levelDesc' ? 'white' : CTA_COLOR }
                             size={23}
                         />
                     </button>
@@ -726,7 +721,7 @@ class FlashTournaments extends Component {
                         onClick={() => this.sortBy('levelAsc')}
                     >
                         <TbSortAscendingNumbers
-                            color='white'
+                            color={sortByKey === 'levelAsc' ? 'white' : CTA_COLOR }
                             size={23}
                         />
                     </button>
@@ -737,10 +732,10 @@ class FlashTournaments extends Component {
     }
 
     renderBody(isMobile) {
-        const { error, section, maxLevelChooseWizard, showModalChooseWizard } = this.state
-        const { loadingCompleted, loadingPending, pendingTournaments, completedTournaments, userMintedNfts } = this.props
+        const { error, section, maxLevelChooseWizard, showModalChooseWizard, completedToShowAmount } = this.state
+        const { loadingCompleted, loadingPending, pendingTournaments, completedTournaments, userMintedNfts, mainTextColor } = this.props
 
-        const { boxW, modalW } = getBoxWidth(isMobile)
+        const { boxW, modalW, padding } = getBoxWidth(isMobile)
 
         //console.log(userMintedNfts);
 
@@ -749,10 +744,12 @@ class FlashTournaments extends Component {
             wizardsPool = userMintedNfts.filter(i => i.level <= maxLevelChooseWizard)
         }
 
-        return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
+        const completedToShow = completedToShowAmount < completedTournaments.length ? completedTournaments.slice(0, completedToShowAmount) : completedTournaments
 
-                <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
+        return (
+            <div style={{ flexDirection: 'column', width: boxW, alignItems: 'center', padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
+
+                <p style={{ color: mainTextColor, fontSize: 24, marginBottom: 30 }} className="text-medium">
                     Flash Tournaments
                 </p>
 
@@ -763,7 +760,7 @@ class FlashTournaments extends Component {
                     {
     					loadingPending && section === 1 ?
     					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', paddingTop: 20, marginBottom: 30 }}>
-    						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+    						<DotLoader size={25} color={mainTextColor} />
     					</div>
     					: null
     				}
@@ -771,14 +768,14 @@ class FlashTournaments extends Component {
                     {
     					loadingCompleted && section === 2 ?
     					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', paddingTop: 20, marginBottom: 30 }}>
-    						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+    						<DotLoader size={25} color={mainTextColor} />
     					</div>
     					: null
     				}
 
                     {
                         section === 1 &&
-                        <p style={{ fontSize: 19, color: 'white', textAlign: 'center', marginBottom: 20 }}>
+                        <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center', marginBottom: 20 }}>
                             The tournaments begins a few minutes after the maximum wizards are reached
                         </p>
                     }
@@ -786,14 +783,14 @@ class FlashTournaments extends Component {
                     {
                         section === 1 &&
                         <button
-                            style={Object.assign({}, styles.btnMenu, { backgroundColor: TEXT_SECONDARY_COLOR, width: 200 })}
+                            style={Object.assign({}, styles.btnMenu, { width: 214 })}
                             className="btnH"
                             onClick={() => {
                                 this.setState({ showModalCreate: true })
                             }}
                         >
-                            <p style={{ fontSize: 16, color: 'white', textAlign: 'center' }}>
-                                CREATE A TOURNAMENT
+                            <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
+                                Create a tournament
                             </p>
                         </button>
                     }
@@ -812,16 +809,29 @@ class FlashTournaments extends Component {
                             return this.renderPendingTournament(item, index, isMobile)
                         })
                         :
-                        completedTournaments.map((item, index) => {
+                        completedToShow.map((item, index) => {
                             return this.renderCompletedTournament(item, index, isMobile)
                         })
+                    }
+
+                    {
+                        section === 2 && completedToShowAmount < completedTournaments.length &&
+                        <button
+                            style={{ marginTop: 15, marginBottom: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 10, borderRadius: 4, borderColor: "#d7d7d7", borderWidth: 1, borderStyle: 'solid' }}
+                            className="btnH"
+                            onClick={() => this.setState({ completedToShowAmount: this.state.completedToShowAmount + 10 })}
+                        >
+                            <p style={{ color: mainTextColor, fontSize: 15 }}>
+                                Show more
+                            </p>
+                        </button>
                     }
 
                 </div>
 
                 {
                     error &&
-                    <p style={{ fontSize: 17, color: 'white' }}>
+                    <p style={{ fontSize: 15, color: 'red' }}>
                         {error}
                     </p>
                 }
@@ -870,7 +880,7 @@ class FlashTournaments extends Component {
 			<div>
 				<Header
 					page='home'
-					section={9}
+					section={7}
 					account={account}
 					isMobile={isMobile}
 					history={this.props.history}
@@ -883,12 +893,12 @@ class FlashTournaments extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 1199px)"
+					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 1200px)"
+					query="(min-width: 1000px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -908,25 +918,35 @@ class FlashTournaments extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: "white"
 	},
     btnMenu: {
         justifyContent: 'center',
         alignItems: 'center',
         display: 'flex',
         cursor: 'pointer',
-        borderRadius: 2,
+        borderRadius: 4,
         width: 140,
         height: 40,
+        backgroundColor: CTA_COLOR
+    },
+    btnInfo: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        display: 'flex',
+        borderRadius: 4,
+        width: 130,
+        height: 34,
+        backgroundColor: 'transparent',
         borderWidth: 1,
-        borderColor: TEXT_SECONDARY_COLOR,
-        borderStyle: 'solid'
+        borderStyle: 'solid',
+        borderColor: "#d7d7d7"
     },
     rowTournament: {
         flexDirection: 'row',
@@ -934,13 +954,14 @@ const styles = {
         justifyContent: 'space-between',
         paddingTop: 9,
         paddingBottom: 9,
-        borderRadius: 2,
-        borderColor: 'white',
+        borderRadius: 4,
+        borderColor: '#d7d7d7',
         borderStyle: 'solid',
         borderWidth: 1,
         width: '100%',
         maxWidth: 1200,
-        marginBottom: 15
+        marginBottom: 15,
+        backgroundColor: "#f2f2f2"
     },
     btnSort: {
         width: 34,
@@ -949,7 +970,7 @@ const styles = {
         alignItems: 'center',
         display: 'flex',
         marginRight: 5,
-        borderRadius: 2,
+        borderRadius: 4,
         borderColor: CTA_COLOR,
         borderWidth: 1,
         borderStyle: 'solid'
@@ -957,10 +978,10 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-    const { account, chainId, gasPrice, gasLimit, networkUrl, netId, wizaBalance, userMintedNfts } = state.mainReducer
+    const { account, chainId, gasPrice, gasLimit, networkUrl, netId, wizaBalance, userMintedNfts, mainTextColor } = state.mainReducer
     const { completedTournaments, pendingTournaments, loadingPending, loadingCompleted } = state.flashTournamentsReducer
 
-    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, wizaBalance, userMintedNfts, completedTournaments, pendingTournaments, loadingPending, loadingCompleted }
+    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, wizaBalance, userMintedNfts, completedTournaments, pendingTournaments, loadingPending, loadingCompleted, mainTextColor }
 }
 
 export default connect(mapStateToProps, {

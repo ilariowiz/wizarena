@@ -133,6 +133,7 @@ class Sales extends Component {
 
     renderItemOffer(item, index) {
         const { yourEquip } = this.state
+        const { mainTextColor } = this.props
 
         const diff = moment().to(this.getExpire(item))
 
@@ -147,27 +148,27 @@ class Sales extends Component {
                     alt={item.itemtype}
                 />
 
-                <p style={{ fontSize: 22, color: 'white', marginBottom: 15, alignItems: 'center' }}>
+                <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15, alignItems: 'center' }}>
                     {item.itemtype}
                 </p>
 
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 15 }}>
-                    <p style={{ fontSize: 17, color: 'white', alignItems: 'center' }}>
-                        <span style={{ color: 'gold' }}>{item.amount}</span> WIZA
+                    <p style={{ fontSize: 16, color: mainTextColor, alignItems: 'center' }}>
+                        {item.amount} $WIZA
                     </p>
 
-                    <p style={{ fontSize: 17, color: 'white', alignItems: 'center' }}>
+                    <p style={{ fontSize: 15, color: mainTextColor, alignItems: 'center' }}>
                         Expiration {diff}
                     </p>
                 </div>
 
-                <p style={{ fontSize: 15, color: 'white', marginBottom: 5, alignItems: 'center' }}>
+                <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 5, alignItems: 'center' }}>
                     You own {youOwn}
                 </p>
 
                 {
                     !youOwn || youOwn === 0 ?
-                    <div style={{ height: 40, width: 160 }} />
+                    <div style={{ height: 36, width: 150 }} />
                     :
                     <button
                         style={Object.assign({}, styles.btnAccept, { backgroundColor: CTA_COLOR })}
@@ -178,8 +179,8 @@ class Sales extends Component {
                             this.acceptOffer(item)
                         }}
                     >
-                        <p style={{ fontSize: 17, color: 'white' }}>
-                            ACCEPT OFFER
+                        <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                            Accept Offer
                         </p>
                     </button>
                 }
@@ -191,17 +192,18 @@ class Sales extends Component {
 
     renderBody(isMobile) {
         const { loading, error, showModalOffer, allOffers } = this.state
+        const { mainTextColor } = this.props
 
-        const { boxW, modalW } = getBoxWidth(isMobile)
+        const { boxW, modalW, padding } = getBoxWidth(isMobile)
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+            <div style={{ flexDirection: 'column', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden', alignItems: 'center' }}>
 
-                <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
+                <p style={{ color: mainTextColor, fontSize: 24, marginBottom: 20 }} className="text-medium">
                     Equipment Offers
                 </p>
 
-                <p style={{ fontSize: 20, color: 'white', marginBottom: 30 }}>
+                <p style={{ fontSize: 17, color: mainTextColor, marginBottom: 30 }}>
                     You can make an offer for a type of ring, whoever owns that ring will be able to accept your offer.
                 </p>
 
@@ -218,14 +220,14 @@ class Sales extends Component {
                 {
 					loading ?
 					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', paddingTop: 30 }}>
-						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+						<DotLoader size={25} color={mainTextColor} />
 					</div>
 					: null
 				}
 
                 {
                     error &&
-                    <p style={{ fontSize: 17, color: 'white' }}>
+                    <p style={{ fontSize: 15, color: 'red' }}>
                         {error}
                     </p>
                 }
@@ -267,12 +269,12 @@ class Sales extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 1199px)"
+					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 1200px)"
+					query="(min-width: 1000px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -292,54 +294,56 @@ class Sales extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: "white"
 	},
     btnBuy: {
         width: 200,
-		height: 50,
+		height: 40,
+        minHeight: 40,
 		backgroundColor: CTA_COLOR,
 		justifyContent: 'center',
 		alignItems: 'center',
-		borderRadius: 2,
+		borderRadius: 4,
         marginBottom: 30
 	},
 	btnBuyText: {
-		fontSize: 21,
+		fontSize: 15,
 		color: 'white',
+        fontFamily: 'FigtreeMedium'
 	},
     boxOffer: {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        borderWidth: 2,
-        borderColor: 'white',
+        borderWidth: 1,
+        borderColor: '#d7d7d7',
         borderStyle: 'solid',
-        borderRadius: 2,
-        marginBottom: 20,
-        marginRight: 20,
-        width: 230,
+        borderRadius: 4,
+        marginBottom: 12,
+        marginRight: 12,
+        width: 220,
         padding: 10,
     },
     btnAccept: {
-        width: 160,
-        height: 40,
+        width: 150,
+        height: 36,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 2,
+        borderRadius: 4,
     }
 }
 
 const mapStateToProps = (state) => {
-    const { account, chainId, gasPrice, gasLimit, netId, networkUrl, showModalTx } = state.mainReducer;
+    const { account, chainId, gasPrice, gasLimit, netId, networkUrl, showModalTx, mainTextColor } = state.mainReducer;
 
-	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, showModalTx };
+	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, showModalTx, mainTextColor };
 }
 
 export default connect(mapStateToProps, {

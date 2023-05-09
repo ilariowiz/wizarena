@@ -56,7 +56,7 @@ class NftCardChoice extends Component {
     }
 
 	render() {
-		const { item, width, canSubscribe, toSubscribe, subscriptionsInfo } = this.props
+		const { item, width, canSubscribe, toSubscribe, subscriptionsInfo, mainTextColor } = this.props
 
         //console.log(subscriptionsInfo)
 
@@ -92,7 +92,7 @@ class NftCardChoice extends Component {
 				<div style={{ flexDirection: 'column', width, alignItems: 'center' }}>
 
 					<div style={{ width: '90%', justifyContent: 'space-between', alignItems: 'center', marginTop: 5, marginBottom: 10 }}>
-						<p style={{ color: 'white', fontSize: 17 }}>
+						<p style={{ color: mainTextColor, fontSize: 16 }} className="text-bold">
 							{item.name}
 						</p>
 					</div>
@@ -102,10 +102,10 @@ class NftCardChoice extends Component {
                         {
                             level ?
                             <div style={{ width: '90%', alignItems: 'center', marginBottom: 8 }}>
-                                <p style={{ color: '#c2c0c0', fontSize: 16, marginRight: 10 }}>
-                                    LEVEL
+                                <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
+                                    Level
                                 </p>
-                                <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 18 }}>
+                                <p style={{ color: mainTextColor, fontSize: 17 }} className="text-bold">
                                     {level}
                                 </p>
                             </div>
@@ -114,7 +114,7 @@ class NftCardChoice extends Component {
 
                         {
                             item.hp ?
-                            cardStats(item, numberOfTotalMedals, undefined, infoEquipment ? infoEquipment.bonusesDict : undefined)
+                            cardStats(item, numberOfTotalMedals, undefined, infoEquipment ? infoEquipment.bonusesDict : undefined, mainTextColor)
                             :
                             null
                         }
@@ -127,8 +127,8 @@ class NftCardChoice extends Component {
                                 style={styles.btnSubscribe}
                                 onClick={() => this.setState({ showModalSpellbook: true })}
                             >
-                                <p style={{ fontSize: 16, color: 'white' }}>
-                                    SELECT TO SUBSCRIBE
+                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                    Select to subscribe
                                 </p>
                             </button>
                             :
@@ -138,9 +138,9 @@ class NftCardChoice extends Component {
                         {
                             !isSubscribed && !canSubscribe ?
                             <div
-                                style={Object.assign({}, styles.btnSubscribe, { backgroundColor: '#014766'})}
+                                style={styles.btnSubscribe}
                             >
-                                <p style={{ fontSize: 15, color: 'white' }}>
+                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
                                     Registrations closed
                                 </p>
                             </div>
@@ -156,8 +156,8 @@ class NftCardChoice extends Component {
                                 style={styles.btnSubscribe}
                                 onClick={() => this.props.onChangeSpell()}
                             >
-                                <p style={{ fontSize: 16, color: 'white' }}>
-                                    CHANGE SPELL
+                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                    Change spell
                                 </p>
                             </button>
                             : null
@@ -167,17 +167,15 @@ class NftCardChoice extends Component {
                             inToSubscribe && !isSubscribed && canSubscribe ?
                             <button
                                 className='btnSubscribe'
-                                style={Object.assign({}, styles.btnSubscribe, { backgroundColor: '#014766'})}
+                                style={styles.btnSubscribe}
                                 onClick={() => this.props.removeFromSubscribers(item.id)}
                             >
-                                <p style={{ fontSize: 16, color: 'white' }}>
-                                    REMOVE TO SUBSCRIBERS
+                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                    Remove from subscribers
                                 </p>
                             </button>
                             : null
                         }
-
-
                     </div>
 
 				</div>
@@ -212,10 +210,10 @@ const styles = {
         color: 'white'
     },
     btnSubscribe: {
-        height: 45,
+        height: 40,
         width: '100%',
-        borderBottomLeftRadius: 2,
-        borderBottomRightRadius: 2,
+        borderBottomLeftRadius: 4,
+        borderBottomRightRadius: 4,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: CTA_COLOR
@@ -223,9 +221,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl } = state.mainReducer
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor } = state.mainReducer
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl }
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor }
 }
 
 export default connect(mapStateToProps)(NftCardChoice);

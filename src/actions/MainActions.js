@@ -62,7 +62,8 @@ import {
 	SET_CHALLENGES_RECEIVED,
 	HIDE_MODAL_TX,
 	CLEAR_TRANSACTION_STATE_PACT_CODE,
-	SET_TIME_TO_HALVENING
+	SET_TIME_TO_HALVENING,
+	SET_VISUAL_COLORS
 } from './types'
 
 
@@ -520,11 +521,11 @@ const calcRanges = (maxStats) => {
 		ranges["hp"] = ranges["hp"].reverse()
 
 		ranges["defense"] = []
-		const rangeDef = Math.round(maxStats["defense"] / 2)
+		const rangeDef = Math.round(maxStats["defense"] / 3)
 		//console.log(rangeHp);
 		for (var i = 0; i < rangeDef; i++) {
-			let start = 14 + (i * 2)
-			let end = start + 1
+			let start = 14 + (i * 3)
+			let end = start + 2
 
 			if (start <= maxStats["defense"]) {
 				ranges['defense'].push(`${start} - ${end}`)
@@ -534,11 +535,11 @@ const calcRanges = (maxStats) => {
 		ranges["defense"] = ranges["defense"].reverse()
 
 		ranges["attack"] = []
-		const rangeAtk = Math.round(maxStats["attack"] / 2) + 1
+		const rangeAtk = Math.round(maxStats["attack"] / 3) + 1
 		//console.log(rangeHp);
 		for (var i = 0; i < rangeAtk; i++) {
-			let start = (i * 2)
-			let end = start + 1
+			let start = (i * 3)
+			let end = start + 2
 
 			if (start <= maxStats["attack"] + 1) {
 				ranges['attack'].push(`${start} - ${end}`)
@@ -548,11 +549,11 @@ const calcRanges = (maxStats) => {
 		ranges["attack"] = ranges["attack"].reverse()
 
 		ranges["damage"] = []
-		const rangeDmg = Math.round(maxStats["damage"] / 2) + 1
+		const rangeDmg = Math.round(maxStats["damage"] / 3) + 1
 		//console.log(rangeDmg);
 		for (var i = 0; i < rangeDmg; i++) {
-			let start = (i * 2)
-			let end = start + 1
+			let start = (i * 3)
+			let end = start + 2
 
 			if (start <= maxStats["damage"] + 1) {
 				ranges['damage'].push(`${start} - ${end}`)
@@ -3920,6 +3921,13 @@ export const setTimeToHalvening = (time) => {
 	return {
 		type: SET_TIME_TO_HALVENING,
 		payload: time
+	}
+}
+
+export const setVisualColors = (isDarkmode) => {
+	return {
+		type: SET_VISUAL_COLORS,
+		payload: isDarkmode
 	}
 }
 

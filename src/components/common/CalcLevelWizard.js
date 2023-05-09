@@ -116,7 +116,7 @@ export const getColorTextBasedOnLevel = (level) => {
     }
 
     let rainbow = new Rainbow()
-    rainbow.setSpectrum("#fffaf1", "#faf000")
+    rainbow.setSpectrum("#5a5a5a", "#840fb2")
     rainbow.setNumberRange(MIN_LEVEL, MAX_LEVEL)
 
     const color = rainbow.colourAt(level)

@@ -42,7 +42,10 @@ import {
 	SET_CHALLENGES_RECEIVED,
 	HIDE_MODAL_TX,
 	CLEAR_TRANSACTION_STATE_PACT_CODE,
-	SET_TIME_TO_HALVENING
+	SET_TIME_TO_HALVENING,
+	SET_VISUAL_COLORS,
+	TEXT_DAY_COLOR,
+	TEXT_NIGHT_COLOR
 } from '../actions/types'
 
 
@@ -92,7 +95,9 @@ const INITIAL_STATE = {
 	challengesSent: [],
 	timeToHalvening: "Loading how long for halvening...",
 	filtriRanges: {},
-	filtriProfileRanges: {}
+	filtriProfileRanges: {},
+	isDarkmode: false,
+	mainTextColor: "#1d1d1f"
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -247,6 +252,13 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, challengesSent: action.payload }
 		case SET_TIME_TO_HALVENING:
 			return { ...state, timeToHalvening: action.payload }
+		case SET_VISUAL_COLORS: {
+			if (action.payload) {
+				return { ...state, mainTextColor: TEXT_NIGHT_COLOR, isDarkmode: true }
+			}
+
+			return { ...state, mainTextColor: TEXT_DAY_COLOR, isDarkmode: false }
+		}
 		case LOGOUT:
 			return { ...state, account: {}, transactionsState: [], showModalTx: false, isConnectWallet: false, isXWallet: false, isQRWalletConnect: false, userMintedNfts: [], wizaBalance: 0, wizardsStaked: 0, qrWalletConnectClient: undefined, kadenaname:""}
 		default:

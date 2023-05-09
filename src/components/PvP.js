@@ -522,7 +522,7 @@ class PvP extends Component {
             }
         }
 
-        
+
         //return
         const sfida = {
             player1: item,
@@ -630,7 +630,7 @@ class PvP extends Component {
     renderRowSub(item, index, isMobile, maxWidth) {
         //console.log(item);
         const { pvpFightsStartDate } = this.state
-        const { userMintedNfts } = this.props
+        const { userMintedNfts, mainTextColor } = this.props
 
         const winRate = this.calcWinRate(item)
 
@@ -677,41 +677,41 @@ class PvP extends Component {
             >
                 <img
                     src={getImageUrl(item.id)}
-                    style={{ width: 120, height: 120, borderRadius: 2, borderColor: 'white', borderWidth: 1, borderStyle: 'solid', marginRight: 10, marginBottom: isMobile ? 7 : 0 }}
+                    style={{ width: 100, height: 100, borderRadius: 4, borderColor: '#d7d7d7', borderWidth: 1, borderStyle: 'solid', marginRight: 10, marginBottom: isMobile ? 7 : 0 }}
                     alt={item.id}
                 />
 
                 <div style={{ flexDirection: 'column', justifyContent: 'space-around', height: '100%' }}>
 
                     <div style={{ alignItems: 'center', marginBottom: 10 }}>
-                        <p style={{ fontSize: 22, color: 'white', marginRight: 20, width: 50 }}>
+                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 20, width: 50 }} className="text-medium">
                             #{item.id}
                         </p>
 
-                        <p style={{ fontSize: 20, color: 'white', width: 170 }}>
-                            WIN RATE {winRate}%
+                        <p style={{ fontSize: 16, color: mainTextColor, width: 170 }}>
+                            Win rate <span className="text-bold">{winRate}%</span>
                         </p>
                     </div>
 
                     <div style={{ alignItems: 'center', marginBottom: 10, minWidth: 283 }}>
-                        <p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
-                            Win {item.win}
+                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 10 }}>
+                            Win <span className="text-bold">{item.win}</span>
                         </p>
 
-                        <p style={{ fontSize: 18, color: 'white', marginRight: 10 }}>
-                            Lose {item.lose}
+                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 10 }}>
+                            Lose <span className="text-bold">{item.lose}</span>
                         </p>
 
                         {
                             item.rounds && fightsStart &&
-                            <p style={{ fontSize: 18, color: 'white' }}>
+                            <p style={{ fontSize: 16, color: mainTextColor }}>
                                 {totalFights}/{item.rounds} fights
                             </p>
                         }
 
                         {
                             !fightsStart &&
-                            <p style={{ fontSize: 18, color: 'white' }}>
+                            <p style={{ fontSize: 16, color: mainTextColor }}>
                                 {item.win + item.lose} fights
                             </p>
                         }
@@ -720,59 +720,59 @@ class PvP extends Component {
                     {
                         level &&
                         <div style={{ alignItems: 'center', marginBottom: 10 }}>
-                            <p style={{ fontSize: 17, color: 'white', marginRight: 7 }}>
+                            <p style={{ fontSize: 14, color: mainTextColor, marginRight: 7 }}>
                                 Level
                             </p>
 
-                            <p style={{ fontSize: 19, color: getColorTextBasedOnLevel(level) }}>
+                            <p style={{ fontSize: 17, color: mainTextColor }} className="text-medium">
                                 {level}
                             </p>
                         </div>
                     }
 
                     <div style={{ alignItems: 'center', marginBottom: 10, flexWrap: 'wrap' }}>
-                        <p style={{ fontSize: 14, color: '#c2c0c0', marginRight: 4 }}>
-                            HP
+                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
+                            Hp
                         </p>
 
-                        <p style={{ fontSize: 16, color: "white", marginRight: 8 }}>
+                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
                             {hp}
                         </p>
 
-                        <p style={{ fontSize: 14, color: '#c2c0c0', marginRight: 4 }}>
-                            DEF
+                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
+                            Def
                         </p>
 
-                        <p style={{ fontSize: 16, color: "white", marginRight: 8 }}>
+                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
                             {def}
                         </p>
 
-                        <p style={{ fontSize: 14, color: '#c2c0c0', marginRight: 4 }}>
-                            ATK
+                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
+                            Atk
                         </p>
 
-                        <p style={{ fontSize: 16, color: "white", marginRight: 8 }}>
+                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
                             {atk + spellSelectedInfo.atkBase}
                         </p>
 
-                        <p style={{ fontSize: 14, color: '#c2c0c0', marginRight: 4 }}>
-                            DMG
+                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
+                            Dmg
                         </p>
 
-                        <p style={{ fontSize: 16, color: "white", marginRight: 8 }}>
+                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
                             {dmg + spellSelectedInfo.dmgBase}
                         </p>
 
-                        <p style={{ fontSize: 14, color: '#c2c0c0', marginRight: 4 }}>
-                            SPEED
+                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
+                            Speed
                         </p>
 
-                        <p style={{ fontSize: 16, color: "white", marginRight: 8 }}>
+                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
                             {speed}
                         </p>
                     </div>
 
-                    <p style={{ fontSize: 15, color: 'white', marginBottom: 10 }}>
+                    <p style={{ fontSize: 14, color: mainTextColor, marginBottom: 10 }}>
                         Spell selected: {item.spellSelected.name}
                     </p>
 
@@ -781,8 +781,8 @@ class PvP extends Component {
                         <div
                             style={styles.btnPlay}
                         >
-                            <p style={{ fontSize: 15, color: 'white' }}>
-                                LOADING...
+                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                Loading...
                             </p>
                         </div>
                         :
@@ -803,8 +803,8 @@ class PvP extends Component {
                                     this.chooseOpponent(item, level)
                                 }}
                             >
-                                <p style={{ fontSize: 15, color: 'white' }}>
-                                    TRAINING
+                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                    Training
                                 </p>
                             </button>
 
@@ -819,8 +819,8 @@ class PvP extends Component {
                                     this.openPopupChangeSpell(item.id)
                                 }}
                             >
-                                <p style={{ fontSize: 15, color: 'white' }}>
-                                    CHANGE SPELL
+                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                    Change spell
                                 </p>
                             </button>
                         </div>
@@ -840,8 +840,8 @@ class PvP extends Component {
                                     this.chooseOpponent(item, level)
                                 }}
                             >
-                                <p style={{ fontSize: 15, color: 'white' }}>
-                                    FIGHT
+                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                    Fight
                                 </p>
                             </button>
 
@@ -856,8 +856,8 @@ class PvP extends Component {
                                     this.openPopupChangeSpell(item.id)
                                 }}
                             >
-                                <p style={{ fontSize: 15, color: 'white' }}>
-                                    CHANGE SPELL
+                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                    Change spell
                                 </p>
                             </button>
                         </div>
@@ -876,8 +876,8 @@ class PvP extends Component {
                                 this.openPopupIncrementFights(item.id)
                             }}
                         >
-                            <p style={{ fontSize: 15, color: 'white' }}>
-                                INCREMENT MAX FIGHTS
+                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                Increment max fights
                             </p>
                         </button>
                         : null
@@ -891,7 +891,7 @@ class PvP extends Component {
 
     renderFooterSubscribe(isMobile) {
 		const { toSubscribe } = this.state
-        const { wizaBalance, account } = this.props
+        const { wizaBalance, account, mainTextColor } = this.props
 
         let totWiza = 0
 
@@ -906,7 +906,7 @@ class PvP extends Component {
 					key={i.idnft}
 					trigger={open => (
 						<img
-							style={{ width: 60, height: 60, borderRadius: 2, marginRight: 10, marginBottom: 10, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', cursor: 'pointer' }}
+							style={{ width: 60, height: 60, borderRadius: 4, marginRight: 10, marginBottom: 10, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', cursor: 'pointer' }}
 							src={getImageUrl(i.idnft)}
 							alt={`#${i.idnft}`}
 						/>
@@ -929,22 +929,22 @@ class PvP extends Component {
 
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginRight: 20 }}>
 
-                    <p style={{ fontSize: 15, color: 'white', marginBottom: 6 }}>
-                        TOT WIZA {totWiza}
+                    <p style={{ fontSize: 14, color: mainTextColor, marginBottom: 6 }} className="text-bold">
+                        Tot $WIZA {totWiza}
                     </p>
                     <button
     					className="btnH"
-    					style={{ width: 180, height: 45, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderRadius: 2, backgroundColor: CTA_COLOR }}
+    					style={{ width: 180, height: 45, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderRadius: 4, backgroundColor: CTA_COLOR }}
     					onClick={() => this.subscribeMass()}
     				>
-    					<p style={{ fontSize: 17, color: 'white' }}>
-    						SUBSCRIBE
+    					<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+    						Subscribe
     					</p>
 
                         {
                             account.account &&
-                            <p style={{ fontSize: 13, color: 'white', marginTop: 3 }}>
-                                Balance: {_.floor(wizaBalance, 1)} WIZA
+                            <p style={{ fontSize: 13, color: 'white', marginTop: 2 }}>
+                                Balance: {_.floor(wizaBalance, 1)} $WIZA
                             </p>
                         }
 
@@ -956,35 +956,31 @@ class PvP extends Component {
 
     renderBody(isMobile) {
         const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults, error, activeSubs, pvpWeekEnd, pvpFightsStart, pvpFightsStartDate } = this.state
-        const { account, userMintedNfts } = this.props
+        const { account, userMintedNfts, mainTextColor } = this.props
 
-        const { boxW, modalW } = getBoxWidth(isMobile)
+        const { boxW, modalW, padding } = getBoxWidth(isMobile)
 
         if (!account || !account.account || !isConnected) {
 
 			return (
-				<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
+				<div style={{ flexDirection: 'column', width: boxW, alignItems: 'center', paddingLeft: padding, paddingRight: padding, paddingBottom: padding, paddingTop: 20, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                    <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
+                    <p style={{ color: mainTextColor, fontSize: 24, marginBottom: 20 }}>
                         PvP
                     </p>
 
 					<img
 						src={getImageUrl(undefined)}
-						style={{ width: 340, height: 340, borderRadius: 2, marginBottom: 30 }}
+						style={{ width: 250, height: 250, borderRadius: 4, marginBottom: 15 }}
 						alt='Placeholder'
 					/>
-
-					<p style={{ fontSize: 23, color: 'white', textAlign: 'center', width: 340, marginBottom: 30, lineHeight: 1.2 }}>
-						Connect your wallet and enter the Arena
-					</p>
 
 					<button
 						className='btnH'
 						style={styles.btnConnect}
 						onClick={() => this.setState({ showModalConnection: true })}
 					>
-						<p style={{ fontSize: 19, color: TEXT_SECONDARY_COLOR }}>
+						<p style={{ fontSize: 15, color: mainTextColor }}>
 							Connect wallet
 						</p>
 					</button>
@@ -1006,15 +1002,15 @@ class PvP extends Component {
 
         if (error) {
 			return (
-				<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+				<div style={{ flexDirection: 'column', alignItems: 'center', width: boxW, paddingLeft: padding, paddingRight: padding, paddingBottom: padding, paddingTop: 20, overflowY: 'auto', overflowX: 'hidden' }}>
 
 					<img
 						src={getImageUrl(undefined)}
-						style={{ width: 340, height: 340, borderRadius: 2, marginBottom: 30 }}
+						style={{ width: 250, height: 250, borderRadius: 4, marginBottom: 30 }}
 						alt='Placeholder'
 					/>
 
-					<p style={{ fontSize: 23, color: 'white', textAlign: 'center', width: 340, marginBottom: 30, lineHeight: 1.2 }}>
+					<p style={{ fontSize: 16, color: 'red', textAlign: 'center', width: 250, marginBottom: 30 }}>
 						{error}
 					</p>
 				</div>
@@ -1034,47 +1030,45 @@ class PvP extends Component {
         const fightsStart = now.isAfter(pvpFightsStartDate)
         //console.log(fightsStart);
 
-        let fontSizeIntro = isMobile ? 16 : 19
-
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
+            <div style={{ flexDirection: 'column', alignItems: 'center', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
+                <p style={{ color: mainTextColor, fontSize: 24, marginBottom: 30 }} className="text-medium">
                     PvP
                 </p>
 
                 {
 					this.state.loading ?
 					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
-						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+						<DotLoader size={25} color={mainTextColor} />
 					</div>
 					: null
 				}
 
-                <div style={{ marginBottom: 30 }}>
+                <div style={{ marginBottom: 20 }}>
 
                     <div style={{  flexDirection: "column" }}>
-                        <p style={{ fontSize: fontSizeIntro, color: 'white', marginBottom: 10 }}>
-                            PVP OPEN: {pvpOpen ? "YES" : "NO"}
+                        <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10 }}>
+                            PvP open: {pvpOpen ? "Yes" : "No"}
                         </p>
 
-                        <p style={{ fontSize: fontSizeIntro, color: 'white' }}>
-                            PVP BUYIN: 1 KDA
+                        <p style={{ fontSize: 15, color: mainTextColor }}>
+                            PvP fee: <span className="text-medium">1 $KDA</span>
                         </p>
                     </div>
 
                     <div style={{  flexDirection: "column", marginLeft: isMobile ? 10 : 50 }}>
-                        <p style={{ fontSize: fontSizeIntro, color: 'white', marginBottom: 10 }}>
-                            SUBSCRIBERS {subscribers.length}
+                        <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10 }}>
+                            Subscribers {subscribers.length}
                         </p>
 
                         {
                             activeSubs && subscribers && subscribers.length > 0 ?
                             <div style={{ alignItems: 'center' }}>
-                                <p style={{ fontSize: fontSizeIntro, color: 'white', marginRight: 10 }}>
-                                    ACTIVE SUBS
+                                <p style={{ fontSize: 15, color: mainTextColor, marginRight: 10 }}>
+                                    Active subs
                                 </p>
-                                <p style={{ fontSize: fontSizeIntro, color: "white" }}>
+                                <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
                                     {activeSubs}
                                 </p>
                             </div>
@@ -1083,36 +1077,38 @@ class PvP extends Component {
                     </div>
 
                     <div style={{ flexDirection: 'column', marginLeft: isMobile ? 10 : 50 }}>
-                        <p style={{ fontSize: fontSizeIntro, color: 'white', marginBottom: 10 }}>
-                            REWARD: +2 AP (min 30 fights to get the reward)
+                        <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10 }}>
+                            Reward: +2 Ap (min 30 fights)
                         </p>
 
                         {
                             !fightsStart &&
-                            <p style={{ fontSize: fontSizeIntro, color: 'white' }}>
-                                REGISTRATIONS CLOSE: {pvpFightsStart}
+                            <p style={{ fontSize: 15, color: mainTextColor }}>
+                                Registrations close: {pvpFightsStart}
                             </p>
                         }
 
                         {
                             pvpWeekEnd && fightsStart &&
-                            <p style={{ fontSize: fontSizeIntro, color: 'white' }}>
-                                PVP WEEK END: {pvpWeekEnd}
+                            <p style={{ fontSize: 15, color: mainTextColor }}>
+                                PvP end: {pvpWeekEnd}
                             </p>
                         }
 
                     </div>
                 </div>
 
-                <p style={{ fontSize: 22, color: 'white', marginBottom: 10 }}>
+                <div style={{ width: '100%', height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginBottom: 30 }} />
+
+                <p style={{ fontSize: 18, color: mainTextColor, marginBottom: 5 }} className="text-bold">
                     Your Wizards in the arena ({yourSubscribersResults.length})
                 </p>
 
-                <p style={{ fontSize: 19, color: 'white', marginBottom: 15 }}>
+                <p style={{ fontSize: 14, color: mainTextColor, marginBottom: 30 }}>
                     You will only fight wizards 25 levels higher or lower
                 </p>
 
-                <div style={{ flexDirection: 'row', width: boxW, marginBottom: 30, flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
+                <div style={{ flexDirection: 'row', width: boxW, marginBottom: 14, flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
                     {
                         yourSubscribersResults && yourSubscribersResults.length > 0 &&
                         yourSubscribersResultsSorted.map((item, index) => {
@@ -1122,9 +1118,11 @@ class PvP extends Component {
 
                 </div>
 
+                <div style={{ width: '100%', height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginBottom: 30 }} />
+
                 {
                     !fightsStart &&
-                    <p style={{ fontSize: 22, color: 'white', marginBottom: 10 }}>
+                    <p style={{ fontSize: 18, color: mainTextColor, marginBottom: 40 }} className="text-bold">
                         Select the wizard you want to enroll in the PvP Arena
                     </p>
                 }
@@ -1138,13 +1136,12 @@ class PvP extends Component {
                                 return this.renderRowChoise(item, index, modalW)
                             })
                         }
-
                     </div>
                 }
 
                 {
                     this.state.toSubscribe.length > 0 &&
-                    <div style={Object.assign({}, styles.footerSubscribe, { bottom: isMobile ? -15 : -25 })}>
+                    <div style={Object.assign({}, styles.footerSubscribe, { bottom: -padding })}>
 						{this.renderFooterSubscribe(isMobile)}
 					</div>
                 }
@@ -1209,12 +1206,12 @@ class PvP extends Component {
                 />
 
 				<Media
-					query="(max-width: 1199px)"
+					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 1200px)"
+					query="(min-width: 1000px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -1234,29 +1231,30 @@ class PvP extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: "white"
 	},
     btnConnect: {
-		width: 340,
-		height: 45,
+		width: 250,
+		height: 40,
 		justifyContent: 'center',
 		alignItems: 'center',
-		borderRadius: 2,
-		borderColor: CTA_COLOR,
-		borderWidth: 2,
-		borderStyle: 'solid'
+		borderRadius: 4,
+		borderColor: "#d7d7d7",
+        borderWidth: 1,
+        borderStyle: 'solid',
+        display: 'flex'
 	},
     btnPlay: {
-        height: 35,
+        height: 36,
         width: 110,
         minWidth: 110,
-        borderRadius: 2,
+        borderRadius: 4,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: CTA_COLOR
@@ -1279,31 +1277,32 @@ const styles = {
         width: 'fit-content',
         padding: 10,
         borderWidth: 1,
-        borderColor: TEXT_SECONDARY_COLOR,
+        borderColor: '#d7d7d7',
         borderStyle: 'solid',
-        borderRadius: 2
+        borderRadius: 4,
+        backgroundColor: "#f2f2f2"
     },
     footerSubscribe: {
 		width: '100%',
 		position: 'sticky',
 		bottom: 0,
 		left: 0,
-		backgroundColor: BACKGROUND_COLOR,
-		borderColor: 'white',
+		backgroundColor: "white",
+		borderColor: '#d7d7d7',
 		borderStyle: 'solid',
-		borderRadius: 2,
-		borderTopWidth: 2,
-		borderLeftWidth: 2,
-		borderRightWidth: 2,
+		borderRadius: 4,
+		borderTopWidth: 1,
+		borderLeftWidth: 1,
+		borderRightWidth: 1,
 		borderBottomWidth: 0,
 		paddingTop: 10
 	},
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance, userMintedNfts } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance, userMintedNfts, mainTextColor } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance, userMintedNfts };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance, userMintedNfts, mainTextColor };
 }
 
 export default connect(mapStateToProps, {

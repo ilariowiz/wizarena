@@ -1,7 +1,7 @@
 import React from 'react'
 import allSpells from './Spells'
 
-const cardStats = (item, numberOfMedalsForTournament, width, bonusFromRing) => {
+const cardStats = (item, numberOfMedalsForTournament, width, bonusFromRing, mainTextColor) => {
 
     //console.log(item);
 
@@ -86,29 +86,29 @@ const cardStats = (item, numberOfMedalsForTournament, width, bonusFromRing) => {
     return (
         <div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
             <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
-                <p style={styles.statsTitleStyle}>
-                    ELEMENT
+                <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
+                    Element
                 </p>
-                <p style={styles.statsStyle}>
-                    {item.element.toUpperCase()}
+                <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })} className="text-medium">
+                    {item.element}
                 </p>
             </div>
 
             <div style={{ width: widthBody, justifyContent: 'space-between', alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
                 <div>
-                    <p style={styles.statsTitleStyle}>
-                        HP
+                    <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
+                        Hp
                     </p>
-                    <p style={styles.statsStyle}>
+                    <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })} className="text-medium">
                         {hpBase}
                     </p>
                 </div>
 
                 <div style={{ flexWrap: 'wrap' }}>
-                    <p style={styles.statsTitleStyle}>
-                        DEFENSE
+                    <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
+                        Defense
                     </p>
-                    <p style={styles.statsStyle}>
+                    <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })} className="text-medium">
                         {defBase}
                     </p>
                 </div>
@@ -116,78 +116,78 @@ const cardStats = (item, numberOfMedalsForTournament, width, bonusFromRing) => {
             </div>
 
             <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
-                <p style={styles.statsTitleStyle}>
-                    SPELL
+                <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
+                    Spell
                 </p>
-                <p style={styles.statsStyle}>
-                    {spellSelected.name.toUpperCase()}
+                <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })} className="text-medium">
+                    {spellSelected.name}
                 </p>
             </div>
 
             <div style={{ width: widthBody, justifyContent: 'space-between', alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
 
                 <div>
-                    <p style={styles.statsTitleStyle}>
-                        ATK
+                    <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
+                        Atk
                     </p>
-                    <p style={styles.statsStyle}>
+                    <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })} className="text-medium">
                         {atkTotal}
                     </p>
                 </div>
 
                 <div style={{ flexWrap: 'wrap' }}>
-                    <p style={styles.statsTitleStyle}>
-                        DAMAGE
+                    <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
+                        Dmg
                     </p>
-                    <p style={styles.statsStyle}>
+                    <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })} className="text-medium">
                         {dmgTotal}
                     </p>
                 </div>
 
                 <div style={{ flexWrap: 'wrap' }}>
-                    <p style={styles.statsTitleStyle}>
-                        SPEED
+                    <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
+                        Speed
                     </p>
-                    <p style={styles.statsStyle}>
+                    <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })} className="text-medium">
                         {speedBase}
                     </p>
                 </div>
             </div>
 
             <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
-                <p style={styles.statsTitleStyle}>
-                    SPELL PERK
+                <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
+                    Spell perk
                 </p>
-                <p style={styles.statsStyle}>
-                    {spellSelected.condition.name ? spellSelected.condition.name.toUpperCase() : '-'}
-                </p>
-            </div>
-
-            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
-                <p style={styles.statsTitleStyle}>
-                    RESISTANCE
-                </p>
-                <p style={styles.statsStyle}>
-                    {item.resistance.toUpperCase()}
+                <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })} className="text-medium">
+                    {spellSelected.condition.name ? spellSelected.condition.name : '-'}
                 </p>
             </div>
 
             <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
-                <p style={styles.statsTitleStyle}>
-                    WEAKNESS
+                <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
+                    Resistance
                 </p>
-                <p style={styles.statsStyle}>
-                    {item.weakness.toUpperCase()}
+                <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })} className="text-medium">
+                    {item.resistance}
+                </p>
+            </div>
+
+            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
+                <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
+                    Weakness
+                </p>
+                <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })} className="text-medium">
+                    {item.weakness}
                 </p>
             </div>
 
             {
                 numberOfMedalsForTournament !== undefined &&
                 <div style={{ width: widthBody, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
-                    <p style={styles.statsTitleStyle}>
-                        MEDALS
+                    <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
+                        Medals
                     </p>
-                    <p style={styles.statsStyle}>
+                    <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })} className="text-medium">
                         {numberOfMedalsForTournament}
                     </p>
                 </div>
@@ -198,13 +198,11 @@ const cardStats = (item, numberOfMedalsForTournament, width, bonusFromRing) => {
 
 const styles = {
     statsTitleStyle: {
-        fontSize: 16,
-        color: '#c2c0c0',
+        fontSize: 14,
         marginRight: 8
     },
     statsStyle: {
-        fontSize: 16,
-        color: 'white'
+        fontSize: 16
     },
 }
 

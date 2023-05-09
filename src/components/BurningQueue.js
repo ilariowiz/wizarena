@@ -98,22 +98,20 @@ class BurningQueue extends Component {
 
     renderBody(isMobile) {
         const { loading, queue, burned } = this.state
+        const { mainTextColor } = this.props
 
-        const { boxW } = getBoxWidth(isMobile)
+        const { boxW, padding } = getBoxWidth(isMobile)
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
-                <p style={{ fontSize: 28, color: 'white', marginBottom: 5 }}>
+            <div style={{ flexDirection: 'column', width: boxW, padding, overflow: 'auto' }}>
+                <p style={{ fontSize: 22, color: mainTextColor, marginBottom: 5 }}>
                     Burning Queue ({queue.length})
-                </p>
-                <p style={{ fontSize: 16, color: '#c2c0c0', marginBottom: 30 }}>
-                    in real time
                 </p>
 
                 {
 					loading ?
-					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', paddingTop: 30 }}>
-						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+					<div style={{ width: boxW, justifyContent: 'center', alignItems: 'center', paddingBottom: 30 }}>
+						<DotLoader size={25} color={mainTextColor} />
 					</div>
 					: null
 				}
@@ -122,9 +120,16 @@ class BurningQueue extends Component {
                     {queue.map((item, index) => {
                         return this.renderNft(item, index, false)
                     })}
+
+                    {
+                        queue && queue.length === 0 && !loading &&
+                        <p style={{ fontSize: 16, color: mainTextColor, marginTop: 15 }}>
+                            Burning queue is empty...
+                        </p>
+                    }
                 </div>
 
-                <p style={{ fontSize: 28, color: 'white', marginBottom: 30 }}>
+                <p style={{ fontSize: 22, color: mainTextColor, marginBottom: 30 }}>
                     Burned NFTs ({burned.length})
                 </p>
 
@@ -157,12 +162,12 @@ class BurningQueue extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 1199px)"
+					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 1200px)"
+					query="(min-width: 1000px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -182,20 +187,20 @@ class BurningQueue extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: "white"
 	},
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, gasPrice, gasLimit, networkUrl } = state.mainReducer;
+	const { account, chainId, gasPrice, gasLimit, networkUrl, mainTextColor } = state.mainReducer;
 
-	return { account, chainId, gasPrice, gasLimit, networkUrl };
+	return { account, chainId, gasPrice, gasLimit, networkUrl, mainTextColor };
 }
 
 export default connect(mapStateToProps, {

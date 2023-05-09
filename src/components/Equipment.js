@@ -3,11 +3,9 @@ import { connect } from 'react-redux'
 import Media from 'react-media';
 import { getDoc, doc } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
-import { AiOutlinePlus } from 'react-icons/ai'
-import { AiOutlineMinus } from 'react-icons/ai'
-import { AiOutlineDoubleLeft } from 'react-icons/ai'
-import { AiOutlineDoubleRight } from 'react-icons/ai'
+import { AiOutlinePlus, AiOutlineMinus, AiOutlineDoubleLeft, AiOutlineDoubleRight } from 'react-icons/ai'
 import { IoClose } from 'react-icons/io5'
+import { BiFilter } from 'react-icons/bi'
 import Popup from 'reactjs-popup';
 import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
@@ -351,13 +349,14 @@ class Equipment extends Component {
 
     renderBoxHeader(title, subtitle, isMobile) {
 		return (
-			<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: 30, marginBottom: 4 }}>
-				<p style={{ fontSize: isMobile ? 17 : 20, color: 'white', textAlign: 'center' }}>
-					{title}
+			<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+
+				<p style={{ fontSize: 14, color: '#707070', textAlign: 'center' }}>
+					{subtitle}
 				</p>
 
-				<p style={{ fontSize: isMobile ? 16 : 18, color: '#c2c0c0', textAlign: 'center' }}>
-					{subtitle}
+				<p style={{ fontSize: 14, color: this.props.mainTextColor, textAlign: 'center' }} className="text-bold">
+					{title}
 				</p>
 			</div>
 		)
@@ -489,14 +488,16 @@ class Equipment extends Component {
         )
     }
 
-    renderHeader(isMobile) {
-		const { totalCountItems } = this.props
+    renderHeader(isMobile, boxW) {
+		const { totalCountItems, mainTextColor } = this.props
 		const { floor, uniqueOwners, volume, equipped } = this.state
 
 		let items = totalCountItems || 0
 
+        let boxStatsW = isMobile ? boxW - 40 : boxW * 50 / 100
+
 		return (
-			<div style={{ width: '100%', flexDirection: 'column', alignItems: 'flex-start', marginBottom: 20, flexWrap: 'wrap' }}>
+			<div style={{ width: '100%', alignItems: 'center', marginBottom: 30, justifyContent: 'center', flexDirection: 'column', flexWrap: 'wrap' }}>
 
                 {/*<div style={{ flexWrap: 'wrap', flexDirection: 'column', alignItems: isMobile ? "center" : 'flex-start'  }}>
 
@@ -516,73 +517,100 @@ class Equipment extends Component {
 
                 </div>*/}
 
-                <div style={{ width: '100%', alignItems: 'center', flexWrap: 'wrap' }}>
-    				<div style={{ flexWrap: 'wrap', alignItems: 'center', marginBottom: 10 }}>
-    					{this.renderBoxHeader(items.toLocaleString(), 'items', isMobile)}
+                <div style={{ alignItems: 'center', justifyContent: 'center', borderColor: '#d7d7d7', borderStyle: 'solid', borderRadius: 4, borderWidth: 1, padding: 6, marginBottom: 40 }}>
 
-    					{this.renderBoxHeader(uniqueOwners.toLocaleString(), 'owners', isMobile)}
+					<a
+						href={`${window.location.protocol}//${window.location.host}/collection`}
+						style={{ justifyContent: 'center', alignItems: 'center', display: 'flex', width: 100, height: 32, marginLeft: 15, cursor: 'pointer' }}
+						onClick={(e) => {
+							e.preventDefault()
+							this.props.history.push(`/collection`)
+						}}
+					>
+						<p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
+							Wizards
+						</p>
+					</a>
 
-    					{this.renderBoxHeader(`${floor || '...'} WIZA`, 'floor price', isMobile)}
+                    <div style={{ justifyContent: 'center', alignItems: 'center', width: 100, height: 32, borderRadius: 4, backgroundColor: '#1d1d1f' }}>
+						<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+							Equipment
+						</p>
+					</div>
 
-    					{this.renderBoxHeader(`${volume.toLocaleString()} WIZA`, 'total volume', isMobile)}
+				</div>
 
-    					{this.renderBoxHeader(`${equipped || 0}`, 'equipped', isMobile)}
-    				</div>
+                <div style={{ flexWrap: 'wrap', alignItems: 'center', justifyContent: isMobile ? 'space-between' : 'space-around', marginBottom: 10, width: boxStatsW }}>
+                    {this.renderBoxHeader(items.toLocaleString(), 'items', isMobile)}
 
-                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                    {this.renderBoxHeader(uniqueOwners.toLocaleString(), 'owners', isMobile)}
 
-                        <a
-                            href={`${window.location.protocol}//${window.location.host}/forge`}
-                            style={styles.btnOffers}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                this.props.history.push('/forge')
-                            }}
-                        >
-                            <p style={{ fontSize: 17, color: 'white' }}>
-                                Forge
-                            </p>
-                        </a>
+                    {this.renderBoxHeader(`${floor || '...'} WIZA`, 'floor price', isMobile)}
 
-                        <a
-                            href={`${window.location.protocol}//${window.location.host}/equipmentoffers`}
-                            style={styles.btnOffers}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                this.props.history.push('/equipmentoffers')
-                            }}
-                        >
-                            <p style={{ fontSize: 17, color: 'white' }}>
-                                Offers
-                            </p>
-                        </a>
+                    {this.renderBoxHeader(`${volume.toLocaleString()} WIZA`, 'total volume', isMobile)}
 
-    					<a
-    						href={`${window.location.protocol}//${window.location.host}/salesequipment`}
-    	                    style={styles.btnSales}
-    	                    onClick={(e) => {
-    							e.preventDefault()
-    							this.props.history.push('/salesequipment')
-    						}}
-    	                >
-    	                    <p style={{ fontSize: 17, color: 'white' }}>
-    	                        Sales
-    	                    </p>
-    	                </a>
-    				</div>
+                    {this.renderBoxHeader(`${equipped || 0}`, 'equipped', isMobile)}
                 </div>
 
+                <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 20, justifyContent: 'center' }}>
+
+                    <a
+                        href={`${window.location.protocol}//${window.location.host}/forge`}
+                        style={styles.btnOffers}
+                        onClick={(e) => {
+                            e.preventDefault()
+                            this.props.history.push('/forge')
+                        }}
+                    >
+                        <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
+                            Forge
+                        </p>
+                    </a>
+
+                    <a
+                        href={`${window.location.protocol}//${window.location.host}/equipmentoffers`}
+                        style={styles.btnOffers}
+                        onClick={(e) => {
+                            e.preventDefault()
+                            this.props.history.push('/equipmentoffers')
+                        }}
+                    >
+                        <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
+                            Offers
+                        </p>
+                    </a>
+
+                    <a
+                        href={`${window.location.protocol}//${window.location.host}/salesequipment`}
+                        style={styles.btnSales}
+                        onClick={(e) => {
+                            e.preventDefault()
+                            this.props.history.push('/salesequipment')
+                        }}
+                    >
+                        <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
+                            Sales
+                        </p>
+                    </a>
+                </div>
+
+                <div
+					style={{ height: 1, backgroundColor: '#d7d7d7', width: '100%' }}
+				/>
 			</div>
 		)
 	}
 
-    renderSearchBar(isMobile) {
+    renderSearchBar(isMobile, boxW) {
 		const { searchText } = this.state
+
+        let widthSearch = isMobile ? boxW - 175 : 300
 
 		return (
 			<div style={{ width: '100%', height: 60, alignItems: 'center', marginBottom: 20 }}>
 				<input
-					style={Object.assign({}, styles.inputSearch, { width: isMobile ? 150 : 350 })}
+					style={Object.assign({}, styles.inputSearch, { width: widthSearch, color: this.props.mainTextColor })}
+                    className="text-medium"
 					placeholder='Search by name or id'
 					value={searchText}
 					onChange={(e) => this.setState({ searchText: e.target.value })}
@@ -590,13 +618,28 @@ class Equipment extends Component {
 
 				<button
 					className='btnH'
-					style={{ width: 130, height: 46, backgroundColor: CTA_COLOR, borderRadius: 2, justifyContent: 'center', alignItems: 'center' }}
+					style={{ width: 100, height: 40, backgroundColor: CTA_COLOR, borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}
 					onClick={() => this.searchByName()}
 				>
-					<p style={{ fontSize: 19, color: 'white' }}>
+					<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
 						Search
 					</p>
 				</button>
+
+                {
+					isMobile ?
+					<button
+						className='btnH'
+						style={{ width: 40, height: 40, marginLeft: 15, backgroundColor: this.props.mainTextColor, borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}
+						onClick={() => this.setState({ showFilters: true })}
+					>
+						<BiFilter
+							color='white'
+							size={24}
+						/>
+					</button>
+					: null
+				}
 			</div>
 		)
 	}
@@ -610,8 +653,8 @@ class Equipment extends Component {
 
 		return (
 			<div style={{ width: '100%', marginBottom: 20 }}>
-				<div style={{ backgroundColor: '#e5e8eb80', justifyContent: 'center', alignItems: 'center', height: 45, paddingLeft: 20, paddingRight: 20, borderRadius: 2 }}>
-					<p style={{ fontSize: 22, color: 'black', marginRight: 10 }}>
+				<div style={{ backgroundColor: '#e5e8eb80', justifyContent: 'center', alignItems: 'center', height: 40, paddingLeft: 15, paddingRight: 15, borderRadius: 4 }}>
+					<p style={{ fontSize: 16, color: this.props.mainTextColor, marginRight: 10 }}>
 						{searchedText}
 					</p>
 
@@ -620,7 +663,7 @@ class Equipment extends Component {
 						onClick={() => this.cancelSearch()}
 					>
 						<IoClose
-							color='black'
+							color={this.props.mainTextColor}
 							size={22}
 						/>
 					</button>
@@ -629,13 +672,14 @@ class Equipment extends Component {
 		)
 	}
 
-    renderItem(item, index) {
+    renderItem(item, index, nftWidth) {
         return (
             <EquipmentCard
                 key={index}
                 item={item}
                 index={index}
                 history={this.props.history}
+                nftWidth={nftWidth}
             />
         )
     }
@@ -649,7 +693,7 @@ class Equipment extends Component {
 					alt='Placeholder'
 				/>
 
-				<p style={{ fontSize: 23, color: 'white', textAlign: 'center' }}>
+				<p style={{ fontSize: 23, color: this.props.mainTextColor, textAlign: 'center' }}>
 					The marketplace is empty...
 				</p>
 			</div>
@@ -669,7 +713,7 @@ class Equipment extends Component {
                     })
 				}}
 			>
-				<p style={{ fontSize: 19 }}>
+				<p style={{ fontSize: 16, color: this.props.mainTextColor }}>
 					{item}
 				</p>
 			</button>
@@ -678,29 +722,15 @@ class Equipment extends Component {
 
     renderBoxSearchStat(statDisplay, list) {
 
-		let text = statDisplay.toUpperCase()
-
 		return (
 			<Popup
 				ref={ref => this.listPopup = ref}
 				trigger={
 					<button style={styles.btnStat}>
-						<p style={{ fontSize: 18, color: 'white' }}>{text}</p>
-						{/*
-							findItem &&
-							<IoClose
-								color='red'
-								size={22}
-								style={{ marginLeft: 5 }}
-								onClick={(e) => {
-									e.stopPropagation()
-									this.searchByStat({ stat: findItem.stat, value: findItem.value })
-								}}
-							/>
-						*/}
+						<p style={{ fontSize: 15, color: this.props.mainTextColor }} className="text-medium">{statDisplay}</p>
 					</button>
 				}
-				position="bottom left"
+				position="right center"
 				on="click"
 				closeOnDocumentClick
 				arrow={true}
@@ -714,11 +744,36 @@ class Equipment extends Component {
 		)
 	}
 
+    calcWidthOfNft(widthNfts) {
+		let widthN = Math.floor(widthNfts / 4)
+
+		if (widthN < 200) {
+			widthN = Math.floor(widthNfts / 3)
+
+			if (widthN < 150) {
+				widthN = Math.floor(widthNfts / 2)
+				return widthN
+			}
+
+			return widthN
+		}
+		else if (widthN > 300) {
+			widthN = Math.floor(widthNfts / 5)
+			return widthN
+		}
+
+		return widthN
+	}
+
     renderBody(isMobile) {
-        const { allItems, allItemsIds } = this.props
+        const { allItems, allItemsIds, mainTextColor } = this.props
 		const { loading, itemsToShow, searchedText, numberOfChest, showModalConnection } = this.state
 
-        const { boxW, modalW } = getBoxWidth(isMobile)
+        const { boxW, modalW, padding } = getBoxWidth(isMobile)
+
+        const widthSide = 180
+		const widthNfts = isMobile ? boxW : boxW - widthSide
+        let nftWidth = this.calcWidthOfNft(widthNfts) - 36;
 
         let showPageCounter = false
 		if (allItemsIds && allItems && allItems.length > 0 && itemsToShow && itemsToShow.length > 0 && !searchedText) {
@@ -731,29 +786,19 @@ class Equipment extends Component {
         }
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+            <div style={{ flexDirection: 'column', width: boxW, paddingLeft: padding, paddingRight: padding, paddingBottom: padding, paddingTop: 20, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
-                    Equipment
-                </p>
+                {this.renderHeader(isMobile, boxW)}
 
-                {this.renderHeader(isMobile)}
-
-                {this.renderSearchBar(isMobile)}
+                {this.renderSearchBar(isMobile, boxW)}
 
 				{this.renderSearched()}
 
-                <div style={{ flexWrap: 'wrap', marginBottom: 10 }}>
-					{this.renderBoxSearchStat("HP", ["Ring of HP +4", "Ring of HP +8", "Ring of HP +12", "Ring of HP +16", "Ring of HP +20", "Ring of Life", "Ring of Last Defense", "Ring of Power"].reverse())}
-                    {this.renderBoxSearchStat("DEFENSE", ["Ring of Defense +1", "Ring of Defense +2", "Ring of Defense +3", "Ring of Defense +4", "Ring of Defense +5", "Ring of Magic Shield", "Ring of Last Defense", "Ring of Power"].reverse())}
-                    {this.renderBoxSearchStat("ATTACK", ["Ring of Attack +1", "Ring of Attack +2", "Ring of Attack +3", "Ring of Attack +4", "Ring of Attack +5", "Ring of Accuracy", "Ring of Destruction", "Ring of Swift Death", "Ring of Power"].reverse())}
-                    {this.renderBoxSearchStat("DAMAGE", ["Ring of Damage +2", "Ring of Damage +4", "Ring of Damage +6", "Ring of Damage +8", "Ring of Damage +10", "Ring of Force", "Ring of Destruction", "Ring of Power"].reverse())}
-                    {this.renderBoxSearchStat("SPEED", ["Ring of Speed +2", "Ring of Speed +4", "Ring of Speed +6", "Ring of Speed +8", "Ring of Speed +10", "Ring of Lightning", "Ring of Swift Death", "Ring of Power"].reverse())}
-				</div>
-
-                <p style={{ marginBottom: 15, fontSize: 16, color: 'white' }}>
-					{numberOfItems} items
-				</p>
+                {/*
+                    <p style={{ marginBottom: 15, fontSize: 16, color: 'white' }}>
+    					{numberOfItems} items
+    				</p>
+                */}
 
                 {
 					allItems && allItems.length === 0 ?
@@ -764,21 +809,34 @@ class Equipment extends Component {
                 {
 					loading ?
 					<div style={{ width: '100%', height: 45, marginTop: 20, marginBottom: 20, justifyContent: 'center', alignItems: 'center' }}>
-						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+						<DotLoader size={25} color={mainTextColor} />
 					</div>
 					: null
 				}
 
-                {
-					itemsToShow && itemsToShow.length > 0 ?
-                    <div style={{ flexWrap: 'wrap' }}>
-    					{itemsToShow.map((item, index) => {
-    						return this.renderItem(item, index);
-    					})}
-                    </div>
-					:
-                    null
-				}
+                <div style={{ width: boxW }}>
+                    {
+                        !isMobile &&
+                        <div style={{ width: widthSide, flexDirection: 'column' }}>
+        					{this.renderBoxSearchStat("Hp", ["Ring of HP +4", "Ring of HP +8", "Ring of HP +12", "Ring of HP +16", "Ring of HP +20", "Ring of Life", "Ring of Last Defense", "Ring of Power"].reverse())}
+                            {this.renderBoxSearchStat("Defense", ["Ring of Defense +1", "Ring of Defense +2", "Ring of Defense +3", "Ring of Defense +4", "Ring of Defense +5", "Ring of Magic Shield", "Ring of Last Defense", "Ring of Power"].reverse())}
+                            {this.renderBoxSearchStat("Attack", ["Ring of Attack +1", "Ring of Attack +2", "Ring of Attack +3", "Ring of Attack +4", "Ring of Attack +5", "Ring of Accuracy", "Ring of Destruction", "Ring of Swift Death", "Ring of Power"].reverse())}
+                            {this.renderBoxSearchStat("Damage", ["Ring of Damage +2", "Ring of Damage +4", "Ring of Damage +6", "Ring of Damage +8", "Ring of Damage +10", "Ring of Force", "Ring of Destruction", "Ring of Power"].reverse())}
+                            {this.renderBoxSearchStat("Speed", ["Ring of Speed +2", "Ring of Speed +4", "Ring of Speed +6", "Ring of Speed +8", "Ring of Speed +10", "Ring of Lightning", "Ring of Swift Death", "Ring of Power"].reverse())}
+        				</div>
+                    }
+
+                    {
+    					itemsToShow && itemsToShow.length > 0 ?
+                        <div style={{ flexWrap: 'wrap', width: widthNfts }}>
+        					{itemsToShow.map((item, index) => {
+        						return this.renderItem(item, index, nftWidth);
+        					})}
+                        </div>
+    					:
+                        null
+    				}
+                </div>
 
                 {
 					showPageCounter ?
@@ -816,7 +874,7 @@ class Equipment extends Component {
 			<div>
 				<Header
 					page='home'
-					section={8}
+					section={1}
 					account={account}
 					isMobile={isMobile}
 					history={this.props.history}
@@ -829,12 +887,12 @@ class Equipment extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 1199px)"
+					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 1200px)"
+					query="(min-width: 1000px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -854,13 +912,13 @@ class Equipment extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: 'white'
 	},
     cardShopStyle: {
         borderRadius: 2,
@@ -916,16 +974,13 @@ const styles = {
 		paddingBottom: 6
 	},
     inputSearch: {
-		width: 390,
-		height: 43,
+		height: 36,
 		marginRight: 15,
-		color: 'white',
-		borderRadius: 2,
-		borderColor: 'white',
+		borderRadius: 4,
+		borderColor: '#d7d7d7',
 		borderStyle: 'solid',
-		borderWidth: 2,
-        backgroundColor: BACKGROUND_COLOR,
-		fontSize: 17,
+		borderWidth: 1,
+		fontSize: 15,
 		paddingLeft: 10,
 		WebkitAppearance: 'none',
 		MozAppearance: 'none',
@@ -933,39 +988,41 @@ const styles = {
 		outline: 'none'
 	},
     btnStat: {
-		padding: 10,
-		backgroundColor: CTA_COLOR,
+		padding: 9,
+		backgroundColor: 'white',
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginRight: 10,
-		marginBottom: 10,
-		borderRadius: 2,
+		marginBottom: 20,
+		marginRight: 15,
+		borderRadius: 4,
+		borderColor: '#d7d7d7',
+		borderStyle: 'solid',
+		borderWidth: 1,
 		minWidth: 60,
 		display: 'flex',
 		flexDirection: 'row'
 	},
     btnOffers: {
-		width: 160,
-		height: 38,
+		width: 130,
+		height: 32,
 		marginRight: 10,
-        marginBottom: 10,
-		borderRadius: 2,
-        borderWidth: 2,
-        borderColor: CTA_COLOR,
+        marginBottom: 5,
+		borderRadius: 4,
+        borderWidth: 1,
+        borderColor: 'black',
         borderStyle: 'solid',
 		justifyContent: 'center',
 		alignItems: 'center',
 		display: 'flex',
-        backgroundColor: CTA_COLOR
 	},
     btnSales: {
-		width: 160,
-		height: 38,
-        marginBottom: 10,
-		borderWidth: 2,
-		borderColor: 'white',
+		width: 130,
+		height: 32,
+        marginBottom: 5,
+		borderWidth: 1,
+		borderColor: 'black',
 		borderStyle: 'solid',
-		borderRadius: 2,
+		borderRadius: 4,
 		justifyContent: 'center',
 		alignItems: 'center',
 		display: 'flex'
@@ -973,10 +1030,10 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, gasPrice, gasLimit, netId, networkUrl } = state.mainReducer;
+	const { account, chainId, gasPrice, gasLimit, netId, networkUrl, mainTextColor } = state.mainReducer;
     const { statSearchedEquipment, allItems, allItemsIds, totalCountItems, totalMintedItems, itemsBlockId } = state.equipmentReducer
 
-	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, statSearchedEquipment, allItems, allItemsIds, totalCountItems, totalMintedItems, itemsBlockId };
+	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, statSearchedEquipment, allItems, allItemsIds, totalCountItems, totalMintedItems, itemsBlockId, mainTextColor };
 }
 
 export default connect(mapStateToProps, {

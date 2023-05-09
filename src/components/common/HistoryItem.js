@@ -7,7 +7,7 @@ import { TEST_NET_ID, CTA_COLOR } from '../../actions/types'
 
 class HistoryItem extends Component {
 	render() {
-		const { item, index, nftH, netId, isMobile } = this.props
+		const { item, index, nftH, netId, isMobile, mainTextColor } = this.props
 
 		let removeBorder = index + 1 === nftH.length
 
@@ -42,28 +42,28 @@ class HistoryItem extends Component {
 						this.props.history.push(`./nft/${item.idnft}`)
 					}}
 				>
-					<p style={{ fontSize: 17, color: CTA_COLOR }}>
+					<p style={{ fontSize: 16, color: CTA_COLOR }} className="text-medium">
 						#{item.idnft}
 					</p>
 				</a>
 
-				<p style={{ fontSize: 17, color: 'white', flex: 0.6 }}>
+				<p style={{ fontSize: 15, color: mainTextColor, flex: 0.6 }} className="text-medium">
 					KDA {item.amount}
 				</p>
 
 				{
 					!isMobile &&
-					<p style={{ fontSize: 15, color: 'white', flex: 1 }}>
+					<p style={{ fontSize: 13, color: mainTextColor, flex: 1 }}>
 						From {item.from.slice(0, 15)}...
 					</p>
 				}
 
-				<p style={{ fontSize: 15, color: 'white', flex: 1 }}>
+				<p style={{ fontSize: 13, color: mainTextColor, flex: 1 }}>
 					To {item.to.slice(0, 15)}...
 				</p>
 
 				<p
-					style={styleData}
+					style={Object.assign({}, styleData, { color: item.requestKey ? CTA_COLOR : mainTextColor })}
 					onClick={() => {
 						if (item.requestKey) {
 							window.open(url, "_blank")
@@ -92,24 +92,22 @@ const styles = {
 		height: 60
 	},
 	dataRequest: {
-		fontSize: 16,
-		color: CTA_COLOR,
+		fontSize: 15,
 		flex: 0.6,
 		cursor: 'pointer',
 		textAlign: 'right'
 	},
 	dataNonRequest: {
 		fontSize: 15,
-		color: 'white',
 		flex: 0.6,
 		textAlign: 'right'
 	}
 }
 
 const mapStateToProps = (state) => {
-	const { netId } = state.mainReducer
+	const { netId, mainTextColor } = state.mainReducer
 
-	return { netId }
+	return { netId, mainTextColor }
 }
 
 export default connect(mapStateToProps)(HistoryItem)

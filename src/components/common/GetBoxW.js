@@ -1,10 +1,13 @@
 const getBoxWidth = (isMobile) => {
 
-	const headerW = document.getElementById("headerbox") ? document.getElementById("headerbox").offsetWidth : 0
+	//const headerW = document.getElementById("headerbox") ? document.getElementById("headerbox").offsetWidth : 0
 	//console.log(headerW);
 
-	const padding = isMobile ? 30 : 56
-	let boxW = Math.floor(window.innerWidth - headerW - padding)
+	const innerW = window.innerWidth
+
+	const padding = (innerW * 12 / 100) / 2
+	//let boxW = Math.floor(window.innerWidth - headerW - padding)
+	let boxW = Math.floor(innerW - (padding * 2))
 
 	//console.log(isMobile, window.innerWidth, boxW);
 
@@ -12,7 +15,7 @@ const getBoxWidth = (isMobile) => {
 	if (modalW > 500) modalW = 500
 	if (modalW < 310) modalW = 310
 
-	return { boxW, modalW }
+	return { boxW, modalW, padding }
 }
 
 export default getBoxWidth

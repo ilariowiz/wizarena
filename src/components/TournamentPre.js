@@ -60,7 +60,6 @@ class Tournament extends Component {
             tournamentSubs: {},
             toSubscribe: [],
 			equipment: [],
-            montepremiWiza: 0,
             statSearched: [],
             subscriptionsInfo: [],
             showModalSpellbook: false,
@@ -548,7 +547,7 @@ class Tournament extends Component {
                     this.props.history.push(`/${goto}`)
                 }}
             >
-                <p style={{ fontSize: 16, color: 'white', textAlign: 'center' }}>
+                <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
                     Open Tournament
                 </p>
             </a>
@@ -564,7 +563,7 @@ class Tournament extends Component {
                     this.loadMinted(tournament, true, false)
                 }}
             >
-                <p style={{ fontSize: 16, color: 'white' }}>
+                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
                     Your results
                 </p>
             </button>
@@ -582,7 +581,7 @@ class Tournament extends Component {
                     this.loadMinted(tournament, false, true)
                 }}
             >
-                <p style={{ fontSize: 16, color: 'white', textAlign: 'center' }}>
+                <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
                     Subscribe your wizards
                 </p>
             </button>
@@ -600,7 +599,7 @@ class Tournament extends Component {
 					key={i.idnft}
 					trigger={open => (
 						<img
-							style={{ width: 60, height: 60, borderRadius: 2, marginRight: 10, marginBottom: 10, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', cursor: 'pointer' }}
+							style={{ width: 60, height: 60, borderRadius: 4, marginRight: 10, marginBottom: 10, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', cursor: 'pointer' }}
 							src={getImageUrl(i.idnft)}
 							alt={`#${i.idnft}`}
 						/>
@@ -628,7 +627,7 @@ class Tournament extends Component {
 
 				<button
 					className="btnH"
-					style={{ width: 180, height: 45, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderRadius: 2, backgroundColor: CTA_COLOR, marginRight: 20 }}
+					style={{ width: 180, height: 44, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderRadius: 4, backgroundColor: CTA_COLOR, marginRight: 20 }}
 					onClick={() => {
                         if (tournamentSubs.type === "weekly") {
                             this.subscribeMassKda()
@@ -642,21 +641,21 @@ class Tournament extends Component {
 
                     }}
 				>
-					<p style={{ fontSize: 16, color: 'white' }}>
-						SUBSCRIBE
+					<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+						Subscribe
 					</p>
 
                     {
                         account.account && tournamentSubs.coinBuyin === "KDA" &&
                         <p style={{ fontSize: 13, color: 'white', marginTop: 3 }}>
-                            Balance: {_.floor(account.balance, 1)} KDA
+                            Balance: {_.floor(account.balance, 1)} $KDA
                         </p>
                     }
 
                     {
                         account.account && tournamentSubs.coinBuyin === "WIZA" &&
                         <p style={{ fontSize: 13, color: 'white', marginTop: 3 }}>
-                            Balance: {_.floor(wizaBalance, 1)} WIZA
+                            Balance: {_.floor(wizaBalance, 1)} $WIZA
                         </p>
                     }
 
@@ -665,9 +664,59 @@ class Tournament extends Component {
 		)
 	}
 
+    renderRoundInfo(marginBottom, mainTextColor, tournamentValue, roundValue) {
+        return (
+            <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
+                <p style={{ fontSize: 16, color: mainTextColor }}>
+                    Tournament <span className="text-bold">{tournamentValue}</span>
+                </p>
+
+                <p style={{ fontSize: 15, color: mainTextColor }}>
+                    Round <span className="text-bold">{roundValue}</span>
+                </p>
+            </div>
+        )
+    }
+
+    renderBuyinInfo(marginBottom, mainTextColor, buyin, coin, feeTournament) {
+        return (
+            <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
+                <p style={{ fontSize: 17, color: mainTextColor }}>
+                    Buyin <span className="text-bold">{buyin}</span> {coin}
+                </p>
+
+                <p style={{ fontSize: 15, color: mainTextColor }}>
+                    Fee {feeTournament}%
+                </p>
+            </div>
+        )
+    }
+
+    renderPrizeInfo(marginBottom, mainTextColor, montepremi, coin) {
+        return (
+            <p style={{ fontSize: 16, color: mainTextColor, marginBottom }}>
+                Prize <span className="text-bold">{montepremi ? montepremi.toFixed(2) : '...'}</span> {coin}
+            </p>
+        )
+    }
+
+    renderSubsInfo(marginBottom, mainTextColor, subs, avgLevel) {
+        return (
+            <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
+                <p style={{ fontSize: 16, color: mainTextColor }}>
+                    Subscribed <span className="text-bold">{subs}</span>
+                </p>
+
+                <p style={{ fontSize: 16, color: mainTextColor }}>
+                    Avg level <span className="text-bold">{avgLevel || '...'}</span>
+                </p>
+            </div>
+        )
+    }
+
     renderTournamentHigh(boxTournamentWidth) {
         const { tournament, tournamentKdaSubs, avgLevelKda } = this.state
-        const { buyin, feeTournament } = this.props
+        const { buyin, feeTournament, mainTextColor } = this.props
 
         const fee = buyin * feeTournament / 100
         const totalFee = fee * tournamentKdaSubs
@@ -694,105 +743,77 @@ class Tournament extends Component {
             }
         }
 
-        const marginBottom = 23
+        const marginBottom = 14
 
         return (
             <div
-                className="cardShopShadow"
                 style={Object.assign({}, styles.boxTournament, { width: boxTournamentWidth })}
             >
                 {
                     tournament.showLeague ?
-                    <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 50, marginBottom }}>
-                        <p style={{ fontSize: 22, color: 'white' }}>
-                            The Twelve League
-                        </p>
-
-                        <p style={{ fontSize: 18, color: 'gold' }}>
-                            {tournament.leagueTournament}
+                    <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom }}>
+                        <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
+                            The Twelve League <span style={{ fontSize: 15 }}>{tournament.leagueTournament}</span>
                         </p>
                     </div>
                     :
-                    <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 50, marginBottom }}>
-                        <p style={{ fontSize: 22, color: 'white' }}>
+                    <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom }}>
+                        <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
                             The Weekly Tournament
                         </p>
                     </div>
                 }
 
-                <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
-                    <p style={{ fontSize: 20, color: 'white' }}>
-                        Tournament {tournamentValue}
-                    </p>
+                {this.renderRoundInfo(marginBottom, mainTextColor, tournamentValue, roundValue)}
 
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        Round {roundValue}
-                    </p>
-                </div>
-
-                <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 40, marginBottom }}>
-                    <p style={{ fontSize: 20, color: 'white' }}>
-                        Buyin <span style={{ color: 'gold' }}>{buyin}</span> $KDA
-                    </p>
-
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        Fee {feeTournament}%
-                    </p>
-                </div>
-
-                <p style={{ fontSize: 20, color: 'white', marginBottom }}>
-                    Level CAP: <span style={{ color: 'gold' }}>{tournament.levelCap}</span>
+                <p style={{ fontSize: 16, color: mainTextColor, marginBottom }}>
+                    Level Cap: <span className="text-bold">{tournament.levelCap}</span>
                 </p>
 
-                <p style={{ fontSize: 17, color: 'white', marginBottom, height: 34 }}>
+                <p style={{ fontSize: 16, color: mainTextColor, marginBottom, height: 20 }}>
                     Structure: {tournament.structure}
                 </p>
 
-                <p style={{ fontSize: 20, color: 'white', marginBottom }}>
-                    Prize <span style={{ color: 'gold' }}>{montepremi ? montepremi.toFixed(2) : '...'}</span> $KDA
-                </p>
+                {this.renderBuyinInfo(marginBottom, mainTextColor, buyin, "$KDA", feeTournament)}
 
-                <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        Subscribed <span style={{ color: 'gold' }}>{tournamentKdaSubs}</span>
-                    </p>
+                <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        AVG level <span style={{ color: 'gold' }}>{avgLevelKda || '...'}</span>
-                    </p>
-                </div>
+                {this.renderPrizeInfo(marginBottom, mainTextColor, montepremi, "$KDA")}
 
-                <p style={{ fontSize: 16, color: 'white', marginBottom, height: 55 }}>
+                {this.renderSubsInfo(marginBottom, mainTextColor, tournamentKdaSubs, avgLevelKda)}
+
+                <p style={{ fontSize: 14, color: mainTextColor, marginBottom, height: 40 }}>
                     Participation reward: (for each wizard) {tournament.reward}
                 </p>
 
-                {
-                    finalDate ?
-                    <p style={{ fontSize: 17, color: 'white', height: 34, marginBottom }}>
-                        {finalDate}
-                    </p>
-                    :
-                    <p style={{ height: 17, fontSize: 17, color: 'white', height: 34, marginBottom }}>
+                <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
-                    </p>
-                }
+                <div style={{ alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
 
-                <div style={{ alignItems: 'center', marginTop: 10 }}>
-                    <p style={{ fontSize: 20, color: 'white', marginRight: 10 }}>
-                        Registrations {tournament.canSubscribe ? "open" : "closed"}
-                    </p>
+                    <div style={{ alignItems: 'center' }}>
+                        <p style={{ fontSize: 15, color: mainTextColor, marginRight: 7 }}>
+                            Registrations {tournament.canSubscribe ? "open" : "closed"}
+                        </p>
+
+                        {
+                            tournament.canSubscribe ?
+                            <AiFillCheckCircle
+                                color='green'
+                                size={26}
+                            />
+                            :
+                            <AiFillCheckCircle
+                                color='#504f4f'
+                                size={26}
+                            />
+                        }
+                    </div>
 
                     {
-                        tournament.canSubscribe ?
-                        <AiFillCheckCircle
-                            color='green'
-                            size={26}
-                        />
-                        :
-                        <AiFillCheckCircle
-                            color='#504f4f'
-                            size={26}
-                        />
+                        finalDate &&
+                        <p style={{ fontSize: 15, color: mainTextColor }} className="text-bold">
+                            {finalDate}
+                        </p>
                     }
                 </div>
 
@@ -824,7 +845,7 @@ class Tournament extends Component {
 
     renderTournamentElite(boxTournamentWidth) {
         const { tournamentElite, tournamentEliteSubs, avgLevelElite } = this.state
-        const { buyinElite } = this.props
+        const { buyinElite, mainTextColor } = this.props
 
         let montepremi = tournamentEliteSubs * buyinElite
 
@@ -849,105 +870,77 @@ class Tournament extends Component {
             }
         }
 
-        const marginBottom = 23
+        const marginBottom = 14
 
         return (
             <div
-                className="cardShopShadow"
                 style={Object.assign({}, styles.boxTournament, { width: boxTournamentWidth })}
             >
                 {
                     tournamentElite.showLeague ?
-                    <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 50, marginBottom }}>
-                        <p style={{ fontSize: 22, color: 'white' }}>
-                            The Twelve League
-                        </p>
-
-                        <p style={{ fontSize: 18, color: 'gold' }}>
-                            {tournamentElite.leagueTournament}
+                    <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom }}>
+                        <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
+                            The Twelve League <span style={{ fontSize: 15 }}>{tournamentElite.leagueTournament}</span>
                         </p>
                     </div>
                     :
-                    <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 50, marginBottom }}>
-                        <p style={{ fontSize: 22, color: 'white' }}>
+                    <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom }}>
+                        <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
                             The Elite Tournament
                         </p>
                     </div>
                 }
 
-                <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
-                    <p style={{ fontSize: 20, color: 'white' }}>
-                        Tournament {tournamentValue}
-                    </p>
+                {this.renderRoundInfo(marginBottom, mainTextColor, tournamentValue, roundValue)}
 
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        Round {roundValue}
-                    </p>
-                </div>
-
-                <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 40, marginBottom }}>
-                    <p style={{ fontSize: 20, color: 'white' }}>
-                        Buyin <span style={{ color: 'gold' }}>{buyinElite}</span> $WIZA
-                    </p>
-
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        Fee 0%
-                    </p>
-                </div>
-
-                <p style={{ fontSize: 20, color: 'white', marginBottom }}>
-                    MIN Level: <span style={{ color: 'gold' }}>{tournamentElite.levelCap}</span>
+                <p style={{ fontSize: 16, color: mainTextColor, marginBottom }}>
+                    Min level: <span className="text-bold">{tournamentElite.levelCap}</span>
                 </p>
 
-                <p style={{ fontSize: 17, color: 'white', marginBottom, height: 34 }}>
+                <p style={{ fontSize: 16, color: mainTextColor, marginBottom, height: 20 }}>
                     Structure: {tournamentElite.structure}
                 </p>
 
-                <p style={{ fontSize: 20, color: 'white', marginBottom }}>
-                    Prize <span style={{ color: 'gold' }}>{montepremi ? montepremi.toFixed(2) : '...'}</span> $WIZA
-                </p>
+                {this.renderBuyinInfo(marginBottom, mainTextColor, buyinElite, "$WIZA", "0")}
 
-                <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        Subscribed <span style={{ color: 'gold' }}>{tournamentEliteSubs}</span>
-                    </p>
+                <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        AVG level <span style={{ color: 'gold' }}>{avgLevelElite || '...'}</span>
-                    </p>
-                </div>
+                {this.renderPrizeInfo(marginBottom, mainTextColor, montepremi, "$WIZA")}
 
-                <p style={{ fontSize: 16, color: 'white', marginBottom, height: 55 }}>
+                {this.renderSubsInfo(marginBottom, mainTextColor, tournamentEliteSubs, avgLevelElite)}
+
+                <p style={{ fontSize: 14, color: mainTextColor, marginBottom, height: 40 }}>
                     Participation reward: (for each wizard) {tournamentElite.reward}
                 </p>
 
-                {
-                    finalDate ?
-                    <p style={{ fontSize: 17, color: 'white', height: 34, marginBottom }}>
-                        {finalDate}
-                    </p>
-                    :
-                    <p style={{ height: 17, fontSize: 17, color: 'white', height: 34, marginBottom }}>
+                <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
-                    </p>
-                }
+                <div style={{ alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
 
-                <div style={{ alignItems: 'center', marginTop: 10 }}>
-                    <p style={{ fontSize: 20, color: 'white', marginRight: 10 }}>
-                        Registrations {tournamentElite.canSubscribe ? "open" : "closed"}
-                    </p>
+                    <div style={{ alignItems: 'center' }}>
+                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 7 }}>
+                            Registrations {tournamentElite.canSubscribe ? "open" : "closed"}
+                        </p>
+
+                        {
+                            tournamentElite.canSubscribe ?
+                            <AiFillCheckCircle
+                                color='green'
+                                size={26}
+                            />
+                            :
+                            <AiFillCheckCircle
+                                color='#504f4f'
+                                size={26}
+                            />
+                        }
+                    </div>
 
                     {
-                        tournamentElite.canSubscribe ?
-                        <AiFillCheckCircle
-                            color='green'
-                            size={26}
-                        />
-                        :
-                        <AiFillCheckCircle
-                            color='#504f4f'
-                            size={26}
-                        />
+                        finalDate &&
+                        <p style={{ fontSize: 15, color: mainTextColor }} className="text-bold">
+                            {finalDate}
+                        </p>
                     }
                 </div>
 
@@ -979,7 +972,7 @@ class Tournament extends Component {
 
     renderTournamentLow(boxTournamentWidth) {
         const { tournamentWiza, tournamentWizaSubs, avgLevelWiza } = this.state
-        const { buyinWiza, feeTournamentWiza } = this.props
+        const { buyinWiza, feeTournamentWiza, mainTextColor } = this.props
 
         const fee = buyinWiza * feeTournamentWiza / 100
         const totalFee = fee * tournamentWizaSubs
@@ -1006,105 +999,77 @@ class Tournament extends Component {
             }
         }
 
-        const marginBottom = 23
+        const marginBottom = 14
 
         return (
             <div
-                className="cardShopShadow"
                 style={Object.assign({}, styles.boxTournament, { width: boxTournamentWidth })}
             >
                 {
                     tournamentWiza.showLeague ?
-                    <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 50, marginBottom }}>
-                        <p style={{ fontSize: 22, color: 'white' }}>
-                            The Twelve League
-                        </p>
-
-                        <p style={{ fontSize: 18, color: 'gold' }}>
-                            {tournamentWiza.leagueTournament}
+                    <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom }}>
+                        <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
+                            The Twelve League <span style={{ fontSize: 15 }}>{tournamentWiza.leagueTournament}</span>
                         </p>
                     </div>
                     :
-                    <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 50, marginBottom }}>
-                        <p style={{ fontSize: 22, color: 'white' }}>
+                    <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom }}>
+                        <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
                             The Apprentice Tournament
                         </p>
                     </div>
                 }
 
-                <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
-                    <p style={{ fontSize: 20, color: 'white' }}>
-                        Tournament {tournamentValue}
-                    </p>
+                {this.renderRoundInfo(marginBottom, mainTextColor, tournamentValue, roundValue)}
 
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        Round {roundValue}
-                    </p>
-                </div>
-
-                <div style={{ alignItems: 'center', justifyContent: 'space-between', height: 40, marginBottom }}>
-                    <p style={{ fontSize: 20, color: 'white' }}>
-                        Buyin <span style={{ color: 'gold' }}>{buyinWiza}</span> $WIZA
-                    </p>
-
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        Fee {feeTournamentWiza}%
-                    </p>
-                </div>
-
-                <p style={{ fontSize: 20, color: 'white', marginBottom }}>
-                    Level CAP: <span style={{ color: 'gold' }}>{tournamentWiza.levelCap}</span>
+                <p style={{ fontSize: 16, color: mainTextColor, marginBottom }}>
+                    Level Cap: <span className="text-bold">{tournamentWiza.levelCap}</span>
                 </p>
 
-                <p style={{ fontSize: 17, color: 'white', marginBottom, height: 34 }}>
+                <p style={{ fontSize: 16, color: mainTextColor, marginBottom, height: 20 }}>
                     Structure: {tournamentWiza.structure}
                 </p>
 
-                <p style={{ fontSize: 20, color: 'white', marginBottom }}>
-                    Prize <span style={{ color: 'gold' }}>{montepremi || '...'}</span> $WIZA
-                </p>
+                 {this.renderBuyinInfo(marginBottom, mainTextColor, buyinWiza, "$WIZA", feeTournamentWiza)}
 
-                <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        Subscribed <span style={{ color: 'gold' }}>{tournamentWizaSubs}</span>
-                    </p>
+                 <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        AVG level <span style={{ color: 'gold' }}>{avgLevelWiza || '...'}</span>
-                    </p>
-                </div>
+                {this.renderPrizeInfo(marginBottom, mainTextColor, montepremi, "$WIZA")}
 
-                <p style={{ fontSize: 16, color: 'white', marginBottom, height: 55 }}>
+                {this.renderSubsInfo(marginBottom, mainTextColor, tournamentWizaSubs, avgLevelWiza)}
+
+                <p style={{ fontSize: 14, color: mainTextColor, marginBottom, height: 40 }}>
                     Participation reward: (for each wizard) {tournamentWiza.reward}
                 </p>
 
-                {
-                    finalDate ?
-                    <p style={{ fontSize: 17, color: 'white', height: 34, marginBottom }}>
-                        {finalDate}
-                    </p>
-                    :
-                    <p style={{ height: 17, fontSize: 17, color: 'white', height: 34, marginBottom }}>
+                <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
-                    </p>
-                }
+                <div style={{ alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
 
-                <div style={{ alignItems: 'center', marginTop: 10 }}>
-                    <p style={{ fontSize: 20, color: 'white', marginRight: 10 }}>
-                        Registrations {tournamentWiza.canSubscribe ? "open" : "closed"}
-                    </p>
+                    <div style={{ alignItems: 'center' }}>
+                        <p style={{ fontSize: 15, color: mainTextColor, marginRight: 7 }}>
+                            Registrations {tournamentWiza.canSubscribe ? "open" : "closed"}
+                        </p>
+
+                        {
+                            tournamentWiza.canSubscribe ?
+                            <AiFillCheckCircle
+                                color='green'
+                                size={26}
+                            />
+                            :
+                            <AiFillCheckCircle
+                                color='#504f4f'
+                                size={26}
+                            />
+                        }
+                    </div>
 
                     {
-                        tournamentWiza.canSubscribe ?
-                        <AiFillCheckCircle
-                            color='green'
-                            size={26}
-                        />
-                        :
-                        <AiFillCheckCircle
-                            color='#504f4f'
-                            size={26}
-                        />
+                        finalDate &&
+                        <p style={{ fontSize: 15, color: mainTextColor }} className="text-bold">
+                            {finalDate}
+                        </p>
                     }
                 </div>
 
@@ -1142,8 +1107,8 @@ class Tournament extends Component {
 
 		return (
 			<div style={{ flexDirection: 'column' }} key={key}>
-				<p style={{ fontSize: 30, color: 'white', marginBottom: 15 }}>
-					ROUND {roundName}
+				<p style={{ fontSize: 20, color: this.props.mainTextColor, marginBottom: 15 }} className="text-medium">
+					Round {roundName}
 				</p>
 
 				<div style={{ flexWrap: 'wrap' }}>
@@ -1219,7 +1184,7 @@ class Tournament extends Component {
 
 		const findItem = statSearched && statSearched.length > 0 ? statSearched.find(i => i.stat === statName) : undefined
 
-		let text = statDisplay.toUpperCase()
+		let text = statDisplay
 		if (findItem) {
 			//console.log(findItem);
 
@@ -1232,7 +1197,7 @@ class Tournament extends Component {
 				ref={ref => this.listPopup = ref}
 				trigger={
 					<button style={styles.btnStat}>
-						<p style={{ fontSize: 16, color: 'white' }}>{text}</p>
+						<p style={{ fontSize: 15, color: 'white' }} className="text-medium">{text}</p>
 						{
 							findItem &&
 							<IoClose
@@ -1263,14 +1228,14 @@ class Tournament extends Component {
 
     renderBody(isMobile) {
         const { tournament, tournamentWiza, tournamentElite, profileFights, error, showProfileFights, showSubs, yourSubs } = this.state
-        const { filtriProfileRanges } = this.props
+        const { filtriProfileRanges, mainTextColor } = this.props
 
-        let { boxW, modalW } = getBoxWidth(isMobile)
+        let { boxW, modalW, padding } = getBoxWidth(isMobile)
         const insideWidth = boxW > 1250 ? 1250 : boxW
 
         if (!tournament.name || !tournamentWiza.name || !tournamentElite.name) {
             return (
-                <div style={{ width: boxW, height: 50, justifyContent: 'center', alignItems: 'center', paddingTop: 30 }}>
+                <div style={{ width: boxW, height: 50, justifyContent: 'center', alignItems: 'center', padding }}>
                     <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
                 </div>
             )
@@ -1283,11 +1248,19 @@ class Tournament extends Component {
         }
 
         return (
-            <div style={{ flexDirection: 'column', alignItems: 'center', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
+            <div style={{ flexDirection: 'column', width: boxW, alignItems: 'center', padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
-                    Tournaments
+                <p style={{ color: mainTextColor, fontSize: 24, marginBottom: 60 }} className="text-medium">
+                    Weekly Tournaments
                 </p>
+
+                {
+					this.state.loading ?
+					<div style={{ width: insideWidth, height: 50, marginBottom: 30, justifyContent: 'center', alignItems: 'center' }}>
+						<DotLoader size={25} color={mainTextColor} />
+					</div>
+					: null
+				}
 
                 <div style={{ width: insideWidth, flexDirection: 'row', justifyContent: isMobile ? 'center' : 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 30 }}>
                     {this.renderTournamentElite(boxTournamentWidth)}
@@ -1300,7 +1273,7 @@ class Tournament extends Component {
                 {
 					this.state.loading ?
 					<div style={{ width: insideWidth, height: 50, justifyContent: 'center', alignItems: 'center' }} id="loading">
-						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+						<DotLoader size={25} color={mainTextColor} />
 					</div>
 					: null
 				}
@@ -1320,29 +1293,13 @@ class Tournament extends Component {
                 }
 
                 {
-                    showSubs && filtriProfileRanges &&
-                    <div style={{ flexWrap: 'wrap', marginBottom: 15, width: insideWidth, alignItems: 'flex-start' }} id="filters">
-                        {this.renderBoxSearchStat("hp", "HP", filtriProfileRanges["hp"])}
-                        {this.renderBoxSearchStat("defense", "DEFENSE", filtriProfileRanges["defense"])}
-                        {this.renderBoxSearchStat("attack", "ATTACK", filtriProfileRanges["attack"])}
-                        {this.renderBoxSearchStat("damage", "DAMAGE", filtriProfileRanges["damage"])}
-                        {this.renderBoxSearchStat("speed", "SPEED", filtriProfileRanges["speed"])}
-    					{this.renderBoxSearchStat("element", "ELEMENT", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
-    					{this.renderBoxSearchStat("resistance", "RESISTANCE", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
-    					{this.renderBoxSearchStat("weakness", "WEAKNESS", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
-    					{this.renderBoxSearchStat("spellbook", "SPELLBOOK", [1, 2, 3, 4])}
-    					{this.renderBoxSearchStat("level", "LEVEL", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 275", "276 - 300", "301 - 325", "326 - 350"].reverse())}
-    				</div>
-                }
-
-                {
                     showSubs && yourSubs.length > 0 && yourSubs[0].length > 0 &&
                     <div style={{ flexDirection: 'column', width: insideWidth }}>
-                        <p style={{ fontSize: 23, color: 'white', marginTop: 10, marginBottom: 15 }}>
+                        <p style={{ fontSize: 22, color: mainTextColor, marginTop: 10, marginBottom: 15, textAlign: 'center' }} className="text-medium">
                             Wizards subscribed
                         </p>
 
-                        <div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
+                        <div style={{ marginBottom: 30, flexWrap: 'wrap', justifyContent: 'center' }}>
                             {yourSubs[0].map((item, index) => this.renderRowChoise(item, index, modalW))}
                         </div>
                     </div>
@@ -1351,10 +1308,34 @@ class Tournament extends Component {
                 {
                     showSubs && yourSubs.length > 0 && yourSubs[1].length > 0 &&
                     <div style={{ flexDirection: 'column', width: insideWidth }}>
-                        <p style={{ fontSize: 23, color: 'white', marginTop: 10, marginBottom: 15 }}>
+                        <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginBottom: 15 }} />
+
+                        <p style={{ fontSize: 22, color: mainTextColor, marginTop: 10, marginBottom: 15, textAlign: 'center' }} className="text-medium">
                             Wizards not subscribed
                         </p>
-                        <div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
+                    </div>
+                }
+
+                {
+                    showSubs && filtriProfileRanges &&
+                    <div style={{ flexWrap: 'wrap', width: insideWidth, alignItems: 'center', justifyContent: 'center', marginBottom: 5 }} id="filters">
+                        {this.renderBoxSearchStat("hp", "Hp", filtriProfileRanges["hp"])}
+                        {this.renderBoxSearchStat("defense", "Defense", filtriProfileRanges["defense"])}
+                        {this.renderBoxSearchStat("attack", "Attack", filtriProfileRanges["attack"])}
+                        {this.renderBoxSearchStat("damage", "Damage", filtriProfileRanges["damage"])}
+                        {this.renderBoxSearchStat("speed", "Speed", filtriProfileRanges["speed"])}
+    					{this.renderBoxSearchStat("element", "Element", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
+    					{this.renderBoxSearchStat("resistance", "Resistance", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
+    					{this.renderBoxSearchStat("weakness", "Weakness", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
+    					{this.renderBoxSearchStat("spellbook", "Spellbook", [1, 2, 3, 4])}
+    					{this.renderBoxSearchStat("level", "Level", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 275", "276 - 300", "301 - 325", "326 - 350"].reverse())}
+    				</div>
+                }
+
+                {
+                    showSubs && yourSubs.length > 0 && yourSubs[1].length > 0 &&
+                    <div style={{ flexDirection: 'column', width: insideWidth }}>
+                        <div style={{ marginBottom: 30, flexWrap: 'wrap', justifyContent: 'center' }}>
                             {yourSubs[1].map((item, index) => this.renderRowChoise(item, index, modalW))}
                         </div>
 
@@ -1366,7 +1347,7 @@ class Tournament extends Component {
 
                 {
                     this.state.toSubscribe.length > 0 &&
-                    <div style={Object.assign({}, styles.footerSubscribe, { bottom: isMobile ? -15 : -25, width: insideWidth })}>
+                    <div style={Object.assign({}, styles.footerSubscribe, { bottom: -padding, width: insideWidth })}>
 						{this.renderFooterSubscribe(isMobile)}
 					</div>
                 }
@@ -1396,7 +1377,7 @@ class Tournament extends Component {
 			<div>
 				<Header
 					page='home'
-					section={4}
+					section={7}
 					account={account}
 					isMobile={isMobile}
 					history={this.props.history}
@@ -1409,12 +1390,12 @@ class Tournament extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 1199px)"
+					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 1200px)"
+					query="(min-width: 1000px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -1434,21 +1415,21 @@ class Tournament extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: "white"
 	},
     btnSubscribe: {
-        width: 150,
-		height: 45,
+        width: "45%",
+		height: 40,
 		backgroundColor: CTA_COLOR,
 		justifyContent: 'center',
 		alignItems: 'center',
-		borderRadius: 2,
+		borderRadius: 4,
         display: 'flex',
         cursor: 'pointer'
 	},
@@ -1468,22 +1449,23 @@ const styles = {
         borderRadius: 8,
         flexDirection: 'column',
         padding: 12,
-        borderWidth: 2,
-        borderColor: CTA_COLOR,
+        borderWidth: 1,
+        borderColor: "#d7d7d7",
         borderStyle: 'solid',
-        marginBottom: 20
+        marginBottom: 20,
+        backgroundColor: "#f2f2f2"
     },
     footerSubscribe: {
 		position: 'sticky',
 		bottom: 0,
 		left: 0,
-		backgroundColor: BACKGROUND_COLOR,
-		borderColor: 'white',
+		backgroundColor: "white",
+		borderColor: '#d7d7d7',
 		borderStyle: 'solid',
-		borderRadius: 2,
-		borderTopWidth: 2,
-		borderLeftWidth: 2,
-		borderRightWidth: 2,
+		borderRadius: 4,
+		borderTopWidth: 1,
+		borderLeftWidth: 1,
+		borderRightWidth: 1,
 		borderBottomWidth: 0,
 		paddingTop: 10
 	},
@@ -1494,7 +1476,7 @@ const styles = {
 		alignItems: 'center',
 		marginRight: 8,
 		marginBottom: 8,
-		borderRadius: 2,
+		borderRadius: 4,
 		minWidth: 60,
 		display: 'flex',
 		flexDirection: 'row'
@@ -1502,9 +1484,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts, wizaBalance, filtriProfileRanges } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts, wizaBalance, filtriProfileRanges, mainTextColor } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts, wizaBalance, filtriProfileRanges };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts, wizaBalance, filtriProfileRanges, mainTextColor };
 }
 
 export default connect(mapStateToProps, {

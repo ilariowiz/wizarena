@@ -6,7 +6,7 @@ import { TEST_NET_ID, CTA_COLOR } from '../../actions/types'
 
 class HistoryItemEquipment extends Component {
 	render() {
-		const { item, index, nftH, netId, isMobile, isAll, coin } = this.props
+		const { item, index, nftH, netId, isMobile, isAll, coin, mainTextColor } = this.props
 
 		let removeBorder = index + 1 === nftH.length
 
@@ -49,23 +49,23 @@ class HistoryItemEquipment extends Component {
 					: null
 				}
 
-				<p style={{ fontSize: 17, color: 'white', flex: 0.6, marginLeft: isAll ? 0 : 20 }}>
+				<p style={{ fontSize: 16, color: mainTextColor, flex: 0.6, marginLeft: isAll ? 0 : 20 }} className="text-medium">
 					WIZA {params[3]}
 				</p>
 
 				{
 					!isMobile &&
-					<p style={{ fontSize: 15, color: 'white', flex: 1 }}>
+					<p style={{ fontSize: 13, color: mainTextColor, flex: 1 }}>
 						From {params[2].slice(0, 15)}...
 					</p>
 				}
 
-				<p style={{ fontSize: 15, color: 'white', flex: 1 }}>
+				<p style={{ fontSize: 13, color: mainTextColor, flex: 1 }}>
 					To {params[1].slice(0, 15)}...
 				</p>
 
 				<p
-					style={styleData}
+					style={Object.assign({}, styleData, { color: item.requestKey ? CTA_COLOR : mainTextColor })}
 					onClick={() => {
 						if (item.requestKey) {
 							window.open(url, "_blank")
@@ -89,29 +89,27 @@ const styles = {
 		borderTopWidth: 0,
 		borderLeftWidth: 0,
 		borderRightWidth: 0,
-		borderColor: '#ededed',
+		borderColor: '#d7d7d7',
 		borderStyle: 'solid',
 		height: 50
 	},
 	dataRequest: {
 		fontSize: 16,
-		color: CTA_COLOR,
 		flex: 0.6,
 		cursor: 'pointer',
 		textAlign: 'right'
 	},
 	dataNonRequest: {
 		fontSize: 15,
-		color: 'white',
 		flex: 0.6,
 		textAlign: 'right'
 	}
 }
 
 const mapStateToProps = (state) => {
-	const { netId } = state.mainReducer
+	const { netId, mainTextColor } = state.mainReducer
 
-	return { netId }
+	return { netId, mainTextColor }
 }
 
 export default connect(mapStateToProps)(HistoryItemEquipment)

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 import { IoClose } from 'react-icons/io5'
 import '../../css/Modal.css'
 import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, CTA_COLOR } from '../../actions/types'
@@ -42,7 +43,7 @@ class ModalTransfer extends Component {
     }
 
 	render() {
-		const { showModal, onCloseModal, width } = this.props;
+		const { showModal, onCloseModal, width, mainTextColor } = this.props;
         const { loading, error } = this.state
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
@@ -51,7 +52,7 @@ class ModalTransfer extends Component {
 			<div className={classContainer}>
 				<div style={Object.assign({}, styles.subcontainer, { width })}>
 
-					<p style={{ color: 'white', fontSize: 18, textAlign: 'center' }}>
+					<p style={{ color: mainTextColor, fontSize: 16, textAlign: 'center' }}>
 						Paste the k: wallet or KadenaName of the receiver
 					</p>
 
@@ -69,7 +70,7 @@ class ModalTransfer extends Component {
                             style={styles.btnConnect}
                             onClick={() => this.startTransfer()}
                         >
-                            <p style={{ color: 'white', fontSize: 19 }}>
+                            <p style={{ color: "white", fontSize: 16 }} className="text-medium">
                                 {loading ? "Loading..." : "Transfer"}
                             </p>
                         </button>
@@ -89,7 +90,7 @@ class ModalTransfer extends Component {
 						onClick={onCloseModal}
 					>
 						<IoClose
-							color='white'
+							color={mainTextColor}
 							size={25}
 						/>
 					</button>
@@ -104,11 +105,11 @@ class ModalTransfer extends Component {
 const styles = {
 	subcontainer: {
 		height: 300,
-		backgroundColor: BACKGROUND_COLOR,
-		borderRadius: 2,
-		borderColor: TEXT_SECONDARY_COLOR,
+		backgroundColor: "white",
+		borderRadius: 4,
+		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
-		borderWidth: 2,
+		borderWidth: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
 		flexDirection: 'column',
@@ -128,7 +129,7 @@ const styles = {
 		borderWidth: 1,
 		borderColor: 'lightgrey',
 		borderStyle: 'solid',
-		borderRadius: 2,
+		borderRadius: 4,
 		fontSize: 14,
 		color: 'black',
 		paddingLeft: 16,
@@ -144,8 +145,14 @@ const styles = {
 		width: 272,
 		height: 45,
 		backgroundColor: CTA_COLOR,
-		borderRadius: 2,
+		borderRadius: 4,
 	},
 }
 
-export default ModalTransfer;
+const mapStateToProps = (state) => {
+	const { mainTextColor } = state.mainReducer
+
+	return { mainTextColor }
+}
+
+export default connect(mapStateToProps)(ModalTransfer);

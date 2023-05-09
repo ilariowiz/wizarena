@@ -1,6 +1,8 @@
 export const BACKGROUND_COLOR = "#222034"//"#25252c"
-export const TEXT_SECONDARY_COLOR = '#21c6e8'
+export const TEXT_SECONDARY_COLOR = '#21c6e8' //#840fb2 viola
 export const CTA_COLOR = '#07abf3'
+export const TEXT_DAY_COLOR = '#1d1d1f'
+export const TEXT_NIGHT_COLOR = 'white'
 
 export const MIN_LEVEL = 122
 export const MAX_LEVEL = 350
@@ -118,3 +120,5 @@ export const SET_COMPLETED_TOURNAMENTS = 'SET_COMPLETED_TOURNAMENTS'
 export const SORT_AUTO_TOURNAMENTS = 'SORT_AUTO_TOURNAMENTS'
 
 export const SET_TIME_TO_HALVENING = 'SET_TIME_TO_HALVENING'
+
+export const SET_VISUAL_COLORS = 'SET_VISUAL_COLORS'

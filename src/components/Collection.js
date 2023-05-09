@@ -4,6 +4,7 @@ import Media from 'react-media';
 import Popup from 'reactjs-popup';
 import DotLoader from 'react-spinners/DotLoader';
 import { IoClose } from 'react-icons/io5'
+import { BiFilter } from 'react-icons/bi'
 import Header from './Header'
 import NftCard from './common/NftCard'
 import getBoxWidth from './common/GetBoxW'
@@ -20,6 +21,7 @@ import {
 import { MAIN_NET_ID, ITEMS_PER_BLOCK, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
 import '../css/Nft.css'
 import 'reactjs-popup/dist/index.css';
+import '../css/Header.css'
 
 
 class Collection extends Component {
@@ -35,7 +37,7 @@ class Collection extends Component {
 			searchText: '',
 			searchedText: '',
 			listed: 0,
-			showFilters: window.innerWidth > 767
+			showFilters: false
 		}
 	}
 
@@ -415,42 +417,67 @@ class Collection extends Component {
 
 	renderBoxHeader(title, subtitle, isMobile) {
 		return (
-			<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: 30, marginBottom: 4 }}>
-				<p style={{ fontSize: isMobile ? 17 : 20, color: 'white', textAlign: 'center' }}>
-					{title}
+			<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+
+				<p style={{ fontSize: 14, color: '#707070', textAlign: 'center' }}>
+					{subtitle}
 				</p>
 
-				<p style={{ fontSize: isMobile ? 16 : 18, color: '#c2c0c0', textAlign: 'center' }}>
-					{subtitle}
+				<p style={{ fontSize: 14, color: this.props.mainTextColor, textAlign: 'center' }} className="text-bold">
+					{title}
 				</p>
 			</div>
 		)
 	}
 
-	renderHeader(isMobile) {
-		const { totalCountNfts, wizardsStaked } = this.props
+	renderHeader(isMobile, boxW) {
+		const { totalCountNfts, wizardsStaked, mainTextColor } = this.props
 		const { floor, uniqueOwners, volume, listed } = this.state
 
 		let items = totalCountNfts || 0
 
+		let boxStatsW = isMobile ? boxW - 40 : boxW * 50 / 100
+
 		return (
-			<div style={{ width: '100%', alignItems: 'center', marginBottom: 20, justifyContent: 'space-between', flexWrap: 'wrap' }}>
+			<div style={{ width: '100%', alignItems: 'center', marginBottom: 30, justifyContent: 'center', flexDirection: 'column', flexWrap: 'wrap' }}>
 
-				<div style={{ flexWrap: 'wrap', alignItems: 'center', marginBottom: 10 }}>
-					{this.renderBoxHeader(items.toLocaleString(), 'items', isMobile)}
+				<div style={{ alignItems: 'center', justifyContent: 'center', borderColor: '#d7d7d7', borderStyle: 'solid', borderRadius: 4, borderWidth: 1, padding: 6, marginBottom: 40 }}>
 
-					{this.renderBoxHeader(`${listed || 0}`, 'listed', isMobile)}
+					<div style={{ justifyContent: 'center', alignItems: 'center', width: 100, height: 32, borderRadius: 4, backgroundColor: mainTextColor }}>
+						<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+							Wizards
+						</p>
+					</div>
 
-					{this.renderBoxHeader(uniqueOwners.toLocaleString(), 'owners', isMobile)}
+					<a
+						href={`${window.location.protocol}//${window.location.host}/equipment`}
+						style={{ justifyContent: 'center', alignItems: 'center', display: 'flex', width: 100, height: 32, marginLeft: 15, cursor: 'pointer' }}
+						onClick={(e) => {
+							e.preventDefault()
+							this.props.history.push(`/equipment`)
+						}}
+					>
+						<p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
+							Equipment
+						</p>
+					</a>
 
-					{this.renderBoxHeader(`${floor || '...'} kda`, 'floor price', isMobile)}
-
-					{this.renderBoxHeader(`${volume.toLocaleString()} kda`, 'total volume', isMobile)}
-
-					{this.renderBoxHeader(`${wizardsStaked || 0}`, 'staked', isMobile)}
 				</div>
 
-				<div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+
+				<div style={{ flexWrap: 'wrap', alignItems: 'center', justifyContent: isMobile ? 'space-between' : 'space-around', marginBottom: 10, width: boxStatsW }}>
+					{this.renderBoxHeader(`${listed || 0} / ${items.toLocaleString()}`, 'Listed', isMobile)}
+
+					{this.renderBoxHeader(`${floor || '...'} kda`, 'Floor', isMobile)}
+
+					{this.renderBoxHeader(`${volume.toLocaleString()} kda`, 'Volume', isMobile)}
+
+					{this.renderBoxHeader(uniqueOwners.toLocaleString(), 'Owners', isMobile)}
+
+					{this.renderBoxHeader(`${wizardsStaked || 0}`, 'Staked', isMobile)}
+				</div>
+
+				<div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 20, justifyContent: 'center' }}>
 					<a
 						href={`${window.location.protocol}//${window.location.host}/sales`}
 	                    style={styles.btnSales}
@@ -459,36 +486,42 @@ class Collection extends Component {
 							this.props.history.push('/sales')
 						}}
 	                >
-	                    <p style={{ fontSize: 17, color: 'white' }}>
+	                    <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
 	                        Sales
 	                    </p>
 	                </a>
 
 					<a
 						href={`${window.location.protocol}//${window.location.host}/burningqueue`}
-	                    style={styles.btnBurning}
+	                    style={styles.btnSales}
 						onClick={(e) => {
 							e.preventDefault()
 							this.props.history.push('/burningqueue')
 						}}
 	                >
-	                    <p style={{ fontSize: 17, color: 'white' }}>
+	                    <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
 	                        Burning Queue
 	                    </p>
 	                </a>
 				</div>
 
+				<div
+					style={{ height: 1, backgroundColor: '#d7d7d7', width: '100%' }}
+				/>
 			</div>
 		)
 	}
 
-	renderSearchBar(isMobile) {
+	renderSearchBar(isMobile, boxW) {
 		const { searchText } = this.state
+
+		let widthSearch = isMobile ? boxW - 175 : 300
 
 		return (
 			<div style={{ width: '100%', height: 60, alignItems: 'center', marginBottom: 20 }}>
 				<input
-					style={Object.assign({}, styles.inputSearch, { width: isMobile ? 150 : 350, fontSize: isMobile ? 15 : 19 })}
+					style={Object.assign({}, styles.inputSearch, { width: widthSearch, color: this.props.mainTextColor })}
+					className="text-medium"
 					placeholder='Search by # or nickname'
 					value={searchText}
 					onChange={(e) => this.setState({ searchText: e.target.value })}
@@ -496,19 +529,35 @@ class Collection extends Component {
 
 				<button
 					className='btnH'
-					style={{ width: 130, height: 46, backgroundColor: CTA_COLOR, borderRadius: 2, justifyContent: 'center', alignItems: 'center' }}
+					style={{ width: 100, height: 40, backgroundColor: CTA_COLOR, borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}
 					onClick={() => this.searchByName()}
 				>
-					<p style={{ fontSize: 19, color: 'white' }}>
+					<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
 						Search
 					</p>
 				</button>
+
+				{
+					isMobile ?
+					<button
+						className='btnH'
+						style={{ width: 40, height: 40, marginLeft: 15, backgroundColor: '#1d1d1f', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}
+						onClick={() => this.setState({ showFilters: true })}
+					>
+						<BiFilter
+							color='white'
+							size={24}
+						/>
+					</button>
+					: null
+				}
 			</div>
 		)
 	}
 
 	renderSearched() {
 		const { searchedText } = this.state
+		const { mainTextColor } = this.props
 
 		if (!searchedText) {
 			return null
@@ -516,8 +565,8 @@ class Collection extends Component {
 
 		return (
 			<div style={{ width: '100%', marginBottom: 20 }}>
-				<div style={{ backgroundColor: '#e5e8eb80', justifyContent: 'center', alignItems: 'center', height: 45, paddingLeft: 20, paddingRight: 20, borderRadius: 2 }}>
-					<p style={{ fontSize: 22, color: 'black', marginRight: 10 }}>
+				<div style={{ backgroundColor: '#e5e8eb80', justifyContent: 'center', alignItems: 'center', height: 40, paddingLeft: 15, paddingRight: 15, borderRadius: 4 }}>
+					<p style={{ fontSize: 16, color: mainTextColor, marginRight: 10 }}>
 						{searchedText}
 					</p>
 
@@ -526,7 +575,7 @@ class Collection extends Component {
 						onClick={() => this.cancelSearch()}
 					>
 						<IoClose
-							color='black'
+							color={mainTextColor}
 							size={22}
 						/>
 					</button>
@@ -542,10 +591,11 @@ class Collection extends Component {
 				style={{ marginBottom: 15, marginLeft: 10 }}
 				onClick={() => {
 					this.listPopup.close()
+					this.setState({ showFilters: false })
 					this.searchByStat({ stat: statName, value: item })
 				}}
 			>
-				<p style={{ fontSize: 19 }}>
+				<p style={{ fontSize: 16, color: this.props.mainTextColor }}>
 					{item}
 				</p>
 			</button>
@@ -553,13 +603,13 @@ class Collection extends Component {
 	}
 
 	renderBoxSearchStat(statName, statDisplay, list) {
-		const { statSearched } = this.props
+		const { statSearched, mainTextColor } = this.props
 
 		//console.log(statSearched);
 
 		const findItem = statSearched && statSearched.length > 0 ? statSearched.find(i => i.stat === statName) : undefined
 
-		let text = statDisplay.toUpperCase()
+		let text = statDisplay
 		if (findItem) {
 			//console.log(findItem);
 
@@ -572,11 +622,11 @@ class Collection extends Component {
 				ref={ref => this.listPopup = ref}
 				trigger={
 					<button style={styles.btnStat}>
-						<p style={{ fontSize: 16, color: 'white' }}>{text}</p>
+						<p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">{text}</p>
 						{
 							findItem &&
 							<IoClose
-								color='red'
+								color={mainTextColor}
 								size={22}
 								style={{ marginLeft: 5 }}
 								onClick={(e) => {
@@ -587,7 +637,7 @@ class Collection extends Component {
 						}
 					</button>
 				}
-				position="bottom left"
+				position="right center"
 				on="click"
 				closeOnDocumentClick
 				arrow={true}
@@ -602,7 +652,7 @@ class Collection extends Component {
 	}
 
 	renderPageCounter() {
-		const { allNftsIds, nftsBlockId } = this.props
+		const { allNftsIds, nftsBlockId, mainTextColor } = this.props
 		//console.log("allNftsIds", allNftsIds, nftsBlockId)
 
 		let subarray = []
@@ -660,7 +710,7 @@ class Collection extends Component {
 						}
 					}}
 				>
-					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 22, lineHeight: 1 }}>
+					<p style={{ color: mainTextColor, fontSize: 18 }} className="text-medium">
 						{item+1}
 					</p>
 				</button>
@@ -683,24 +733,106 @@ class Collection extends Component {
 					alt='Placeholder'
 				/>
 
-				<p style={{ fontSize: 23, color: 'white', textAlign: 'center' }}>
+				<p style={{ fontSize: 23, color: this.props.mainTextColor, textAlign: 'center' }}>
 					The Arena is empty...
 				</p>
 			</div>
 		)
 	}
 
+	renderSlidePanel(boxW, widthSide) {
+		const { showFilters } = this.state
+		const { filtriRanges, mainTextColor } = this.props
+
+		const panelWidth = "90%"
+
+		return (
+			<div style={styles.panelShadow}>
+
+				<div
+					className={showFilters ? "slide-panel-container-on" : "slide-panel-container-off"}
+					style={Object.assign({}, styles.panel, { width: showFilters ? panelWidth : 0, zIndex: 997 })}
+				>
+
+					<div style={styles.headerPanel}>
+
+						<p style={{ fontSize: 24, color: mainTextColor, marginLeft: 30 }} className="text-bold">
+							Wizards Arena
+						</p>
+
+						<div style={{ alignItems: 'center', justifyContent: 'flex-end' }}>
+							<button
+								onClick={() => {
+									document.body.style.overflow = "auto"
+									document.body.style.height = "auto"
+									this.setState({ showFilters: false })
+								}}
+								style={{ marginRight: 30 }}
+							>
+								<IoClose
+									color={mainTextColor}
+									size={34}
+								/>
+							</button>
+						</div>
+
+					</div>
+
+					{
+						filtriRanges && Object.keys(filtriRanges).length > 0 &&
+						<div style={{ width: widthSide, flexDirection: 'column', marginLeft: 30 }}>
+							{this.renderBoxSearchStat("collection", "Collection", ["Wizards", "Clerics", "Druids"])}
+							{this.renderBoxSearchStat("hp", "Hp", filtriRanges["hp"])}
+							{this.renderBoxSearchStat("defense", "Defense", filtriRanges["defense"])}
+							{this.renderBoxSearchStat("attack", "Attack", filtriRanges["attack"])}
+							{this.renderBoxSearchStat("damage", "Damage", filtriRanges["damage"])}
+							{this.renderBoxSearchStat("speed", "Speed", filtriRanges["speed"])}
+							{this.renderBoxSearchStat("element", "Element", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
+							{this.renderBoxSearchStat("resistance", "Resistance", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
+							{this.renderBoxSearchStat("weakness", "Weakness", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
+							{this.renderBoxSearchStat("spellbook", "Spellbook", [1, 2, 3, 4])}
+							{this.renderBoxSearchStat("level", "Level", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 275", "276 - 300", "301 - 325", "326 - 350"].reverse())}
+						</div>
+					}
+
+				</div>
+			</div>
+		)
+	}
+
+	calcWidthOfNft(widthNfts) {
+		let widthN = Math.floor(widthNfts / 4)
+
+		if (widthN < 200) {
+			widthN = Math.floor(widthNfts / 3)
+
+			if (widthN < 150) {
+				widthN = Math.floor(widthNfts / 2)
+				return widthN
+			}
+
+			return widthN
+		}
+		else if (widthN > 300) {
+			widthN = Math.floor(widthNfts / 5)
+			return widthN
+		}
+
+		return widthN
+	}
+
 	renderBody(isMobile) {
-		const { allNfts, allNftsIds, statSearched, filtriRanges } = this.props
+		const { allNfts, allNftsIds, statSearched, filtriRanges, mainTextColor } = this.props
 		const { loading, nftsToShow, searchedText, showFilters } = this.state
 
 		//console.log(allNftsIds)
-		const { boxW } = getBoxWidth(isMobile)
+		const { boxW, padding } = getBoxWidth(isMobile)
 
+		const widthSide = 180
+		const widthNfts = isMobile ? boxW : boxW - widthSide
 
-		let nftMinW = 260;
-		let nInRow = Math.floor(boxW / nftMinW)
-		//console.log(boxW, nInRow)
+		let nftWidth = this.calcWidthOfNft(widthNfts) - 30;
+		let nInRow = Math.floor(widthNfts / nftWidth)
 
 		let rows = this.buildsRow(nftsToShow, nInRow)
 
@@ -724,51 +856,19 @@ class Collection extends Component {
 		}
 
 		return (
-			<div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+			<div style={{ flexDirection: 'column', width: boxW, paddingLeft: padding, paddingRight: padding, paddingBottom: padding, paddingTop: 20, overflowY: 'auto', overflowX: 'hidden' }}>
 
-				<p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
-					Marketplace
-				</p>
+				{this.renderHeader(isMobile, boxW)}
 
-				{this.renderHeader(isMobile)}
-
-				{this.renderSearchBar(isMobile)}
+				{this.renderSearchBar(isMobile, boxW)}
 
 				{this.renderSearched()}
 
-				{
-					filtriRanges && Object.keys(filtriRanges).length > 0 && showFilters &&
-					<div style={{ flexWrap: 'wrap', marginBottom: 10 }}>
-						{this.renderBoxSearchStat("collection", "COLLECTION", ["Wizards", "Clerics", "Druids"])}
-						{this.renderBoxSearchStat("hp", "HP", filtriRanges["hp"])}
-						{this.renderBoxSearchStat("defense", "DEFENSE", filtriRanges["defense"])}
-						{this.renderBoxSearchStat("attack", "ATTACK", filtriRanges["attack"])}
-						{this.renderBoxSearchStat("damage", "DAMAGE", filtriRanges["damage"])}
-						{this.renderBoxSearchStat("speed", "SPEED", filtriRanges["speed"])}
-						{this.renderBoxSearchStat("element", "ELEMENT", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
-						{this.renderBoxSearchStat("resistance", "RESISTANCE", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
-						{this.renderBoxSearchStat("weakness", "WEAKNESS", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
-						{this.renderBoxSearchStat("spellbook", "SPELLBOOK", [1, 2, 3, 4])}
-						{this.renderBoxSearchStat("level", "LEVEL", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 275", "276 - 300", "301 - 325", "326 - 350"].reverse())}
-					</div>
-				}
-
-				{
-					!showFilters &&
-					<button
-						className="btnH"
-						style={Object.assign({}, styles.btnStat, { width: 'fit-content', marginBottom: 12 })}
-						onClick={() => this.setState({ showFilters: true })}
-					>
-						<p style={{ fontSize: 17, color: 'white' }}>
-							Show filters
-						</p>
-					</button>
-				}
-
+				{/*
 				<p style={{ marginBottom: 15, fontSize: 16, color: 'white' }}>
 					{numberOfWiz} Wizards
 				</p>
+				*/}
 
 				{
 					allNfts && allNfts.length === 0 ?
@@ -779,30 +879,70 @@ class Collection extends Component {
 				{
 					loading ?
 					<div style={{ width: '100%', height: 45, marginTop: 20, marginBottom: 20, justifyContent: 'center', alignItems: 'center' }}>
-						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+						<DotLoader size={25} color={mainTextColor} />
 					</div>
 					: null
 				}
 
-				{
-					nftsToShow.length > 0 ?
-					rows.map((itemsPerRow, index) => {
-						return this.renderRow(itemsPerRow, index, nInRow, boxW);
-					})
-					:
-					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-						<img
-							src={getImageUrl(undefined)}
-							style={{ width: 280, height: 280, borderRadius: 2 }}
-							alt='Placeholder'
-						/>
-					</div>
-				}
+				<div style={{ width: boxW }}>
+					{
+						filtriRanges && Object.keys(filtriRanges).length > 0 && !isMobile &&
+						<div style={{ width: widthSide, flexDirection: 'column' }}>
+							{this.renderBoxSearchStat("collection", "Collection", ["Wizards", "Clerics", "Druids"])}
+							{this.renderBoxSearchStat("hp", "Hp", filtriRanges["hp"])}
+							{this.renderBoxSearchStat("defense", "Defense", filtriRanges["defense"])}
+							{this.renderBoxSearchStat("attack", "Attack", filtriRanges["attack"])}
+							{this.renderBoxSearchStat("damage", "Damage", filtriRanges["damage"])}
+							{this.renderBoxSearchStat("speed", "Speed", filtriRanges["speed"])}
+							{this.renderBoxSearchStat("element", "Element", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
+							{this.renderBoxSearchStat("resistance", "Resistance", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
+							{this.renderBoxSearchStat("weakness", "Weakness", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
+							{this.renderBoxSearchStat("spellbook", "Spellbook", [1, 2, 3, 4])}
+							{this.renderBoxSearchStat("level", "Level", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 275", "276 - 300", "301 - 325", "326 - 350"].reverse())}
+						</div>
+					}
+
+					{
+						nftsToShow.length > 0 ?
+						<div style={{ flexWrap: 'wrap', width: widthNfts }}>
+							{rows.map((itemsPerRow, index) => {
+								return this.renderRow(itemsPerRow, index, nInRow, widthNfts);
+							})}
+						</div>
+						:
+						<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+							<img
+								src={getImageUrl(undefined)}
+								style={{ width: 280, height: 280, borderRadius: 2 }}
+								alt='Placeholder'
+							/>
+						</div>
+					}
+				</div>
+
 
 				{
 					showPageCounter ?
 					this.renderPageCounter()
 					: null
+				}
+
+				{
+					isMobile &&
+					<div
+						className={this.state.showFilters ? "bg-slide-on" : "bg-slide-off"}
+						onClick={() => {
+							document.body.style.overflow = "auto"
+							document.body.style.height = "auto"
+							this.setState({ showFilters: false })
+						}}
+						style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#00000090', width: this.state.showFilters ? window.innerWidth : 0 }}
+					/>
+				}
+
+				{
+					isMobile &&
+					this.renderSlidePanel(boxW, widthSide)
 				}
 			</div>
 		)
@@ -828,12 +968,12 @@ class Collection extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 1199px)"
+					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 1200px)"
+					query="(min-width: 1000px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -853,13 +993,13 @@ class Collection extends Component {
 
 const styles = {
 	container: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: 'white'
 	},
 	rowStyle: {
 		width: '100%',
@@ -880,8 +1020,8 @@ const styles = {
 		alignItems: 'center',
 		marginLeft: 10,
 		marginRight: 10,
-		borderRadius: 2,
-		borderColor: TEXT_SECONDARY_COLOR,
+		borderRadius: 4,
+		borderColor: '#d7d7d7',
 		borderWidth: 1,
 		borderStyle: 'solid',
 		paddingLeft: 10,
@@ -890,15 +1030,13 @@ const styles = {
 		paddingBottom: 6
 	},
 	inputSearch: {
-		height: 43,
+		height: 36,
 		marginRight: 15,
-		color: 'white',
-		borderRadius: 2,
-		borderColor: 'white',
+		borderRadius: 4,
+		borderColor: '#d7d7d7',
 		borderStyle: 'solid',
-		backgroundColor: BACKGROUND_COLOR,
 		borderWidth: 1,
-		fontSize: 19,
+		fontSize: 15,
 		paddingLeft: 10,
 		WebkitAppearance: 'none',
 		MozAppearance: 'none',
@@ -907,47 +1045,67 @@ const styles = {
 	},
 	btnStat: {
 		padding: 9,
-		backgroundColor: CTA_COLOR,
+		backgroundColor: 'white',
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginRight: 8,
-		marginBottom: 8,
-		borderRadius: 2,
+		marginBottom: 20,
+		marginRight: 15,
+		borderRadius: 4,
+		borderColor: '#d7d7d7',
+		borderStyle: 'solid',
+		borderWidth: 1,
 		minWidth: 60,
 		display: 'flex',
 		flexDirection: 'row'
 	},
 	btnSales: {
-		width: 160,
-		height: 38,
+		width: 130,
+		height: 32,
 		marginRight: 10,
 		marginBottom: 5,
-		borderWidth: 2,
-		borderColor: 'white',
+		borderWidth: 1,
+		borderColor: 'black',
 		borderStyle: 'solid',
-		borderRadius: 2,
+		borderRadius: 4,
 		justifyContent: 'center',
 		alignItems: 'center',
 		display: 'flex'
 	},
 	btnBurning: {
-		width: 160,
-		height: 38,
+		width: 130,
+		height: 32,
 		marginBottom: 5,
-		borderWidth: 2,
+		borderWidth: 1,
 		borderColor: '#840fb2',
 		borderStyle: 'solid',
-		borderRadius: 2,
+		borderRadius: 4,
 		justifyContent: 'center',
 		alignItems: 'center',
 		display: 'flex'
-	}
+	},
+	panelShadow: {
+		justifyContent: 'flex-end',
+		position: 'absolute',
+	},
+	panel: {
+		backgroundColor: 'white',
+		flexDirection: 'column',
+		overflow: 'auto',
+	},
+	headerPanel: {
+		height: 90,
+		width: '100%',
+		paddingTop: 10,
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		marginBottom: 30
+	},
 }
 
 const mapStateToProps = (state) => {
-	const { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, statSearched, wizardsStaked, filtriRanges } = state.mainReducer;
+	const { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, statSearched, wizardsStaked, filtriRanges, mainTextColor } = state.mainReducer;
 
-	return { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, statSearched, wizardsStaked, filtriRanges };
+	return { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, statSearched, wizardsStaked, filtriRanges, mainTextColor };
 }
 
 export default connect(mapStateToProps, {

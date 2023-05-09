@@ -123,7 +123,7 @@ class DoChallenges extends Component {
         return (
             <button
                 className="btnH"
-                style={{ width: isMobile ? width : width*2, borderRadius: 2, borderColor: 'white', borderWidth: 1, borderStyle: 'solid', alignItems: 'center', display: 'flex', flexDirection: isMobile ? 'column' : 'row' }}
+                style={{ width: isMobile ? width : width*2, borderRadius: 4, borderColor: '#d7d7d7', borderWidth: 1, borderStyle: 'solid', alignItems: 'center', display: 'flex', flexDirection: isMobile ? 'column' : 'row' }}
                 onClick={() => {
                     this.setState({ showYourNfts: true }, () => {
                         document.getElementById("box-yournfts").scrollIntoView({ behavior: 'smooth' })
@@ -135,7 +135,7 @@ class DoChallenges extends Component {
                     src={getImageUrl(undefined)}
                 />
 
-                <p style={{ fontSize: 16, color: 'white', marginLeft: isMobile ? 0 : 10, marginRight: isMobile ? 0 : 10, marginTop: isMobile ? 20 : 0, marginBottom: isMobile ? 20 : 0 }}>
+                <p style={{ fontSize: 17, color: this.props.mainTextColor, marginLeft: isMobile ? 0 : 10, marginRight: isMobile ? 0 : 10, marginTop: isMobile ? 20 : 0, marginBottom: isMobile ? 20 : 0 }} className="text-medium">
                     Choose your wizard
                 </p>
             </button>
@@ -144,7 +144,7 @@ class DoChallenges extends Component {
 
 
     renderSingleNft(info, width, isMobile) {
-
+        const { mainTextColor } = this.props
         //console.log(info);
 
         const level = calcLevelWizard(info)
@@ -160,7 +160,7 @@ class DoChallenges extends Component {
         return (
             <div style={Object.assign({}, styles.containerCard, { flexDirection: isMobile ? 'column' : 'row', width: isMobile ? width : width*2 })}>
                 <img
-                    style={{ width: widthImg, height: widthImg, marginLeft: isMobile ? 0 : 10, borderRadius: 2 }}
+                    style={{ width: widthImg, height: widthImg, marginLeft: isMobile ? 0 : 10, borderRadius: 4 }}
                     src={getImageUrl(info.id, "1")}
                     alt={`#${info.id}`}
                 />
@@ -169,36 +169,36 @@ class DoChallenges extends Component {
                     <div style={{ marginBottom: 5, marginTop: 10 }}>
                         {
                             info.nickname ?
-                            <p style={{ color: 'white', fontSize: 18 }}>
+                            <p style={{ color: mainTextColor, fontSize: 16 }} className="text-medium">
                                 {info.name} {info.nickname}
                             </p>
                             :
-                            <p style={{ color: 'white', fontSize: 19 }}>
+                            <p style={{ color: mainTextColor, fontSize: 16 }} className="text-medium">
                                 {info.name}
                             </p>
                         }
                     </div>
 
                     <div style={{ marginBottom: 5, alignItems: 'center' }}>
-                        <p style={{ color: '#c2c0c0', fontSize: 16, marginRight: 8 }}>
-                            LEVEL
+                        <p style={{ color: mainTextColor, fontSize: 15, marginRight: 8 }}>
+                            Level
                         </p>
 
-                        <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 20 }}>
+                        <p style={{ color: mainTextColor, fontSize: 18 }} className="text-bold">
                             {level}
                         </p>
                     </div>
 
-                    {cardStats(info, undefined, '100%', infoEquipment ? infoEquipment.bonusesDict : undefined)}
+                    {cardStats(info, undefined, '100%', infoEquipment ? infoEquipment.bonusesDict : undefined, mainTextColor)}
 
                     {
                         info.equipment && info.equipment.bonus ?
                         <div style={{ alignItems: 'center', marginBottom: 10 }}>
                             <img
                                 src={info.equipment.url}
-                                style={{ width: 50, height: 50, borderRadius: 2, borderColor: 'white', borderWidth: 1, borderStyle: 'solid', marginRight: 10 }}
+                                style={{ width: 50, height: 50, borderRadius: 4, borderColor: '#d7d7d7', borderWidth: 1, borderStyle: 'solid', marginRight: 10 }}
                             />
-                            <p style={{ fontSize: 16, color: 'white' }}>
+                            <p style={{ fontSize: 14, color: mainTextColor }}>
                                 {info.equipment.name}
                             </p>
                         </div>
@@ -211,7 +211,7 @@ class DoChallenges extends Component {
     }
 
     renderNewChallenge(isMobile, spaceImage) {
-        const { wizardSfidato } = this.props
+        const { wizardSfidato, mainTextColor } = this.props
         const { yourChampion } = this.state
 
         return (
@@ -223,7 +223,7 @@ class DoChallenges extends Component {
                     this.renderSelectYourChampion(spaceImage, isMobile)
                 }
 
-                <p style={{ marginTop: 15, marginBottom: 15, fontSize: 26, color: 'white', width: isMobile ? spaceImage : spaceImage*2, textAlign: 'center' }}>
+                <p style={{ marginTop: 15, marginBottom: 15, fontSize: 20, color: mainTextColor, width: isMobile ? spaceImage : spaceImage*2, textAlign: 'center' }}>
                     VS
                 </p>
 
@@ -234,21 +234,22 @@ class DoChallenges extends Component {
 
     renderRightChallenge() {
         const { inputPrice } = this.state
+        const { mainTextColor } = this.props
 
         return (
             <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                <p style={{ fontSize: 17, color: 'white', marginBottom: 5 }}>
-                    KDA amount
+                <p style={{ fontSize: 17, color: mainTextColor, marginBottom: 5 }} className="text-medium">
+                    $KDA amount
                 </p>
 
                 <input
                     style={styles.inputPriceStyle}
-                    placeholder='KDA'
+                    placeholder='$KDA'
                     value={inputPrice}
                     onChange={(e) => this.setState({ inputPrice: e.target.value })}
                 />
 
-                <p style={{ fontSize: 17, color: 'white', margin: 15, textAlign: 'center' }}>
+                <p style={{ fontSize: 16, color: mainTextColor, margin: 15, textAlign: 'center' }}>
                     Your opponent will have 3 days to accept the challenge. If he doesn't accept it, you can collect the KDAs in the Challenges tab
                 </p>
 
@@ -257,8 +258,8 @@ class DoChallenges extends Component {
                     style={styles.btnChallenge}
                     onClick={() => this.sendChallenge()}
                 >
-                    <p style={{ fontSize: 16, color: 'white' }}>
-                        CHALLENGE
+                    <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                        Challenge
                     </p>
                 </button>
             </div>
@@ -293,9 +294,9 @@ class DoChallenges extends Component {
 
     renderBody(isMobile) {
         const { loading, error, yourNfts, showYourNfts } = this.state
-        const { wizardSfidato } = this.props
+        const { wizardSfidato, mainTextColor } = this.props
 
-        const { boxW, modalW } = getBoxWidth(isMobile)
+        const { boxW, modalW, padding } = getBoxWidth(isMobile)
 
         let spaceImage = isMobile ? (boxW * 95 / 100) : (boxW / 2) - 100
         if (spaceImage > 220 && !isMobile) {
@@ -304,13 +305,13 @@ class DoChallenges extends Component {
 
         if (!wizardSfidato) {
             return (
-                <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+                <div style={{ flexDirection: 'column', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                    <p style={{ color: 'white', fontSize: 30, marginBottom: 20 }}>
+                    <p style={{ color: mainTextColor, fontSize: 24, marginBottom: 20 }} className="text-medium">
                         Start Challenge
                     </p>
 
-                    <p style={{ color: 'white', fontSize: 20 }}>
+                    <p style={{ color: mainTextColor, fontSize: 18 }}>
                         Choose a wizard to start a challenge
                     </p>
 
@@ -319,7 +320,7 @@ class DoChallenges extends Component {
                         className="btnH"
                         onClick={() => this.props.history.replace("/challenges")}
                     >
-                        <p style={{ fontSize: 16, color: 'white' }}>
+                        <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
                             Check your active challenges
                         </p>
                     </button>
@@ -329,9 +330,9 @@ class DoChallenges extends Component {
         }
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+            <div style={{ flexDirection: 'column', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                <p style={{ color: 'white', fontSize: 30, marginBottom: 20 }}>
+                <p style={{ color: mainTextColor, fontSize: 24, marginBottom: 20 }} className="text-medium">
                     Start Challenge
                 </p>
 
@@ -345,7 +346,7 @@ class DoChallenges extends Component {
 
                 {
                     error &&
-                    <p style={{ fontSize: 17, color: 'white' }}>
+                    <p style={{ fontSize: 15, color: 'red' }}>
                         {error}
                     </p>
                 }
@@ -361,7 +362,7 @@ class DoChallenges extends Component {
 
                 {
                     showYourNfts ?
-                    <p style={{ fontSize: 22, color: 'white', marginTop: 40 }} id="box-yournfts">
+                    <p style={{ fontSize: 18, color: mainTextColor, marginTop: 40 }} className="text-medium" id="box-yournfts">
                         Choose your wizard
                     </p>
                     : null
@@ -388,7 +389,7 @@ class DoChallenges extends Component {
 			<div>
 				<Header
 					page='home'
-					section={24}
+					section={7}
 					account={account}
 					isMobile={isMobile}
 					history={this.props.history}
@@ -407,12 +408,12 @@ class DoChallenges extends Component {
                 />
 
 				<Media
-					query="(max-width: 1199px)"
+					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 1200px)"
+					query="(min-width: 1000px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -432,30 +433,31 @@ class DoChallenges extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: "white"
 	},
     containerCard: {
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: 'white',
-        borderRadius: 2,
+        borderColor: '#d7d7d7',
+        borderRadius: 4,
         borderStyle: 'solid',
     },
     inputPriceStyle: {
 		width: 100,
 		height: 40,
 		color: 'black',
-		borderRadius: 2,
-		borderColor: '#b9b7b7',
+		borderRadius: 4,
+		borderColor: '#d7d7d7',
 		borderStyle: 'solid',
-		borderWidth: 2,
-		fontSize: 18,
+		borderWidth: 1,
+		fontSize: 16,
+        fontFamily: 'FigtreeMedium',
 		paddingLeft: 10,
 		WebkitAppearance: 'none',
 		MozAppearance: 'none',
@@ -467,7 +469,7 @@ const styles = {
         width: 150,
         height: 40,
         backgroundColor: CTA_COLOR,
-        borderRadius: 2,
+        borderRadius: 4,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center'
@@ -475,22 +477,21 @@ const styles = {
     btnBack: {
         marginTop: 40,
         width: 220,
+        height: 40,
         paddingTop: 5,
         paddingBottom: 5,
         justifyContent: 'center',
         alignItems: 'center',
-        borderWidth: 2,
-        borderColor: TEXT_SECONDARY_COLOR,
-        borderStyle: 'solid',
-        borderRadius: 2
+        backgroundColor: CTA_COLOR,
+        borderRadius: 4
     }
 }
 
 const mapStateToProps = (state) => {
-    const { account, chainId, gasPrice, gasLimit, networkUrl, netId } = state.mainReducer
+    const { account, chainId, gasPrice, gasLimit, networkUrl, netId, mainTextColor } = state.mainReducer
     const { wizardSfidato } = state.challengesReducer
 
-    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, wizardSfidato }
+    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, wizardSfidato, mainTextColor }
 }
 
 export default connect(mapStateToProps, {

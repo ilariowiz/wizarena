@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import getImageUrl from './GetImageUrl'
 import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
 
@@ -12,7 +13,7 @@ class CardSingleFightProfile extends Component {
     }
 
     render() {
-        const { userMintedNfts, item, index } = this.props
+        const { userMintedNfts, item, index, mainTextColor } = this.props
 
 		const itemInfo = userMintedNfts.find(i => i.name === item.name)
 
@@ -25,12 +26,12 @@ class CardSingleFightProfile extends Component {
             >
 				<img
 					src={getImageUrl(itemInfo.id)}
-					style={{ width: 110, height: 110, borderRadius: 2, marginRight: 15, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+					style={{ width: 110, height: 110, borderRadius: 4, marginRight: 15, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid' }}
 					alt={itemInfo.name}
 				/>
 
 				<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center', marginRight: 10 }}>
-					<p style={{ color: 'white', fontSize: 17, marginBottom: 4 }}>
+					<p style={{ color: mainTextColor, fontSize: 16, marginBottom: 4 }} className="text-medium">
 						{item.name}
 					</p>
 
@@ -39,8 +40,8 @@ class CardSingleFightProfile extends Component {
                         <div style={{ flexDirection: 'column' }}>
 
                             <div style={{ height: 40, justifyContent: 'center', alignItems: 'center', marginBottom: 12 }}>
-                                <p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 22, textAlign: 'center' }}>
-                                    {isWinner ? "WINNER" : "LOSER"}
+                                <p style={{ color: isWinner ? TEXT_SECONDARY_COLOR : '#707070', fontSize: 17, textAlign: 'center' }} className="text-bold">
+                                    {isWinner ? "Winner" : "Loser"}
                                 </p>
                             </div>
 
@@ -53,8 +54,8 @@ class CardSingleFightProfile extends Component {
                                     this.props.history.push(`/fight/${item.fightId}`)
                                 }}
                             >
-                                <p style={{ color: 'white', fontSize: 17 }}>
-            						REPLAY
+                                <p style={{ color: 'white', fontSize: 15 }} className="text-medium">
+            						Replay
             					</p>
                             </a>
                         </div>
@@ -68,8 +69,8 @@ class CardSingleFightProfile extends Component {
                                 style={Object.assign({}, styles.btnChoice, { marginBottom: 12 })}
                                 onClick={() => this.setState({ showResult: true })}
                             >
-                                <p style={{ color: 'white', fontSize: 17 }}>
-            						SHOW RESULT
+                                <p style={{ color: "white", fontSize: 15 }} className="text-medium">
+            						Show result
             					</p>
                             </button>
 
@@ -82,8 +83,8 @@ class CardSingleFightProfile extends Component {
                                     this.props.history.push(`/fight/${item.fightId}`)
                                 }}
                             >
-                                <p style={{ color: 'white', fontSize: 17 }}>
-            						REPLAY
+                                <p style={{ color: 'white', fontSize: 15 }} className="text-medium">
+            						Replay
             					</p>
                             </a>
                         </div>
@@ -96,8 +97,10 @@ class CardSingleFightProfile extends Component {
 
 const styles = {
     boxSingleFight: {
-		backgroundColor: '#ffffff15',
-		borderRadius: 2,
+        borderColor: "#d7d7d7",
+		borderRadius: 4,
+        borderStyle: 'solid',
+        borderWidth: 1,
 		alignItems: 'center',
 		width: 235,
 		height: 150,
@@ -109,8 +112,8 @@ const styles = {
 	},
     btnChoice: {
         width: 100,
-        height: 38,
-        borderRadius: 2,
+        height: 36,
+        borderRadius: 4,
         backgroundColor: CTA_COLOR,
         display: 'flex',
         justifyContent: 'center',
@@ -118,4 +121,10 @@ const styles = {
     }
 }
 
-export default CardSingleFightProfile
+const mapStateToProps = (state) => {
+    const { mainTextColor } = state.mainReducer
+
+    return { mainTextColor }
+}
+
+export default connect(mapStateToProps)(CardSingleFightProfile)

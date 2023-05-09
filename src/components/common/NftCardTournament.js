@@ -84,7 +84,7 @@ class NftCardTournament extends Component {
 	}
 
 	render() {
-		const { item, history, width, account, tournamentSeason } = this.props
+		const { item, history, width, account, tournamentSeason, mainTextColor } = this.props
 		const { potion, ring, infoEquipment } = this.state
 
 		//console.log(tournamentSeason);
@@ -129,7 +129,7 @@ class NftCardTournament extends Component {
 			<a
 				href={`${window.location.protocol}//${window.location.host}/nft/${item.id}`}
 				className='container'
-				style={{ borderColor: isMine ? "gold" : "white" }}
+				style={{ borderColor: isMine ? "#840fb2" : "#d7d7d7" }}
 				onClick={(e) => {
 					e.preventDefault()
 					this.props.selectWizard(item.id)
@@ -137,7 +137,7 @@ class NftCardTournament extends Component {
 				}}
 			>
 				<img
-					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
+					style={{ width, height: width, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
 					src={getImageUrl(item.id)}
 					alt={`#${item.id}`}
 				/>
@@ -147,21 +147,21 @@ class NftCardTournament extends Component {
 					<div style={{ flex: 0.8, flexDirection: 'column', justifyContent: 'space-between', marginTop: 5 }}>
 						{
 							item.nickname ?
-							<p style={{ color: isMine ? "gold" : "white", fontSize: 16, marginLeft: 10, lineHeight: 1, overflowWrap: 'anywhere' }}>
+							<p style={{ color: mainTextColor, fontSize: 13, marginLeft: 10, marginRight: 3, overflowWrap: 'anywhere' }} className="text-bold">
 								<span style={{ fontSize: 13 }}>{item.name}</span> {item.nickname}
 							</p>
 							:
-							<p style={{ color: isMine ? "gold" : "white", fontSize: 18, marginLeft: 10, lineHeight: 1, marginBottom: 4 }}>
+							<p style={{ color: mainTextColor, fontSize: 14, marginLeft: 10, marginBottom: 4 }} className="text-bold">
 								{item.name}
 							</p>
 						}
 
 						<div style={{ alignItems: 'center', marginLeft: 10, height: 28 }}>
-							<p style={{ color: "#c2c0c0", fontSize: 15, marginRight: 10 }}>
-								LEVEL
+							<p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
+								level
 							</p>
 
-							<p style={{ color: getColorTextBasedOnLevel(level), fontSize: 18 }}>
+							<p style={{ color: getColorTextBasedOnLevel(level), fontSize: 17 }} className="text-bold">
 								{level}
 							</p>
 						</div>
@@ -170,12 +170,12 @@ class NftCardTournament extends Component {
 					<div style={{ flex: 0.2, flexDirection: 'column', justifyContent: 'space-between', marginTop: 5, marginRight: 10 }}>
 						<div style={{ width: '100%', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}>
 							<IoMedalOutline
-								color={isMine ? "gold" : "white"}
+								color={mainTextColor}
 								size={20}
 								style={{ marginRight: 8 }}
 							/>
 
-							<p style={{ color: isMine ? "gold" : "white", fontSize: 18, lineHeight: 1 }}>
+							<p style={{ color: mainTextColor, fontSize: 16 }}>
 								{totalMedals}
 							</p>
 						</div>
@@ -197,7 +197,7 @@ class NftCardTournament extends Component {
 									position="top center"
 									on="hover"
 								>
-									<div style={{ padding: 5, fontSize: 18 }}>
+									<div style={{ padding: 5, fontSize: 16, color: mainTextColor }}>
 										{ring.name} : {infoEquipment.bonusesText.join(", ")}
 									</div>
 								</Popup>
@@ -220,7 +220,7 @@ class NftCardTournament extends Component {
 									position="top center"
 									on="hover"
 								>
-									<div style={{ padding: 5, fontSize: 18 }}>
+									<div style={{ padding: 5, fontSize: 16, mainTextColor }}>
 										{descPotion}
 									</div>
 								</Popup>
@@ -239,9 +239,9 @@ class NftCardTournament extends Component {
 }
 
 const mapStateToProps = (state) => {
-	const { account } = state.mainReducer
+	const { account, mainTextColor } = state.mainReducer
 
-	return { account }
+	return { account, mainTextColor }
 }
 
 export default connect(mapStateToProps, {

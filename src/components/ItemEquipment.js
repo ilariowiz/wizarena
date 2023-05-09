@@ -210,16 +210,17 @@ class ItemEquipment extends Component {
 
     renderName(marginBottom) {
 		const { equipment } = this.state
+        const { mainTextColor } = this.props
 
         const rarity = ringsRarity[equipment.name]
         //console.log(rarity);
 		return (
 			<div style={{ flexDirection: 'column', marginBottom }}>
-                <p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 26, lineHeight: 1, marginBottom: 5 }}>
+                <p style={{ color: mainTextColor, fontSize: 22, marginBottom: 5 }} className="text-medium">
                     #{equipment.id} {equipment.name}
                 </p>
 
-                <p style={{ color: '#c2c0c0', fontSize: 18, lineHeight: 1 }}>
+                <p style={{ color: mainTextColor, fontSize: 16 }}>
                     1 of {rarity} {rarity > 1 ? "rings" : "ring"}
                 </p>
 			</div>
@@ -228,6 +229,7 @@ class ItemEquipment extends Component {
 
     renderLeftBoxPriceListed(isOwner) {
 		const { equipment, inputPrice, wizaPrice } = this.state
+        const { mainTextColor } = this.props
 
 		return (
 			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
@@ -235,29 +237,29 @@ class ItemEquipment extends Component {
 				{this.renderName(24)}
 
 				<div style={{ flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'flex-end', marginTop: 15 }}>
-					<p style={{ color: '#c2c0c0', fontSize: 17, marginBottom: 4 }}>
+					<p style={{ color: mainTextColor, fontSize: 15, marginBottom: 5 }}>
 						Current price
 					</p>
 
 					<div style={{ alignItems: 'center', marginBottom: 4 }}>
-                        <p style={{ fontSize: 20, color: 'white', lineHeight: 1, marginRight: 15 }}>
+                        <p style={{ fontSize: 15, color: mainTextColor, marginRight: 7 }}>
 							$WIZA
 						</p>
 
-						<p style={{ fontSize: 24, color: 'white', lineHeight: 1 }}>
+						<p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
 							{equipment.price}
 						</p>
 					</div>
 
-					<p style={{ color: '#c2c0c0', fontSize: 15 }}>
-						(KDA {(wizaPrice * equipment.price).toFixed(2)})
+					<p style={{ color: "#707070", fontSize: 14 }}>
+						($KDA {(wizaPrice * equipment.price).toFixed(2)})
 					</p>
 				</div>
 
 				{
 					isOwner &&
 					<div style={{ flexDirection: 'column', marginTop: 15 }}>
-						<p style={{ color: '#c2c0c0', fontSize: 17, marginBottom: 5 }}>
+						<p style={{ color: mainTextColor, fontSize: 16, marginBottom: 5 }}>
 							Update price
 						</p>
 
@@ -277,7 +279,7 @@ class ItemEquipment extends Component {
 	// GESTIAMO I CASI: Connect Wallet, Cancel Listing, Buy Now, Make Offer
 	renderBtnBuy(width, marginRight, isMobile) {
 		const { equipment } = this.state;
-		const { account } = this.props
+		const { account, mainTextColor } = this.props
 
 		if (!account || (account && !account.account)) {
 
@@ -292,7 +294,7 @@ class ItemEquipment extends Component {
 						style={Object.assign({}, styles.btnBuy, { width, marginRight })}
 						onClick={() => this.setState({ showModalConnection: true })}
 					>
-						<p style={Object.assign({}, styles.btnBuyText, { fontSize: 19 })}>
+						<p style={styles.btnBuyText}>
 							Connect wallet
 						</p>
 					</button>
@@ -337,17 +339,6 @@ class ItemEquipment extends Component {
 
 		return (
 			<div style={style}>
-
-				{/*<button
-					className='btnH'
-					style={Object.assign({}, styles.btnBuy, { width, marginRight })}
-					onClick={() => this.setState({ showModalOffer: true })}
-				>
-					<p style={styles.btnBuyText}>
-						Make offer
-					</p>
-				</button>*/}
-
 				<button
 					className='btnH'
 					style={Object.assign({}, styles.btnBuy, { width, marginRight })}
@@ -363,6 +354,7 @@ class ItemEquipment extends Component {
 
     renderLeftBoxListing() {
 		const { inputPrice, wizaPrice } = this.state
+        const { mainTextColor } = this.props
 
 		return (
 			<div style={{ flexDirection: 'column', justifyContent: 'space-between', alignItems: 'flex-start', marginLeft: 15 }}>
@@ -370,12 +362,8 @@ class ItemEquipment extends Component {
 				{this.renderName(24)}
 
 				<div style={{ flexDirection: 'column', marginTop: 15 }}>
-					<p style={{ color: '#c2c0c0', fontSize: 17, marginBottom: 5 }}>
-						Set price in WIZA
-					</p>
-
-					<p style={{ color: '#c2c0c0', fontSize: 16, marginBottom: 5 }}>
-						KDA {(wizaPrice * inputPrice).toFixed(2)}
+					<p style={{ color: mainTextColor, fontSize: 16, marginBottom: 5 }}>
+						Set price in $WIZA
 					</p>
 
 					<input
@@ -384,6 +372,10 @@ class ItemEquipment extends Component {
 						value={inputPrice}
 						onChange={(e) => this.setState({ inputPrice: e.target.value })}
 					/>
+
+                    <p style={{ color: mainTextColor, fontSize: 13, marginTop: 5 }}>
+						$KDA {(wizaPrice * inputPrice).toFixed(2)}
+					</p>
 				</div>
 
 			</div>
@@ -392,7 +384,7 @@ class ItemEquipment extends Component {
 
     renderBtnSell(width, marginRight, isMobile) {
 		const { equipment } = this.state
-		const { account } = this.props
+		const { account, mainTextColor } = this.props
 
 		let style = isMobile ? { flexDirection: 'column', height: '100%', marginLeft: 15, marginTop: 10, justifyContent: 'flex-end' }
 								:
@@ -407,7 +399,7 @@ class ItemEquipment extends Component {
 						style={Object.assign({}, styles.btnTransfer, { marginRight })}
 						onClick={() => this.setState({ showModalTransfer: true })}
 					>
-						<p style={{ color: 'white', fontSize: 17 }}>
+						<p style={{ color: mainTextColor, fontSize: 15 }} className="text-medium">
 							Transfer
 						</p>
 					</button>
@@ -448,7 +440,7 @@ class ItemEquipment extends Component {
 					style={Object.assign({}, styles.btnBuy, { width })}
 					onClick={() => this.setState({ showModalConnection: true })}
 				>
-					<p style={Object.assign({}, styles.btnBuyText, { fontSize: 18 })}>
+					<p style={styles.btnBuyText}>
 						Connect wallet
 					</p>
 				</button>
@@ -458,6 +450,7 @@ class ItemEquipment extends Component {
 
     renderBoxStats(width) {
 		const { equipment } = this.state
+        const { mainTextColor } = this.props
 
         let infoEquipment = equipment && equipment.bonus ? getRingBonuses(equipment) : undefined
 
@@ -466,11 +459,9 @@ class ItemEquipment extends Component {
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
-				<div style={{ backgroundColor: '#ffffff15', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
-					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, color: 'white' }}>
-						Stats
-					</p>
-				</div>
+                <p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 18, color: mainTextColor }} className="text-medium">
+                    Stats
+                </p>
 
 				<div style={Object.assign({}, styles.boxTraits, { width })}>
 
@@ -478,8 +469,8 @@ class ItemEquipment extends Component {
 						equipment && infoEquipment ?
 						<div style={Object.assign({}, styles.boxTraits, { width })}>
 
-							<div style={{ width: '100%', alignItems: 'center', marginBottom: 8 }}>
-								<p style={{ fontSize: 22, color: "white" }}>
+							<div style={{ width: '100%', alignItems: 'center', marginBottom: 5 }}>
+								<p style={{ fontSize: 16, color: mainTextColor }}>
 									{infoEquipment.bonusesText.join(", ")}
 								</p>
 							</div>
@@ -495,12 +486,13 @@ class ItemEquipment extends Component {
 
     renderBoxEquipped(width, isMobile) {
 		const { equipment } = this.state
+        const { mainTextColor } = this.props
 
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width, borderWidth: 0, alignItems: isMobile ? 'center' : 'flex-end' })}>
 
                 <div style={{ flexDirection: 'column', alignItems: 'center' }}>
-                    <p style={{ marginBottom: 20, fontSize: 26, color: 'white' }}>
+                    <p style={{ marginBottom: 10, fontSize: 16, color: mainTextColor }}>
                         Equipped to
                     </p>
 
@@ -514,11 +506,11 @@ class ItemEquipment extends Component {
                     >
                         <img
                             src={getImageUrl(equipment.equippedToId)}
-                            style={{ width: width - 80, marginBottom: 10, borderColor: 'white', borderWidth: 1, borderStyle: 'solid', borderRadius: 2 }}
+                            style={{ width: width - 80, marginBottom: 10, borderColor: '#d7d7d7', borderWidth: 1, borderStyle: 'solid', borderRadius: 4 }}
                             alt="Ring"
                         />
 
-                        <p style={{ fontSize: 22, color: 'white' }}>
+                        <p style={{ fontSize: 18, color: mainTextColor }}>
                             #{equipment.equippedToId}
                         </p>
                     </a>
@@ -543,15 +535,14 @@ class ItemEquipment extends Component {
 
     renderBoxSales(width) {
 		const { itemHistory, loadingHistory } = this.state
+        const { mainTextColor } = this.props
 
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
-				<div style={{ backgroundColor: '#ffffff15', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
-					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 22, color: 'white' }}>
-						Item sales
-					</p>
-				</div>
+                <p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 18, color: mainTextColor }}>
+                    Item sales
+                </p>
 
 				<div style={Object.assign({}, styles.boxHistory, { width })}>
 
@@ -561,7 +552,7 @@ class ItemEquipment extends Component {
 
 					{
 						itemHistory && itemHistory.length === 0 ?
-						<p style={{ fontSize: 18, color: 'white', marginLeft: 15, marginBottom: 15, marginTop: 15 }}>
+						<p style={{ fontSize: 16, color: mainTextColor, marginLeft: 15, marginBottom: 15, marginTop: 15 }}>
 							{loadingHistory ? "Loading..." : "No sales"}
 						</p>
 						: null
@@ -577,14 +568,14 @@ class ItemEquipment extends Component {
 		const { equipment, loading } = this.state
 		const { account } = this.props
 
-		const { boxW, modalW } = getBoxWidth(true)
-        let imageWidth = boxW > 500 ? 500 : boxW - 30
+		const { boxW, modalW, padding } = getBoxWidth(true)
+        let imageWidth = boxW > 400 ? 400 : boxW - 30
 
 		let ctaWidth = boxW * 50 / 100
 		if (ctaWidth > 170) ctaWidth = 170
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 15, overflowY: 'auto', overflowX: 'hidden' }}>
+            <div style={{ flexDirection: 'column', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden' }}>
 
                 {
                     loading &&
@@ -596,7 +587,7 @@ class ItemEquipment extends Component {
                 <div style={{ width: boxW, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 25 }}>
 
                     <img
-                        style={{ width: imageWidth, height: imageWidth, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+                        style={{ width: imageWidth, height: imageWidth }}
                         src={equipment.url}
                         alt={equipment.id}
                     />
@@ -676,40 +667,40 @@ class ItemEquipment extends Component {
 
     renderBodyLarge() {
         const { equipment, loading } = this.state
-		const { account } = this.props
+		const { account, mainTextColor } = this.props
 
 		//console.log(nft);
 
-		const { boxW, modalW } = getBoxWidth(false)
+		const { boxW, modalW, padding } = getBoxWidth(false)
 
-        let insideWidth = boxW > 900 ? 900 : boxW
+        let insideWidth = boxW > 700 ? 700 : boxW
 
 		let ctaWidth = insideWidth * 30 / 100
-		if (ctaWidth > 250) ctaWidth = 250
+		if (ctaWidth > 220) ctaWidth = 220
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: 25, overflowY: 'auto', overflowX: 'hidden' }}>
+            <div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: padding/2, overflowY: 'auto', overflowX: 'hidden' }}>
 
                 {
                     loading &&
-                    <div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30, marginBottom: 30 }}>
-                        <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+                    <div style={{ width: boxW, justifyContent: 'center', alignItems: 'center', marginTop: 30, marginBottom: 30 }}>
+                        <DotLoader size={25} color={mainTextColor} />
                     </div>
                 }
 
                 <div style={{ width: boxW, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 35 }}>
 
-                    <div style={{ alignItems: 'center', width: insideWidth, justifyContent: equipment && equipment.equipped ? 'space-between' : 'center' }}>
+                    <div style={{ alignItems: 'center', width: insideWidth, justifyContent: 'center' }}>
 
                         <img
-                            style={{ width: 300, height: 300, marginBottom: 30, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+                            style={{ width: 220, height: 220, marginBottom: 30 }}
                             src={equipment.url}
                             alt={equipment.id}
                         />
 
                         {
                             equipment && equipment.equipped ?
-                            this.renderBoxEquipped(300, false)
+                            this.renderBoxEquipped(220, false)
                             : null
                         }
                     </div>
@@ -798,7 +789,7 @@ class ItemEquipment extends Component {
 					alt='Placeholder'
 				/>
 
-				<p style={{ fontSize: 23, color: 'white', textAlign: 'center' }}>
+				<p style={{ fontSize: 18, color: this.props.mainTextColor, textAlign: 'center' }}>
 					The Arena is empty...
 				</p>
 			</div>
@@ -825,12 +816,12 @@ class ItemEquipment extends Component {
                 />
 
 				<Media
-					query="(max-width: 1199px)"
+					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 1200px)"
+					query="(min-width: 1000px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -879,60 +870,60 @@ class ItemEquipment extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: "white"
 	},
     boxRightLarge: {
 		width: '100%',
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
-		borderRadius: 2,
+		borderRadius: 4,
 		paddingTop: 16,
 		paddingBottom: 16,
-		backgroundColor: '#ffffff15'
+		borderColor: '#d7d7d7',
+        borderWidth: 1,
+        borderStyle: 'solid'
 	},
 	boxRightMobile: {
 		width: '100%',
 		flexDirection: 'column',
 		justifyContent: 'space-between',
-		borderRadius: 2,
+		borderRadius: 4,
 		paddingTop: 16,
 		paddingBottom: 16,
-		backgroundColor: '#ffffff15'
-	},
-	boxPrice: {
-		borderRadius: 2,
-		paddingTop: 16,
-		paddingBottom: 16,
-		backgroundColor: '#ffffff15'
+        borderColor: '#d7d7d7',
+        borderWidth: 1,
+        borderStyle: 'solid'
 	},
 	btnBuy: {
-		height: 50,
+		height: 40,
 		backgroundColor: CTA_COLOR,
 		justifyContent: 'center',
 		alignItems: 'center',
-		borderRadius: 2,
+		borderRadius: 4,
 	},
 	btnBuyText: {
-		fontSize: 21,
-		color: 'white',
+		fontSize: 16,
+        color: 'white',
+		fontFamily: 'FigtreeMedium',
 	},
     inputPrice: {
 		width: 130,
 		height: 40,
 		color: 'black',
-		borderRadius: 2,
-		borderColor: '#b9b7b7',
+		borderRadius: 4,
+		borderColor: '#d7d7d7',
 		borderStyle: 'solid',
-		borderWidth: 2,
-		fontSize: 19,
+		borderWidth: 1,
+		fontSize: 16,
 		paddingLeft: 10,
+        fontFamily: 'FigtreeMedium',
 		WebkitAppearance: 'none',
 		MozAppearance: 'none',
 		appearance: 'none',
@@ -940,16 +931,16 @@ const styles = {
 	},
     boxSection: {
 		flexDirection: 'column',
-		borderRadius: 2,
+		borderRadius: 4,
 		borderWidth: 1,
-		borderColor: '#ffffff15',
+		borderColor: '#d7d7d7',
 		borderStyle: 'solid',
 		marginBottom: 30
 	},
 	boxTraits: {
 		flexDirection: 'row',
 		flexWrap: 'wrap',
-		padding: 10,
+		padding: 7,
 	},
     boxHistory: {
 		flexDirection: 'column',
@@ -962,9 +953,9 @@ const styles = {
 		maxWidth: 154,
 		justifyContent: 'center',
 		alignItems: 'center',
-		borderWidth: 2,
+		borderWidth: 1,
 		borderColor: CTA_COLOR,
-		borderRadius: 2,
+		borderRadius: 4,
 		borderStyle: 'solid',
 		marginTop: 5,
 		paddingLeft: 11,
@@ -975,10 +966,10 @@ const styles = {
 
 
 const mapStateToProps = (state) => {
-	const { account, chainId, gasPrice, gasLimit, netId, networkUrl } = state.mainReducer;
+	const { account, chainId, gasPrice, gasLimit, netId, networkUrl, mainTextColor } = state.mainReducer;
     const { statSearched, allItems, allItemsIds, totalCountItems, itemsBlockId } = state.equipmentReducer
 
-	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, statSearched, allItems, allItemsIds, totalCountItems, itemsBlockId };
+	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, statSearched, allItems, allItemsIds, totalCountItems, itemsBlockId, mainTextColor };
 }
 
 export default connect(mapStateToProps, {

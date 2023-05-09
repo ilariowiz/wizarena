@@ -72,7 +72,7 @@ class NftCardBurningQueue extends Component {
 	}
 
 	render() {
-		const { item, history, width, isBurned } = this.props
+		const { item, history, width, isBurned, mainTextColor } = this.props
 		const { rank, itemInfo } = this.state
 
 		const from = !isBurned ? moment(item.timestamp.timep).fromNow() : ""
@@ -90,7 +90,7 @@ class NftCardBurningQueue extends Component {
 				}}
 			>
 				<img
-					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
+					style={{ width, height: width, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
 					src={getImageUrl(item.idnft)}
 					alt={`#${item.idnft}`}
 				/>
@@ -100,18 +100,18 @@ class NftCardBurningQueue extends Component {
 					<div style={{ width: '100%', justifyContent: 'space-between', alignItems: 'center' }}>
 
 						<div style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
-							<p style={{ color: 'white', fontSize: 19, marginLeft: 10, lineHeight: 1, marginBottom: 4 }}>
+							<p style={{ color: mainTextColor, fontSize: 16, marginLeft: 10, marginBottom: 4 }} className="text-medium">
 								#{item.idnft}
 							</p>
 
 							{
 								rank && !isBurned &&
 								<div style={{ alignItems: 'center', marginLeft: 10, marginBottom: 4 }}>
-									<p style={{ color: '#c2c0c0', fontSize: 15, marginRight: 10, marginTop: 1, lineHeight: 1 }}>
+									<p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
 										Rank
 									</p>
 
-									<p style={{ color: "white", fontSize: 16, lineHeight: 1 }}>
+									<p style={{ color: mainTextColor, fontSize: 15 }} className="text-medium">
 										{rank}
 									</p>
 								</div>
@@ -120,11 +120,11 @@ class NftCardBurningQueue extends Component {
 							{
 								level &&
 								<div style={{ alignItems: 'center', marginLeft: 10 }}>
-									<p style={{ color: '#c2c0c0', fontSize: 15, marginRight: 10, marginTop: 1, lineHeight: 1 }}>
+									<p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
 										Level
 									</p>
 
-									<p style={{ color: getColorTextBasedOnLevel(level), fontSize: 16, lineHeight: 1 }}>
+									<p style={{ color: mainTextColor, fontSize: 16 }}>
 										{level}
 									</p>
 								</div>
@@ -135,11 +135,11 @@ class NftCardBurningQueue extends Component {
 						{
 							!isBurned &&
 							<div style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
-								<p style={{ color: 'white', fontSize: 16, marginRight: 10, lineHeight: 1, marginBottom: 4 }}>
-									IN QUEUE
+								<p style={{ color: mainTextColor, fontSize: 15, marginRight: 10, marginBottom: 4 }}>
+									In Queue
 								</p>
 
-								<p style={{ color: '#c2c0c0', fontSize: 14, marginRight: 10, lineHeight: 1 }}>
+								<p style={{ color: mainTextColor, fontSize: 13, marginRight: 10 }}>
 									{from}
 								</p>
 							</div>
@@ -148,11 +148,11 @@ class NftCardBurningQueue extends Component {
 						{
 							item.rank &&
 							<div style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
-								<p style={{ color: 'white', fontSize: 16, marginRight: 10, lineHeight: 1 }}>
-									RANK
+								<p style={{ color: mainTextColor, fontSize: 15, marginRight: 10 }}>
+									Rank
 								</p>
 
-								<p style={{ color: '#c2c0c0', fontSize: 14, marginRight: 10, lineHeight: 1 }}>
+								<p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }} className="text-medium">
 									{item.rank}
 								</p>
 							</div>
@@ -167,10 +167,10 @@ class NftCardBurningQueue extends Component {
 }
 
 const mapStateToProps = (state) => {
-	const { chainId, gasPrice, gasLimit, networkUrl } = state.mainReducer
+	const { chainId, gasPrice, gasLimit, networkUrl, mainTextColor } = state.mainReducer
 	const { ranks } = state.rankReducer
 
-	return { ranks, chainId, gasPrice, gasLimit, networkUrl }
+	return { ranks, chainId, gasPrice, gasLimit, networkUrl, mainTextColor }
 }
 
 export default connect(mapStateToProps, {

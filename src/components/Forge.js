@@ -162,23 +162,24 @@ class Forge extends Component {
 
     renderProgressLevel() {
         const { level, forgeXP, xpNextLevel } = this.state
+        const { mainTextColor } = this.props
 
         const pct = forgeXP * 100 / xpNextLevel
 
         return (
             <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                <p style={{ fontSize: 14, color: 'white', marginBottom: 6 }}>
-                    LEVEL {level}
+                <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 5 }} className="text-medium">
+                    Level {level}
                 </p>
 
                 <div style={styles.barLevelContainer}>
-                    <div style={{ backgroundColor: '#a22634', width: `${pct}%` }} />
+                    <div style={{ backgroundColor: '#a22634', width: `${pct}%`, height: 16, borderRadius: 4 }} />
 
-                    <p style={{ fontSize: 14, color: 'white', position: 'absolute', left: 7 }}>
+                    <p style={{ fontSize: 13, color: mainTextColor, position: 'absolute', left: 7 }}>
                         {forgeXP}
                     </p>
 
-                    <p style={{ fontSize: 14, color: 'white', position: 'absolute', right: 7 }}>
+                    <p style={{ fontSize: 13, color: mainTextColor, position: 'absolute', right: 7 }}>
                         {xpNextLevel}
                     </p>
                 </div>
@@ -188,10 +189,11 @@ class Forge extends Component {
 
     renderBody(isMobile) {
         const { loading, error, ring1, ring2, ringIdxSelected, finalRecipe, discount } = this.state
+        const { mainTextColor } = this.props
 
-        const { boxW } = getBoxWidth(isMobile)
+        const { boxW, padding } = getBoxWidth(isMobile)
 
-        let placeholderW = 120
+        let imageW = 100
 
         let wizaFee = 0
         if (finalRecipe) {
@@ -199,9 +201,9 @@ class Forge extends Component {
         }
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflowY: 'auto', overflowX: 'hidden' }}>
+            <div style={{ flexDirection: 'column', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
+                <p style={{ color: mainTextColor, fontSize: 24, marginBottom: 20 }} className="text-medium">
                     Forge
                 </p>
 
@@ -212,7 +214,7 @@ class Forge extends Component {
                     <div style={{ justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
                         <div style={{ width: 60, minWidth: 60, height: 10 }} />
 
-                        <p style={{ fontSize: 20, color: 'white', textAlign: 'center', marginLeft: 15, marginRight: 15 }}>
+                        <p style={{ fontSize: isMobile ? 15 : 17, color: mainTextColor, textAlign: 'center', marginLeft: 15, marginRight: 15 }}>
                             Select a ring and find out what you can combine it with
                         </p>
 
@@ -225,7 +227,7 @@ class Forge extends Component {
                                 style={{ width: 60 }}
                                 alt="Recipe Book"
                             />
-                            <p style={{ fontSize: 14, color: 'white', textAlign: 'center' }}>
+                            <p style={{ fontSize: 13, color: mainTextColor, textAlign: 'center' }}>
                                 Recipe Book
                             </p>
                         </button>
@@ -238,7 +240,7 @@ class Forge extends Component {
                 {
 					loading ?
 					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', paddingTop: 20, marginBottom: 30 }}>
-						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+						<DotLoader size={25} color={mainTextColor} />
 					</div>
 					: null
 				}
@@ -257,17 +259,17 @@ class Forge extends Component {
                                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', padding: 10 }}>
                                     <img
                                         src={ring1.url}
-                                        style={{ width: 120, height: 120 }}
+                                        style={{ width: imageW, height: imageW }}
                                         alt="Ring 1"
                                     />
-                                    <p style={{ fontSize: 16, color: 'white', marginTop: 5, textAlign: 'center' }}>
+                                    <p style={{ fontSize: 15, color: mainTextColor, marginTop: 5, textAlign: 'center' }}>
                                         #{ring1.id} {ring1.name}
                                     </p>
                                 </div>
                                 :
                                 <img
                                     src={ring_placeholder}
-                                    style={{ width: placeholderW, height: placeholderW }}
+                                    style={{ width: imageW, height: imageW }}
                                     alt="Placeholder"
                                 />
                             }
@@ -276,8 +278,8 @@ class Forge extends Component {
                         <div style={{ width: 30, height: 30 }} />
 
                         <AiOutlinePlus
-                            color="white"
-                            size={30}
+                            color={mainTextColor}
+                            size={26}
                         />
 
                         <div style={{ width: 30, height: 30 }} />
@@ -292,17 +294,17 @@ class Forge extends Component {
                                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', padding: 10 }}>
                                     <img
                                         src={ring2.url}
-                                        style={{ width: 120, height: 120 }}
+                                        style={{ width: imageW, height: imageW }}
                                         alt="Ring 2"
                                     />
-                                    <p style={{ fontSize: 16, color: 'white', marginTop: 5, textAlign: 'center' }}>
+                                    <p style={{ fontSize: 15, color: mainTextColor, marginTop: 5, textAlign: 'center' }}>
                                         #{ring2.id} {ring2.name}
                                     </p>
                                 </div>
                                 :
                                 <img
                                     src={ring_placeholder}
-                                    style={{ width: placeholderW, height: placeholderW }}
+                                    style={{ width: imageW, height: imageW }}
                                     alt="Placeholder"
                                 />
                             }
@@ -311,21 +313,21 @@ class Forge extends Component {
                         <div style={{ width: 30, height: 30 }} />
 
                         <AiOutlinePlus
-                            color="white"
-                            size={30}
+                            color={mainTextColor}
+                            size={26}
                         />
 
                         <div style={{ width: 30, height: 30 }} />
 
                         <div style={Object.assign({}, styles.boxImage, { cursor: 'pointer' })}>
-                            <p style={{ fontSize: 28, color: 'white' }}>
-                                {finalRecipe ? wizaFee : '...'} WIZA
+                            <p style={{ fontSize: 19, color: mainTextColor }} className="text-bold">
+                                {finalRecipe ? wizaFee : '...'} $WIZA
                             </p>
                         </div>
 
                     </div>
 
-                    <p style={{ fontSize: 52, color: 'white', marginBottom: 10 }}>
+                    <p style={{ fontSize: 40, color: mainTextColor, marginBottom: 10 }}>
                     =
                     </p>
 
@@ -335,17 +337,17 @@ class Forge extends Component {
                             <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', padding: 10 }}>
                                 <img
                                     src={finalRecipe.url}
-                                    style={{ width: 120, height: 120 }}
+                                    style={{ width: imageW, height: imageW }}
                                     alt="Forged Ring"
                                 />
-                                <p style={{ fontSize: 16, color: 'white', marginTop: 5, textAlign: 'center' }}>
+                                <p style={{ fontSize: 15, color: mainTextColor, marginTop: 5, textAlign: 'center' }}>
                                     {finalRecipe.name}
                                 </p>
                             </div>
                             :
                             <img
                                 src={ring_placeholder}
-                                style={{ width: placeholderW, height: placeholderW }}
+                                style={{ width: imageW, height: imageW }}
                                 alt="Placeholder"
                             />
                         }
@@ -353,12 +355,12 @@ class Forge extends Component {
 
                     <button
                         className='btnH'
-                        style={styles.btnChoose}
+                        style={styles.btnForge}
                         onClick={() => {
                             this.forge()
                         }}
                     >
-                        <p style={{ fontSize: 18, color: 'white' }}>
+                        <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
                             FORGE
                         </p>
                     </button>
@@ -425,12 +427,12 @@ class Forge extends Component {
 		return (
 			<div style={styles.container}>
 				<Media
-					query="(max-width: 1199px)"
+					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 1200px)"
+					query="(min-width: 1000px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -450,31 +452,30 @@ class Forge extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: "white"
 	},
     boxImage: {
-        width: 200,
-        height: 200,
-        backgroundColor: '#ffffff10',
-        borderRadius: 2,
-        borderColor: 'white',
+        width: 180,
+        height: 180,
+        borderRadius: 4,
+        borderColor: '#d7d7d7',
         borderStyle: 'solid',
-        borderWidth: 2,
+        borderWidth: 1,
         justifyContent: 'center',
         alignItems: 'center',
         display: 'flex'
     },
-    btnChoose: {
-        height: 45,
-        width: 204,
+    btnForge: {
+        height: 40,
+        width: 184,
         marginTop: 35,
-        borderRadius: 2,
+        borderRadius: 4,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: CTA_COLOR,
@@ -489,20 +490,20 @@ const styles = {
     barLevelContainer: {
         width: 300,
         height: 16,
-        borderRadius: 2,
+        borderRadius: 4,
         overflow: 'hidden',
         position: 'relative',
         borderWidth: 1,
-        borderColor: 'white',
+        borderColor: '#d7d7d7',
         borderStyle: 'solid',
         alignItems: 'center'
     }
 }
 
 const mapStateToProps = (state) => {
-    const { account, chainId, gasPrice, gasLimit, networkUrl, netId } = state.mainReducer
+    const { account, chainId, gasPrice, gasLimit, networkUrl, netId, mainTextColor } = state.mainReducer
 
-    return { account, chainId, gasPrice, gasLimit, networkUrl, netId }
+    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, mainTextColor }
 }
 
 export default connect(mapStateToProps, {

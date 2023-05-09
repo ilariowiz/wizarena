@@ -608,6 +608,7 @@ class Shop extends Component {
 	}
 
     renderRingsCard(item, index, isMobile) {
+        const { mainTextColor } = this.props
 
         const bonusValues = item.bonus.split(",")
 
@@ -625,20 +626,19 @@ class Shop extends Component {
         return (
             <div
                 key={index}
-                className="cardShopShadow"
-                style={Object.assign({}, styles.cardShopStyle, { marginRight: isMobile ? 10 : 35, marginBottom: isMobile ? 10 : 35 })}
+                style={styles.cardShopStyle}
             >
                 <img
                     src={item.url}
-                    style={{ width: 100, marginBottom: 10 }}
+                    style={{ width: 80, marginBottom: 10 }}
                     alt="Ring"
                 />
 
-                <p style={{ fontSize: 19, color: 'white', marginBottom: 10, textAlign: 'center', minHeight: 38, marginRight: 9, marginLeft: 9 }}>
+                <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10, textAlign: 'center', minHeight: 38, marginRight: 9, marginLeft: 9 }}>
                     #{item.id} {item.name}
                 </p>
 
-                <p style={{ fontSize: 18, color: 'white', marginBottom: 15, textAlign: 'center' }}>
+                <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10, textAlign: 'center' }}>
                     {bonuses.join(", ")}
                 </p>
 
@@ -651,8 +651,8 @@ class Shop extends Component {
                             this.unequipEquipment(item.id, item.name)
                         }}
                     >
-                        <p style={{ fontSize: 16, color: 'white' }}>
-                            UNEQUIP <br /><span style={{ fontSize: 13 }}>({Math.floor(wizard.level / 5)} WIZA)</span>
+                        <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                            Unequip <br /><span style={{ fontSize: 12 }}>({Math.floor(wizard.level / 5)} $WIZA)</span>
                         </p>
                     </button>
                     :
@@ -663,8 +663,8 @@ class Shop extends Component {
                             this.equipEquipment(item.id, item.name)
                         }}
                     >
-                        <p style={{ fontSize: 17, color: 'white' }}>
-                            EQUIP
+                        <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                            Equip
                         </p>
                     </button>
                 }
@@ -674,6 +674,7 @@ class Shop extends Component {
 
     renderShopCard(key, isMobile) {
         const { increase, wizaValue } = this.state
+        const { mainTextColor } = this.props
 
         const wizard = this.getWizardSelected()
 
@@ -713,7 +714,7 @@ class Shop extends Component {
             newLevel = calcLevelWizardAfterUpgrade(copySelected, key)
         }
 
-        let colorTextLevel = getColorTextBasedOnLevel(newLevel)
+        let colorTextLevel = mainTextColor //getColorTextBasedOnLevel(newLevel)
         if (newLevel > MAX_LEVEL) {
             colorTextLevel = "red"
         }
@@ -738,15 +739,14 @@ class Shop extends Component {
 
         return (
             <div
-                className="cardShopShadow"
-                style={Object.assign({}, styles.cardShopStyle, { marginRight: isMobile ? 10 : 35, marginBottom: isMobile ? 10 : 35 })}
+                style={styles.cardShopStyle}
             >
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
-                    <div style={{ width: 100, height: 100, alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 70, height: 70, alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
                         <img
                             src={img}
-                            style={{ width: 110, height: 110 }}
+                            style={{ width: 80, height: 80 }}
                             alt="logo"
                         />
                     </div>
@@ -772,19 +772,19 @@ class Shop extends Component {
 							}}
                         >
                             <AiOutlineMinus
-                                color="white"
-                                size={22}
+                                color={mainTextColor}
+                                size={20}
                             />
                         </button>
 
 
                         <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                            <p style={{ fontSize: 22, color: 'white' }}>
+                            <p style={{ fontSize: 16, color: mainTextColor }}>
                                 +{increase[key]}
                             </p>
 
-                            <p style={{ fontSize: 20, color: 'white' }}>
-                                {key.toUpperCase()}
+                            <p style={{ fontSize: 16, color: mainTextColor }} className="text-medium">
+                                {key}
                             </p>
                         </div>
 
@@ -802,23 +802,23 @@ class Shop extends Component {
 							}}
 						>
 							<AiOutlinePlus
-								color="white"
-								size={22}
+								color={mainTextColor}
+								size={20}
 							/>
 						</button>
                     </div>
 
-                    <p style={{ fontSize: 17, color: 'white' }}>
+                    <p style={{ fontSize: 14, color: mainTextColor }}>
                         $WIZA
                     </p>
-                    <p style={{ fontSize: 21, color: 'white', marginBottom: 15 }}>
+                    <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15 }} className="text-bold">
                         {costo.toFixed(2)}
                     </p>
 
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        NEW LEVEL
+                    <p style={{ fontSize: 14, color: mainTextColor }}>
+                        New Level
                     </p>
-                    <p style={{ fontSize: 21, color: colorTextLevel, marginBottom: 10 }}>
+                    <p style={{ fontSize: 16, color: colorTextLevel, marginBottom: 10 }} className="text-bold">
                         {newLevel}
                     </p>
                 </div>
@@ -835,8 +835,8 @@ class Shop extends Component {
                         this.buyStat(key, costo)
                     }}
                 >
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        UPGRADE
+                    <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                        Upgrade
                     </p>
                 </button>
 
@@ -846,6 +846,7 @@ class Shop extends Component {
 
     renderAPShopCard(key, isMobile) {
         const { increase, wizaValue } = this.state
+        const { mainTextColor } = this.props
 
         const wizard = this.getWizardSelected()
 
@@ -904,7 +905,7 @@ class Shop extends Component {
         costoWiza = round((costoWiza * 9 / 100), 2)
         //console.log(costoWiza);
 
-        let colorTextLevel = getColorTextBasedOnLevel(newLevel)
+        let colorTextLevel = mainTextColor //getColorTextBasedOnLevel(newLevel)
         if (newLevel > MAX_LEVEL) {
             colorTextLevel = "red"
         }
@@ -929,15 +930,14 @@ class Shop extends Component {
 
         return (
             <div
-                className="cardShopShadow"
-                style={Object.assign({}, styles.cardShopStyle, { marginRight: isMobile ? 10 : 35, marginBottom: isMobile ? 10 : 35 })}
+                style={styles.cardShopStyle}
             >
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
-                    <div style={{ width: 100, height: 100, alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 70, height: 70, alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
                         <img
                             src={img}
-                            style={{ width: 110, height: 110 }}
+                            style={{ width: 80, height: 80 }}
                             alt="logo"
                         />
                     </div>
@@ -963,19 +963,19 @@ class Shop extends Component {
 							}}
                         >
                             <AiOutlineMinus
-                                color="white"
-                                size={22}
+                                color={mainTextColor}
+                                size={20}
                             />
                         </button>
 
 
                         <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                            <p style={{ fontSize: 22, color: 'white' }}>
+                            <p style={{ fontSize: 16, color: mainTextColor }}>
                                 +{increase[key]}
                             </p>
 
-                            <p style={{ fontSize: 20, color: 'white' }}>
-                                {key.toUpperCase()}
+                            <p style={{ fontSize: 16, color: mainTextColor }} className="text-medium">
+                                {key}
                             </p>
                         </div>
 
@@ -993,37 +993,37 @@ class Shop extends Component {
 							}}
 						>
 							<AiOutlinePlus
-								color="white"
-								size={22}
+								color={mainTextColor}
+								size={20}
 							/>
 						</button>
                     </div>
 
                     <div style={{ alignItems: 'center', justifyContent: 'space-around', width: '100%',  marginBottom: 15 }}>
                         <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                            <p style={{ fontSize: 17, color: 'white' }}>
-                                AP
+                            <p style={{ fontSize: 14, color: mainTextColor }}>
+                                Ap
                             </p>
-                            <p style={{ fontSize: 20, color: 'white' }}>
+                            <p style={{ fontSize: 16, color: mainTextColor }} className="text-bold">
                                 {costo}
                             </p>
                         </div>
 
                         <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                            <p style={{ fontSize: 17, color: 'white' }}>
+                            <p style={{ fontSize: 14, color: mainTextColor }}>
                                 $WIZA
                             </p>
-                            <p style={{ fontSize: 20, color: 'white' }}>
+                            <p style={{ fontSize: 16, color: mainTextColor }} className="text-bold">
                                 {costoWiza}
                             </p>
                         </div>
 
                     </div>
 
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        NEW LEVEL
+                    <p style={{ fontSize: 14, color: mainTextColor }}>
+                        New Level
                     </p>
-                    <p style={{ fontSize: 21, color: colorTextLevel, marginBottom: 10 }}>
+                    <p style={{ fontSize: 16, color: colorTextLevel, marginBottom: 10 }} className="text-bold">
                         {newLevel}
                     </p>
                 </div>
@@ -1040,8 +1040,8 @@ class Shop extends Component {
                         this.buyStatWithAP(key, costo)
                     }}
                 >
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        UPGRADE
+                    <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                        Upgrade
                     </p>
                 </button>
 
@@ -1051,24 +1051,23 @@ class Shop extends Component {
 
     renderAPBurnCard(isMobile) {
         const { apToBurn } = this.state
+        const { mainTextColor } = this.props
 
         const wizard = this.getWizardSelected()
 
         return (
             <div
-                className="cardShopShadow"
-                style={Object.assign({}, styles.cardShopStyle, { marginRight: isMobile ? 10 : 35, marginBottom: isMobile ? 10 : 35 })}
+                style={styles.cardShopStyle}
             >
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
-                    <div style={{ width: 100, height: 100, alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 70, height: 70, alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
                         <img
                             src={potion_ap_burn}
-                            style={{ width: 110, height: 110 }}
+                            style={{ width: 80, height: 80 }}
                             alt="logo"
                         />
                     </div>
-
 
                     <div style={{ justifyContent: 'space-between', marginBottom: 15, width: '100%' }}>
 
@@ -1083,19 +1082,19 @@ class Shop extends Component {
 							}}
                         >
                             <AiOutlineMinus
-                                color="white"
-                                size={22}
+                                color={mainTextColor}
+                                size={20}
                             />
                         </button>
 
 
                         <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                            <p style={{ fontSize: 22, color: 'white' }}>
+                            <p style={{ fontSize: 16, color: mainTextColor }} className="text-bold">
                                 {apToBurn}
                             </p>
 
-                            <p style={{ fontSize: 20, color: 'white' }}>
-                                AP
+                            <p style={{ fontSize: 14, color: mainTextColor }}>
+                                Ap
                             </p>
                         </div>
 
@@ -1110,16 +1109,16 @@ class Shop extends Component {
 							}}
 						>
 							<AiOutlinePlus
-								color="white"
-								size={22}
+								color={mainTextColor}
+								size={20}
 							/>
 						</button>
                     </div>
 
-                    <p style={{ fontSize: 16, color: 'white' }}>
-                        $WIZA GAINED
+                    <p style={{ fontSize: 14, color: mainTextColor }}>
+                        $WIZA gained
                     </p>
-                    <p style={{ fontSize: 21, color: 'white', marginBottom: 15 }}>
+                    <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15 }} className="text-bold">
                         {apToBurn * 15}
                     </p>
 
@@ -1137,8 +1136,8 @@ class Shop extends Component {
                         this.burnAP()
                     }}
                 >
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        BURN
+                    <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                        Burn
                     </p>
                 </button>
 
@@ -1148,6 +1147,7 @@ class Shop extends Component {
 
     renderRetrainShopCard(key, isMobile) {
         const { decrease, baseStats } = this.state
+        const { mainTextColor } = this.props
 
         const wizard = this.getWizardSelected()
 
@@ -1203,7 +1203,7 @@ class Shop extends Component {
             newLevel = calcLevelWizardAfterDowngrade(copySelected, key)
         }
 
-        let colorTextLevel = getColorTextBasedOnLevel(newLevel)
+        let colorTextLevel = mainTextColor //getColorTextBasedOnLevel(newLevel)
         if (newLevel > MAX_LEVEL) {
             colorTextLevel = "red"
         }
@@ -1240,15 +1240,14 @@ class Shop extends Component {
 
         return (
             <div
-                className="cardShopShadow"
-                style={Object.assign({}, styles.cardShopStyle, { marginRight: isMobile ? 10 : 35, marginBottom: isMobile ? 10 : 35 })}
+                style={styles.cardShopStyle}
             >
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
-                    <div style={{ width: 100, height: 100, alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 70, height: 70, alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
                         <img
                             src={img}
-                            style={{ width: 110, height: 110 }}
+                            style={{ width: 80, height: 80 }}
                             alt="logo"
                         />
                     </div>
@@ -1274,19 +1273,19 @@ class Shop extends Component {
 							}}
                         >
                             <AiOutlineMinus
-                                color={canDecrease ? "white" : "#c2c0c0"}
-                                size={22}
+                                color={canDecrease ? mainTextColor : "#707070"}
+                                size={20}
                             />
                         </button>
 
 
                         <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                            <p style={{ fontSize: 22, color: 'white' }}>
+                            <p style={{ fontSize: 16, color: mainTextColor }}>
                                 -{decrease[key]}
                             </p>
 
-                            <p style={{ fontSize: 20, color: 'white' }}>
-                                {key.toUpperCase()}
+                            <p style={{ fontSize: 16, color: mainTextColor }} className="text-medium">
+                                {key}
                             </p>
                         </div>
 
@@ -1312,41 +1311,41 @@ class Shop extends Component {
 							}}
 						>
 							<AiOutlinePlus
-								color={canDecrease ? "white" : "#c2c0c0"}
-								size={22}
+								color={canDecrease ? mainTextColor : "#707070"}
+								size={20}
 							/>
 						</button>
                     </div>
 
-                    <p style={{ fontSize: 17, color: '#c2c0c0' }}>
-                        INITIAL STAT
+                    <p style={{ fontSize: 14, color: mainTextColor }}>
+                        Starting Stat
                     </p>
-                    <p style={{ fontSize: 17, color: '#c2c0c0', marginBottom: 15 }}>
+                    <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15 }} className="text-medium">
                         {baseStat}
                     </p>
 
                     <div style={{ alignItems: 'center', justifyContent: 'center' }}>
 
                         <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: 20 }}>
-                            <p style={{ fontSize: 17, color: '#f80303', marginBottom: 5 }}>
-                                COST
+                            <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 5 }}>
+                                Cost
                             </p>
-                            <p style={{ fontSize: 17, color: 'white' }}>
-                                WIZA
+                            <p style={{ fontSize: 16, color: mainTextColor }}>
+                                $WIZA
                             </p>
-                            <p style={{ fontSize: 21, color: 'white', marginBottom: 15 }}>
+                            <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15 }} className="text-bold">
                                 {decreaseTo * 15}
                             </p>
                         </div>
 
                         <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginLeft: 20 }}>
-                            <p style={{ fontSize: 17, color: 'gold', marginBottom: 5 }}>
-                                GAIN
+                            <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 5 }}>
+                                Gain
                             </p>
-                            <p style={{ fontSize: 17, color: 'white' }}>
-                                AP
+                            <p style={{ fontSize: 16, color: mainTextColor }}>
+                                Ap
                             </p>
-                            <p style={{ fontSize: 21, color: 'white', marginBottom: 15 }}>
+                            <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15 }} className="text-bold">
                                 {gain}
                             </p>
                         </div>
@@ -1354,10 +1353,10 @@ class Shop extends Component {
 
                     </div>
 
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        {canDecrease ? "NEW LEVEL" : "LEVEL"}
+                    <p style={{ fontSize: 14, color: mainTextColor }}>
+                        {canDecrease ? "New Level" : "Level"}
                     </p>
-                    <p style={{ fontSize: 21, color: colorTextLevel, marginBottom: 10 }}>
+                    <p style={{ fontSize: 16, color: colorTextLevel, marginBottom: 10 }} className="text-bold">
                         {canDecrease ? newLevel : wizard.level}
                     </p>
                 </div>
@@ -1374,8 +1373,8 @@ class Shop extends Component {
                         this.downgrade(key, decreaseTo*5)
                     }}
                 >
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        DOWNGRADE
+                    <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                        Downgrade
                     </p>
                 </button>
 
@@ -1385,6 +1384,7 @@ class Shop extends Component {
 
     renderVialCard(key, canBuy, isMobile) {
         const { loadingPotionEquipped, wizaValue } = this.state
+        const { mainTextColor } = this.props
 
         const wizard = this.getWizardSelected()
 
@@ -1419,35 +1419,34 @@ class Shop extends Component {
 
         return (
             <div
-                className="cardShopShadow"
-                style={Object.assign({}, styles.cardVialStyle, { marginRight: isMobile ? 10 : 35, marginBottom: isMobile ? 10 : 35 })}
+                style={styles.cardVialStyle}
             >
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
-                    <div style={{ width: 70, height: 70, marginBottom: 5, alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 50, height: 50, marginBottom: 10, alignItems: 'center', justifyContent: 'center' }}>
                         <img
                             src={img}
-                            style={{ height: 70 }}
+                            style={{ height: 50 }}
                             alt="logo"
                         />
                     </div>
 
 
-                    <p style={{ fontSize: 22, color: 'white' }}>
+                    <p style={{ fontSize: 16, color: mainTextColor }} className="text-bold">
                         +{bonus}
                     </p>
 
-                    <p style={{ fontSize: 20, color: 'white', marginBottom: 10 }}>
-                        {key.toUpperCase()}
+                    <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 10 }}>
+                        {key}
                     </p>
 
                     {
                         canBuy ?
                         <div style={{ flexDirection: 'column', alignItems: 'center' }}>
-                            <p style={{ fontSize: 17, color: 'white' }}>
+                            <p style={{ fontSize: 14, color: mainTextColor }}>
                                 $WIZA
                             </p>
-                            <p style={{ fontSize: 21, color: 'white', marginBottom: 15 }}>
+                            <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15 }} className="text-bold">
                                 {costo.toFixed(2)}
                             </p>
                         </div>
@@ -1463,7 +1462,7 @@ class Shop extends Component {
                         style={styles.btnChoose}
                     >
                         <p style={{ fontSize: 15, color: 'white' }}>
-                            LOADING
+                            Loading
                         </p>
                     </div>
                     : null
@@ -1478,8 +1477,8 @@ class Shop extends Component {
                             this.buyVial(key, costo)
                         }}
                     >
-                        <p style={{ fontSize: 17, color: 'white' }}>
-                            BUY VIAL
+                        <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                            Buy Vial
                         </p>
                     </button>
                     : null
@@ -1491,8 +1490,8 @@ class Shop extends Component {
                         className='btnH'
                         style={styles.btnChoose}
                     >
-                        <p style={{ fontSize: 16, color: 'white' }}>
-                            EQUIPPED
+                        <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                            Equipped
                         </p>
                     </div>
                     : null
@@ -1504,19 +1503,20 @@ class Shop extends Component {
 
     renderCardNickname(isMobile) {
         const { wizaValue } = this.state
+        const { mainTextColor } = this.props
+
         return (
             <div
-                className="cardShopShadow"
                 style={Object.assign({}, styles.cardVialStyle, { marginBottom: 30 })}
             >
-                <p style={{ fontSize: 22, color: 'white', marginBottom: 15, marginTop: 15 }}>
-                    EPIC NAME
+                <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15, marginTop: 15 }}>
+                    Epic Name
                 </p>
 
-                <p style={{ fontSize: 17, color: 'white' }}>
+                <p style={{ fontSize: 14, color: mainTextColor }}>
                     $WIZA
                 </p>
-                <p style={{ fontSize: 21, color: 'white', marginBottom: 20 }}>
+                <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 20 }} className="text-bold">
                     {round(wizaValue * 0.4, 2)}
                 </p>
 
@@ -1527,8 +1527,8 @@ class Shop extends Component {
                         this.setState({ showModalSetName: true })
                     }}
                 >
-                    <p style={{ fontSize: 17, color: 'white' }}>
-                        SET NAME
+                    <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                        Set Name
                     </p>
                 </button>
 
@@ -1538,27 +1538,28 @@ class Shop extends Component {
 
     renderHistory(item, index) {
         //console.log(item);
+        const { mainTextColor } = this.props
 
         return (
             <div key={index} style={styles.rowHistory}>
-                <p style={{ color: 'white', fontSize: 18, marginRight: 10 }}>
+                <p style={{ color: mainTextColor, fontSize: 16, marginRight: 10 }}>
                     -
                 </p>
-                <p style={{ color: 'white', fontSize: 18, marginRight: 20 }}>
+                <p style={{ color: mainTextColor, fontSize: 16, marginRight: 20 }}>
                     {item.idnft}
                 </p>
 
-                <p style={{ color: 'white', fontSize: 18, marginRight: 25 }}>
+                <p style={{ color: mainTextColor, fontSize: 16, marginRight: 25 }}>
                     +{item.increment} {item.stat}
                 </p>
 
                 {
                     item.cost.int ?
-                    <p style={{ color: 'white', fontSize: 18 }}>
-                        AP {item.cost.int}
+                    <p style={{ color: mainTextColor, fontSize: 16 }}>
+                        Ap {item.cost.int}
                     </p>
                     :
-                    <p style={{ color: 'white', fontSize: 18 }}>
+                    <p style={{ color: mainTextColor, fontSize: 16 }}>
                         $WIZA {item.cost}
                     </p>
 
@@ -1567,30 +1568,26 @@ class Shop extends Component {
         )
     }
 
-    renderChoises(width, isMobile) {
-        const { userMintedNfts } = this.props
+    renderChoises(width, isMobile, padding) {
+        const { userMintedNfts, mainTextColor } = this.props
 
         const sorted = this.sortById()
 
         return (
-            <div style={{ flexDirection: 'column', width, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+            <div style={{ flexDirection: 'column', alignItems: 'center', width, paddingLeft: padding, paddingRight: padding, paddingBottom: padding, paddingTop: 20, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
-                    Magic Shop
+                <p style={{ fontSize: 17, color: mainTextColor, marginBottom: 15 }}>
+                    Select the Wizard you want to upgrade
                 </p>
 
-                <p style={{ fontSize: 22, color: 'white', marginBottom: 10 }}>
-                    Select the Wizard you want to improve
-                </p>
-
-                <p style={{ fontSize: 17, color: 'white', marginBottom: 15 }}>
-                    ATK and DMG you'll see in each wizard is their base ATK and DMG, it doesn't take into account the selected spell.
+                <p style={{ fontSize: 14, color: mainTextColor, marginBottom: 35 }}>
+                    <span className="text-bold">Attack</span> and <span className="text-bold">Damage</span> you'll see in each wizard is their base <span className="text-bold">Attack</span> and <span className="text-bold">Damage</span>, it doesn't take into account the selected spell.
                 </p>
 
                 {
 					this.state.loading ?
 					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30, marginBottom: 30 }}>
-						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+						<DotLoader size={25} color={mainTextColor} />
 					</div>
 					: null
 				}
@@ -1609,6 +1606,7 @@ class Shop extends Component {
     }
 
     renderSpellUnkown(isMobile) {
+        const { mainTextColor } = this.props
 
         const wizard = this.getWizardSelected()
 
@@ -1621,7 +1619,7 @@ class Shop extends Component {
         if (wizard.spellbook.length < 4) {
             return (
                 <div style={{ marginTop: 20, marginBottom: 20 }}>
-                    <p style={{ fontSize: 17, color: 'white' }}>
+                    <p style={{ fontSize: 16, color: mainTextColor }}>
                         Your wizard must know at least 4 spells in order to learn another
                     </p>
                 </div>
@@ -1655,6 +1653,7 @@ class Shop extends Component {
 
     renderSpell(spell, index) {
         const { wizaValue } = this.state
+        const { mainTextColor } = this.props
 
 		const marginRight = 12
 
@@ -1675,29 +1674,29 @@ class Shop extends Component {
                     style={styles.btnSwap}
                     onClick={() => this.setState({ showModalSwapSpell: true, newSpellToLearn: spell })}
                 >
-                    <p style={{ fontSize: 14, color: 'white', marginBottom: 3 }}>
-                        {round((wizaValue * 10), 2)} WIZA
+                    <p style={{ fontSize: 13, color: 'white', marginBottom: 3 }} className="text-bold">
+                        {round((wizaValue * 10), 2)} $WIZA
                     </p>
-                    <p style={{ fontSize: 16, color: 'white' }}>
-                        SWAP
+                    <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                        Swap
                     </p>
                 </button>
 
-				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
-					NAME
+				<p style={{ color: mainTextColor, fontSize: 14, marginRight: 5 }}>
+					Name
 				</p>
-				<p style={{ color: "white", fontSize: 20, marginRight }}>
+				<p style={{ color: mainTextColor, fontSize: 17, marginRight }} className="text-medium">
 					{spell.name}
 				</p>
-				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
-					PERK
+				<p style={{ color: mainTextColor, fontSize: 14, marginRight: 5 }}>
+					Perk
 				</p>
 
 				{
 					spell.condition && spell.condition.name ?
 					<Popup
 						trigger={open => (
-							<button style={{ color: "white", fontSize: 20, marginRight }}>
+							<button style={{ color: mainTextColor, fontSize: 17, marginRight }} className="text-medium">
 								{spell.condition.name}
 							</button>
 						)}
@@ -1709,24 +1708,22 @@ class Shop extends Component {
 						</div>
 					</Popup>
 					:
-					<p style={{ color: "white", fontSize: 20, marginRight }}>
+					<p style={{ color: mainTextColor, fontSize: 17, marginRight }}>
 						-
 					</p>
 				}
 
-
-
-				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
-					BASE ATK
+				<p style={{ color: mainTextColor, fontSize: 14, marginRight: 5 }}>
+					Base Atk
 				</p>
-				<p style={{ color: "white", fontSize: 20, marginRight }}>
+				<p style={{ color: mainTextColor, fontSize: 17, marginRight }} className="text-medium">
 					{spell.atkBase}
 				</p>
 
-				<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14, marginRight: 5, marginBottom: 1 }}>
-					BASE DMG
+				<p style={{ color: mainTextColor, fontSize: 14, marginRight: 5 }}>
+					Base Dmg
 				</p>
-				<p style={{ color: "white", fontSize: 20 }}>
+				<p style={{ color: mainTextColor, fontSize: 17 }} className="text-medium">
 					{spell.dmgBase}
 				</p>
 
@@ -1738,46 +1735,46 @@ class Shop extends Component {
 
         let img;
         let imgStyle;
-        if (key === "UPGRADES") {
+        if (key === "Upgrades") {
             img = potion_hp
-            imgStyle = { height: 62 }
+            imgStyle = { height: 56 }
         }
-        else if (key === "AP") {
+        else if (key === "Ap") {
             img = potion_dmg
-            imgStyle = { height: 62 }
+            imgStyle = { height: 56 }
         }
-        else if (key === "RETRAIN") {
+        else if (key === "Retrain") {
             img = retrain_def
-            imgStyle = { height: 62 }
+            imgStyle = { height: 56 }
         }
-        else if (key === "VIALS") {
+        else if (key === "Vials") {
             img = vial_atk
-            imgStyle = { height: 42 }
+            imgStyle = { height: 36 }
         }
-        else if (key === "NICKNAME") {
+        else if (key === "Nickname") {
             img = banner_nickname
-            imgStyle = { height: 52 }
+            imgStyle = { height: 46 }
         }
-        else if (key === "RINGS") {
+        else if (key === "Rings") {
             img = ring_dmg
-            imgStyle = { height: 50 }
+            imgStyle = { height: 44 }
         }
-        else if (key === "SPELLBOOK") {
+        else if (key === "Spellbook") {
             img = book_shop
-            imgStyle = { height: 40 }
+            imgStyle = { height: 34 }
         }
 
         let divId = `shop-${key.toLowerCase()}`
 
         return (
             <button
-                className="btnH cardShopShadow"
+                className="btnH"
                 style={styles.boxMenu}
                 onClick={() => {
                     document.getElementById(divId).scrollIntoView({ behavior: 'smooth' })
                 }}
             >
-                <div style={{ width: 62, height: 62, marginBottom: 3, justifyContent: 'center', alignItems: 'center' }}>
+                <div style={{ width: 56, height: 56, marginBottom: 3, justifyContent: 'center', alignItems: 'center' }}>
                     <img
                         src={img}
                         style={imgStyle}
@@ -1785,7 +1782,7 @@ class Shop extends Component {
                     />
                 </div>
 
-                <p style={{ fontSize: 16, color: 'white' }}>
+                <p style={{ fontSize: 14, color: this.props.mainTextColor }} className="text-medium">
                     {key}
                 </p>
 
@@ -1805,54 +1802,42 @@ class Shop extends Component {
                     })
 				}}
 			>
-				<p style={{ fontSize: 19 }}>
+				<p style={{ fontSize: 16 }}>
 					{item}
 				</p>
 			</button>
 		)
 	}
 
-    renderSearched() {
-		const { searchedText } = this.state
-
-		if (!searchedText) {
-			return null
-		}
-
-		return (
-			<div style={{ width: '100%', marginBottom: 20 }}>
-				<div style={{ backgroundColor: '#e5e8eb80', justifyContent: 'center', alignItems: 'center', height: 45, paddingLeft: 20, paddingRight: 20, borderRadius: 2 }}>
-					<p style={{ fontSize: 22, color: 'black', marginRight: 10 }}>
-						{searchedText}
-					</p>
-
-					<button
-						style={{ paddingTop: 5 }}
-						onClick={() => this.cancelSearch()}
-					>
-						<IoClose
-							color='black'
-							size={22}
-						/>
-					</button>
-				</div>
-			</div>
-		)
-	}
-
     renderBoxSearchStat(statDisplay, list) {
+        const { searchText } = this.state
 
-		let text = statDisplay.toUpperCase()
+		let text = statDisplay
+        if (searchText && list.includes(searchText)) {
+			text = `${text} = ${searchText}`
+		}
 
 		return (
 			<Popup
 				ref={ref => this.listPopup = ref}
 				trigger={
 					<button style={styles.btnStat}>
-						<p style={{ fontSize: 18, color: 'white' }}>{text}</p>
+						<p style={{ fontSize: 15, color: this.props.mainTextColor }} className="text-medium">{text}</p>
+                        {
+							searchText && list.includes(searchText) &&
+							<IoClose
+								color={this.props.mainTextColor}
+								size={22}
+								style={{ marginLeft: 5 }}
+								onClick={(e) => {
+									e.stopPropagation()
+									this.cancelSearch()
+								}}
+							/>
+						}
 					</button>
 				}
-				position="bottom left"
+				position="right center"
 				on="click"
 				closeOnDocumentClick
 				arrow={true}
@@ -1868,9 +1853,9 @@ class Shop extends Component {
 
     renderBody(isMobile) {
         const { isConnected, showModalConnection, historyUpgrades, potionEquipped, equipment, itemsToShow, searchedText } = this.state
-        const { account, wizaBalance } = this.props
+        const { account, wizaBalance, mainTextColor } = this.props
 
-        const { boxW, modalW } = getBoxWidth(isMobile)
+        const { boxW, modalW, padding } = getBoxWidth(isMobile)
 
         const wizard = this.getWizardSelected()
 
@@ -1878,24 +1863,20 @@ class Shop extends Component {
         if (!account || !account.account || !isConnected) {
 
 			return (
-				<div style={{ flexDirection: 'column', alignItems: 'center', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
+				<div style={{ flexDirection: 'column', width: boxW, alignItems: 'center', paddingLeft: padding, paddingRight: padding, paddingBottom: padding, paddingTop: 20, overflowY: 'auto', overflowX: 'hidden' }}>
 
 					<img
 						src={getImageUrl(undefined)}
-						style={{ width: 300, height: 300, borderRadius: 2, marginBottom: 30 }}
+						style={{ width: 250, height: 250, borderRadius: 4, marginBottom: 15 }}
 						alt='Placeholder'
 					/>
-
-					<p style={{ fontSize: 19, color: 'white', textAlign: 'center', width: 300, marginBottom: 30, lineHeight: 1.2 }}>
-						Connect your wallet and enter the Arena
-					</p>
 
 					<button
 						className='btnH'
 						style={styles.btnConnect}
 						onClick={() => this.setState({ showModalConnection: true })}
 					>
-						<p style={{ fontSize: 19, color: TEXT_SECONDARY_COLOR }}>
+						<p style={{ fontSize: 15, color: mainTextColor }}>
 							Connect wallet
 						</p>
 					</button>
@@ -1918,7 +1899,7 @@ class Shop extends Component {
 
         // LIST OF YOUR WIZARDS
         if (!wizard) {
-            return this.renderChoises(boxW, isMobile)
+            return this.renderChoises(boxW, isMobile, padding)
         }
 
         //console.log(equipment);
@@ -1926,13 +1907,12 @@ class Shop extends Component {
         const showMenuRings = equipment.length > 0 && !equipment[0].equipped
         const ringsToShow = itemsToShow.length > 0 ? itemsToShow : equipment
 
+        const widthSide = 180
+		const widthNfts = isMobile ? boxW : boxW - widthSide
+
         //WIZARD SELECTED
         return (
-            <div style={{ flexDirection: 'column', width: boxW, marginTop: 5, padding: !isMobile ? 25 : 15, overflow: 'auto' }}>
-
-                <p style={{ color: '#8d8d8d', fontSize: 30, marginBottom: 20 }}>
-                    Magic Shop
-                </p>
+            <div style={{ flexDirection: 'column', width: boxW, paddingLeft: padding, paddingRight: padding, paddingBottom: padding, paddingTop: 20, overflowY: 'auto', overflowX: 'hidden' }}>
 
                 <div style={{ flexDirection: 'column', marginBottom: 30 }}>
 
@@ -1943,90 +1923,90 @@ class Shop extends Component {
 
                     <div style={{ flexDirection: 'column' }}>
 
-                        <p style={{ fontSize: 22, color: "white", marginBottom: 15 }}>
-                            $WIZA balance: {wizaBalance || 0.0}
+                        <div style={{ flexDirection: 'column', alignItems: 'center' }}>
+
+                            <p style={{ fontSize: 14, color: mainTextColor }}>
+                                $WIZA balance:
+                            </p>
+                            <p style={{ fontSize: 17, color: mainTextColor, marginBottom: 15 }} className="text-medium">
+                                {wizaBalance || 0.0}
+                            </p>
+
+                            <button
+    							className="btnH"
+    							style={styles.btnBuyWiza}
+    							onClick={() => this.setState({ showModalBuy: true })}
+    						>
+    							<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+    								Buy $WIZA
+    							</p>
+    						</button>
+
+                            <div style={{ alignItems: 'center', marginBottom: 20 }}>
+                                <p style={{ fontSize: 17, color: mainTextColor, marginRight: 10 }}>
+                                    Level Cap:
+                                </p>
+                                <p style={{ fontSize: 17, color: mainTextColor }} className="text-bold">
+                                    {MAX_LEVEL}
+                                </p>
+                            </div>
+
+                            <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 30 }}>
+                                {this.renderBoxMenu("Rings")}
+                                {this.renderBoxMenu("Upgrades")}
+                                {this.renderBoxMenu("Ap")}
+                                {this.renderBoxMenu("Retrain")}
+                                {this.renderBoxMenu("Vials")}
+                                {this.renderBoxMenu("Spellbook")}
+                                {this.renderBoxMenu("Nickname")}
+                            </div>
+                        </div>
+
+                        <p style={{ fontSize: 25, color: mainTextColor, marginBottom: 15 }} id="shop-rings" className="text-bold">
+                            Rings
                         </p>
-
-                        <button
-							className="btnH"
-							style={styles.btnBuyWiza}
-							onClick={() => this.setState({ showModalBuy: true })}
-						>
-							<p style={{ fontSize: 16, color: 'white' }}>
-								BUY WIZA
-							</p>
-						</button>
-
-                        <div style={{ alignItems: 'center', marginBottom: 20 }}>
-                            <p style={{ fontSize: 22, color: "white", marginRight: 10 }}>
-                                LEVEL CAP:
-                            </p>
-                            <p style={{ fontSize: 22, color: getColorTextBasedOnLevel(MAX_LEVEL) }}>
-                                {MAX_LEVEL}
-                            </p>
-                        </div>
-
-                        <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 20 }}>
-                            {this.renderBoxMenu("RINGS")}
-                            {this.renderBoxMenu("UPGRADES")}
-                            {this.renderBoxMenu("AP")}
-                            {this.renderBoxMenu("RETRAIN")}
-                            {this.renderBoxMenu("VIALS")}
-                            {this.renderBoxMenu("SPELLBOOK")}
-                            {this.renderBoxMenu("NICKNAME")}
-                        </div>
-
-                        <div style={{ width: '100%', alignItems: 'center', padding: 5, marginBottom: 10, backgroundColor: "#2d2a42", borderRadius: 2 }}>
-                            <p style={{ fontSize: 26, color: 'white' }} id="shop-rings">
-                                RINGS
-                            </p>
-                        </div>
 
                         {
                             this.state.loadingEquip &&
                             <div style={{ alignItems: 'flex-start', flexDirection: 'column', marginBottom: 30 }}>
-                                <p style={{ fontSize: 21, color: 'white' }}>
+                                <p style={{ fontSize: 16, color: mainTextColor }}>
                                     Loading equipment...
                                 </p>
                             </div>
                         }
 
-                        {
-                            !this.state.loadingEquip && showMenuRings &&
-                            <div style={{ flexWrap: 'wrap', marginBottom: 10 }}>
-            					{this.renderBoxSearchStat("HP", ["Ring of HP +4", "Ring of HP +8", "Ring of HP +12", "Ring of HP +16", "Ring of HP +20", "Ring of Life", "Ring of Last Defense", "Ring of Power"].reverse())}
-                                {this.renderBoxSearchStat("DEFENSE", ["Ring of Defense +1", "Ring of Defense +2", "Ring of Defense +3", "Ring of Defense +4", "Ring of Defense +5", "Ring of Magic Shield", "Ring of Last Defense", "Ring of Power"].reverse())}
-                                {this.renderBoxSearchStat("ATTACK", ["Ring of Attack +1", "Ring of Attack +2", "Ring of Attack +3", "Ring of Attack +4", "Ring of Attack +5", "Ring of Accuracy", "Ring of Destruction", "Ring of Swift Death", "Ring of Power"].reverse())}
-                                {this.renderBoxSearchStat("DAMAGE", ["Ring of Damage +2", "Ring of Damage +4", "Ring of Damage +6", "Ring of Damage +8", "Ring of Damage +10", "Ring of Force", "Ring of Destruction", "Ring of Power"].reverse())}
-                                {this.renderBoxSearchStat("SPEED", ["Ring of Speed +2", "Ring of Speed +4", "Ring of Speed +6", "Ring of Speed +8", "Ring of Speed +10", "Ring of Lightning", "Ring of Swift Death", "Ring of Power"].reverse())}
-            				</div>
-                        }
+                        <div style={{ width: boxW, marginBottom: 30 }}>
 
-                        {
-                            !this.state.loadingEquip && showMenuRings &&
-                            this.renderSearched()
-                        }
+                            {
+                                !this.state.loadingEquip && !isMobile &&
+                                <div style={{ width: widthSide, flexDirection: 'column' }}>
+                					{this.renderBoxSearchStat("Hp", ["Ring of HP +4", "Ring of HP +8", "Ring of HP +12", "Ring of HP +16", "Ring of HP +20", "Ring of Life", "Ring of Last Defense", "Ring of Power"].reverse())}
+                                    {this.renderBoxSearchStat("Defense", ["Ring of Defense +1", "Ring of Defense +2", "Ring of Defense +3", "Ring of Defense +4", "Ring of Defense +5", "Ring of Magic Shield", "Ring of Last Defense", "Ring of Power"].reverse())}
+                                    {this.renderBoxSearchStat("Attack", ["Ring of Attack +1", "Ring of Attack +2", "Ring of Attack +3", "Ring of Attack +4", "Ring of Attack +5", "Ring of Accuracy", "Ring of Destruction", "Ring of Swift Death", "Ring of Power"].reverse())}
+                                    {this.renderBoxSearchStat("Damage", ["Ring of Damage +2", "Ring of Damage +4", "Ring of Damage +6", "Ring of Damage +8", "Ring of Damage +10", "Ring of Force", "Ring of Destruction", "Ring of Power"].reverse())}
+                                    {this.renderBoxSearchStat("Speed", ["Ring of Speed +2", "Ring of Speed +4", "Ring of Speed +6", "Ring of Speed +8", "Ring of Speed +10", "Ring of Lightning", "Ring of Swift Death", "Ring of Power"].reverse())}
+                				</div>
+                            }
 
-                        {
-                            ringsToShow.length > 0 ?
-                            <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
-                                {ringsToShow.map((item, index) => {
-                                    return this.renderRingsCard(item, index, isMobile)
-                                })}
-                            </div>
-                            :
-                            <div style={{ alignItems: 'flex-start', flexDirection: 'column', marginBottom: 30 }}>
-                                <p style={{ fontSize: 21, color: 'white' }}>
-                                    No ring available
-                                </p>
-                            </div>
-                        }
-
-                        <div style={{ width: '100%', alignItems: 'center', padding: 5, marginBottom: 10, backgroundColor: "#2d2a42", borderRadius: 2 }}>
-                            <p style={{ fontSize: 26, color: 'white' }} id="shop-upgrades">
-                                UPGRADES
-                            </p>
+                            {
+                                ringsToShow.length > 0 ?
+                                <div style={{ flexWrap: 'wrap', width: widthNfts }}>
+                                    {ringsToShow.map((item, index) => {
+                                        return this.renderRingsCard(item, index, isMobile)
+                                    })}
+                                </div>
+                                :
+                                <div style={{ alignItems: 'flex-start', flexDirection: 'column' }}>
+                                    <p style={{ fontSize: 16, color: mainTextColor }}>
+                                        No ring available
+                                    </p>
+                                </div>
+                            }
                         </div>
+
+                        <p style={{ fontSize: 25, color: mainTextColor, marginBottom: 15 }} id="shop-upgrades" className="text-bold">
+                            Upgrades
+                        </p>
 
                         <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
                             {this.renderShopCard("hp", isMobile)}
@@ -2041,14 +2021,12 @@ class Shop extends Component {
 
                         </div>
 
-                        <div style={{ width: '100%', alignItems: 'center', padding: 5, marginBottom: 10, backgroundColor: "#2d2a42", borderRadius: 2 }}>
-                            <p style={{ fontSize: 26, color: 'white' }} id="shop-ap">
-                                ATTRIBUTE POINTS
-                            </p>
-                        </div>
+                        <p style={{ fontSize: 25, color: mainTextColor, marginBottom: 5 }} id="shop-ap" className="text-bold">
+                            Attribute Points
+                        </p>
 
-                        <p style={{ fontSize: 20, color: "white", marginBottom: 15 }}>
-                            AP available: {wizard.ap ? wizard.ap.int : 0}
+                        <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15 }} className="text-medium">
+                            Ap available: {wizard.ap ? wizard.ap.int : 0}
                         </p>
 
                         <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
@@ -2066,17 +2044,15 @@ class Shop extends Component {
 
                         </div>
 
-                        <div style={{ width: '100%', alignItems: 'center', padding: 5, marginBottom: 10, backgroundColor: "#2d2a42", borderRadius: 2 }}>
-                            <p style={{ fontSize: 26, color: 'white' }} id="shop-retrain">
-                                RETRAIN
-                            </p>
-                        </div>
+                        <p style={{ fontSize: 25, color: mainTextColor, marginBottom: 5 }} id="shop-retrain" className="text-bold">
+                            Retrain
+                        </p>
 
-                        <p style={{ fontSize: 20, color: "white", marginBottom: 10 }}>
+                        <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 5 }}>
                             Rebuild your wizard, you can't go under the initial stat
                         </p>
 
-                        <p style={{ fontSize: 20, color: "white", marginBottom: 15 }}>
+                        <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15 }} className="text-medium">
                             Downgrade points: {wizard.downgrades ? wizard.downgrades.int : 0}
                         </p>
 
@@ -2097,22 +2073,20 @@ class Shop extends Component {
                             !potionEquipped ?
                             <div style={{ flexDirection: 'column' }} id="shop-vials">
 
-                                <div style={{ width: '100%', alignItems: 'center', padding: 5, marginBottom: 5, backgroundColor: "#2d2a42", borderRadius: 2 }}>
-                                    <p style={{ fontSize: 26, color: 'white' }}>
-                                        VIALS
-                                    </p>
-                                </div>
+                                <p style={{ fontSize: 25, color: mainTextColor, marginBottom: 5 }} id="shop-vials" className="text-bold">
+                                    Vials
+                                </p>
 
-                                <p style={{ fontSize: 18, color: 'white', marginBottom: 10 }}>
+                                <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 5 }}>
                                     In each tournament you will be able to buy one vial to temporarily upgrade your wizard. The bonus will last the whole tournament.
                                 </p>
 
-                                <p style={{ fontSize: 18, color: 'white', marginBottom: 10 }}>
+                                <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 5 }}>
                                     Each wizard can have a maximum of one vial
                                 </p>
 
-                                <p style={{ fontSize: 18, color: 'gold', marginBottom: 10 }}>
-                                    ATTENTION! Vials will not work in the apprentice tournament
+                                <p style={{ fontSize: 14, color: 'red', marginBottom: 15 }} className="text-medium">
+                                    ATTENTION! Vials will not work in the apprentice or elite tournament
                                 </p>
 
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
@@ -2131,13 +2105,11 @@ class Shop extends Component {
                             :
                             <div style={{ flexDirection: 'column' }} id="shop-vials">
 
-                                <div style={{ width: '100%', alignItems: 'center', padding: 5, marginBottom: 5, backgroundColor: "#2d2a42", borderRadius: 2 }}>
-                                    <p style={{ fontSize: 26, color: 'white' }}>
-                                        VIALS
-                                    </p>
-                                </div>
+                                <p style={{ fontSize: 25, color: mainTextColor, marginBottom: 5 }} id="shop-vials" className="text-bold">
+                                    Vials
+                                </p>
 
-                                <p style={{ fontSize: 17, color: 'white', marginBottom: 10 }}>
+                                <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15 }}>
                                     Vial Equipped
                                 </p>
                                 {this.renderVialCard(potionEquipped, false, isMobile)}
@@ -2146,13 +2118,11 @@ class Shop extends Component {
 
                         <div style={{ flexDirection: 'column' }} id="shop-spellbook">
 
-                            <div style={{ width: '100%', alignItems: 'center', padding: 5, marginBottom: 5, backgroundColor: "#2d2a42", borderRadius: 2 }}>
-                                <p style={{ fontSize: 26, color: 'white' }}>
-                                    SPELLBOOK
-                                </p>
-                            </div>
+                            <p style={{ fontSize: 25, color: mainTextColor, marginBottom: 5 }} className="text-bold">
+                                Spellbook
+                            </p>
 
-                            <p style={{ fontSize: 18, color: 'white', marginBottom: 10 }}>
+                            <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 10 }}>
                                 Swap a spell you know for a new one
                             </p>
 
@@ -2161,19 +2131,16 @@ class Shop extends Component {
 
                         <div style={{ flexDirection: 'column' }} id="shop-nickname">
 
-                            <div style={{ width: '100%', alignItems: 'center', padding: 5, marginBottom: 5, backgroundColor: "#2d2a42", borderRadius: 2 }}>
-                                <p style={{ fontSize: 26, color: 'white' }}>
-                                    NICKNAME
-                                </p>
-                            </div>
+                            <p style={{ fontSize: 25, color: mainTextColor, marginBottom: 5 }} className="text-bold">
+                                Nickname
+                            </p>
 
-                            <p style={{ fontSize: 18, color: 'white', marginBottom: 10 }}>
+                            <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 10 }}>
                                 Want to give your wizard an epic nickname? Now you can!
                             </p>
 
                             <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                 {this.renderCardNickname(isMobile)}
-
                             </div>
                         </div>
 
@@ -2182,8 +2149,8 @@ class Shop extends Component {
                 </div>
 
 
-                <p style={{ fontSize: 26, color: 'white', marginBottom: 15 }}>
-                    HISTORY
+                <p style={{ fontSize: 25, color: mainTextColor, marginBottom: 15 }} className="text-bold">
+                    History
                 </p>
 
                 {
@@ -2194,7 +2161,7 @@ class Shop extends Component {
 
                 {
                     this.state.loadingHistoryUpgrades &&
-                    <p style={{ fontSize: 15, color: 'white' }}>
+                    <p style={{ fontSize: 15, color: mainTextColor }}>
                         Loading...
                     </p>
                 }
@@ -2258,12 +2225,12 @@ class Shop extends Component {
                 />
 
 				<Media
-					query="(max-width: 1199px)"
+					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
 				/>
 
 				<Media
-					query="(min-width: 1200px)"
+					query="(min-width: 1000px)"
 					render={() => this.renderTopHeader(false)}
 				/>
 
@@ -2283,51 +2250,59 @@ class Shop extends Component {
 
 const styles = {
     container: {
-		flexDirection: 'row',
+		flexDirection: 'column',
 		position: 'absolute',
 		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: "white"
 	},
     btnConnect: {
-		width: 300,
-		height: 45,
+		width: 250,
+		height: 40,
 		justifyContent: 'center',
 		alignItems: 'center',
-		borderRadius: 2,
-		borderColor: CTA_COLOR,
-		borderWidth: 2,
+		borderRadius: 4,
+		borderColor: "#d7d7d7",
+		borderWidth: 1,
 		borderStyle: 'solid'
 	},
     cardShopStyle: {
         width: 200,
-        borderRadius: 2,
+        borderRadius: 4,
+        borderWidth: 1,
+        borderColor: '#d7d7d7',
+        borderStyle: 'solid',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight: 35,
-        marginBottom: 35,
+        marginRight: 12,
+        marginBottom: 12,
         paddingTop: 5,
-        backgroundColor: "#3729af"
+        height: 'fit-content',
+        backgroundColor: "#f2f2f2"
     },
     cardVialStyle: {
         width: 160,
-        borderRadius: 2,
+        borderRadius: 4,
+        borderWidth: 1,
+        borderColor: '#d7d7d7',
+        borderStyle: 'solid',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        marginRight: 35,
-        marginBottom: 35,
+        marginRight: 12,
+        marginBottom: 12,
         paddingTop: 5,
-        backgroundColor: "#3729af"
+        height: 'fit-content',
+        backgroundColor: "#f2f2f2"
     },
     btnChoose: {
         height: 40,
         width: '70%',
         marginBottom: 13,
-        borderRadius: 2,
+        borderRadius: 4,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: CTA_COLOR
@@ -2346,36 +2321,40 @@ const styles = {
         alignItems: 'center'
     },
     boxMenu: {
-        width: 90,
-        height: 90,
+        width: 80,
+        height: 80,
         borderRadius: 4,
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'column',
         display: 'flex',
         marginRight: 15,
-        marginBottom: 15
+        marginBottom: 15,
+        borderWidth: 1,
+        borderColor: '#d7d7d7',
+        borderStyle: 'solid'
     },
     btnStat: {
-		padding: 10,
-		backgroundColor: CTA_COLOR,
+		padding: 9,
+		backgroundColor: 'white',
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginRight: 10,
-		marginBottom: 10,
-		borderRadius: 2,
+		marginBottom: 20,
+		marginRight: 15,
+		borderRadius: 4,
+		borderColor: '#d7d7d7',
+		borderStyle: 'solid',
+		borderWidth: 1,
 		minWidth: 60,
 		display: 'flex',
 		flexDirection: 'row'
 	},
     btnBuyWiza: {
         height: 40,
-        width: 180,
-        borderRadius: 2,
-        borderColor: TEXT_SECONDARY_COLOR,
-        borderWidth: 2,
-        borderStyle: 'solid',
-		marginBottom: 15,
+        width: 160,
+        borderRadius: 4,
+        backgroundColor: CTA_COLOR,
+		marginBottom: 20,
     },
     btnSwap: {
         paddingLeft: 10,
@@ -2387,7 +2366,7 @@ const styles = {
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: CTA_COLOR,
-        borderRadius: 2,
+        borderRadius: 4,
         marginRight: 20,
         marginBottom: 5,
         marginTop: 5
@@ -2395,10 +2374,10 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, wizaBalance, wizardSelectedIdShop } = state.mainReducer;
+	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, wizaBalance, wizardSelectedIdShop, mainTextColor } = state.mainReducer;
     const { txListen } = state.modalTransactionReducer
 
-	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, wizaBalance, wizardSelectedIdShop, txListen };
+	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, wizaBalance, wizardSelectedIdShop, txListen, mainTextColor };
 }
 
 export default connect(mapStateToProps, {

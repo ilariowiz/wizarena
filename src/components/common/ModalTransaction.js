@@ -250,7 +250,7 @@ class ModalTransaction extends Component {
 	}
 
 	render() {
-		const { showModal, width } = this.props;
+		const { showModal, width, mainTextColor } = this.props;
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 
@@ -260,11 +260,11 @@ class ModalTransaction extends Component {
 			<div className={classContainer}>
 				<div style={Object.assign({}, styles.subcontainer, { width })}>
 
-					<p style={{ fontSize: 20, color: 'white', marginBottom: 20, textAlign: 'center' }}>
+					<p style={{ fontSize: 18, color: mainTextColor, marginBottom: 20, textAlign: 'center' }}>
 						{content.title}
 					</p>
 
-					<p style={{ fontSize: 18, color: 'white', marginBottom: 20, textAlign: 'center', paddingLeft: 15, paddingRight: 15, overflowWrap: 'anywhere' }}>
+					<p style={{ fontSize: 16, color: mainTextColor, marginBottom: 20, textAlign: 'center', paddingLeft: 15, paddingRight: 15, overflowWrap: 'anywhere' }}>
 						{content.body}
 					</p>
 
@@ -275,7 +275,7 @@ class ModalTransaction extends Component {
 							style={styles.btnAction}
 							onClick={content.action}
 						>
-							<p style={{ fontSize: 16, color: 'white' }}>
+							<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
 								{content.buttonText}
 							</p>
 						</button>
@@ -283,7 +283,7 @@ class ModalTransaction extends Component {
 
 					{
 						content.loading &&
-						<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+						<DotLoader size={25} color={mainTextColor} />
 					}
 
 					{
@@ -293,7 +293,7 @@ class ModalTransaction extends Component {
 							onClick={() => this.props.mintFail()}
 						>
 							<IoClose
-								color='white'
+								color={mainTextColor}
 								size={25}
 							/>
 						</button>
@@ -309,32 +309,32 @@ class ModalTransaction extends Component {
 const styles = {
 	subcontainer: {
 		minHeight: 240,
-		backgroundColor: BACKGROUND_COLOR,
-		borderRadius: 2,
+		backgroundColor: "white",
+		borderRadius: 4,
 		justifyContent: 'center',
 		alignItems: 'center',
 		flexDirection: 'column',
 		position: 'relative',
-		borderWidth: 2,
-		borderColor: TEXT_SECONDARY_COLOR,
+		borderWidth: 1,
+		borderColor: "#d7d7d7",
 		borderStyle: 'solid'
 	},
 	btnAction: {
 		width: 180,
-		height: 42,
+		height: 40,
 		justifyContent: 'center',
 		alignItems: 'center',
-		borderRadius: 2,
+		borderRadius: 4,
 		backgroundColor: CTA_COLOR
 	}
 }
 
 const mapStateToProps = (state) => {
-	const { transactionsState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, gasPrice, gasLimit } = state.mainReducer
+	const { transactionsState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, gasPrice, gasLimit, mainTextColor } = state.mainReducer
 	const { txInfo, txListen, txSucceed } = state.modalTransactionReducer
 
 
-	return { transactionsState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, gasPrice, gasLimit, txInfo, txListen, txSucceed }
+	return { transactionsState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, gasPrice, gasLimit, txInfo, txListen, txSucceed, mainTextColor }
 }
 
 export default connect(mapStateToProps, {

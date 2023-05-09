@@ -56,7 +56,7 @@ class NftCardChoiceDuel extends Component {
     }
 
 	render() {
-		const { item, width, canSubscribe, toSubscribe, subscriptionsInfo } = this.props
+		const { item, width, canSubscribe, toSubscribe, subscriptionsInfo, mainTextColor } = this.props
 
         //console.log(item);
 
@@ -81,7 +81,7 @@ class NftCardChoiceDuel extends Component {
 				className='containerChoice'
 			>
 				<img
-					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
+					style={{ width, height: width, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
 					src={getImageUrl(item.id)}
 					alt={`#${item.id}`}
 				/>
@@ -89,7 +89,7 @@ class NftCardChoiceDuel extends Component {
 				<div style={{ flexDirection: 'column', width, alignItems: 'center' }}>
 
 					<div style={{ width: '90%', justifyContent: 'space-between', alignItems: 'center', marginTop: 5, marginBottom: 10 }}>
-						<p style={{ color: 'white', fontSize: 17 }}>
+						<p style={{ color: mainTextColor, fontSize: 16 }} className="text-bold">
 							{item.name}
 						</p>
 					</div>
@@ -99,10 +99,10 @@ class NftCardChoiceDuel extends Component {
                         {
                             level ?
                             <div style={{ width: '90%', alignItems: 'center', marginBottom: 8 }}>
-                                <p style={{ color: '#c2c0c0', fontSize: 16, marginRight: 10 }}>
-                                    LEVEL
+                                <p style={{ color: mainTextColor, fontSize: 15, marginRight: 10 }}>
+                                    Level
                                 </p>
-                                <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 18 }}>
+                                <p style={{ color: mainTextColor, fontSize: 17 }} className="text-bold">
                                     {level}
                                 </p>
                             </div>
@@ -111,7 +111,7 @@ class NftCardChoiceDuel extends Component {
 
                         {
                             item.hp ?
-                            cardStats(item, numberOfTotalMedals, undefined, infoEquipment ? infoEquipment.bonusesDict : undefined)
+                            cardStats(item, numberOfTotalMedals, undefined, infoEquipment ? infoEquipment.bonusesDict : undefined, mainTextColor)
                             :
                             null
                         }
@@ -122,19 +122,18 @@ class NftCardChoiceDuel extends Component {
                                 className='btnSubscribe'
                                 style={Object.assign({}, styles.btnSubscribe, { backgroundColor: '#014766'})}
                             >
-                                <p style={{ fontSize: 16, color: 'white' }}>
-                                    SELECTED
+                                <p style={{ fontSize: 15, color: 'white' }}>
+                                    Selected
                                 </p>
                             </div>
                             :
                             <button
                                 className='btnSubscribe'
                                 style={styles.btnSubscribe}
-                                //onClick={() => this.setState({ showModalSpellbook: true })}
                                 onClick={() => this.onSubscribe(item.spellSelected)}
                             >
-                                <p style={{ fontSize: 16, color: 'white' }}>
-                                    SELECT
+                                <p style={{ fontSize: 15, color: 'white' }}>
+                                    Select
                                 </p>
                             </button>
                         }
@@ -164,20 +163,11 @@ class NftCardChoiceDuel extends Component {
 }
 
 const styles = {
-    statsTitleStyle: {
-        fontSize: 15,
-        color: '#c2c0c0',
-        marginRight: 8
-    },
-    statsStyle: {
-        fontSize: 15,
-        color: 'white'
-    },
     btnSubscribe: {
-        height: 45,
+        height: 40,
         width: '100%',
-        borderBottomLeftRadius: 2,
-        borderBottomRightRadius: 2,
+        borderBottomLeftRadius: 4,
+        borderBottomRightRadius: 4,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: CTA_COLOR
@@ -185,9 +175,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl } = state.mainReducer
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor } = state.mainReducer
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl }
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor }
 }
 
 export default connect(mapStateToProps)(NftCardChoiceDuel);

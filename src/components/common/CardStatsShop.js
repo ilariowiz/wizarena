@@ -1,6 +1,6 @@
 import React from 'react'
 
-const cardStatsShop = (item, numberOfMedalsForTournament, width) => {
+const cardStatsShop = (item, numberOfMedalsForTournament, width, mainTextColor) => {
 
     //console.log(item);
 
@@ -26,20 +26,21 @@ const cardStatsShop = (item, numberOfMedalsForTournament, width) => {
         <div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
             <div style={{ width: widthBody, justifyContent: 'space-between', alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
-                <div>
-                    <p style={styles.statsTitleStyle}>
-                        HP
+
+                <div style={{ alignItems: 'center' }}>
+                    <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
+                        Hp
                     </p>
-                    <p style={styles.statsStyle}>
+                    <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })}>
                         {item.hp.int || item.hp}
                     </p>
                 </div>
 
-                <div style={{ flexWrap: 'wrap' }}>
-                    <p style={styles.statsTitleStyle}>
-                        DEFENSE
+                <div style={{ flexWrap: 'wrap', alignItems: 'center' }}>
+                    <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
+                        Defense
                     </p>
-                    <p style={styles.statsStyle}>
+                    <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })}>
                         {item.defense.int || item.defense}
                     </p>
                 </div>
@@ -48,31 +49,31 @@ const cardStatsShop = (item, numberOfMedalsForTournament, width) => {
 
             <div style={{ width: widthBody, justifyContent: 'space-between', alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
 
-                <div>
-                    <p style={styles.statsTitleStyle}>
-                        ATK
+                <div style={{ alignItems: 'center' }}>
+                    <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
+                        Atk
                     </p>
-                    <p style={styles.statsStyle}>
+                    <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })}>
                         {atkBase}
                     </p>
                 </div>
 
-                <div style={{ flexWrap: 'wrap' }}>
-                    <p style={styles.statsTitleStyle}>
-                        DAMAGE
+                <div style={{ flexWrap: 'wrap', alignItems: 'center' }}>
+                    <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
+                        Damage
                     </p>
-                    <p style={styles.statsStyle}>
+                    <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })}>
                         {dmgBase}
                     </p>
                 </div>
             </div>
 
             <div style={{ width: widthBody, justifyContent: 'space-between', alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
-                <div style={{ flexWrap: 'wrap' }}>
-                    <p style={styles.statsTitleStyle}>
-                        SPEED
+                <div style={{ flexWrap: 'wrap', alignItems: 'center' }}>
+                    <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
+                        Speed
                     </p>
-                    <p style={styles.statsStyle}>
+                    <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })}>
                         {speedBase}
                     </p>
                 </div>
@@ -81,10 +82,10 @@ const cardStatsShop = (item, numberOfMedalsForTournament, width) => {
             {
                 numberOfMedalsForTournament !== undefined &&
                 <div style={{ width: widthBody, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
-                    <p style={styles.statsTitleStyle}>
-                        MEDALS
+                    <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
+                        Medals
                     </p>
-                    <p style={styles.statsStyle}>
+                    <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })}>
                         {numberOfMedalsForTournament}
                     </p>
                 </div>
@@ -95,13 +96,11 @@ const cardStatsShop = (item, numberOfMedalsForTournament, width) => {
 
 const styles = {
     statsTitleStyle: {
-        fontSize: 16,
-        color: '#c2c0c0',
+        fontSize: 14,
         marginRight: 8
     },
     statsStyle: {
         fontSize: 16,
-        color: 'white'
     },
 }
 

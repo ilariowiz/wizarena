@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import getRingBonuses from './GetRingBonuses'
 import getImageUrl from './GetImageUrl'
 import '../../css/ItemCard.css'
@@ -7,7 +8,7 @@ const logoWiza = require('../../assets/wzlogo_bg_transparent.png')
 
 class EquipmentCard extends Component {
     render() {
-        const { item, history } = this.props
+        const { item, history, nftWidth, mainTextColor } = this.props
 
         //console.log(item);
 
@@ -17,6 +18,7 @@ class EquipmentCard extends Component {
             <a
 				href={`${window.location.protocol}//${window.location.host}/item/${item.id}`}
 				className='containerItem'
+                style={{ width: nftWidth, backgroundColor: "#f2f2f2" }}
 				onClick={(e) => {
 					e.preventDefault()
 					history.push(`/item/${item.id}`)
@@ -30,11 +32,11 @@ class EquipmentCard extends Component {
                     />
                 </div>
 
-                <p style={{ fontSize: 19, color: 'white', marginBottom: 10, maxWidth: 180 }}>
+                <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10, width: nftWidth }}>
                     #{item.id} {item.name}
                 </p>
 
-                <p style={{ fontSize: 18, color: 'white', marginBottom: 15, maxWidth: 180 }}>
+                <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 15, width: nftWidth }}>
                     {infoEquipment.bonusesText.join(", ")}
                 </p>
 
@@ -43,15 +45,15 @@ class EquipmentCard extends Component {
                     <div style={{ alignItems: 'center', justifyContent: 'flex-start', width: '100%' }}>
                         <img
                             src={logoWiza}
-                            style={{ width: 34, marginRight: 10 }}
+                            style={{ width: 32, marginRight: 10 }}
                             alt='logo'
                         />
 
-                        <p style={{ fontSize: 18, color: 'white', marginRight: 7 }}>
+                        <p style={{ fontSize: 15, color: mainTextColor, marginRight: 5 }} className="text-bold">
                             {item.price}
                         </p>
 
-                        <p style={{ fontSize: 16, color: 'white' }}>
+                        <p style={{ fontSize: 13, color: mainTextColor }}>
                             $WIZA
                         </p>
                     </div>
@@ -62,16 +64,16 @@ class EquipmentCard extends Component {
                 {
                     item.equipped ?
                     <div style={{ alignItems: 'center', justifyContent: 'flex-end', width: '100%' }}>
-                        <p style={{ fontSize: 13, color: '#c2c0c0', marginRight: 7 }}>
+                        <p style={{ fontSize: 12, color: '#707070', marginRight: 7 }}>
                             equipped to
                         </p>
 
-                        <p style={{ fontSize: 15, color: 'white', marginRight: 7 }}>
+                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 7 }}>
                             #{item.equippedToId}
                         </p>
 
                         <img
-        					style={{ width: 40, height: 40, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', borderRadius: 2 }}
+        					style={{ width: 40, height: 40, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', borderRadius: 4 }}
         					src={getImageUrl(item.equippedToId)}
         					alt={`#${item.equippedToId}`}
         				/>
@@ -80,9 +82,20 @@ class EquipmentCard extends Component {
                     null
                 }
 
+                {
+                    !item.listed && !item.equipped &&
+                    <div style={{ height: 42 }} />
+                }
+
             </a>
         )
     }
 }
 
-export default EquipmentCard
+const mapStateToProps = (state) => {
+	const { mainTextColor } = state.mainReducer
+
+	return { mainTextColor }
+}
+
+export default connect(mapStateToProps)(EquipmentCard)

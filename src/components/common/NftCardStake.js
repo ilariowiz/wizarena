@@ -50,6 +50,7 @@ class NftCardStake extends Component {
 
     renderBurningTop() {
         const { infoBurn } = this.state
+        const { mainTextColor } = this.props
 
         if (!infoBurn.confirmBurn) {
             return <div />
@@ -60,11 +61,11 @@ class NftCardStake extends Component {
         return (
             <div style={{ flexDirection: 'column', width: '100%', marginRight: 10, alignItems: 'flex-end' }}>
 
-				<p style={{ color: 'white', fontSize: 16, lineHeight: 1.2, textAlign: 'end' }}>
-					IN BURNING QUEUE
+				<p style={{ color: mainTextColor, fontSize: 14, textAlign: 'end' }}>
+					In Burning Queue
 				</p>
 
-				<p style={{ color: '#c2c0c0', fontSize: 12, marginBottom: 2, lineHeight: 1 }}>
+				<p style={{ color: '#707070', fontSize: 13, marginBottom: 2, lineHeight: 1 }}>
 					{burnedFromDate}
 				</p>
 			</div>
@@ -72,7 +73,7 @@ class NftCardStake extends Component {
     }
 
 	renderStakedTop() {
-		const { stakeInfo } = this.props
+		const { stakeInfo, mainTextColor } = this.props
 
 		const startStaked = moment(stakeInfo.timestamp.timep).fromNow()
         const multiplier = stakeInfo.multiplier.int
@@ -86,15 +87,15 @@ class NftCardStake extends Component {
 		return (
 			<div style={{ flexDirection: 'column', width: '100%', marginRight: 10, alignItems: 'flex-end' }}>
 
-				<p style={{ color: 'white', fontSize: 14, lineHeight: 1.2, textAlign: 'end' }}>
-					UNCLAIMED $WIZA
+				<p style={{ color: mainTextColor, fontSize: 13, lineHeight: 1.2, textAlign: 'end' }}>
+					Unclaimed $WIZA
 				</p>
 
-				<p style={{ color: 'white', fontSize: 16, marginBottom: 2, lineHeight: 1 }}>
+				<p style={{ color: mainTextColor, fontSize: 16, marginBottom: 2, lineHeight: 1 }} className="text-medium">
 					{_.floor(unclaimedWiza, 4)}
 				</p>
 
-				<p style={{ color: '#c2c0c0', fontSize: 12, marginBottom: 2, lineHeight: 1 }}>
+				<p style={{ color: '#707070', fontSize: 12, marginBottom: 2, lineHeight: 1 }}>
 					{startStaked}
 				</p>
 			</div>
@@ -114,7 +115,7 @@ class NftCardStake extends Component {
     }
 
 	render() {
-		const { item, history, width, stakeInfo, loading } = this.props
+		const { item, history, width, stakeInfo, loading, mainTextColor } = this.props
 		const { inBurnQueue } = this.state
 
         //console.log(stakeInfo);
@@ -132,13 +133,13 @@ class NftCardStake extends Component {
                 style={{ marginBottom: 12 }}
 			>
 				<img
-					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
+					style={{ width, height: width, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
 					src={getImageUrl(item.id)}
 					alt={`#${item.id}`}
 				/>
 
-                <div style={{ width, marginTop: 5 }}>
-                    <p style={{ color: 'white', minHeight: 34, fontSize: 17, lineHeight: 1, marginLeft: 10, marginRight: 10 }}>
+                <div style={{ width, marginTop: 5, minHeight: 28, alignItems: 'center' }}>
+                    <p style={{ color: mainTextColor, fontSize: 14, lineHeight: 1, marginLeft: 10, marginRight: 10 }} className="text-medium">
                         {item.nickname ? `${item.name} ${item.nickname}` : item.name}
                     </p>
                 </div>
@@ -149,15 +150,15 @@ class NftCardStake extends Component {
 
                         {
                             item.medals &&
-                            <div style={{ alignItems: 'center', marginLeft: 10 }}>
+                            <div style={{ alignItems: 'center', marginLeft: 10, marginBottom: 5 }}>
 
                                 <IoMedalOutline
-                                    color="white"
+                                    color={mainTextColor}
                                     size={18}
                                     style={{ marginRight: 8 }}
                                 />
 
-                                <p style={{ color: 'white', fontSize: 19, marginTop: 3, lineHeight: 1 }}>
+                                <p style={{ color: mainTextColor, fontSize: 16, lineHeight: 1 }} className="text-medium">
                                     {this.calcMedals()}
                                 </p>
                             </div>
@@ -166,10 +167,10 @@ class NftCardStake extends Component {
                         {
                             level &&
                             <div style={{ alignItems: 'center', marginLeft: 10 }}>
-                                <p style={{ color: '#c2c0c0', fontSize: 15, marginRight: 7 }}>
-                                    LEVEL
+                                <p style={{ color: '#707070', fontSize: 15, marginRight: 7 }}>
+                                    Level
                                 </p>
-                                <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 18 }}>
+                                <p style={{ color: mainTextColor, fontSize: 16 }} className="text-bold">
                                     {level}
                                 </p>
                             </div>
@@ -179,19 +180,19 @@ class NftCardStake extends Component {
 					{
 						item.listed ?
 						<div style={{ width: '100%', alignItems: 'center', justifyContent: 'flex-end', marginRight: 10 }}>
-							<p style={{ color: '#c2c0c0', fontSize: 14, lineHeight: 1 }}>
-								PRICE
+							<p style={{ color: '#707070', fontSize: 14, lineHeight: 1 }}>
+								Price
 							</p>
 
 							<div style={{ marginLeft: 10, alignItems: 'center' }}>
 
 								<img
-									style={{ width: 19, marginRight: 6, objectFit: 'contain', marginBottom: 6 }}
+									style={{ width: 19, marginRight: 6, objectFit: 'contain' }}
 									src={logoKda}
 									alt='Kadena logo'
 								/>
 
-								<p style={{ color: 'white', fontSize: 20, marginBottom: 2, lineHeight: 1 }}>
+								<p style={{ color: mainTextColor, fontSize: 16, lineHeight: 1 }} className="text-bold">
 									{item.price}
 								</p>
 							</div>
@@ -220,7 +221,7 @@ class NftCardStake extends Component {
 					<div
 						style={Object.assign({}, styles.btnStake, { width })}
 					>
-						<DotLoader size={25} color='white' />
+						<DotLoader size={16} color={mainTextColor} />
 					</div>
 				}
 
@@ -235,15 +236,15 @@ class NftCardStake extends Component {
 							this.props.onDelist()
 						}}
 					>
-						<p style={{ fontSize: 17, color: 'white' }}>
-							DELIST
+						<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+							Delist
 						</p>
 					</button>
                 }
 
                 {
                     !item.medals &&
-                    <div style={{ height: 50 }} />
+                    <div style={{ height: 40 }} />
                 }
 
 				{
@@ -258,8 +259,8 @@ class NftCardStake extends Component {
                                 this.props.onStake()
                             }}
                         >
-                            <p style={{ fontSize: 17, color: 'white' }}>
-                                STAKE
+                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                Stake
                             </p>
                         </button>
 
@@ -272,8 +273,8 @@ class NftCardStake extends Component {
     							this.props.onAddBurning()
     						}}
     					>
-    						<p style={{ fontSize: 17, color: 'white' }}>
-    							BURN
+    						<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+    							Burn
     						</p>
     					</button>
                     </div>
@@ -290,8 +291,8 @@ class NftCardStake extends Component {
 							this.props.onRemoveBurning()
 						}}
 					>
-						<p style={{ fontSize: 16, color: 'white' }}>
-							REMOVE FROM BURNING QUEUE
+						<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+							Remove from Burning queue
 						</p>
 					</button>
                 }
@@ -308,8 +309,8 @@ class NftCardStake extends Component {
                                 this.props.onClaim()
                             }}
                         >
-                            <p style={{ fontSize: 17, color: 'white' }}>
-                                CLAIM
+                            <p style={{ fontSize: 14, color: 'white' }} className="text-medium">
+                                Claim
                             </p>
                         </button>
 
@@ -322,8 +323,8 @@ class NftCardStake extends Component {
     							this.props.onUnstake()
     						}}
     					>
-    						<p style={{ fontSize: 17, color: 'white' }}>
-    							CLAIM & UNSTAKE
+    						<p style={{ fontSize: 14, color: 'white' }} className="text-medium">
+    							Claim & Unstake
     						</p>
     					</button>
                     </div>
@@ -339,15 +340,15 @@ const styles = {
 		display: 'flex',
 		justifyContent: 'center',
 		alignItems: 'center',
-		height: 50,
+		height: 40,
 		backgroundColor: CTA_COLOR
 	}
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl } = state.mainReducer
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor } = state.mainReducer
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl }
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor }
 }
 
 export default connect(mapStateToProps, {

@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import getRingBonuses from './GetRingBonuses'
 import '../../css/ItemCard.css'
 
 
 class EquipmentCardForge extends Component {
     render() {
-        const { item } = this.props
+        const { item, mainTextColor } = this.props
 
         //console.log(item);
 
@@ -19,16 +20,16 @@ class EquipmentCardForge extends Component {
                 <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                     <img
                         src={item.url}
-                        style={{ width: 110, marginBottom: 10 }}
+                        style={{ width: 90, marginBottom: 10 }}
                         alt="Equipment"
                     />
                 </div>
 
-                <p style={{ fontSize: 19, color: 'white', marginBottom: 10, maxWidth: 180 }}>
+                <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 10, maxWidth: 180 }}>
                     #{item.id} {item.name}
                 </p>
 
-                <p style={{ fontSize: 18, color: 'white', marginBottom: 15, maxWidth: 180 }}>
+                <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 15, maxWidth: 180 }}>
                     {infoEquipment.bonusesText.join(", ")}
                 </p>
 
@@ -37,4 +38,10 @@ class EquipmentCardForge extends Component {
     }
 }
 
-export default EquipmentCardForge
+const mapStateToProps = (state) => {
+    const { mainTextColor } = state.mainReducer
+
+    return { mainTextColor }
+}
+
+export default connect(mapStateToProps)(EquipmentCardForge)

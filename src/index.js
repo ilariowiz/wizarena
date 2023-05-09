@@ -52,7 +52,7 @@ ReactDOM.render(
           <Switch>
             <Route exact path="/" component={App} />
             <Route path="/collection" component={Collection} />
-            <Route path="/mint" component={Mint} />
+            {/*<Route path="/mint" component={Mint} />*/}
             <Route path="/me" component={Profile} />
             <Route path="/nft/" component={Nft} />
             <Route path="/fight/" component={Fight} />

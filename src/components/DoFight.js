@@ -584,32 +584,33 @@ class DoFight extends Component {
 
 
     renderBoxHp(width, item, initialHp, currentHp, level, index, isMobile) {
+        const { mainTextColor } = this.props
 
         const innerWidth = width - 40
 
-        const colorLevel = getColorTextBasedOnLevel(level)
+        const colorLevel = mainTextColor //getColorTextBasedOnLevel(level)
 
         return (
             <div style={Object.assign({}, styles.boxHp, { width })}>
 
                 <div style={{ justifyContent: 'space-between', alignItems: 'center', width: innerWidth, flexDirection: isMobile ? 'column' : 'row' }}>
-                    <p style={{ fontSize: isMobile ? 15 : 20, color: TEXT_SECONDARY_COLOR }}>
+                    <p style={{ fontSize: 15, color: TEXT_SECONDARY_COLOR }} className="text-bold">
                         {this.getName(item)}
                     </p>
 
                     <div style={{ alignItems: 'center' }}>
-                        <p style={{ fontSize: isMobile ? 15 : 17, color: 'white', marginRight: 8 }}>
-                            LEVEL
+                        <p style={{ fontSize: 15, color: mainTextColor, marginRight: 8 }}>
+                            Level
                         </p>
 
-                        <p style={{ fontSize: isMobile ? 15 : 20, color: colorLevel }}>
+                        <p style={{ fontSize: 18, color: colorLevel }} className="text-bold">
                             {level}
                         </p>
                     </div>
 
                 </div>
 
-                <div style={{ position: 'relative', width: innerWidth, height: 15, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', borderRadius: 4, overflow: "hidden", marginTop: 8 }}>
+                <div style={{ position: 'relative', width: innerWidth, height: 15, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', borderRadius: 4, overflow: "hidden", marginTop: 8 }}>
                     <div
                         className="hpBar"
                         ref={(ref) => {
@@ -620,7 +621,7 @@ class DoFight extends Component {
                         }}
                         style={{ width: this.calcWidthHp(innerWidth, initialHp, currentHp), backgroundColor: this.getColorHpBar(currentHp, initialHp) }}
                     >
-                        <p style={{ fontSize: 16, color: 'white', marginLeft: 15 }}>
+                        <p style={{ fontSize: 14, color: mainTextColor, marginLeft: 15 }} className="text-bold">
                             {currentHp < 0 ? 0 : currentHp}/{initialHp}
                         </p>
                     </div>
@@ -631,15 +632,15 @@ class DoFight extends Component {
     }
 
     renderDesc(item, index) {
-
+        const { mainTextColor } = this.props
         //console.log(item);
 
         return (
             <div key={index} style={{ marginBottom: 15 }}>
-                <p style={{ fontSize: 18, color: TEXT_SECONDARY_COLOR, marginRight: 10 }}>
+                <p style={{ fontSize: 15, color: TEXT_SECONDARY_COLOR, marginRight: 10 }}>
                     Turn {item.turn}:
                 </p>
-                <p className="textDesc">
+                <p style={{ fontSize: 16, color: mainTextColor }}>
                     {item.desc}
                 </p>
             </div>
@@ -722,7 +723,7 @@ class DoFight extends Component {
 
                     <button
                         className="btnH"
-                        style={Object.assign({}, styles.btnOverlay, { backgroundColor: isEnd ? CTA_COLOR : BACKGROUND_COLOR })}
+                        style={styles.btnOverlay}
                         onClick={() => {
                             if (isEnd) {
                                 this.props.history.replace("/pvp")
@@ -732,8 +733,8 @@ class DoFight extends Component {
                             }
                         }}
                     >
-                        <p style={{ fontSize: 17, color: 'white' }}>
-                            {isEnd ? "Back to PVP" : "Next Turn"}
+                        <p style={{ fontSize: 15, color: 'white' }}>
+                            {isEnd ? "Back to PvP" : "Next turn"}
                         </p>
                     </button>
                 </div>
@@ -767,21 +768,17 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: "white"
 	},
     boxHp: {
         flexDirection: 'column',
         minHeight: 70,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: BACKGROUND_COLOR,
         borderWidth: 2,
         borderColor: TEXT_SECONDARY_COLOR,
         borderStyle: 'solid',
-        borderTopLeftRadius: 10,
-        borderBottomLeftRadius: 2,
-        borderTopRightRadius: 2,
-        borderBottomRightRadius: 10
+        borderRadius: 4
     },
     boxDesc: {
         position: 'relative',
@@ -799,19 +796,17 @@ const styles = {
         position: 'absolute',
         bottom: 10,
         right: 10,
-        width: 160,
+        width: 120,
         height: 40,
-        borderWidth: 2,
-        borderRadius: 2,
-        borderColor: CTA_COLOR,
-        borderStyle: "solid"
+        borderRadius: 4,
+        backgroundColor: CTA_COLOR,
     }
 }
 
 const mapStateToProps = (state) => {
-	const { sfida, chainId, gasPrice, gasLimit, networkUrl } = state.mainReducer;
+	const { sfida, chainId, gasPrice, gasLimit, networkUrl, mainTextColor } = state.mainReducer;
 
-	return { sfida, chainId, gasPrice, gasLimit, networkUrl };
+	return { sfida, chainId, gasPrice, gasLimit, networkUrl, mainTextColor };
 }
 
 export default connect(mapStateToProps, {
