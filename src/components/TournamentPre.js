@@ -1319,7 +1319,7 @@ class Tournament extends Component {
                 {
                     showSubs && filtriProfileRanges &&
                     <div style={{ flexWrap: 'wrap', width: insideWidth, alignItems: 'center', justifyContent: 'center', marginBottom: 5 }} id="filters">
-                        {this.renderBoxSearchStat("hp", "Hp", filtriProfileRanges["hp"])}
+                        {this.renderBoxSearchStat("hp", "HP", filtriProfileRanges["hp"])}
                         {this.renderBoxSearchStat("defense", "Defense", filtriProfileRanges["defense"])}
                         {this.renderBoxSearchStat("attack", "Attack", filtriProfileRanges["attack"])}
                         {this.renderBoxSearchStat("damage", "Damage", filtriProfileRanges["damage"])}

@@ -1348,10 +1348,10 @@ class Nft extends Component {
 
 				//console.log(fixedValue);
 
-				let spellInfo = allSpells.find(i => i.condition.name && i.condition.name.toUpperCase() === fixedValue)
+				let spellInfo = allSpells.find(i => i.condition.name && i.condition.name.toUpperCase() === fixedValue.toUpperCase())
 				//console.log(spellInfo);
 				if (spellInfo) {
-					let condInfo = conditions.find(i => i.name.toUpperCase() === fixedValue)
+					let condInfo = conditions.find(i => i.name.toUpperCase() === fixedValue.toUpperCase())
 					if (condInfo) {
 						condDesc = `${condInfo.effect} - Chance of success: ${spellInfo.condition.pct}%`
 					}
@@ -1396,7 +1396,7 @@ class Nft extends Component {
 			max = maxStats[title.toLowerCase()]
 			widthIn = fixedValue * 100 / max
 
-			if (title === "Hp") {
+			if (title === "HP") {
 				bgColorIn = '#58af04'
 			}
 			else if (title === 'Defense') {
@@ -1482,14 +1482,14 @@ class Nft extends Component {
 								</p>
 							</div>
 
-							{this.renderStat("Hp", nft.hp.int)}
+							{this.renderStat("HP", nft.hp.int)}
 							{this.renderStat("Defense", nft.defense.int)}
 
 							{this.renderStat("Attack", nft.attack.int + spellSelected.atkBase)}
 							{this.renderStat("Damage", nft.damage.int + spellSelected.dmgBase)}
 							{this.renderStat("Speed", nft.speed ? nft.speed.int : 0)}
 
-							{this.renderStat("Ap", nft.ap.int)}
+							{this.renderStat("AP", nft.ap.int)}
 
 							{this.renderStat("Downgrade Points", nft.downgrades.int)}
 

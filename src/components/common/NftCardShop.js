@@ -64,7 +64,7 @@ class NftCardShop extends Component {
 
                         <div style={{ width: '90%', alignItems: 'center', marginBottom: 8 }}>
                             <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
-                                Ap
+                                AP
                             </p>
                             <p style={{ color: mainTextColor, fontSize: 16 }}>
                                 {item.ap.int}

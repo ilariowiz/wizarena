@@ -753,7 +753,7 @@ class Profile extends Component {
 				{
 					!loading && userMintedNfts && userMintedNfts.length > 0 && filtriProfileRanges && !isMobile &&
 					<div style={{ width: widthSide, flexDirection: 'column' }} id="filters">
-						{this.renderBoxSearchStat("hp", "Hp", filtriProfileRanges["hp"])}
+						{this.renderBoxSearchStat("hp", "HP", filtriProfileRanges["hp"])}
 						{this.renderBoxSearchStat("defense", "Defense", filtriProfileRanges["defense"])}
 						{this.renderBoxSearchStat("attack", "Attack", filtriProfileRanges["attack"])}
 						{this.renderBoxSearchStat("damage", "Damage", filtriProfileRanges["damage"])}
@@ -819,7 +819,7 @@ class Profile extends Component {
 				{
 					equipment.length > 0 && !isMobile &&
 					<div style={{ width: widthSide, flexDirection: 'column' }}>
-						{this.renderBoxSearchEquip("Hp", ["Ring of HP +4", "Ring of HP +8", "Ring of HP +12", "Ring of HP +16", "Ring of HP +20", "Ring of Life", "Ring of Last Defense", "Ring of Power"].reverse())}
+						{this.renderBoxSearchEquip("HP", ["Ring of HP +4", "Ring of HP +8", "Ring of HP +12", "Ring of HP +16", "Ring of HP +20", "Ring of Life", "Ring of Last Defense", "Ring of Power"].reverse())}
 						{this.renderBoxSearchEquip("Defense", ["Ring of Defense +1", "Ring of Defense +2", "Ring of Defense +3", "Ring of Defense +4", "Ring of Defense +5", "Ring of Magic Shield", "Ring of Last Defense", "Ring of Power"].reverse())}
 						{this.renderBoxSearchEquip("Attack", ["Ring of Attack +1", "Ring of Attack +2", "Ring of Attack +3", "Ring of Attack +4", "Ring of Attack +5", "Ring of Accuracy", "Ring of Destruction", "Ring of Swift Death", "Ring of Power"].reverse())}
 						{this.renderBoxSearchEquip("Damage", ["Ring of Damage +2", "Ring of Damage +4", "Ring of Damage +6", "Ring of Damage +8", "Ring of Damage +10", "Ring of Force", "Ring of Destruction", "Ring of Power"].reverse())}

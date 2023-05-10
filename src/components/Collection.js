@@ -782,7 +782,7 @@ class Collection extends Component {
 						filtriRanges && Object.keys(filtriRanges).length > 0 &&
 						<div style={{ width: widthSide, flexDirection: 'column', marginLeft: 30 }}>
 							{this.renderBoxSearchStat("collection", "Collection", ["Wizards", "Clerics", "Druids"])}
-							{this.renderBoxSearchStat("hp", "Hp", filtriRanges["hp"])}
+							{this.renderBoxSearchStat("hp", "HP", filtriRanges["hp"])}
 							{this.renderBoxSearchStat("defense", "Defense", filtriRanges["defense"])}
 							{this.renderBoxSearchStat("attack", "Attack", filtriRanges["attack"])}
 							{this.renderBoxSearchStat("damage", "Damage", filtriRanges["damage"])}
@@ -887,7 +887,7 @@ class Collection extends Component {
 						filtriRanges && Object.keys(filtriRanges).length > 0 && !isMobile &&
 						<div style={{ width: widthSide, flexDirection: 'column' }}>
 							{this.renderBoxSearchStat("collection", "Collection", ["Wizards", "Clerics", "Druids"])}
-							{this.renderBoxSearchStat("hp", "Hp", filtriRanges["hp"])}
+							{this.renderBoxSearchStat("hp", "HP", filtriRanges["hp"])}
 							{this.renderBoxSearchStat("defense", "Defense", filtriRanges["defense"])}
 							{this.renderBoxSearchStat("attack", "Attack", filtriRanges["attack"])}
 							{this.renderBoxSearchStat("damage", "Damage", filtriRanges["damage"])}

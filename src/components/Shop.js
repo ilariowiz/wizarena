@@ -1002,7 +1002,7 @@ class Shop extends Component {
                     <div style={{ alignItems: 'center', justifyContent: 'space-around', width: '100%',  marginBottom: 15 }}>
                         <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                             <p style={{ fontSize: 14, color: mainTextColor }}>
-                                Ap
+                                AP
                             </p>
                             <p style={{ fontSize: 16, color: mainTextColor }} className="text-bold">
                                 {costo}
@@ -1094,7 +1094,7 @@ class Shop extends Component {
                             </p>
 
                             <p style={{ fontSize: 14, color: mainTextColor }}>
-                                Ap
+                                AP
                             </p>
                         </div>
 
@@ -1343,7 +1343,7 @@ class Shop extends Component {
                                 Gain
                             </p>
                             <p style={{ fontSize: 16, color: mainTextColor }}>
-                                Ap
+                                AP
                             </p>
                             <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15 }} className="text-bold">
                                 {gain}
@@ -1556,7 +1556,7 @@ class Shop extends Component {
                 {
                     item.cost.int ?
                     <p style={{ color: mainTextColor, fontSize: 16 }}>
-                        Ap {item.cost.int}
+                        AP {item.cost.int}
                     </p>
                     :
                     <p style={{ color: mainTextColor, fontSize: 16 }}>
@@ -1739,7 +1739,7 @@ class Shop extends Component {
             img = potion_hp
             imgStyle = { height: 56 }
         }
-        else if (key === "Ap") {
+        else if (key === "AP") {
             img = potion_dmg
             imgStyle = { height: 56 }
         }
@@ -1954,7 +1954,7 @@ class Shop extends Component {
                             <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 30 }}>
                                 {this.renderBoxMenu("Rings")}
                                 {this.renderBoxMenu("Upgrades")}
-                                {this.renderBoxMenu("Ap")}
+                                {this.renderBoxMenu("AP")}
                                 {this.renderBoxMenu("Retrain")}
                                 {this.renderBoxMenu("Vials")}
                                 {this.renderBoxMenu("Spellbook")}
@@ -1980,7 +1980,7 @@ class Shop extends Component {
                             {
                                 !this.state.loadingEquip && !isMobile &&
                                 <div style={{ width: widthSide, flexDirection: 'column' }}>
-                					{this.renderBoxSearchStat("Hp", ["Ring of HP +4", "Ring of HP +8", "Ring of HP +12", "Ring of HP +16", "Ring of HP +20", "Ring of Life", "Ring of Last Defense", "Ring of Power"].reverse())}
+                					{this.renderBoxSearchStat("HP", ["Ring of HP +4", "Ring of HP +8", "Ring of HP +12", "Ring of HP +16", "Ring of HP +20", "Ring of Life", "Ring of Last Defense", "Ring of Power"].reverse())}
                                     {this.renderBoxSearchStat("Defense", ["Ring of Defense +1", "Ring of Defense +2", "Ring of Defense +3", "Ring of Defense +4", "Ring of Defense +5", "Ring of Magic Shield", "Ring of Last Defense", "Ring of Power"].reverse())}
                                     {this.renderBoxSearchStat("Attack", ["Ring of Attack +1", "Ring of Attack +2", "Ring of Attack +3", "Ring of Attack +4", "Ring of Attack +5", "Ring of Accuracy", "Ring of Destruction", "Ring of Swift Death", "Ring of Power"].reverse())}
                                     {this.renderBoxSearchStat("Damage", ["Ring of Damage +2", "Ring of Damage +4", "Ring of Damage +6", "Ring of Damage +8", "Ring of Damage +10", "Ring of Force", "Ring of Destruction", "Ring of Power"].reverse())}
@@ -2026,7 +2026,7 @@ class Shop extends Component {
                         </p>
 
                         <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15 }} className="text-medium">
-                            Ap available: {wizard.ap ? wizard.ap.int : 0}
+                            AP available: {wizard.ap ? wizard.ap.int : 0}
                         </p>
 
                         <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>

@@ -97,7 +97,7 @@ const cardStats = (item, numberOfMedalsForTournament, width, bonusFromRing, main
             <div style={{ width: widthBody, justifyContent: 'space-between', alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
                 <div>
                     <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
-                        Hp
+                        HP
                     </p>
                     <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })} className="text-medium">
                         {hpBase}

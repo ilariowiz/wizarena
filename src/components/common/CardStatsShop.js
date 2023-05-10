@@ -29,7 +29,7 @@ const cardStatsShop = (item, numberOfMedalsForTournament, width, mainTextColor) 
 
                 <div style={{ alignItems: 'center' }}>
                     <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
-                        Hp
+                        HP
                     </p>
                     <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })}>
                         {item.hp.int || item.hp}

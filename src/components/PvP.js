@@ -732,7 +732,7 @@ class PvP extends Component {
 
                     <div style={{ alignItems: 'center', marginBottom: 10, flexWrap: 'wrap' }}>
                         <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
-                            Hp
+                            HP
                         </p>
 
                         <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
@@ -1078,7 +1078,7 @@ class PvP extends Component {
 
                     <div style={{ flexDirection: 'column', marginLeft: isMobile ? 10 : 50 }}>
                         <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10 }}>
-                            Reward: +2 Ap (min 30 fights)
+                            Reward: +2 AP (min 30 fights)
                         </p>
 
                         {
