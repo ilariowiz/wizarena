@@ -2061,7 +2061,8 @@
             (with-read auto-tournaments tournamentid
                 {
                     "buyin":=buyin,
-                    "nPlayers":=nPlayers
+                    "nPlayers":=nPlayers,
+                    "wallets":=wallets
                 }
                 (if
                     (= (length winner2) 0)
@@ -2098,7 +2099,11 @@
                         )
                     ]
                 )
-
+                (if
+                    (>= buyin 30.0)
+                    (map (add-xp-to-wallet-flash-t) wallets)
+                    ""
+                )
                 (update auto-tournaments tournamentid
                     {
                         "completed":true,
@@ -2108,6 +2113,11 @@
                 )
             )
         )
+    )
+
+    (defun add-xp-to-wallet-flash-t (account:string)
+        (require-capability (PRIVATE))
+        (add-xp-to-wallet account 1)
     )
 
     (defun get-pending-auto-tournaments ()

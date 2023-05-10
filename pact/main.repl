@@ -1186,25 +1186,25 @@
 
 (commit-tx)
 
-(begin-tx "CANCEL TOURNAMENT")
-
-(env-sigs [{
-  "key": "aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1",
-  "caps": [
-    (free.wiz-arena.DEV),
-    (coin.GAS)
-  ]
-}])
-
-(free.wiza.get-user-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
-
-(free.wiz-arena.cancel-tournament "0" free.wiza)
-
-(free.wiza.get-user-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
-
-(free.wiz-arena.get-pending-auto-tournaments)
-
-(commit-tx)
+; (begin-tx "CANCEL TOURNAMENT")
+;
+; (env-sigs [{
+;   "key": "aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1",
+;   "caps": [
+;     (free.wiz-arena.DEV),
+;     (coin.GAS)
+;   ]
+; }])
+;
+; (free.wiza.get-user-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+;
+; (free.wiz-arena.cancel-tournament "0" free.wiza)
+;
+; (free.wiza.get-user-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+;
+; (free.wiz-arena.get-pending-auto-tournaments)
+;
+; (commit-tx)
 
 
 ; (begin-tx "COMPLETE TOURNAMENT")
@@ -1219,9 +1219,13 @@
 ;
 ; (free.wiza.get-user-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
 ;
+; (free.wiz-arena.get-wallet-xp "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+;
 ; (free.wiz-arena.complete-tournament "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "" {} free.wiza)
 ;
 ; (free.wiza.get-user-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+;
+; (free.wiz-arena.get-wallet-xp "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
 ;
 ; (commit-tx)
 
