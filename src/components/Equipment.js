@@ -786,7 +786,7 @@ class Equipment extends Component {
         }
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, paddingLeft: padding, paddingRight: padding, paddingBottom: padding, paddingTop: 20, overflowY: 'auto', overflowX: 'hidden' }}>
+            <div style={{ flexDirection: 'column', width: boxW, paddingLeft: padding, paddingRight: padding, paddingBottom: padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
                 {this.renderHeader(isMobile, boxW)}
 
@@ -794,11 +794,9 @@ class Equipment extends Component {
 
 				{this.renderSearched()}
 
-                {/*
-                    <p style={{ marginBottom: 15, fontSize: 16, color: 'white' }}>
-    					{numberOfItems} items
-    				</p>
-                */}
+                <p style={{ marginBottom: 15, fontSize: 14, color: mainTextColor }}>
+					{numberOfItems} items
+				</p>
 
                 {
 					allItems && allItems.length === 0 ?
