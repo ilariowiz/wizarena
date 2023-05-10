@@ -184,7 +184,7 @@ class DoChallenges extends Component {
                             Level
                         </p>
 
-                        <p style={{ color: mainTextColor, fontSize: 18 }} className="text-bold">
+                        <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 17 }} className="text-bold">
                             {level}
                         </p>
                     </div>

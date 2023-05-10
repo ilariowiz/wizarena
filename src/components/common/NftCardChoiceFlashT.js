@@ -65,7 +65,7 @@ class NftCardChoiceFlashT extends Component {
                                 <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
                                     Level
                                 </p>
-                                <p style={{ color: mainTextColor, fontSize: 17 }} className="text-bold">
+                                <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 17 }} className="text-bold">
                                     {level}
                                 </p>
                             </div>

@@ -378,7 +378,7 @@ class Fight extends Component {
                             level
                         </p>
 
-                        <p style={{ color: mainTextColor, fontSize: 18 }} className="text-bold">
+                        <p style={{ color: getColorTextBasedOnLevel(levels[info.id]), fontSize: 17 }} className="text-bold">
                             {levels[info.id]}
                         </p>
                     </div>

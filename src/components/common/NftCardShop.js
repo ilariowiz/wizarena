@@ -57,7 +57,7 @@ class NftCardShop extends Component {
                             <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
                                 Level
                             </p>
-                            <p style={{ color: mainTextColor, fontSize: 16 }} className="text-medium">
+                            <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 16 }} className="text-bold">
                                 {level}
                             </p>
                         </div>

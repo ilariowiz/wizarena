@@ -1477,7 +1477,7 @@ class Nft extends Component {
 								<p style={{ fontSize: 17, color: mainTextColor, marginRight: 10 }}>
 									Level
 								</p>
-								<p style={{ fontSize: 22, color: mainTextColor }}>
+								<p style={{ fontSize: 22, color: getColorTextBasedOnLevel(level) }} className="text-bold">
 									{level}
 								</p>
 							</div>

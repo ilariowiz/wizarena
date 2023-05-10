@@ -724,7 +724,7 @@ class PvP extends Component {
                                 Level
                             </p>
 
-                            <p style={{ fontSize: 17, color: mainTextColor }} className="text-medium">
+                            <p style={{ fontSize: 17, color: getColorTextBasedOnLevel(level) }} className="text-bold">
                                 {level}
                             </p>
                         </div>

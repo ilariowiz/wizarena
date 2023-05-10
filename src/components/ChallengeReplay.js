@@ -186,7 +186,7 @@ class ChallengeReplay extends Component {
 
         const innerWidth = width - 40
 
-        const colorLevel = mainTextColor //getColorTextBasedOnLevel(level)
+        const colorLevel = getColorTextBasedOnLevel(level)
 
         return (
             <div style={Object.assign({}, styles.boxHp, { width })}>

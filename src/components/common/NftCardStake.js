@@ -167,10 +167,10 @@ class NftCardStake extends Component {
                         {
                             level &&
                             <div style={{ alignItems: 'center', marginLeft: 10 }}>
-                                <p style={{ color: '#707070', fontSize: 15, marginRight: 7 }}>
+                                <p style={{ color: mainTextColor, fontSize: 15, marginRight: 7 }}>
                                     Level
                                 </p>
-                                <p style={{ color: mainTextColor, fontSize: 16 }} className="text-bold">
+                                <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 16 }} className="text-bold">
                                     {level}
                                 </p>
                             </div>

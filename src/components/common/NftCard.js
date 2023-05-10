@@ -29,31 +29,31 @@ class NftCard extends Component {
 					alt={`#${item.id}`}
 				/>
 
-				<div style={{ flexDirection: 'column', justifyContent: 'center', width, height: 65, alignItems: 'center' }}>
+				<div style={{ flexDirection: 'column', justifyContent: 'space-between', width, height: 65, alignItems: 'center' }}>
 
-					<div style={{ width: '100%', marginBottom: 5 }}>
+					<div style={{ width: '100%', marginTop: 5 }}>
 
 						{
 							item.nickname ?
-							<p style={{ color: mainTextColor, fontSize: 13, marginLeft: 10 }} className="text-medium">
+							<p style={{ color: mainTextColor, fontSize: 13, marginRight: 6, marginLeft: 6 }} className="text-medium">
 								{item.name} {item.nickname}
 							</p>
 							:
-							<p style={{ color: mainTextColor, fontSize: 14, marginLeft: 10 }} className="text-medium">
+							<p style={{ color: mainTextColor, fontSize: 14, marginRight: 6, marginLeft: 6 }} className="text-medium">
 								{item.name}
 							</p>
 						}
 					</div>
 
-					<div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between' }}>
+					<div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5 }}>
 						{
 							item.level &&
-							<div style={{ alignItems: 'center', marginLeft: 10 }}>
+							<div style={{ alignItems: 'center', marginLeft: 6 }}>
 								<p style={{ color: mainTextColor, fontSize: 13, marginRight: 10 }}>
 									Level
 								</p>
 
-								<p style={{ color: mainTextColor, fontSize: 15 }} className="text-medium">
+								<p style={{ color: getColorTextBasedOnLevel(item.level), fontSize: 15 }} className="text-bold">
 									{item.level}
 								</p>
 							</div>
@@ -61,7 +61,7 @@ class NftCard extends Component {
 
 						{
 							item.listed ?
-							<div style={{ width: '100%', alignItems: 'center', justifyContent: 'flex-end', marginRight: 10 }}>
+							<div style={{ width: '100%', alignItems: 'center', justifyContent: 'flex-end', marginRight: 6 }}>
 								<div style={{ alignItems: 'center' }}>
 
 									<img

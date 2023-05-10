@@ -14,7 +14,6 @@ import graphSubscribers from './common/tournament/GraphSubscribers'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import convertMedalName from './common/ConvertMedalName'
-import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import {
     getMontepremi,

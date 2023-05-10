@@ -124,7 +124,7 @@ class NftCardBurningQueue extends Component {
 										Level
 									</p>
 
-									<p style={{ color: mainTextColor, fontSize: 16 }}>
+									<p style={{ color: getColorTextBasedOnLevel(level), fontSize: 16 }} className="text-bold">
 										{level}
 									</p>
 								</div>

@@ -714,7 +714,7 @@ class Shop extends Component {
             newLevel = calcLevelWizardAfterUpgrade(copySelected, key)
         }
 
-        let colorTextLevel = mainTextColor //getColorTextBasedOnLevel(newLevel)
+        let colorTextLevel = getColorTextBasedOnLevel(newLevel)
         if (newLevel > MAX_LEVEL) {
             colorTextLevel = "red"
         }
@@ -905,7 +905,7 @@ class Shop extends Component {
         costoWiza = round((costoWiza * 9 / 100), 2)
         //console.log(costoWiza);
 
-        let colorTextLevel = mainTextColor //getColorTextBasedOnLevel(newLevel)
+        let colorTextLevel = getColorTextBasedOnLevel(newLevel)
         if (newLevel > MAX_LEVEL) {
             colorTextLevel = "red"
         }
@@ -1203,7 +1203,7 @@ class Shop extends Component {
             newLevel = calcLevelWizardAfterDowngrade(copySelected, key)
         }
 
-        let colorTextLevel = mainTextColor //getColorTextBasedOnLevel(newLevel)
+        let colorTextLevel = getColorTextBasedOnLevel(newLevel)
         if (newLevel > MAX_LEVEL) {
             colorTextLevel = "red"
         }

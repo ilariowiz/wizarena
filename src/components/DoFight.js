@@ -588,7 +588,7 @@ class DoFight extends Component {
 
         const innerWidth = width - 40
 
-        const colorLevel = mainTextColor //getColorTextBasedOnLevel(level)
+        const colorLevel = getColorTextBasedOnLevel(level)
 
         return (
             <div style={Object.assign({}, styles.boxHp, { width })}>
@@ -603,7 +603,7 @@ class DoFight extends Component {
                             Level
                         </p>
 
-                        <p style={{ fontSize: 18, color: colorLevel }} className="text-bold">
+                        <p style={{ fontSize: 17, color: colorLevel }} className="text-bold">
                             {level}
                         </p>
                     </div>
