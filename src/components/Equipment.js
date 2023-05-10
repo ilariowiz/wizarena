@@ -707,8 +707,7 @@ class Equipment extends Component {
 				style={{ marginBottom: 15, marginLeft: 10 }}
 				onClick={() => {
 					this.listPopup.close()
-					//this.searchByStat({ stat: statName, value: item })
-                    this.setState({ searchText: item }, () => {
+                    this.setState({ searchText: item, showFilters: false }, () => {
                         this.searchByName()
                     })
 				}}
@@ -741,6 +740,57 @@ class Equipment extends Component {
 					})}
 				</div>
 			</Popup>
+		)
+	}
+
+    renderSlidePanel(boxW, widthSide) {
+		const { showFilters } = this.state
+		const { filtriRanges, mainTextColor } = this.props
+
+		const panelWidth = "90%"
+
+		return (
+			<div style={styles.panelShadow}>
+
+				<div
+					className={showFilters ? "slide-panel-container-on" : "slide-panel-container-off"}
+					style={Object.assign({}, styles.panel, { width: showFilters ? panelWidth : 0, zIndex: 997 })}
+				>
+
+					<div style={styles.headerPanel}>
+
+						<p style={{ fontSize: 24, color: mainTextColor, marginLeft: 30 }} className="text-bold">
+							Wizards Arena
+						</p>
+
+						<div style={{ alignItems: 'center', justifyContent: 'flex-end' }}>
+							<button
+								onClick={() => {
+									document.body.style.overflow = "auto"
+									document.body.style.height = "auto"
+									this.setState({ showFilters: false })
+								}}
+								style={{ marginRight: 30 }}
+							>
+								<IoClose
+									color={mainTextColor}
+									size={34}
+								/>
+							</button>
+						</div>
+
+					</div>
+
+                    <div style={{ width: widthSide, flexDirection: 'column', marginLeft: 30 }}>
+                        {this.renderBoxSearchStat("HP", ["Ring of HP +4", "Ring of HP +8", "Ring of HP +12", "Ring of HP +16", "Ring of HP +20", "Ring of Life", "Ring of Last Defense", "Ring of Power"].reverse())}
+                        {this.renderBoxSearchStat("Defense", ["Ring of Defense +1", "Ring of Defense +2", "Ring of Defense +3", "Ring of Defense +4", "Ring of Defense +5", "Ring of Magic Shield", "Ring of Last Defense", "Ring of Power"].reverse())}
+                        {this.renderBoxSearchStat("Attack", ["Ring of Attack +1", "Ring of Attack +2", "Ring of Attack +3", "Ring of Attack +4", "Ring of Attack +5", "Ring of Accuracy", "Ring of Destruction", "Ring of Swift Death", "Ring of Power"].reverse())}
+                        {this.renderBoxSearchStat("Damage", ["Ring of Damage +2", "Ring of Damage +4", "Ring of Damage +6", "Ring of Damage +8", "Ring of Damage +10", "Ring of Force", "Ring of Destruction", "Ring of Power"].reverse())}
+                        {this.renderBoxSearchStat("Speed", ["Ring of Speed +2", "Ring of Speed +4", "Ring of Speed +6", "Ring of Speed +8", "Ring of Speed +10", "Ring of Lightning", "Ring of Swift Death", "Ring of Power"].reverse())}
+                    </div>
+
+				</div>
+			</div>
 		)
 	}
 
@@ -840,6 +890,24 @@ class Equipment extends Component {
 					showPageCounter ?
 					this.renderPageCounter()
 					: null
+				}
+
+                {
+					isMobile &&
+					<div
+						className={this.state.showFilters ? "bg-slide-on" : "bg-slide-off"}
+						onClick={() => {
+							document.body.style.overflow = "auto"
+							document.body.style.height = "auto"
+							this.setState({ showFilters: false })
+						}}
+						style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#00000090', width: this.state.showFilters ? window.innerWidth : 0 }}
+					/>
+				}
+
+				{
+					isMobile &&
+					this.renderSlidePanel(boxW, widthSide)
 				}
 
                 {
@@ -1024,6 +1092,23 @@ const styles = {
 		justifyContent: 'center',
 		alignItems: 'center',
 		display: 'flex'
+	},
+    panelShadow: {
+		justifyContent: 'flex-end',
+		position: 'absolute',
+	},
+	panel: {
+		backgroundColor: 'white',
+		flexDirection: 'column',
+		overflow: 'auto',
+	},
+	headerPanel: {
+		height: 90,
+		width: '100%',
+		paddingTop: 10,
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		marginBottom: 30
 	},
 }
 
