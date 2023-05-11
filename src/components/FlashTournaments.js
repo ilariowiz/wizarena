@@ -222,7 +222,7 @@ class FlashTournaments extends Component {
                         on="hover"
                     >
                         <div style={{ padding: 5, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-                            <p style={{ fontSize: 16, textAlign: 'center' }}>
+                            <p style={{ fontSize: 16, textAlign: 'center', color: "#1d1d1f" }}>
                                 Wizard #{wiz}
                             </p>
                         </div>
@@ -469,7 +469,7 @@ class FlashTournaments extends Component {
                                             on="hover"
                                         >
                                             <div style={{ padding: 5, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-                                                <p style={{ fontSize: 16, textAlign: 'center' }}>
+                                                <p style={{ fontSize: 16, textAlign: 'center', color: "#1d1d1f" }}>
                                                     Wizard #{wiz}
                                                 </p>
                                             </div>
@@ -539,7 +539,7 @@ class FlashTournaments extends Component {
                                         on="hover"
                                     >
                                         <div style={{ padding: 5, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-                                            <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center' }}>
+                                            <p style={{ fontSize: 16, color: "#1d1d1f", textAlign: 'center' }}>
                                                 Wizard #{item.fights.winner}
                                             </p>
                                         </div>
@@ -584,7 +584,7 @@ class FlashTournaments extends Component {
                                                 on="hover"
                                             >
                                                 <div style={{ padding: 5, justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-                                                    <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center' }}>
+                                                    <p style={{ fontSize: 16, color: "#1d1d1f", textAlign: 'center' }}>
                                                         Wizard #{secondPlaceId}
                                                     </p>
                                                 </div>
