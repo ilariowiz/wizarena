@@ -8,7 +8,7 @@ import {
 } from '../actions'
 import { MAIN_NET_ID } from '../actions/types'
 
-const logo = require('../assets/wiz_logo.png')
+const logo = require('../assets/wzlogo_bg_transparent.png')
 
 
 class App extends Component {
