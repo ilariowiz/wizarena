@@ -344,6 +344,7 @@ export const sendMessageFlashT = (info) => {
                 "title": `${info.name || "Flash Tournament"}`,
                 "description": message,
                 "url": `https://www.wizardsarena.net/flashtournaments`,
+                "color": 16776960 
             }
         ]
     }
@@ -380,6 +381,7 @@ export const sendMessageFlashTSub = (info) => {
                 "title": title,
                 "description": message,
                 "url": `https://www.wizardsarena.net/flashtournaments`,
+                "color": 255
             }
         ]
     }
