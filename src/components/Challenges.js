@@ -12,7 +12,7 @@ import allSpells from './common/Spells'
 import { calcLevelWizard } from './common/CalcLevelWizard'
 import ChallengeItem from './common/ChallengeItem'
 import ModalLoading from './common/ModalLoading'
-import { BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID } from '../actions/types'
+import { TEXT_SECONDARY_COLOR, MAIN_NET_ID } from '../actions/types'
 import {
     setNetworkSettings,
     setNetworkUrl,
@@ -432,7 +432,7 @@ class Challenges extends Component {
 
     render() {
 		return (
-			<div style={styles.container}>
+			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
 				<Media
 					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
@@ -465,14 +465,13 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: "white"
 	},
 }
 
 const mapStateToProps = (state) => {
-    const { account, chainId, gasPrice, gasLimit, networkUrl, netId, challengesReceived, challengesSent, mainTextColor } = state.mainReducer
+    const { account, chainId, gasPrice, gasLimit, networkUrl, netId, challengesReceived, challengesSent, mainTextColor, mainBackgroundColor } = state.mainReducer
 
-    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, challengesReceived, challengesSent, mainTextColor }
+    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, challengesReceived, challengesSent, mainTextColor, mainBackgroundColor }
 }
 
 export default connect(mapStateToProps, {

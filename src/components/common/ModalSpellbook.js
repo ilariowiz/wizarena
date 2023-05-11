@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { IoClose } from 'react-icons/io5'
 import allSpells from './Spells'
 import '../../css/Modal.css'
-import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, CTA_COLOR } from '../../actions/types'
+import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
 
 
 class ModalSpellbook extends Component {
@@ -107,7 +107,7 @@ class ModalSpellbook extends Component {
     }
 
 	render() {
-		const { showModal, onCloseModal, width, stats, mainTextColor } = this.props;
+		const { showModal, onCloseModal, width, stats, mainTextColor, mainBackgroundColor } = this.props;
 
         let spellbook = stats.spellbook
 
@@ -117,7 +117,7 @@ class ModalSpellbook extends Component {
 
 		return (
 			<div className={classContainer}>
-				<div style={Object.assign({}, styles.subcontainer, { width })}>
+				<div style={Object.assign({}, styles.subcontainer, { width, backgroundColor: mainBackgroundColor })}>
 
                     <p style={{ fontSize: 18, color: mainTextColor, marginTop: 30, marginBottom: 15 }}>
                         Spellbook
@@ -160,7 +160,6 @@ class ModalSpellbook extends Component {
 const styles = {
 	subcontainer: {
 		minHeight: 300,
-		backgroundColor: "white",
 		borderRadius: 4,
 		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
@@ -193,9 +192,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { mainTextColor } = state.mainReducer
+	const { mainTextColor, mainBackgroundColor } = state.mainReducer
 
-	return { mainTextColor }
+	return { mainTextColor, mainBackgroundColor }
 }
 
 export default connect(mapStateToProps)(ModalSpellbook);

@@ -1,88 +1,11 @@
 .btn {
-	font-size: 20px;
-	color: #21c6e895;
-	cursor: pointer;
-	margin-right: 32px;
-	font-weight: 500;
-	line-height: 1;
-	white-space: nowrap;
-}
-
-.btnMobile {
-	font-size: 17px;
-	color: #21c6e895;
-	cursor: pointer;
-	margin-right: 16px;
-	font-weight: 500;
-	line-height: 1;
-	white-space: nowrap;
+	
 }
 
 .btn:hover {
 	color: #21c6e8;
 }
 
-.btnPressed {
-	font-size: 20px;
-	color: #21c6e8;
-	cursor: pointer;
-	margin-right: 32px;
-	font-weight: 700;
-	line-height: 1;
-	white-space: nowrap;
-}
-
-.btnPressedMobile {
-	font-size: 17px;
-	color: #21c6e8;
-	cursor: pointer;
-	margin-right: 16px;
-	font-weight: 700;
-	line-height: 1;
-	white-space: nowrap;
-}
-
-.btnPressedBlack {
-	font-size: 20px;
-	color: #21c6e8;
-	cursor: pointer;
-	margin-right: 32px;
-	font-weight: 500;
-	line-height: 1;
-	white-space: nowrap;
-}
-
-.btnPressedBlackMobile {
-	font-size: 17px;
-	color: #21c6e8;
-	cursor: pointer;
-	margin-right: 16px;
-	font-weight: 500;
-	line-height: 1;
-	white-space: nowrap;
-}
-
-.homeheader {
-	box-shadow: rgb(7 8 8 / 60%) 0px 0px 8px 0px;
-	height: 72px;
-	min-height: 72px;
-	width: 100%;
-	top: 0;
-	/*position: sticky;*/
-	z-index: 120;
-	justify-content: center;
-}
-
-.homeheaderMobile {
-	box-shadow: rgb(7 8 8 / 60%) 0px 0px 8px 0px;
-	height: 110px;
-	min-height: 110px;
-	width: 100%;
-	top: 0;
-	/*position: sticky;*/
-	z-index: 120;
-	justify-content: center;
-}
 
 .slide-panel-container-off {
 	visibility: hidden;

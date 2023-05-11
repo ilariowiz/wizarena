@@ -19,7 +19,7 @@ import {
 	getMintPrice,
 	updateInfoTransactionModal
 } from '../actions'
-import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
+import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
 
 const logo = require('../assets/wiz_logo_centrale.png')
@@ -655,7 +655,7 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
+		backgroundColor: "white"
 	},
 	container2: {
 		width: '90%',

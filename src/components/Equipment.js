@@ -13,7 +13,7 @@ import EquipmentCard from './common/EquipmentCard'
 import ModalOpenItemsMinted from './common/ModalOpenItemsMinted'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import getBoxWidth from './common/GetBoxW'
-import { MAIN_NET_ID, ITEMS_PER_BLOCK, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR, RING_MINT_PRICE } from '../actions/types'
+import { MAIN_NET_ID, ITEMS_PER_BLOCK, TEXT_SECONDARY_COLOR, CTA_COLOR, RING_MINT_PRICE } from '../actions/types'
 import {
     setNetworkSettings,
 	setNetworkUrl,
@@ -489,7 +489,7 @@ class Equipment extends Component {
     }
 
     renderHeader(isMobile, boxW) {
-		const { totalCountItems, mainTextColor } = this.props
+		const { totalCountItems, mainTextColor, isDarkmode } = this.props
 		const { floor, uniqueOwners, volume, equipped } = this.state
 
 		let items = totalCountItems || 0
@@ -532,8 +532,8 @@ class Equipment extends Component {
 						</p>
 					</a>
 
-                    <div style={{ justifyContent: 'center', alignItems: 'center', width: 100, height: 32, borderRadius: 4, backgroundColor: '#1d1d1f' }}>
-						<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                    <div style={{ justifyContent: 'center', alignItems: 'center', width: 100, height: 32, borderRadius: 4, backgroundColor: mainTextColor }}>
+						<p style={{ fontSize: 15, color: isDarkmode ? 'black' : 'white' }} className="text-medium">
 							Equipment
 						</p>
 					</div>
@@ -556,7 +556,7 @@ class Equipment extends Component {
 
                     <a
                         href={`${window.location.protocol}//${window.location.host}/forge`}
-                        style={styles.btnOffers}
+                        style={Object.assign({}, styles.btnSales, { borderColor: isDarkmode ? 'white' : 'black', marginRight: 10 })}
                         onClick={(e) => {
                             e.preventDefault()
                             this.props.history.push('/forge')
@@ -569,7 +569,7 @@ class Equipment extends Component {
 
                     <a
                         href={`${window.location.protocol}//${window.location.host}/equipmentoffers`}
-                        style={styles.btnOffers}
+                        style={Object.assign({}, styles.btnSales, { borderColor: isDarkmode ? 'white' : 'black', marginRight: 10 })}
                         onClick={(e) => {
                             e.preventDefault()
                             this.props.history.push('/equipmentoffers')
@@ -582,7 +582,7 @@ class Equipment extends Component {
 
                     <a
                         href={`${window.location.protocol}//${window.location.host}/salesequipment`}
-                        style={styles.btnSales}
+                        style={Object.assign({}, styles.btnSales, { borderColor: isDarkmode ? 'white' : 'black' })}
                         onClick={(e) => {
                             e.preventDefault()
                             this.props.history.push('/salesequipment')
@@ -603,13 +603,14 @@ class Equipment extends Component {
 
     renderSearchBar(isMobile, boxW) {
 		const { searchText } = this.state
+        const { mainBackgroundColor, isDarkmode } = this.props
 
         let widthSearch = isMobile ? boxW - 175 : 300
 
 		return (
 			<div style={{ width: '100%', height: 60, alignItems: 'center', marginBottom: 20 }}>
 				<input
-					style={Object.assign({}, styles.inputSearch, { width: widthSearch, color: this.props.mainTextColor })}
+					style={Object.assign({}, styles.inputSearch, { width: widthSearch, color: this.props.mainTextColor, backgroundColor: mainBackgroundColor })}
                     className="text-medium"
 					placeholder='Search by name or id'
 					value={searchText}
@@ -630,11 +631,11 @@ class Equipment extends Component {
 					isMobile ?
 					<button
 						className='btnH'
-						style={{ width: 40, height: 40, marginLeft: 15, backgroundColor: this.props.mainTextColor, borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}
+						style={{ width: 40, height: 40, marginLeft: 15, backgroundColor: isDarkmode ? "white" : '#1d1d1f', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}
 						onClick={() => this.setState({ showFilters: true })}
 					>
 						<BiFilter
-							color='white'
+							color={isDarkmode ? "black" : 'white'}
 							size={24}
 						/>
 					</button>
@@ -729,6 +730,7 @@ class Equipment extends Component {
 						<p style={{ fontSize: 15, color: this.props.mainTextColor }} className="text-medium">{statDisplay}</p>
 					</button>
 				}
+                contentStyle={{ backgroundColor: this.props.mainBackgroundColor }}
 				position="right center"
 				on="click"
 				closeOnDocumentClick
@@ -951,7 +953,7 @@ class Equipment extends Component {
 
     render() {
 		return (
-			<div style={styles.container}>
+			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
 				<Media
 					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
@@ -984,7 +986,6 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: 'white'
 	},
     cardShopStyle: {
         borderRadius: 2,
@@ -1055,7 +1056,7 @@ const styles = {
 	},
     btnStat: {
 		padding: 9,
-		backgroundColor: 'white',
+		backgroundColor: 'transparent',
 		justifyContent: 'center',
 		alignItems: 'center',
 		marginBottom: 20,
@@ -1068,25 +1069,11 @@ const styles = {
 		display: 'flex',
 		flexDirection: 'row'
 	},
-    btnOffers: {
-		width: 130,
-		height: 32,
-		marginRight: 10,
-        marginBottom: 5,
-		borderRadius: 4,
-        borderWidth: 1,
-        borderColor: 'black',
-        borderStyle: 'solid',
-		justifyContent: 'center',
-		alignItems: 'center',
-		display: 'flex',
-	},
     btnSales: {
 		width: 130,
 		height: 32,
         marginBottom: 5,
 		borderWidth: 1,
-		borderColor: 'black',
 		borderStyle: 'solid',
 		borderRadius: 4,
 		justifyContent: 'center',
@@ -1113,10 +1100,10 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, gasPrice, gasLimit, netId, networkUrl, mainTextColor } = state.mainReducer;
+	const { account, chainId, gasPrice, gasLimit, netId, networkUrl, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
     const { statSearchedEquipment, allItems, allItemsIds, totalCountItems, totalMintedItems, itemsBlockId } = state.equipmentReducer
 
-	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, statSearchedEquipment, allItems, allItemsIds, totalCountItems, totalMintedItems, itemsBlockId, mainTextColor };
+	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, statSearchedEquipment, allItems, allItemsIds, totalCountItems, totalMintedItems, itemsBlockId, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {

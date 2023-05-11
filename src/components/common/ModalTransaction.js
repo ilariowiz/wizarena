@@ -16,7 +16,7 @@ import {
 	clearTransactionByPactCode,
 	addTxKeyToListed
 } from '../../actions'
-import { TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../../actions/types'
+import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
 import '../../css/Nft.css'
 
 
@@ -250,7 +250,7 @@ class ModalTransaction extends Component {
 	}
 
 	render() {
-		const { showModal, width, mainTextColor } = this.props;
+		const { showModal, width, mainTextColor, mainBackgroundColor } = this.props;
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 
@@ -258,7 +258,7 @@ class ModalTransaction extends Component {
 
 		return (
 			<div className={classContainer}>
-				<div style={Object.assign({}, styles.subcontainer, { width })}>
+				<div style={Object.assign({}, styles.subcontainer, { width, backgroundColor: mainBackgroundColor })}>
 
 					<p style={{ fontSize: 18, color: mainTextColor, marginBottom: 20, textAlign: 'center' }}>
 						{content.title}
@@ -309,7 +309,6 @@ class ModalTransaction extends Component {
 const styles = {
 	subcontainer: {
 		minHeight: 240,
-		backgroundColor: "white",
 		borderRadius: 4,
 		justifyContent: 'center',
 		alignItems: 'center',
@@ -330,11 +329,11 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { transactionsState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, gasPrice, gasLimit, mainTextColor } = state.mainReducer
+	const { transactionsState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, gasPrice, gasLimit, mainTextColor, mainBackgroundColor } = state.mainReducer
 	const { txInfo, txListen, txSucceed } = state.modalTransactionReducer
 
 
-	return { transactionsState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, gasPrice, gasLimit, txInfo, txListen, txSucceed, mainTextColor }
+	return { transactionsState, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, gasPrice, gasLimit, txInfo, txListen, txSucceed, mainTextColor, mainBackgroundColor }
 }
 
 export default connect(mapStateToProps, {

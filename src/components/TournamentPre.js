@@ -15,7 +15,7 @@ import CardSingleFightProfile from './common/CardSingleFightProfile'
 import Header from './Header'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
-import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
+import { MAIN_NET_ID, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import {
     getBuyin,
     getFeeTournament,
@@ -716,7 +716,7 @@ class Tournament extends Component {
 
     renderTournamentHigh(boxTournamentWidth) {
         const { tournament, tournamentKdaSubs, avgLevelKda } = this.state
-        const { buyin, feeTournament, mainTextColor } = this.props
+        const { buyin, feeTournament, mainTextColor, isDarkmode } = this.props
 
         const fee = buyin * feeTournament / 100
         const totalFee = fee * tournamentKdaSubs
@@ -747,7 +747,7 @@ class Tournament extends Component {
 
         return (
             <div
-                style={Object.assign({}, styles.boxTournament, { width: boxTournamentWidth })}
+                style={Object.assign({}, styles.boxTournament, { width: boxTournamentWidth, backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
             >
                 {
                     tournament.showLeague ?
@@ -845,7 +845,7 @@ class Tournament extends Component {
 
     renderTournamentElite(boxTournamentWidth) {
         const { tournamentElite, tournamentEliteSubs, avgLevelElite } = this.state
-        const { buyinElite, mainTextColor } = this.props
+        const { buyinElite, mainTextColor, isDarkmode } = this.props
 
         let montepremi = tournamentEliteSubs * buyinElite
 
@@ -874,7 +874,7 @@ class Tournament extends Component {
 
         return (
             <div
-                style={Object.assign({}, styles.boxTournament, { width: boxTournamentWidth })}
+                style={Object.assign({}, styles.boxTournament, { width: boxTournamentWidth, backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
             >
                 {
                     tournamentElite.showLeague ?
@@ -972,7 +972,7 @@ class Tournament extends Component {
 
     renderTournamentLow(boxTournamentWidth) {
         const { tournamentWiza, tournamentWizaSubs, avgLevelWiza } = this.state
-        const { buyinWiza, feeTournamentWiza, mainTextColor } = this.props
+        const { buyinWiza, feeTournamentWiza, mainTextColor, isDarkmode } = this.props
 
         const fee = buyinWiza * feeTournamentWiza / 100
         const totalFee = fee * tournamentWizaSubs
@@ -1003,7 +1003,7 @@ class Tournament extends Component {
 
         return (
             <div
-                style={Object.assign({}, styles.boxTournament, { width: boxTournamentWidth })}
+                style={Object.assign({}, styles.boxTournament, { width: boxTournamentWidth, backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
             >
                 {
                     tournamentWiza.showLeague ?
@@ -1228,7 +1228,7 @@ class Tournament extends Component {
 
     renderBody(isMobile) {
         const { tournament, tournamentWiza, tournamentElite, profileFights, error, showProfileFights, showSubs, yourSubs } = this.state
-        const { filtriProfileRanges, mainTextColor } = this.props
+        const { filtriProfileRanges, mainTextColor, mainBackgroundColor } = this.props
 
         let { boxW, modalW, padding } = getBoxWidth(isMobile)
         const insideWidth = boxW > 1250 ? 1250 : boxW
@@ -1347,7 +1347,7 @@ class Tournament extends Component {
 
                 {
                     this.state.toSubscribe.length > 0 &&
-                    <div style={Object.assign({}, styles.footerSubscribe, { bottom: -padding, width: insideWidth })}>
+                    <div style={Object.assign({}, styles.footerSubscribe, { bottom: -padding, width: insideWidth, backgroundColor: mainBackgroundColor })}>
 						{this.renderFooterSubscribe(isMobile)}
 					</div>
                 }
@@ -1388,7 +1388,7 @@ class Tournament extends Component {
 
     render() {
 		return (
-			<div style={styles.container}>
+			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
 				<Media
 					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
@@ -1421,7 +1421,6 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: "white"
 	},
     btnSubscribe: {
         width: "45%",
@@ -1453,7 +1452,6 @@ const styles = {
         borderColor: "#d7d7d7",
         borderStyle: 'solid',
         marginBottom: 20,
-        backgroundColor: "#f2f2f2"
     },
     footerSubscribe: {
 		position: 'sticky',
@@ -1484,9 +1482,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts, wizaBalance, filtriProfileRanges, mainTextColor } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts, wizaBalance, filtriProfileRanges, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts, wizaBalance, filtriProfileRanges, mainTextColor };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts, wizaBalance, filtriProfileRanges, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {

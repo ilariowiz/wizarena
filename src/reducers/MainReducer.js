@@ -45,7 +45,9 @@ import {
 	SET_TIME_TO_HALVENING,
 	SET_VISUAL_COLORS,
 	TEXT_DAY_COLOR,
-	TEXT_NIGHT_COLOR
+	TEXT_NIGHT_COLOR,
+	BACKGROUND_DAY_COLOR,
+	BACKGROUND_NIGHT_COLOR
 } from '../actions/types'
 
 
@@ -97,7 +99,8 @@ const INITIAL_STATE = {
 	filtriRanges: {},
 	filtriProfileRanges: {},
 	isDarkmode: false,
-	mainTextColor: "#1d1d1f"
+	mainTextColor: "#1d1d1f",
+	mainBackgroundColor: "white"
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -254,10 +257,9 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, timeToHalvening: action.payload }
 		case SET_VISUAL_COLORS: {
 			if (action.payload) {
-				return { ...state, mainTextColor: TEXT_NIGHT_COLOR, isDarkmode: true }
+				return { ...state, mainTextColor: TEXT_NIGHT_COLOR, mainBackgroundColor: BACKGROUND_NIGHT_COLOR, isDarkmode: true }
 			}
-
-			return { ...state, mainTextColor: TEXT_DAY_COLOR, isDarkmode: false }
+			return { ...state, mainTextColor: TEXT_DAY_COLOR, mainBackgroundColor: BACKGROUND_DAY_COLOR, isDarkmode: false }
 		}
 		case LOGOUT:
 			return { ...state, account: {}, transactionsState: [], showModalTx: false, isConnectWallet: false, isXWallet: false, isQRWalletConnect: false, userMintedNfts: [], wizaBalance: 0, wizardsStaked: 0, qrWalletConnectClient: undefined, kadenaname:""}

@@ -2,13 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import getImageUrl from './GetImageUrl'
 import '../../css/Modal.css'
-import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, CTA_COLOR } from '../../actions/types'
+import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
 
 
 class ModalFightsFlashTournament extends Component {
 
 	renderFight(item, index) {
-		const { mainTextColor } = this.props
+		const { mainTextColor, isDarkmode } = this.props
 
 		const imgWidth = 60
 
@@ -16,7 +16,7 @@ class ModalFightsFlashTournament extends Component {
 			<a
 				key={index}
 				href={`${window.location.protocol}//${window.location.host}/fight/${item.fightId}`}
-				style={styles.boxFight}
+				style={Object.assign({}, styles.boxFight, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
 				onClick={(e) => {
 					e.preventDefault()
 					this.props.history.push(`/fight/${item.fightId}`)
@@ -98,7 +98,7 @@ class ModalFightsFlashTournament extends Component {
 	}
 
 	render() {
-		const { showModal, width, fights, tournamentInfo, isMobile, mainTextColor } = this.props;
+		const { showModal, width, fights, tournamentInfo, isMobile, mainTextColor, mainBackgroundColor } = this.props;
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 
@@ -123,7 +123,7 @@ class ModalFightsFlashTournament extends Component {
 
 		return (
 			<div className={classContainer}>
-				<div style={Object.assign({}, styles.subcontainer, { width: '80%' })}>
+				<div style={Object.assign({}, styles.subcontainer, { width: '80%', backgroundColor: mainBackgroundColor })}>
 
 					<div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', marginBottom: 25 }}>
 						{
@@ -202,7 +202,6 @@ class ModalFightsFlashTournament extends Component {
 
 const styles = {
 	subcontainer: {
-		backgroundColor: "white",
 		borderRadius: 4,
 		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
@@ -227,15 +226,14 @@ const styles = {
 		alignItems: 'center',
 		justifyContent: 'center',
 		display: 'flex',
-		backgroundColor: '#e9e9e9',
 		borderRadius: 4
 	}
 }
 
 const mapStateToProps = (state) => {
-	const { mainTextColor } = state.mainReducer
+	const { mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer
 
-	return { mainTextColor }
+	return { mainTextColor, mainBackgroundColor, isDarkmode }
 }
 
 export default connect(mapStateToProps)(ModalFightsFlashTournament);

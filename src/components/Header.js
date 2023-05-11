@@ -4,10 +4,9 @@ import _ from 'lodash'
 import moment from 'moment'
 import Popup from 'reactjs-popup';
 import BounceLoader from 'react-spinners/BounceLoader';
-import { IoMenu } from 'react-icons/io5'
-import { IoClose } from 'react-icons/io5'
-import { SiDiscord } from 'react-icons/si'
-import { SiTwitter } from 'react-icons/si'
+import { IoMenu, IoClose } from 'react-icons/io5'
+import { SiDiscord, SiTwitter } from 'react-icons/si'
+import { MdDarkMode, MdOutlineDarkMode } from 'react-icons/md'
 import ModalBuyWIZA from './common/ModalBuyWIZA'
 import ModalTransaction from './common/ModalTransaction'
 import getBoxWidth from './common/GetBoxW'
@@ -44,6 +43,14 @@ const shop_icon = require('../assets/menu/black/shop.png')
 const pvp_icon = require('../assets/menu/black/pvp.png')
 const tournaments_icon = require('../assets/menu/black/tournaments.png')
 const challenges_icon = require('../assets/menu/black/wand.png')
+
+const market_icon_night = require('../assets/menu/marketplace.png')
+const flash_icon_night = require('../assets/menu/flash_tournament.png')
+const profile_icon_night = require('../assets/menu/profile.png')
+const shop_icon_night = require('../assets/menu/shop.png')
+const pvp_icon_night = require('../assets/menu/pvp.png')
+const tournaments_icon_night = require('../assets/menu/tournaments.png')
+const challenges_icon_night = require('../assets/menu/wand.png')
 
 class Header extends Component {
 	constructor(props) {
@@ -180,7 +187,7 @@ class Header extends Component {
 
 	renderSlidePanel(boxW) {
 		const { showPanel } = this.state
-		const { isMobile, circulatingSupply, wizaNotClaimed, totalMined, account, netId, isXWallet, isQRWalletConnect, timeToHalvening, mainTextColor } = this.props
+		const { isMobile, circulatingSupply, wizaNotClaimed, totalMined, account, netId, isXWallet, isQRWalletConnect, timeToHalvening, mainTextColor, isDarkmode, mainBackgroundColor } = this.props
 
 		const panelWidth = isMobile ? "100%" : boxW * 60 / 100
 
@@ -189,7 +196,7 @@ class Header extends Component {
 
 				<div
 					className={showPanel ? "slide-panel-container-on" : "slide-panel-container-off"}
-					style={Object.assign({}, styles.panel, { width: showPanel ? panelWidth : 0, zIndex: 1000 })}
+					style={Object.assign({}, styles.panel, { width: showPanel ? panelWidth : 0, zIndex: 1000, backgroundColor: mainBackgroundColor })}
 				>
 
 					<div style={styles.headerPanel}>
@@ -279,7 +286,7 @@ class Header extends Component {
 
 						<button
 							className="btnH"
-							style={Object.assign({}, styles.btnLogout, { borderColor: '#1d1d1f', marginBottom: 20, width: 180, height: 36 })}
+							style={Object.assign({}, styles.btnLogout, { borderColor: isDarkmode ? '#d7d7d7' : mainTextColor, marginBottom: 20, width: 180, height: 36 })}
 							onClick={() => this.setState({ showModalBuy: true })}
 						>
 							<p style={{ fontSize: 14, color: mainTextColor }} className="text-medium">
@@ -428,6 +435,28 @@ class Header extends Component {
 							Check your Druid rarity
 						</p>
 
+						<p style={{ fontSize: 22, color: mainTextColor, marginBottom: 20 }}>
+							Dark Mode
+						</p>
+
+						<button
+							style={styles.btnDarkMode}
+							onClick={() => this.props.setVisualColors(!this.props.isDarkmode)}
+						>
+							{
+								!isDarkmode ?
+								<MdDarkMode
+									size={26}
+									color='black'
+								/>
+								:
+								<MdOutlineDarkMode
+									size={26}
+									color='black'
+								/>
+							}
+						</button>
+
 						{
 							account.account &&
 							<div style={{ flexDirection: 'column', marginTop: 30 }}>
@@ -478,7 +507,7 @@ class Header extends Component {
 
 	renderSlidePanelPlay(isMobile) {
 		const { showPopupMenu } = this.state
-		const { mainTextColor } = this.props
+		const { mainTextColor, mainBackgroundColor } = this.props
 
 		const panelWidth = isMobile ? "70%" : "30%"
 
@@ -487,7 +516,7 @@ class Header extends Component {
 
 				<div
 					className={showPopupMenu ? "slide-panel-container-on" : "slide-panel-container-off"}
-					style={Object.assign({}, styles.panel, { width: showPopupMenu ? panelWidth : 0, zIndex: 997 })}
+					style={Object.assign({}, styles.panel, { width: showPopupMenu ? panelWidth : 0, zIndex: 997, backgroundColor: mainBackgroundColor })}
 				>
 
 					<div style={styles.headerPanel}>
@@ -525,12 +554,14 @@ class Header extends Component {
 	}
 
 	renderPlayMenu() {
+		const { isDarkmode } = this.props
+
 		return (
 			<div style={{ flexDirection: "column", flexWrap: 'wrap' }}>
 
 				{this.renderBtnMenu(
 					'pvp',
-					pvp_icon,
+					isDarkmode ? pvp_icon_night : pvp_icon,
 					"PvP",
 					99,
 					16)
@@ -538,7 +569,7 @@ class Header extends Component {
 
 				{this.renderBtnMenu(
 					'flashtournaments',
-					flash_icon,
+					isDarkmode ? flash_icon_night : flash_icon,
 					"Flash Tournaments",
 					99,
 					16)
@@ -546,7 +577,7 @@ class Header extends Component {
 
 				{this.renderBtnMenu(
 					'tournaments',
-					tournaments_icon,
+					isDarkmode ? tournaments_icon_night : tournaments_icon,
 					"Weekly Tournaments",
 					99,
 					16)
@@ -555,7 +586,7 @@ class Header extends Component {
 
 				{this.renderBtnMenu(
 					'challenges',
-					challenges_icon,
+					isDarkmode ? challenges_icon_night : challenges_icon,
 					"Challenges",
 					99,
 					16)
@@ -700,16 +731,17 @@ class Header extends Component {
 
 	renderDesktop() {
 		const { boxW, modalW, padding } = getBoxWidth(false)
+		const { mainBackgroundColor, isDarkmode } = this.props
 
 		return (
-			<div style={{ flexDirection: 'row', width: '100%', paddingLeft: padding, paddingRight: padding, paddingTop: 8, paddingBottom: 8, backgroundColor: 'white', position: 'relative', alignItems: 'center', justifyContent: 'space-between' }} id="headerbox">
+			<div style={{ flexDirection: 'row', width: '100%', paddingLeft: padding, paddingRight: padding, paddingTop: 8, paddingBottom: 8, backgroundColor: mainBackgroundColor, position: 'relative', alignItems: 'center', justifyContent: 'space-between' }} id="headerbox">
 
 				{this.renderLogo()}
 
 				<div style={{ alignItems: 'center', justifyContent: 'center' }}>
 					{this.renderBtnMenu(
 						'collection',
-						market_icon,
+						isDarkmode ? market_icon_night : market_icon,
 						"Marketplace",
 						1,
 						14)
@@ -717,7 +749,7 @@ class Header extends Component {
 
 					{this.renderBtnMenu(
 						'me',
-						profile_icon,
+						isDarkmode ? profile_icon_night : profile_icon,
 						"Profile",
 						3,
 						14)
@@ -725,7 +757,7 @@ class Header extends Component {
 
 					{this.renderBtnMenu(
 						'magicshop',
-						shop_icon,
+						isDarkmode ? shop_icon_night : shop_icon,
 						"Magic shop",
 						5,
 						14)
@@ -802,7 +834,7 @@ class Header extends Component {
 
 	renderBtnPlay(isMobile, id, title) {
 		const { showPopupMenu } = this.state
-		const { section, mainTextColor } = this.props
+		const { section, mainTextColor, isDarkmode } = this.props
 
 		let iconSize = isMobile ? 35 : 28
 
@@ -816,7 +848,7 @@ class Header extends Component {
 				>
 					<img
 						style={{ width: iconSize, height: iconSize }}
-						src={pvp_icon}
+						src={isDarkmode ? pvp_icon_night : pvp_icon}
 						alt={title}
 					/>
 					{
@@ -897,37 +929,37 @@ class Header extends Component {
 
 	renderMobile() {
 		const { showPanel } = this.state
-		const { transactionsState, showModalTx, mainTextColor } = this.props
+		const { transactionsState, showModalTx, mainTextColor, mainBackgroundColor, isDarkmode } = this.props
 
 		const { boxW, modalW, padding } = getBoxWidth(true)
 
 		return (
-			<div style={{ flexDirection: 'row', width: '100%', paddingLeft: padding, paddingRight: padding, paddingTop: 8, paddingBottom: 8, backgroundColor: 'white', position: 'relative', alignItems: 'center', justifyContent: 'space-between' }} id="headerbox">
+			<div style={{ flexDirection: 'row', width: '100%', paddingLeft: padding, paddingRight: padding, paddingTop: 8, paddingBottom: 8, backgroundColor: mainBackgroundColor, position: 'relative', alignItems: 'center', justifyContent: 'space-between' }} id="headerbox">
 
 				{this.renderLogo()}
 
 				<div style={{ alignItems: 'center', justifyContent: 'center' }}>
 					{this.renderBtnMenuMobile(
 						'collection',
-						market_icon,
+						isDarkmode ? market_icon_night : market_icon,
 						1)
 					}
 
 					{this.renderBtnMenuMobile(
 						'me',
-						profile_icon,
+						isDarkmode ? profile_icon_night : profile_icon,
 						3)
 					}
 
 					{this.renderBtnMenuMobile(
 						'magicshop',
-						shop_icon,
+						isDarkmode ? shop_icon_night : shop_icon,
 						5)
 					}
 
 					{this.renderBtnMenuMobile(
 						'play',
-						pvp_icon,
+						isDarkmode ? pvp_icon_night : pvp_icon,
 						7)
 					}
 				</div>
@@ -1015,7 +1047,6 @@ const styles = {
 		position: 'absolute',
 	},
 	panel: {
-		backgroundColor: 'white',
 		flexDirection: 'column',
 		overflow: 'auto',
 	},
@@ -1043,13 +1074,24 @@ const styles = {
 		cursor: 'pointer',
 		padding: 16
 	},
+	btnDarkMode: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'center',
+		padding: 4,
+		marginBottom: 20,
+		backgroundColor: "#d7d7d7",
+		width: 36,
+		height: 36,
+		borderRadius: 18
+	}
 }
 
 const mapStateToProps = (state) => {
-	const { allNftsIds, timeToHalvening, totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, transactionsState, isDarkmode, mainTextColor } = state.mainReducer
+	const { allNftsIds, timeToHalvening, totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, transactionsState, isDarkmode, mainTextColor, mainBackgroundColor } = state.mainReducer
 	const { txInfo } = state.modalTransactionReducer
 
-	return { allNftsIds, timeToHalvening, totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, txInfo, transactionsState, isDarkmode, mainTextColor }
+	return { allNftsIds, timeToHalvening, totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, txInfo, transactionsState, isDarkmode, mainTextColor, mainBackgroundColor }
 }
 
 export default connect(mapStateToProps, {

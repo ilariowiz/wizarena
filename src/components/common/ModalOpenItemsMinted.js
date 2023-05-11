@@ -4,7 +4,7 @@ import DotLoader from 'react-spinners/DotLoader';
 import EquipmentCard from './EquipmentCard'
 import '../../css/Modal.css'
 import '../../css/ItemCard.css'
-import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, CTA_COLOR } from '../../actions/types'
+import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
 import {
     loadEquipMinted
 } from '../../actions'
@@ -95,7 +95,7 @@ class ModalOpenItemsMinted extends Component {
     }
 
 	render() {
-		const { showModal } = this.props;
+		const { showModal, mainBackgroundColor } = this.props;
         const { lastMinted, loading } = this.state
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
@@ -105,7 +105,7 @@ class ModalOpenItemsMinted extends Component {
 
 		return (
 			<div className={classContainer}>
-				<div style={Object.assign({}, styles.subcontainer, { width, maxHeight })}>
+				<div style={Object.assign({}, styles.subcontainer, { width, maxHeight, backgroundColor: mainBackgroundColor })}>
 
 					<p style={{ color: 'white', fontSize: 22, marginBottom: 20, marginTop: 20 }}>
 						Open the freshly minted chests:
@@ -146,7 +146,6 @@ class ModalOpenItemsMinted extends Component {
 
 const styles = {
 	subcontainer: {
-		backgroundColor: BACKGROUND_COLOR,
 		borderRadius: 2,
 		borderColor: TEXT_SECONDARY_COLOR,
 		borderStyle: 'solid',
@@ -172,9 +171,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-    const { account, chainId, gasPrice, gasLimit, networkUrl } = state.mainReducer
+    const { account, chainId, gasPrice, gasLimit, networkUrl, mainBackgroundColor } = state.mainReducer
 
-    return { account, chainId, gasPrice, gasLimit, networkUrl }
+    return { account, chainId, gasPrice, gasLimit, networkUrl, mainBackgroundColor }
 }
 
 export default connect(mapStateToProps, {

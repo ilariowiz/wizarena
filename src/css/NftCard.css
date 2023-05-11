@@ -8,7 +8,7 @@
 	border-radius: 6px;
 	cursor: pointer;
 	margin-right: 12px;
-	background-color: #ffffff;
+	background-color: transparent;
 	display: flex;
 	height: fit-content;
 	overflow: hidden;

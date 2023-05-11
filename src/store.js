@@ -8,7 +8,7 @@ import reducers from './reducers';
 
 const saveSubsetMain = createFilter(
 	'mainReducer',
-	['account', 'chainId', 'isXWallet', 'isQRWalletConnect', 'qrWalletConnectClient', 'wizardSelectedIdShop', 'kadenaname', 'hideNavBar', 'transactionsState', 'mainTextColor', 'isDarkmode']
+	['account', 'chainId', 'isXWallet', 'isQRWalletConnect', 'qrWalletConnectClient', 'wizardSelectedIdShop', 'kadenaname', 'hideNavBar', 'transactionsState', 'mainTextColor', 'mainBackgroundColor', 'isDarkmode']
 )
 
 const saveSubsetSales = createFilter(

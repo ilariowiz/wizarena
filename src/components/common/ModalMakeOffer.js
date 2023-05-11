@@ -4,7 +4,7 @@ import moment from 'moment'
 import { IoClose } from 'react-icons/io5'
 import { AiOutlineCheck } from 'react-icons/ai'
 import '../../css/Modal.css'
-import { TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../../actions/types'
+import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
 import '../../css/Nft.css'
 
 
@@ -56,7 +56,7 @@ class ModalMakeOffer extends Component {
 	}
 
 	render() {
-		const { showModal, onCloseModal, width, mainTextColor } = this.props;
+		const { showModal, onCloseModal, width, mainTextColor, mainBackgroundColor } = this.props;
 		const { inputOffer, duration, acceptCondition, error } = this.state
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
@@ -67,7 +67,7 @@ class ModalMakeOffer extends Component {
 
 		return (
 			<div className={classContainer}>
-				<div style={Object.assign({}, styles.subcontainer, { width })}>
+				<div style={Object.assign({}, styles.subcontainer, { width, backgroundColor: mainBackgroundColor })}>
 
 					<p style={{ color: mainTextColor, fontSize: 18, marginBottom: 10 }} className="text-medium">
 						Make an offer
@@ -182,7 +182,6 @@ const styles = {
 	subcontainer: {
 		paddingTop: 15,
 		paddingBottom: 15,
-		backgroundColor: "white",
 		borderRadius: 4,
 		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
@@ -222,9 +221,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { mainTextColor } = state.mainReducer
+	const { mainTextColor, mainBackgroundColor } = state.mainReducer
 
-	return { mainTextColor }
+	return { mainTextColor, mainBackgroundColor }
 }
 
 export default connect(mapStateToProps)(ModalMakeOffer);

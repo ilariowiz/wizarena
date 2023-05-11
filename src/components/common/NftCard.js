@@ -11,7 +11,7 @@ const logoKda = require('../../assets/kdalogo2.png')
 
 class NftCard extends Component {
 	render() {
-		const { item, history, width, mainTextColor } = this.props
+		const { item, history, width, mainTextColor, isDarkmode } = this.props
 
 		return (
 			<a
@@ -53,7 +53,7 @@ class NftCard extends Component {
 									Level
 								</p>
 
-								<p style={{ color: getColorTextBasedOnLevel(item.level), fontSize: 15 }} className="text-bold">
+								<p style={{ color: getColorTextBasedOnLevel(item.level, isDarkmode), fontSize: 15 }} className="text-bold">
 									{item.level}
 								</p>
 							</div>
@@ -86,9 +86,9 @@ class NftCard extends Component {
 }
 
 const mapStateToProps = (state) => {
-	const { mainTextColor } = state.mainReducer
+	const { mainTextColor, isDarkmode } = state.mainReducer
 
-	return { mainTextColor }
+	return { mainTextColor, isDarkmode }
 }
 
 export default connect(mapStateToProps, {

@@ -41,7 +41,7 @@ import {
 	declineOffer,
 	getWalletXp
 } from '../actions'
-import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
+import { MAIN_NET_ID, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import '../css/Nft.css'
 import 'reactjs-popup/dist/index.css';
 
@@ -631,7 +631,7 @@ class Profile extends Component {
 
 	renderBoxSearchStat(statName, statDisplay, list) {
 		const { statSearched } = this.state
-		const { mainTextColor } = this.props
+		const { mainTextColor, mainBackgroundColor } = this.props
 
 		//console.log(statSearched);
 
@@ -665,6 +665,7 @@ class Profile extends Component {
 						}
 					</button>
 				}
+				contentStyle={{ backgroundColor: this.props.mainBackgroundColor }}
 				position="right center"
 				on="click"
 				closeOnDocumentClick
@@ -805,6 +806,27 @@ class Profile extends Component {
 		)
 	}
 
+	calcWidthOfNft(widthNfts) {
+		let widthN = Math.floor(widthNfts / 4)
+
+		if (widthN < 200) {
+			widthN = Math.floor(widthNfts / 3)
+
+			if (widthN < 180) {
+				widthN = Math.floor(widthNfts / 2)
+				return widthN
+			}
+
+			return widthN
+		}
+		else if (widthN > 300) {
+			widthN = Math.floor(widthNfts / 5)
+			return widthN
+		}
+
+		return widthN
+	}
+
 	renderYourEquip(width, isMobile) {
 		const { equipment, itemsToShow, loading } = this.state
 
@@ -812,6 +834,7 @@ class Profile extends Component {
 
 		const widthSide = 180
 		const widthNfts = isMobile ? width : width - widthSide
+		let nftWidth = this.calcWidthOfNft(widthNfts) - 36;
 
 		return (
 			<div style={{ width }}>
@@ -842,6 +865,7 @@ class Profile extends Component {
 				                item={item}
 				                index={index}
 				                history={this.props.history}
+								nftWidth={nftWidth}
 				            />
 				        )
 					})}
@@ -898,26 +922,28 @@ class Profile extends Component {
 
 	renderMenu(isMobile) {
 		const { section, loading, equipment, offersMade, offersReceived, offersEquipmentMade } = this.state;
-		const { userMintedNfts, mainTextColor } = this.props
+		const { userMintedNfts, mainTextColor, mainBackgroundColor, isDarkmode } = this.props
+
+		let textColor = isDarkmode ? "#1d1d1f" : "white"
 
 		return (
 			<div style={{ alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', borderColor: '#d7d7d7', borderStyle: 'solid', borderRadius: 4, borderWidth: 1, padding: 6, marginBottom: 30, marginTop: 20 }}>
 
 				<button
-					style={Object.assign({}, styles.btnMenu, { backgroundColor: section === 1 ? mainTextColor : 'white' })}
+					style={Object.assign({}, styles.btnMenu, { backgroundColor: section === 1 ? mainTextColor : 'transparent' })}
 					onClick={() => {
 						if (this.state.section !== 1) {
 							this.setState({ section: 1 })
 						}
 					}}
 				>
-					<p style={{ fontSize: 14, color: section === 1 ? "white" : mainTextColor }} className="text-medium">
+					<p style={{ fontSize: 14, color: section === 1 ? textColor : mainTextColor }} className="text-medium">
 						Collection {userMintedNfts ? `(${userMintedNfts.length})` : ""}
 					</p>
 				</button>
 
 				<button
-					style={Object.assign({}, styles.btnMenu, { backgroundColor: section === 5 ? mainTextColor : 'white' })}
+					style={Object.assign({}, styles.btnMenu, { backgroundColor: section === 5 ? mainTextColor : 'transparent' })}
 					onClick={() => {
 						if (loading) {
 							return
@@ -927,13 +953,13 @@ class Profile extends Component {
 						this.loadEquip()
 					}}
 				>
-					<p style={{ fontSize: 14, color: section === 5 ? "white" : mainTextColor }} className="text-medium">
+					<p style={{ fontSize: 14, color: section === 5 ? textColor : mainTextColor }} className="text-medium">
 						Equipment {equipment && equipment.length > 0 ? `(${equipment.length})` : ""}
 					</p>
 				</button>
 
 				<button
-					style={Object.assign({}, styles.btnMenu, { backgroundColor: section === 3 ? mainTextColor : 'white' })}
+					style={Object.assign({}, styles.btnMenu, { backgroundColor: section === 3 ? mainTextColor : 'transparent' })}
 					onClick={() => {
 						if (loading || !userMintedNfts) {
 							return
@@ -943,13 +969,13 @@ class Profile extends Component {
 						this.loadOffersMade()
 					}}
 				>
-					<p style={{ fontSize: 14, color: section === 3 ? "white" : mainTextColor }} className="text-medium">
+					<p style={{ fontSize: 14, color: section === 3 ? textColor : mainTextColor }} className="text-medium">
 						{offersMade && offersMade.length + offersEquipmentMade.length > 0 ? `Offers made (${offersMade.length + offersEquipmentMade.length})` : "Offers made"}
 					</p>
 				</button>
 
 				<button
-					style={Object.assign({}, styles.btnMenu, { backgroundColor: section === 4 ? mainTextColor : 'white' })}
+					style={Object.assign({}, styles.btnMenu, { backgroundColor: section === 4 ? mainTextColor : 'transparent' })}
 					onClick={() => {
 						if (loading || !userMintedNfts) {
 							return
@@ -959,7 +985,7 @@ class Profile extends Component {
 						this.loadOffersReceived()
 					}}
 				>
-					<p style={{ fontSize: 14, color: section === 4 ? "white" : mainTextColor }} className="text-medium">
+					<p style={{ fontSize: 14, color: section === 4 ? textColor : mainTextColor }} className="text-medium">
 						{offersReceived && offersReceived.length > 0 ? `Offers received (${offersReceived.length})` : "Offers received"}
 					</p>
 				</button>
@@ -1159,7 +1185,7 @@ class Profile extends Component {
 
 	render() {
 		return (
-			<div style={styles.container}>
+			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
 				<Media
 					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
@@ -1192,7 +1218,6 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: "white"
 	},
 	btnConnect: {
 		width: 300,
@@ -1236,7 +1261,7 @@ const styles = {
 	},
 	btnStat: {
 		padding: 9,
-		backgroundColor: 'white',
+		backgroundColor: 'transparent',
 		justifyContent: 'center',
 		alignItems: 'center',
 		marginBottom: 20,
@@ -1252,9 +1277,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, wizaBalance, walletXp, filtriProfileRanges, mainTextColor } = state.mainReducer;
+	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, wizaBalance, walletXp, filtriProfileRanges, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, wizaBalance, walletXp, filtriProfileRanges, mainTextColor };
+	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, wizaBalance, walletXp, filtriProfileRanges, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {

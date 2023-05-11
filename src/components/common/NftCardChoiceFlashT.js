@@ -29,7 +29,7 @@ class NftCardChoiceFlashT extends Component {
 	}
 
 	render() {
-		const { item, width, mainTextColor } = this.props
+		const { item, width, mainTextColor, isDarkmode } = this.props
 
         const level = calcLevelWizard(item)
 
@@ -65,7 +65,7 @@ class NftCardChoiceFlashT extends Component {
                                 <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
                                     Level
                                 </p>
-                                <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 17 }} className="text-bold">
+                                <p style={{ color: getColorTextBasedOnLevel(level, isDarkmode), fontSize: 17 }} className="text-bold">
                                     {level}
                                 </p>
                             </div>
@@ -114,9 +114,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-    const { mainTextColor } = state.mainReducer
+    const { mainTextColor, isDarkmode } = state.mainReducer
 
-    return { mainTextColor }
+    return { mainTextColor, isDarkmode }
 }
 
 export default connect(mapStateToProps)(NftCardChoiceFlashT)

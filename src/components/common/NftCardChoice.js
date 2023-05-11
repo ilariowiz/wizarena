@@ -56,7 +56,7 @@ class NftCardChoice extends Component {
     }
 
 	render() {
-		const { item, width, canSubscribe, toSubscribe, subscriptionsInfo, mainTextColor } = this.props
+		const { item, width, canSubscribe, toSubscribe, subscriptionsInfo, mainTextColor, isDarkmode } = this.props
 
         //console.log(subscriptionsInfo)
 
@@ -105,7 +105,7 @@ class NftCardChoice extends Component {
                                 <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
                                     Level
                                 </p>
-                                <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 17 }} className="text-bold">
+                                <p style={{ color: getColorTextBasedOnLevel(level, isDarkmode), fontSize: 17 }} className="text-bold">
                                     {level}
                                 </p>
                             </div>
@@ -221,9 +221,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor } = state.mainReducer
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor, isDarkmode } = state.mainReducer
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor }
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor, isDarkmode }
 }
 
 export default connect(mapStateToProps)(NftCardChoice);

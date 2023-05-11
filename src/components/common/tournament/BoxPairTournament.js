@@ -1,7 +1,7 @@
 import React from 'react'
 import getImageUrl from '../GetImageUrl'
 
-const boxPairTournament = (item, index, userMinted, mainTextColor, subscribed) => {
+const boxPairTournament = (item, index, userMinted, mainTextColor, subscribed, history) => {
 
     let is1mine = false
     let is2mine = false
@@ -48,7 +48,7 @@ const boxPairTournament = (item, index, userMinted, mainTextColor, subscribed) =
                     href={`${window.location.protocol}//${window.location.host}/nft/${item.s1.id}`}
                     onClick={(e) => {
                         e.preventDefault()
-                        this.props.history.push(`/nft/${item.s1.id}`)
+                        history.push(`/nft/${item.s1.id}`)
                     }}
                 >
                     <img
@@ -77,7 +77,7 @@ const boxPairTournament = (item, index, userMinted, mainTextColor, subscribed) =
                         href={`${window.location.protocol}//${window.location.host}/nft/${item.s2.id}`}
                         onClick={(e) => {
                             e.preventDefault()
-                            this.props.history.push(`/nft/${item.s2.id}`)
+                            history.push(`/nft/${item.s2.id}`)
                         }}
                     >
                         <img

@@ -8,7 +8,7 @@ const logoWiza = require('../../assets/wzlogo_bg_transparent.png')
 
 class EquipmentCard extends Component {
     render() {
-        const { item, history, nftWidth, mainTextColor } = this.props
+        const { item, history, nftWidth, mainTextColor, isDarkmode } = this.props
 
         //console.log(item);
 
@@ -18,7 +18,7 @@ class EquipmentCard extends Component {
             <a
 				href={`${window.location.protocol}//${window.location.host}/item/${item.id}`}
 				className='containerItem'
-                style={{ width: nftWidth, backgroundColor: "#f2f2f2" }}
+                style={{ width: nftWidth, backgroundColor: isDarkmode ? "rgb(242 242 242 / 10%)" : "#f2f2f2" }}
 				onClick={(e) => {
 					e.preventDefault()
 					history.push(`/item/${item.id}`)
@@ -93,9 +93,9 @@ class EquipmentCard extends Component {
 }
 
 const mapStateToProps = (state) => {
-	const { mainTextColor } = state.mainReducer
+	const { mainTextColor, isDarkmode } = state.mainReducer
 
-	return { mainTextColor }
+	return { mainTextColor, isDarkmode }
 }
 
 export default connect(mapStateToProps)(EquipmentCard)

@@ -14,7 +14,7 @@ import graphSubscribers from './common/tournament/GraphSubscribers'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import convertMedalName from './common/ConvertMedalName'
-import { MAIN_NET_ID, BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
+import { MAIN_NET_ID, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import {
     getMontepremi,
     getBuyin,
@@ -84,7 +84,7 @@ class Tournament extends Component {
                 nRounds: 6,
                 name: "t7_r6",
                 roundEnded: "5",
-                showPair: false,
+                showPair: true,
                 showLeague: true,
                 region: "ciao",
                 event: "sunburst",
@@ -371,7 +371,7 @@ class Tournament extends Component {
 
                 <div style={{ width: boxW, flexWrap: 'wrap' }}>
                     {matchPair.map((item, index) => {
-                        return boxPairTournament(item, index, userMinted, mainTextColor, subscribed)
+                        return boxPairTournament(item, index, userMinted, mainTextColor, subscribed, this.props.history)
                     })}
                 </div>
             </div>
@@ -509,7 +509,7 @@ class Tournament extends Component {
 
     render() {
 		return (
-			<div style={styles.container}>
+			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
 				<Media
 					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
@@ -542,7 +542,6 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: "white"
 	},
     btnSubscribe: {
         width: 250,
@@ -565,9 +564,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, montepremi, buyin, feeTournament, subscribed, subscribedKdaSpellGraph, mainTextColor } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, montepremi, buyin, feeTournament, subscribed, subscribedKdaSpellGraph, mainTextColor, mainBackgroundColor } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, montepremi, buyin, feeTournament, subscribed, subscribedKdaSpellGraph, mainTextColor };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, montepremi, buyin, feeTournament, subscribed, subscribedKdaSpellGraph, mainTextColor, mainBackgroundColor };
 }
 
 export default connect(mapStateToProps, {

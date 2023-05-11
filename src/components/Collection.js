@@ -18,7 +18,7 @@ import {
 	storeFiltersStats,
 	getWizardsStakedCount
 } from '../actions'
-import { MAIN_NET_ID, ITEMS_PER_BLOCK, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
+import { MAIN_NET_ID, ITEMS_PER_BLOCK, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
 import 'reactjs-popup/dist/index.css';
 import '../css/Header.css'
@@ -431,7 +431,7 @@ class Collection extends Component {
 	}
 
 	renderHeader(isMobile, boxW) {
-		const { totalCountNfts, wizardsStaked, mainTextColor } = this.props
+		const { totalCountNfts, wizardsStaked, mainTextColor, isDarkmode } = this.props
 		const { floor, uniqueOwners, volume, listed } = this.state
 
 		let items = totalCountNfts || 0
@@ -444,7 +444,7 @@ class Collection extends Component {
 				<div style={{ alignItems: 'center', justifyContent: 'center', borderColor: '#d7d7d7', borderStyle: 'solid', borderRadius: 4, borderWidth: 1, padding: 6, marginBottom: 40 }}>
 
 					<div style={{ justifyContent: 'center', alignItems: 'center', width: 100, height: 32, borderRadius: 4, backgroundColor: mainTextColor }}>
-						<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+						<p style={{ fontSize: 15, color: isDarkmode ? 'black' : 'white' }} className="text-medium">
 							Wizards
 						</p>
 					</div>
@@ -480,7 +480,7 @@ class Collection extends Component {
 				<div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 20, justifyContent: 'center' }}>
 					<a
 						href={`${window.location.protocol}//${window.location.host}/sales`}
-	                    style={styles.btnSales}
+	                    style={Object.assign({}, styles.btnSales, { borderColor: isDarkmode ? 'white' : 'black' })}
 	                    onClick={(e) => {
 							e.preventDefault()
 							this.props.history.push('/sales')
@@ -493,7 +493,7 @@ class Collection extends Component {
 
 					<a
 						href={`${window.location.protocol}//${window.location.host}/burningqueue`}
-	                    style={styles.btnSales}
+	                    style={Object.assign({}, styles.btnSales, { borderColor: isDarkmode ? 'white' : 'black' })}
 						onClick={(e) => {
 							e.preventDefault()
 							this.props.history.push('/burningqueue')
@@ -514,13 +514,14 @@ class Collection extends Component {
 
 	renderSearchBar(isMobile, boxW) {
 		const { searchText } = this.state
+		const { mainBackgroundColor, isDarkmode } = this.props
 
 		let widthSearch = isMobile ? boxW - 175 : 300
 
 		return (
 			<div style={{ width: '100%', height: 60, alignItems: 'center', marginBottom: 20 }}>
 				<input
-					style={Object.assign({}, styles.inputSearch, { width: widthSearch, color: this.props.mainTextColor })}
+					style={Object.assign({}, styles.inputSearch, { width: widthSearch, color: this.props.mainTextColor, backgroundColor: mainBackgroundColor })}
 					className="text-medium"
 					placeholder='Search by # or nickname'
 					value={searchText}
@@ -541,11 +542,11 @@ class Collection extends Component {
 					isMobile ?
 					<button
 						className='btnH'
-						style={{ width: 40, height: 40, marginLeft: 15, backgroundColor: '#1d1d1f', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}
+						style={{ width: 40, height: 40, marginLeft: 15, backgroundColor: isDarkmode ? "white" : '#1d1d1f', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}
 						onClick={() => this.setState({ showFilters: true })}
 					>
 						<BiFilter
-							color='white'
+							color={isDarkmode ? "black" : 'white'}
 							size={24}
 						/>
 					</button>
@@ -603,7 +604,7 @@ class Collection extends Component {
 	}
 
 	renderBoxSearchStat(statName, statDisplay, list) {
-		const { statSearched, mainTextColor } = this.props
+		const { statSearched, mainTextColor, mainBackgroundColor } = this.props
 
 		//console.log(statSearched);
 
@@ -637,6 +638,7 @@ class Collection extends Component {
 						}
 					</button>
 				}
+				contentStyle={{ backgroundColor: mainBackgroundColor }}
 				position="right center"
 				on="click"
 				closeOnDocumentClick
@@ -742,7 +744,7 @@ class Collection extends Component {
 
 	renderSlidePanel(boxW, widthSide) {
 		const { showFilters } = this.state
-		const { filtriRanges, mainTextColor } = this.props
+		const { filtriRanges, mainTextColor, mainBackgroundColor } = this.props
 
 		const panelWidth = "90%"
 
@@ -751,7 +753,7 @@ class Collection extends Component {
 
 				<div
 					className={showFilters ? "slide-panel-container-on" : "slide-panel-container-off"}
-					style={Object.assign({}, styles.panel, { width: showFilters ? panelWidth : 0, zIndex: 997 })}
+					style={Object.assign({}, styles.panel, { width: showFilters ? panelWidth : 0, zIndex: 997, backgroundColor: mainBackgroundColor })}
 				>
 
 					<div style={styles.headerPanel}>
@@ -964,7 +966,7 @@ class Collection extends Component {
 
 	render() {
 		return (
-			<div style={styles.container}>
+			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
 				<Media
 					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
@@ -997,7 +999,6 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: 'white'
 	},
 	rowStyle: {
 		width: '100%',
@@ -1043,7 +1044,7 @@ const styles = {
 	},
 	btnStat: {
 		padding: 9,
-		backgroundColor: 'white',
+		backgroundColor: 'transparent',
 		justifyContent: 'center',
 		alignItems: 'center',
 		marginBottom: 20,
@@ -1062,19 +1063,6 @@ const styles = {
 		marginRight: 10,
 		marginBottom: 5,
 		borderWidth: 1,
-		borderColor: 'black',
-		borderStyle: 'solid',
-		borderRadius: 4,
-		justifyContent: 'center',
-		alignItems: 'center',
-		display: 'flex'
-	},
-	btnBurning: {
-		width: 130,
-		height: 32,
-		marginBottom: 5,
-		borderWidth: 1,
-		borderColor: '#840fb2',
 		borderStyle: 'solid',
 		borderRadius: 4,
 		justifyContent: 'center',
@@ -1086,7 +1074,6 @@ const styles = {
 		position: 'absolute',
 	},
 	panel: {
-		backgroundColor: 'white',
 		flexDirection: 'column',
 		overflow: 'auto',
 	},
@@ -1101,9 +1088,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, statSearched, wizardsStaked, filtriRanges, mainTextColor } = state.mainReducer;
+	const { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, statSearched, wizardsStaked, filtriRanges, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, statSearched, wizardsStaked, filtriRanges, mainTextColor };
+	return { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, statSearched, wizardsStaked, filtriRanges, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {

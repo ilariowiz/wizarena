@@ -84,7 +84,7 @@ class NftCardTournament extends Component {
 	}
 
 	render() {
-		const { item, history, width, account, tournamentSeason, mainTextColor } = this.props
+		const { item, history, width, account, tournamentSeason, mainTextColor, isDarkmode } = this.props
 		const { potion, ring, infoEquipment } = this.state
 
 		//console.log(tournamentSeason);
@@ -161,7 +161,7 @@ class NftCardTournament extends Component {
 								level
 							</p>
 
-							<p style={{ color: getColorTextBasedOnLevel(level), fontSize: 17 }} className="text-bold">
+							<p style={{ color: getColorTextBasedOnLevel(level, isDarkmode), fontSize: 17 }} className="text-bold">
 								{level}
 							</p>
 						</div>
@@ -239,9 +239,9 @@ class NftCardTournament extends Component {
 }
 
 const mapStateToProps = (state) => {
-	const { account, mainTextColor } = state.mainReducer
+	const { account, mainTextColor, isDarkmode } = state.mainReducer
 
-	return { account, mainTextColor }
+	return { account, mainTextColor, isDarkmode }
 }
 
 export default connect(mapStateToProps, {

@@ -8,7 +8,7 @@ import DotLoader from 'react-spinners/DotLoader';
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import calcMedals from './common/CalcMedals'
-import { BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID } from '../actions/types'
+import { TEXT_SECONDARY_COLOR, MAIN_NET_ID } from '../actions/types'
 import {
     setNetworkSettings,
     setNetworkUrl,
@@ -333,7 +333,7 @@ class League extends Component {
 
     render() {
 		return (
-			<div style={styles.container}>
+			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
 				<Media
 					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
@@ -366,7 +366,6 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: "white"
 	},
     row: {
         alignItems: 'center',
@@ -392,9 +391,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-    const { chainId, gasPrice, gasLimit, networkUrl, account, mainTextColor } = state.mainReducer
+    const { chainId, gasPrice, gasLimit, networkUrl, account, mainTextColor, mainBackgroundColor } = state.mainReducer
 
-    return { chainId, gasPrice, gasLimit, networkUrl, account, mainTextColor }
+    return { chainId, gasPrice, gasLimit, networkUrl, account, mainTextColor, mainBackgroundColor }
 }
 
 export default connect(mapStateToProps, {

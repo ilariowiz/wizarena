@@ -110,13 +110,21 @@ export const calcLevelWizardAfterDowngrade = (item, stat) => {
     return level
 }
 
-export const getColorTextBasedOnLevel = (level) => {
+export const getColorTextBasedOnLevel = (level, isDarkmode) => {
     if (!level) {
         return "white"
     }
 
+    let colorLow = "#5a5a5a"
+    let colorHigh = "#840fb2"
+
+    if (isDarkmode) {
+        colorLow = "#fffaf1"
+        colorHigh = "#faf000"
+    }
+
     let rainbow = new Rainbow()
-    rainbow.setSpectrum("#5a5a5a", "#840fb2")
+    rainbow.setSpectrum(colorLow, colorHigh)
     rainbow.setNumberRange(MIN_LEVEL, MAX_LEVEL)
 
     const color = rainbow.colourAt(level)

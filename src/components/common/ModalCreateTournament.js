@@ -5,7 +5,7 @@ import { IoClose } from 'react-icons/io5'
 import ModalChooseWizard from './ModalChooseWizard'
 import getImageUrl from './GetImageUrl'
 import '../../css/Modal.css'
-import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, CTA_COLOR } from '../../actions/types'
+import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
 
 
 class ModalCreateTournament extends Component {
@@ -49,7 +49,7 @@ class ModalCreateTournament extends Component {
     }
 
 	render() {
-		const { showModal, onCloseModal, width, wizaBalance, mainTextColor } = this.props;
+		const { showModal, onCloseModal, width, wizaBalance, mainTextColor, mainBackgroundColor, isDarkmode } = this.props;
         const { idnft, buyin, maxLevel } = this.state
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
@@ -58,7 +58,7 @@ class ModalCreateTournament extends Component {
 
 		return (
 			<div className={classContainer}>
-				<div style={Object.assign({}, styles.subcontainer, { width })}>
+				<div style={Object.assign({}, styles.subcontainer, { width, backgroundColor: mainBackgroundColor })}>
 
 					<p style={{ color: mainTextColor, fontSize: 20, textAlign: 'center', marginBottom: 10, marginTop: 10 }} className="text-medium">
 						Create Tournament
@@ -106,7 +106,7 @@ class ModalCreateTournament extends Component {
 
                         </div>
 
-                        <div style={styles.box}>
+                        <div style={Object.assign({}, styles.box, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}>
 
                             <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
                                 <p style={{ fontSize: 16, color: mainTextColor }}>
@@ -115,7 +115,7 @@ class ModalCreateTournament extends Component {
                             </div>
 
                             <input
-                                style={styles.input}
+                                style={Object.assign({}, styles.input, { color: mainTextColor })}
                                 type='text'
                                 placeholder='Enter a Name (optional)'
                                 value={this.state.name}
@@ -124,7 +124,7 @@ class ModalCreateTournament extends Component {
 
                         </div>
 
-                        <div style={styles.box}>
+                        <div style={Object.assign({}, styles.box, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}>
 
                             <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
                                 <p style={{ fontSize: 16, color: mainTextColor }}>
@@ -137,7 +137,7 @@ class ModalCreateTournament extends Component {
                             </div>
 
                             <input
-                                style={styles.input}
+                                style={Object.assign({}, styles.input, { color: mainTextColor })}
                                 type='text'
                                 placeholder='Enter Buyin'
                                 value={this.state.buyin}
@@ -146,7 +146,7 @@ class ModalCreateTournament extends Component {
 
                         </div>
 
-                        <div style={styles.box}>
+                        <div style={Object.assign({}, styles.box, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}>
 
                             <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
                                 <p style={{ fontSize: 16, color: mainTextColor }}>
@@ -155,7 +155,7 @@ class ModalCreateTournament extends Component {
                             </div>
 
                             <input
-                                style={styles.input}
+                                style={Object.assign({}, styles.input, { color: mainTextColor })}
                                 type='text'
                                 placeholder='Enter Max Level'
                                 value={this.state.maxLevel}
@@ -164,7 +164,7 @@ class ModalCreateTournament extends Component {
 
                         </div>
 
-                        <div style={styles.box}>
+                        <div style={Object.assign({}, styles.box, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}>
 
                             <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
                                 <p style={{ fontSize: 16, color: mainTextColor }}>
@@ -246,7 +246,6 @@ class ModalCreateTournament extends Component {
 
 const styles = {
 	subcontainer: {
-		backgroundColor: "white",
 		borderRadius: 4,
 		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
@@ -306,9 +305,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-    const { mainTextColor } = state.mainReducer
+    const { mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer
 
-    return { mainTextColor }
+    return { mainTextColor, mainBackgroundColor, isDarkmode }
 }
 
 export default connect(mapStateToProps)(ModalCreateTournament)

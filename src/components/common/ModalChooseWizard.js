@@ -3,18 +3,18 @@ import { connect } from 'react-redux'
 import { IoClose } from 'react-icons/io5'
 import NftCardChoiceFlashT from './NftCardChoiceFlashT'
 import '../../css/Modal.css'
-import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR } from '../../actions/types'
+import { TEXT_SECONDARY_COLOR } from '../../actions/types'
 
 
 class ModalChooseWizard extends Component {
 	render() {
-		const { showModal, onCloseModal, width, yourWizards, equipment, mainTextColor } = this.props;
+		const { showModal, onCloseModal, width, yourWizards, equipment, mainTextColor, mainBackgroundColor } = this.props;
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 
 		return (
 			<div className={classContainer}>
-				<div style={Object.assign({}, styles.subcontainer, { width: '90%' })}>
+				<div style={Object.assign({}, styles.subcontainer, { width: '90%', backgroundColor: mainBackgroundColor })}>
 
 					<div style={{ flexWrap: 'wrap', overflowY: 'auto', overflowX: 'hidden', justifyContent: 'center', marginTop: 30 }}>
 						{yourWizards && yourWizards.map((item, index) => {
@@ -51,7 +51,6 @@ class ModalChooseWizard extends Component {
 
 const styles = {
 	subcontainer: {
-		backgroundColor: "white",
 		borderRadius: 4,
 		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
@@ -65,9 +64,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { mainTextColor } = state.mainReducer
+	const { mainTextColor, mainBackgroundColor } = state.mainReducer
 
-	return { mainTextColor }
+	return { mainTextColor, mainBackgroundColor }
 }
 
 export default connect(mapStateToProps)(ModalChooseWizard);

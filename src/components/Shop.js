@@ -43,7 +43,7 @@ import {
     updateInfoTransactionModal,
     swapSpell
 } from '../actions'
-import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, MAX_LEVEL, TEST_NET_ID } from '../actions/types'
+import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, MAX_LEVEL, TEST_NET_ID } from '../actions/types'
 import '../css/Nft.css'
 import '../css/Shop.css'
 
@@ -608,7 +608,7 @@ class Shop extends Component {
 	}
 
     renderRingsCard(item, index, isMobile) {
-        const { mainTextColor } = this.props
+        const { mainTextColor, isDarkmode } = this.props
 
         const bonusValues = item.bonus.split(",")
 
@@ -626,7 +626,7 @@ class Shop extends Component {
         return (
             <div
                 key={index}
-                style={styles.cardShopStyle}
+                style={Object.assign({}, styles.cardShopStyle, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
             >
                 <img
                     src={item.url}
@@ -674,7 +674,7 @@ class Shop extends Component {
 
     renderShopCard(key, isMobile) {
         const { increase, wizaValue } = this.state
-        const { mainTextColor } = this.props
+        const { mainTextColor, isDarkmode } = this.props
 
         const wizard = this.getWizardSelected()
 
@@ -714,7 +714,7 @@ class Shop extends Component {
             newLevel = calcLevelWizardAfterUpgrade(copySelected, key)
         }
 
-        let colorTextLevel = getColorTextBasedOnLevel(newLevel)
+        let colorTextLevel = getColorTextBasedOnLevel(newLevel, isDarkmode)
         if (newLevel > MAX_LEVEL) {
             colorTextLevel = "red"
         }
@@ -739,7 +739,7 @@ class Shop extends Component {
 
         return (
             <div
-                style={styles.cardShopStyle}
+                style={Object.assign({}, styles.cardShopStyle, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
             >
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
@@ -846,7 +846,7 @@ class Shop extends Component {
 
     renderAPShopCard(key, isMobile) {
         const { increase, wizaValue } = this.state
-        const { mainTextColor } = this.props
+        const { mainTextColor, isDarkmode } = this.props
 
         const wizard = this.getWizardSelected()
 
@@ -905,7 +905,7 @@ class Shop extends Component {
         costoWiza = round((costoWiza * 9 / 100), 2)
         //console.log(costoWiza);
 
-        let colorTextLevel = getColorTextBasedOnLevel(newLevel)
+        let colorTextLevel = getColorTextBasedOnLevel(newLevel, isDarkmode)
         if (newLevel > MAX_LEVEL) {
             colorTextLevel = "red"
         }
@@ -930,7 +930,7 @@ class Shop extends Component {
 
         return (
             <div
-                style={styles.cardShopStyle}
+                style={Object.assign({}, styles.cardShopStyle, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
             >
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
@@ -1051,13 +1051,13 @@ class Shop extends Component {
 
     renderAPBurnCard(isMobile) {
         const { apToBurn } = this.state
-        const { mainTextColor } = this.props
+        const { mainTextColor, isDarkmode } = this.props
 
         const wizard = this.getWizardSelected()
 
         return (
             <div
-                style={styles.cardShopStyle}
+                style={Object.assign({}, styles.cardShopStyle, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
             >
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
@@ -1147,7 +1147,7 @@ class Shop extends Component {
 
     renderRetrainShopCard(key, isMobile) {
         const { decrease, baseStats } = this.state
-        const { mainTextColor } = this.props
+        const { mainTextColor, isDarkmode } = this.props
 
         const wizard = this.getWizardSelected()
 
@@ -1203,7 +1203,7 @@ class Shop extends Component {
             newLevel = calcLevelWizardAfterDowngrade(copySelected, key)
         }
 
-        let colorTextLevel = getColorTextBasedOnLevel(newLevel)
+        let colorTextLevel = getColorTextBasedOnLevel(newLevel, isDarkmode)
         if (newLevel > MAX_LEVEL) {
             colorTextLevel = "red"
         }
@@ -1240,7 +1240,7 @@ class Shop extends Component {
 
         return (
             <div
-                style={styles.cardShopStyle}
+                style={Object.assign({}, styles.cardShopStyle, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
             >
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
@@ -1384,7 +1384,7 @@ class Shop extends Component {
 
     renderVialCard(key, canBuy, isMobile) {
         const { loadingPotionEquipped, wizaValue } = this.state
-        const { mainTextColor } = this.props
+        const { mainTextColor, isDarkmode } = this.props
 
         const wizard = this.getWizardSelected()
 
@@ -1419,7 +1419,7 @@ class Shop extends Component {
 
         return (
             <div
-                style={styles.cardVialStyle}
+                style={Object.assign({}, styles.cardVialStyle, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
             >
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
 
@@ -1503,11 +1503,11 @@ class Shop extends Component {
 
     renderCardNickname(isMobile) {
         const { wizaValue } = this.state
-        const { mainTextColor } = this.props
+        const { mainTextColor, isDarkmode } = this.props
 
         return (
             <div
-                style={Object.assign({}, styles.cardVialStyle, { marginBottom: 30 })}
+                style={Object.assign({}, styles.cardVialStyle, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2", marginBottom: 30 })}
             >
                 <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15, marginTop: 15 }}>
                     Epic Name
@@ -2218,7 +2218,7 @@ class Shop extends Component {
 
     render() {
 		return (
-			<div style={styles.container}>
+			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
                 <Toaster
                     position="top-center"
                     reverseOrder={false}
@@ -2256,7 +2256,6 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: "white"
 	},
     btnConnect: {
 		width: 250,
@@ -2281,7 +2280,6 @@ const styles = {
         marginBottom: 12,
         paddingTop: 5,
         height: 'fit-content',
-        backgroundColor: "#f2f2f2"
     },
     cardVialStyle: {
         width: 160,
@@ -2296,7 +2294,6 @@ const styles = {
         marginBottom: 12,
         paddingTop: 5,
         height: 'fit-content',
-        backgroundColor: "#f2f2f2"
     },
     btnChoose: {
         height: 40,
@@ -2336,7 +2333,7 @@ const styles = {
     },
     btnStat: {
 		padding: 9,
-		backgroundColor: 'white',
+		backgroundColor: 'transparent',
 		justifyContent: 'center',
 		alignItems: 'center',
 		marginBottom: 20,
@@ -2374,10 +2371,10 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, wizaBalance, wizardSelectedIdShop, mainTextColor } = state.mainReducer;
+	const { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, wizaBalance, wizardSelectedIdShop, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
     const { txListen } = state.modalTransactionReducer
 
-	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, wizaBalance, wizardSelectedIdShop, txListen, mainTextColor };
+	return { userMintedNfts, account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, wizaBalance, wizardSelectedIdShop, txListen, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {

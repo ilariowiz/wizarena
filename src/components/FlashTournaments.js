@@ -13,7 +13,7 @@ import ModalCreateTournament from './common/ModalCreateTournament'
 import ModalChooseWizard from './common/ModalChooseWizard'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
-import { BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID, CTA_COLOR } from '../actions/types'
+import { TEXT_SECONDARY_COLOR, MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import {
     setNetworkSettings,
     setNetworkUrl,
@@ -144,33 +144,35 @@ class FlashTournaments extends Component {
 
     renderMenu() {
         const { section } = this.state
-        const { mainTextColor } = this.props
+        const { mainTextColor, isDarkmode } = this.props
+
+        let textColor = isDarkmode ? "#1d1d1f" : "white"
 
         return (
             <div style={{ alignItems: 'center', justifyContent: 'center', borderColor: '#d7d7d7', borderStyle: 'solid', borderRadius: 4, borderWidth: 1, padding: 6, marginBottom: 40 }}>
 
                 <button
-                    style={{ justifyContent: 'center', alignItems: 'center', width: 100, height: 32, borderRadius: 4, backgroundColor: section === 1 ? mainTextColor : 'white' }}
+                    style={{ justifyContent: 'center', alignItems: 'center', width: 100, height: 32, borderRadius: 4, backgroundColor: section === 1 ? mainTextColor : 'transparent' }}
                     onClick={() => {
                         this.setState({ section: 1, sortByKey: 'playersDesc' }, () => {
                             this.sortBy('playersDesc')
                         })
                     }}
                 >
-                    <p style={{ fontSize: 15, color: section === 1 ? 'white' : mainTextColor }} className="text-medium">
+                    <p style={{ fontSize: 15, color: section === 1 ? textColor : mainTextColor }} className="text-medium">
                         Pending
                     </p>
                 </button>
 
                 <button
-                    style={{ justifyContent: 'center', alignItems: 'center', width: 100, height: 32, borderRadius: 4, backgroundColor: section === 2 ? mainTextColor : 'white' }}
+                    style={{ justifyContent: 'center', alignItems: 'center', width: 100, height: 32, borderRadius: 4, backgroundColor: section === 2 ? mainTextColor : 'transparent' }}
                     onClick={() => {
                         this.setState({ section: 2, sortByKey: 'completedAt' }, () => {
                             this.sortBy('completedAt')
                         })
                     }}
                 >
-                    <p style={{ fontSize: 15, color: section === 2 ? 'white' : mainTextColor }} className="text-medium">
+                    <p style={{ fontSize: 15, color: section === 2 ? textColor : mainTextColor }} className="text-medium">
                         Completed
                     </p>
                 </button>
@@ -267,7 +269,7 @@ class FlashTournaments extends Component {
     }
 
     renderPendingTournament(item, index, isMobile) {
-        const { account, mainTextColor } = this.props
+        const { account, mainTextColor, isDarkmode } = this.props
 
         const createdAt = moment(item.createdAt.timep)
         const diff = moment().to(createdAt)
@@ -284,7 +286,7 @@ class FlashTournaments extends Component {
         }
 
         return (
-            <div style={Object.assign({}, styles.rowTournament, { flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start' })} key={index}>
+            <div style={Object.assign({}, styles.rowTournament, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2", flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start' })} key={index}>
 
                 {
                     item.name ?
@@ -361,7 +363,7 @@ class FlashTournaments extends Component {
     }
 
     renderCompletedTournament(item, index, isMobile) {
-        const { userMintedNfts, account, mainTextColor } = this.props
+        const { userMintedNfts, account, mainTextColor, isDarkmode } = this.props
 
         //console.log(item);
 
@@ -406,7 +408,7 @@ class FlashTournaments extends Component {
         }
 
         return (
-            <div style={Object.assign({}, styles.rowTournament, { flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start', borderColor: youSubbed ? '#840fb2' : '#d7d7d7', borderWidth: youSubbed ? 2 : 1 })} key={index}>
+            <div style={Object.assign({}, styles.rowTournament, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2", flexDirection: 'column', alignItems: isMobile ? 'center' : 'flex-start', borderColor: youSubbed ? '#840fb2' : '#d7d7d7', borderWidth: youSubbed ? 2 : 1 })} key={index}>
 
                 {
                     item.name ?
@@ -441,7 +443,6 @@ class FlashTournaments extends Component {
                                         }
                                     }
                                 }
-
 
                                 return (
                                     <a
@@ -891,7 +892,7 @@ class FlashTournaments extends Component {
 
     render() {
 		return (
-			<div style={styles.container}>
+			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
 				<Media
 					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
@@ -924,7 +925,6 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: "white"
 	},
     btnMenu: {
         justifyContent: 'center',
@@ -961,7 +961,6 @@ const styles = {
         width: '100%',
         maxWidth: 1200,
         marginBottom: 15,
-        backgroundColor: "#f2f2f2"
     },
     btnSort: {
         width: 34,
@@ -978,10 +977,10 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-    const { account, chainId, gasPrice, gasLimit, networkUrl, netId, wizaBalance, userMintedNfts, mainTextColor } = state.mainReducer
+    const { account, chainId, gasPrice, gasLimit, networkUrl, netId, wizaBalance, userMintedNfts, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer
     const { completedTournaments, pendingTournaments, loadingPending, loadingCompleted } = state.flashTournamentsReducer
 
-    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, wizaBalance, userMintedNfts, completedTournaments, pendingTournaments, loadingPending, loadingCompleted, mainTextColor }
+    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, wizaBalance, userMintedNfts, completedTournaments, pendingTournaments, loadingPending, loadingCompleted, mainTextColor, mainBackgroundColor, isDarkmode }
 }
 
 export default connect(mapStateToProps, {

@@ -1,4 +1,5 @@
-export const BACKGROUND_COLOR = "#222034"//"#25252c"
+export const BACKGROUND_DAY_COLOR = "white"
+export const BACKGROUND_NIGHT_COLOR = "#25252c"////222034
 export const TEXT_SECONDARY_COLOR = '#21c6e8' //#840fb2 viola
 export const CTA_COLOR = '#07abf3'
 export const TEXT_DAY_COLOR = '#1d1d1f'

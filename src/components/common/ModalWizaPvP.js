@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { IoClose } from 'react-icons/io5'
 import '../../css/Modal.css'
-import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, CTA_COLOR } from '../../actions/types'
+import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
 
 
 class ModalWizaPvP extends Component {
@@ -40,13 +40,13 @@ class ModalWizaPvP extends Component {
     }
 
 	render() {
-		const { showModal, onCloseModal, width, mainTextColor } = this.props;
+		const { showModal, onCloseModal, width, mainTextColor, mainBackgroundColor } = this.props;
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 
 		return (
 			<div className={classContainer}>
-				<div style={Object.assign({}, styles.subcontainer, { width })}>
+				<div style={Object.assign({}, styles.subcontainer, { width, backgroundColor: mainBackgroundColor })}>
 
 					<div style={styles.boxWallet}>
                         <p style={{ color: mainTextColor, fontSize: 18, marginBottom: 15, textAlign: 'center', marginTop: 10 }}>
@@ -109,7 +109,6 @@ class ModalWizaPvP extends Component {
 const styles = {
 	subcontainer: {
 		minHeight: 300,
-		backgroundColor: "white",
 		borderRadius: 4,
 		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
@@ -154,9 +153,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { mainTextColor } = state.mainReducer
+	const { mainTextColor, mainBackgroundColor } = state.mainReducer
 
-	return { mainTextColor }
+	return { mainTextColor, mainBackgroundColor }
 }
 
 export default connect(mapStateToProps)(ModalWizaPvP);

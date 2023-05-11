@@ -9,7 +9,7 @@ import DotLoader from 'react-spinners/DotLoader';
 import moment from 'moment'
 import getBoxWidth from './common/GetBoxW'
 import HistoryItem from './common/HistoryItem'
-import { BACKGROUND_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
+import { TEXT_SECONDARY_COLOR } from '../actions/types'
 import {
     setSales
 } from '../actions'
@@ -158,7 +158,7 @@ class Sales extends Component {
 
     renderBody(isMobile) {
         const { loading, error, dataSales, selectedSales } = this.state
-        const { mainTextColor } = this.props
+        const { mainTextColor, mainBackgroundColor } = this.props
 
         const { boxW, padding } = getBoxWidth(isMobile)
 
@@ -185,7 +185,7 @@ class Sales extends Component {
                         height={400}
                         data={dataSales}
                         options={{
-                            backgroundColor: "white",
+                            backgroundColor: mainBackgroundColor,
                             hAxis: {
                                 textStyle:{ color: mainTextColor, fontSize: 13, fontName: "FigtreeRegular"},
                             },
@@ -241,7 +241,7 @@ class Sales extends Component {
 
     render() {
 		return (
-			<div style={styles.container}>
+			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
 				<Media
 					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
@@ -274,15 +274,14 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: "white"
 	},
 }
 
 const mapStateToProps = (state) => {
-    const { mainTextColor } = state.mainReducer
+    const { mainTextColor, mainBackgroundColor } = state.mainReducer
     const { sales, lastTimeUpdateSales } = state.salesReducer
 
-    return { sales, lastTimeUpdateSales, mainTextColor }
+    return { sales, lastTimeUpdateSales, mainTextColor, mainBackgroundColor }
 }
 
 export default connect(mapStateToProps, {

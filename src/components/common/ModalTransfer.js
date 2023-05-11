@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { IoClose } from 'react-icons/io5'
 import '../../css/Modal.css'
-import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, CTA_COLOR } from '../../actions/types'
+import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
 
 
 class ModalTransfer extends Component {
@@ -43,14 +43,14 @@ class ModalTransfer extends Component {
     }
 
 	render() {
-		const { showModal, onCloseModal, width, mainTextColor } = this.props;
+		const { showModal, onCloseModal, width, mainTextColor, mainBackgroundColor } = this.props;
         const { loading, error } = this.state
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 
 		return (
 			<div className={classContainer}>
-				<div style={Object.assign({}, styles.subcontainer, { width })}>
+				<div style={Object.assign({}, styles.subcontainer, { width, backgroundColor: mainBackgroundColor })}>
 
 					<p style={{ color: mainTextColor, fontSize: 16, textAlign: 'center' }}>
 						Paste the k: wallet or KadenaName of the receiver
@@ -105,7 +105,6 @@ class ModalTransfer extends Component {
 const styles = {
 	subcontainer: {
 		height: 300,
-		backgroundColor: "white",
 		borderRadius: 4,
 		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
@@ -150,9 +149,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { mainTextColor } = state.mainReducer
+	const { mainTextColor, mainBackgroundColor } = state.mainReducer
 
-	return { mainTextColor }
+	return { mainTextColor, mainBackgroundColor }
 }
 
 export default connect(mapStateToProps)(ModalTransfer);

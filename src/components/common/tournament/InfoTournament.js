@@ -22,7 +22,7 @@ const renderInfoTournament = (tournament, montepremi, buyin, subscribed, mainTex
 
             {
                 tournament.showLeague ?
-                titleTournament(`The Twelve League ${tournament.leagueTournament}`)
+                titleTournament(`The Twelve League ${tournament.leagueTournament}`, mainTextColor)
                 :
                 titleTournament(titleTour, mainTextColor)
             }
@@ -57,7 +57,7 @@ const renderInfoTournament = (tournament, montepremi, buyin, subscribed, mainTex
                 <button
                     className='btnH'
                     style={styles.btnSubscribe}
-                    onClick={() => this.props.history.replace('/tournaments')}
+                    onClick={() => history.replace('/tournaments')}
                 >
                     <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
                         Subscribe your wizards

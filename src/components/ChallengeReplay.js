@@ -13,7 +13,7 @@ import {
     setNetworkUrl,
     showWinnerChallenge
 } from '../actions'
-import { BACKGROUND_COLOR, CTA_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID, REVEAL_CAP } from '../actions/types'
+import { CTA_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID, REVEAL_CAP } from '../actions/types'
 
 import "../css/Fight.css"
 
@@ -182,11 +182,11 @@ class ChallengeReplay extends Component {
 
 
     renderBoxHp(width, item, initialHp, currentHp, level, index, isMobile) {
-        const { mainTextColor } = this.props
+        const { mainTextColor, isDarkmode } = this.props
 
         const innerWidth = width - 40
 
-        const colorLevel = getColorTextBasedOnLevel(level)
+        const colorLevel = getColorTextBasedOnLevel(level, isDarkmode)
 
         return (
             <div style={Object.assign({}, styles.boxHp, { width })}>
@@ -342,7 +342,7 @@ class ChallengeReplay extends Component {
 
     render() {
 		return (
-			<div style={styles.container}>
+			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
 				<Media
 					query="(max-width: 600px)"
 					render={() => this.renderBody(true)}
@@ -366,7 +366,6 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: "white"
 	},
     boxHp: {
         flexDirection: 'column',
@@ -402,10 +401,10 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-    const { mainTextColor } = state.mainReducer
+    const { mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer
 	const { challengeReplay } = state.challengesReducer;
 
-	return { challengeReplay, mainTextColor };
+	return { challengeReplay, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {

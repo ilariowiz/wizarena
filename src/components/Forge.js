@@ -9,7 +9,7 @@ import ModalRecipeBook from './common/ModalRecipeBook'
 import getBoxWidth from './common/GetBoxW'
 import recipeBook from './common/RecipeBook'
 import forgeLevel from './common/ForgeLevel'
-import { BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID, CTA_COLOR } from '../actions/types'
+import { TEXT_SECONDARY_COLOR, MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import {
     setNetworkSettings,
     setNetworkUrl,
@@ -201,9 +201,9 @@ class Forge extends Component {
         }
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden' }}>
+            <div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                <p style={{ color: mainTextColor, fontSize: 24, marginBottom: 20 }} className="text-medium">
+                <p style={{ color: mainTextColor, fontSize: 24, marginBottom: 20, textAlign: 'center' }} className="text-medium">
                     Forge
                 </p>
 
@@ -425,7 +425,7 @@ class Forge extends Component {
 
     render() {
 		return (
-			<div style={styles.container}>
+			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
 				<Media
 					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
@@ -458,7 +458,6 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: "white"
 	},
     boxImage: {
         width: 180,
@@ -501,9 +500,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-    const { account, chainId, gasPrice, gasLimit, networkUrl, netId, mainTextColor } = state.mainReducer
+    const { account, chainId, gasPrice, gasLimit, networkUrl, netId, mainTextColor, mainBackgroundColor } = state.mainReducer
 
-    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, mainTextColor }
+    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, mainTextColor, mainBackgroundColor }
 }
 
 export default connect(mapStateToProps, {

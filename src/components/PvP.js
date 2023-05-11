@@ -35,7 +35,7 @@ import {
     loadEquipMinted,
     updateInfoTransactionModal
 } from '../actions'
-import { BACKGROUND_COLOR, MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
+import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
 
 
@@ -630,7 +630,7 @@ class PvP extends Component {
     renderRowSub(item, index, isMobile, maxWidth) {
         //console.log(item);
         const { pvpFightsStartDate } = this.state
-        const { userMintedNfts, mainTextColor } = this.props
+        const { userMintedNfts, mainTextColor, isDarkmode } = this.props
 
         const winRate = this.calcWinRate(item)
 
@@ -673,7 +673,7 @@ class PvP extends Component {
         return (
             <div
                 key={index}
-                style={Object.assign({}, styles.boxSubscribed, { flexDirection: isMobile ? 'column' : 'row', maxWidth: maxWidth - 10, marginRight: isMobile ? 5 : 20 })}
+                style={Object.assign({}, styles.boxSubscribed, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2", flexDirection: isMobile ? 'column' : 'row', maxWidth: maxWidth - 10, marginRight: isMobile ? 5 : 20 })}
             >
                 <img
                     src={getImageUrl(item.id)}
@@ -724,7 +724,7 @@ class PvP extends Component {
                                 Level
                             </p>
 
-                            <p style={{ fontSize: 17, color: getColorTextBasedOnLevel(level) }} className="text-bold">
+                            <p style={{ fontSize: 17, color: getColorTextBasedOnLevel(level, isDarkmode) }} className="text-bold">
                                 {level}
                             </p>
                         </div>
@@ -1198,7 +1198,7 @@ class PvP extends Component {
 
     render() {
 		return (
-			<div style={styles.container}>
+			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
 
                 <Toaster
                     position="top-center"
@@ -1237,7 +1237,6 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: "white"
 	},
     btnConnect: {
 		width: 250,
@@ -1280,7 +1279,6 @@ const styles = {
         borderColor: '#d7d7d7',
         borderStyle: 'solid',
         borderRadius: 4,
-        backgroundColor: "#f2f2f2"
     },
     footerSubscribe: {
 		width: '100%',
@@ -1300,9 +1298,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance, userMintedNfts, mainTextColor } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance, userMintedNfts, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance, userMintedNfts, mainTextColor };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance, userMintedNfts, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {

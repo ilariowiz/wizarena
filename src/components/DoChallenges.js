@@ -13,7 +13,7 @@ import cardStats from './common/CardStats'
 import getRingBonuses from './common/GetRingBonuses'
 import getImageUrl from './common/GetImageUrl'
 import NftCardChoiceDuel from './common/NftCardChoiceDuel'
-import { BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID, CTA_COLOR } from '../actions/types'
+import { TEXT_SECONDARY_COLOR, MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import {
     loadUserMintedNfts,
     setNetworkSettings,
@@ -144,7 +144,7 @@ class DoChallenges extends Component {
 
 
     renderSingleNft(info, width, isMobile) {
-        const { mainTextColor } = this.props
+        const { mainTextColor, isDarkmode } = this.props
         //console.log(info);
 
         const level = calcLevelWizard(info)
@@ -184,7 +184,7 @@ class DoChallenges extends Component {
                             Level
                         </p>
 
-                        <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 17 }} className="text-bold">
+                        <p style={{ color: getColorTextBasedOnLevel(level, isDarkmode), fontSize: 17 }} className="text-bold">
                             {level}
                         </p>
                     </div>
@@ -400,7 +400,7 @@ class DoChallenges extends Component {
 
     render() {
 		return (
-			<div style={styles.container}>
+			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
 
                 <Toaster
                     position="top-center"
@@ -439,7 +439,6 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: "white"
 	},
     containerCard: {
         alignItems: 'center',
@@ -488,10 +487,10 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-    const { account, chainId, gasPrice, gasLimit, networkUrl, netId, mainTextColor } = state.mainReducer
+    const { account, chainId, gasPrice, gasLimit, networkUrl, netId, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer
     const { wizardSfidato } = state.challengesReducer
 
-    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, wizardSfidato, mainTextColor }
+    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, wizardSfidato, mainTextColor, mainBackgroundColor, isDarkmode }
 }
 
 export default connect(mapStateToProps, {

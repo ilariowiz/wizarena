@@ -44,7 +44,7 @@ import {
 	updateInfoTransactionModal,
 	setWizardSfidato
 } from '../actions'
-import { MAIN_NET_ID, REVEAL_CAP, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
+import { MAIN_NET_ID, REVEAL_CAP, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
 
 const logoKda = require('../assets/kdalogo2.png')
@@ -554,7 +554,7 @@ class Nft extends Component {
 					{item.trait_type}
 				</p>
 
-				<p style={{ color: this.props.mainTextColor, fontSize: 16 }}>
+				<p style={{ color: "#1d1d1f", fontSize: 16 }}>
 					{item.value}
 				</p>
 
@@ -590,7 +590,7 @@ class Nft extends Component {
 				<p style={{ color: '#707070', fontSize: 13, marginBottom: 5 }}>
 					Tournament {item.replace("t", "")}
 				</p>
-				<p style={{ color: this.props.mainTextColor, fontSize: 16 }}>
+				<p style={{ color: "#1d1d1f", fontSize: 16 }}>
 					{numbersOfMedals} / {maxMedals.maxMedals}
 				</p>
 
@@ -698,19 +698,19 @@ class Nft extends Component {
 						}}
 					>
 						<p style={{ fontSize: 15, color: '#707070', marginRight: 15 }}>
-							Tournament <span style={{ fontSize: 16, color: mainTextColor }}>{key.replace("t","")}</span>
+							Tournament <span style={{ fontSize: 16, color: "#1d1d1f" }}>{key.replace("t","")}</span>
 						</p>
 
 						{
 							openFightsSection.includes(key) ?
 							<IoEyeOffOutline
 								size={20}
-								color={mainTextColor}
+								color="#1d1d1f"
 							/>
 							:
 							<IoEyeOutline
 								size={20}
-								color={mainTextColor}
+								color="#1d1d1f"
 							/>
 						}
 
@@ -742,7 +742,7 @@ class Nft extends Component {
 		let round = item.tournament.split("_")[1]
 
 		const textWinner = item.winner === nft.id ? "Winner" : "Loser"
-		const textWinnerColor = textWinner === "Winner" ? this.props.mainTextColor : "#707070"
+		const textWinnerColor = textWinner === "Winner" ? "#1d1d1f" : "#707070"
 
 		return (
 			<a
@@ -932,7 +932,7 @@ class Nft extends Component {
 
 	renderSlidePanelMedals(boxW, isMobile) {
 		const { showMedals, nft } = this.state
-		const { mainTextColor } = this.props
+		const { mainTextColor, mainBackgroundColor } = this.props
 
 		const panelWidth = isMobile ? '90%' : "50%"
 
@@ -950,7 +950,7 @@ class Nft extends Component {
 
 				<div
 					className={showMedals ? "slide-panel-container-on" : "slide-panel-container-off"}
-					style={Object.assign({}, styles.panel, { width: showMedals ? panelWidth : 0, zIndex: 997 })}
+					style={Object.assign({}, styles.panel, { width: showMedals ? panelWidth : 0, zIndex: 997, backgroundColor: mainBackgroundColor })}
 				>
 
 					<div style={styles.headerPanel}>
@@ -996,7 +996,7 @@ class Nft extends Component {
 
 	renderSlidePanelFights(boxW, isMobile) {
 		const { showFights, nft } = this.state
-		const { mainTextColor } = this.props
+		const { mainTextColor, mainBackgroundColor } = this.props
 
 		const panelWidth = isMobile ? '90%' : "50%"
 
@@ -1014,7 +1014,7 @@ class Nft extends Component {
 
 				<div
 					className={showFights ? "slide-panel-container-on" : "slide-panel-container-off"}
-					style={Object.assign({}, styles.panel, { width: showFights ? panelWidth : 0, zIndex: 997 })}
+					style={Object.assign({}, styles.panel, { width: showFights ? panelWidth : 0, zIndex: 997, backgroundColor: mainBackgroundColor })}
 				>
 
 					<div style={styles.headerPanel}>
@@ -1187,6 +1187,7 @@ class Nft extends Component {
 
 	renderName(marginBottom) {
 		const { nft } = this.state
+		const { mainTextColor } = this.props
 
 		let type = "Wizard"
 		if (parseInt(nft.id) >= 1023 && parseInt(nft.id) < 2048) {
@@ -1202,11 +1203,11 @@ class Nft extends Component {
 			<div style={{ flexDirection: 'column', marginBottom }}>
 				{
 					nft.nickname ?
-					<p style={{ color: 'black', fontSize: 24 }} className="text-bold">
+					<p style={{ color: mainTextColor, fontSize: 24 }} className="text-bold">
 						{nft.name} {nft.nickname}
 					</p>
 					:
-					<p style={{ color: 'black', fontSize: 24 }} className="text-bold">
+					<p style={{ color: mainTextColor, fontSize: 24 }} className="text-bold">
 						{type} {nft.name}
 					</p>
 				}
@@ -1442,7 +1443,7 @@ class Nft extends Component {
 
 	renderBoxStats(width) {
 		const { nft, historyUpgrades, level, equipment } = this.state
-		const { mainTextColor } = this.props
+		const { mainTextColor, isDarkmode } = this.props
 
 		let rev = false
 		if (parseInt(nft.id) < REVEAL_CAP) {
@@ -1454,7 +1455,7 @@ class Nft extends Component {
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
-				<div style={{ backgroundColor: '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
+				<div style={{ backgroundColor: isDarkmode ? "#f4f4f433" : '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
 					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 20, color: 'black' }} className="text-medium">
 						Stats
 					</p>
@@ -1477,7 +1478,7 @@ class Nft extends Component {
 								<p style={{ fontSize: 17, color: mainTextColor, marginRight: 10 }}>
 									Level
 								</p>
-								<p style={{ fontSize: 22, color: getColorTextBasedOnLevel(level) }} className="text-bold">
+								<p style={{ fontSize: 22, color: getColorTextBasedOnLevel(level, isDarkmode) }} className="text-bold">
 									{level}
 								</p>
 							</div>
@@ -1534,6 +1535,7 @@ class Nft extends Component {
 
 	renderBoxMedals(width) {
 		const { nft } = this.state
+		const { isDarkmode } = this.props
 
 		//console.log(nft.medals)
 
@@ -1549,7 +1551,7 @@ class Nft extends Component {
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
-				<div style={{ backgroundColor: '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
+				<div style={{ backgroundColor: isDarkmode ? "#f4f4f433" : '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
 					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 20, color: 'black' }} className="text-medium">
 						Medals
 					</p>
@@ -1575,13 +1577,14 @@ class Nft extends Component {
 
 	renderBoxFights(width) {
 		const { nft } = this.state
+		const { isDarkmode } = this.props
 
 		//console.log(nft.groupedFights);
 
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
-				<div style={{ backgroundColor: '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
+				<div style={{ backgroundColor: isDarkmode ? "#f4f4f433" : '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
 					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 20, color: 'black' }} className="text-medium">
 						Fights
 					</p>
@@ -1608,6 +1611,7 @@ class Nft extends Component {
 
 	renderBoxSpellbook(width) {
 		const { nft } = this.state
+		const { isDarkmode } = this.props
 
 		let rev = false
 		if (parseInt(nft.id) < REVEAL_CAP) {
@@ -1617,7 +1621,7 @@ class Nft extends Component {
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
-				<div style={{ backgroundColor: '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
+				<div style={{ backgroundColor: isDarkmode ? "#f4f4f433" : '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
 					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 20, color: 'black' }} className="text-medium">
 						Spellbook
 					</p>
@@ -1643,6 +1647,7 @@ class Nft extends Component {
 
 	renderBoxProperties(width) {
 		const { nft } = this.state
+		const { isDarkmode } = this.props
 
 		let rev = false
 		if (parseInt(nft.id) < REVEAL_CAP) {
@@ -1661,7 +1666,7 @@ class Nft extends Component {
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
-				<div style={{ backgroundColor: '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
+				<div style={{ backgroundColor: isDarkmode ? "#f4f4f433" : '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
 					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 20, color: 'black' }} className="text-medium">
 						Properties
 					</p>
@@ -1687,13 +1692,15 @@ class Nft extends Component {
 
 	renderBoxOffers(width, isMobile) {
 		const { offers, loadingOffers } = this.state
+		const { isDarkmode } = this.props
+
 
 		//console.log(offers);
 
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
-				<div style={{ backgroundColor: '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
+				<div style={{ backgroundColor: isDarkmode ? "#f4f4f433" : '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
 					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 20, color: 'black' }} className="text-medium">
 						Item offers
 					</p>
@@ -1721,11 +1728,12 @@ class Nft extends Component {
 
 	renderBoxSales(width, isMobile) {
 		const { nftH, loadingHistory } = this.state
+		const { isDarkmode } = this.props
 
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
 
-				<div style={{ backgroundColor: '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
+				<div style={{ backgroundColor: isDarkmode ? "#f4f4f433" : '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
 					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 20, color: 'black' }} className="text-medium">
 						Item sales
 					</p>
@@ -1754,7 +1762,7 @@ class Nft extends Component {
 
 	renderBoxEquipment(width) {
 		const { equipment } = this.state
-		const { mainTextColor } = this.props
+		const { mainTextColor, isDarkmode } = this.props
 
 		const infoEquipment = getRingBonuses(equipment)
 		//console.log(infoEquipment);
@@ -1763,8 +1771,8 @@ class Nft extends Component {
 
 		return (
 			<div style={{ width: width - 20 }}>
-				<div style={styles.subBoxEquipment}>
-					<p style={{ fontSize: 18, color: mainTextColor }}>
+				<div style={Object.assign({}, styles.subBoxEquipment, { backgroundColor: isDarkmode ? "#f4f4f473" : "#f4f4f4" })}>
+					<p style={{ fontSize: 18, color: "#1d1d1f" }}>
 						Equipment
 					</p>
 
@@ -1776,11 +1784,11 @@ class Nft extends Component {
 						/>
 
 						<div style={{ flexDirection: 'column' }}>
-							<p style={{ fontSize: 16, color: mainTextColor, marginBottom: 5 }}>
+							<p style={{ fontSize: 16, color: "#1d1d1f", marginBottom: 5 }}>
 								#{equipment.id} {equipment.name}
 							</p>
 
-							<p style={{ fontSize: 15, color: mainTextColor }}>
+							<p style={{ fontSize: 15, color: "#1d1d1f" }}>
 								{infoEquipment.bonusesText.join(", ")}
 							</p>
 						</div>
@@ -2143,7 +2151,7 @@ class Nft extends Component {
 		}
 
 		return (
-			<div style={styles.container}>
+			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
 
 				<Toaster
 					position="top-center"
@@ -2218,7 +2226,6 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: 'white'
 	},
 	boxShare: {
 		flexDirection: 'row',
@@ -2369,7 +2376,6 @@ const styles = {
 		position: 'absolute',
 	},
 	panel: {
-		backgroundColor: 'white',
 		flexDirection: 'column',
 		overflow: 'auto',
 	},
@@ -2384,9 +2390,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, nftSelected, userMintedNfts, subscribed, subscribedWiza, mainTextColor } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, nftSelected, userMintedNfts, subscribed, subscribedWiza, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, nftSelected, userMintedNfts, subscribed, subscribedWiza, mainTextColor };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, allNfts, nftSelected, userMintedNfts, subscribed, subscribedWiza, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {

@@ -11,7 +11,7 @@ import cardStats from './common/CardStats'
 import getRingBonuses from './common/GetRingBonuses'
 import getBoxWidth from './common/GetBoxW'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
-import { MAIN_NET_ID, BACKGROUND_COLOR, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
+import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import {
     setNetworkSettings,
     setNetworkUrl,
@@ -342,7 +342,7 @@ class Fight extends Component {
 
     renderSingleNft(info, width) {
         const { levels, showStat } = this.state
-        const { mainTextColor } = this.props
+        const { mainTextColor, isDarkmode } = this.props
 
         //console.log(info);
 
@@ -378,7 +378,7 @@ class Fight extends Component {
                             level
                         </p>
 
-                        <p style={{ color: getColorTextBasedOnLevel(levels[info.id]), fontSize: 17 }} className="text-bold">
+                        <p style={{ color: getColorTextBasedOnLevel(levels[info.id], isDarkmode), fontSize: 17 }} className="text-bold">
                             {levels[info.id]}
                         </p>
                     </div>
@@ -664,7 +664,7 @@ class Fight extends Component {
         const { loading } = this.state
 
 		return (
-			<div style={styles.container}>
+			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
 
 				<Media
 					query="(max-width: 999px)"
@@ -697,8 +697,7 @@ const styles = {
 		top: 0,
 		left: 0,
 		right: 0,
-		bottom: 0,
-		backgroundColor: "white"
+		bottom: 0
 	},
     btnChoice: {
         width: 140,
@@ -722,9 +721,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, netId, chainId, gasPrice, gasLimit, networkUrl, mainTextColor } = state.mainReducer;
+	const { account, netId, chainId, gasPrice, gasLimit, networkUrl, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { account, netId, chainId, gasPrice, gasLimit, networkUrl, mainTextColor };
+	return { account, netId, chainId, gasPrice, gasLimit, networkUrl, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {

@@ -72,7 +72,7 @@ class NftCardBurningQueue extends Component {
 	}
 
 	render() {
-		const { item, history, width, isBurned, mainTextColor } = this.props
+		const { item, history, width, isBurned, mainTextColor, isDarkmode } = this.props
 		const { rank, itemInfo } = this.state
 
 		const from = !isBurned ? moment(item.timestamp.timep).fromNow() : ""
@@ -124,7 +124,7 @@ class NftCardBurningQueue extends Component {
 										Level
 									</p>
 
-									<p style={{ color: getColorTextBasedOnLevel(level), fontSize: 16 }} className="text-bold">
+									<p style={{ color: getColorTextBasedOnLevel(level, isDarkmode), fontSize: 16 }} className="text-bold">
 										{level}
 									</p>
 								</div>
@@ -167,10 +167,10 @@ class NftCardBurningQueue extends Component {
 }
 
 const mapStateToProps = (state) => {
-	const { chainId, gasPrice, gasLimit, networkUrl, mainTextColor } = state.mainReducer
+	const { chainId, gasPrice, gasLimit, networkUrl, mainTextColor, isDarkmode } = state.mainReducer
 	const { ranks } = state.rankReducer
 
-	return { ranks, chainId, gasPrice, gasLimit, networkUrl, mainTextColor }
+	return { ranks, chainId, gasPrice, gasLimit, networkUrl, mainTextColor, isDarkmode }
 }
 
 export default connect(mapStateToProps, {

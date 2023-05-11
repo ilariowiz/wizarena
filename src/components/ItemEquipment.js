@@ -11,7 +11,7 @@ import getRingBonuses from './common/GetRingBonuses'
 import getImageUrl from './common/GetImageUrl'
 import ringsRarity from './common/RankRings'
 import getBoxWidth from './common/GetBoxW'
-import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR, BACKGROUND_COLOR } from '../actions/types'
+import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import {
     setNetworkSettings,
 	setNetworkUrl,
@@ -808,7 +808,7 @@ class ItemEquipment extends Component {
 		}
 
 		return (
-			<div style={styles.container}>
+			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
 
                 <Toaster
                     position="top-center"
@@ -876,7 +876,6 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: "white"
 	},
     boxRightLarge: {
 		width: '100%',
@@ -966,10 +965,10 @@ const styles = {
 
 
 const mapStateToProps = (state) => {
-	const { account, chainId, gasPrice, gasLimit, netId, networkUrl, mainTextColor } = state.mainReducer;
+	const { account, chainId, gasPrice, gasLimit, netId, networkUrl, mainTextColor, mainBackgroundColor } = state.mainReducer;
     const { statSearched, allItems, allItemsIds, totalCountItems, itemsBlockId } = state.equipmentReducer
 
-	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, statSearched, allItems, allItemsIds, totalCountItems, itemsBlockId, mainTextColor };
+	return { account, chainId, gasPrice, gasLimit, netId, networkUrl, statSearched, allItems, allItemsIds, totalCountItems, itemsBlockId, mainTextColor, mainBackgroundColor };
 }
 
 export default connect(mapStateToProps, {

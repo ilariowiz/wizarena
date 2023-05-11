@@ -6,7 +6,7 @@ import {
 	fetchAccountDetails,
 	getNumberMinted
 } from '../actions'
-import { MAIN_NET_ID, BACKGROUND_COLOR } from '../actions/types'
+import { MAIN_NET_ID } from '../actions/types'
 
 const logo = require('../assets/wiz_logo.png')
 
@@ -54,7 +54,7 @@ class App extends Component {
 		//console.log(window)
 
 		return (
-			<div style={styles.container}>
+			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
 				<img
 					src={logo}
 					style={{ width: 192, height: 192 }}
@@ -76,15 +76,14 @@ const styles = {
 		left: 0,
 		right: 0,
 		bottom: 0,
-		backgroundColor: BACKGROUND_COLOR
 	},
 }
 
 
 const mapStateToProps = (state) => {
-	const { account, chainId, gasPrice, gasLimit, networkUrl, allNfts } = state.mainReducer;
+	const { account, chainId, gasPrice, gasLimit, networkUrl, allNfts, mainBackgroundColor } = state.mainReducer;
 
-	return { account, chainId, gasPrice, gasLimit, networkUrl, allNfts };
+	return { account, chainId, gasPrice, gasLimit, networkUrl, allNfts, mainBackgroundColor };
 }
 
 export default connect(mapStateToProps, {

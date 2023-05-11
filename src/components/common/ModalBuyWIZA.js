@@ -7,7 +7,7 @@ import {
     getWizaKDAPool,
     fetchAccountDetails
 } from '../../actions'
-import { TEXT_SECONDARY_COLOR, BACKGROUND_COLOR, CTA_COLOR } from '../../actions/types'
+import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
 
 
 class ModalBuyWIZA extends Component {
@@ -95,7 +95,7 @@ class ModalBuyWIZA extends Component {
 
 
 	render() {
-		const { showModal, onCloseModal, width, account, mainTextColor } = this.props;
+		const { showModal, onCloseModal, width, account, mainTextColor, mainBackgroundColor } = this.props;
         const { loading, estimatedWiza, wizaValue, amount } = this.state
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
@@ -104,7 +104,7 @@ class ModalBuyWIZA extends Component {
 
 		return (
 			<div className={classContainer}>
-				<div style={Object.assign({}, styles.subcontainer, { width })}>
+				<div style={Object.assign({}, styles.subcontainer, { width, backgroundColor: mainBackgroundColor })}>
 
 					<p style={{ color: mainTextColor, fontSize: 18, textAlign: 'center', marginBottom: 10 }}>
 						Swap
@@ -201,7 +201,6 @@ class ModalBuyWIZA extends Component {
 const styles = {
 	subcontainer: {
 		height: 400,
-		backgroundColor: "white",
 		borderRadius: 4,
 		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
@@ -263,9 +262,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-    const { account, chainId, gasPrice, gasLimit, networkUrl, netId, mainTextColor } = state.mainReducer
+    const { account, chainId, gasPrice, gasLimit, networkUrl, netId, mainTextColor, mainBackgroundColor } = state.mainReducer
 
-    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, mainTextColor }
+    return { account, chainId, gasPrice, gasLimit, networkUrl, netId, mainTextColor, mainBackgroundColor }
 }
 
 export default connect(mapStateToProps, {

@@ -115,7 +115,7 @@ class NftCardStake extends Component {
     }
 
 	render() {
-		const { item, history, width, stakeInfo, loading, mainTextColor } = this.props
+		const { item, history, width, stakeInfo, loading, mainTextColor, isDarkmode } = this.props
 		const { inBurnQueue } = this.state
 
         //console.log(stakeInfo);
@@ -170,7 +170,7 @@ class NftCardStake extends Component {
                                 <p style={{ color: mainTextColor, fontSize: 15, marginRight: 7 }}>
                                     Level
                                 </p>
-                                <p style={{ color: getColorTextBasedOnLevel(level), fontSize: 16 }} className="text-bold">
+                                <p style={{ color: getColorTextBasedOnLevel(level, isDarkmode), fontSize: 16 }} className="text-bold">
                                     {level}
                                 </p>
                             </div>
@@ -346,9 +346,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor } = state.mainReducer
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor, isDarkmode } = state.mainReducer
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor }
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor, isDarkmode }
 }
 
 export default connect(mapStateToProps, {
