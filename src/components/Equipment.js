@@ -747,7 +747,7 @@ class Equipment extends Component {
 
     renderSlidePanel(boxW, widthSide) {
 		const { showFilters } = this.state
-		const { filtriRanges, mainTextColor } = this.props
+		const { filtriRanges, mainTextColor, mainBackgroundColor } = this.props
 
 		const panelWidth = "90%"
 
@@ -756,7 +756,7 @@ class Equipment extends Component {
 
 				<div
 					className={showFilters ? "slide-panel-container-on" : "slide-panel-container-off"}
-					style={Object.assign({}, styles.panel, { width: showFilters ? panelWidth : 0, zIndex: 997 })}
+					style={Object.assign({}, styles.panel, { width: showFilters ? panelWidth : 0, zIndex: 997, backgroundColor: mainBackgroundColor })}
 				>
 
 					<div style={styles.headerPanel}>
@@ -1085,7 +1085,6 @@ const styles = {
 		position: 'absolute',
 	},
 	panel: {
-		backgroundColor: 'white',
 		flexDirection: 'column',
 		overflow: 'auto',
 	},
