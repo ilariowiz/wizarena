@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import EquipmentCardForge from './EquipmentCardForge'
 import '../../css/Modal.css'
 import '../../css/ItemCard.css'
-import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
+import { CTA_COLOR } from '../../actions/types'
 
 
 class ModalForgeEquipment extends Component {

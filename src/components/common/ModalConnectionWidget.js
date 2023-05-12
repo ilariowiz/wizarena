@@ -3,7 +3,6 @@ import { connect } from 'react-redux'
 import ConnectionWidget from './ConnectionWidget'
 import { IoClose } from 'react-icons/io5'
 import '../../css/Modal.css'
-import { TEXT_SECONDARY_COLOR } from '../../actions/types'
 
 
 class ModalConnectionWidget extends Component {

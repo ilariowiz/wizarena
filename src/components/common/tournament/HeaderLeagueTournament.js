@@ -1,7 +1,6 @@
 import React from 'react'
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import { CTA_COLOR } from '../../../actions/types'
 
 
 const headerLeague = (tournament, mainTextColor, history) => {

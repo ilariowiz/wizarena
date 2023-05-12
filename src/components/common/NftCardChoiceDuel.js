@@ -56,7 +56,7 @@ class NftCardChoiceDuel extends Component {
     }
 
 	render() {
-		const { item, width, canSubscribe, toSubscribe, subscriptionsInfo, mainTextColor, isDarkmode } = this.props
+		const { item, width, subscriptionsInfo, mainTextColor, isDarkmode } = this.props
 
         //console.log(item);
 

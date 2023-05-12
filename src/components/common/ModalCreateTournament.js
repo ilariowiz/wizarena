@@ -5,7 +5,7 @@ import { IoClose } from 'react-icons/io5'
 import ModalChooseWizard from './ModalChooseWizard'
 import getImageUrl from './GetImageUrl'
 import '../../css/Modal.css'
-import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
+import { CTA_COLOR } from '../../actions/types'
 
 
 class ModalCreateTournament extends Component {
@@ -50,7 +50,7 @@ class ModalCreateTournament extends Component {
 
 	render() {
 		const { showModal, onCloseModal, width, wizaBalance, mainTextColor, mainBackgroundColor, isDarkmode } = this.props;
-        const { idnft, buyin, maxLevel } = this.state
+        const { idnft } = this.state
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 
@@ -75,6 +75,7 @@ class ModalCreateTournament extends Component {
                                     <img
                                         src={getImageUrl(idnft)}
                                         style={{ width: 120, height: 120, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', marginBottom: 5 }}
+                                        alt="Wizard"
                                     />
 
                                     <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10 }} className="text-bold">

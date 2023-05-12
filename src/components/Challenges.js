@@ -5,7 +5,6 @@ import { firebasedb } from './Firebase';
 import Media from 'react-media';
 import Header from './Header'
 import DotLoader from 'react-spinners/DotLoader';
-import moment from 'moment'
 import getBoxWidth from './common/GetBoxW'
 import fight from './common/CalcFight'
 import allSpells from './common/Spells'
@@ -127,7 +126,7 @@ class Challenges extends Component {
     }
 
     onWithdraw(challengeid) {
-        const { account, chainId, gasPrice, gasLimit, netId } = this.props
+        const { account, chainId, gasPrice, netId } = this.props
 
         //console.log(challengeid);
 
@@ -141,7 +140,7 @@ class Challenges extends Component {
     }
 
     onAccept(challengeid, wiz2id) {
-        const { account, chainId, gasPrice, gasLimit, netId } = this.props
+        const { account, chainId, gasPrice, netId } = this.props
 
         //console.log(challengeid, wiz2id);
 
@@ -155,8 +154,6 @@ class Challenges extends Component {
     }
 
     async onShowResult(item) {
-        const { chainId, gasPrice, gasLimit, netId, account } = this.props
-
         //console.log(item);
 
         this.setState({ showModalLoading: true, textModalLoading: "Loading..." })
@@ -238,7 +235,7 @@ class Challenges extends Component {
     }
 
     sendResult(challengeid, fightId) {
-        const { chainId, gasPrice, gasLimit, netId, account } = this.props
+        const { chainId, gasPrice, netId, account } = this.props
 
         this.setState({ showModalLoading: false, textModalLoading: "" })
 

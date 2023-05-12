@@ -96,7 +96,7 @@ class OfferItem extends Component {
 	}
 
 	renderExpiration() {
-		const { item, isMobile, mainTextColor } = this.props
+		const { item, mainTextColor } = this.props
 
 		const diff = moment().to(this.getExpire())
 

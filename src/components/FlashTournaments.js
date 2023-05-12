@@ -6,14 +6,13 @@ import DotLoader from 'react-spinners/DotLoader';
 import Popup from 'reactjs-popup';
 import moment from 'moment'
 import _ from 'lodash'
-import { AiOutlinePlus } from 'react-icons/ai'
 import { TbSortAscendingNumbers, TbSortDescendingNumbers } from 'react-icons/tb'
 import ModalFightsFlashTournament from './common/ModalFightsFlashTournament'
 import ModalCreateTournament from './common/ModalCreateTournament'
 import ModalChooseWizard from './common/ModalChooseWizard'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
-import { TEXT_SECONDARY_COLOR, MAIN_NET_ID, CTA_COLOR } from '../actions/types'
+import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import {
     setNetworkSettings,
     setNetworkUrl,
@@ -244,6 +243,7 @@ class FlashTournaments extends Component {
                 <img
                     src={img}
                     style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid' }}
+                    alt="Wizard"
                 />
             </div>
         )

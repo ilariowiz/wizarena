@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import getImageUrl from './GetImageUrl'
 import '../../css/Modal.css'
-import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
+import { CTA_COLOR } from '../../actions/types'
 
 
 class ModalFightsFlashTournament extends Component {
@@ -98,7 +98,7 @@ class ModalFightsFlashTournament extends Component {
 	}
 
 	render() {
-		const { showModal, width, fights, tournamentInfo, isMobile, mainTextColor, mainBackgroundColor } = this.props;
+		const { showModal, fights, tournamentInfo, isMobile, mainTextColor, mainBackgroundColor } = this.props;
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 

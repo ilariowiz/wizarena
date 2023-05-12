@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getDoc, doc, updateDoc, setDoc } from "firebase/firestore";
+import { getDoc, doc, updateDoc } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
@@ -35,7 +35,7 @@ import {
     loadEquipMinted,
     updateInfoTransactionModal
 } from '../actions'
-import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
+import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
 
 

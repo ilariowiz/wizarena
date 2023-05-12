@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
-import { doc, updateDoc, collection, setDoc, increment, getDocs, where, query } from "firebase/firestore";
+import { collection, getDocs, where, query } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Rainbow from 'rainbowvis.js'
-import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
+import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
-import allSpells from './common/Spells'
 import {
     setNetworkSettings,
     setNetworkUrl,

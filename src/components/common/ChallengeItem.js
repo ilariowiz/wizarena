@@ -55,7 +55,7 @@ class ChallengeItem extends Component {
     }
 
     renderCta() {
-        const { item, isMobile, isReceived, showWinnerChallenges, mainTextColor } = this.props
+        const { item, isReceived, showWinnerChallenges, mainTextColor } = this.props
 
         //console.log(item.fightId);
 
@@ -175,7 +175,7 @@ class ChallengeItem extends Component {
     }
 
 	render() {
-		const { item, isMobile, showWinnerChallenges, mainTextColor } = this.props
+		const { item, showWinnerChallenges, mainTextColor } = this.props
 
         let winner = ""
         if (item.status === "accepted" && item.fightId && showWinnerChallenges.includes(item.id)) {
@@ -199,6 +199,7 @@ class ChallengeItem extends Component {
                         <img
                             src={getImageUrl(item.wiz1id)}
                             style={styles.img}
+                            alt="Wizard 1"
                         />
 
                         <p style={{ fontSize: 16, color: winner === item.wiz1id ? TEXT_SECONDARY_COLOR : mainTextColor, textAlign: 'center' }} className="text-medium">
@@ -222,6 +223,7 @@ class ChallengeItem extends Component {
                         <img
                             src={getImageUrl(item.wiz2id)}
                             style={styles.img}
+                            alt="Wizard 2"
                         />
                         <p style={{ fontSize: 16, color: winner === item.wiz2id ? TEXT_SECONDARY_COLOR : mainTextColor, textAlign: 'center' }} className="text-medium">
                             #{item.wiz2id}

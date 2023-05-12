@@ -6,7 +6,6 @@ import DotLoader from 'react-spinners/DotLoader';
 import moment from 'moment'
 import HistoryItemEquipment from './common/HistoryItemEquipment'
 import getBoxWidth from './common/GetBoxW'
-import { TEXT_SECONDARY_COLOR } from '../actions/types'
 import {
     setSalesEquipment
 } from '../actions'
@@ -80,7 +79,7 @@ class Sales extends Component {
         const { loading, error } = this.state
         const { salesEquipment, mainTextColor } = this.props
 
-        const { boxW, modalW, padding } = getBoxWidth(isMobile)
+        const { boxW, padding } = getBoxWidth(isMobile)
 
         return (
             <div style={{ flexDirection: 'column', textAlign: 'center', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden' }}>

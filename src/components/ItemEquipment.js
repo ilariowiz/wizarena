@@ -279,7 +279,7 @@ class ItemEquipment extends Component {
 	// GESTIAMO I CASI: Connect Wallet, Cancel Listing, Buy Now, Make Offer
 	renderBtnBuy(width, marginRight, isMobile) {
 		const { equipment } = this.state;
-		const { account, mainTextColor } = this.props
+		const { account } = this.props
 
 		if (!account || (account && !account.account)) {
 
@@ -568,7 +568,7 @@ class ItemEquipment extends Component {
 		const { equipment, loading } = this.state
 		const { account } = this.props
 
-		const { boxW, modalW, padding } = getBoxWidth(true)
+		const { boxW, padding } = getBoxWidth(true)
         let imageWidth = boxW > 400 ? 400 : boxW - 30
 
 		let ctaWidth = boxW * 50 / 100
@@ -671,7 +671,7 @@ class ItemEquipment extends Component {
 
 		//console.log(nft);
 
-		const { boxW, modalW, padding } = getBoxWidth(false)
+		const { boxW, padding } = getBoxWidth(false)
 
         let insideWidth = boxW > 700 ? 700 : boxW
 
@@ -797,7 +797,7 @@ class ItemEquipment extends Component {
 	}
 
     render() {
-		const { showModalConnection, loading, error, showModalTransfer } = this.state
+		const { showModalConnection, error, showModalTransfer } = this.state
 
 		let modalW = window.innerWidth * 82 / 100
 		if (modalW > 480) {

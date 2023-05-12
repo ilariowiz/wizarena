@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import Popup from 'reactjs-popup';
-import { AiOutlineReload, AiOutlineShareAlt, AiOutlineUnorderedList } from 'react-icons/ai';
+import { AiOutlineUnorderedList } from 'react-icons/ai';
 import { IoEyeOffOutline, IoEyeOutline, IoFlash, IoMedalOutline, IoClose } from 'react-icons/io5';
 import { BsFillTagFill } from 'react-icons/bs'
 import moment from 'moment'
@@ -669,8 +669,6 @@ class Nft extends Component {
 
 	renderMainFight(key, index) {
 		const { nft, openFightsSection } = this.state
-		const { mainTextColor } = this.props
-
 		//console.log(key, index);
 
 		if (nft.groupedFights && nft.groupedFights[key].length > 0) {
@@ -806,7 +804,7 @@ class Nft extends Component {
 	// SE NFT é LISTATO ******************************************
 	// GESTIAMO I CASI: Connect Wallet, Cancel Listing, Buy Now, Make Offer
 	renderBtnBuy(width, marginRight, isMobile) {
-		const { nft, equipment } = this.state;
+		const { nft } = this.state;
 		const { account } = this.props
 
 		if (!account || (account && !account.account)) {
@@ -922,6 +920,7 @@ class Nft extends Component {
 				<img
 					src={challenge_icon}
 					style={{ width: 26, height: 26, marginRight: 7 }}
+					alt="Challenge icon"
 				/>
 				<p style={styles.btnBuyText} className="text-medium">
 					Challenge
@@ -1001,13 +1000,14 @@ class Nft extends Component {
 		const panelWidth = isMobile ? '90%' : "50%"
 
 		//console.log(nft.medals)
-
+		/*
 		let sortedKeyMedals = []
 		if (nft.medals) {
 			sortedKeyMedals = Object.keys(nft.medals).sort((a, b) => {
 				return parseInt(a.replace("t","")) - parseInt(b.replace("t", ""))
 			})
 		}
+		*/
 
 		return (
 			<div style={styles.panelShadow}>
@@ -1100,7 +1100,6 @@ class Nft extends Component {
 	}
 
 	renderBtnMakeOffer(width, marginRight, isMobile) {
-		const { nft, equipment } = this.state
 
 		let style = isMobile ? { height: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }
 								:
@@ -1150,7 +1149,7 @@ class Nft extends Component {
 
 	renderBtnSell(width, marginRight, isMobile) {
 		const { nft } = this.state
-		const { account, mainTextColor } = this.props
+		const { account } = this.props
 
 		let style = isMobile ? { flexDirection: 'row', height: '100%', marginTop: 10, justifyContent: 'space-between' }
 								:
@@ -1762,7 +1761,7 @@ class Nft extends Component {
 
 	renderBoxEquipment(width) {
 		const { equipment } = this.state
-		const { mainTextColor, isDarkmode } = this.props
+		const { isDarkmode } = this.props
 
 		const infoEquipment = getRingBonuses(equipment)
 		//console.log(infoEquipment);
@@ -1803,7 +1802,7 @@ class Nft extends Component {
 		const { nft, loading, infoBurn } = this.state
 		const { account } = this.props
 
-		const { boxW, modalW, padding } = getBoxWidth(true)
+		const { boxW, padding } = getBoxWidth(true)
 
 		let imageWidth = boxW > 500 ? 500 : boxW - 30
 
@@ -1957,7 +1956,7 @@ class Nft extends Component {
 
 		//console.log(nft);
 
-		const { boxW, modalW, padding } = getBoxWidth(false)
+		const { boxW, padding } = getBoxWidth(false)
 
 		let insideWidth = boxW > 1000 ? 1000 : boxW
 
@@ -2140,7 +2139,7 @@ class Nft extends Component {
 	}
 
 	render() {
-		const { showModalConnection, loading, error, showModalTransfer, showModalOffer } = this.state
+		const { showModalConnection, error, showModalTransfer, showModalOffer } = this.state
 
 		let modalW = window.innerWidth * 82 / 100
 		if (modalW > 480) {

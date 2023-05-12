@@ -41,7 +41,7 @@ import {
 	declineOffer,
 	getWalletXp
 } from '../actions'
-import { MAIN_NET_ID, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
+import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
 import 'reactjs-popup/dist/index.css';
 
@@ -631,7 +631,7 @@ class Profile extends Component {
 
 	renderBoxSearchStat(statName, statDisplay, list) {
 		const { statSearched } = this.state
-		const { mainTextColor, mainBackgroundColor } = this.props
+		const { mainTextColor } = this.props
 
 		//console.log(statSearched);
 
@@ -742,7 +742,7 @@ class Profile extends Component {
 	}
 
 	renderYourWizards(width, isMobile) {
-		const { yourNfts, loading, showFilters } = this.state
+		const { yourNfts, loading } = this.state
 		const { userMintedNfts, filtriProfileRanges } = this.props
 
 		const widthSide = 180
@@ -828,7 +828,7 @@ class Profile extends Component {
 	}
 
 	renderYourEquip(width, isMobile) {
-		const { equipment, itemsToShow, loading } = this.state
+		const { equipment, itemsToShow } = this.state
 
         const ringsToShow = itemsToShow.length > 0 ? itemsToShow : equipment
 
@@ -922,7 +922,7 @@ class Profile extends Component {
 
 	renderMenu(isMobile) {
 		const { section, loading, equipment, offersMade, offersReceived, offersEquipmentMade } = this.state;
-		const { userMintedNfts, mainTextColor, mainBackgroundColor, isDarkmode } = this.props
+		const { userMintedNfts, mainTextColor, isDarkmode } = this.props
 
 		let textColor = isDarkmode ? "#1d1d1f" : "white"
 

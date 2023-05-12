@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { IoClose } from 'react-icons/io5'
 import '../../css/Modal.css'
-import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
+import { CTA_COLOR } from '../../actions/types'
 
 
 class ModalWizaPvP extends Component {

@@ -112,7 +112,7 @@ class Sales extends Component {
                     const selection = chart.getSelection()
                     if (selection.length === 1) {
                         const [selectedItem] = selection
-                        const dataTable = chartWrapper.getDataTable()
+                        //const dataTable = chartWrapper.getDataTable()
                         const { row } = selectedItem
                         //console.log(row);
                         //console.log(data[row+1]);

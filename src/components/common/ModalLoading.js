@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import DotLoader from 'react-spinners/DotLoader';
 import '../../css/Modal.css'
-import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
 
 
 class ModalLoading extends Component {

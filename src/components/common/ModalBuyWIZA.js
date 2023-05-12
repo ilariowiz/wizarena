@@ -7,7 +7,7 @@ import {
     getWizaKDAPool,
     fetchAccountDetails
 } from '../../actions'
-import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
+import { CTA_COLOR } from '../../actions/types'
 
 
 class ModalBuyWIZA extends Component {

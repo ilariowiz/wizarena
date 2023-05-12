@@ -3,12 +3,11 @@ import { connect } from 'react-redux'
 import { IoClose } from 'react-icons/io5'
 import NftCardChoiceFlashT from './NftCardChoiceFlashT'
 import '../../css/Modal.css'
-import { TEXT_SECONDARY_COLOR } from '../../actions/types'
 
 
 class ModalChooseWizard extends Component {
 	render() {
-		const { showModal, onCloseModal, width, yourWizards, equipment, mainTextColor, mainBackgroundColor } = this.props;
+		const { showModal, onCloseModal, yourWizards, equipment, mainTextColor, mainBackgroundColor } = this.props;
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 

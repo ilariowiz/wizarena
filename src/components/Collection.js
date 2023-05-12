@@ -18,7 +18,7 @@ import {
 	storeFiltersStats,
 	getWizardsStakedCount
 } from '../actions'
-import { MAIN_NET_ID, ITEMS_PER_BLOCK, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
+import { MAIN_NET_ID, ITEMS_PER_BLOCK, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
 import 'reactjs-popup/dist/index.css';
 import '../css/Header.css'
@@ -825,7 +825,7 @@ class Collection extends Component {
 
 	renderBody(isMobile) {
 		const { allNfts, allNftsIds, statSearched, filtriRanges, mainTextColor } = this.props
-		const { loading, nftsToShow, searchedText, showFilters } = this.state
+		const { loading, nftsToShow, searchedText } = this.state
 
 		//console.log(allNftsIds)
 		const { boxW, padding } = getBoxWidth(isMobile)

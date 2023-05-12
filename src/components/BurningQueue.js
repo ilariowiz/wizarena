@@ -8,7 +8,7 @@ import Header from './Header'
 import DotLoader from 'react-spinners/DotLoader';
 import NftCardBurningQueue from './common/NftCardBurningQueue'
 import getBoxWidth from './common/GetBoxW'
-import { TEXT_SECONDARY_COLOR, MAIN_NET_ID } from '../actions/types'
+import { MAIN_NET_ID } from '../actions/types'
 import {
     setNetworkSettings,
     setNetworkUrl,

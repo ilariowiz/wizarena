@@ -5,16 +5,13 @@ import moment from 'moment'
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import DotLoader from 'react-spinners/DotLoader';
-import Popup from 'reactjs-popup';
 import NftCardTournament from './common/NftCardTournament'
 import Header from './Header'
 import boxPairTournament from './common/tournament/BoxPairTournament'
 import renderInfoTournament from './common/tournament/InfoTournament'
 import graphSubscribers from './common/tournament/GraphSubscribers'
 import getBoxWidth from './common/GetBoxW'
-import getImageUrl from './common/GetImageUrl'
-import convertMedalName from './common/ConvertMedalName'
-import { MAIN_NET_ID, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
+import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import {
     getBuyin,
     setNetworkSettings,
@@ -25,7 +22,6 @@ import {
     getInfoItemEquippedMass
 } from '../actions'
 import '../css/Nft.css'
-import 'reactjs-popup/dist/index.css';
 
 
 class TournamentElite extends Component {
@@ -256,7 +252,7 @@ class TournamentElite extends Component {
 
         //console.log(subscribedWiza, tournament);
 
-        const { boxW, modalW, padding } = getBoxWidth(isMobile)
+        const { boxW, padding } = getBoxWidth(isMobile)
 
         if (this.state.loading) {
             return (
@@ -280,9 +276,6 @@ class TournamentElite extends Component {
 
             const dateStart = moment(tournament.start.seconds * 1000)
             //console.log(dateStart);
-
-            const dateStartString = moment(dateStart).format("dddd, MMMM Do YYYY, h:mm:ss a");
-            const dateStartTo = moment().to(dateStart)
 
 			return (
 				<div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>

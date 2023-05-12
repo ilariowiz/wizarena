@@ -1,12 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getDocs, collection, query, where, orderBy } from "firebase/firestore";
-import { firebasedb } from './Firebase';
 import Media from 'react-media';
 import Header from './Header'
 import DotLoader from 'react-spinners/DotLoader';
 import toast, { Toaster } from 'react-hot-toast';
-import moment from 'moment'
 import getBoxWidth from './common/GetBoxW'
 import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import cardStats from './common/CardStats'
@@ -133,6 +130,7 @@ class DoChallenges extends Component {
                 <img
                     style={{ width: widthImg, height: widthImg }}
                     src={getImageUrl(undefined)}
+                    alt="placeholder"
                 />
 
                 <p style={{ fontSize: 17, color: this.props.mainTextColor, marginLeft: isMobile ? 0 : 10, marginRight: isMobile ? 0 : 10, marginTop: isMobile ? 20 : 0, marginBottom: isMobile ? 20 : 0 }} className="text-medium">
@@ -197,6 +195,7 @@ class DoChallenges extends Component {
                             <img
                                 src={info.equipment.url}
                                 style={{ width: 50, height: 50, borderRadius: 4, borderColor: '#d7d7d7', borderWidth: 1, borderStyle: 'solid', marginRight: 10 }}
+                                alt="Ring"
                             />
                             <p style={{ fontSize: 14, color: mainTextColor }}>
                                 {info.equipment.name}

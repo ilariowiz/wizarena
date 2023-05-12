@@ -6,7 +6,7 @@ import { TEST_NET_ID, CTA_COLOR } from '../../actions/types'
 
 class HistoryItemEquipment extends Component {
 	render() {
-		const { item, index, nftH, netId, isMobile, isAll, coin, mainTextColor } = this.props
+		const { item, index, nftH, netId, isMobile, isAll, mainTextColor } = this.props
 
 		let removeBorder = index + 1 === nftH.length
 

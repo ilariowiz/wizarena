@@ -9,7 +9,7 @@ import ModalRecipeBook from './common/ModalRecipeBook'
 import getBoxWidth from './common/GetBoxW'
 import recipeBook from './common/RecipeBook'
 import forgeLevel from './common/ForgeLevel'
-import { TEXT_SECONDARY_COLOR, MAIN_NET_ID, CTA_COLOR } from '../actions/types'
+import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import {
     setNetworkSettings,
     setNetworkUrl,

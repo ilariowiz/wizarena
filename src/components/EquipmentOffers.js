@@ -7,7 +7,7 @@ import moment from 'moment'
 import getBoxWidth from './common/GetBoxW'
 import ModalMakeOfferItem from './common/ModalMakeOfferItem'
 import itemToUrl from './common/ItemToUrl'
-import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
+import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import {
     setNetworkSettings,
     setNetworkUrl,

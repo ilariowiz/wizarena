@@ -571,8 +571,6 @@ class Tournament extends Component {
     }
 
     renderBtnSubscribe(tournament) {
-        const { account } = this.props
-
         return (
             <button
                 className='btnH'

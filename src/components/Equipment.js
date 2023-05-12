@@ -747,7 +747,7 @@ class Equipment extends Component {
 
     renderSlidePanel(boxW, widthSide) {
 		const { showFilters } = this.state
-		const { filtriRanges, mainTextColor, mainBackgroundColor } = this.props
+		const { mainTextColor, mainBackgroundColor } = this.props
 
 		const panelWidth = "90%"
 

@@ -273,7 +273,7 @@ class Fight extends Component {
 
             this.indexFightActions += 1
 
-            const element = document.getElementById("mainBox")
+            //const element = document.getElementById("mainBox")
 
             this.setState({ fightActions })
 
@@ -462,7 +462,7 @@ class Fight extends Component {
         const { u1, u2, actions, winner, error, showOnlyOne, actionsDict, showResult, showBar, fightActions, loading } = this.state
         const { mainTextColor } = this.props
 
-        const { boxW, modalW, padding } = getBoxWidth(isMobile)
+        const { boxW, padding } = getBoxWidth(isMobile)
 
         let maxWidth = boxW > 900 ? 900 : boxW
 
@@ -661,8 +661,6 @@ class Fight extends Component {
 	}
 
     render() {
-        const { loading } = this.state
-
 		return (
 			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
 

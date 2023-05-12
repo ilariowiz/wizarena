@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { IoClose } from 'react-icons/io5'
 import allSpells from './Spells'
 import '../../css/Modal.css'
-import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
+import { CTA_COLOR } from '../../actions/types'
 
 
 class ModalSwapSpell extends Component {
