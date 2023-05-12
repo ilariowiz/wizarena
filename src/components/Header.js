@@ -712,7 +712,7 @@ class Header extends Component {
 							on="hover"
 						>
 							<div style={{ width: 200, overflowWrap: "anywhere", padding: 8 }}>
-								<p style={{ color: mainTextColor, fontSize: 15, lineHeight: 1.3 }}>
+								<p style={{ color: "#1d1d1f", fontSize: 15, lineHeight: 1.4 }}>
 									{textToConfirm}.<br /> Request key: {transactionsState[transactionsState.length-1].requestKey}
 								</p>
 							</div>
