@@ -22,7 +22,7 @@ const headerLeague = (tournament, mainTextColor, history) => {
                     on="hover"
                 >
                     <div style={{ padding: 10 }}>
-                        <p style={{ fontSize: 16, color: mainTextColor, lineHeight: 1.2 }}>
+                        <p style={{ fontSize: 16, color: "#1d1d1f", lineHeight: 1.2 }}>
                             {tournament.regionDescription}
                         </p>
                     </div>
@@ -43,7 +43,7 @@ const headerLeague = (tournament, mainTextColor, history) => {
                     on="hover"
                 >
                     <div style={{ padding: 10 }}>
-                        <p style={{ fontSize: 16, color: mainTextColor, lineHeight: 1.2 }}>
+                        <p style={{ fontSize: 16, color: "#1d1d1f", lineHeight: 1.2 }}>
                             {tournament.eventDescription}
                         </p>
                     </div>
