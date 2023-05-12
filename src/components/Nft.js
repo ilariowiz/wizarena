@@ -809,7 +809,7 @@ class Nft extends Component {
 
 		if (!account || (account && !account.account)) {
 
-			let style = isMobile ? { height: '100%', flexDirection: 'row', marginLeft: 15, marginRight: 15, marginTop: 10, justifyContent: 'center' }
+			let style = isMobile ? { flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }
 									:
 									{ paddingLeft: 12, paddingRight: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }
 
@@ -830,7 +830,7 @@ class Nft extends Component {
 
 		if (nft.owner === account.account) {
 
-			let style = isMobile ? { height: '100%', flexDirection: 'row', marginLeft: 15, marginRight: 15, marginTop: 10, justifyContent: 'space-between' }
+			let style = isMobile ? { flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }
 									:
 									{ width: width*2, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }
 
@@ -839,7 +839,7 @@ class Nft extends Component {
 
 					<button
 						className='btnH'
-						style={Object.assign({}, styles.btnBuy, { width: width-10 })}
+						style={Object.assign({}, styles.btnBuy, { width: width-10, marginBottom: isMobile ? 15 : 0 })}
 						onClick={() => this.delist()}
 					>
 						<p style={styles.btnBuyText} className="text-medium">
@@ -860,7 +860,7 @@ class Nft extends Component {
 			)
 		}
 
-		let style = isMobile ? { height: '100%', flexDirection: 'row', marginLeft: 15, marginRight: 15, marginTop: 10, justifyContent: 'space-between' }
+		let style = isMobile ? { flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }
 								:
 								{ width: width*2, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }
 
@@ -869,7 +869,7 @@ class Nft extends Component {
 
 				<button
 					className='btnH'
-					style={Object.assign({}, styles.btnBuy, { width: width-10 })}
+					style={Object.assign({}, styles.btnBuy, { width: width-10, marginBottom: isMobile ? 15 : 0 })}
 					onClick={() => this.setState({ showModalOffer: true })}
 				>
 					<BsFillTagFill
@@ -1110,7 +1110,7 @@ class Nft extends Component {
 
 				<button
 					className='btnH'
-					style={Object.assign({}, styles.btnBuy, { width: width*2 })}
+					style={Object.assign({}, styles.btnBuy, { width: isMobile ? width : width*2 })}
 					onClick={() => this.setState({ showModalOffer: true })}
 				>
 					<BsFillTagFill
@@ -1151,7 +1151,7 @@ class Nft extends Component {
 		const { nft } = this.state
 		const { account } = this.props
 
-		let style = isMobile ? { flexDirection: 'row', height: '100%', marginTop: 10, justifyContent: 'space-between' }
+		let style = isMobile ? { width, flexDirection: 'column', alignItems: 'center', marginTop: 10, justifyContent: 'center' }
 								:
 								{ width: width*2, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }
 
@@ -1161,7 +1161,7 @@ class Nft extends Component {
 					!nft.listed && account && account.account && nft.owner === account.account ?
 					<button
 						className="btnH"
-						style={Object.assign({}, styles.btnBuy, { width: width-10 })}
+						style={Object.assign({}, styles.btnBuy, { width: width-10, marginBottom: isMobile ? 15 : 0 })}
 						onClick={() => this.setState({ showModalTransfer: true })}
 					>
 						<p style={styles.btnBuyText} className="text-medium">
@@ -1808,8 +1808,10 @@ class Nft extends Component {
 
 		let showOverlayBurn = infoBurn && infoBurn.burned
 
-		let ctaWidth = boxW * 40 / 100
-		if (ctaWidth > 150) ctaWidth = 150
+		const viewTopsW = imageWidth * 75 / 100
+
+		let ctaWidth = (viewTopsW/2) - 5
+		//if (ctaWidth > 150) ctaWidth = 150
 
 		return (
 			<div style={{ flexDirection: 'column', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden', alignItems: 'center' }}>
@@ -1821,11 +1823,11 @@ class Nft extends Component {
 					</div>
 				}
 
-				<div style={{ width: boxW, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 25 }}>
+				<div style={{ width: imageWidth, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 25 }}>
 
 					<div style={{ position: 'relative' }}>
 						<img
-							style={{ width: imageWidth, height: imageWidth, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid' }}
+							style={{ width: imageWidth, height: imageWidth, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid' }}
 							src={getImageUrl(nft.id)}
 							alt={nft.id}
 						/>
@@ -1833,7 +1835,7 @@ class Nft extends Component {
 						{
 							showOverlayBurn ?
 							<img
-								style={{ width: imageWidth, height: imageWidth, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', position: 'absolute', top: 0, left: 0 }}
+								style={{ width: imageWidth, height: imageWidth, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', position: 'absolute', top: 0, left: 0 }}
 								src={burn_overlay}
 								alt={nft.id}
 							/>
@@ -1843,28 +1845,26 @@ class Nft extends Component {
 
 					<div style={{ flexDirection: 'column', width: imageWidth, height: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }}>
 
-						<div style={{ width: imageWidth, flexDirection: 'column', alignItems: 'center', marginBottom: 20 }}>
-							{this.renderName(20)}
+						{this.renderName(20)}
 
+						<div style={{ width: imageWidth, flexDirection: 'column', alignItems: 'center', marginBottom: 20 }}>
 							{
 								account && account.account !== nft.owner ?
-								this.renderBtnChallenge(200)
+								this.renderBtnChallenge(viewTopsW)
 								: null
 							}
 
-							{this.renderBtnsMedalsFights(200)}
+							{this.renderBtnsMedalsFights(viewTopsW)}
 						</div>
 
 						{
 							//nft listato, in renderbtn buy gestiamo tutti i casi, anche account non connesso
 							nft.listed &&
-							<div style={styles.boxRightMobile}>
+							<div style={Object.assign({}, styles.boxRightMobile,  { width: imageWidth })}>
 
 								{this.renderLeftBoxPriceListed(nft.owner === account.account, imageWidth)}
 
-								<div style={{ height: 10 }} />
-
-								{this.renderBtnBuy(ctaWidth, 15, true)}
+								{this.renderBtnBuy(viewTopsW, 0, true)}
 
 							</div>
 						}
@@ -1872,12 +1872,12 @@ class Nft extends Component {
 						{
 							// nft non listato ma tu sei owner: SELL
 							!nft.listed && account && account.account && nft.owner === account.account ?
-							<div style={styles.boxRightMobile}>
-								{this.renderLeftBoxListing()}
+							<div style={Object.assign({}, styles.boxRightMobile,  { width: imageWidth })}>
+								{this.renderLeftBoxListing(imageWidth)}
 
 								<div style={{ height: 10 }} />
 
-								{this.renderBtnSell(ctaWidth, 15, true)}
+								{this.renderBtnSell(viewTopsW, 0, true)}
 
 							</div>
 							: null
@@ -1886,15 +1886,15 @@ class Nft extends Component {
 						{
 							//non sei il proprietario e l'nft non è listato
 							!nft.listed && !loading && account && account.account && nft.owner !== account.account ?
-							<div style={styles.boxRightMobile}>
+							<div style={Object.assign({}, styles.boxRightMobile,  { width: imageWidth })}>
 
 								{this.renderLeftMakeOffer()}
 
-								<div style={{ height: 10 }} />
+								<div style={{ height: 5 }} />
 
 								{
 									!showOverlayBurn ?
-									this.renderBtnMakeOffer(ctaWidth, 0, true)
+									this.renderBtnMakeOffer(viewTopsW, 0, true)
 									: null
 								}
 							</div>
@@ -1904,13 +1904,13 @@ class Nft extends Component {
 						{
 							//nft non listato ma account non connesso CONNECT WALLET
 							 !nft.listed && !loading && (!account || (account && !account.account)) ?
-							<div style={styles.boxRightMobile}>
+							<div style={Object.assign({}, styles.boxRightMobile,  { width: imageWidth })}>
 
 								{this.renderLeftMakeOffer()}
 
-								<div style={{ height: 10 }} />
+								<div style={{ height: 5 }} />
 
-								{this.renderBtnConnect(ctaWidth, 15, true)}
+								{this.renderBtnConnect(viewTopsW, 0, true)}
 							</div>
 							: null
 						}
@@ -2269,10 +2269,7 @@ const styles = {
 		width: '100%',
 		flexDirection: 'column',
 		justifyContent: 'space-between',
-		borderRadius: 4,
-		paddingTop: 16,
-		paddingBottom: 16,
-		backgroundColor: '#f4f4f4'
+		alignItems: 'center'
 	},
 	boxPrice: {
 		borderRadius: 4,
