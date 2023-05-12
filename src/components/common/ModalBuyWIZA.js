@@ -125,7 +125,7 @@ class ModalBuyWIZA extends Component {
                             </div>
 
                             <input
-                                style={styles.input}
+                                style={Object.assign({}, styles.input, { color: mainTextColor })}
                                 type='text'
                                 placeholder='Enter amount'
                                 value={this.state.amount}
@@ -142,7 +142,7 @@ class ModalBuyWIZA extends Component {
                                 </p>
                             </div>
 
-                            <div style={Object.assign({}, styles.input, { alignItems: 'center' })}>
+                            <div style={Object.assign({}, styles.input, { alignItems: 'center', color: mainTextColor })}>
                                 {estimatedWiza}
                             </div>
 
@@ -227,7 +227,6 @@ const styles = {
 		borderStyle: 'solid',
 		borderRadius: 4,
 		fontSize: 16,
-		color: 'black',
         fontFamily: 'FigtreeMedium',
 		paddingLeft: 8,
 		paddingRight: 8,
