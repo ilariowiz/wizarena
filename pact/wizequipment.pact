@@ -15,7 +15,7 @@
   (defconst MINTED_COUNT_KEY "minted-count-key")
   (defconst NFTS_COUNT_KEY "nfts-count-key")
   (defconst VOLUME_PURCHASE_COUNT "volume_purchase_count")
-  (defconst PRICE_KEY 4.0)
+  (defconst PRICE_KEY 5.0)
   (defconst FEE_KEY 2)
   (defconst ADMIN_KEYSET "free.wizequipment-keyset")
   (defconst ADMIN_ADDRESS "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb")
@@ -96,9 +96,7 @@
 
   (defschema creation-schema
       @doc "Initial equipment creation"
-      url:string
-      bonus:string
-      name:string
+      type:string
   )
 
   (defschema equip-main-schema
@@ -170,6 +168,10 @@
       xp:integer
   )
 
+  (defschema wl-mint-schema
+      amount:integer
+  )
+
   (deftable equipment:{equip-main-schema})
   (deftable creation:{creation-schema})
   (deftable equipped:{equipped-schema})
@@ -182,6 +184,9 @@
 
   (deftable recipe-book:{recipe-book-schema})
   (deftable forge-level:{forge-level-schema})
+
+  (deftable wl-mint:{wl-mint-schema})
+  (deftable wl-minted:{wl-mint-schema})
 
   ; Can only happen once
   ; --------------------------------------------------------------------------
@@ -268,19 +273,59 @@
               (id (int-to-str 10(get-count NFTS_COUNT_KEY)))
           )
           (insert creation id
-              {"url": (at "url" item-list),
-              "bonus": (at "bonus" item-list),
-              "name": (at "name" item-list)}
+              {"type": (at "type" item-list)}
           )
       )
       (increase-count NFTS_COUNT_KEY)
+  )
+
+  (defun add-infos (item-list:list)
+      (with-capability (ADMIN)
+          (map
+              (add-info)
+              item-list
+          )
+      )
+  )
+
+  (defun add-info (item:object)
+    (require-capability (ADMIN))
+    (let (
+            (id (at "id" item))
+        )
+        (update equipment id {
+            "url": (at "url" item),
+            "bonus": (at "bonus" item),
+            "name": (at "name" item)
+        })
+    )
+  )
+
+  (defun add-users-wl-mint (accounts:list)
+      (with-capability (ADMIN)
+          (map
+              (add-user-wl-mint)
+              accounts
+          )
+      )
+  )
+
+  (defun add-user-wl-mint (data:object)
+      (require-capability (ADMIN))
+      (let (
+              (address (at "address" data))
+              (amount (at "amount" data))
+          )
+          (write wl-mint address { "amount": amount })
+          (write wl-minted address { "amount": 0 })
+      )
   )
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;;;;;;; MINT Equipment  ;;;;;;;;;;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  (defun get-equipment-1 (owner:string amount:integer)
+  (defun get-equipment-1 (owner:string amount:integer m:module{wiza1-interface-v2})
       @doc "Mint part 1"
       (enforce (>= amount 1) "Must mint at least 1 item")
       (let (
@@ -288,12 +333,26 @@
               (equipment-created (get-count NFTS_COUNT_KEY))
               (mint-price PRICE_KEY)
               (mint-start (get-value MINT_START))
+              (max-to-mint (get-max-items owner))
+              (minted (get-minted owner))
+              (wiza-cost (* (get-wiza-value) 2))
           )
           (enforce (= mint-start "1") "the chests are still empty")
           (enforce (<= (+ equipment-minted amount) equipment-created) "Tried to mint more items then available! Please reduce the amount")
+          (enforce (>= (- max-to-mint amount) minted) "Exceed max mint per wallet")
+
+          (with-default-read wl-minted owner
+            {"amount": 0}
+            {"amount":= nminted }
+            (write wl-minted owner {"amount": (+ nminted amount)})
+          )
+
           (install-capability (coin.TRANSFER owner ADMIN_ADDRESS (* mint-price amount)))
           (coin.transfer owner ADMIN_ADDRESS (* mint-price amount))
+
           (with-capability (ACCOUNT_GUARD owner)
+              (m::spend-wiza (* wiza-cost amount) owner)
+
               (with-capability (PRIVATE)
                   (map
                       (get-equipment-2 owner)
@@ -318,15 +377,15 @@
               (mint-equipment id {
                   "id": id,
                   "created": (at "block-time" (chain-data)),
-                  "url": (at "url" data),
-                  "bonus": (at "bonus" data),
-                  "name": (at "name" data),
+                  "url": "",
+                  "bonus": "",
+                  "name": "",
                   "owner": owner,
                   "listed": false,
                   "price": 0.0,
                   "equipped": false,
                   "equippedToId": "",
-                  "type":""
+                  "type": (at "type" data)
               })
               (emit-event (EQUIPMENT_MINTED id owner))
           )
@@ -339,6 +398,18 @@
       (require-capability (PRIVATE))
       (insert equipment id data)
       (increase-count MINTED_POST_COUNT_KEY)
+  )
+
+  (defun get-max-items (account:string)
+    (at "amount" (read wl-mint account ['amount]))
+  )
+
+  (defun get-minted (account:string)
+      (with-default-read wl-minted account
+          {"amount": 0}
+          {"amount":= minted }
+          minted
+      )
   )
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -898,7 +969,7 @@
           (enforce (< 0 created-count) "no equipment created")
           (enforce (< minted-count created-count) "all equipment minted")
           (let (
-                  (data (read creation id ['url 'bonus 'name]))
+                  (data (read creation id ['type]))
               )
               data
           )
@@ -973,6 +1044,11 @@
       )
   )
 
+  (defun get-wiza-value ()
+      36.5464
+      ;(free.wiz-dexinfo.get-wiza-value)
+  )
+
 )
 
 (if (read-msg "upgrade")
@@ -990,6 +1066,9 @@
     (create-table recipe-book)
 
     (create-table forge-level)
+
+    (create-table wl-mint)
+    (create-table wl-minted)
 
     (initialize)
 

@@ -1470,27 +1470,35 @@
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
+; (free.wiz-equipment.create-all-equipment [
+;     {
+;         "url":"https:/prova.it",
+;         "bonus":"1_defense",
+;         "name": "ring of defense +1"
+;     },
+;     {
+;         "url":"https:/prova.it",
+;         "bonus":"1_defense",
+;         "name": "ring of defense +1"
+;     },
+;     {
+;         "url":"https:/prova.it",
+;         "bonus":"5_attack",
+;         "name": "ring of attack +5"
+;     },
+;     {
+;         "url":"https:/prova.it",
+;         "bonus":"4_defense,10_hp",
+;         "name": "ring of superior defense"
+;     }
+; ])
+
 (free.wiz-equipment.create-all-equipment [
-    {
-        "url":"https:/prova.it",
-        "bonus":"1_defense",
-        "name": "ring of defense +1"
-    },
-    {
-        "url":"https:/prova.it",
-        "bonus":"1_defense",
-        "name": "ring of defense +1"
-    },
-    {
-        "url":"https:/prova.it",
-        "bonus":"5_attack",
-        "name": "ring of attack +5"
-    },
-    {
-        "url":"https:/prova.it",
-        "bonus":"4_defense,10_hp",
-        "name": "ring of superior defense"
-    }
+    {"type":"ring"},
+    {"type":"ring"},
+    {"type":"ring"},
+    {"type":"ring"},
+    {"type":"ring"}
 ])
 
 (commit-tx)
@@ -1527,6 +1535,8 @@
 
 (free.wiz-equipment.set-value "mint_start" "1")
 
+(free.wiz-equipment.add-users-wl-mint [{"address": "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "amount": 2}])
+
 (commit-tx)
 
 (begin-tx "MINT EQUIP")
@@ -1535,12 +1545,33 @@
   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
   "caps": [
     (free.wiz-equipment.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
-    (coin.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb" 8.0),
+    (coin.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb" 10.0),
     (coin.GAS)
   ]
 }])
 
-(free.wiz-equipment.get-equipment-1 "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" 2)
+(free.wiz-equipment.get-equipment-1 "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" 2 free.wiza)
+
+(commit-tx)
+
+(begin-tx "ADD INFO EQUIP")
+
+(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+
+(free.wiz-equipment.add-infos [
+    {
+        "id": "0",
+        "url":"https:/prova.it",
+        "bonus":"1_defense",
+        "name": "ring of defense +1"
+    },
+    {
+        "id": "1",
+        "url":"https:/prova.it",
+        "bonus":"1_defense",
+        "name": "ring of defense +1"
+    }
+])
 
 (commit-tx)
 
