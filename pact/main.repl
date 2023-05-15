@@ -1499,25 +1499,25 @@
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
-(free.wiz-equipment.set-recipe-book-value "4_hp_4_hp" "https://storage.googleapis.com/wizarena/equipment/ring_hp_4.png" "8_hp" "Ring of HP +8" 70.0 1)
-(free.wiz-equipment.set-recipe-book-value "8_hp_8_hp" "https://storage.googleapis.com/wizarena/equipment/ring_hp_3.png" "12_hp" "Ring of HP +12" 90.0 1)
-(free.wiz-equipment.set-recipe-book-value "12_hp_12_hp" "https://storage.googleapis.com/wizarena/equipment/ring_hp_2.png" "16_hp" "Ring of HP +16" 120.0 1)
+(free.wiz-equipment.set-recipe-book-value "4_hp_4_hp" "https://storage.googleapis.com/wizarena/equipment/ring_hp_4.png" "8_hp" "Ring of HP +8" 70.0 1 "ring")
+(free.wiz-equipment.set-recipe-book-value "8_hp_8_hp" "https://storage.googleapis.com/wizarena/equipment/ring_hp_3.png" "12_hp" "Ring of HP +12" 90.0 1 "ring")
+(free.wiz-equipment.set-recipe-book-value "12_hp_12_hp" "https://storage.googleapis.com/wizarena/equipment/ring_hp_2.png" "16_hp" "Ring of HP +16" 120.0 1 "ring")
 
-(free.wiz-equipment.set-recipe-book-value "1_defense_1_defense" "https://storage.googleapis.com/wizarena/equipment/ring_def_4.png" "2_defense" "Ring of Defense +2" 70.0 1)
-(free.wiz-equipment.set-recipe-book-value "2_defense_2_defense" "https://storage.googleapis.com/wizarena/equipment/ring_def_3.png" "3_defense" "Ring of Defense +3" 90.0 1)
-(free.wiz-equipment.set-recipe-book-value "3_defense_3_defense" "https://storage.googleapis.com/wizarena/equipment/ring_def_2.png" "4_defense" "Ring of Defense +4" 120.0 1)
+(free.wiz-equipment.set-recipe-book-value "1_defense_1_defense" "https://storage.googleapis.com/wizarena/equipment/ring_def_4.png" "2_defense" "Ring of Defense +2" 70.0 1 "ring")
+(free.wiz-equipment.set-recipe-book-value "2_defense_2_defense" "https://storage.googleapis.com/wizarena/equipment/ring_def_3.png" "3_defense" "Ring of Defense +3" 90.0 1 "ring")
+(free.wiz-equipment.set-recipe-book-value "3_defense_3_defense" "https://storage.googleapis.com/wizarena/equipment/ring_def_2.png" "4_defense" "Ring of Defense +4" 120.0 1 "ring")
 
-(free.wiz-equipment.set-recipe-book-value "1_attack_1_attack" "https://storage.googleapis.com/wizarena/equipment/ring_atk_4.png" "2_attack" "Ring of Attack +2" 70.0 1)
-(free.wiz-equipment.set-recipe-book-value "2_attack_2_attack" "https://storage.googleapis.com/wizarena/equipment/ring_atk_3.png" "3_attack" "Ring of Attack +3" 90.0 1)
-(free.wiz-equipment.set-recipe-book-value "3_attack_3_attack" "https://storage.googleapis.com/wizarena/equipment/ring_atk_2.png" "4_attack" "Ring of Attack +4" 120.0 1)
+(free.wiz-equipment.set-recipe-book-value "1_attack_1_attack" "https://storage.googleapis.com/wizarena/equipment/ring_atk_4.png" "2_attack" "Ring of Attack +2" 70.0 1 "ring")
+(free.wiz-equipment.set-recipe-book-value "2_attack_2_attack" "https://storage.googleapis.com/wizarena/equipment/ring_atk_3.png" "3_attack" "Ring of Attack +3" 90.0 1 "ring")
+(free.wiz-equipment.set-recipe-book-value "3_attack_3_attack" "https://storage.googleapis.com/wizarena/equipment/ring_atk_2.png" "4_attack" "Ring of Attack +4" 120.0 1 "ring")
 
-(free.wiz-equipment.set-recipe-book-value "2_damage_2_damage" "https://storage.googleapis.com/wizarena/equipment/ring_dmg_4.png" "4_damage" "Ring of Damage +4" 70.0 1)
-(free.wiz-equipment.set-recipe-book-value "4_damage_4_damage" "https://storage.googleapis.com/wizarena/equipment/ring_dmg_3.png" "6_damage" "Ring of Damage +6" 90.0 1)
-(free.wiz-equipment.set-recipe-book-value "6_damage_6_damage" "https://storage.googleapis.com/wizarena/equipment/ring_dmg_2.png" "8_damage" "Ring of Damage +8" 120.0 1)
+(free.wiz-equipment.set-recipe-book-value "2_damage_2_damage" "https://storage.googleapis.com/wizarena/equipment/ring_dmg_4.png" "4_damage" "Ring of Damage +4" 70.0 1 "ring")
+(free.wiz-equipment.set-recipe-book-value "4_damage_4_damage" "https://storage.googleapis.com/wizarena/equipment/ring_dmg_3.png" "6_damage" "Ring of Damage +6" 90.0 1 "ring")
+(free.wiz-equipment.set-recipe-book-value "6_damage_6_damage" "https://storage.googleapis.com/wizarena/equipment/ring_dmg_2.png" "8_damage" "Ring of Damage +8" 120.0 1 "ring")
 
-(free.wiz-equipment.set-recipe-book-value "2_speed_2_speed" "https://storage.googleapis.com/wizarena/equipment/ring_speed_4.png" "4_speed" "Ring of Speed +4" 70.0 1)
-(free.wiz-equipment.set-recipe-book-value "4_speed_4_speed" "https://storage.googleapis.com/wizarena/equipment/ring_speed_6.png" "6_speed" "Ring of Speed +6" 90.0 1)
-(free.wiz-equipment.set-recipe-book-value "6_speed_6_speed" "https://storage.googleapis.com/wizarena/equipment/ring_speed_8.png" "8_speed" "Ring of Speed +8" 120.0 1)
+(free.wiz-equipment.set-recipe-book-value "2_speed_2_speed" "https://storage.googleapis.com/wizarena/equipment/ring_speed_4.png" "4_speed" "Ring of Speed +4" 70.0 1 "ring")
+(free.wiz-equipment.set-recipe-book-value "4_speed_4_speed" "https://storage.googleapis.com/wizarena/equipment/ring_speed_6.png" "6_speed" "Ring of Speed +6" 90.0 1 "ring")
+(free.wiz-equipment.set-recipe-book-value "6_speed_6_speed" "https://storage.googleapis.com/wizarena/equipment/ring_speed_8.png" "8_speed" "Ring of Speed +8" 120.0 1 "ring")
 
 (commit-tx)
 
@@ -1666,21 +1666,7 @@
 ;
 ; (commit-tx)
 
-(begin-tx "LIST EQUIP")
-
-(env-sigs [{
-  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-  "caps": [
-    (free.wiz-equipment.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
-    (coin.GAS)
-  ]
-}])
-
-(free.wiz-equipment.list-equipment "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" 1200.0)
-
-(commit-tx)
-
-; (begin-tx "EQUIP ITEM")
+; (begin-tx "LIST EQUIP")
 ;
 ; (env-sigs [{
 ;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
@@ -1690,9 +1676,23 @@
 ;   ]
 ; }])
 ;
-; (free.wiz-equipment.equip-item "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" free.wiz-arena)
+; (free.wiz-equipment.list-equipment "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" 1200.0)
 ;
 ; (commit-tx)
+
+(begin-tx "EQUIP ITEM")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-equipment.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-equipment.equip-item "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" free.wiz-arena)
+
+(commit-tx)
 
 ; (begin-tx "DELIST EQUIP")
 ;
@@ -1708,19 +1708,19 @@
 ;
 ; (commit-tx) 94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd
 
-(begin-tx "BUY EQUIP")
-
-(env-sigs [{
-  "key": "94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd",
-  "caps": [
-    (free.wiz-equipment.ACCOUNT_GUARD "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd"),
-    (coin.GAS)
-  ]
-}])
-
-(free.wiz-equipment.buy-equipment "0" "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" free.wiza)
-
-(commit-tx)
+; (begin-tx "BUY EQUIP")
+;
+; (env-sigs [{
+;   "key": "94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd",
+;   "caps": [
+;     (free.wiz-equipment.ACCOUNT_GUARD "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd"),
+;     (coin.GAS)
+;   ]
+; }])
+;
+; (free.wiz-equipment.buy-equipment "0" "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" free.wiza)
+;
+; (commit-tx)
 
 (begin-tx "GET INFO EQUIP")
 

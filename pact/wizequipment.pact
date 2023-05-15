@@ -163,6 +163,7 @@
       name:string
       wiza:decimal
       level:integer
+      type:string
   )
 
   (defschema forge-level-schema
@@ -273,22 +274,6 @@
           )
       )
       (increase-count NFTS_COUNT_KEY)
-  )
-
-  (defun update-types (ids-list:list)
-      (with-capability (ADMIN)
-          (map
-              (update-type)
-              ids-list
-          )
-      )
-  )
-
-  (defun update-type (idequip:string)
-      (require-capability (ADMIN))
-      (update equipment idequip
-          {"type": "ring"}
-      )
   )
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -426,22 +411,40 @@
     (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
     (with-capability (OWNER owner iditem)
         (let (
-                (data (get-equipment-fields-for-id iditem))
+                (item-data (get-equipment-fields-for-id iditem))
                 (nft-data (m::get-wizard-fields-for-id (str-to-int idnft)))
-                (nft-equipped-data (get-equipped-fields-for-id idnft))
             )
             (enforce (= (at "owner" nft-data) owner) "you are not the owner of this wizard")
-            (enforce (= (at "equipped" nft-equipped-data) false) "Can't equip an already equipped wizard")
             (enforce (= (at "listed" nft-data) false) "can't equip a listed wizard")
-            (enforce (= (at "listed" data) false) "can't equip a listed item")
-            (enforce (= (at "equipped" data) false) "can't equip an already equipped item")
-            (write equipped idnft {
-                "id": iditem,
-                "url": (at "url" data),
-                "bonus": (at "bonus" data),
-                "name": (at "name" data),
-                "equipped": true
-            })
+            (enforce (= (at "listed" item-data) false) "can't equip a listed item")
+            (enforce (= (at "equipped" item-data) false) "can't equip an already equipped item")
+            (if
+                (= "ring" (at "type" item-data))
+                (let (
+                        (nft-equipped-data (get-equipped-fields-for-id idnft))
+                    )
+                    (enforce (= (at "equipped" nft-equipped-data) false) "Can't equip an already equipped wizard")
+                    (write equipped idnft {
+                        "id": iditem,
+                        "url": (at "url" item-data),
+                        "bonus": (at "bonus" item-data),
+                        "name": (at "name" item-data),
+                        "equipped": true
+                    })
+                )
+                (let (
+                        (nft-equipped-data (get-equipped-fields-for-id (+ idnft (at "type" item-data))))
+                    )
+                    (enforce (= (at "equipped" nft-equipped-data) false) "Can't equip an already equipped wizard")
+                    (write equipped (+ idnft (at "type" item-data)) {
+                        "id": iditem,
+                        "url": (at "url" item-data),
+                        "bonus": (at "bonus" item-data),
+                        "name": (at "name" item-data),
+                        "equipped": true
+                    })
+                )
+            )
             (update equipment iditem {
                 "equipped": true,
                 "equippedToId": idnft
@@ -455,20 +458,30 @@
     (enforce (= (format "{}" [mw]) "free.wiza") "not allowed, security reason")
     (with-capability (OWNER owner iditem)
         (let (
-                (data (get-equipment-fields-for-id iditem))
+                (item-data (get-equipment-fields-for-id iditem))
                 (nft-data (ma::get-wizard-fields-for-id (str-to-int idnft)))
             )
             (enforce (= (at "owner" nft-data) owner) "you are not the owner of this wizard")
-            (enforce (= (at "equipped" data) true) "this item is not equipped")
-            ;(mw::spend-wiza 120.0 owner)
+            (enforce (= (at "equipped" item-data) true) "this item is not equipped")
             (mw::spend-wiza (floor (+ (/ (calculate-level nft-data) 5) 0.0) 1) owner)
-            (write equipped idnft {
-                "id": iditem,
-                "url": (at "url" data),
-                "bonus": (at "bonus" data),
-                "name": (at "name" data),
-                "equipped": false
-            })
+
+            (if
+                (= "ring" (at "type" item-data))
+                (write equipped idnft {
+                    "id": iditem,
+                    "url": (at "url" item-data),
+                    "bonus": (at "bonus" item-data),
+                    "name": (at "name" item-data),
+                    "equipped": false
+                })
+                (write equipped (+ idnft (at "type" item-data)) {
+                    "id": iditem,
+                    "url": (at "url" item-data),
+                    "bonus": (at "bonus" item-data),
+                    "name": (at "name" item-data),
+                    "equipped": false
+                })
+            )
             (update equipment iditem {
                 "equipped": false,
                 "equippedToId": ""
@@ -662,7 +675,8 @@
                 "bonus":=bonus,
                 "name":=name,
                 "wiza":=wiza,
-                "level":=level}
+                "level":=level,
+                "type":=type}
                 (let (
                         (final-cost (- wiza (/ (* wiza discount) 100)))
                         (id (id-for-forged-equipment))
@@ -687,7 +701,8 @@
                                 "listed": false,
                                 "price": 0.0,
                                 "equipped": false,
-                                "equippedToId": ""
+                                "equippedToId": "",
+                                "type": type
                             }
                         )
                         (emit-event (FORGE_ITEM recipe ingredients owner))
@@ -944,7 +959,7 @@
       )
   )
 
-  (defun set-recipe-book-value (key:string url:string bonus:string name:string wiza:decimal level:integer)
+  (defun set-recipe-book-value (key:string url:string bonus:string name:string wiza:decimal level:integer type:string)
       @doc "Sets the value for a key to store in a table"
       (with-capability (ADMIN)
           (insert recipe-book key
@@ -952,7 +967,8 @@
             "bonus":bonus,
             "name":name,
             "wiza":wiza,
-            "level":level}
+            "level":level,
+            "type":type}
           )
       )
   )

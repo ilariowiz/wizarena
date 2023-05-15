@@ -14,7 +14,8 @@ const recipeBook = [
         name: "Ring of HP +8",
         url: "https://storage.googleapis.com/wizarena/equipment/ring_hp_4.png",
         wiza: 70,
-        stat: 'HP'
+        stat: 'HP',
+        type: 'ring'
     },
     {
         ingredients: "8_hp_8_hp",
@@ -31,7 +32,8 @@ const recipeBook = [
         name: "Ring of HP +12",
         url: "https://storage.googleapis.com/wizarena/equipment/ring_hp_3.png",
         wiza: 90,
-        stat: 'HP'
+        stat: 'HP',
+        type: 'ring'
     },
     {
         ingredients: "12_hp_12_hp",
@@ -48,7 +50,8 @@ const recipeBook = [
         name: "Ring of HP +16",
         url: "https://storage.googleapis.com/wizarena/equipment/ring_hp_2.png",
         wiza: 120,
-        stat: 'HP'
+        stat: 'HP',
+        type: 'ring'
     },
     {
         ingredients: "1_attack_1_attack",
@@ -65,7 +68,8 @@ const recipeBook = [
         name: "Ring of Attack +2",
         url: "https://storage.googleapis.com/wizarena/equipment/ring_atk_4.png",
         wiza: 70,
-        stat: 'Attack'
+        stat: 'Attack',
+        type: 'ring'
     },
     {
         ingredients: "2_attack_2_attack",
@@ -82,7 +86,8 @@ const recipeBook = [
         name: "Ring of Attack +3",
         url: "https://storage.googleapis.com/wizarena/equipment/ring_atk_3.png",
         wiza: 90,
-        stat: 'Attack'
+        stat: 'Attack',
+        type: 'ring'
     },
     {
         ingredients: "3_attack_3_attack",
@@ -99,7 +104,8 @@ const recipeBook = [
         name: "Ring of Attack +4",
         url: "https://storage.googleapis.com/wizarena/equipment/ring_atk_2.png",
         wiza: 120,
-        stat: 'Attack'
+        stat: 'Attack',
+        type: 'ring'
     },
     {
         ingredients: "1_defense_1_defense",
@@ -116,7 +122,8 @@ const recipeBook = [
         name: "Ring of Defense +2",
         url: "https://storage.googleapis.com/wizarena/equipment/ring_def_4.png",
         wiza: 70,
-        stat: 'Defense'
+        stat: 'Defense',
+        type: 'ring'
     },
     {
         ingredients: "2_defense_2_defense",
@@ -133,7 +140,8 @@ const recipeBook = [
         name: "Ring of Defense +3",
         url: "https://storage.googleapis.com/wizarena/equipment/ring_def_3.png",
         wiza: 90,
-        stat: 'Defense'
+        stat: 'Defense',
+        type: 'ring'
     },
     {
         ingredients: "3_defense_3_defense",
@@ -150,7 +158,8 @@ const recipeBook = [
         name: "Ring of Defense +4",
         url: "https://storage.googleapis.com/wizarena/equipment/ring_def_2.png",
         wiza: 120,
-        stat: 'Defense'
+        stat: 'Defense',
+        type: 'ring'
     },
     {
         ingredients: "2_damage_2_damage",
@@ -167,7 +176,8 @@ const recipeBook = [
         name: "Ring of Damage +4",
         url: "https://storage.googleapis.com/wizarena/equipment/ring_dmg_4.png",
         wiza: 70,
-        stat: 'Damage'
+        stat: 'Damage',
+        type: 'ring'
     },
     {
         ingredients: "4_damage_4_damage",
@@ -184,7 +194,8 @@ const recipeBook = [
         name: "Ring of Damage +6",
         url: "https://storage.googleapis.com/wizarena/equipment/ring_dmg_3.png",
         wiza: 90,
-        stat: 'Damage'
+        stat: 'Damage',
+        type: 'ring'
     },
     {
         ingredients: "6_damage_6_damage",
@@ -201,7 +212,8 @@ const recipeBook = [
         name: "Ring of Damage +8",
         url: "https://storage.googleapis.com/wizarena/equipment/ring_dmg_2.png",
         wiza: 120,
-        stat: 'Damage'
+        stat: 'Damage',
+        type: 'ring'
     },
     {
         ingredients: "2_speed_2_speed",
@@ -218,7 +230,8 @@ const recipeBook = [
         name: "Ring of Speed +4",
         url: "https://storage.googleapis.com/wizarena/equipment/ring_speed_4.png",
         wiza: 70,
-        stat: 'Speed'
+        stat: 'Speed',
+        type: 'ring'
     },
     {
         ingredients: "4_speed_4_speed",
@@ -235,7 +248,8 @@ const recipeBook = [
         name: "Ring of Speed +6",
         url: "https://storage.googleapis.com/wizarena/equipment/ring_speed_3.png",
         wiza: 90,
-        stat: 'Speed'
+        stat: 'Speed',
+        type: 'ring'
     },
     {
         ingredients: "6_speed_6_speed",
@@ -252,7 +266,8 @@ const recipeBook = [
         name: "Ring of Speed +8",
         url: "https://storage.googleapis.com/wizarena/equipment/ring_speed_2.png",
         wiza: 120,
-        stat: 'Speed'
+        stat: 'Speed',
+        type: 'ring'
     },
 ]
 
