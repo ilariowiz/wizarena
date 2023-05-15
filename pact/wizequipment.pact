@@ -113,6 +113,7 @@
       price:decimal
       equipped:bool
       equippedToId:string
+      type:string
   )
 
   (defschema equipped-schema
@@ -274,6 +275,21 @@
       (increase-count NFTS_COUNT_KEY)
   )
 
+  (defun update-types (ids-list:list)
+      (with-capability (ADMIN)
+          (map
+              (update-type)
+              ids-list
+          )
+      )
+  )
+
+  (defun update-type (idequip:string)
+      (require-capability (ADMIN))
+      (update equipment idequip
+          {"type": "ring"}
+      )
+  )
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;;;;;;; MINT Equipment  ;;;;;;;;;;;;
@@ -324,7 +340,8 @@
                   "listed": false,
                   "price": 0.0,
                   "equipped": false,
-                  "equippedToId": ""
+                  "equippedToId": "",
+                  "type":""
               })
               (emit-event (EQUIPMENT_MINTED id owner))
           )
