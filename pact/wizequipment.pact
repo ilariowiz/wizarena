@@ -325,7 +325,7 @@
   ;;;;;;;; MINT Equipment  ;;;;;;;;;;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  (defun get-equipment-1 (owner:string amount:integer m:module{wiza1-interface-v2})
+  (defun get-equipment-1 (owner:string amount:integer m:module{wiza1-interface-v3})
       @doc "Mint part 1"
       (enforce (>= amount 1) "Must mint at least 1 item")
       (let (
@@ -441,7 +441,7 @@
       )
   )
 
-  (defun buy-equipment (id:string newowner:string m:module{wiza1-interface-v2})
+  (defun buy-equipment (id:string newowner:string m:module{wiza1-interface-v3})
       @doc "buy an equipment from marketplace"
       (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
       (let (
@@ -478,7 +478,7 @@
   ;;;;;;;; EQUIP/UNEQUIP  ;;;;;;;;;;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  (defun equip-item:object (iditem:string owner:string idnft:string m:module{wizarena-interface-v2})
+  (defun equip-item (iditem:string owner:string idnft:string m:module{wizarena-interface-v2})
     (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
     (with-capability (OWNER owner iditem)
         (let (
@@ -524,7 +524,7 @@
     )
   )
 
-  (defun unequip-item:object (iditem:string owner:string idnft:string ma:module{wizarena-interface-v2} mw:module{wiza1-interface-v2})
+  (defun unequip-item (iditem:string owner:string idnft:string ma:module{wizarena-interface-v2} mw:module{wiza1-interface-v3})
     (enforce (= (format "{}" [ma]) "free.wiz-arena") "not allowed, security reason")
     (enforce (= (format "{}" [mw]) "free.wiza") "not allowed, security reason")
     (with-capability (OWNER owner iditem)
@@ -592,7 +592,7 @@
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-  (defun make-offer (buyer:string itemtype:string duration:integer amount:decimal m:module{wiza1-interface-v2})
+  (defun make-offer (buyer:string itemtype:string duration:integer amount:decimal m:module{wiza1-interface-v3})
       @doc "make an offer for an item type"
       (enforce (> amount 0.0) "Amount must be greater then zero")
       (enforce (> duration 0) "Duration must be at least 1 day")
@@ -628,7 +628,7 @@
       )
   )
 
-  (defun accept-offer (idoffer:string iditem:string owner:string m:module{wiza1-interface-v2})
+  (defun accept-offer (idoffer:string iditem:string owner:string m:module{wiza1-interface-v3})
     (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
     (with-read offers idoffer
       {
@@ -680,7 +680,7 @@
     )
   )
 
-  (defun cancel-offer (idoffer:string m:module{wiza1-interface-v2})
+  (defun cancel-offer (idoffer:string m:module{wiza1-interface-v3})
     @doc "cancel offer"
     (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
     (with-read offers idoffer
@@ -731,7 +731,7 @@
   ;;;;;;;; FORGE  ;;;;;;;;;;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  (defun forge (recipe:string ingredients:list owner:string m:module{wiza1-interface-v2})
+  (defun forge (recipe:string ingredients:list owner:string m:module{wiza1-interface-v3})
     (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
     (map
         (check-ownership owner)
