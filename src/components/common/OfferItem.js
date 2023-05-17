@@ -59,7 +59,7 @@ class OfferItem extends Component {
                         this.props.withdrawOffer(chainId, gasPrice, 5000, netId, item.id, account)
                     }}
 				>
-					<p style={{ fontSize: 15, color: CTA_COLOR }} className="text-medium">
+					<p style={{ fontSize: 15, color: "white" }} className="text-medium">
 						Withdraw
 					</p>
 				</button>
