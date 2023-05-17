@@ -1,9 +1,9 @@
 (namespace "free")
-(interface wiza1-interface-v2
+(interface wiza1-interface-v3
 
-    (defun spend-wiza:object (amount:decimal account:string))
+    (defun spend-wiza:bool (amount:decimal account:string))
 
-    (defun check-nft-is-staked:object (idnft:string))
+    (defun check-nft-is-staked:bool (idnft:string))
 
     (defcap TRANSFER:bool
       ( sender:string

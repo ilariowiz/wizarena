@@ -13,8 +13,7 @@
 
     (use coin)
   (implements fungible-v2)
-  (implements wiza1-interface-v1)
-  (implements wiza1-interface-v2)
+  (implements wiza1-interface-v3)
 
   ; --------------------------------------------------------------------------
  ; Constants
@@ -615,7 +614,7 @@
         )
     )
 
-    (defun spend-wiza:object (amount:decimal account:string)
+    (defun spend-wiza:bool (amount:decimal account:string)
         (enforce (= (at "chain-id" (chain-data)) "1") "Spend is only for chain 1")
         (let (
                 (balance (get-user-balance account))
@@ -697,7 +696,7 @@
         )
     )
 
-    (defun check-nft-is-staked:object (idnft:string)
+    (defun check-nft-is-staked:bool (idnft:string)
         (with-default-read staked-table idnft
             {"staked": false}
             {"staked":= staked}
