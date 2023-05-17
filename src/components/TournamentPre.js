@@ -284,8 +284,15 @@ class Tournament extends Component {
 
             const fights = s.fights
 
+            //console.log(fights);
+
 			if (fights && fights.length > 0) {
-				let fightsPerTournamentName = fights.filter(i => i.tournament.includes(tournamentName))
+
+				let fightsPerTournamentName = fights.filter(i => {
+                    let tName = i.tournament.split("_")[0]
+
+                    return tName === tournamentName
+                })
 				//console.log(fightsPerTournamentName);
 
 				fightsPerTournamentName.map(i => {
