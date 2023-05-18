@@ -312,7 +312,8 @@ export const connectWalletConnect = (netId, chainId, gasPrice, gasLimit, network
 				//console.log(item);
 				let normalAccountName = item;
 				["mainnet01"].forEach(chain => {
-					normalAccountName = normalAccountName.replace("**", ":").replace(`kadena:${chain}:`, "")
+					//normalAccountName = normalAccountName.replace("**", ":").replace(`kadena:${chain}:`, "")
+					normalAccountName = `k:${normalAccountName.replace(`kadena:${chain}:`, "")}`
 				})
 				return normalAccountName
 			})
