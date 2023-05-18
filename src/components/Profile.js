@@ -598,14 +598,14 @@ class Profile extends Component {
 
 	renderError() {
 		return (
-			<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginTop: 30 }}>
+			<div style={{ width: '100%', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginTop: 30 }}>
 				<img
 					src={getImageUrl(undefined)}
-					style={{ width: 340, height: 340, borderRadius: 2, marginBottom: 30 }}
+					style={{ width: 300, height: 300, borderRadius: 4, marginBottom: 30 }}
 					alt='Placeholder'
 				/>
 
-				<p style={{ fontSize: 23, color: 'white', textAlign: 'center' }}>
+				<p style={{ fontSize: 20, color: 'white', textAlign: 'center' }}>
 					The Arena is empty...
 				</p>
 			</div>

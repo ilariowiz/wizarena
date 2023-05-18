@@ -304,6 +304,8 @@ export const connectWalletConnect = (netId, chainId, gasPrice, gasLimit, network
 			const session = await approval()
 			//console.log(session);
 
+			const wallet = session.peer.metadata.name
+
 			dispatch(setIsWalletConnectQR(true))
 
 			dispatch(setQrWalletConnectClient({ pairingTopic: session.topic }))
@@ -312,8 +314,13 @@ export const connectWalletConnect = (netId, chainId, gasPrice, gasLimit, network
 				//console.log(item);
 				let normalAccountName = item;
 				["mainnet01"].forEach(chain => {
-					//normalAccountName = normalAccountName.replace("**", ":").replace(`kadena:${chain}:`, "")
-					normalAccountName = `k:${normalAccountName.replace(`kadena:${chain}:`, "")}`
+					if (wallet && wallet.includes("Koala")) {
+						normalAccountName = normalAccountName.replace("**", ":").replace(`kadena:${chain}:`, "")
+					}
+					else {
+						normalAccountName = `k:${normalAccountName.replace(`kadena:${chain}:`, "")}`
+					}
+
 				})
 				return normalAccountName
 			})
