@@ -521,7 +521,7 @@ class Fight extends Component {
         }
 
         return (
-            <div style={{ flexDirection: 'column', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden', alignItems: 'center' }} id="mainBox">
+            <div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden', alignItems: 'center' }} id="mainBox">
 
                 <div style={{ width: maxWidth, justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
 
