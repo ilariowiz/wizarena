@@ -197,7 +197,7 @@ class NftCardTournament extends Component {
 									position="top center"
 									on="hover"
 								>
-									<div style={{ padding: 5, fontSize: 16, color: mainTextColor }}>
+									<div style={{ padding: 5, fontSize: 16, color: "#1d1d1f" }}>
 										{ring.name} : {infoEquipment.bonusesText.join(", ")}
 									</div>
 								</Popup>
@@ -220,7 +220,7 @@ class NftCardTournament extends Component {
 									position="top center"
 									on="hover"
 								>
-									<div style={{ padding: 5, fontSize: 16, mainTextColor }}>
+									<div style={{ padding: 5, fontSize: 16, color: "#1d1d1f" }}>
 										{descPotion}
 									</div>
 								</Popup>
