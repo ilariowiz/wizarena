@@ -57,7 +57,7 @@ const renderSingleGraph = (color, name, mainTextColor, subscribed, subscribedSpe
     let number = 0
     let pct = 0
 
-    if (subscribedSpellGraph[name]) {
+    if (subscribedSpellGraph && subscribedSpellGraph[name]) {
         number = subscribedSpellGraph[name]
         pct = number / subscribed.length * 100
     }
