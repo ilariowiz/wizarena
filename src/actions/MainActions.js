@@ -3242,7 +3242,7 @@ export const getCirculatingSupply = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 	}
 }
 
-export const getWizaNotClaimed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, callback) => {
+export const getWizaNotClaimed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 200000, networkUrl, callback) => {
 	return (dispatch) => {
 
 		let cmd = {

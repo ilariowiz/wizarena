@@ -1846,16 +1846,25 @@
 
 (begin-tx "CALCULATE REWARD")
 
-(env-sigs [{
-  "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb",
-  "caps": [
-    (coin.GAS)
-  ]
-}])
+(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
 (free.wiza.get-nft-staked-mass ["0", "1"])
 
-;(free.wiza.calculate-reward-mass ["0", "1"])
+(env-chain-data {
+    "block-time": (time "2023-07-01T00:00:00Z")
+})
+
+(free.wiza.calculate-reward-mass ["0", "1"])
+
+;(free.wiza.set-multiplier 2.0)
+
+(free.wiza.calculate-reward-mass ["0", "1"])
+
+(free.wiza.get-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+
+;(free.wiza.force-claim-all ["0", "1"])
+
+;(free.wiza.get-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
 
 (commit-tx)
 

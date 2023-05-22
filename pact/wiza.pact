@@ -45,12 +45,6 @@
 
     (defconst WIZA_TOKEN_BANK:string "wiza-token-bank")
 
-    (defconst BASE_MULTIPLIER:decimal 4.0
-        "base stake reward")
-
-    (defconst BASE_MULTIPLIER_TOURNAMENT:decimal 30.0
-        "base tournament subscription reward")
-
   ; --------------------------------------------------------------------------
   ; Schemas and tables
   ; --------------------------------------------------------------------------
@@ -72,9 +66,15 @@
         amount:decimal
     )
 
+    (defschema base-multiplier-schema
+        multiplier:decimal
+    )
+
     (deftable token-table:{token-schema})
     (deftable staked-table:{staked-schema})
     (deftable mined-wiza-table:{mined-wiza-schema})
+
+    (deftable base-multiplier-table:{base-multiplier-schema})
 
     ; --------------------------------------------------------------------------
  ; Capatilibites
@@ -179,6 +179,8 @@
     (create-account WIZA_TOKEN_BANK (create-BANK-guard))
 
     (write mined-wiza-table "" {"amount":0.0})
+
+    (write base-multiplier-table "" {"multiplier": 4.0})
   )
 
     ; --------------------------------------------------------------------------
@@ -516,6 +518,32 @@
         )
     )
 
+    ;;;; ADMIN REQUIRED
+    (defun force-claim-all (items:list)
+        (with-capability (ADMIN)
+            (map
+                (force-claim)
+                items
+            )
+        )
+    )
+
+    (defun force-claim (idnft:string)
+        (require-capability (ADMIN))
+        (with-read staked-table idnft
+            {"multiplier":= multiplier,
+            "timestamp":= stakedTime,
+            "account":= account
+            "staked":=staked}
+            (with-capability (PRIVATE)
+                (mine-from-stake account multiplier stakedTime)
+            )
+            (update staked-table idnft
+                {"timestamp": (at "block-time" (chain-data))}
+            )
+        )
+    )
+
     ;TEST (days (/ (diff-time (add-time (at "block-time" (chain-data)) (days 3.78)) stakedTime) 86400))
     ;PROD (days (/ (diff-time (at "block-time" (chain-data)) stakedTime) 86400))
     (defun mine-from-stake (account:string multiplier:integer stakedTime:time)
@@ -749,7 +777,11 @@
     )
 
     (defun calculate-reward (days:decimal multiplier:integer)
-        (* days (* multiplier BASE_MULTIPLIER))
+        (let (
+                (base-multiplier (at "multiplier" (read base-multiplier-table "" ['multiplier])))
+            )
+            (floor (* days (* multiplier base-multiplier)) DECIMALS)
+        )
     )
 
     (defun get-total-mined ()
@@ -769,6 +801,14 @@
             balance
         )
     )
+
+    (defun set-multiplier (multiplier:decimal)
+        (with-capability (ADMIN)
+            (write base-multiplier-table ""
+                {"multiplier": multiplier}
+            )
+        )
+    )
 )
 
 
@@ -778,7 +818,7 @@
     (create-table staked-table)
     (create-table token-table)
     (create-table mined-wiza-table)
-    ;(create-table coin.coin-table)
+    (create-table base-multiplier-table)
 
     (initialize)
 
