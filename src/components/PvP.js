@@ -956,7 +956,7 @@ class PvP extends Component {
 
     renderBody(isMobile) {
         const { isConnected, showModalConnection, pvpOpen, subscribers, yourSubscribersResults, error, activeSubs, pvpWeekEnd, pvpFightsStart, pvpFightsStartDate } = this.state
-        const { account, userMintedNfts, mainTextColor } = this.props
+        const { account, userMintedNfts, mainTextColor, mainBackgroundColor } = this.props
 
         const { boxW, modalW, padding } = getBoxWidth(isMobile)
 
@@ -1141,7 +1141,7 @@ class PvP extends Component {
 
                 {
                     this.state.toSubscribe.length > 0 &&
-                    <div style={Object.assign({}, styles.footerSubscribe, { bottom: -padding })}>
+                    <div style={Object.assign({}, styles.footerSubscribe, { bottom: -padding, backgroundColor: mainBackgroundColor })}>
 						{this.renderFooterSubscribe(isMobile)}
 					</div>
                 }
@@ -1285,7 +1285,6 @@ const styles = {
 		position: 'sticky',
 		bottom: 0,
 		left: 0,
-		backgroundColor: "white",
 		borderColor: '#d7d7d7',
 		borderStyle: 'solid',
 		borderRadius: 4,

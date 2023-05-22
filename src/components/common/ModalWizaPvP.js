@@ -10,7 +10,7 @@ class ModalWizaPvP extends Component {
 		super(props)
 
 		this.state = {
-			wizaAmount: '',
+			wizaAmount: 30,
 		}
 	}
 
