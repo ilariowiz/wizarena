@@ -88,14 +88,6 @@
         )
     )
 
-    (defcap CHALLENGERS (account1:string account2:string sender:string)
-        (if
-            (= account1 sender)
-            (compose-capability (ACCOUNT_GUARD account1))
-            (compose-capability (ACCOUNT_GUARD account2))
-        )
-    )
-
     (defcap ADMIN() ; Used for admin functions
         @doc "Only allows admin to call these"
         (enforce-keyset ADMIN_KEYSET)
@@ -352,7 +344,9 @@
         status:string
         withdrawn:bool
         fightId:string
+        winnerId:string
         blockTime:time
+        coin:string
     )
 
     (defschema spells-schema
@@ -2295,7 +2289,8 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-    (defun send-challenge (wiz1id:string wiz2id:string amount:decimal)
+    (defun send-challenge (wiz1id:string wiz2id:string amount:decimal coin:string m:module{wiza1-interface-v3})
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (enforce (> amount 0.0) "Amount must be greater then zero")
         (let (
                 (wiz1data (get-wizard-fields-for-id (str-to-int wiz1id)))
@@ -2303,21 +2298,32 @@
                 (wiz1level (calculate-level wiz1id))
                 (wiz2level (calculate-level wiz2id))
                 (new-challenge-id (int-to-str 10 (get-count WIZARDS_CHALLENGES_COUNT_KEY)))
+                (bank-guard (at "guard" (coin.details WIZ_AUTO_TOURNAMENTS_BANK)))
             )
             (enforce (= (at "listed" wiz1data) false) "You cannot launch the challenge if your wizard is listed")
             (enforce (= (at "confirmBurn" wiz1data) false) "You cannot launch the challenge if your wizard is in Burning queue")
             (with-capability (OWNER (at "owner" wiz1data) wiz1id)
-                (install-capability (coin.TRANSFER (at "owner" wiz1data) WIZARDS_OFFERS_BANK amount))
-                (coin.transfer (at "owner" wiz1data) WIZARDS_OFFERS_BANK amount)
-                (with-default-read token-table WIZARDS_OFFERS_BANK
-                  {"balance": 0.0}
-                  {"balance":= oldbalance }
-                  (update token-table WIZARDS_OFFERS_BANK {"balance": (+ oldbalance amount)})
+                (if
+                    (= coin "kda")
+                    [
+                        (install-capability (coin.TRANSFER (at "owner" wiz1data) WIZARDS_OFFERS_BANK amount))
+                        (coin.transfer (at "owner" wiz1data) WIZARDS_OFFERS_BANK amount)
+                        (with-default-read token-table WIZARDS_OFFERS_BANK
+                          {"balance": 0.0}
+                          {"balance":= oldbalance }
+                          (update token-table WIZARDS_OFFERS_BANK {"balance": (+ oldbalance amount)})
+                        )
+                    ]
+                    [
+                        (install-capability (m::TRANSFER (at "owner" wiz1data) WIZ_AUTO_TOURNAMENTS_BANK amount))
+                        (m::transfer-create (at "owner" wiz1data) WIZ_AUTO_TOURNAMENTS_BANK bank-guard amount)
+                    ]
                 )
+
                 (insert challenges new-challenge-id {
                     "id": new-challenge-id,
                     "timestamp": (at "block-time" (chain-data)),
-                    "expiresat": (add-time (at "block-time" (chain-data)) (days 3)), ;3 days
+                    "expiresat": (add-time (at "block-time" (chain-data)) (days 3)),
                     "amount":amount,
                     "withdrawn": false,
                     "status": "pending",
@@ -2328,7 +2334,9 @@
                     "wiz2owner": owner2,
                     "wiz2level": wiz2level,
                     "fightId": "",
-                    "blockTime": (at "block-time" (chain-data))
+                    "blockTime": (at "block-time" (chain-data)),
+                    "coin":coin,
+                    "winnerId": ""
                 })
                 (with-capability (PRIVATE)
                   (increase-count WIZARDS_CHALLENGES_COUNT_KEY)
@@ -2337,7 +2345,8 @@
         )
     )
 
-    (defun accept-challenge (challengeid:string)
+    (defun accept-challenge (challengeid:string m:module{wiza1-interface-v3})
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (with-read challenges challengeid
             {
                 "expiresat":=expiresat,
@@ -2346,7 +2355,8 @@
                 "wiz1id":=wiz1id,
                 "wiz2id":=wiz2id,
                 "wiz1level":=wiz1levelold,
-                "wiz2level":=wiz2levelold
+                "wiz2level":=wiz2levelold,
+                "coin":=coin
             }
             (enforce (= iswithdrew false) "Cannot accept twice")
             (enforce (>= expiresat (at "block-time" (chain-data))) "Challenge expired.")
@@ -2354,17 +2364,28 @@
                     (owner2 (at "owner" (read nfts wiz2id ["owner"])))
                     (wiz1level (calculate-level wiz1id))
                     (wiz2level (calculate-level wiz2id))
+                    (bank-guard (at "guard" (coin.details WIZ_AUTO_TOURNAMENTS_BANK)))
                 )
                 (enforce (= wiz1level wiz1levelold) "the level of Wizard 1 does not match that of the sent challenge")
                 (enforce (= wiz2level wiz2levelold) "the level of Wizard 2 does not match that of the sent challenge")
                 (with-capability (OWNER owner2 wiz2id)
-                    (install-capability (coin.TRANSFER owner2 WIZARDS_OFFERS_BANK amount))
-                    (coin.transfer owner2 WIZARDS_OFFERS_BANK amount)
-                    (with-default-read token-table WIZARDS_OFFERS_BANK
-                      {"balance": 0.0}
-                      {"balance":= oldbalance }
-                      (update token-table WIZARDS_OFFERS_BANK {"balance": (+ oldbalance amount)})
+                    (if
+                        (= coin "kda")
+                        [
+                            (install-capability (coin.TRANSFER owner2 WIZARDS_OFFERS_BANK amount))
+                            (coin.transfer owner2 WIZARDS_OFFERS_BANK amount)
+                            (with-default-read token-table WIZARDS_OFFERS_BANK
+                              {"balance": 0.0}
+                              {"balance":= oldbalance }
+                              (update token-table WIZARDS_OFFERS_BANK {"balance": (+ oldbalance amount)})
+                            )
+                        ]
+                        [
+                            (install-capability (m::TRANSFER owner2 WIZ_AUTO_TOURNAMENTS_BANK amount))
+                            (m::transfer-create owner2 WIZ_AUTO_TOURNAMENTS_BANK bank-guard amount)
+                        ]
                     )
+
                     (update challenges challengeid {
                         "status": "accepted",
                         "blockTime": (at "block-time" (chain-data))
@@ -2374,84 +2395,107 @@
         )
     )
 
-    (defun do-result-challenge (challengeid:string data:string sender:string)
+    (defun complete-challenge (challengeid:string winner:string fight:string m:module{wiza1-interface-v3})
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (with-read challenges challengeid
             {
-                "status":=status,
                 "amount":=amount,
                 "withdrawn":=iswithdrew,
                 "wiz1id":=wiz1id,
                 "wiz2id":=wiz2id,
-                "blockTime":=blockTime,
-                "fightId":=fightId
+                "coin":=coin
             }
-            (enforce (= status "accepted") "Can't show the result before accepting the challenge")
-            (enforce (!= blockTime (at "block-time" (chain-data))) "You cannot accept and see the result at the same time")
-
-            (if
-                (= iswithdrew false)
-                (let (
-                        (wiz1data (get-wizard-fields-for-id (str-to-int wiz1id)))
-                        (wiz2data (get-wizard-fields-for-id (str-to-int wiz2id)))
-                        (fee (/ (* 4 amount) 100))
-                        (info (base64-decode data))
-                    )
-                    (with-capability (CHALLENGERS (at "owner" wiz1data) (at "owner" wiz2data) sender)
-                        (let (
-                                (wiz1owner (at "owner" wiz1data))
-                                (wiz2owner (at "owner" wiz2data))
-                                (winner (drop 20 info))
-                            )
-                            (if
-                                (= wiz1id winner)
-                                [
-                                    (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK wiz1owner (- (* amount 2.0) fee)))
-                                    (with-capability (PRIVATE)(coin.transfer WIZARDS_OFFERS_BANK wiz1owner (- (* amount 2.0) fee)))
-                                ]
-                                [
-                                    (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK wiz2owner (- (* amount 2.0) fee)))
-                                    (with-capability (PRIVATE)(coin.transfer WIZARDS_OFFERS_BANK wiz2owner (- (* amount 2.0) fee)))
-                                ]
-                            )
-                            (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK ADMIN_ADDRESS fee))
-                            (with-capability (PRIVATE)(coin.transfer WIZARDS_OFFERS_BANK ADMIN_ADDRESS fee))
-                        (with-default-read token-table WIZARDS_OFFERS_BANK
-                          {"balance": 0.0}
-                          {"balance":= oldbalance }
-                          (update token-table WIZARDS_OFFERS_BANK {"balance": (- oldbalance (* amount 2))})
-                        )
-                        )
-                        (update challenges challengeid {
-                            "withdrawn": true,
-                            "fightId": data
-                        })
-                    )
+            (enforce (= iswithdrew false) "Challenge already completed")
+            (let (
+                    (wiz1owner (at "owner" (get-wizard-fields-for-id (str-to-int wiz1id))))
+                    (wiz2owner (at "owner" (get-wizard-fields-for-id (str-to-int wiz2id))))
+                    (fee (/ (* 4 amount) 100))
                 )
-                fightId
+                (with-capability (DEV)
+                    (if
+                        (= winner wiz1id)
+                        (send-prize-challenge wiz1owner amount fee coin m)
+                        (send-prize-challenge wiz2owner amount fee coin m)
+                    )
+                    (update challenges challengeid {
+                        "withdrawn": true,
+                        "fightId": fight,
+                        "winnerId": winner
+                    })
+                )
             )
         )
     )
 
-    (defun cancel-challenge (challengeid:string)
+    (defun send-prize-challenge (account:string amount:decimal fee:decimal coin:string m:module{wiza1-interface-v3})
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+        (require-capability (DEV))
+        (if
+            (= coin "kda")
+            [
+                (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK account (- (* amount 2.0) fee)))
+                (with-capability (PRIVATE)(coin.transfer WIZARDS_OFFERS_BANK account (- (* amount 2.0) fee)))
+
+                (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK ADMIN_ADDRESS fee))
+                (with-capability (PRIVATE)(coin.transfer WIZARDS_OFFERS_BANK ADMIN_ADDRESS fee))
+
+                (with-default-read token-table WIZARDS_OFFERS_BANK
+                  {"balance": 0.0}
+                  {"balance":= oldbalance }
+                  (update token-table WIZARDS_OFFERS_BANK {"balance": (- oldbalance (* amount 2))})
+                )
+            ]
+            [
+                (let (
+                        (winner-guard (at "guard" (coin.details account)))
+                        (admin-guard (at "guard" (coin.details ADMIN_ADDRESS)))
+                    )
+                    (install-capability (m::TRANSFER WIZ_AUTO_TOURNAMENTS_BANK account (- (* amount 2.0) fee)))
+                    (m::transfer-create WIZ_AUTO_TOURNAMENTS_BANK account winner-guard (- (* amount 2.0) fee))
+
+                    (install-capability (m::TRANSFER WIZ_AUTO_TOURNAMENTS_BANK ADMIN_ADDRESS fee))
+                    (m::transfer-create WIZ_AUTO_TOURNAMENTS_BANK ADMIN_ADDRESS admin-guard fee)
+                )
+            ]
+        )
+    )
+
+    (defun cancel-challenge (challengeid:string m:module{wiza1-interface-v3})
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (with-read challenges challengeid
             {
                 "wiz1owner":=wiz1owner,
                 "expiresat":=expiresat,
                 "amount":=amount,
-                "withdrawn":=iswithdrew
+                "withdrawn":=iswithdrew,
+                "coin":=coin
             }
             (with-capability (ACCOUNT_GUARD wiz1owner)
                 (enforce (= iswithdrew false) "Cannot withdraw twice")
                 (enforce (<= expiresat (at "block-time" (chain-data))) "Cannot cancel challenge yet.")
             )
             (with-capability (PRIVATE)
-                (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK wiz1owner amount))
-                (coin.transfer WIZARDS_OFFERS_BANK wiz1owner amount)
-                (with-default-read token-table WIZARDS_OFFERS_BANK
-                  {"balance": 0.0}
-                  {"balance":= oldbalance }
-                  (update token-table WIZARDS_OFFERS_BANK {"balance": (- oldbalance amount)})
+                (if
+                    (= coin "kda")
+                    [
+                        (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK wiz1owner amount))
+                        (coin.transfer WIZARDS_OFFERS_BANK wiz1owner amount)
+                        (with-default-read token-table WIZARDS_OFFERS_BANK
+                          {"balance": 0.0}
+                          {"balance":= oldbalance }
+                          (update token-table WIZARDS_OFFERS_BANK {"balance": (- oldbalance amount)})
+                        )
+                    ]
+                    [
+                        (let (
+                                (account-guard (at "guard" (coin.details wiz1owner)))
+                            )
+                            (install-capability (m::TRANSFER WIZ_AUTO_TOURNAMENTS_BANK wiz1owner amount))
+                            (m::transfer-create WIZ_AUTO_TOURNAMENTS_BANK wiz1owner account-guard amount)
+                        )
+                    ]
                 )
+
                 (update challenges challengeid
                     { "withdrawn": true,
                     "status": "canceled"}
@@ -2473,6 +2517,14 @@
             (and?
                 (where "wiz2owner" (= account))
                 (where "status" (!= "canceled"))
+            ))
+    )
+
+    (defun get-accepted-challenges ()
+        (select challenges
+            (and?
+                (where "withdrawn" (= false))
+                (where "status" (= "accepted"))
             ))
     )
 

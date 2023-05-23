@@ -2835,10 +2835,10 @@ export const swapKdaWiza = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, amount
 CHALLENGES FUNCTIONS
 **********************************/
 
-export const sendChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, nft1id, nft2id, account, amount) => {
+export const sendChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, nft1id, nft2id, account, amount, coin) => {
 	return (dispatch) => {
 
-		let pactCode = `(free.${CONTRACT_NAME}.send-challenge "${nft1id}" "${nft2id}" ${_.round(amount).toFixed(1)})`;
+		let pactCode = `(free.${CONTRACT_NAME}.send-challenge "${nft1id}" "${nft2id}" ${_.round(amount).toFixed(1)} "${coin}" free.wiza)`;
 
 		let cmd = {
 			pactCode,
@@ -2873,7 +2873,7 @@ export const sendChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, nft1
 export const acceptChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, challengeid, nft2id, account) => {
 	return (dispatch) => {
 
-		let pactCode = `(free.${CONTRACT_NAME}.accept-challenge "${challengeid}")`;
+		let pactCode = `(free.${CONTRACT_NAME}.accept-challenge "${challengeid}" free.wiza)`;
 
 		let cmd = {
 			pactCode,
@@ -2905,45 +2905,10 @@ export const acceptChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, ch
 	}
 }
 
-export const doResultChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, challengeid, fightId, account) => {
-	return (dispatch) => {
-
-		let pactCode = `(free.${CONTRACT_NAME}.do-result-challenge "${challengeid}" "${fightId}" "${account.account}")`;
-
-		let cmd = {
-			pactCode,
-			caps: [
-				Pact.lang.mkCap(
-          			"Verify your account",
-          			"Verify your account",
-          			`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
-          			[account.account]
-        		),
-				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
-			],
-			sender: account.account,
-			gasLimit: 5000,
-			gasPrice,
-			chainId,
-			ttl: 600,
-			envData: {
-				"user-ks": account.guard,
-				account: account.account
-			},
-			signingPubKey: account.guard.keys[0],
-			networkId: netId
-		}
-
-		//console.log("doResultChallenge", cmd)
-
-		dispatch(updateTransactionState("cmdToConfirm", cmd))
-	}
-}
-
 export const cancelChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, challengeid, account) => {
 	return (dispatch) => {
 
-		let pactCode = `(free.${CONTRACT_NAME}.cancel-challenge "${challengeid}")`;
+		let pactCode = `(free.${CONTRACT_NAME}.cancel-challenge "${challengeid}" free.wiza)`;
 
 		let cmd = {
 			pactCode,

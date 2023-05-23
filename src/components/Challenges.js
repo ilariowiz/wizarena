@@ -22,7 +22,6 @@ import {
     acceptChallenge,
     loadSingleNft,
     getInfoItemEquipped,
-    doResultChallenge,
     setChallengeReplay
 } from '../actions'
 
@@ -62,7 +61,8 @@ class Challenges extends Component {
 
                 //console.log(response);
                 if (response) {
-                    this.calcStats(response, true)
+                    //this.calcStats(response, true)
+                    this.setState({ loadingSent: false })
                 }
                 else {
                     this.setState({ loadingSent: false })
@@ -78,7 +78,8 @@ class Challenges extends Component {
 			this.props.getChallengesReceived(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
                 //console.log(response);
                 if (response) {
-                    this.calcStats(response, false)
+                    //this.calcStats(response, false)
+                    this.setState({ loadingReceived: false })
                 }
                 else {
                     this.setState({ loadingReceived: false })
@@ -156,6 +157,32 @@ class Challenges extends Component {
     async onShowResult(item) {
         //console.log(item);
 
+        //lasciamo questo pezzo per supportare i replay vecchi
+        if (!item.coin) {
+            this.setState({ showModalLoading: true, textModalLoading: "Loading..." })
+
+            const q = query(collection(firebasedb, "fights_duels"), where("challengeid", "==", item.id))
+            const querySnapshot = await getDocs(q)
+
+            let dataFightFirebase = undefined
+
+            querySnapshot.forEach(doc => {
+                dataFightFirebase = doc.data()
+            })
+
+            this.setState({ showModalLoading: false, textModalLoading: "" })
+            this.props.setChallengeReplay(dataFightFirebase)
+
+            setTimeout(() => {
+                this.props.history.push(`/challengereplay/${dataFightFirebase.fightId}`)
+            }, 300)
+            //console.log("go to replay");
+        }
+        else {
+            this.props.history.push(`/fight/${item.fightId}`)
+        }
+
+        /*
         this.setState({ showModalLoading: true, textModalLoading: "Loading..." })
 
         const q = query(collection(firebasedb, "fights_duels"), where("challengeid", "==", item.id))
@@ -166,9 +193,11 @@ class Challenges extends Component {
         querySnapshot.forEach(doc => {
             dataFightFirebase = doc.data()
         })
+        */
 
         //console.log("dataFightFirebase", dataFightFirebase);
 
+        /*
         if (!item.fightId && !dataFightFirebase) {
             this.setState({ showModalLoading: true, textModalLoading: `Loading stats of #${item.wiz1id}` })
 
@@ -206,8 +235,10 @@ class Challenges extends Component {
             }, 300)
             //console.log("go to replay");
         }
+        */
     }
 
+    /*
     async updateFirebase(challengeid, info1, info2, history, winner) {
 
         const fightRef = doc(collection(firebasedb, "fights_duels"))
@@ -247,7 +278,9 @@ class Challenges extends Component {
 
         this.props.doResultChallenge(chainId, gasPrice, netId, challengeid, fightId, account)
     }
+    */
 
+    /*
     refactorSpellSelected(spellSelected) {
         const refactorSpellSelected = allSpells.find(i => i.name === spellSelected.name)
         //console.log(refactorSpellSelected);
@@ -292,6 +325,7 @@ class Challenges extends Component {
 			}
 		})
     }
+    */
 
     renderChallenges(array, loading, isReceived, isMobile) {
 
@@ -481,6 +515,5 @@ export default connect(mapStateToProps, {
     acceptChallenge,
     loadSingleNft,
     getInfoItemEquipped,
-    doResultChallenge,
     setChallengeReplay
 })(Challenges)

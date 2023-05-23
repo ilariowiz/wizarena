@@ -923,7 +923,7 @@ class Nft extends Component {
 					alt="Challenge icon"
 				/>
 				<p style={styles.btnBuyText} className="text-medium">
-					Challenge
+					Send challenge
 				</p>
 			</button>
 		)

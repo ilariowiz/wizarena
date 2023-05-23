@@ -43,7 +43,11 @@ class ChallengeItem extends Component {
     getWinner() {
         const { item } = this.props
 
-        if (item.fightId) {
+        if (item.winnerId) {
+            return item.winnerId
+        }
+
+        if (item.fightId && !item.winnerId) {
             const decode = atob(item.fightId)
             const winner = decode.substring(20)
 
@@ -155,23 +159,44 @@ class ChallengeItem extends Component {
                 )
             }
 
+            //il bot sta per fare il fight
             return (
-                <button
-                    className="btnH"
-                    style={styles.btnCta}
-                    onClick={() => this.props.onShowResult()}
+                <div
+                    style={Object.assign({}, styles.btnCta, { backgroundColor: 'transparent', borderColor: "#d7d7d7" })}
                 >
                     <TbSwords
-                        color='white'
+                        color={mainTextColor}
                         size={20}
                     />
 
-                    <p style={{ fontSize: 15, color: 'white', marginLeft: 6 }} className="text-medium">
-                        Fight
+                    <p style={{ fontSize: 15, color: mainTextColor, marginLeft: 6 }} className="text-medium">
+                        Accepted
                     </p>
-                </button>
+                </div>
             )
         }
+    }
+
+    renderValueChallenge(item) {
+        const { mainTextColor } = this.props
+
+        if (!item.amount) {
+            return <div />
+        }
+
+        if (!item.coin) {
+            return (
+                <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 9 }} className="text-bold">
+                    $KDA {item.amount}
+                </p>
+            )
+        }
+
+        return (
+            <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 9 }} className="text-bold">
+                {item.coin === 'kda' ? "$KDA" : "$WIZA"} {item.amount}
+            </p>
+        )
     }
 
 	render() {
@@ -232,20 +257,13 @@ class ChallengeItem extends Component {
 
                 </div>
 
-				{
-					item.amount ?
-					<p style={{ fontSize: 15, color: mainTextColor, marginBottom: 9 }} className="text-bold">
-						$KDA {item.amount}
-					</p>
-					:
-					undefined
-				}
+				{this.renderValueChallenge(item)}
 
                 {this.renderExpiration()}
 
                 {this.renderCta()}
 
-                <p style={{ fontSize: 13, color: mainTextColor }}>
+                <p style={{ fontSize: 12, color: mainTextColor }}>
                     Challenge ID: {item.id}
                 </p>
 

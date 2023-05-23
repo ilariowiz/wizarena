@@ -35,6 +35,7 @@ class DoChallenges extends Component {
             yourChampion: {},
             showYourNfts: false,
             inputPrice: '',
+            coin: "wiza"
         }
     }
 
@@ -82,7 +83,7 @@ class DoChallenges extends Component {
 	}
 
     sendChallenge() {
-        const { yourChampion, inputPrice } = this.state
+        const { yourChampion, inputPrice, coin } = this.state
         const { wizardSfidato, chainId, gasPrice, netId, account } = this.props
 
 
@@ -104,13 +105,13 @@ class DoChallenges extends Component {
         }
 
         this.props.updateInfoTransactionModal({
-			transactionToConfirmText: `Your #${yourChampion.id} will challenge #${wizardSfidato.id}`,
+			transactionToConfirmText: `Your #${yourChampion.id} will challenge #${wizardSfidato.id} for ${inputPrice} $${coin.toUpperCase()}`,
 			typeModal: 'sendchallenge',
 			transactionOkText: `Challenge sent!`,
-            makeOfferValues: { wiz1id: yourChampion.id, wiz2id: wizardSfidato.id, amount: inputPrice }
+            makeOfferValues: { wiz1id: yourChampion.id, wiz2id: wizardSfidato.id, amount: inputPrice, coin }
 		})
 
-        this.props.sendChallenge(chainId, gasPrice, netId, yourChampion.id, wizardSfidato.id, account, inputPrice)
+        this.props.sendChallenge(chainId, gasPrice, netId, yourChampion.id, wizardSfidato.id, account, inputPrice, coin)
     }
 
     renderSelectYourChampion(width, isMobile) {
@@ -232,24 +233,55 @@ class DoChallenges extends Component {
     }
 
     renderRightChallenge() {
-        const { inputPrice } = this.state
+        const { inputPrice, coin } = this.state
         const { mainTextColor } = this.props
 
         return (
             <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+
+                <div style={{ alignItems: 'center', justifyContent: 'space-between', width: '100%', marginBottom: 30, maxWidth: 160 }}>
+                    <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+
+                        <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center' }}>
+                            $WIZA
+                        </p>
+
+                        <input
+                            type='radio'
+                            value="wiza"
+                            checked={coin === "wiza"}
+                            onChange={(e) => this.setState({ coin: "wiza" })}
+                        />
+                    </div>
+
+                    <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+
+                        <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center' }}>
+                            $KDA
+                        </p>
+
+                        <input
+                            type='radio'
+                            value="kda"
+                            checked={coin === "kda"}
+                            onChange={(e) => this.setState({ coin: "kda" })}
+                        />
+                    </div>
+                </div>
+
                 <p style={{ fontSize: 17, color: mainTextColor, marginBottom: 5 }} className="text-medium">
-                    $KDA amount
+                    ${coin.toUpperCase()} amount
                 </p>
 
                 <input
                     style={styles.inputPriceStyle}
-                    placeholder='$KDA'
+                    placeholder={coin.toUpperCase()}
                     value={inputPrice}
                     onChange={(e) => this.setState({ inputPrice: e.target.value })}
                 />
 
                 <p style={{ fontSize: 16, color: mainTextColor, margin: 15, textAlign: 'center' }}>
-                    Your opponent will have 3 days to accept the challenge. If he doesn't accept it, you can collect the KDAs in the Challenges tab
+                    Your opponent will have 3 days to accept the challenge. If he doesn't accept it, you can collect the ${coin.toUpperCase()} in the Challenges tab
                 </p>
 
                 <button

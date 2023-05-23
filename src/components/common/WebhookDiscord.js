@@ -303,7 +303,7 @@ export const sendMessageChallenge = (info) => {
     request.setRequestHeader("Content-type", 'application/json')
     //console.log(content);
 
-    const message = `There is a new challenge for **#${info.wiz2id}**: he was challenged by **#${info.wiz1id}** for **${info.amount}** KDA`
+    const message = `There is a new challenge for **#${info.wiz2id}**: he was challenged by **#${info.wiz1id}** for **${info.amount}** $${info.coin.toUpperCase()}`
 
     const params = {
         username: `Wizard Bot`,
@@ -344,7 +344,7 @@ export const sendMessageFlashT = (info) => {
                 "title": `${info.name || "Flash Tournament"}`,
                 "description": message,
                 "url": `https://www.wizardsarena.net/flashtournaments`,
-                "color": 16776960 
+                "color": 16776960
             }
         ]
     }

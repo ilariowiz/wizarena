@@ -1054,17 +1054,14 @@
   ]
 }])
 
-(free.wiz-arena.send-challenge "0" "2" 10.0)
+(free.wiza.get-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
 
-(coin.get-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+(free.wiz-arena.send-challenge "0" "2" 30.0 "wiza" free.wiza)
+
+(free.wiza.get-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
 
 (commit-tx)
 
-; (env-chain-data {
-;     "chain-id": "1",
-;     "block-height": 20,
-;     "block-time": (time "2023-10-01T00:00:01Z")
-; })
 
 (begin-tx "GET CHALLENGE")
 
@@ -1082,7 +1079,7 @@
 
 (begin-tx "ACCEPT CHALLENGE")
 
-(coin.get-balance "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd")
+(free.wiza.get-balance "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd")
 
 (env-sigs [{
   "key": "94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd",
@@ -1092,33 +1089,30 @@
   ]
 }])
 
-(free.wiz-arena.accept-challenge "0")
+(free.wiz-arena.accept-challenge "0" free.wiza)
 
-(coin.get-balance "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd")
+(free.wiza.get-balance "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd")
+
+(free.wiz-arena.get-accepted-challenges)
 
 (commit-tx)
 
-(env-chain-data {
-     "chain-id": "1",
-     "block-height": 20,
-     "block-time": (time "2023-10-01T00:00:02Z")
- })
 
 (begin-tx "SHOW RESULT CHALLENGE")
 
 (env-sigs [{
-  "key": "94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd",
+  "key": "aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1",
   "caps": [
-    (free.wiz-arena.ACCOUNT_GUARD "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd")
+    (free.wiz-arena.DEV)
     (coin.GAS)
   ]
 }])
 
-(free.wiz-arena.do-result-challenge "0" "WlNZc05JdDQ5SlRiNG5Ib2NGODcw" "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd")
+(free.wiz-arena.complete-challenge "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "WlNZc05JdDQ5SlRiNG5Ib2NGODcw" free.wiza)
 
-(coin.get-balance "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd")
+(free.wiza.get-balance "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd")
 
-(coin.get-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+(free.wiza.get-balance "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
 
 (commit-tx)
 
