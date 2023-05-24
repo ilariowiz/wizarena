@@ -1052,14 +1052,22 @@ class Profile extends Component {
 
 				<div style={{ flexWrap: 'wrap', alignItems: 'center', justifyContent: isMobile ? 'space-between' : 'space-around', marginBottom: 10, width: boxStatsW }}>
 
-					<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+					<a
+						className="btnH"
+						style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+						href={`${window.location.protocol}//${window.location.host}/walletsxp`}
+						onClick={(e) => {
+							e.preventDefault()
+							this.props.history.push(`/walletsxp`)
+						}}
+					>
 						<p style={{ fontSize: 16, color: "#707070" }}>
 							Wizard Xp
 						</p>
 						<p style={{ fontSize: 16, color: mainTextColor }} className="text-bold">
 							{walletXp || 0.0}
 						</p>
-					</div>
+					</a>
 
 					<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
 						<p style={{ fontSize: 16, color: "#707070" }}>

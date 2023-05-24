@@ -1410,6 +1410,23 @@ export const getWalletXp = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 50
 	}
 }
 
+export const getWalletsXp = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 50000, networkUrl, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-wallets-xp-1)`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (!response.status && callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
 export const addNftToBurningQueue = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, idnft, account) => {
 	return (dispatch) => {
 

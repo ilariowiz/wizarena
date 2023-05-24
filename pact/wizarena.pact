@@ -2739,6 +2739,18 @@
     (defun get-wallet-xp (account:string)
         (at "xp" (read wallet-xp account ['xp]))
     )
+
+    (defun get-wallets-xp-1 ()
+        (map
+            (get-wallets-xp-2)
+            (keys wallet-xp)
+        )
+    )
+
+    (defun get-wallets-xp-2 (account:string)
+        {"xp": (at "xp" (read wallet-xp account ['xp])),
+        "account": account}
+    )
 )
 
 
