@@ -688,13 +688,13 @@ class Header extends Component {
 		)
 	}
 
-	renderLogo() {
+	renderLogo(isMobile, width) {
 		const { transactionsState, showModalTx, txInfo, mainTextColor } = this.props
 
 		const textToConfirm = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1].transactionToConfirmText : ""
 
 		return (
-			<div style={{ alignItems: 'center' }}>
+			<div style={{ alignItems: 'flex-start', width }}>
 
 				{
 					transactionsState && transactionsState.length > 0 && !showModalTx ?
@@ -721,7 +721,7 @@ class Header extends Component {
 					:
 					<img
 						src={logo_img}
-						style={{ width: 50 }}
+						style={{ width: isMobile ? 40 : 50 }}
 						alt='logo'
 					/>
 				}
@@ -736,7 +736,7 @@ class Header extends Component {
 		return (
 			<div style={{ flexDirection: 'row', width: '100%', paddingLeft: padding, paddingRight: padding, paddingTop: 8, paddingBottom: 8, backgroundColor: mainBackgroundColor, position: 'relative', alignItems: 'center', justifyContent: 'space-between' }} id="headerbox">
 
-				{this.renderLogo()}
+				{this.renderLogo(false, 131)}
 
 				<div style={{ alignItems: 'center', justifyContent: 'center' }}>
 					{this.renderBtnMenu(
@@ -936,7 +936,7 @@ class Header extends Component {
 		return (
 			<div style={{ flexDirection: 'row', width: '100%', paddingLeft: padding, paddingRight: padding, paddingTop: 8, paddingBottom: 8, backgroundColor: mainBackgroundColor, position: 'relative', alignItems: 'center', justifyContent: 'space-between' }} id="headerbox">
 
-				{this.renderLogo()}
+				{this.renderLogo(true, 40)}
 
 				<div style={{ alignItems: 'center', justifyContent: 'center' }}>
 					{this.renderBtnMenuMobile(
