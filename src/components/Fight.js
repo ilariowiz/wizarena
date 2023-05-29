@@ -387,7 +387,7 @@ class Fight extends Component {
                         style={styles.showStatsBtn}
                         onClick={() => this.setState({ showStat: !this.state.showStat })}
                     >
-                        <p style={{ fontSize: 15, color: mainTextColor }}>
+                        <p style={{ fontSize: 14, color: mainTextColor }}>
                             Show stats
                         </p>
                     </button>
@@ -707,7 +707,7 @@ const styles = {
         borderRadius: 4
     },
     showStatsBtn: {
-        height: 30,
+        minHeight: 30,
         width: 100,
         borderRadius: 4,
         borderColor: "#d7d7d7",
