@@ -43,7 +43,7 @@ class WalletsXpLeaderboard extends Component {
                 return b.xp.int - a.xp.int
             })
 
-            console.log(response);
+            //console.log(response);
 
             this.setState({ wallets: response, loading: false })
         })
