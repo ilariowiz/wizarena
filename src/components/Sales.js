@@ -163,7 +163,7 @@ class Sales extends Component {
         const { boxW, padding } = getBoxWidth(isMobile)
 
         return (
-            <div style={{ flexDirection: 'column', textAlign: 'center', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden' }}>
+            <div style={{ flexDirection: 'column', textAlign: 'center', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
                 <p style={{ color: mainTextColor, fontSize: 24, marginBottom: 20 }} className="text-medium">
                     Sales
