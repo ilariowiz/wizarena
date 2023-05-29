@@ -15,7 +15,7 @@
   (defconst MINTED_COUNT_KEY "minted-count-key")
   (defconst NFTS_COUNT_KEY "nfts-count-key")
   (defconst VOLUME_PURCHASE_COUNT "volume_purchase_count")
-  (defconst PRICE_KEY 5.0)
+  (defconst PRICE_KEY "price_key")
   (defconst FEE_KEY 2)
   (defconst ADMIN_KEYSET "free.wizequipment-keyset")
   (defconst ADMIN_ADDRESS "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb")
@@ -138,6 +138,10 @@
       count:decimal
   )
 
+  (defschema price-schema
+      price:decimal
+  )
+
   (defschema offers-schema
       @doc "schema for offers on marketplace"
       id:string
@@ -188,6 +192,8 @@
   (deftable wl-mint:{wl-mint-schema})
   (deftable wl-minted:{wl-mint-schema})
 
+  (deftable price-table:{price-schema})
+
   ; Can only happen once
   ; --------------------------------------------------------------------------
 
@@ -207,6 +213,8 @@
       (insert counts FORGED_ID {"count": 100000})
       (coin.create-account WIZ_EQUIPMENT_FUSED (create-BANK-guard))
       (create-account WIZ_EQUIPMENT_FUSED (create-BANK-guard))
+
+      (insert price-table PRICE_KEY {"price": 5.0})
   )
 
   ; --------------------------------------------------------------------------
@@ -255,17 +263,17 @@
   ;:;;;;;;; EQUIP CREATION , ADMIN ONLY ;;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  (defun create-all-equipment (objects-list:list)
+  (defun create-all-equipment (amount:integer type:string)
       @doc "take a list of multiple wizards, and create each wizard"
       (with-capability (ADMIN)
           (map
-              (create-equipment)
-              objects-list
+              (create-equipment type)
+              (make-list amount 1)
           )
       )
   )
 
-  (defun create-equipment (item-list:object)
+  (defun create-equipment (type:string amount:integer)
       @doc "take a list of traits, to create a wizard"
       (require-capability (ADMIN))
       (let
@@ -273,7 +281,7 @@
               (id (int-to-str 10(get-count NFTS_COUNT_KEY)))
           )
           (insert creation id
-              {"type": (at "type" item-list)}
+              {"type": type}
           )
       )
       (increase-count NFTS_COUNT_KEY)
@@ -331,7 +339,7 @@
       (let (
               (equipment-minted (get-count MINTED_COUNT_KEY))
               (equipment-created (get-count NFTS_COUNT_KEY))
-              (mint-price PRICE_KEY)
+              (mint-price (get-price))
               (mint-start (get-value MINT_START))
               (max-to-mint (get-max-items owner))
               (minted (get-minted owner))
@@ -1016,6 +1024,11 @@
       (at "count" (read volume VOLUME_PURCHASE_COUNT ['count]))
   )
 
+  (defun get-price ()
+      @doc "get volume of purchase"
+      (at "price" (read price-table PRICE_KEY ['price]))
+  )
+
   (defun get-value (key:string)
       @doc "Gets value for a key"
       (at "value" (read values key ['value]))
@@ -1026,6 +1039,14 @@
       (with-capability (ADMIN)
           (update values key
               {"value": value}
+          )
+      )
+  )
+
+  (defun set-price (price:decimal)
+      (with-capability (ADMIN)
+          (update price-table PRICE_KEY
+              {"price": price}
           )
       )
   )
@@ -1069,6 +1090,8 @@
 
     (create-table wl-mint)
     (create-table wl-minted)
+
+    (create-table price-table)
 
     (initialize)
 
