@@ -56,9 +56,12 @@ class ModalCreateTournament extends Component {
 
         //console.log(account);
 
+        const height = window.innerHeight
+        const maxH = height * 90 / 100
+
 		return (
 			<div className={classContainer}>
-				<div style={Object.assign({}, styles.subcontainer, { width, backgroundColor: mainBackgroundColor })}>
+				<div style={Object.assign({}, styles.subcontainer, { width, backgroundColor: mainBackgroundColor, maxHeight: maxH })}>
 
 					<p style={{ color: mainTextColor, fontSize: 20, textAlign: 'center', marginBottom: 10, marginTop: 10 }} className="text-medium">
 						Create Tournament
@@ -132,7 +135,7 @@ class ModalCreateTournament extends Component {
                                     Buyin
                                 </p>
 
-                                <p style={{ fontSize: 14, color: mainTextColor }}>
+                                <p style={{ fontSize: 13, color: mainTextColor }}>
                                     balance: {_.floor(wizaBalance, 1)} $WIZA
                                 </p>
                             </div>
@@ -255,7 +258,9 @@ const styles = {
 		alignItems: 'center',
 		flexDirection: 'column',
 		position: 'relative',
-        padding: 10
+        padding: 10,
+        overflowY: 'auto',
+        overflowX: 'hidden'
 	},
     boxWallet: {
 		flexDirection: 'column',
