@@ -1845,12 +1845,10 @@ export const withdrawOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 	}
 }
 
-export const mintEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, amount, account) => {
+export const mintEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, amount, account, mintPrice) => {
 	return (dispatch) => {
 
-		const mintPrice = RING_MINT_PRICE
-
-		let pactCode = `(free.${CONTRACT_NAME_EQUIPMENT}.get-equipment-1 "${account.account}" ${amount})`;
+		let pactCode = `(free.${CONTRACT_NAME_EQUIPMENT}.get-equipment-1 "${account.account}" ${amount} free.wiza)`;
 
 		let caps = [
 			Pact.lang.mkCap(
@@ -3086,10 +3084,10 @@ AUTO TOURNAMENT FUNCTIONS
 
 *************************************************************************/
 
-export const createTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, idnft, account, buyin, maxLevel, name, winners) => {
+export const createTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, idnft, account, buyin, maxLevel, name, winners, nPlayers) => {
 	return (dispatch) => {
 
-		let pactCode = `(free.${CONTRACT_NAME}.create-tournament "${idnft}" "${account.account}" ${_.round(buyin).toFixed(1)} ${maxLevel} "${name}" ${winners} free.wiza)`;
+		let pactCode = `(free.${CONTRACT_NAME}.create-tournament "${idnft}" "${account.account}" ${_.round(buyin).toFixed(1)} ${maxLevel} "${name}" ${winners} ${nPlayers} free.wiza)`;
 
 		let cmd = {
 			pactCode,
@@ -3717,6 +3715,18 @@ export const signTransaction = (cmdToSign, isXWallet, isQRWalletConnect, qrWalle
 
 		if (parsedLocalRes && parsedLocalRes.result && parsedLocalRes.result.status === "success") {
 			let data = null
+
+			/*
+			let newCmdSigned = Object.assign({}, JSON.parse(signedCmd.cmd))
+			newCmdSigned['meta']['gasLimit'] = parsedLocalRes.gas + 3000
+
+			console.log(newCmdSigned);
+
+			let newSigned = Object.assign({}, signedCmd)
+			newSigned['cmd'] = JSON.stringify(newCmdSigned)
+
+			console.log(newSigned);
+			*/
 
 			try {
 				data = await Pact.wallet.sendSigned(signedCmd, networkUrl)

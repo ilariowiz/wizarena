@@ -18,7 +18,8 @@ class ModalCreateTournament extends Component {
             maxLevel: 0,
             showChooseWizard: false,
             winners: 1,
-            name: ""
+            name: "",
+            nPlayers: 8
 		}
 	}
 
@@ -27,7 +28,7 @@ class ModalCreateTournament extends Component {
 	}
 
     create() {
-        const { idnft, buyin, maxLevel, name, winners } = this.state
+        const { idnft, buyin, maxLevel, name, winners, nPlayers } = this.state
 
         //console.log(winners);
 
@@ -45,7 +46,7 @@ class ModalCreateTournament extends Component {
 
         let finalLevel = parseInt(maxLevel) > 350 ? 350 : parseInt(maxLevel)
 
-        this.props.createTournament(idnft, buyin, finalLevel, name, winners)
+        this.props.createTournament(idnft, buyin, finalLevel, name, winners, nPlayers)
     }
 
 	render() {
@@ -165,6 +166,60 @@ class ModalCreateTournament extends Component {
                                 value={this.state.maxLevel}
                                 onChange={(e) => this.setState({ maxLevel: e.target.value })}
                             />
+
+                        </div>
+
+                        <div style={Object.assign({}, styles.box, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}>
+
+                            <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
+                                <p style={{ fontSize: 16, color: mainTextColor }}>
+                                    Number of Players
+                                </p>
+                            </div>
+
+                            <div style={{ alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingBottom: 10 }}>
+                                <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+
+                                    <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }}>
+                                        4
+                                    </p>
+
+                                    <input
+                                        type='radio'
+                                        value={4}
+                                        checked={this.state.nPlayers === 4}
+                                        onChange={(e) => this.setState({ nPlayers: 4 })}
+                                    />
+                                </div>
+
+                                <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+
+                                    <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }}>
+                                        8
+                                    </p>
+
+                                    <input
+                                        type='radio'
+                                        value={8}
+                                        checked={this.state.nPlayers === 8}
+                                        onChange={(e) => this.setState({ nPlayers: 8 })}
+                                    />
+                                </div>
+
+                                <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+
+                                    <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }}>
+                                        16
+                                    </p>
+
+                                    <input
+                                        type='radio'
+                                        value={16}
+                                        checked={this.state.nPlayers === 16}
+                                        onChange={(e) => this.setState({ nPlayers: 16 })}
+                                    />
+                                </div>
+                            </div>
 
                         </div>
 

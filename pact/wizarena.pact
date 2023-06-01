@@ -1973,11 +1973,12 @@
     ;;;;;; AUTO TOURNAMENTS ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun create-tournament (idnft:string account:string buyin:decimal maxLevel:integer name:string winners:integer m:module{wiza1-interface-v3})
+    (defun create-tournament (idnft:string account:string buyin:decimal maxLevel:integer name:string winners:integer nPlayers:integer m:module{wiza1-interface-v3})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (enforce (> buyin 0.0) "Buyin must be greater than 0")
         (enforce (> maxLevel 0) "Max Level must be greater than 0")
         (enforce (contains winners [1 2]) "invalid number of winners")
+        (enforce (contains nPlayers [4 8 16]) "invalid number of players")
         (with-capability (OWNER account idnft)
             (let (
                     (current-level (calculate-level idnft))
@@ -1998,7 +1999,7 @@
                     "maxLevel": maxLevel,
                     "completed": false,
                     "fights":{},
-                    "nPlayers": 8,
+                    "nPlayers": nPlayers,
                     "name": name,
                     "winners": winners}
                 )
