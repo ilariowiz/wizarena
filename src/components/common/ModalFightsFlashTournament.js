@@ -113,11 +113,11 @@ class ModalFightsFlashTournament extends Component {
 		const tournamentid = tournamentInfo.id
 
 		let howManyFights = 3
-		if (tournamentInfo.nPlayers === 4) {
+		if (tournamentInfo.nPlayers.int === 4) {
 			howManyFights = 2
 		}
-		else if (tournamentInfo.nPlayers === 2) {
-			howManyFights = 1
+		else if (tournamentInfo.nPlayers.int === 16) {
+			howManyFights = 4
 		}
 
 
@@ -151,10 +151,24 @@ class ModalFightsFlashTournament extends Component {
 					}
 
 					{
-						howManyFights === 3 &&
+						howManyFights >= 3 &&
 						<div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', marginBottom: 25 }}>
 							{
 								fights && fights[`${tournamentid}_r3`].map((item, index) => {
+									if (isMobile) {
+										return this.renderFightMobile(item, index, true)
+									}
+									return this.renderFight(item, index)
+								})
+							}
+						</div>
+					}
+
+					{
+						howManyFights === 4 &&
+						<div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', marginBottom: 25 }}>
+							{
+								fights && fights[`${tournamentid}_r4`].map((item, index) => {
 									if (isMobile) {
 										return this.renderFightMobile(item, index, true)
 									}
