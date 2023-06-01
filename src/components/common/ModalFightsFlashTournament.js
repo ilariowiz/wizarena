@@ -119,6 +119,9 @@ class ModalFightsFlashTournament extends Component {
 		else if (tournamentInfo.nPlayers.int === 16) {
 			howManyFights = 4
 		}
+		else if (tournamentInfo.nPlayers.int === 2) {
+			howManyFights = 1
+		}
 
 
 		return (
