@@ -389,6 +389,9 @@ class FlashTournaments extends Component {
             if (item.nPlayers.int === 4) {
                 secondKey = "r2"
             }
+            if (item.nPlayers.int === 16) {
+                secondKey = "r4"
+            }
             if (item.nPlayers.int === 2) {
                 secondKey = "r1"
             }
