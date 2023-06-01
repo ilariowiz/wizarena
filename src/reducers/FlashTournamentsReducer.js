@@ -38,13 +38,19 @@ export default (state = INITIAL_STATE, action) => {
 
             if (key === 'playersDesc') {
                 oldPending.sort((a, b) => {
-                    return b.players.length - a.players.length
+                    let playersLeftA = a.nPlayers.int - a.players.length
+                    let playersLeftB = b.nPlayers.int - b.players.length
+
+                    return playersLeftA - playersLeftB
                 })
             }
 
             if (key === 'playersAsc') {
                 oldPending.sort((a, b) => {
-                    return a.players.length - b.players.length
+                    let playersLeftA = a.nPlayers.int - a.players.length
+                    let playersLeftB = b.nPlayers.int - b.players.length
+
+                    return playersLeftB - playersLeftA
                 })
             }
 
