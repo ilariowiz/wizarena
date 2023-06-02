@@ -5,6 +5,7 @@ import getImageUrl from './GetImageUrl'
 import '../../css/ItemCard.css'
 
 const logoWiza = require('../../assets/wzlogo_bg_transparent.png')
+const placeholder = require('../../assets/ring_placeholder.png')
 
 class EquipmentCard extends Component {
     render() {
@@ -12,7 +13,7 @@ class EquipmentCard extends Component {
 
         //console.log(item);
 
-        const infoEquipment = getRingBonuses(item)
+        const infoEquipment = item.bonus ? getRingBonuses(item) : undefined
 
         return (
             <a
@@ -25,19 +26,28 @@ class EquipmentCard extends Component {
 				}}
 			>
                 <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
-                    <img
-                        src={item.url}
-                        style={{ width: 110, marginBottom: 10 }}
-                        alt='equipment'
-                    />
+                    {
+                        item.url ?
+                        <img
+                            src={item.url}
+                            style={{ width: 110, marginBottom: 10 }}
+                            alt='equipment'
+                        />
+                        :
+                        <img
+                            src={placeholder}
+                            style={{ width: 110, marginBottom: 10 }}
+                            alt='placeholder'
+                        />
+                    }
                 </div>
 
                 <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10, width: nftWidth }}>
-                    #{item.id} {item.name}
+                    #{item.id} {item.name || ""}
                 </p>
 
                 <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 15, width: nftWidth }}>
-                    {infoEquipment.bonusesText.join(", ")}
+                    {infoEquipment ? infoEquipment.bonusesText.join(", ") : ""}
                 </p>
 
                 {
