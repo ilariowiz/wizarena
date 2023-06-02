@@ -7,16 +7,16 @@ import { CTA_COLOR } from '../../actions/types'
 
 class ModalFightsFlashTournament extends Component {
 
-	renderFight(item, index) {
+	renderFight(item, index, showHorizontal, width) {
 		const { mainTextColor, isDarkmode } = this.props
 
-		const imgWidth = 60
+		const imgWidth = width || 60
 
 		return (
 			<a
 				key={index}
 				href={`${window.location.protocol}//${window.location.host}/fight/${item.fightId}`}
-				style={Object.assign({}, styles.boxFight, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
+				style={Object.assign({}, styles.boxFight, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2", flexDirection: showHorizontal ? 'column' : 'row' })}
 				onClick={(e) => {
 					e.preventDefault()
 					this.props.history.push(`/fight/${item.fightId}`)
@@ -52,16 +52,16 @@ class ModalFightsFlashTournament extends Component {
 		)
 	}
 
-	renderFightMobile(item, index, showHorizontal) {
-		const { mainTextColor } = this.props
+	renderFightMobile(item, index, showHorizontal, width) {
+		const { mainTextColor, isDarkmode } = this.props
 
-		const imgWidth = 40
+		const imgWidth = width || 40
 
 		return (
 			<a
 				key={index}
 				href={`${window.location.protocol}//${window.location.host}/fight/${item.fightId}`}
-				style={Object.assign({}, styles.boxFight, { flexDirection: showHorizontal ? 'row' : 'column' })}
+				style={Object.assign({}, styles.boxFight, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2", flexDirection: showHorizontal ? 'row' : 'column' })}
 				onClick={(e) => {
 					e.preventDefault()
 					this.props.history.push(`/fight/${item.fightId}`)
@@ -113,11 +113,13 @@ class ModalFightsFlashTournament extends Component {
 		const tournamentid = tournamentInfo.id
 
 		let howManyFights = 3
+		let widthImg = isMobile ? 40 : 60
 		if (tournamentInfo.nPlayers.int === 4) {
 			howManyFights = 2
 		}
 		else if (tournamentInfo.nPlayers.int === 16) {
 			howManyFights = 4
+			widthImg = isMobile ? 22 : 42
 		}
 		else if (tournamentInfo.nPlayers.int === 2) {
 			howManyFights = 1
@@ -126,15 +128,15 @@ class ModalFightsFlashTournament extends Component {
 
 		return (
 			<div className={classContainer}>
-				<div style={Object.assign({}, styles.subcontainer, { width: '80%', backgroundColor: mainBackgroundColor })}>
+				<div style={Object.assign({}, styles.subcontainer, { width: '90%', backgroundColor: mainBackgroundColor })}>
 
 					<div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', marginBottom: 25 }}>
 						{
 							fights && fights[`${tournamentid}_r1`].map((item, index) => {
 								if (isMobile) {
-									return this.renderFightMobile(item, index, howManyFights === 1 ? true : false)
+									return this.renderFightMobile(item, index, howManyFights === 1 ? true : false, widthImg)
 								}
-								return this.renderFight(item, index)
+								return this.renderFight(item, index, howManyFights === 4 ? true : false, widthImg)
 							})
 						}
 					</div>
