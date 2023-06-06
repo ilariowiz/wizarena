@@ -509,7 +509,7 @@ class Header extends Component {
 		const { showPopupMenu } = this.state
 		const { mainTextColor, mainBackgroundColor } = this.props
 
-		const panelWidth = isMobile ? "70%" : "30%"
+		const panelWidth = isMobile ? "70%" : "42%"
 
 		return (
 			<div style={styles.panelShadow}>
