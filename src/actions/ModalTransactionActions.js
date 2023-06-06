@@ -9,29 +9,6 @@ import {
     ADD_TX_KEY_TO_LISTEN
 } from './types'
 
-/*
-export const updateInfoTransactionModal = (dict) => {
-    return {
-        type: UPDATE_INFO_TRANSACTION_MODAL,
-        payload: {
-            transactionToConfirmText: dict.transactionToConfirmText,
-            typeModal: dict.typeModal,
-            transactionOkText: dict.transactionOkText,
-            nameNft: dict.nameNft,
-            saleValues: dict.saleValues,
-            statToUpgrade: dict.statToUpgrade,
-            howMuchIncrement: dict.howMuchIncrement,
-            idNft: dict.idNft,
-            nicknameToSet: dict.nicknameToSet,
-            ringToEquipName: dict.ringToEquipName,
-            wizaAmount: dict.wizaAmount,
-            toSubscribePvP: dict.toSubscribePvP,
-            inputPrice: dict.inputPrice,
-            makeOfferValues: dict.makeOfferValues
-        }
-    }
-}
-*/
 
 export const updateInfoTransactionModal = (dict) => {
     return {
@@ -93,7 +70,7 @@ export const pollForTransaction = (props, requestKey) => {
 
         //console.log(pollRes);
 
-        if (pollRes && pollRes.result && pollRes.result.status === "success") {
+        if (pollRes.result.status === "success") {
             dispatch(updateTransactionState("success", 1))
 
             if (txSucceed && txSucceed.includes(requestKey)) {
