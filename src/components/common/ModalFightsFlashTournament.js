@@ -128,7 +128,7 @@ class ModalFightsFlashTournament extends Component {
 
 		return (
 			<div className={classContainer}>
-				<div style={Object.assign({}, styles.subcontainer, { width: '90%', backgroundColor: mainBackgroundColor, overflowY: 'auto', overflowX: 'hidden' })}>
+				<div style={Object.assign({}, styles.subcontainer, { width: '90%', maxHeight: '85%', backgroundColor: mainBackgroundColor, overflowY: 'auto', overflowX: 'hidden' })}>
 
 					<div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', marginBottom: 25 }}>
 						{
@@ -204,7 +204,7 @@ class ModalFightsFlashTournament extends Component {
 
                     <button
                         className='btnH'
-                        style={styles.btnConnect}
+                        style={styles.btnClose}
                         onClick={() => this.props.onCloseModal()}
                     >
                         <p style={{ color: 'white', fontSize: 15 }} className="text-medium">
@@ -225,16 +225,16 @@ const styles = {
 		borderColor: "#d7d7d7",
 		borderStyle: 'solid',
 		borderWidth: 1,
-		justifyContent: 'center',
 		alignItems: 'center',
 		flexDirection: 'column',
 		position: 'relative',
 		paddingTop: 20,
 		paddingBottom: 20
 	},
-	btnConnect: {
+	btnClose: {
 		width: 120,
 		height: 34,
+		minHeight: 34,
 		backgroundColor: CTA_COLOR,
 		borderRadius: 4,
 	},
