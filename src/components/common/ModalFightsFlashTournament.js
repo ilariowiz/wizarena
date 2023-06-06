@@ -128,7 +128,7 @@ class ModalFightsFlashTournament extends Component {
 
 		return (
 			<div className={classContainer}>
-				<div style={Object.assign({}, styles.subcontainer, { width: '90%', backgroundColor: mainBackgroundColor })}>
+				<div style={Object.assign({}, styles.subcontainer, { width: '90%', backgroundColor: mainBackgroundColor, overflowY: 'auto', overflowX: 'hidden' })}>
 
 					<div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', marginBottom: 25 }}>
 						{
