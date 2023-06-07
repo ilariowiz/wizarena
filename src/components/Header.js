@@ -114,7 +114,7 @@ class Header extends Component {
 	calcMinutesToHalvening() {
 		const { wizaNotClaimed, totalMined, allNftsIds, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-		const halvening = 6620000
+		const halvening = 9930000
 
 		if (allNftsIds && allNftsIds.length > 0) {
 			this.props.getWizardsStakeInfo(chainId, gasPrice, gasLimit, networkUrl, allNftsIds, (response) => {
