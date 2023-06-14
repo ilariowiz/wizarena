@@ -2545,9 +2545,6 @@
                 (spend-wiza wiza-cost address m)
             )
         )
-        (with-capability (PRIVATE)
-            (add-xp-to-wallet address 1)
-        )
     )
 
     (defun transfer-wizard (id:string sender:string receiver:string m:module{wiza1-interface-v3} mequip:module{wizequipment-interface-v1})
