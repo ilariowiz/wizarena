@@ -528,6 +528,23 @@ class DoFight extends Component {
         })
     }
 
+    showResult() {
+        if (this.turnTimeout) {
+            clearTimeout(this.turnTimeout)
+            this.turnTimeout = undefined
+        }
+
+        let historyShow = []
+
+        this.history.map((item, index) => {
+            item['turn'] = index+1
+
+            historyShow.splice(0, 0, item)
+        })
+
+        this.setState({ historyShow, isEnd: true })
+    }
+
     nextTurn() {
         if (this.turnTimeout) {
             clearTimeout(this.turnTimeout)
@@ -594,9 +611,19 @@ class DoFight extends Component {
             <div style={Object.assign({}, styles.boxHp, { width })}>
 
                 <div style={{ justifyContent: 'space-between', alignItems: 'center', width: innerWidth, flexDirection: isMobile ? 'column' : 'row' }}>
-                    <p style={{ fontSize: 15, color: TEXT_SECONDARY_COLOR }} className="text-bold">
-                        {this.getName(item)}
-                    </p>
+
+                    <a
+                        href={`${window.location.protocol}//${window.location.host}/nft/${item.id}`}
+                        style={{ cursor: 'pointer' }}
+                        onClick={(e) => {
+                            e.preventDefault()
+                            this.props.history.push(`/nft/${item.id}`)
+                        }}
+                    >
+                        <p style={{ fontSize: 15, color: TEXT_SECONDARY_COLOR }} className="text-bold">
+                            {this.getName(item)}
+                        </p>
+                    </a>
 
                     <div style={{ alignItems: 'center' }}>
                         <p style={{ fontSize: 15, color: mainTextColor, marginRight: 8 }}>
@@ -737,6 +764,27 @@ class DoFight extends Component {
                             {isEnd ? "Back to PvP" : "Next turn"}
                         </p>
                     </button>
+
+                    {
+                        !isEnd &&
+                        <button
+                            className="btnH"
+                            style={styles.btnOverlayTop}
+                            onClick={() => {
+                                if (isEnd) {
+                                    this.props.history.replace("/pvp")
+                                }
+                                else {
+                                    this.showResult()
+                                }
+                            }}
+                        >
+                            <p style={{ fontSize: 15, color: 'white' }}>
+                                Show result
+                            </p>
+                        </button>
+                    }
+
                 </div>
             </div>
         )
@@ -794,6 +842,15 @@ const styles = {
     btnOverlay: {
         position: 'absolute',
         bottom: 10,
+        right: 10,
+        width: 120,
+        height: 40,
+        borderRadius: 4,
+        backgroundColor: CTA_COLOR,
+    },
+    btnOverlayTop: {
+        position: 'absolute',
+        top: 10,
         right: 10,
         width: 120,
         height: 40,
