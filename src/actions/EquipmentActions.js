@@ -245,6 +245,74 @@ export const getForgeLevel = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 	}
 }
 
+export const getEquipmentMintPhase = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.get-value "mint_start")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
+export const getEquipmentMintPrice = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.get-price)`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
+export const getMaxMintable = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, account, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.get-max-items "${account}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
+export const getAmountMinted = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, account, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.get-minted "${account}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
 
 export const readFromContract = (cmd, returnError, networkUrl) => {
 	return async (dispatch) => {
