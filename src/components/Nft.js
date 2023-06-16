@@ -82,7 +82,8 @@ class Nft extends Component {
 			equipment: {},
 			maxStats: undefined,
 			showMedals: false,
-			showFights: false
+			showFights: false,
+			winRate: 0
 		}
 	}
 
@@ -202,7 +203,19 @@ class Nft extends Component {
 		let tournaments = []
 
 		if (response.fights) {
+
+			//console.log(response.medals);
+
 			response.fights.map(i => {
+
+				/*
+				const encoded = btoa(JSON.stringify(i))
+				console.log(encoded);
+
+				const decoded = atob(encoded)
+				console.log(JSON.parse(decoded));
+				*/
+
 				const torneoName = i.tournament.split("_")[0]
 				if (!tournaments.includes(torneoName)) {
 					tournaments.push(torneoName)
@@ -372,6 +385,7 @@ class Nft extends Component {
 	}
 
 	async loadMaxMedalsPerTournament() {
+		const { nft } = this.state
 
 		const docSnap = await getDocs(collection(firebasedb, "history_tournament"))
 
@@ -388,7 +402,49 @@ class Nft extends Component {
 			numbersOfMaxMedalsPerTournament.push(obj)
 		})
 
-		this.setState({ numbersOfMaxMedalsPerTournament })
+		let dictWin = { win: 0, maxMedals: 0 }
+
+		//console.log(nft.fights);
+
+		nft.fights.map(i => {
+
+			/*
+			const tName = i.tournament.split("_")[0]
+
+			const tInfo = numbersOfMaxMedalsPerTournament.find(i => i.tournamentName === tName)
+
+			if (!dictWin[tName]) {
+				dictWin[tName] = tInfo.maxMedals
+				dictWin['maxMedals'] += tInfo.maxMedals
+			}
+			*/
+
+			if (i.winner === nft.id) {
+				dictWin['win'] += 1
+			}
+			dictWin['maxMedals'] += 1
+		})
+
+		const winRate = Math.round(dictWin['win'] / dictWin['maxMedals'] * 100)
+
+		//console.log(dictWin, winRate);
+
+
+		//console.log(numbersOfMaxMedalsPerTournament, this.state.nft.medals);
+
+		/*
+		for (const [key, value] of Object.entries(nft.medals)) {
+			console.log(key, value);
+
+			const tInfo = numbersOfMaxMedalsPerTournament.find(i => i.tournamentName === key)
+			//dictWin['maxMedals'] += parseInt(tInfo.maxMedals)
+		}
+		*/
+
+		//console.log(dictWin);
+
+
+		this.setState({ numbersOfMaxMedalsPerTournament, winRate })
 	}
 
 	list() {
@@ -1185,7 +1241,7 @@ class Nft extends Component {
 	}
 
 	renderName(marginBottom) {
-		const { nft } = this.state
+		const { nft, winRate } = this.state
 		const { mainTextColor } = this.props
 
 		let type = "Wizard"
@@ -1208,6 +1264,13 @@ class Nft extends Component {
 					:
 					<p style={{ color: mainTextColor, fontSize: 24 }} className="text-bold">
 						{type} {nft.name}
+					</p>
+				}
+
+				{
+					parseInt(winRate) > 0 &&
+					<p style={{ color: mainTextColor, fontSize: 15, textAlign: 'center', marginTop: 7 }} className="text-bold">
+						Win Rate {winRate}%
 					</p>
 				}
 
