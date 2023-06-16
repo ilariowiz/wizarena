@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { round } from 'lodash'
 import Media from 'react-media';
 import { getDoc, doc } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
@@ -13,7 +14,7 @@ import EquipmentCard from './common/EquipmentCard'
 import ModalOpenItemsMinted from './common/ModalOpenItemsMinted'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import getBoxWidth from './common/GetBoxW'
-import { MAIN_NET_ID, ITEMS_PER_BLOCK, TEXT_SECONDARY_COLOR, CTA_COLOR, RING_MINT_PRICE } from '../actions/types'
+import { MAIN_NET_ID, ITEMS_PER_BLOCK, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import {
     setNetworkSettings,
 	setNetworkUrl,
@@ -23,7 +24,12 @@ import {
     getEquipmentVolume,
     mintEquipment,
     storeFiltersStatsEquip,
-    updateInfoTransactionModal
+    updateInfoTransactionModal,
+    getWizaValue,
+    getEquipmentMintPhase,
+    getEquipmentMintPrice,
+    getMaxMintable,
+    getAmountMinted
 } from '../actions'
 import '../css/Shop.css'
 
@@ -45,10 +51,13 @@ class Equipment extends Component {
 			searchText: '',
 			searchedText: '',
             numberOfChest: 1,
-            showModalOpenChests: false,
-            typeModal: "",
             showModalConnection: false,
-            ban: ""
+            wizaValue: 0,
+            mintStart: false,
+            mintPrice: 0,
+            maxMintable: 0,
+            minted: 0,
+            listed: 0
         }
     }
 
@@ -59,22 +68,12 @@ class Equipment extends Component {
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
         setTimeout(() => {
+            //this.loadWizaValue()
 			this.loadAll()
 			this.getMarketVolume()
+            //this.getInfoMint()
 		}, 500)
-
-        this.loadB()
 	}
-
-    async loadB() {
-        const docRef = doc(firebasedb, "test", `HYX1lHrsAL1S0Xj10GgO`)
-
-        const docSnap = await getDoc(docRef)
-        let data = docSnap.data()
-        if (data) {
-            this.setState({ ban: data.id })
-        }
-    }
 
     loadAll() {
         const { chainId, gasPrice, gasLimit, networkUrl, statSearchedEquipment, allItems } = this.props
@@ -91,6 +90,8 @@ class Equipment extends Component {
 
 			this.props.loadAllItemsIds(chainId, gasPrice, gasLimit, networkUrl, (res) => {
 
+                //console.log(this.props.allItems)
+
 				this.getFloor(res)
 				this.getUniqueOwners(res)
                 this.getEquipped(res)
@@ -98,13 +99,56 @@ class Equipment extends Component {
 				this.props.getPageBlockItems(res, this.props.itemsBlockId || 0, (itemsToShow) => {
 					//console.log("loadAllNftsIds completed");
                     //console.log(itemsToShow);
-					this.setState({ loading: false, itemsToShow })
+
+                    const listed = this.props.allItems.filter(i => i.listed)
+                    //console.log(listed);
+
+					this.setState({ loading: false, itemsToShow, listed: listed.length })
 
 				})
 
 			})
 		}
     }
+
+    loadWizaValue() {
+		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		this.props.getWizaValue(chainId, gasPrice, gasLimit, networkUrl, (wizaValue) => {
+            console.log(wizaValue);
+            this.setState({ wizaValue })
+        })
+	}
+
+    getInfoMint() {
+		const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
+
+        this.props.getEquipmentMintPhase(chainId, gasPrice, gasLimit, networkUrl, (res) => {
+			//console.log(res);
+            if (res === "1") {
+                this.setState({ mintStart: true })
+            }
+		})
+
+        this.props.getEquipmentMintPrice(chainId, gasPrice, gasLimit, networkUrl, (res) => {
+			//console.log(res);
+            this.setState({ mintPrice: res })
+		})
+
+        if (account && account.account) {
+            this.props.getMaxMintable(chainId, gasPrice, gasLimit, networkUrl, account.account, (res) => {
+    			//console.log(res);
+                if (!res.status) {
+                    this.setState({ maxMintable: res })
+                }
+    		})
+
+            this.props.getAmountMinted(chainId, gasPrice, gasLimit, networkUrl, account.account, (res) => {
+    			//console.log(res);
+                this.setState({ minted: res })
+    		})
+        }
+	}
 
     getMarketVolume() {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
@@ -180,19 +224,17 @@ class Equipment extends Component {
 
     buyChest() {
         const { account, chainId, gasPrice, netId } = this.props
-        const { numberOfChest } = this.state
+        const { numberOfChest, mintPrice, wizaValue } = this.state
 
-        if (account.account === this.state.ban) {
-            return
-        }
+        const wizaPrice = round(wizaValue * 2) * numberOfChest
 
         this.props.updateInfoTransactionModal({
-			transactionToConfirmText: `You will buy ${numberOfChest} ${numberOfChest > 1 ? "chests" : "chest"} for ${numberOfChest*RING_MINT_PRICE} $KDA`,
+			transactionToConfirmText: `You will buy ${numberOfChest} ${numberOfChest > 1 ? "chests" : "chest"} for ${numberOfChest*mintPrice} $KDA and ${wizaPrice} $WIZA`,
 			typeModal: 'buychest',
 			transactionOkText: `${numberOfChest} ${numberOfChest > 1 ? 'chests' : 'chest'} successfully bought!`,
 		})
 
-        this.props.mintEquipment(chainId, gasPrice, netId, numberOfChest, account)
+        this.props.mintEquipment(chainId, gasPrice, netId, numberOfChest, account, mintPrice)
     }
 
     renderPageCounter() {
@@ -363,18 +405,20 @@ class Equipment extends Component {
 	}
 
     renderChestCard(isMobile) {
-        const { numberOfChest } = this.state
-        const { account } = this.props
+        const { numberOfChest, mintStart, mintPrice, wizaValue, maxMintable, minted } = this.state
+        const { account, mainTextColor } = this.props
+
+        const leftToMint = maxMintable - minted
 
         return (
             <div
                 className="cardShopShadow"
                 style={isMobile ? styles.cardShopStyleMobile : styles.cardShopStyle}
             >
-                <div style={{ width: 90, height: 90, alignItems: 'center', justifyContent: 'center', marginLeft: isMobile ? 0 : 15 }}>
+                <div style={{ width: 80, height: 80, alignItems: 'center', justifyContent: 'center', marginLeft: isMobile ? 0 : 15 }}>
                     <img
                         src={chest_img}
-                        style={{ width: 90 }}
+                        style={{ width: 80 }}
                         alt="chest"
                     />
                 </div>
@@ -392,26 +436,26 @@ class Equipment extends Component {
                         }}
                     >
                         <AiOutlineMinus
-                            color="white"
+                            color={mainTextColor}
                             size={22}
                         />
                     </button>
 
 
                     <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: 75 }}>
-                        <p style={{ fontSize: 22, color: 'white' }}>
+                        <p style={{ fontSize: 19, color: mainTextColor }}>
                             {numberOfChest}
                         </p>
 
-                        <p style={{ fontSize: 20, color: 'white' }}>
-                            {numberOfChest > 1 ? 'CHESTS' : 'CHEST'}
+                        <p style={{ fontSize: 17, color: mainTextColor }}>
+                            {numberOfChest > 1 ? 'Chests' : 'Chest'}
                         </p>
                     </div>
 
                     <button
                         style={{ marginRight: isMobile ? 0 : 15, cursor: 'pointer', justifyContent: 'center', alignItems: 'center', width: 45 }}
                         onClick={() => {
-                            if (this.state.numberOfChest === 10) {
+                            if (this.state.numberOfChest >= leftToMint) {
                                 return
                             }
 
@@ -419,36 +463,35 @@ class Equipment extends Component {
                         }}
                     >
                         <AiOutlinePlus
-                            color="white"
+                            color={mainTextColor}
                             size={22}
                         />
                     </button>
                 </div>
 
-                <div style={{ alignItems: 'center', marginBottom: isMobile ? 15 : 0 }}>
-                    <p style={{ fontSize: 17, color: 'white', marginRight: 10 }}>
-                        KDA
-                    </p>
-                    <p style={{ fontSize: 21, color: 'white', width: 25, marginRight: isMobile ? 0 : 20 }}>
-                        {numberOfChest * RING_MINT_PRICE}
-                    </p>
+                <div style={{ flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center' }}>
+
+                    <div style={{ alignItems: 'center', marginBottom: isMobile ? 15 : 0 }}>
+                        <p style={{ fontSize: 15, color: mainTextColor, marginRight: 10, width: 47 }}>
+                            $KDA
+                        </p>
+                        <p style={{ fontSize: 15, color: mainTextColor, width: 25, marginRight: isMobile ? 0 : 20 }}>
+                            {numberOfChest * mintPrice}
+                        </p>
+                    </div>
+
+                    <div style={{ alignItems: 'center', marginBottom: isMobile ? 15 : 0 }}>
+                        <p style={{ fontSize: 15, color: mainTextColor, marginRight: 10, width: 47 }}>
+                            $WIZA
+                        </p>
+                        <p style={{ fontSize: 15, color: mainTextColor, width: 25, marginRight: isMobile ? 0 : 20 }}>
+                            {numberOfChest * round(wizaValue*2)}
+                        </p>
+                    </div>
                 </div>
 
                 {
-                    account && account.account ?
-                    <button
-                        className='btnH'
-                        style={Object.assign({}, styles.btnChoose, { marginRight: isMobile ? 0 : 15 })}
-                        onClick={() => {
-                            this.buyChest()
-                            //this.setState({ showModalOpenChests: true })
-                        }}
-                    >
-                        <p style={{ fontSize: 17, color: 'white' }}>
-                            BUY
-                        </p>
-                    </button>
-                    :
+                    !account &&
                     <button
                         className='btnH'
                         style={Object.assign({}, styles.btnChoose, { marginRight: isMobile ? 0 : 15, width: 130 })}
@@ -456,10 +499,58 @@ class Equipment extends Component {
                             this.setState({ showModalConnection: true })
                         }}
                     >
-                        <p style={{ fontSize: 17, color: 'white' }}>
-                            CONNECT WALLET
+                        <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }}>
+                            Connect wallet
                         </p>
                     </button>
+                }
+
+                {
+                    account && account.account && mintStart && leftToMint > 0 &&
+                    <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: isMobile ? 0 : 15 }}>
+                        <button
+                            className='btnH'
+                            style={styles.btnChoose}
+                            onClick={() => {
+                                this.buyChest()
+                            }}
+                        >
+                            <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }}>
+                                Buy
+                            </p>
+                        </button>
+
+                        <p style={{ color: mainTextColor, marginTop: 4, fontSize: 14, textAlign: 'center' }}>
+                            You can mint up {leftToMint}
+                        </p>
+                    </div>
+                }
+
+                {
+                    account && account.account && mintStart && leftToMint === 0 &&
+                    <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: isMobile ? 0 : 15 }}>
+                        <div
+                            style={Object.assign({}, styles.btnChoose, { backgroundColor: "transparent" })}
+                        >
+                            <p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center' }}>
+                                You have no chests left to mint
+                            </p>
+                        </div>
+                    </div>
+                }
+
+                {
+                    account && account.account && !mintStart &&
+                    <div
+                        style={Object.assign({}, styles.btnChoose, { marginRight: isMobile ? 0 : 15 })}
+                        //onClick={() => {
+                        //    this.buyChest()
+                        //}}
+                    >
+                        <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }}>
+                            Mint not started
+                        </p>
+                    </div>
                 }
 
             </div>
@@ -471,17 +562,17 @@ class Equipment extends Component {
 
 		let items = totalMintedItems || 0
 
-        let maxItems = 4000
+        let maxItems = 5400
 
         let pctMinted = items * 100 / maxItems
 
         return (
-            <div style={{ position: 'relative', width: '100%', height: 16, borderRadius: 2, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', overflow: 'hidden', alignItems: 'center', marginBottom: 15 }}>
+            <div style={{ position: 'relative', width: '100%', height: 16, borderRadius: 4, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', overflow: 'hidden', alignItems: 'center', marginBottom: 30 }}>
                 <div
                     style={{ backgroundColor: CTA_COLOR, height: 16, width: `${pctMinted}%` }}
                 />
 
-                <p style={{ position: 'absolute', right: 6, color: 'white', fontSize: 14 }}>
+                <p style={{ position: 'absolute', right: 6, color: 'white', fontSize: 13 }}>
                     {items}/{maxItems}
                 </p>
             </div>
@@ -489,8 +580,8 @@ class Equipment extends Component {
     }
 
     renderHeader(isMobile, boxW) {
-		const { totalCountItems, mainTextColor, isDarkmode } = this.props
-		const { floor, uniqueOwners, volume, equipped } = this.state
+		const { totalCountItems, mainTextColor, isDarkmode, allItems } = this.props
+		const { floor, uniqueOwners, volume, equipped, listed } = this.state
 
 		let items = totalCountItems || 0
 
@@ -499,29 +590,11 @@ class Equipment extends Component {
 		return (
 			<div style={{ width: '100%', alignItems: 'center', marginBottom: 30, justifyContent: 'center', flexDirection: 'column', flexWrap: 'wrap' }}>
 
-                {/*<div style={{ flexWrap: 'wrap', flexDirection: 'column', alignItems: isMobile ? "center" : 'flex-start'  }}>
-
-                    <p style={{ fontSize: 24, color: 'white', marginBottom: 25 }}>
-                        Buy a mystery chest
-                    </p>
-
-                    <div style={{ flexDirection: 'column' }}>
-                        {this.renderChestCard(isMobile)}
-
-                        {this.renderProgress()}
-                    </div>
-
-                    <p style={{ fontSize: 22, color: 'white', marginBottom: 35, marginTop: 20 }}>
-                        ...or buy a ring directly from the marketplace
-                    </p>
-
-                </div>*/}
-
                 <div style={{ alignItems: 'center', justifyContent: 'center', borderColor: '#d7d7d7', borderStyle: 'solid', borderRadius: 4, borderWidth: 1, padding: 6, marginBottom: 40 }}>
 
 					<a
 						href={`${window.location.protocol}//${window.location.host}/collection`}
-						style={{ justifyContent: 'center', alignItems: 'center', display: 'flex', width: 100, height: 32, marginLeft: 15, cursor: 'pointer' }}
+						style={{ justifyContent: 'center', alignItems: 'center', display: 'flex', width: 100, height: 32, marginRight: 15, cursor: 'pointer' }}
 						onClick={(e) => {
 							e.preventDefault()
 							this.props.history.push(`/collection`)
@@ -540,16 +613,30 @@ class Equipment extends Component {
 
 				</div>
 
+                {/*<div style={{ flexWrap: 'wrap', flexDirection: 'column', alignItems: 'center' }}>
+
+                    <p style={{ fontSize: 20, color: mainTextColor, marginBottom: 12 }}>
+                        Buy a mystery chest
+                    </p>
+
+                    <div style={{ flexDirection: 'column' }}>
+                        {this.renderChestCard(isMobile)}
+
+                        {this.renderProgress()}
+                    </div>
+
+                </div>*/}
+
                 <div style={{ flexWrap: 'wrap', alignItems: 'center', justifyContent: isMobile ? 'space-between' : 'space-around', marginBottom: 10, width: boxStatsW }}>
-                    {this.renderBoxHeader(items.toLocaleString(), 'items', isMobile)}
+                    {this.renderBoxHeader(`${listed}/${items.toLocaleString()}`, 'Listed', isMobile)}
 
-                    {this.renderBoxHeader(uniqueOwners.toLocaleString(), 'owners', isMobile)}
+                    {this.renderBoxHeader(`${floor || '...'} WIZA`, 'Floor', isMobile)}
 
-                    {this.renderBoxHeader(`${floor || '...'} WIZA`, 'floor price', isMobile)}
+                    {this.renderBoxHeader(`${volume.toLocaleString()} WIZA`, 'Volume', isMobile)}
 
-                    {this.renderBoxHeader(`${volume.toLocaleString()} WIZA`, 'total volume', isMobile)}
+                    {this.renderBoxHeader(uniqueOwners.toLocaleString(), 'Owners', isMobile)}
 
-                    {this.renderBoxHeader(`${equipped || 0}`, 'equipped', isMobile)}
+                    {this.renderBoxHeader(`${equipped || 0}`, 'Equipped', isMobile)}
                 </div>
 
                 <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 20, justifyContent: 'center' }}>
@@ -819,7 +906,7 @@ class Equipment extends Component {
 
     renderBody(isMobile) {
         const { allItems, allItemsIds, mainTextColor } = this.props
-		const { loading, itemsToShow, searchedText, numberOfChest, showModalConnection } = this.state
+		const { loading, itemsToShow, searchedText, showModalConnection } = this.state
 
         const { boxW, modalW, padding } = getBoxWidth(isMobile)
 
@@ -912,19 +999,6 @@ class Equipment extends Component {
 					this.renderSlidePanel(boxW, widthSide)
 				}
 
-                {
-                    this.state.showModalOpenChests &&
-                    <ModalOpenItemsMinted
-                        showModal={this.state.showModalOpenChests}
-                        onCloseModal={() => {
-                             this.setState({ showModalOpenChests: false })
-                             window.location.reload()
-                        }}
-                        history={this.props.history}
-                        amountMinted={numberOfChest}
-                    />
-                }
-
                 <ModalConnectionWidget
 					width={modalW}
 					showModal={showModalConnection}
@@ -988,33 +1062,40 @@ const styles = {
 		bottom: 0,
 	},
     cardShopStyle: {
-        borderRadius: 2,
+        borderRadius: 4,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         marginBottom: 15,
-        backgroundColor: "#3729af"
+        backgroundColor: "transparent",
+        borderWidth: 1,
+        borderColor: "#d7d7d7",
+        borderStyle: 'solid'
     },
     cardShopStyleMobile: {
-        borderRadius: 2,
+        borderRadius: 4,
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 15,
-        backgroundColor: "#3729af",
+        backgroundColor: "transparent",
         width: 'fit-content',
         paddingLeft: 15,
         paddingRight: 15,
         paddingBottom: 15,
+        borderWidth: 1,
+        borderColor: "#d7d7d7",
+        borderStyle: 'solid'
     },
     btnChoose: {
-        height: 45,
+        height: 38,
         width: 100,
         minWidth: 100,
-        borderRadius: 2,
+        borderRadius: 4,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: CTA_COLOR
+        backgroundColor: CTA_COLOR,
+        display: 'flex',
     },
     btnPageStyle: {
 		justifyContent: 'center',
@@ -1114,5 +1195,10 @@ export default connect(mapStateToProps, {
     getEquipmentVolume,
     mintEquipment,
     storeFiltersStatsEquip,
-    updateInfoTransactionModal
+    updateInfoTransactionModal,
+    getWizaValue,
+    getEquipmentMintPhase,
+    getEquipmentMintPrice,
+    getMaxMintable,
+    getAmountMinted
 })(Equipment)
