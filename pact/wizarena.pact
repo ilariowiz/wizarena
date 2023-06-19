@@ -2672,7 +2672,7 @@
                 (< id max-reveal)
                 (let (
                         (info (read nfts (int-to-str 10 id)))
-                        (info-stat (read stats (int-to-str 10 id)))
+                        (info-stat (read stats (int-to-str 10 id) ['attack 'damage 'weakness 'defense 'element 'hp 'medals 'resistance 'spellSelected 'spellbook 'ap 'speed 'downgrades 'tournaments] ))
                     )
                     (+ (+ (+ info info-market) info-stat) {"confirmBurn":confirmBurn})
                 )

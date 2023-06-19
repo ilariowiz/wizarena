@@ -1142,27 +1142,27 @@
 
 (commit-tx)
 
-(begin-tx "SET FIGHTS")
-
-(env-gasmodel "table")(env-gaslimit 150000)(env-gas 0)
-
-(env-sigs [{ "key": "aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1", "caps": []}])
-
-(free.wiz-arena.set-fights [
-
-    {
-        "id": "0",
-        "tournaments": {
-            "t10_r5": {"fightId":"fwm4s7JZ0UiV2yHphKsH", "winner":"1924"},
-            "t10_r6": {"fightId":"w2dBrLFGljdCb2Kdvk7y", "winner":"1924"},
-            "t9_r1": {"fightId":"w2dBrLFGljdCb2Kdvk7y", "winner":"1924"}
-        }
-    }
-])
-
-(env-gas)
-
-(commit-tx)
+; (begin-tx "SET FIGHTS")
+;
+; (env-gasmodel "table")(env-gaslimit 150000)(env-gas 0)
+;
+; (env-sigs [{ "key": "aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1", "caps": []}])
+;
+; (free.wiz-arena.set-fights [
+;
+;     {
+;         "id": "0",
+;         "tournaments": {
+;             "t10_r5": {"fightId":"fwm4s7JZ0UiV2yHphKsH", "winner":"1924"},
+;             "t10_r6": {"fightId":"w2dBrLFGljdCb2Kdvk7y", "winner":"1924"},
+;             "t9_r1": {"fightId":"w2dBrLFGljdCb2Kdvk7y", "winner":"1924"}
+;         }
+;     }
+; ])
+;
+; (env-gas)
+;
+; (commit-tx)
 
 (begin-tx "ADD FIGHT 1")
 
@@ -1188,7 +1188,7 @@
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
-(free.wiz-arena.get-base-stats "0")
+(free.wiz-arena.get-wizard-fields-for-id 0)
 
 (commit-tx)
 
