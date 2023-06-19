@@ -240,7 +240,6 @@
         weakness:string
         defense:integer
         element:string
-        fights:list
         hp:integer
         medals:object
         resistance:string
@@ -249,6 +248,7 @@
         ap:integer
         speed:integer
         downgrades:integer
+        tournaments:object
     )
 
     (defschema upgrade-stat-values-schema
@@ -592,7 +592,7 @@
                 "weakness": (at "weakness" item),
                 "defense": (at "defense" item),
                 "element": (at "element" item),
-                "fights": (at "fights" item),
+                "tournaments": {},
                 "hp": (at "hp" item),
                 "medals": (at "medals" item),
                 "resistance": (at "resistance" item),
@@ -707,27 +707,8 @@
     (defun update-fights-medals (objects-list:list)
         (with-capability (ADMIN)
             (map
-                (update-fight-medal)
+                (update-fight-medal-dev)
                 objects-list
-            )
-        )
-    )
-
-    (defun update-fight-medal (item:object)
-        (require-capability (ADMIN))
-        (let
-            (
-                (id (at "id" item))
-            )
-            (with-default-read stats id
-                {"fights":[],
-                "medals": {}}
-                {"fights":=fights,
-                "medals":=medals}
-                (update stats id
-                    {"fights": (+ fights (at "fights" item)),
-                    "medals": (+ (at "medals" item) medals)}
-                )
             )
         )
     )
@@ -742,42 +723,41 @@
     )
 
     (defun update-fight-medal-dev (item:object)
-        (require-capability (DEV))
+        (require-capability (PRIVATE))
         (let
             (
                 (id (at "id" item))
             )
             (with-default-read stats id
-                {"fights":[],
+                {"tournaments":{},
                 "medals": {}}
-                {"fights":=fights,
+                {"tournaments":=tournaments,
                 "medals":=medals}
                 (update stats id
-                    {"fights": (+ fights (at "fights" item)),
+                    {"tournaments": (+ tournaments (at "tournament" item)),
                     "medals": (+ (at "medals" item) medals)}
                 )
             )
         )
     )
 
-    ; (defun set-fight-medals (objects:list)
-    ;     (with-capability (ADMIN)
+    ; (defun set-fights (objects:list)
+    ;     (with-capability (DEV)
     ;         (map
-    ;             (set-fight-medal)
+    ;             (set-fight)
     ;             objects
     ;         )
     ;     )
     ; )
     ;
-    ; (defun set-fight-medal (item:object)
-    ;     (require-capability (ADMIN))
+    ; (defun set-fight (item:object)
+    ;     (require-capability (DEV))
     ;     (let
     ;          (
     ;              (id (at "id" item))
     ;         )
     ;         (update stats id
-    ;             {"fights": (at "fights" item),
-    ;             "medals": (at "medals" item)}
+    ;             {"tournaments": (at "tournaments" item)}
     ;         )
     ;     )
     ; )

@@ -633,13 +633,13 @@
     "defense": 17,
     "speed": 0,
     "element": "Dark",
-    "fights": [],
     "hp": 81,
     "medals": {},
     "resistance": "ice",
     "spellSelected": {"atkBase":6, "condition":{}, "dmgBase":6, "element":"Dark","name":"Unholy Nova"},
     "spellbook":[{"atkBase":6, "condition":{}, "dmgBase":6, "element":"Dark","name":"Unholy Nova"}, {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}, {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Avalance"}, {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Dark","name":"Bho"}],
-    "ap": 0
+    "ap": 0,
+    "tournaments": {}
 },
 {
     "id": "1",
@@ -649,13 +649,13 @@
     "defense": 15,
     "speed": 2,
     "element": "Fire",
-    "fights": [],
     "hp": 44,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
     "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}],
-    "ap": 0
+    "ap": 0,
+    "tournaments": {}
 },
 {
     "id": "2",
@@ -664,14 +664,14 @@
     "weakness": "ice",
     "defense": 17,
     "element": "Fire",
-    "fights": [],
     "hp": 77,
     "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
     "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}],
-    "ap": 0
+    "ap": 0,
+    "tournaments": {}
 },
 {
     "id": "3",
@@ -680,14 +680,14 @@
     "weakness": "ice",
     "defense": 21,
     "element": "Fire",
-    "fights": [],
     "hp": 54,
     "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
     "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}],
-    "ap": 0
+    "ap": 0,
+    "tournaments": {}
 },
 {
     "id": "4",
@@ -696,14 +696,14 @@
     "weakness": "ice",
     "defense": 21,
     "element": "Fire",
-    "fights": [],
     "hp": 54,
     "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
     "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}],
-    "ap": 0
+    "ap": 0,
+    "tournaments": {}
 },
 {
     "id": "5",
@@ -712,14 +712,14 @@
     "weakness": "ice",
     "defense": 21,
     "element": "Fire",
-    "fights": [],
     "hp": 54,
     "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
     "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}],
-    "ap": 0
+    "ap": 0,
+    "tournaments": {}
 },
 {
     "id": "6",
@@ -728,14 +728,14 @@
     "weakness": "ice",
     "defense": 21,
     "element": "Fire",
-    "fights": [],
     "hp": 54,
     "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
     "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}],
-    "ap": 0
+    "ap": 0,
+    "tournaments": {}
 },
 {
     "id": "7",
@@ -744,14 +744,14 @@
     "weakness": "ice",
     "defense": 21,
     "element": "Fire",
-    "fights": [],
     "hp": 54,
     "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
     "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}],
-    "ap": 0
+    "ap": 0,
+    "tournaments": {}
 },
 {
     "id": "8",
@@ -760,14 +760,14 @@
     "weakness": "ice",
     "defense": 21,
     "element": "Fire",
-    "fights": [],
     "hp": 54,
     "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
     "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}],
-    "ap": 0
+    "ap": 0,
+    "tournaments": {}
 },
 {
     "id": "9",
@@ -776,14 +776,14 @@
     "weakness": "ice",
     "defense": 21,
     "element": "Fire",
-    "fights": [],
     "hp": 54,
     "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
     "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}],
-    "ap": 0
+    "ap": 0,
+    "tournaments": {}
 },
 {
     "id": "10",
@@ -792,14 +792,14 @@
     "weakness": "ice",
     "defense": 21,
     "element": "Fire",
-    "fights": [],
     "hp": 54,
     "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
     "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}],
-    "ap": 0
+    "ap": 0,
+    "tournaments": {}
 },
 {
     "id": "11",
@@ -808,14 +808,14 @@
     "weakness": "ice",
     "defense": 21,
     "element": "Fire",
-    "fights": [],
     "hp": 54,
     "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
     "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}],
-    "ap": 0
+    "ap": 0,
+    "tournaments": {}
 },
 {
     "id": "12",
@@ -824,14 +824,14 @@
     "weakness": "ice",
     "defense": 21,
     "element": "Fire",
-    "fights": [],
     "hp": 54,
     "speed": 1,
     "medals": {},
     "resistance": "fire",
     "spellSelected": {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"},
     "spellbook":[{"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"}],
-    "ap": 0
+    "ap": 0,
+    "tournaments": {}
 }
 ])
 
@@ -1142,19 +1142,47 @@
 
 (commit-tx)
 
-; (begin-tx "ADD FIGHT 1")
-;
-; (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
-;
-; (free.wiz-arena.update-fights-medals [
-;     {
-;         "id":"0",
-;         "fights":[{"fightId": "w2dBrLFGljdCb2Kdvk7y","tournament": "t10_r5","winner": "2047"}],
-;         "medals": {"t5":"1"}
-;     }
-; ])
-;
-; (commit-tx)
+(begin-tx "SET FIGHTS")
+
+(env-gasmodel "table")(env-gaslimit 150000)(env-gas 0)
+
+(env-sigs [{ "key": "aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1", "caps": []}])
+
+(free.wiz-arena.set-fights [
+
+    {
+        "id": "0",
+        "tournaments": {
+            "t10_r5": {"fightId":"fwm4s7JZ0UiV2yHphKsH", "winner":"1924"},
+            "t10_r6": {"fightId":"w2dBrLFGljdCb2Kdvk7y", "winner":"1924"},
+            "t9_r1": {"fightId":"w2dBrLFGljdCb2Kdvk7y", "winner":"1924"}
+        }
+    }
+])
+
+(env-gas)
+
+(commit-tx)
+
+(begin-tx "ADD FIGHT 1")
+
+(env-gasmodel "table")(env-gaslimit 150000)(env-gas 0)
+
+(env-sigs [{ "key": "aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1", "caps": []}])
+
+(free.wiz-arena.update-fights-medals-dev [
+    {
+        "id": "0",
+        "tournament": {
+            "t11_r1": {"fightId":"fwm4s7JZ0UiV2yHphKsH", "winner":"1924"}
+        },
+        "medals": {"t11":"1"}
+    }
+])
+
+(env-gas)
+
+(commit-tx)
 
 (begin-tx "GET DATA")
 
