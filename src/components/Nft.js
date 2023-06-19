@@ -197,7 +197,7 @@ class Nft extends Component {
 	loadExtraInfo(response) {
 		document.title = `${response.name} - Wizards Arena`
 
-		console.log(response)
+		//console.log(response)
 		//console.log(Object.keys(response.medals));
 
 		let tournaments = []
