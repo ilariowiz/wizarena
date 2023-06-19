@@ -66,7 +66,6 @@ class Nft extends Component {
 			showModalTransfer: false,
 			kadenaPrice: 0,
 			loading: true,
-			fights: [],
 			traitsRank: undefined,
 			loadingHistory: true,
 			numbersOfMaxMedalsPerTournament: [],
@@ -161,16 +160,17 @@ class Nft extends Component {
 		}
 	}
 
-	groupFights(array, key) {
+	groupFights(dict, tname) {
 
 		let temp = []
 
-		for (let i = 0; i < array.length; i++) {
-			const fight = array[i]
+		for (const [key, value] of Object.entries(dict)) {
+			const tournamentFight = key.split("_")[0]
 
-			const tournamentFight = fight.tournament.split("_")[0]
+			if (tournamentFight === tname) {
 
-			if (tournamentFight === key) {
+				const fight = { tournament: key, ...value }
+
 				temp.push(fight)
 			}
 		}
@@ -197,32 +197,23 @@ class Nft extends Component {
 	loadExtraInfo(response) {
 		document.title = `${response.name} - Wizards Arena`
 
-		//console.log(response)
+		console.log(response)
 		//console.log(Object.keys(response.medals));
 
 		let tournaments = []
 
-		if (response.fights) {
+		if (response.tournaments) {
 
 			//console.log(response.medals);
 
-			response.fights.map(i => {
+			for (const [key, value] of Object.entries(response.tournaments)) {
+				const torneoName = key.split("_")[0]
 
-				/*
-				const encoded = btoa(JSON.stringify(i))
-				console.log(encoded);
-
-				const decoded = atob(encoded)
-				console.log(JSON.parse(decoded));
-				*/
-
-				const torneoName = i.tournament.split("_")[0]
 				if (!tournaments.includes(torneoName)) {
 					tournaments.push(torneoName)
 				}
-			})
+			}
 
-			//let tournaments = Object.keys(response.medals)
 			tournaments.sort((a, b) => {
 				return parseInt(a.replace("t", "")) - parseInt(b.replace("t", ""))
 			})
@@ -234,9 +225,9 @@ class Nft extends Component {
 
 		let openFightsSection = []
 
-		if (response.fights) {
+		if (response.tournaments) {
 			tournaments.map(i => {
-				const groupedFight = this.groupFights(response.fights, i)
+				const groupedFight = this.groupFights(response.tournaments, i)
 				//console.log(groupedFight);
 				if (groupedFight.length > 0) {
 					openFightsSection = [i]
@@ -404,45 +395,15 @@ class Nft extends Component {
 
 		let dictWin = { win: 0, maxMedals: 0 }
 
-		//console.log(nft.fights);
-
-		nft.fights.map(i => {
-
-			/*
-			const tName = i.tournament.split("_")[0]
-
-			const tInfo = numbersOfMaxMedalsPerTournament.find(i => i.tournamentName === tName)
-
-			if (!dictWin[tName]) {
-				dictWin[tName] = tInfo.maxMedals
-				dictWin['maxMedals'] += tInfo.maxMedals
-			}
-			*/
-
-			if (i.winner === nft.id) {
+		for (const [key, value] of Object.entries(nft.tournaments)) {
+			if (value.winner === nft.id) {
 				dictWin['win'] += 1
 			}
+
 			dictWin['maxMedals'] += 1
-		})
+		}
 
 		const winRate = Math.round(dictWin['win'] / dictWin['maxMedals'] * 100)
-
-		//console.log(dictWin, winRate);
-
-
-		//console.log(numbersOfMaxMedalsPerTournament, this.state.nft.medals);
-
-		/*
-		for (const [key, value] of Object.entries(nft.medals)) {
-			console.log(key, value);
-
-			const tInfo = numbersOfMaxMedalsPerTournament.find(i => i.tournamentName === key)
-			//dictWin['maxMedals'] += parseInt(tInfo.maxMedals)
-		}
-		*/
-
-		//console.log(dictWin);
-
 
 		this.setState({ numbersOfMaxMedalsPerTournament, winRate })
 	}
@@ -1099,7 +1060,7 @@ class Nft extends Component {
 
 					<div style={{ width: "80%", flexDirection: 'row', marginLeft: 30, flexWrap: 'wrap' }}>
 					{
-						!nft || !nft.fights || (nft && nft.fights.length === 0) ?
+						!nft || !nft.tournaments || (nft && Object.keys(nft.tournaments).length === 0) ?
 						<p style={{ fontSize: 16, color: this.props.mainTextColor, margin: 15 }}>
 							This wizard hasn't participated in any fight yet
 						</p>
@@ -1595,82 +1556,6 @@ class Nft extends Component {
 		)
 	}
 
-	renderBoxMedals(width) {
-		const { nft } = this.state
-		const { isDarkmode } = this.props
-
-		//console.log(nft.medals)
-
-		let sortedKeyMedals = []
-		if (nft.medals) {
-			sortedKeyMedals = Object.keys(nft.medals).sort((a, b) => {
-				return parseInt(a.replace("t","")) - parseInt(b.replace("t", ""))
-			})
-		}
-
-		//console.log(sortedKeyMedals);
-
-		return (
-			<div style={Object.assign({}, styles.boxSection, { width })}>
-
-				<div style={{ backgroundColor: isDarkmode ? "#f4f4f433" : '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
-					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 20, color: 'black' }} className="text-medium">
-						Medals
-					</p>
-				</div>
-
-				<div style={Object.assign({}, styles.boxTraits, { width })}>
-					{
-						!nft || !nft.medals || Object.keys(nft.medals).length === 0 ?
-						<p style={{ fontSize: 16, color: this.props.mainTextColor, margin: 15 }}>
-							This wizard has not yet won a medal
-						</p>
-						:
-						nft && nft.medals && sortedKeyMedals.map((key) => {
-							return this.renderMedal(key)
-						})
-					}
-
-				</div>
-
-			</div>
-		)
-	}
-
-	renderBoxFights(width) {
-		const { nft } = this.state
-		const { isDarkmode } = this.props
-
-		//console.log(nft.groupedFights);
-
-		return (
-			<div style={Object.assign({}, styles.boxSection, { width })}>
-
-				<div style={{ backgroundColor: isDarkmode ? "#f4f4f433" : '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
-					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 20, color: 'black' }} className="text-medium">
-						Fights
-					</p>
-				</div>
-
-				<div style={styles.boxTraits}>
-					{
-						!nft || !nft.fights || (nft && nft.fights.length === 0) ?
-						<p style={{ fontSize: 16, color: this.props.mainTextColor, margin: 15 }}>
-							This wizard hasn't participated in any fight yet
-						</p>
-						:
-						nft && nft.groupedFights && Object.keys(nft.groupedFights).map((key, index) => {
-							//console.log(key, index);
-							return this.renderMainFight(key, index)
-						})
-					}
-
-				</div>
-
-			</div>
-		)
-	}
-
 	renderBoxSpellbook(width) {
 		const { nft } = this.state
 		const { isDarkmode } = this.props
@@ -1986,10 +1871,6 @@ class Nft extends Component {
 
 				{this.renderBoxSpellbook(imageWidth)}
 
-				{/*{this.renderBoxMedals(imageWidth)}
-
-				{this.renderBoxFights(imageWidth)} */}
-
 				{this.renderBoxProperties(imageWidth)}
 
 				{this.renderBoxOffers(imageWidth, true)}
@@ -2139,12 +2020,6 @@ class Nft extends Component {
 					{this.renderBoxSpellbook(insideWidth/2 - 10)}
 
 				</div>
-
-				{/*<div style={{ width: insideWidth, justifyContent: 'space-between' }}>
-					{this.renderBoxMedals((insideWidth/2) - 10)}
-
-					{this.renderBoxFights(insideWidth/2 - 10)}
-				</div>*/}
 
 				{this.renderBoxProperties(insideWidth)}
 

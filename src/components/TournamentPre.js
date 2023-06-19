@@ -282,18 +282,21 @@ class Tournament extends Component {
 			const s = userMintedNfts[i]
 			//console.log(s);
 
-            const fights = s.fights
+            const fights = s.tournaments
 
             //console.log(fights);
 
-			if (fights && fights.length > 0) {
+			if (fights && Object.keys(fights).length > 0) {
 
-				let fightsPerTournamentName = fights.filter(i => {
-                    let tName = i.tournament.split("_")[0]
+                let fightsPerTournamentName = []
 
-                    return tName === tournamentName
-                })
-				//console.log(fightsPerTournamentName);
+                for (const [key, value] of Object.entries(fights)) {
+                    let tName = key.split("_")[0]
+
+                    if (tName === tournamentName) {
+                        fightsPerTournamentName.push({ tournament: key, ...value })
+                    }
+                }
 
 				fightsPerTournamentName.map(i => {
 					i['name'] = s.name
