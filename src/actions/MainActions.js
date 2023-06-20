@@ -1299,7 +1299,7 @@ export const getFeeTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit
 	}
 }
 
-export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, tournament, tournamentType, callback) => {
+export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 1800000, networkUrl, tournament, tournamentType, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
