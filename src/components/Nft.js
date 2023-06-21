@@ -209,7 +209,6 @@ class Nft extends Component {
 			this.loadFights(response)
 			this.loadHistory(response.id)
 			this.getHistoryUpgrades()
-			this.loadMaxMedalsPerTournament()
 
 			this.loadOffers(response.id)
 
@@ -268,7 +267,9 @@ class Nft extends Component {
 				})
 			}
 
-			this.setState({ nft: response, openFightsSection, loadingFights: false })
+			this.setState({ nft: response, openFightsSection, loadingFights: false }, () => {
+				this.loadMaxMedalsPerTournament()
+			})
 		})
 	}
 
@@ -410,8 +411,10 @@ class Nft extends Component {
 
 		let dictWin = { win: 0, maxMedals: 0 }
 
-		for (const [key, value] of Object.entries(nft.tournaments)) {
-			if (value.winner === nft.id) {
+		for (var i = 0; i < nft.tournaments.length; i++) {
+			let t = nft.tournaments[i]
+
+			if (t.winner === nft.id) {
 				dictWin['win'] += 1
 			}
 
