@@ -42,7 +42,8 @@ import {
 	acceptOffer,
 	getInfoItemEquipped,
 	updateInfoTransactionModal,
-	setWizardSfidato
+	setWizardSfidato,
+	getFightPerNfts
 } from '../actions'
 import { MAIN_NET_ID, REVEAL_CAP, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -66,6 +67,7 @@ class Nft extends Component {
 			showModalTransfer: false,
 			kadenaPrice: 0,
 			loading: true,
+			loadingFights: [],
 			traitsRank: undefined,
 			loadingHistory: true,
 			numbersOfMaxMedalsPerTournament: [],
@@ -160,18 +162,17 @@ class Nft extends Component {
 		}
 	}
 
-	groupFights(dict, tname) {
+	groupFights(array, tname) {
 
 		let temp = []
 
-		for (const [key, value] of Object.entries(dict)) {
-			const tournamentFight = key.split("_")[0]
+		for (var i = 0; i < array.length; i++) {
+			const t = array[i]
+
+			const tournamentFight = t.tournament.split("_")[0]
 
 			if (tournamentFight === tname) {
-
-				const fight = { tournament: key, ...value }
-
-				temp.push(fight)
+				temp.push(t)
 			}
 		}
 
@@ -200,49 +201,12 @@ class Nft extends Component {
 		//console.log(response)
 		//console.log(Object.keys(response.medals));
 
-		let tournaments = []
-
-		if (response.tournaments) {
-
-			//console.log(response.medals);
-
-			for (const [key, value] of Object.entries(response.tournaments)) {
-				const torneoName = key.split("_")[0]
-
-				if (!tournaments.includes(torneoName)) {
-					tournaments.push(torneoName)
-				}
-			}
-
-			tournaments.sort((a, b) => {
-				return parseInt(a.replace("t", "")) - parseInt(b.replace("t", ""))
-			})
-
-			response['groupedFights'] = {}
-		}
-
-
-
-		let openFightsSection = []
-
-		if (response.tournaments) {
-			tournaments.map(i => {
-				const groupedFight = this.groupFights(response.tournaments, i)
-				//console.log(groupedFight);
-				if (groupedFight.length > 0) {
-					openFightsSection = [i]
-				}
-
-				response['groupedFights'][i] = groupedFight
-			})
-		}
-
-		//console.log(openFightsSection);
 		//console.log(response);
 
 		const level = calcLevelWizard(response)
 
-		this.setState({ nft: response, level, loading: false, openFightsSection }, () => {
+		this.setState({ nft: response, level, loading: false }, () => {
+			this.loadFights(response)
 			this.loadHistory(response.id)
 			this.getHistoryUpgrades()
 			this.loadMaxMedalsPerTournament()
@@ -254,6 +218,57 @@ class Nft extends Component {
 			if (response.confirmBurn) {
 				this.loadInfoBurn(response.id)
 			}
+		})
+	}
+
+	loadFights(response) {
+		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		const ids = [response.id]
+
+		this.props.getFightPerNfts(chainId, gasPrice, gasLimit, networkUrl, ids, (fights) => {
+			//console.log(fights);
+
+			response['tournaments'] = fights && fights.length > 0 ? fights : []
+
+			let tournaments = []
+
+			if (response.tournaments) {
+
+				//console.log(response.medals);
+
+				for (var i = 0; i < response.tournaments.length; i++) {
+					const f = response.tournaments[i]
+
+					const torneoName = f.tournament.split("_")[0]
+
+					if (!tournaments.includes(torneoName)) {
+						tournaments.push(torneoName)
+					}
+				}
+
+				tournaments.sort((a, b) => {
+					return parseInt(a.replace("t", "")) - parseInt(b.replace("t", ""))
+				})
+
+				response['groupedFights'] = {}
+			}
+
+			let openFightsSection = []
+
+			if (response.tournaments) {
+				tournaments.map(i => {
+					const groupedFight = this.groupFights(response.tournaments, i)
+					//console.log(groupedFight);
+					if (groupedFight.length > 0) {
+						openFightsSection = [i]
+					}
+
+					response['groupedFights'][i] = groupedFight
+				})
+			}
+
+			this.setState({ nft: response, openFightsSection, loadingFights: false })
 		})
 	}
 
@@ -1011,20 +1026,11 @@ class Nft extends Component {
 	}
 
 	renderSlidePanelFights(boxW, isMobile) {
-		const { showFights, nft } = this.state
+		const { showFights, nft, loadingFights } = this.state
 		const { mainTextColor, mainBackgroundColor } = this.props
 
 		const panelWidth = isMobile ? '90%' : "50%"
 
-		//console.log(nft.medals)
-		/*
-		let sortedKeyMedals = []
-		if (nft.medals) {
-			sortedKeyMedals = Object.keys(nft.medals).sort((a, b) => {
-				return parseInt(a.replace("t","")) - parseInt(b.replace("t", ""))
-			})
-		}
-		*/
 
 		return (
 			<div style={styles.panelShadow}>
@@ -1059,8 +1065,17 @@ class Nft extends Component {
 					</div>
 
 					<div style={{ width: "80%", flexDirection: 'row', marginLeft: 30, flexWrap: 'wrap' }}>
+
 					{
-						!nft || !nft.tournaments || (nft && Object.keys(nft.tournaments).length === 0) ?
+						loadingFights &&
+						<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30 }}>
+							<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+						</div>
+					}
+
+
+					{
+						!nft || !nft.tournaments || (nft && nft.tournaments.length === 0) ?
 						<p style={{ fontSize: 16, color: this.props.mainTextColor, margin: 15 }}>
 							This wizard hasn't participated in any fight yet
 						</p>
@@ -2344,5 +2359,6 @@ export default connect(mapStateToProps, {
 	acceptOffer,
 	getInfoItemEquipped,
 	updateInfoTransactionModal,
-	setWizardSfidato
+	setWizardSfidato,
+	getFightPerNfts
 })(Nft);

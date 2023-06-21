@@ -32,7 +32,8 @@ import {
     subscribeToTournamentMassELITE,
     updateInfoTransactionModal,
     fetchAccountDetails,
-    getWizaBalance
+    getWizaBalance,
+    getFightPerNfts
 } from '../actions'
 import '../css/Nft.css'
 import 'reactjs-popup/dist/index.css';
@@ -107,8 +108,30 @@ class Tournament extends Component {
 
 		if (account && account.account) {
 			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (minted) => {
+                //console.log(minted);
                 if (isResults) {
-                    this.loadProfileFights(tournament)
+
+                    let idsSubscription = []
+                    const tName = tournament.name.split("_")[0]
+
+                    minted.map(i => {
+                        idsSubscription.push(`${tName}_${i.id}`)
+                    })
+
+                    this.props.getSubscriptions(chainId, gasPrice, gasLimit, networkUrl, idsSubscription, (subscriptions) => {
+                        //console.log(subscriptions);
+
+                        let subscribed = []
+                        subscriptions.map(i => {
+                            if (i.idnft) {
+                                subscribed.push(i.idnft)
+                            }
+                        })
+
+                        //console.log(subscribed);
+
+                        this.loadProfileFights(tournament, subscribed)
+                    })
                 }
 
                 if (isSubs) {
@@ -123,14 +146,12 @@ class Tournament extends Component {
                         })
 
                         this.props.getSubscriptions(chainId, gasPrice, gasLimit, networkUrl, idsSubscription, (subscriptions) => {
-                            //console.log(subscriptions);
+                            console.log(subscriptions);
 
                             this.setState({ equipment: response, subscriptionsInfo: subscriptions }, () => {
                                 this.loadSubs(tournament)
                             })
                         })
-
-
         			})
 
                 }
@@ -270,64 +291,69 @@ class Tournament extends Component {
         return Math.round(sum / array.length)
     }
 
-    loadProfileFights(tournament) {
-		const { userMintedNfts } = this.props
+    loadProfileFights(tournament, subscribed) {
+        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
 		const tournamentName = tournament.name.split("_")[0]
 		//console.log(tournamentName);
 
-		let profileFights = []
+        this.props.getFightPerNfts(chainId, gasPrice, gasLimit, networkUrl, subscribed, (allfights) => {
+            //console.log(allfights);
 
-		for (let i = 0; i < userMintedNfts.length; i++) {
-			const s = userMintedNfts[i]
-			//console.log(s);
+            let profileFights = []
 
-            const fights = s.tournaments
+    		for (let i = 0; i < subscribed.length; i++) {
+    			const s = subscribed[i]
+    			//console.log(s);
 
-            //console.log(fights);
+                let fights = allfights.filter(i => i.id === s)
+                //console.log(fights);
 
-			if (fights && Object.keys(fights).length > 0) {
+    			if (fights && fights.length > 0) {
 
-                let fightsPerTournamentName = []
+                    let fightsPerTournamentName = []
 
-                for (const [key, value] of Object.entries(fights)) {
-                    let tName = key.split("_")[0]
+                    for (let z = 0; z < fights.length; z++) {
+                        const s = fights[z]
 
-                    if (tName === tournamentName) {
-                        fightsPerTournamentName.push({ tournament: key, ...value })
+                        let tName = s.tournament.split("_")[0]
+
+                        if (tName === tournamentName) {
+                            fightsPerTournamentName.push(s)
+                        }
                     }
-                }
 
-				fightsPerTournamentName.map(i => {
-					i['name'] = s.name
-					profileFights.push(i)
-				})
-			}
-		}
+    				fightsPerTournamentName.map(y => {
+    					y['name'] = `#${s}`
+    					profileFights.push(y)
+    				})
+    			}
+    		}
 
-		profileFights.sort((a, b) => {
-			if (parseInt(a.tournament[a.tournament.length - 1]) === 0) return 1;
-			if (parseInt(b.tournament[b.tournament.length - 1]) === 0) return -1
-			return parseInt(a.tournament[a.tournament.length - 1]) - parseInt(b.tournament[b.tournament.length - 1])
-		})
+    		profileFights.sort((a, b) => {
+    			if (parseInt(a.tournament[a.tournament.length - 1]) === 0) return 1;
+    			if (parseInt(b.tournament[b.tournament.length - 1]) === 0) return -1
+    			return parseInt(a.tournament[a.tournament.length - 1]) - parseInt(b.tournament[b.tournament.length - 1])
+    		})
 
-		//console.log(profileFights);
+    		//console.log(profileFights);
 
-		let fightsPerRound = {}
+    		let fightsPerRound = {}
 
-		for (var i = 0; i < profileFights.length; i++) {
-			const singleF = profileFights[i]
+    		for (var i = 0; i < profileFights.length; i++) {
+    			const singleF = profileFights[i]
 
-			if (!fightsPerRound[singleF.tournament]) {
-				fightsPerRound[singleF.tournament] = []
-			}
+    			if (!fightsPerRound[singleF.tournament]) {
+    				fightsPerRound[singleF.tournament] = []
+    			}
 
-			fightsPerRound[singleF.tournament].push(singleF)
-		}
+    			fightsPerRound[singleF.tournament].push(singleF)
+    		}
 
-		//console.log(fightsPerRound);
+    		//console.log(fightsPerRound);
 
-		this.setState({ profileFights: fightsPerRound, loading: false, showProfileFights: true, showSubs: false })
+    		this.setState({ profileFights: fightsPerRound, loading: false, showProfileFights: true, showSubs: false })
+        })
 	}
 
     loadSubs(tournament) {
@@ -1511,5 +1537,6 @@ export default connect(mapStateToProps, {
     subscribeToTournamentMassELITE,
     updateInfoTransactionModal,
     fetchAccountDetails,
-    getWizaBalance
+    getWizaBalance,
+    getFightPerNfts
 })(Tournament)

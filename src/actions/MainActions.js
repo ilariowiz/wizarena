@@ -881,6 +881,46 @@ export const loadSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 	}
 }
 
+export const getFightPerNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 6000000, networkUrl, ids, callback) => {
+	return (dispatch) => {
+
+		let promises = []
+
+		ids.map(id => {
+			let promise = Promise.resolve(dispatch(loadFightsSingleNft(chainId, gasPrice, 6000000, networkUrl, id)))
+			promises.push(promise)
+		})
+
+		Promise.all(promises).then(values => {
+			//console.log(values);
+
+			let final = []
+			values.map(i => {
+				final.push(...i)
+			})
+
+			if (callback) {
+				callback(final)
+			}
+		})
+	}
+}
+
+export const loadFightsSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 6000000, networkUrl, id) => {
+
+	return async (dispatch) => {
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-fights-wizard "${id}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		const response = await dispatch(readFromContract(cmd, true, networkUrl))
+		//console.log(response);
+
+		return response
+	}
+}
+
 export const getOffersForNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 60000, networkUrl, id, callback) => {
 	return (dispatch) => {
 
@@ -1224,7 +1264,7 @@ export const getWizardsStakedCount = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 	}
 }
 
-export const getSubscriptions = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 5000, networkUrl, ids, callback) => {
+export const getSubscriptions = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 57000, networkUrl, ids, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
