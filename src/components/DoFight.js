@@ -12,7 +12,8 @@ import {
     setNetworkSettings,
     setNetworkUrl,
     loadSingleNft,
-    getInfoItemEquipped
+    getInfoItemEquipped,
+    setSfida
 } from '../actions'
 import { CTA_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID, REVEAL_CAP } from '../actions/types'
 
@@ -612,18 +613,17 @@ class DoFight extends Component {
 
                 <div style={{ justifyContent: 'space-between', alignItems: 'center', width: innerWidth, flexDirection: isMobile ? 'column' : 'row' }}>
 
-                    <a
-                        href={`${window.location.protocol}//${window.location.host}/nft/${item.id}`}
+                    <button
                         style={{ cursor: 'pointer' }}
-                        onClick={(e) => {
-                            e.preventDefault()
+                        onClick={() => {
+                            this.props.setSfida(undefined)
                             this.props.history.push(`/nft/${item.id}`)
                         }}
                     >
                         <p style={{ fontSize: 15, color: TEXT_SECONDARY_COLOR }} className="text-bold">
                             {this.getName(item)}
                         </p>
-                    </a>
+                    </button>
 
                     <div style={{ alignItems: 'center' }}>
                         <p style={{ fontSize: 15, color: mainTextColor, marginRight: 8 }}>
@@ -869,5 +869,6 @@ export default connect(mapStateToProps, {
     setNetworkSettings,
     setNetworkUrl,
     loadSingleNft,
-    getInfoItemEquipped
+    getInfoItemEquipped,
+    setSfida
 })(DoFight)
