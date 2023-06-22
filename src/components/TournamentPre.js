@@ -6,7 +6,7 @@ import _ from 'lodash'
 import { collection, getDocs } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import DotLoader from 'react-spinners/DotLoader';
-import { AiFillCheckCircle } from 'react-icons/ai'
+import { AiFillCheckCircle, AiOutlineLock } from 'react-icons/ai'
 import { IoClose } from 'react-icons/io5'
 import Popup from 'reactjs-popup';
 import NftCardChoice from './common/NftCardChoice'
@@ -264,7 +264,7 @@ class Tournament extends Component {
 
             this.setState({ tournamentElite: tournament }, async () => {
 
-				this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-elite-key")
+				//this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-elite-key")
                 const tournamentName = tournament.name.split("_")[0]
 
                 this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "elite", (subscribed) => {
@@ -403,10 +403,10 @@ class Tournament extends Component {
     }
 
     subscribe(idNft, spellSelected) {
-		const { account, buyin, feeTournament, buyinWiza, feeTournamentWiza, buyinElite } = this.props
+		const { account, buyin, feeTournament, buyinWiza, feeTournamentWiza } = this.props
 		const { tournamentSubs } = this.state
 
-		if (!buyin || !feeTournament || !buyinWiza || !feeTournamentWiza || !buyinElite || !spellSelected || !spellSelected.name) {
+		if (!buyin || !feeTournament || !buyinWiza || !feeTournamentWiza || !spellSelected || !spellSelected.name) {
 			return
 		}
 
@@ -879,9 +879,7 @@ class Tournament extends Component {
 
     renderTournamentElite(boxTournamentWidth) {
         const { tournamentElite, tournamentEliteSubs, avgLevelElite } = this.state
-        const { buyinElite, mainTextColor, isDarkmode } = this.props
-
-        let montepremi = tournamentEliteSubs * buyinElite
+        const { mainTextColor, isDarkmode } = this.props
 
         const tournamentName = tournamentElite.name.split("_")[0]
         const tournamentValue = tournamentName.replace("t", "")
@@ -920,7 +918,7 @@ class Tournament extends Component {
                     :
                     <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom }}>
                         <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
-                            The Elite Tournament
+                            The Chaos Tournament
                         </p>
                     </div>
                 }
@@ -928,18 +926,20 @@ class Tournament extends Component {
                 {this.renderRoundInfo(marginBottom, mainTextColor, tournamentValue, roundValue)}
 
                 <p style={{ fontSize: 16, color: mainTextColor, marginBottom }}>
-                    Min level: <span className="text-bold">{tournamentElite.levelCap}</span>
+                    Level Cap: <span className="text-bold">{tournamentElite.levelCap}</span>
                 </p>
 
                 <p style={{ fontSize: 16, color: mainTextColor, marginBottom, height: 20 }}>
                     Structure: {tournamentElite.structure}
                 </p>
 
-                {this.renderBuyinInfo(marginBottom, mainTextColor, buyinElite, "$WIZA", "0")}
+                {this.renderBuyinInfo(marginBottom, mainTextColor, "FREE", "", "0")}
 
                 <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
-                {this.renderPrizeInfo(marginBottom, mainTextColor, montepremi, "$WIZA")}
+                <p style={{ fontSize: 16, color: mainTextColor, marginBottom }}>
+                    Prize: <span className="text-bold">4 medals 1000 WIZA</span>
+                </p>
 
                 {this.renderSubsInfo(marginBottom, mainTextColor, tournamentEliteSubs, avgLevelElite)}
 
@@ -953,21 +953,13 @@ class Tournament extends Component {
 
                     <div style={{ alignItems: 'center' }}>
                         <p style={{ fontSize: 16, color: mainTextColor, marginRight: 7 }}>
-                            Registrations {tournamentElite.canSubscribe ? "open" : "closed"}
+                            Registrations private
                         </p>
 
-                        {
-                            tournamentElite.canSubscribe ?
-                            <AiFillCheckCircle
-                                color='green'
-                                size={26}
-                            />
-                            :
-                            <AiFillCheckCircle
-                                color='#504f4f'
-                                size={26}
-                            />
-                        }
+                        <AiOutlineLock
+                            color={mainTextColor}
+                            size={26}
+                        />
                     </div>
 
                     {
@@ -978,7 +970,7 @@ class Tournament extends Component {
                     }
                 </div>
 
-                {
+                {/*
                     tournamentElite.canSubscribe ?
                     <div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: marginBottom }}>
                         {this.renderBtnSubscribe(tournamentElite)}
@@ -988,7 +980,7 @@ class Tournament extends Component {
                     </div>
                     :
                     null
-                }
+                */}
 
                 {
                     !tournamentElite.canSubscribe &&
