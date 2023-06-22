@@ -1180,14 +1180,14 @@
     }
 ])
 
-(free.wiz-arena.set-fights [
-    {
-        "id": "0",
-        "tournament": "t11_r2",
-        "fightId": "fwm4s7JZ0UiV2yHphKsH",
-        "winner": "1924"
-    }
-])
+; (free.wiz-arena.set-fights [
+;     {
+;         "id": "0",
+;         "tournament": "t11_r2",
+;         "fightId": "fwm4s7JZ0UiV2yHphKsH",
+;         "winner": "1924"
+;     }
+; ])
 
 (env-gas)
 
@@ -1200,6 +1200,35 @@
 (free.wiz-arena.get-fights-wizard "0")
 
 (free.wiz-arena.get-wizard-fields-for-id 0)
+
+(commit-tx)
+
+(begin-tx "SUB TO CHAOS TOURNAMENT")
+
+(env-gasmodel "table")(env-gaslimit 150000)(env-gas 0)
+
+(env-sigs [{ "key": "aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1", "caps": []}])
+
+(free.wiz-arena.subscribe-tournament-mass-dev [
+    {
+        "id": "t3007_0",
+        "round": "t3007",
+        "idnft": "0",
+        "spellSelected": {"name": "Storm"},
+        "address": "k:461ae9f3c9c255112ac3797f6b15699c656c9bc44ed089551a0f792085ef9504"
+    }
+])
+
+; (free.wiz-arena.set-fights [
+;     {
+;         "id": "0",
+;         "tournament": "t11_r2",
+;         "fightId": "fwm4s7JZ0UiV2yHphKsH",
+;         "winner": "1924"
+;     }
+; ])
+
+(env-gas)
 
 (commit-tx)
 

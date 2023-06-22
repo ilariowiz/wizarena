@@ -755,32 +755,32 @@
         )
     )
 
-    (defun set-fights (objects:list)
-        (with-capability (DEV)
-            (map
-                (set-fight)
-                objects
-            )
-        )
-    )
-
-    (defun set-fight (item:object)
-        (require-capability (DEV))
-        (let
-             (
-                 (id (at "id" item))
-                 (key (format "{}_{}" [(at "id" item) (at "tournament" item)]))
-            )
-            (write fights-db key
-                {
-                    "id": id,
-                    "tournament": (at "tournament" item),
-                    "fightId": (at "fightId" item),
-                    "winner": (at "winner" item)
-                }
-            )
-        )
-    )
+    ; (defun set-fights (objects:list)
+    ;     (with-capability (DEV)
+    ;         (map
+    ;             (set-fight)
+    ;             objects
+    ;         )
+    ;     )
+    ; )
+    ;
+    ; (defun set-fight (item:object)
+    ;     (require-capability (DEV))
+    ;     (let
+    ;          (
+    ;              (id (at "id" item))
+    ;              (key (format "{}_{}" [(at "id" item) (at "tournament" item)]))
+    ;         )
+    ;         (write fights-db key
+    ;             {
+    ;                 "id": id,
+    ;                 "tournament": (at "tournament" item),
+    ;                 "fightId": (at "fightId" item),
+    ;                 "winner": (at "winner" item)
+    ;             }
+    ;         )
+    ;     )
+    ; )
 
     (defun update-downgrades (objects-list:list)
         (with-capability (ADMIN)
@@ -1290,6 +1290,28 @@
                     subscribers
                 )
             )
+        )
+    )
+
+    (defun subscribe-tournament-mass-dev (subscribers:list)
+        (with-capability (DEV)
+            (map
+                (nft-to-subscribe-dev "chaos")
+                subscribers
+            )
+        )
+    )
+
+    (defun nft-to-subscribe-dev (type:string subscriber:object)
+        (require-capability (DEV))
+        (let (
+                (id (at "id" subscriber))
+                (round (at "round" subscriber))
+                (idnft (at "idnft" subscriber))
+                (address (at "address" subscriber))
+                (spellSelected (at "spellSelected" subscriber))
+            )
+            (subscribe-tournament id round idnft address spellSelected type)
         )
     )
 
