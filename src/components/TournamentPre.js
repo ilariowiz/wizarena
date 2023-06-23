@@ -3,7 +3,7 @@ import Media from 'react-media';
 import { connect } from 'react-redux'
 import moment from 'moment'
 import _ from 'lodash'
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import DotLoader from 'react-spinners/DotLoader';
 import { AiFillCheckCircle, AiOutlineLock } from 'react-icons/ai'
@@ -291,12 +291,76 @@ class Tournament extends Component {
         return Math.round(sum / array.length)
     }
 
-    loadProfileFights(tournament, subscribed) {
+    async loadProfileFights(tournament, subscribed) {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-		const tournamentName = tournament.name.split("_")[0]
+		const tournamentName =  tournament.name.split("_")[0]
 		//console.log(tournamentName);
 
+        let tournamentsKey = []
+        for (var i = 1; i < 7; i++) {
+            let tKey = `${tournamentName}_r${i}`
+            tournamentsKey.push(tKey)
+        }
+
+        let q = query(collection(firebasedb, "fights"), where("idnft1", "in", subscribed))
+        let q2 = query(collection(firebasedb, "fights"), where("idnft2", "in", subscribed))
+
+        Promise.all([getDocs(q), getDocs(q2)]).then(values => {
+
+            let results = []
+            //console.log(values);
+
+            values.map(querySnapshot => {
+                querySnapshot.forEach(doc => {
+                    //console.log(doc.id);
+                    let d = doc.data()
+
+                    if (d.tournament && tournamentsKey.includes(d.tournament)) {
+
+                        const idnft = subscribed.includes(d.idnft1) ? d.idnft1 : d.idnft2
+
+                        const obj = {
+                            fightId: doc.id,
+                            tournament: d.tournament,
+                            winner: d.winner,
+                            id: idnft,
+                            name: `#${idnft}`
+                        }
+
+                        results.push(obj)
+                    }
+                })
+
+                //console.log(results);
+            })
+
+            results.sort((a, b) => {
+                if (parseInt(a.tournament[a.tournament.length - 1]) === 0) return 1;
+                if (parseInt(b.tournament[b.tournament.length - 1]) === 0) return -1
+                return parseInt(a.tournament[a.tournament.length - 1]) - parseInt(b.tournament[b.tournament.length - 1])
+            })
+
+            //console.log(profileFights);
+
+            let fightsPerRound = {}
+
+            for (var i = 0; i < results.length; i++) {
+                const singleF = results[i]
+
+                if (!fightsPerRound[singleF.tournament]) {
+                    fightsPerRound[singleF.tournament] = []
+                }
+
+                fightsPerRound[singleF.tournament].push(singleF)
+            }
+
+            //console.log(fightsPerRound);
+
+            this.setState({ profileFights: fightsPerRound, loading: false, showProfileFights: true, showSubs: false })
+        })
+
+        /*
         this.props.getFightPerNfts(chainId, gasPrice, gasLimit, networkUrl, subscribed, (allfights) => {
             //console.log(allfights);
 
@@ -322,6 +386,8 @@ class Tournament extends Component {
                             fightsPerTournamentName.push(s)
                         }
                     }
+
+                    //console.log(fightsPerTournamentName);
 
     				fightsPerTournamentName.map(y => {
     					y['name'] = `#${s}`
@@ -354,6 +420,7 @@ class Tournament extends Component {
 
     		this.setState({ profileFights: fightsPerRound, loading: false, showProfileFights: true, showSubs: false })
         })
+        */
 	}
 
     loadSubs(tournament) {
