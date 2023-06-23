@@ -297,24 +297,46 @@ class Tournament extends Component {
 		const tournamentName =  tournament.name.split("_")[0]
 		//console.log(tournamentName);
 
+        //subscribed = ["63", "91", "137", "147", "226", "257", "273", "344", "350", "355", "396", "488", "689", "820", "876", "907", "917", "927", "952", "972", "1148", "1217"]
+
         let tournamentsKey = []
         for (var i = 1; i < 7; i++) {
             let tKey = `${tournamentName}_r${i}`
             tournamentsKey.push(tKey)
         }
 
-        let q = query(collection(firebasedb, "fights"), where("idnft1", "in", subscribed))
-        let q2 = query(collection(firebasedb, "fights"), where("idnft2", "in", subscribed))
+        let blocks = _.chunk(subscribed, 10)
 
-        Promise.all([getDocs(q), getDocs(q2)]).then(values => {
+        let queries = []
+
+        for (var i = 0; i < blocks.length; i++) {
+            const b = blocks[i]
+
+            let q1 = query(collection(firebasedb, "fights"), where("idnft1", "in", b))
+            let q2 = query(collection(firebasedb, "fights"), where("idnft2", "in", b))
+
+            queries.push(getDocs(q1))
+            queries.push(getDocs(q2))
+        }
+
+        //console.log(queries);
+
+        //let q = query(collection(firebasedb, "fights"), where("idnft1", "in", subscribed))
+        //let q2 = query(collection(firebasedb, "fights"), where("idnft2", "in", subscribed))
+
+        Promise.all(queries).then(values => {
 
             let results = []
             //console.log(values);
 
             values.map(querySnapshot => {
+
+                //console.log(querySnapshot);
+
                 querySnapshot.forEach(doc => {
                     //console.log(doc.id);
                     let d = doc.data()
+                    //console.log(d);
 
                     if (d.tournament && tournamentsKey.includes(d.tournament)) {
 
