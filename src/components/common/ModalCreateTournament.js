@@ -178,6 +178,21 @@ class ModalCreateTournament extends Component {
                             </div>
 
                             <div style={{ alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingBottom: 10 }}>
+
+                                <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+
+                                    <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }}>
+                                        2
+                                    </p>
+
+                                    <input
+                                        type='radio'
+                                        value={4}
+                                        checked={this.state.nPlayers === 2}
+                                        onChange={(e) => this.setState({ nPlayers: 2 })}
+                                    />
+                                </div>
+
                                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
                                     <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }}>

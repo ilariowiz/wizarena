@@ -112,7 +112,7 @@ class ModalFightsFlashTournament extends Component {
 
 		const tournamentid = tournamentInfo.id
 
-		let howManyFights = 3
+		let howManyFights = 3 //8 players
 		let widthImg = isMobile ? 40 : 60
 		if (tournamentInfo.nPlayers.int === 4) {
 			howManyFights = 2

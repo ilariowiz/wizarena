@@ -2000,7 +2000,7 @@
         (enforce (> buyin 0.0) "Buyin must be greater than 0")
         (enforce (> maxLevel 0) "Max Level must be greater than 0")
         (enforce (contains winners [1 2]) "invalid number of winners")
-        (enforce (contains nPlayers [4 8 16]) "invalid number of players")
+        (enforce (contains nPlayers [2 4 8 16]) "invalid number of players")
         (with-capability (OWNER account idnft)
             (let (
                     (current-level (calculate-level idnft))
@@ -2144,11 +2144,11 @@
                         )
                     ]
                 )
-                (if
-                    (>= buyin 30.0)
-                    (map (add-xp-to-wallet-flash-t) wallets)
-                    ""
-                )
+                ; (if
+                ;     (>= buyin 30.0)
+                ;     (map (add-xp-to-wallet-flash-t) wallets)
+                ;     ""
+                ; )
                 (update auto-tournaments tournamentid
                     {
                         "completed":true,
