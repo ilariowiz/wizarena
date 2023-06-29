@@ -43,6 +43,7 @@ import {
 	STORE_CIRCULATING_SUPPLY,
 	STORE_TOTAL_MINED,
 	SET_SFIDA,
+	SET_SFIDA_PVE,
 	SET_AVG_LEVEL_PVP,
 	SET_WIZARD_SELECTED_SHOP,
 	CONTRACT_NAME_EQUIPMENT,
@@ -3913,6 +3914,13 @@ export const storeFiltersStats = (filters) => {
 export const setSfida = (item) => {
 	return {
 		type: SET_SFIDA,
+		payload: item
+	}
+}
+
+export const setSfidaPvE = (item) => {
+	return {
+		type: SET_SFIDA_PVE,
 		payload: item
 	}
 }

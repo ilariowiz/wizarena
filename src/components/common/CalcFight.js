@@ -48,10 +48,10 @@ const fight = (s1, s2, ev, callback) => {
         evento = Object.assign({}, ev)
     }
 
-    let iniziativa1 = Math.floor(Math.random() * 15) + 1; //da 1 a 15
+    let iniziativa1 = Math.floor(Math.random() * 14) + 1; //da 1 a 14
     iniziativa1 = iniziativa1 + s1copy.speed
 
-    let iniziativa2 = Math.floor(Math.random() * 15) + 1; //da 1 a 15
+    let iniziativa2 = Math.floor(Math.random() * 14) + 1; //da 1 a 14
     iniziativa2 = iniziativa2 + s2copy.speed
 
     //console.log(iniziativa1, iniziativa2);
@@ -284,7 +284,7 @@ const turno = (attaccante, difensore) => {
             }
         }
 
-        if ((atkTot >= difesaDif || tiro >= 19) && tiro !== 1) {
+        if ((atkTot >= difesaDif || tiro >= 18) && tiro !== 1) {
 
             const dannoBase = attaccante.damage
             let dannoSpell = dannoBase + attaccante.spellSelected.dmgBase

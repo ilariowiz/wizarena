@@ -28,6 +28,7 @@ import {
 	STORE_CIRCULATING_SUPPLY,
 	STORE_TOTAL_MINED,
 	SET_SFIDA,
+	SET_SFIDA_PVE,
 	SET_AVG_LEVEL_PVP,
 	SET_WIZARD_SELECTED_SHOP,
 	STORE_WIZA_NOT_CLAIMED,
@@ -87,6 +88,7 @@ const INITIAL_STATE = {
 	circulatingSupply: 0,
 	wizaNotClaimed: 0,
 	sfida: {},
+	sfidaPvE: {},
 	avgLevelPvP: 0,
 	wizardSelectedIdShop: undefined,
 	kadenaname: "",
@@ -237,6 +239,8 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, circulatingSupply: action.payload }
 		case SET_SFIDA:
 			return { ...state, sfida: action.payload }
+		case SET_SFIDA_PVE:
+			return { ...state, sfidaPvE: action.payload }
 		case SET_AVG_LEVEL_PVP:
 			return { ...state, avgLevelPvP: action.payload }
 		case SET_WIZARD_SELECTED_SHOP:

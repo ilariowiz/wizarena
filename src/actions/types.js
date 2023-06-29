@@ -77,6 +77,7 @@ export const STORE_TOTAL_MINED = 'STORE_TOTAL_MINED'
 export const STORE_WIZA_NOT_CLAIMED = 'STORE_WIZA_NOT_CLAIMED'
 
 export const SET_SFIDA = 'SET_SFIDA'
+export const SET_SFIDA_PVE = 'SET_SFIDA_PVE'
 export const SET_AVG_LEVEL_PVP = 'SET_AVG_LEVEL_PVP'
 
 export const SAVE_SALES = 'SAVE_SALES'

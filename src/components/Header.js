@@ -568,6 +568,14 @@ class Header extends Component {
 				}
 
 				{this.renderBtnMenu(
+					'pve',
+					isDarkmode ? pvp_icon_night : pvp_icon,
+					"PvE (FREE Beta)",
+					99,
+					16)
+				}
+
+				{this.renderBtnMenu(
 					'flashtournaments',
 					isDarkmode ? flash_icon_night : flash_icon,
 					"Flash Tournaments",

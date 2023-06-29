@@ -16,6 +16,9 @@ import BurningQueue from './components/BurningQueue'
 import DoFight from './components/DoFight'
 import PvP from './components/PvP'
 
+import DoFightPvE from './components/DoFightPvE'
+import PvE from './components/PvE'
+
 import League from './components/League'
 import Equipment from './components/Equipment'
 import ItemEquipment from './components/ItemEquipment'
@@ -63,7 +66,9 @@ ReactDOM.render(
             <Route path="/magicshop" component={Shop} />
             <Route path="/burningqueue" component={BurningQueue} />
             <Route path="/fightpvp" component={DoFight} />
+            <Route path="/fightpve" component={DoFightPvE} />
             <Route path="/pvp" component={PvP} />
+            <Route path="/pve" component={PvE} />
             <Route path="/league" component={League} />
             <Route path="/equipment" component={Equipment} />
             <Route path="/equipmentoffers" component={EquipmentOffers} />
