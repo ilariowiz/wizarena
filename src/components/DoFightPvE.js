@@ -141,7 +141,7 @@ class DoFight extends Component {
 
     showFight() {
         let historyToShow = this.history[this.indexShow]
-        //historyToShow["turn"] = this.indexShow+1
+        historyToShow["turn"] = this.indexShow+1
 
         let historyShow = Object.assign([], this.state.historyShow)
 
@@ -311,12 +311,11 @@ class DoFight extends Component {
 
     renderDesc(item, index) {
         const { mainTextColor } = this.props
-        //console.log(item);
 
         return (
             <div key={index} style={{ marginBottom: 15 }}>
                 <p style={{ fontSize: 15, color: TEXT_SECONDARY_COLOR, marginRight: 10 }}>
-                    Turn {this.indexShow+1}:
+                    Turn {item.turn}:
                 </p>
                 <p style={{ fontSize: 16, color: mainTextColor }}>
                     {item.desc}

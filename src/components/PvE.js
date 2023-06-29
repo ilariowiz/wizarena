@@ -99,14 +99,17 @@ class PvE extends Component {
         return (
             <div style={{ flexDirection: 'column', textAlign: 'center', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                <p style={{ color: mainTextColor, fontSize: 24, marginBottom: 20 }} className="text-medium">
+                <p style={{ color: mainTextColor, fontSize: 24 }} className="text-medium">
                     PvE
                 </p>
 
                 {
 					this.state.loading ?
-					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginBottom: 30 }}>
+					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginBottom: 10, marginTop: 30 }}>
 						<DotLoader size={25} color={mainTextColor} />
+                        <p style={{ fontSize: 14, color: mainTextColor, marginTop: 7 }}>
+                            Loading your wizards...
+                        </p>
 					</div>
 					: null
 				}
