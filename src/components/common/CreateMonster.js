@@ -73,7 +73,7 @@ const createMonster = (key, level) => {
     monsterLevel -= spellSelected.atkBase * atkMod
     monsterLevel -= spellSelected.dmgBase * dmgMod
 
-    console.log(monsterLevel, hp, attack, damage, defense, speed, element, resistance, weakness, spellSelected);
+    //console.log(monsterLevel, hp, attack, damage, defense, speed, element, resistance, weakness, spellSelected);
 
     return { name: `${key} Orc`, id: 'orc', level: Math.round(monsterLevel), hp, attack, damage, defense, speed, element, resistance, weakness, spellSelected }
 }

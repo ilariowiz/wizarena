@@ -117,7 +117,7 @@ class DoFight extends Component {
 
 
                     fight(this.player1, this.player2, undefined, (history, winner) => {
-                        console.log(history, winner);
+                        //console.log(history, winner);
 
                         this.setState({ winner, loading: false }, () => {
                             this.history = history
