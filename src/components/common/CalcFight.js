@@ -299,11 +299,11 @@ const turno = (attaccante, difensore) => {
 
             let danno = dannoSpell + (Math.floor(Math.random() * 5) - 2)
 
-            if (attaccante.element.toLowerCase() === difensore.weakness) {
+            if (attaccante.element.toLowerCase() === difensore.weakness.toLowerCase()) {
                 danno *= 2
                 hasDebolezza = true
             }
-            else if (attaccante.element.toLowerCase() === difensore.resistance) {
+            else if (attaccante.element.toLowerCase() === difensore.resistance.toLowerCase()) {
                 danno = Math.floor(danno/2)
                 hasResistenza = true
             }

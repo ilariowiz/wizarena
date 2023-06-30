@@ -21,8 +21,6 @@ import { CTA_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID, REVEAL_CAP } from '../act
 
 import "../css/Fight.css"
 
-const orc_1_img = require('../assets/monsters/orc_1.png')
-
 
 class DoFight extends Component {
     constructor(props) {
@@ -279,7 +277,7 @@ class DoFight extends Component {
                 {
                     index === 1 &&
                     <div style={{ alignItems: 'center', flexDirection: 'column' }}>
-                        <p style={{ color: mainTextColor, fontSize: 13 }}>
+                        <p style={{ color: mainTextColor, fontSize: 12 }}>
                             HP {item.hp} - DEF {item.defense} - ATK {item.attack + item.spellSelected.atkBase} - DMG {item.damage + item.spellSelected.dmgBase} - SPEED {item.speed}
                         </p>
                         <p style={{ color: mainTextColor, fontSize: 12 }}>
@@ -378,7 +376,7 @@ class DoFight extends Component {
                         <div style={{ width: widthImg, height: widthImg, marginBottom: isMobile ? 70 : 110, position: 'relative' }}>
                             <img
             					style={{ width: widthImg , height: widthImg }}
-                                src={orc_1_img}
+                                src={this.player2.image}
             					alt=""
             				/>
                         </div>

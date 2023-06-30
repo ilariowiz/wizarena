@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { getDocs, collection, query, where, orderBy } from "firebase/firestore";
 import { firebasedb } from './Firebase';
+import { sample } from 'lodash'
 import Media from 'react-media';
 import Header from './Header'
 import DotLoader from 'react-spinners/DotLoader';
@@ -16,11 +17,17 @@ import {
     setSfidaPvE
 } from '../actions'
 
-const orc_1_img = require('../assets/monsters/orc_1.png')
+const orc_berserker = require('../assets/monsters/orc_1.png')
+const orc_defensive = require('../assets/monsters/orc_defensive.png')
+const orc_average = require('../assets/monsters/orc_average.png')
+
+const orcs_images = [orc_berserker, orc_defensive, orc_average]
 
 class PvE extends Component {
     constructor(props) {
         super(props)
+
+        this.sampleImage = sample(orcs_images)
 
         this.state = {
             loading: true,
@@ -116,7 +123,7 @@ class PvE extends Component {
 
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                     <img
-                        src={orc_1_img}
+                        src={this.sampleImage}
                         style={{ width: 300, marginBottom: 50 }}
                     />
 
