@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import moment from 'moment'
 import getImageUrl from './GetImageUrl'
-import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
+import { getColorTextBasedOnLevel } from './CalcLevelWizard'
 import '../../css/NftCard.css'
 import {
 	setRank,
@@ -77,7 +77,7 @@ class NftCardBurningQueue extends Component {
 
 		const from = !isBurned ? moment(item.timestamp.timep).fromNow() : ""
 
-		const level = itemInfo ? calcLevelWizard(itemInfo) : undefined
+		const level = itemInfo ? itemInfo.level : undefined
 		//console.log(item);
 
 		return (

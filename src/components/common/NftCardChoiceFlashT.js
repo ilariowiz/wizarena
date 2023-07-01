@@ -4,7 +4,7 @@ import getImageUrl from './GetImageUrl'
 import '../../css/NftCardChoice.css'
 import cardStats from './CardStats'
 import getRingBonuses from './GetRingBonuses'
-import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
+import { getColorTextBasedOnLevel } from './CalcLevelWizard'
 import { CTA_COLOR } from '../../actions/types'
 
 
@@ -30,8 +30,6 @@ class NftCardChoiceFlashT extends Component {
 
 	render() {
 		const { item, width, mainTextColor, isDarkmode } = this.props
-
-        const level = calcLevelWizard(item)
 
         const ring = this.getRingEquipped()
 		let infoEquipment;
@@ -60,13 +58,13 @@ class NftCardChoiceFlashT extends Component {
 					<div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
                         {
-                            level ?
+                            item.level ?
                             <div style={{ width: '90%', alignItems: 'center', marginBottom: 8 }}>
                                 <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
                                     Level
                                 </p>
-                                <p style={{ color: getColorTextBasedOnLevel(level, isDarkmode), fontSize: 17 }} className="text-bold">
-                                    {level}
+                                <p style={{ color: getColorTextBasedOnLevel(item.level, isDarkmode), fontSize: 17 }} className="text-bold">
+                                    {item.level}
                                 </p>
                             </div>
                             : null

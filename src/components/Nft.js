@@ -25,7 +25,7 @@ import conditions from './common/Conditions'
 import allSpells from './common/Spells'
 import titles from './common/LeagueTitle'
 import getBoxWidth from './common/GetBoxW'
-import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
+import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import 'reactjs-popup/dist/index.css';
 import {
 	setNetworkSettings,
@@ -74,7 +74,6 @@ class Nft extends Component {
 			historyUpgrades: [],
 			openFightsSection: [],
 			infoBurn: {},
-			level: 0,
 			offers: [],
 			loadingOffers: true,
 			showModalOffer: false,
@@ -203,9 +202,7 @@ class Nft extends Component {
 
 		//console.log(response);
 
-		const level = calcLevelWizard(response)
-
-		this.setState({ nft: response, level, loading: false }, () => {
+		this.setState({ nft: response, loading: false }, () => {
 			this.loadFights(response)
 			this.loadHistory(response.id)
 			this.getHistoryUpgrades()
@@ -1489,7 +1486,7 @@ class Nft extends Component {
     }
 
 	renderBoxStats(width) {
-		const { nft, historyUpgrades, level, equipment } = this.state
+		const { nft, historyUpgrades, equipment } = this.state
 		const { mainTextColor, isDarkmode } = this.props
 
 		let rev = false
@@ -1525,8 +1522,8 @@ class Nft extends Component {
 								<p style={{ fontSize: 17, color: mainTextColor, marginRight: 10 }}>
 									Level
 								</p>
-								<p style={{ fontSize: 22, color: getColorTextBasedOnLevel(level, isDarkmode) }} className="text-bold">
-									{level}
+								<p style={{ fontSize: 22, color: getColorTextBasedOnLevel(nft.level, isDarkmode) }} className="text-bold">
+									{nft.level}
 								</p>
 							</div>
 

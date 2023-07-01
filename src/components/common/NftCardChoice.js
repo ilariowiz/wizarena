@@ -4,7 +4,7 @@ import getImageUrl from './GetImageUrl'
 import '../../css/NftCardChoice.css'
 import cardStats from './CardStats'
 import getRingBonuses from './GetRingBonuses'
-import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
+import { getColorTextBasedOnLevel } from './CalcLevelWizard'
 import ModalSpellbook from './ModalSpellbook'
 import { CTA_COLOR } from '../../actions/types'
 
@@ -58,7 +58,7 @@ class NftCardChoice extends Component {
 	render() {
 		const { item, width, canSubscribe, toSubscribe, subscriptionsInfo, mainTextColor, isDarkmode } = this.props
 
-        //console.log(subscriptionsInfo)
+        //console.log(item)
 
         let isSubscribed;
         //console.log(isSubscribed);
@@ -67,8 +67,6 @@ class NftCardChoice extends Component {
         }
 
         const numberOfTotalMedals = item.medals ? this.calcMedals() : 0
-
-        const level = calcLevelWizard(item)
 
         const inToSubscribe = toSubscribe.some(i => i.idnft === item.id)
 
@@ -100,13 +98,13 @@ class NftCardChoice extends Component {
 					<div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
                         {
-                            level ?
+                            item.level ?
                             <div style={{ width: '90%', alignItems: 'center', marginBottom: 8 }}>
                                 <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
                                     Level
                                 </p>
-                                <p style={{ color: getColorTextBasedOnLevel(level, isDarkmode), fontSize: 17 }} className="text-bold">
-                                    {level}
+                                <p style={{ color: getColorTextBasedOnLevel(item.level, isDarkmode), fontSize: 17 }} className="text-bold">
+                                    {item.level}
                                 </p>
                             </div>
                             : null
@@ -121,7 +119,7 @@ class NftCardChoice extends Component {
 
 
                         {
-                            !isSubscribed && canSubscribe && level && !inToSubscribe ?
+                            !isSubscribed && canSubscribe && item.level && !inToSubscribe ?
                             <button
                                 className='btnSubscribe'
                                 style={styles.btnSubscribe}

@@ -17,7 +17,7 @@ import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import allSpells from './common/Spells'
 import getRingBonuses from './common/GetRingBonuses'
-import { getColorTextBasedOnLevel, calcLevelWizard } from './common/CalcLevelWizard'
+import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import {
     loadUserMintedNfts,
 	clearTransaction,
@@ -636,11 +636,6 @@ class PvP extends Component {
 
         const nftInfo = userMintedNfts.find(i => i.id === item.id)
 
-        let level;
-        if (nftInfo) {
-            level = calcLevelWizard(nftInfo)
-        }
-        //console.log(level);
 
         //console.log(nftInfo);
 
@@ -718,14 +713,14 @@ class PvP extends Component {
                     </div>
 
                     {
-                        level &&
+                        item.level &&
                         <div style={{ alignItems: 'center', marginBottom: 10 }}>
                             <p style={{ fontSize: 14, color: mainTextColor, marginRight: 7 }}>
                                 Level
                             </p>
 
-                            <p style={{ fontSize: 17, color: getColorTextBasedOnLevel(level, isDarkmode) }} className="text-bold">
-                                {level}
+                            <p style={{ fontSize: 17, color: getColorTextBasedOnLevel(item.level, isDarkmode) }} className="text-bold">
+                                {item.level}
                             </p>
                         </div>
                     }
@@ -800,7 +795,7 @@ class PvP extends Component {
                                         return
                                     }
 
-                                    this.chooseOpponent(item, level)
+                                    this.chooseOpponent(item, item.level)
                                 }}
                             >
                                 <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
@@ -837,7 +832,7 @@ class PvP extends Component {
                                         return
                                     }
 
-                                    this.chooseOpponent(item, level)
+                                    this.chooseOpponent(item, item.level)
                                 }}
                             >
                                 <p style={{ fontSize: 15, color: 'white' }} className="text-medium">

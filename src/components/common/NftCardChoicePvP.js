@@ -4,7 +4,7 @@ import getImageUrl from './GetImageUrl'
 import '../../css/NftCardChoice.css'
 import cardStats from './CardStats'
 import getRingBonuses from './GetRingBonuses'
-import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
+import { getColorTextBasedOnLevel } from './CalcLevelWizard'
 import ModalWizaPvP from './ModalWizaPvP'
 import {
     getPvPsubscription
@@ -88,8 +88,6 @@ class NftCardChoicePvP extends Component {
 
         //const numberOfTotalMedals = item.medals ? this.calcMedals() : 0
 
-        const level = calcLevelWizard(item)
-
         const ring = this.getRingEquipped()
 		let infoEquipment;
 		if (ring) {
@@ -120,13 +118,13 @@ class NftCardChoicePvP extends Component {
 					<div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
                         {
-                            level ?
+                            item.level ?
                             <div style={{ width: '90%', alignItems: 'center', marginBottom: 8 }}>
                                 <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
                                     Level
                                 </p>
-                                <p style={{ color: getColorTextBasedOnLevel(level, isDarkmode), fontSize: 16 }} className="text-bold">
-                                    {level}
+                                <p style={{ color: getColorTextBasedOnLevel(item.level, isDarkmode), fontSize: 16 }} className="text-bold">
+                                    {item.level}
                                 </p>
                             </div>
                             : null
@@ -153,7 +151,7 @@ class NftCardChoicePvP extends Component {
 
 
                         {
-                            !isSubscribed && canSubscribe && level && !loading && !inToSubscribe ?
+                            !isSubscribed && canSubscribe && item.level && !loading && !inToSubscribe ?
                             <button
                                 className='btnSubscribe'
                                 style={styles.btnSubscribe}

@@ -1867,7 +1867,7 @@
 
     (defun calculate-level (idnft:string)
         (let (
-                (data (get-wizard-fields-for-id (str-to-int idnft)))
+                (data (read stats idnft ['attack 'damage 'defense 'hp 'speed] ))
             )
             (let (
                     (hp (at "hp" data))
@@ -2708,6 +2708,7 @@
                 (info-market (read nfts-market (int-to-str 10 id)))
                 (confirmBurn (check-nft-in-burning-queue (int-to-str 10 id)))
                 (max-reveal (str-to-int (get-value ID_REVEAL)))
+                (level (calculate-level (int-to-str 10 id)))
             )
             ; per fare il reveal vediamo quale id ha la richeista, se è più di 1023 allora è un cleric
             (if
@@ -2716,7 +2717,7 @@
                         (info (read nfts (int-to-str 10 id)))
                         (info-stat (read stats (int-to-str 10 id) ['attack 'damage 'weakness 'defense 'element 'hp 'medals 'resistance 'spellSelected 'spellbook 'ap 'speed 'downgrades] ))
                     )
-                    (+ (+ (+ info info-market) info-stat) {"confirmBurn":confirmBurn})
+                    (+ (+ (+ (+ info info-market) info-stat) {"confirmBurn":confirmBurn}) {"level":level})
                 )
                 (let (
                         (info (read nfts (int-to-str 10 id) ['created 'owner 'name 'id 'imageHash]))

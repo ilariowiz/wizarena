@@ -146,7 +146,7 @@ class Tournament extends Component {
                         })
 
                         this.props.getSubscriptions(chainId, gasPrice, gasLimit, networkUrl, idsSubscription, (subscriptions) => {
-                            console.log(subscriptions);
+                            //console.log(subscriptions);
 
                             this.setState({ equipment: response, subscriptionsInfo: subscriptions }, () => {
                                 this.loadSubs(tournament)

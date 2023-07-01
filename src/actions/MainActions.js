@@ -427,8 +427,7 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 					let maxStats = { hp: 0, defense: 0, attack: 0, damage: 0, speed: 0 }
 
 					final.map(i => {
-						const level = calcLevelWizard(i)
-						i.level = level
+						i.level = i.level.int
 
 
 						if (i.hp.int > maxStats.hp) {
@@ -591,8 +590,7 @@ export const loadBlockNftsSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, g
 			if (response) {
 				//console.log(response);
 				response.map(i => {
-					const level = calcLevelWizard(i)
-					i.level = level
+					i.level = i.level.int
 				})
 
 				response.sort((a, b) => {
@@ -799,8 +797,7 @@ export const loadBlockUserMintedNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, g
 				let maxStats = { hp: 0, defense: 0, attack: 0, damage: 0, speed: 0 }
 
 				response.map(i => {
-					const level = calcLevelWizard(i)
-					i.level = level
+					i.level = i.level.int
 
 					if (i.hp.int > maxStats.hp) {
 						maxStats['hp'] = i.hp.int
@@ -860,6 +857,9 @@ export const loadSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 			//console.log(response)
 
 			if (response) {
+
+				response["level"] = response.level.int
+
 				if (callback) {
 					callback(response)
 				}
@@ -1127,6 +1127,8 @@ export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 						const l = calcLevelWizard(response[idx])
 						response[idx]["level"] = l
 						response[idx]["fightsLeft"] = response[idx].rounds.int - (data.win + data.lose)
+
+						//console.log(response[idx]);
 
 						return { ...data, ...response[idx]}
 					})

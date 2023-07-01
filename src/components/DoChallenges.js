@@ -5,7 +5,7 @@ import Header from './Header'
 import DotLoader from 'react-spinners/DotLoader';
 import toast, { Toaster } from 'react-hot-toast';
 import getBoxWidth from './common/GetBoxW'
-import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
+import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import cardStats from './common/CardStats'
 import getRingBonuses from './common/GetRingBonuses'
 import getImageUrl from './common/GetImageUrl'
@@ -146,8 +146,6 @@ class DoChallenges extends Component {
         const { mainTextColor, isDarkmode } = this.props
         //console.log(info);
 
-        const level = calcLevelWizard(info)
-
         let infoEquipment;
         if (info.equipment && info.equipment.bonus) {
             infoEquipment = getRingBonuses(info.equipment)
@@ -183,8 +181,8 @@ class DoChallenges extends Component {
                             Level
                         </p>
 
-                        <p style={{ color: getColorTextBasedOnLevel(level, isDarkmode), fontSize: 17 }} className="text-bold">
-                            {level}
+                        <p style={{ color: getColorTextBasedOnLevel(info.level, isDarkmode), fontSize: 17 }} className="text-bold">
+                            {info.level}
                         </p>
                     </div>
 

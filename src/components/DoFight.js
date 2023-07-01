@@ -5,7 +5,7 @@ import DotLoader from 'react-spinners/DotLoader';
 import { doc, updateDoc, collection, setDoc, increment } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Rainbow from 'rainbowvis.js'
-import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
+import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
 import allSpells from './common/Spells'
 import {
@@ -88,7 +88,6 @@ class DoFight extends Component {
 
                     if (isPlayer1) {
                         this.player1 = response
-                        this.player1.level = calcLevelWizard(this.player1)
                         this.player1.attack = this.player1.attack.int
                         this.player1.damage = this.player1.damage.int
                         this.player1.defense = this.player1.defense.int
@@ -111,7 +110,6 @@ class DoFight extends Component {
                     }
                     else {
                         this.player2 = response
-                        this.player2.level = calcLevelWizard(this.player2)
                         this.player2.attack = this.player2.attack.int
                         this.player2.damage = this.player2.damage.int
                         this.player2.defense = this.player2.defense.int

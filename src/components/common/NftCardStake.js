@@ -7,7 +7,7 @@ import DotLoader from 'react-spinners/DotLoader';
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCard.css'
 import '../../css/Nft.css'
-import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
+import { getColorTextBasedOnLevel } from './CalcLevelWizard'
 import {
     getInfoNftBurning,
     selectWizard
@@ -119,7 +119,6 @@ class NftCardStake extends Component {
 		const { inBurnQueue } = this.state
 
         //console.log(stakeInfo);
-        const level = calcLevelWizard(item)
 
 		return (
 			<a
@@ -165,13 +164,13 @@ class NftCardStake extends Component {
                         }
 
                         {
-                            level &&
+                            item.level &&
                             <div style={{ alignItems: 'center', marginLeft: 10 }}>
                                 <p style={{ color: mainTextColor, fontSize: 15, marginRight: 7 }}>
                                     Level
                                 </p>
-                                <p style={{ color: getColorTextBasedOnLevel(level, isDarkmode), fontSize: 16 }} className="text-bold">
-                                    {level}
+                                <p style={{ color: getColorTextBasedOnLevel(item.level, isDarkmode), fontSize: 16 }} className="text-bold">
+                                    {item.level}
                                 </p>
                             </div>
                         }

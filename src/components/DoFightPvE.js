@@ -6,7 +6,7 @@ import { doc, updateDoc, collection, setDoc, increment } from "firebase/firestor
 import { firebasedb } from './Firebase';
 import Rainbow from 'rainbowvis.js'
 import fight from './common/CalcFight'
-import { calcLevelWizard, getColorTextBasedOnLevel } from './common/CalcLevelWizard'
+import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
 import createMonster from './common/CreateMonster'
 import allSpells from './common/Spells'
@@ -88,7 +88,6 @@ class DoFight extends Component {
                 this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, idNft, (ring) => {
 
                     this.player1 = response
-                    this.player1.level = calcLevelWizard(this.player1)
                     this.player1.attack = this.player1.attack.int
                     this.player1.damage = this.player1.damage.int
                     this.player1.defense = this.player1.defense.int

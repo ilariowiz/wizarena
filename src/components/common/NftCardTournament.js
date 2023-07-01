@@ -5,7 +5,7 @@ import Popup from 'reactjs-popup';
 import getRingBonuses from './GetRingBonuses'
 import getImageUrl from './GetImageUrl'
 import calcMedals from './CalcMedals'
-import { calcLevelWizard, getColorTextBasedOnLevel } from './CalcLevelWizard'
+import { getColorTextBasedOnLevel } from './CalcLevelWizard'
 import '../../css/NftCard.css'
 import 'reactjs-popup/dist/index.css';
 import {
@@ -98,8 +98,6 @@ class NftCardTournament extends Component {
 			isMine = true
 		}
 
-		const level = calcLevelWizard(item)
-
 		let imagePotion = vial_empty
 		let descPotion = ""
 
@@ -161,8 +159,8 @@ class NftCardTournament extends Component {
 								level
 							</p>
 
-							<p style={{ color: getColorTextBasedOnLevel(level, isDarkmode), fontSize: 17 }} className="text-bold">
-								{level}
+							<p style={{ color: getColorTextBasedOnLevel(item.level, isDarkmode), fontSize: 17 }} className="text-bold">
+								{item.level}
 							</p>
 						</div>
 					</div>
