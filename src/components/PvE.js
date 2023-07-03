@@ -216,7 +216,8 @@ const styles = {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: CTA_COLOR
+        backgroundColor: CTA_COLOR,
+        marginBottom: 15
     }
 }
 

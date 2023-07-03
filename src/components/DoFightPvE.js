@@ -275,7 +275,7 @@ class DoFight extends Component {
 
                 {
                     index === 1 &&
-                    <div style={{ alignItems: 'center', flexDirection: 'column' }}>
+                    <div style={{ alignItems: 'center', flexDirection: 'column', marginLeft: 8, marginRight: 8 }}>
                         <p style={{ color: mainTextColor, fontSize: 12 }}>
                             hp {item.hp} - def {item.defense} - atk {item.attack + item.spellSelected.atkBase} - dmg {item.damage + item.spellSelected.dmgBase} - speed {item.speed}
                         </p>
