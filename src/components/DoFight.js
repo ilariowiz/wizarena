@@ -657,7 +657,7 @@ class DoFight extends Component {
                         {
                             !isMobile &&
                             <p style={{ color: mainTextColor, fontSize: 12 }}>
-                                Resistance {item.resistance} - Weakness {item.weakness} - Spell {item.spellSelected.name}
+                                resistance {item.resistance} - weakness {item.weakness} - spell {item.spellSelected.name}
                             </p>
                         }
                     </div>
