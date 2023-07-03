@@ -21,7 +21,8 @@ export const calcLevelWizard = (item) => {
     let dmgLevel = dmg * 2.67
     let speedLevel = speed * 2.67
 
-    const level = Math.round(hpLevel + defLevel + atkLevel + dmgLevel + speedLevel)
+    let level = hpLevel + defLevel + atkLevel + dmgLevel + speedLevel
+    level = Math.round(level.toFixed(6))
 
     //console.log(level);
     return level
@@ -63,9 +64,10 @@ export const calcLevelWizardAfterUpgrade = (item, stat) => {
     let speedLevel = speed * 2.67
 
 
-    const level = Math.round(hpLevel + defLevel + atkLevel + dmgLevel + speedLevel)
+    let level = hpLevel + defLevel + atkLevel + dmgLevel + speedLevel
+    level = Math.round(level.toFixed(6))
 
-    //console.log(level);
+    //console.log(Math.round(level.toFixed(6)));
     return level
 }
 
@@ -104,7 +106,8 @@ export const calcLevelWizardAfterDowngrade = (item, stat) => {
     let speedLevel = speed * 2.67
 
 
-    const level = Math.round(hpLevel + defLevel + atkLevel + dmgLevel + speedLevel)
+    let level = hpLevel + defLevel + atkLevel + dmgLevel + speedLevel
+    level = Math.round(level.toFixed(6))
 
     //console.log(level);
     return level
