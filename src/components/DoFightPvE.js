@@ -277,10 +277,10 @@ class DoFight extends Component {
                     index === 1 &&
                     <div style={{ alignItems: 'center', flexDirection: 'column' }}>
                         <p style={{ color: mainTextColor, fontSize: 12 }}>
-                            HP {item.hp} - DEF {item.defense} - ATK {item.attack + item.spellSelected.atkBase} - DMG {item.damage + item.spellSelected.dmgBase} - SPEED {item.speed}
+                            hp {item.hp} - def {item.defense} - atk {item.attack + item.spellSelected.atkBase} - dmg {item.damage + item.spellSelected.dmgBase} - speed {item.speed}
                         </p>
                         <p style={{ color: mainTextColor, fontSize: 12 }}>
-                            Resistance {item.resistance} - Weakness {item.weakness} - Spell {item.spellSelected.name}
+                            resistance {item.resistance} - weakness {item.weakness} - spell {item.spellSelected.name}
                         </p>
                     </div>
                 }

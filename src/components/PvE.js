@@ -50,9 +50,11 @@ class PvE extends Component {
 	}
 
     loadMinted() {
-        const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+        const { account, chainId, gasPrice, gasLimit, networkUrl, userMintedNfts } = this.props
 
-        if (account && account.account) {
+        //console.log(userMintedNfts);
+
+        if (account && account.account && !userMintedNfts) {
             this.props.loadEquipMinted(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
                 this.setState({ equipment: response })
             })
@@ -60,6 +62,9 @@ class PvE extends Component {
             this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
                 this.setState({ loading: false })
             })
+        }
+        else {
+            this.setState({ loading: false })
         }
     }
 
