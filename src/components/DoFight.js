@@ -635,6 +635,15 @@ class DoFight extends Component {
 
                 </div>
 
+                <div style={{ alignItems: 'center', flexDirection: 'column', marginLeft: 8, marginRight: 8 }}>
+                    <p style={{ color: mainTextColor, fontSize: 12 }}>
+                        hp {item.hp} - def {item.defense} - atk {item.attack + item.spellSelected.atkBase} - dmg {item.damage + item.spellSelected.dmgBase} - speed {item.speed}
+                    </p>
+                    <p style={{ color: mainTextColor, fontSize: 12 }}>
+                        Resistance {item.resistance} - Weakness {item.weakness} - Spell {item.spellSelected.name}
+                    </p>
+                </div>
+
                 <div style={{ position: 'relative', width: innerWidth, height: 15, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', borderRadius: 4, overflow: "hidden", marginTop: 8 }}>
                     <div
                         className="hpBar"
@@ -817,7 +826,7 @@ const styles = {
 	},
     boxHp: {
         flexDirection: 'column',
-        minHeight: 70,
+        minHeight: 80,
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 2,
