@@ -1876,7 +1876,7 @@
                     (dmg (at "damage" data))
                     (speed (at "speed" data))
                 )
-                (round(+ (+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* dmg 2.67)) (* speed 2.67)))
+                (round(+ (+ (+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* dmg 2.67)) (* speed 2.67)) 0.000001))
             )
         )
     )

@@ -25,7 +25,7 @@ import conditions from './common/Conditions'
 import allSpells from './common/Spells'
 import titles from './common/LeagueTitle'
 import getBoxWidth from './common/GetBoxW'
-import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
+import { getColorTextBasedOnLevel, calcLevelWizard, calcLevelWizardAfterUpgrade } from './common/CalcLevelWizard'
 import 'reactjs-popup/dist/index.css';
 import {
 	setNetworkSettings,
@@ -185,6 +185,9 @@ class Nft extends Component {
 
 		this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, idNft, (response) => {
 			//console.log(response);
+
+ 			//console.log(calcLevelWizardAfterUpgrade({hp: response.hp.int, attack: response.attack.int, defense: response.defense.int, damage: response.damage.int, speed: response.speed.int}, "damage"));
+
 			if (response.name) {
 				this.loadExtraInfo(response)
 			}

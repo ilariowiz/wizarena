@@ -21,10 +21,15 @@ export const calcLevelWizard = (item) => {
     let dmgLevel = dmg * 2.67
     let speedLevel = speed * 2.67
 
-    let level = hpLevel + defLevel + atkLevel + dmgLevel + speedLevel
-    level = Math.round(level.toFixed(6))
+    let level = hpLevel + defLevel + atkLevel + dmgLevel + speedLevel + 0.000001
 
+    //console.log(defLevel, atkLevel, dmgLevel, speedLevel);
+
+    //level = Math.round(level.toFixed(6))
+
+    level = bankersRound(level)
     //console.log(level);
+
     return level
 }
 
@@ -64,10 +69,15 @@ export const calcLevelWizardAfterUpgrade = (item, stat) => {
     let speedLevel = speed * 2.67
 
 
-    let level = hpLevel + defLevel + atkLevel + dmgLevel + speedLevel
-    level = Math.round(level.toFixed(6))
+    let level = hpLevel + defLevel + atkLevel + dmgLevel + speedLevel + 0.000001
 
+    //console.log(level);
     //console.log(Math.round(level.toFixed(6)));
+
+    level = bankersRound(level)
+
+    //console.log(level);
+
     return level
 }
 
@@ -106,10 +116,10 @@ export const calcLevelWizardAfterDowngrade = (item, stat) => {
     let speedLevel = speed * 2.67
 
 
-    let level = hpLevel + defLevel + atkLevel + dmgLevel + speedLevel
-    level = Math.round(level.toFixed(6))
-
+    let level = hpLevel + defLevel + atkLevel + dmgLevel + speedLevel + 0.000001
+    level = bankersRound(level)
     //console.log(level);
+
     return level
 }
 
@@ -135,4 +145,11 @@ export const getColorTextBasedOnLevel = (level, isDarkmode) => {
     //console.log(color);
 
     return `#${color}`
+}
+
+const bankersRound = (n, d=0) => {
+    let x = n * Math.pow(10, d);
+    let r = Math.round(x);
+    let br = Math.abs(x) % 1 === 0.5 ? (r % 2 === 0 ? r : r-1) : r;
+    return br / Math.pow(10, d);
 }
