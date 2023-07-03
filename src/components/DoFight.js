@@ -102,6 +102,8 @@ class DoFight extends Component {
                                 const infos = i.split("_")
                                 this.player1[infos[1]] += parseInt(infos[0])
                             })
+
+                            this.player1.ring = ring
                         }
 
                         this.player1InitialHp = this.player1.hp
@@ -125,6 +127,8 @@ class DoFight extends Component {
                                 //console.log(infos[1], infos[0]);
                                 this.player2[infos[1]] += parseInt(infos[0])
                             })
+
+                            this.player2.ring = ring
                         }
 
                         this.player2InitialHp = this.player2.hp
@@ -635,13 +639,28 @@ class DoFight extends Component {
 
                 </div>
 
-                <div style={{ alignItems: 'center', flexDirection: 'column', marginLeft: 8, marginRight: 8 }}>
-                    <p style={{ color: mainTextColor, fontSize: 12 }}>
-                        hp {item.hp} - def {item.defense} - atk {item.attack + item.spellSelected.atkBase} - dmg {item.damage + item.spellSelected.dmgBase} - speed {item.speed}
-                    </p>
-                    <p style={{ color: mainTextColor, fontSize: 12 }}>
-                        Resistance {item.resistance} - Weakness {item.weakness} - Spell {item.spellSelected.name}
-                    </p>
+                <div style={{ alignItems: 'center', flexDirection: 'row', width: innerWidth, justifyContent: 'flex-start', marginTop: 4 }}>
+
+                    {
+                        item.ring && item.ring.url &&
+                        <img
+                            style={{ width: 32, height: 32, marginRight: 10 }}
+                            src={item.ring.url}
+                            alt={item.ring.name}
+                        />
+                    }
+
+                    <div style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
+                        <p style={{ color: mainTextColor, fontSize: 12, marginBottom: 3 }}>
+                            hp {item.hp} - def {item.defense} - atk {item.attack + item.spellSelected.atkBase} - dmg {item.damage + item.spellSelected.dmgBase} - speed {item.speed}
+                        </p>
+                        {
+                            !isMobile &&
+                            <p style={{ color: mainTextColor, fontSize: 12 }}>
+                                Resistance {item.resistance} - Weakness {item.weakness} - Spell {item.spellSelected.name}
+                            </p>
+                        }
+                    </div>
                 </div>
 
                 <div style={{ position: 'relative', width: innerWidth, height: 15, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', borderRadius: 4, overflow: "hidden", marginTop: 8 }}>
@@ -826,7 +845,7 @@ const styles = {
 	},
     boxHp: {
         flexDirection: 'column',
-        minHeight: 80,
+        minHeight: 90,
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 2,
