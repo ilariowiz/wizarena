@@ -294,10 +294,11 @@ class Tournament extends Component {
     async loadProfileFights(tournament, subscribed) {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-		const tournamentName =  tournament.name.split("_")[0]
+		const tournamentName = tournament.name.split("_")[0]
 		//console.log(tournamentName);
 
-        //subscribed = ["63", "91", "137", "147", "226", "257", "273", "344", "350", "355", "396", "488", "689", "820", "876", "907", "917", "927", "952", "972", "1148", "1217"]
+        //subscribed = ["63", "68", "94", "143", "171", "194", "226", "235", "289", "342", "388", "428", "582", "584", "611", "649", "714", "765", "803", "820", "890", "917", "952"]
+        //subscribed = ["63", "68"]
 
         let tournamentsKey = []
         for (var i = 1; i < 7; i++) {
@@ -316,13 +317,74 @@ class Tournament extends Component {
             let q2 = query(collection(firebasedb, "fights"), where("idnft2", "in", b))
 
             queries.push(getDocs(q1))
-            queries.push(getDocs(q2))
         }
 
-        //console.log(queries);
+        let valuesAll = []
 
-        //let q = query(collection(firebasedb, "fights"), where("idnft1", "in", subscribed))
-        //let q2 = query(collection(firebasedb, "fights"), where("idnft2", "in", subscribed))
+        let r = 0
+        let results = []
+
+        for (let i = 0; i < queries.length; i++) {
+
+            Promise.resolve(queries[i]).then(values => {
+                //console.log(values);
+
+                values.forEach(doc => {
+                    //console.log(doc);
+                    let d = doc.data()
+                    //console.log(d);
+
+                    if (d.tournament && tournamentsKey.includes(d.tournament)) {
+
+                        const idnft = subscribed.includes(d.idnft1) ? d.idnft1 : d.idnft2
+
+                        const obj = {
+                            fightId: doc.id,
+                            tournament: d.tournament,
+                            winner: d.winner,
+                            id: idnft,
+                            name: `#${idnft}`
+                        }
+
+                        results.push(obj)
+                    }
+                })
+
+                r++
+                if (r === queries.length) {
+
+                    //console.log(results);
+
+                    results.sort((a, b) => {
+                        if (parseInt(a.tournament[a.tournament.length - 1]) === 0) return 1;
+                        if (parseInt(b.tournament[b.tournament.length - 1]) === 0) return -1
+                        return parseInt(a.tournament[a.tournament.length - 1]) - parseInt(b.tournament[b.tournament.length - 1])
+                    })
+
+                    //console.log(profileFights);
+
+                    let fightsPerRound = {}
+
+                    for (var i = 0; i < results.length; i++) {
+                        const singleF = results[i]
+
+                        if (!fightsPerRound[singleF.tournament]) {
+                            fightsPerRound[singleF.tournament] = []
+                        }
+
+                        fightsPerRound[singleF.tournament].push(singleF)
+                    }
+
+                    //console.log(fightsPerRound);
+
+                    this.setState({ profileFights: fightsPerRound, loading: false, showProfileFights: true, showSubs: false })
+                }
+            })
+
+        }
+
+        /*
+        return
 
         Promise.all(queries).then(values => {
 
@@ -334,7 +396,7 @@ class Tournament extends Component {
                 //console.log(querySnapshot);
 
                 querySnapshot.forEach(doc => {
-                    //console.log(doc.id);
+                    //console.log(doc);
                     let d = doc.data()
                     //console.log(d);
 
@@ -377,10 +439,13 @@ class Tournament extends Component {
                 fightsPerRound[singleF.tournament].push(singleF)
             }
 
-            //console.log(fightsPerRound);
+            console.log(fightsPerRound);
 
-            this.setState({ profileFights: fightsPerRound, loading: false, showProfileFights: true, showSubs: false })
+            //this.setState({ profileFights: fightsPerRound, loading: false, showProfileFights: true, showSubs: false })
         })
+
+        */
+
 
         /*
         this.props.getFightPerNfts(chainId, gasPrice, gasLimit, networkUrl, subscribed, (allfights) => {
