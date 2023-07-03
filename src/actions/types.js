@@ -6,7 +6,7 @@ export const TEXT_DAY_COLOR = '#1d1d1f'
 export const TEXT_NIGHT_COLOR = 'white'
 
 export const MIN_LEVEL = 122
-export const MAX_LEVEL = 350
+export const MAX_LEVEL = 375
 
 export const REVEAL_CAP = 3072
 
