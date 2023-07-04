@@ -306,6 +306,59 @@ class Tournament extends Component {
             tournamentsKey.push(tKey)
         }
 
+        let q2 = query(collection(firebasedb, "fights"), where("tournament", "in", tournamentsKey))
+
+        Promise.resolve(getDocs(q2)).then(values => {
+
+            let results = []
+
+            values.forEach(doc => {
+                //console.log(doc);
+                let d = doc.data()
+                //console.log(d, subscribed);
+
+                if (subscribed.includes(d.idnft1) || subscribed.includes(d.idnft2)) {
+
+                    const idnft = subscribed.includes(d.idnft1) ? d.idnft1 : d.idnft2
+
+                    const obj = {
+                        fightId: doc.id,
+                        tournament: d.tournament,
+                        winner: d.winner,
+                        id: idnft,
+                        name: `#${idnft}`
+                    }
+
+                    results.push(obj)
+                }
+            })
+
+            results.sort((a, b) => {
+                if (parseInt(a.tournament[a.tournament.length - 1]) === 0) return 1;
+                if (parseInt(b.tournament[b.tournament.length - 1]) === 0) return -1
+                return parseInt(a.tournament[a.tournament.length - 1]) - parseInt(b.tournament[b.tournament.length - 1])
+            })
+
+            //console.log(profileFights);
+
+            let fightsPerRound = {}
+
+            for (var i = 0; i < results.length; i++) {
+                const singleF = results[i]
+
+                if (!fightsPerRound[singleF.tournament]) {
+                    fightsPerRound[singleF.tournament] = []
+                }
+
+                fightsPerRound[singleF.tournament].push(singleF)
+            }
+
+            //console.log(fightsPerRound);
+
+            this.setState({ profileFights: fightsPerRound, loading: false, showProfileFights: true, showSubs: false })
+        })
+
+        /*
         let blocks = _.chunk(subscribed, 10)
 
         let queries = []
@@ -318,8 +371,6 @@ class Tournament extends Component {
 
             queries.push(getDocs(q1))
         }
-
-        let valuesAll = []
 
         let r = 0
         let results = []
@@ -382,10 +433,10 @@ class Tournament extends Component {
             })
 
         }
+        */
+
 
         /*
-        return
-
         Promise.all(queries).then(values => {
 
             let results = []
@@ -443,8 +494,8 @@ class Tournament extends Component {
 
             //this.setState({ profileFights: fightsPerRound, loading: false, showProfileFights: true, showSubs: false })
         })
-
         */
+
 
 
         /*
