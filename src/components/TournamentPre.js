@@ -50,7 +50,10 @@ class Tournament extends Component {
 			tournamentKdaSubs: 0,
             tournamentWizaSubs: 0,
             tournamentEliteSubs: 0,
-            loading: true,
+            loading: false,
+            loadingElite: true,
+            loadingWeekly: true,
+            loadingApprentice: true,
             avgLevelKda: 0,
             avgLevelWiza: 0,
             avgLevelElite: 0,
@@ -193,7 +196,7 @@ class Tournament extends Component {
                     const avgLevel = this.calcAvgLevel(subscribed)
                     //console.log(avgLevel);
 
-                    this.setState({ tournamentKdaSubs: subscribed.length, avgLevelKda: avgLevel, loading: false })
+                    this.setState({ tournamentKdaSubs: subscribed.length, avgLevelKda: avgLevel, loadingWeekly: false })
                 })
 
             })
@@ -234,7 +237,7 @@ class Tournament extends Component {
                     const avgLevel = this.calcAvgLevel(subscribed)
                     //console.log(avgLevel);
 
-                    this.setState({ tournamentWizaSubs: subscribed.length, avgLevelWiza: avgLevel, loading: false })
+                    this.setState({ tournamentWizaSubs: subscribed.length, avgLevelWiza: avgLevel, loadingApprentice: false })
                 })
 
             })
@@ -273,7 +276,7 @@ class Tournament extends Component {
                     const avgLevel = this.calcAvgLevel(subscribed)
                     //console.log(avgLevel);
 
-                    this.setState({ tournamentEliteSubs: subscribed.length, avgLevelElite: avgLevel, loading: false })
+                    this.setState({ tournamentEliteSubs: subscribed.length, avgLevelElite: avgLevel, loadingElite: false })
                 })
 
             })
@@ -954,7 +957,7 @@ class Tournament extends Component {
     }
 
     renderTournamentHigh(boxTournamentWidth) {
-        const { tournament, tournamentKdaSubs, avgLevelKda } = this.state
+        const { tournament, tournamentKdaSubs, avgLevelKda, loadingWeekly } = this.state
         const { buyin, feeTournament, mainTextColor, isDarkmode } = this.props
 
         const fee = buyin * feeTournament / 100
@@ -1057,7 +1060,7 @@ class Tournament extends Component {
                 </div>
 
                 {
-                    tournament.canSubscribe ?
+                    tournament.canSubscribe && !loadingWeekly ?
                     <div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: marginBottom }}>
                         {this.renderBtnSubscribe(tournament)}
 
@@ -1069,7 +1072,7 @@ class Tournament extends Component {
                 }
 
                 {
-                    !tournament.canSubscribe &&
+                    !tournament.canSubscribe && !loadingWeekly &&
                     <div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: marginBottom }}>
                         {this.renderBtnYourResults(tournament)}
 
@@ -1078,12 +1081,19 @@ class Tournament extends Component {
                     </div>
                 }
 
+                {
+                    loadingWeekly &&
+                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center', marginTop: marginBottom, minHeight: 40 }}>
+                        <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+                    </div>
+                }
+
             </div>
         )
     }
 
     renderTournamentElite(boxTournamentWidth) {
-        const { tournamentElite, tournamentEliteSubs, avgLevelElite } = this.state
+        const { tournamentElite, tournamentEliteSubs, avgLevelElite, loadingElite } = this.state
         const { mainTextColor, isDarkmode } = this.props
 
         const tournamentName = tournamentElite.name.split("_")[0]
@@ -1175,25 +1185,19 @@ class Tournament extends Component {
                     }
                 </div>
 
-                {/*
-                    tournamentElite.canSubscribe ?
-                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: marginBottom }}>
-                        {this.renderBtnSubscribe(tournamentElite)}
-
-                        {this.renderBtnOpenTournament('tournamentE')}
-
-                    </div>
-                    :
-                    null
-                */}
-
                 {
-                    !tournamentElite.canSubscribe &&
+                    !tournamentElite.canSubscribe && !loadingElite &&
                     <div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: marginBottom }}>
                         {this.renderBtnYourResults(tournamentElite)}
 
                         {this.renderBtnOpenTournament('tournamentE')}
+                    </div>
+                }
 
+                {
+                    loadingElite &&
+                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center', marginTop: marginBottom, minHeight: 40 }}>
+                        <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
                     </div>
                 }
 
@@ -1202,7 +1206,7 @@ class Tournament extends Component {
     }
 
     renderTournamentLow(boxTournamentWidth) {
-        const { tournamentWiza, tournamentWizaSubs, avgLevelWiza } = this.state
+        const { tournamentWiza, tournamentWizaSubs, avgLevelWiza, loadingApprentice } = this.state
         const { buyinWiza, feeTournamentWiza, mainTextColor, isDarkmode } = this.props
 
         const fee = buyinWiza * feeTournamentWiza / 100
@@ -1305,24 +1309,27 @@ class Tournament extends Component {
                 </div>
 
                 {
-                    tournamentWiza.canSubscribe ?
+                    tournamentWiza.canSubscribe && !loadingApprentice &&
                     <div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: marginBottom }}>
                         {this.renderBtnSubscribe(tournamentWiza)}
 
                         {this.renderBtnOpenTournament('tournamentW')}
-
                     </div>
-                    :
-                    null
                 }
 
                 {
-                    !tournamentWiza.canSubscribe &&
+                    !tournamentWiza.canSubscribe && !loadingApprentice &&
                     <div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: marginBottom }}>
                         {this.renderBtnYourResults(tournamentWiza)}
 
                         {this.renderBtnOpenTournament('tournamentW')}
+                    </div>
+                }
 
+                {
+                    loadingApprentice &&
+                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center', marginTop: marginBottom, minHeight: 40 }}>
+                        <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
                     </div>
                 }
 
