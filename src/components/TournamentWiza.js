@@ -151,7 +151,7 @@ class Tournament extends Component {
         //console.log(yourWizards , "/", winnerWizards);
 
         let yourStat;
-        if (roundEnded === "6") {
+        if (roundEnded === "4") {
             yourStat = `Your winning Wizards ${winnerWizards} / ${yourWizards}`
         }
         else {
@@ -349,7 +349,7 @@ class Tournament extends Component {
 
     renderMatchPair(boxW, isMobile, padding) {
         const { matchPair, tournament, userMinted, subscribed } = this.state
-        const { mainTextColor, buyinWiza, subscribedWiza } = this.props
+        const { mainTextColor, buyinWiza, subscribedWiza, isDarkmode } = this.props
 
         const roundName = tournament.name.split("_")[1]
 
@@ -362,7 +362,7 @@ class Tournament extends Component {
 
                 <div style={{ width: boxW, flexWrap: 'wrap' }}>
                     {matchPair.map((item, index) => {
-                        return boxPairTournament(item, index, userMinted, mainTextColor, subscribed, this.props.history)
+                        return boxPairTournament(item, index, userMinted, mainTextColor, subscribed, this.props.history, isDarkmode)
                     })}
                 </div>
             </div>
@@ -391,8 +391,6 @@ class Tournament extends Component {
         else {
             text = `Round started ${start.fromNow()}`
         }
-
-        //console.log(winners);
 
         const subtitleText = `The ${subscribed.length} winners of ${roundEnded} medals:`
 
@@ -537,9 +535,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinWiza, feeTournamentWiza, subscribedWiza, subscribedWizaSpellGraph, mainTextColor, mainBackgroundColor } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinWiza, feeTournamentWiza, subscribedWiza, subscribedWizaSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinWiza, feeTournamentWiza, subscribedWiza, subscribedWizaSpellGraph, mainTextColor, mainBackgroundColor };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinWiza, feeTournamentWiza, subscribedWiza, subscribedWizaSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {

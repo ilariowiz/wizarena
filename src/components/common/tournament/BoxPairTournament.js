@@ -1,7 +1,7 @@
 import React from 'react'
 import getImageUrl from '../GetImageUrl'
 
-const boxPairTournament = (item, index, userMinted, mainTextColor, subscribed, history) => {
+const boxPairTournament = (item, index, userMinted, mainTextColor, subscribed, history, isDarkmode) => {
 
     let is1mine = false
     let is2mine = false
@@ -12,12 +12,12 @@ const boxPairTournament = (item, index, userMinted, mainTextColor, subscribed, h
 
         if (s.id === item.s1.id) {
             is1mine = true
-            borderColor = '#840fb2'
+            borderColor = isDarkmode ? 'gold' : '#840fb2'
         }
 
         if (item.s2 && item.s2.id && s.id === item.s2.id) {
             is2mine = true
-            borderColor = '#840fb2'
+            borderColor = isDarkmode ? 'gold' : '#840fb2'
         }
     }
 

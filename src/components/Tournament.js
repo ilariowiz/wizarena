@@ -354,7 +354,7 @@ class Tournament extends Component {
 
     renderMatchPair(boxW, isMobile, padding) {
         const { matchPair, tournament, userMinted } = this.state
-        const { mainTextColor, subscribed, montepremi, buyin } = this.props
+        const { mainTextColor, subscribed, montepremi, buyin, isDarkmode } = this.props
 
         const roundName = tournament.name.split("_")[1]
 
@@ -367,7 +367,7 @@ class Tournament extends Component {
 
                 <div style={{ width: boxW, flexWrap: 'wrap' }}>
                     {matchPair.map((item, index) => {
-                        return boxPairTournament(item, index, userMinted, mainTextColor, subscribed, this.props.history)
+                        return boxPairTournament(item, index, userMinted, mainTextColor, subscribed, this.props.history, isDarkmode)
                     })}
                 </div>
             </div>
@@ -560,9 +560,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, montepremi, buyin, feeTournament, subscribed, subscribedKdaSpellGraph, mainTextColor, mainBackgroundColor } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, montepremi, buyin, feeTournament, subscribed, subscribedKdaSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, montepremi, buyin, feeTournament, subscribed, subscribedKdaSpellGraph, mainTextColor, mainBackgroundColor };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, montepremi, buyin, feeTournament, subscribed, subscribedKdaSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {

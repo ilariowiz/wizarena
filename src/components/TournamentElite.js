@@ -147,7 +147,7 @@ class TournamentElite extends Component {
         //console.log(yourWizards , "/", winnerWizards);
 
         let yourStat;
-        if (roundEnded === "6") {
+        if (roundEnded === "4") {
             yourStat = `Your winning Wizards ${winnerWizards} / ${yourWizards}`
         }
         else {
@@ -345,7 +345,7 @@ class TournamentElite extends Component {
 
     renderMatchPair(boxW, isMobile, padding) {
         const { matchPair, tournament, userMinted, subscribed } = this.state
-        const { mainTextColor, subscribedElite } = this.props
+        const { mainTextColor, subscribedElite, isDarkmode } = this.props
 
         //console.log(subscribed);
         const roundName = tournament.name.split("_")[1]
@@ -359,7 +359,7 @@ class TournamentElite extends Component {
 
                 <div style={{ width: boxW, flexWrap: 'wrap' }}>
                     {matchPair.map((item, index) => {
-                        return boxPairTournament(item, index, userMinted, mainTextColor, subscribed, this.props.history)
+                        return boxPairTournament(item, index, userMinted, mainTextColor, subscribed, this.props.history, isDarkmode)
                     })}
                 </div>
             </div>
@@ -534,9 +534,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, subscribedElite, subscribedEliteSpellGraph, mainTextColor, mainBackgroundColor } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, subscribedElite, subscribedEliteSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, subscribedElite, subscribedEliteSpellGraph, mainTextColor, mainBackgroundColor };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, subscribedElite, subscribedEliteSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {
