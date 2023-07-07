@@ -1093,6 +1093,15 @@ export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 
 			let onlyWeekId = response.map(i => `${pvpWeek}_#${i.id}`)
 
+			//console.log(onlyWeekId);
+
+			if (onlyWeekId && onlyWeekId.length === 0) {
+				if (callback) {
+					callback([])
+					return
+				}
+			}
+
 			const onlyWeekIdBy10 = onlyWeekId.reduce((rows, item, index) => {
 				//console.log(index);
 				//se array row è piena, aggiungiamo una nuova row = [] alla lista
@@ -1136,29 +1145,6 @@ export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 			)
 
 			resultFirebase = resultFirebase.flat(1)
-
-			if (resultFirebase.length < response.length) {
-
-				/*
-				response.map(n => {
-					//console.log(n);
-					const hasId = resultFirebase.some(s => s.id === n.id)
-					//console.log(hasId);
-
-					if (!hasId) {
-						const docRefPvP = doc(firebasedb, "pvp_results", `${pvpWeek}_#${n.id}`)
-						setDoc(docRefPvP, { "lose": 0, "win": 0, "maxFights": n.rounds.int })
-
-						const docRefPvPTraining = doc(firebasedb, "pvp_training", `${pvpWeek}_#${n.id}`)
-						setDoc(docRefPvPTraining, { "lose": 0, "win": 0, "maxFights": n.rounds.int })
-					}
-				})
-				dispatch(getAllSubscribersPvP(chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, pvpWeek, callback))
-				return
-				*/
-			}
-
-			//console.log(resultFirebase);
 
 			if (callback) {
 				callback(resultFirebase)
