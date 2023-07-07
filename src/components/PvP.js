@@ -135,7 +135,7 @@ class PvP extends Component {
 
         this.props.getPvPweek(chainId, gasPrice, gasLimit, networkUrl, async(res) => {
 
-            const docRef = doc(firebasedb, "pvp_week", res)
+            const docRef = doc(firebasedb, "pvp_week", "general")
 
     		const docSnap = await getDoc(docRef)
     		let data = docSnap.data()
@@ -402,20 +402,6 @@ class PvP extends Component {
         }
 
         const fightsStart = moment().isAfter(pvpFightsStartDate)
-
-        /*
-        if (!fightsStart) {
-            const docRefT = doc(firebasedb, "pvp_training", `${pvpWeek}_#${item.id}`)
-            const docSnapT = await getDoc(docRefT)
-
-            let dataT = docSnapT.data()
-
-            if (!dataT) {
-                const docRefTraining = doc(firebasedb, "pvp_training", `${pvpWeek}_#${item.id}`)
-                await setDoc(docRefTraining, { "lose": 0, "win": 0 })
-            }
-        }
-        */
 
         let maxL = level+25
         let minL = level-25
