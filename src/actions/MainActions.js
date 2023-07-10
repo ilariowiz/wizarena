@@ -64,7 +64,8 @@ import {
 	HIDE_MODAL_TX,
 	CLEAR_TRANSACTION_STATE_PACT_CODE,
 	SET_TIME_TO_HALVENING,
-	SET_VISUAL_COLORS
+	SET_VISUAL_COLORS,
+	SET_SUBSCRIBERS_PVP
 } from './types'
 
 
@@ -1090,6 +1091,8 @@ export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 
 		dispatch(readFromContract(cmd, true, networkUrl)).then(async (response) => {
 			//console.log(response)
+
+			dispatch({ type: SET_SUBSCRIBERS_PVP, payload: response })
 
 			let onlyWeekId = response.map(i => `${pvpWeek}_#${i.id}`)
 

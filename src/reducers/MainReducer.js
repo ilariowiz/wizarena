@@ -48,7 +48,8 @@ import {
 	TEXT_DAY_COLOR,
 	TEXT_NIGHT_COLOR,
 	BACKGROUND_DAY_COLOR,
-	BACKGROUND_NIGHT_COLOR
+	BACKGROUND_NIGHT_COLOR,
+	SET_SUBSCRIBERS_PVP
 } from '../actions/types'
 
 
@@ -102,7 +103,8 @@ const INITIAL_STATE = {
 	filtriProfileRanges: {},
 	isDarkmode: false,
 	mainTextColor: "#1d1d1f",
-	mainBackgroundColor: "white"
+	mainBackgroundColor: "white",
+	subscribersPvP: []
 }
 
 export default (state = INITIAL_STATE, action) => {
@@ -265,6 +267,8 @@ export default (state = INITIAL_STATE, action) => {
 			}
 			return { ...state, mainTextColor: TEXT_DAY_COLOR, mainBackgroundColor: BACKGROUND_DAY_COLOR, isDarkmode: false }
 		}
+		case SET_SUBSCRIBERS_PVP:
+			return { ...state, subscribersPvP: action.payload }
 		case LOGOUT:
 			return { ...state, account: {}, transactionsState: [], showModalTx: false, isConnectWallet: false, isXWallet: false, isQRWalletConnect: false, userMintedNfts: [], wizaBalance: 0, wizardsStaked: 0, qrWalletConnectClient: undefined, kadenaname:""}
 		default:
