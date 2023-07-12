@@ -720,9 +720,15 @@ class Header extends Component {
 							on="hover"
 						>
 							<div style={{ width: 200, overflowWrap: "anywhere", padding: 8 }}>
-								<p style={{ color: "#1d1d1f", fontSize: 15, lineHeight: 1.4 }}>
-									{textToConfirm}.<br /> Request key: {transactionsState[transactionsState.length-1].requestKey}
-								</p>
+								<a
+									href={`https://explorer.chainweb.com/mainnet/tx/${transactionsState[transactionsState.length-1].requestKey}`}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									<p style={{ color: "#1d1d1f", fontSize: 15, lineHeight: 1.4 }}>
+										{textToConfirm}.<br /> Request key: {transactionsState[transactionsState.length-1].requestKey}
+									</p>
+								</a>
 							</div>
 						</Popup>
 					</div>
