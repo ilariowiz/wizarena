@@ -822,10 +822,13 @@ class Header extends Component {
 			<ModalTransaction
 				showModal={this.props.showModalTx}
 				width={width}
-				mintSuccess={(requestKey) => {
+				mintSuccess={(requestKey, location) => {
 					this.props.clearTransaction(requestKey)
 					this.props.removeInfo(requestKey)
-					window.location.reload()
+
+					if (location === window.location.href) {
+						window.location.reload()
+					}		
 				}}
 				mintFail={(pactCode, requestKey) => {
 					//console.log(pactCode);

@@ -11,6 +11,10 @@ import {
 
 
 export const updateInfoTransactionModal = (dict) => {
+
+    dict['location'] = window.location.href
+    //console.log(dict);
+
     return {
         type: UPDATE_INFO_TRANSACTION_MODAL,
         payload: dict

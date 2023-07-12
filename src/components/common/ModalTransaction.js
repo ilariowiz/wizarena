@@ -8,7 +8,6 @@ import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, 
 import '../../css/Modal.css'
 import {
 	signTransaction,
-	updateTransactionState,
 	pollForTransaction,
 	hideModalTx,
 	addTxKeyToInfo,
@@ -218,8 +217,9 @@ class ModalTransaction extends Component {
 			if (txState.success != null) {
 
 				let transactionOkText = ""
+				let info = {}
 				if (txInfo && txInfo.length > 0) {
-					const info = txInfo.find(i => i.requestKey === txState.requestKey)
+					info = txInfo.find(i => i.requestKey === txState.requestKey)
 					if (info) {
 						transactionOkText = info.transactionOkText
 					}
@@ -229,7 +229,7 @@ class ModalTransaction extends Component {
 				body = transactionOkText
 				buttonText = 'Close'
 
-				action = () => this.props.mintSuccess(txState.requestKey)
+				action = () => this.props.mintSuccess(txState.requestKey, info.location)
 				loading = false
 				canCancel = false
 			}
@@ -337,7 +337,6 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {
 	signTransaction,
-	updateTransactionState,
 	pollForTransaction,
 	hideModalTx,
 	addTxKeyToInfo,
