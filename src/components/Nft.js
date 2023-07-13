@@ -1472,7 +1472,7 @@ class Nft extends Component {
 					</div>
 				}
 
-				<p style={Object.assign({}, styles.textValueStat, { color: mainTextColor })}>{fixedValue}{max ? `/${max}` : ''}</p>
+				<p style={Object.assign({}, styles.textValueStat, { color: mainTextColor })}>{fixedValue}</p>
 			</div>
 		)
 	}
