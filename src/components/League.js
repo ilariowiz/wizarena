@@ -34,7 +34,7 @@ class League extends Component {
     }
 
     componentDidMount() {
-		document.title = "The Twelve League - Wizards Arena"
+		document.title = "League - Wizards Arena"
 
         this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
@@ -43,19 +43,102 @@ class League extends Component {
 	}
 
     async loadTournament() {
-        const querySnapshot = await getDocs(collection(firebasedb, "stage"))
+
+        const queryT = await getDocs(collection(firebasedb, "stage_low"))
+
+        queryT.forEach(doc => {
+			const tournament = doc.data()
+            this.setState({ tournament })
+        })
+
+        const querySnapshot = await getDocs(collection(firebasedb, "ranking_s4"))
+
+        let rankings = []
 
         querySnapshot.forEach(doc => {
             //console.log(doc.data());
-			const tournament = doc.data()
-            this.setState({ tournament }, () => {
-                setTimeout(() => {
-        			this.loadAll()
-        		}, 500)
-            })
+            const idDoc = doc.id
+			const data = doc.data()
+
+            //console.log(idDoc, data);
+
+            rankings.push({ id: idDoc, ranking: data.ranking })
         })
+
+        //se non ci sono ancora dati ***************************
+        if (rankings.length <= 1) {
+            this.setState({ ranking: [], loading: false })
+            return
+        }
+
+        rankings.sort((a, b) => {
+            return b.ranking - a.ranking
+        })
+
+        let rankings2 = []
+
+        for (let i = 0; i < rankings.length; i++) {
+            const r = rankings[i]
+
+            if (i < 24) {
+                rankings2.push(r)
+                continue
+            }
+
+            if (r.ranking === rankings[i-1].ranking) {
+                //console.log(r.ranking, rankings[i-1].ranking);
+                rankings2.push(r)
+            }
+            else {
+                break
+            }
+        }
+
+        //console.log(rankings2);
+
+        let finalRankings = []
+
+        for (let i = 0; i < rankings2.length; i++) {
+            const r = rankings2[i]
+
+            if (finalRankings.length === 0) {
+                let subr = finalRankings.push([r])
+                continue
+            }
+
+            let latestSubArray = finalRankings[finalRankings.length - 1]
+            //console.log(latestSubArray);
+            let latestRanking = latestSubArray[latestSubArray.length - 1]
+
+            //console.log(latestRanking.ranking, r.ranking);
+
+            if (latestRanking.ranking === r.ranking) {
+                latestSubArray.push(r)
+            }
+            else {
+                let subr = finalRankings.push([r])
+            }
+        }
+
+        //console.log(finalRankings);
+
+        let final2 = []
+
+        let places = 0
+
+        finalRankings.map((items, index) => {
+            places = items.length + places
+            const placesString = items.length === 1 ? `${places}° place` : `${places - items.length + 1}° to ${places}° places`
+            const obj = { ranking: placesString, nfts: items }
+            final2.push(obj)
+        })
+
+        //console.log(final2);
+
+        this.setState({ ranking: final2, loading: false })
     }
 
+    /*
     loadAll() {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
         const { tournament } = this.state
@@ -107,6 +190,7 @@ class League extends Component {
 
         })
 	}
+    */
 
     renderSingleCard(item, index, widthNft) {
         const { account, mainTextColor } = this.props
@@ -130,7 +214,7 @@ class League extends Component {
                     alt={`#${item.id}`}
                 />
                 <p style={{ fontSize: 14, color: mainTextColor, marginTop: 2 }}>
-                    {item.name}
+                    #{item.id}
                 </p>
                 {
                     item.nickname &&
@@ -142,51 +226,14 @@ class League extends Component {
         )
     }
 
-    renderPlace(place) {
-        if (place === 1) {
-            return "1st place"
-        }
-        else if (place === 2) {
-            return "2nd place"
-        }
-        else if (place === 3) {
-            return "3rd place"
-        }
-        else if (place === 4) {
-            return "4th place"
-        }
-        else if (place === 5) {
-            return "5th place"
-        }
-        else if (place === 6) {
-            return "6th place"
-        }
-        else if (place === 7) {
-            return "7th place"
-        }
-        else if (place === 8) {
-            return "8th place"
-        }
-        else if (place === 9) {
-            return "9th place"
-        }
-        else if (place === 10) {
-            return "10th place"
-        }
-        else if (place === 11) {
-            return "11th place"
-        }
-        else if (place === 12) {
-            return "12th place"
-        }
-    }
-
     renderBox(items, index, boxW, isMobile) {
+
+        //console.log(items);
 
         let img;
         let wImg;
         let borderColor
-        let nMedals = items[0].totMedals
+        let nPoints = items.nfts[0].ranking
 
         if (index === 0) {
             img = cup_gold
@@ -212,7 +259,7 @@ class League extends Component {
             borderColor = "#cd7f32"
         }
 
-        let widthNft = (boxW - 100) / items.length;
+        let widthNft = (boxW - 100) / items.nfts.length;
         if (widthNft < 75) {
             widthNft = 75
         }
@@ -222,7 +269,7 @@ class League extends Component {
 
         //console.log(items);
 
-        let sortedItems = items.sort((a, b) => {
+        let sortedItems = items.nfts.sort((a, b) => {
             return parseInt(a.id) - parseInt(b.id)
         })
 
@@ -242,15 +289,15 @@ class League extends Component {
                         />
                     </div>
 
-                    <p style={{ fontSize: 26, color: borderColor, marginLeft: 9 }} className="text-bold">
-                        {nMedals}
+                    <p style={{ fontSize: 24, color: borderColor, marginLeft: 9 }} className="text-bold">
+                        {nPoints}
                     </p>
                     <p style={{ fontSize: 16, color: borderColor, marginLeft: 9 }}>
-                        medals
+                        points
                     </p>
 
                     <p style={{ fontSize: 16, color: borderColor, marginLeft: 9, width: 100, textAlign: 'center' }} className="text-bold">
-                        {this.renderPlace(index+1)}
+                        {items.ranking}
                     </p>
                 </div>
 
@@ -271,12 +318,14 @@ class League extends Component {
 
         const { boxW, padding } = getBoxWidth(isMobile)
 
+        let ligueTitle = tournament.type === "apprentice" ? "The Apprentice League" : "The Twelve League"
+
         return (
             <div style={{ flexDirection: 'column', width: boxW, alignItems: 'center', padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
                 <div style={{ marginBottom: 10, alignItems: 'center' }}>
                     <p style={{ fontSize: 24, color: mainTextColor, marginRight: 10 }}>
-                        The Twelve League
+                        {ligueTitle}
                     </p>
 
                     {
@@ -300,9 +349,21 @@ class League extends Component {
 				}
 
                 <div style={{ width: '100%', flexDirection: 'column' }}>
-                    {ranking.map((items, index) => {
-                        return this.renderBox(items, index, boxW, isMobile)
-                    })}
+                    {
+                        ranking && ranking.length > 0 ?
+                        ranking.map((items, index) => {
+                            return this.renderBox(items, index, boxW, isMobile)
+                        })
+                        :
+                        null
+                    }
+
+                    {
+                        ranking.length === 0 && !loading &&
+                        <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center' }}>
+                            No data available
+                        </p>
+                    }
                 </div>
 
                 {
