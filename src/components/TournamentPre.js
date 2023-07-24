@@ -1244,7 +1244,7 @@ class Tournament extends Component {
                     tournamentWiza.showLeague ?
                     <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom }}>
                         <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
-                            The Twelve League <span style={{ fontSize: 15 }}>{tournamentWiza.leagueTournament}</span>
+                            The Apprentice League <span style={{ fontSize: 15 }}>{tournamentWiza.leagueTournament}</span>
                         </p>
                     </div>
                     :

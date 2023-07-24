@@ -10,11 +10,14 @@ const renderInfoTournament = (tournament, montepremi, buyin, subscribed, mainTex
     const dateStartString = moment(dateStart).format("dddd, MMMM Do YYYY, h:mm:ss a");
 
     let titleTour = "The Weekly Tournament"
+    let titleLeague = "The Twelve League"
+
     if (tournament.type === "elite") {
         titleTour = "The Chaos Tournament"
     }
     else if (tournament.type === "apprentice") {
         titleTour = "The Apprentice Tournament"
+        titleLeague = "The Apprentice League"
     }
 
     return (
@@ -22,7 +25,7 @@ const renderInfoTournament = (tournament, montepremi, buyin, subscribed, mainTex
 
             {
                 tournament.showLeague ?
-                titleTournament(`The Twelve League ${tournament.leagueTournament}`, mainTextColor)
+                titleTournament(`${titleLeague} ${tournament.leagueTournament}`, mainTextColor)
                 :
                 titleTournament(titleTour, mainTextColor)
             }

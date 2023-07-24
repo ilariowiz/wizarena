@@ -4,29 +4,33 @@ import 'reactjs-popup/dist/index.css';
 
 
 const headerLeague = (tournament, mainTextColor, history) => {
+
     return (
         <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
 
-            <div style={{ alignItems: 'center', marginBottom: 15 }}>
-                <p style={{ fontSize: 16, color: mainTextColor, marginRight: 10 }}>
-                    Region:
-                </p>
-                <Popup
-                    trigger={open => (
-                        <p style={{ textDecoration: "underline", fontSize: 16, color: mainTextColor, cursor: 'pointer' }}>
-                            {tournament.region}
-                        </p>
-                    )}
-                    position="bottom center"
-                    on="hover"
-                >
-                    <div style={{ padding: 10 }}>
-                        <p style={{ fontSize: 16, color: "#1d1d1f", lineHeight: 1.2 }}>
-                            {tournament.regionDescription}
-                        </p>
-                    </div>
-                </Popup>
-            </div>
+            {
+                tournament.type === "weekly" &&
+                <div style={{ alignItems: 'center', marginBottom: 15 }}>
+                    <p style={{ fontSize: 16, color: mainTextColor, marginRight: 10 }}>
+                        Region:
+                    </p>
+                    <Popup
+                        trigger={open => (
+                            <p style={{ textDecoration: "underline", fontSize: 16, color: mainTextColor, cursor: 'pointer' }}>
+                                {tournament.region}
+                            </p>
+                        )}
+                        position="bottom center"
+                        on="hover"
+                    >
+                        <div style={{ padding: 10 }}>
+                            <p style={{ fontSize: 16, color: "#1d1d1f", lineHeight: 1.2 }}>
+                                {tournament.regionDescription}
+                            </p>
+                        </div>
+                    </Popup>
+                </div>
+            }
 
             <div style={{ alignItems: 'center', marginBottom: 15 }}>
                 <p style={{ fontSize: 16, color: mainTextColor, marginRight: 10 }}>
