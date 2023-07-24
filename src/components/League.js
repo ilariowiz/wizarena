@@ -80,7 +80,7 @@ class League extends Component {
         for (let i = 0; i < rankings.length; i++) {
             const r = rankings[i]
 
-            if (i < 24) {
+            if (i < 50) {
                 rankings2.push(r)
                 continue
             }
