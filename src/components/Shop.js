@@ -63,6 +63,7 @@ const vial_speed = require('../assets/vial_speed.png')
 const banner_nickname = require('../assets/banner_nickname.png')
 
 const ring_dmg = require('../assets/ring_dmg_1.png')
+const pendant_menu = require('../assets/pendant_undead_h.png')
 
 const retrain_def = require('../assets/retrain_def.png')
 const retrain_atk = require('../assets/retrain_atk.png')
@@ -91,14 +92,15 @@ class Shop extends Component {
             tournamentName: "",
             showModalSetName: false,
             apToBurn: 1,
-            equipment: [],
+            rings: [],
+            pendants: [],
             decrease: { hp: 1, defense: 1, attack: 1, damage: 1, speed: 1},
             baseStats: undefined,
             wizaValue: 0,
             loadingEquip: true,
-            itemsToShow: [],
+            ringsToShow: [],
+            pendantsToShow: [],
             searchText: "",
-            searchedText: "",
             showModalBuy: false,
             showModalSwapSpell: false,
             newSpellToLearn: {}
@@ -157,21 +159,33 @@ class Shop extends Component {
                 //rimuoviamo i listed
                 let equipment = response.filter(i => !i.listed)
 
+                let rings = equipment.filter(i => i.type === "ring")
+                let pendants = equipment.filter(i => i.type === "pendant")
+
                 setTimeout(() => {
                     const wizard = this.getWizardSelected()
                     //console.log(wizard);
                     if (wizard) {
-                        const equippedItem = equipment.find(i => i.equippedToId === wizard.id)
-                        if (equippedItem) {
+                        const equippedRing = rings.find(i => i.equippedToId === wizard.id && i.type === "ring")
+                        if (equippedRing) {
                             //mostriamo solo quello equippato
-                            equipment = [equippedItem]
+                            rings = [equippedRing]
                         }
                         else {
-                            equipment = equipment.filter(i => !i.equipped)
+                            rings = rings.filter(i => !i.equipped)
+                        }
+
+                        const equippedPendant = rings.find(i => i.equippedToId === wizard.id && i.type === "pendant")
+                        if (equippedPendant) {
+                            //mostriamo solo quello equippato
+                            pendants = [equippedPendant]
+                        }
+                        else {
+                            pendants = pendants.filter(i => !i.equipped)
                         }
                     }
 
-                    this.setState({ equipment, loadingEquip: false })
+                    this.setState({ rings, pendants, loadingEquip: false })
                 }, 500)
 			})
 		}
@@ -199,7 +213,7 @@ class Shop extends Component {
 
         let historyUpgrades = []
 
-        let url = `https://estats.chainweb.com/txs/events?search=wiz-arena.BUY_UPGRADE&param=${account.account}&limit=50`
+        let url = `https://estats.chainweb.com/txs/events?search=wiz-arena.BUY_UPGRADE&param=${account.account}&limit=30`
 
 		//console.log(url);
 		fetch(url)
@@ -289,24 +303,31 @@ class Shop extends Component {
         return undefined
     }
 
-    searchByName() {
-		const { searchText, equipment } = this.state
+    searchByName(type) {
+		const { searchText, rings, pendants } = this.state
 
         if (!searchText) {
             return
         }
 
-		let result = equipment.filter(i => i.name.toLowerCase().includes(searchText.toLowerCase()))
+        let temp = type === 'ring' ? rings : pendants
+
+		let result = temp.filter(i => i.name.toLowerCase().includes(searchText.toLowerCase()))
 
         if (result.length === 0) {
-            result = equipment.filter(i => i.id === searchText)
+            result = temp.filter(i => i.id === searchText)
         }
 
-		this.setState({ itemsToShow: result, searchedText: searchText })
+        if (type === 'ring') {
+            this.setState({ ringsToShow: result })
+        }
+		else {
+            this.setState({ pendantsToShow: result })
+        }
 	}
 
     cancelSearch() {
-		this.setState({ searchedText: '', searchText: '', itemsToShow: [] })
+		this.setState({ searchText: '', ringsToShow: [], pendantsToShow: [] })
 	}
 
     buyStat(stat, costo) {
@@ -321,7 +342,7 @@ class Shop extends Component {
         }
 
         this.props.updateInfoTransactionModal({
-			transactionToConfirmText: `You will improve the ${stat} of ${nameNftToUpgrade}`,
+			transactionToConfirmText: `You will improve the ${stat} of ${nameNftToUpgrade} using WIZA`,
 			typeModal: 'upgrade',
 			transactionOkText: `Your Wizard #${wizard.id} is stronger now!`,
             nameNft: nameNftToUpgrade,
@@ -345,7 +366,7 @@ class Shop extends Component {
         }
 
         this.props.updateInfoTransactionModal({
-			transactionToConfirmText: `You will improve the ${stat} of ${nameNftToUpgrade}`,
+			transactionToConfirmText: `You will improve the ${stat} of ${nameNftToUpgrade} using AP`,
 			typeModal: 'upgrade',
 			transactionOkText: `Your Wizard #${wizard.id} is stronger now!`,
             nameNft: nameNftToUpgrade,
@@ -544,14 +565,14 @@ class Shop extends Component {
 				item={item}
 				width={w}
                 onChange={() => {
-                    this.setState({ searchText: "", searchedText: "", itemsToShow: [], equipment: [], loadingEquip: true })
+                    this.setState({ searchText: "", ringsToShow: [], pendantsToShow: [], rings: [], pendants: [], loadingEquip: true })
                     this.props.setWizardSelectedShop(undefined)
                 }}
 			/>
 		)
 	}
 
-    renderRingsCard(item, index, isMobile) {
+    renderEquipCard(item, index, isMobile, type) {
         const { mainTextColor, isDarkmode } = this.props
 
         const bonusValues = item.bonus.split(",")
@@ -559,7 +580,19 @@ class Shop extends Component {
         let bonuses = []
         bonusValues.map(i => {
             const b = i.split("_")
-            const btext = `+${b[0]} ${b[1]}`
+            let btext;
+            if (type === 'ring') {
+                btext = `+${b[0]} ${b[1]}`
+            }
+            else {
+                if (b[1] === 'res') {
+                    btext = `70-90% resistant to ${b[0]}`
+                }
+                else {
+                    btext = `Fixed resistance of ${b[0]} against ${b[1]}`
+                }
+            }
+
             bonuses.push(btext)
         })
 
@@ -575,7 +608,7 @@ class Shop extends Component {
                 <img
                     src={item.url}
                     style={{ width: 80, marginBottom: 10 }}
-                    alt="Ring"
+                    alt={type}
                 />
 
                 <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10, textAlign: 'center', minHeight: 38, marginRight: 9, marginLeft: 9 }}>
@@ -1703,6 +1736,10 @@ class Shop extends Component {
             img = ring_dmg
             imgStyle = { height: 44 }
         }
+        else if (key === "Pendants") {
+            img = pendant_menu
+            imgStyle = { height: 58 }
+        }
         else if (key === "Spellbook") {
             img = book_shop
             imgStyle = { height: 34 }
@@ -1734,7 +1771,7 @@ class Shop extends Component {
         )
     }
 
-    renderListStat(item, index) {
+    renderListStat(item, index, type) {
 		return (
 			<button
 				key={index}
@@ -1742,7 +1779,7 @@ class Shop extends Component {
 				onClick={() => {
 					this.listPopup.close()
                     this.setState({ searchText: item }, () => {
-                        this.searchByName()
+                        this.searchByName(type)
                     })
 				}}
 			>
@@ -1753,7 +1790,7 @@ class Shop extends Component {
 		)
 	}
 
-    renderBoxSearchStat(statDisplay, list) {
+    renderBoxSearchStat(type, statDisplay, list) {
         const { searchText } = this.state
 
 		let text = statDisplay
@@ -1788,7 +1825,7 @@ class Shop extends Component {
 			>
 				<div style={{ flexDirection: 'column', paddingTop: 10 }}>
 					{list.map((item, index) => {
-						return this.renderListStat(item, index)
+						return this.renderListStat(item, index, type)
 					})}
 				</div>
 			</Popup>
@@ -1796,7 +1833,7 @@ class Shop extends Component {
 	}
 
     renderBody(isMobile) {
-        const { isConnected, showModalConnection, historyUpgrades, potionEquipped, equipment, itemsToShow } = this.state
+        const { isConnected, showModalConnection, historyUpgrades, potionEquipped, rings, pendants, ringsToShow, pendantsToShow } = this.state
         const { account, wizaBalance, mainTextColor } = this.props
 
         const { boxW, modalW, padding } = getBoxWidth(isMobile)
@@ -1846,9 +1883,9 @@ class Shop extends Component {
             return this.renderChoises(boxW, isMobile, padding)
         }
 
-        //console.log(equipment);
 
-        const ringsToShow = itemsToShow.length > 0 ? itemsToShow : equipment
+        const ringsFinal = ringsToShow.length > 0 ? ringsToShow : rings
+        const pendantsFinal = pendantsToShow.length > 0 ? pendantsToShow : pendants
 
         const widthSide = 180
 		const widthNfts = isMobile ? boxW : boxW - widthSide
@@ -1896,6 +1933,7 @@ class Shop extends Component {
 
                             <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 30 }}>
                                 {this.renderBoxMenu("Rings")}
+                                {this.renderBoxMenu("Pendants")}
                                 {this.renderBoxMenu("Upgrades")}
                                 {this.renderBoxMenu("AP")}
                                 {this.renderBoxMenu("Retrain")}
@@ -1913,7 +1951,7 @@ class Shop extends Component {
                             this.state.loadingEquip &&
                             <div style={{ alignItems: 'flex-start', flexDirection: 'column', marginBottom: 30 }}>
                                 <p style={{ fontSize: 16, color: mainTextColor }}>
-                                    Loading equipment...
+                                    Loading rings...
                                 </p>
                             </div>
                         }
@@ -1923,25 +1961,64 @@ class Shop extends Component {
                             {
                                 !this.state.loadingEquip && !isMobile &&
                                 <div style={{ width: widthSide, flexDirection: 'column' }}>
-                					{this.renderBoxSearchStat("HP", ["Ring of HP +4", "Ring of HP +8", "Ring of HP +12", "Ring of HP +16", "Ring of HP +20", "Ring of Life", "Ring of Last Defense", "Ring of Power"].reverse())}
-                                    {this.renderBoxSearchStat("Defense", ["Ring of Defense +1", "Ring of Defense +2", "Ring of Defense +3", "Ring of Defense +4", "Ring of Defense +5", "Ring of Magic Shield", "Ring of Last Defense", "Ring of Power"].reverse())}
-                                    {this.renderBoxSearchStat("Attack", ["Ring of Attack +1", "Ring of Attack +2", "Ring of Attack +3", "Ring of Attack +4", "Ring of Attack +5", "Ring of Accuracy", "Ring of Destruction", "Ring of Swift Death", "Ring of Power"].reverse())}
-                                    {this.renderBoxSearchStat("Damage", ["Ring of Damage +2", "Ring of Damage +4", "Ring of Damage +6", "Ring of Damage +8", "Ring of Damage +10", "Ring of Force", "Ring of Destruction", "Ring of Power"].reverse())}
-                                    {this.renderBoxSearchStat("Speed", ["Ring of Speed +2", "Ring of Speed +4", "Ring of Speed +6", "Ring of Speed +8", "Ring of Speed +10", "Ring of Lightning", "Ring of Swift Death", "Ring of Power"].reverse())}
+                					{this.renderBoxSearchStat("ring", "HP", ["Ring of HP +4", "Ring of HP +8", "Ring of HP +12", "Ring of HP +16", "Ring of HP +20", "Ring of Life", "Ring of Last Defense", "Ring of Power"].reverse())}
+                                    {this.renderBoxSearchStat("ring", "Defense", ["Ring of Defense +1", "Ring of Defense +2", "Ring of Defense +3", "Ring of Defense +4", "Ring of Defense +5", "Ring of Magic Shield", "Ring of Last Defense", "Ring of Power"].reverse())}
+                                    {this.renderBoxSearchStat("ring", "Attack", ["Ring of Attack +1", "Ring of Attack +2", "Ring of Attack +3", "Ring of Attack +4", "Ring of Attack +5", "Ring of Accuracy", "Ring of Destruction", "Ring of Swift Death", "Ring of Power"].reverse())}
+                                    {this.renderBoxSearchStat("ring", "Damage", ["Ring of Damage +2", "Ring of Damage +4", "Ring of Damage +6", "Ring of Damage +8", "Ring of Damage +10", "Ring of Force", "Ring of Destruction", "Ring of Power"].reverse())}
+                                    {this.renderBoxSearchStat("ring", "Speed", ["Ring of Speed +2", "Ring of Speed +4", "Ring of Speed +6", "Ring of Speed +8", "Ring of Speed +10", "Ring of Lightning", "Ring of Swift Death", "Ring of Power"].reverse())}
                 				</div>
                             }
 
                             {
-                                ringsToShow.length > 0 ?
+                                ringsFinal.length > 0 ?
                                 <div style={{ flexWrap: 'wrap', width: widthNfts }}>
-                                    {ringsToShow.map((item, index) => {
-                                        return this.renderRingsCard(item, index, isMobile)
+                                    {ringsFinal.map((item, index) => {
+                                        return this.renderEquipCard(item, index, isMobile, 'ring')
                                     })}
                                 </div>
                                 :
                                 <div style={{ alignItems: 'flex-start', flexDirection: 'column' }}>
                                     <p style={{ fontSize: 16, color: mainTextColor }}>
                                         No ring available
+                                    </p>
+                                </div>
+                            }
+                        </div>
+
+                        <p style={{ fontSize: 25, color: mainTextColor, marginBottom: 15 }} id="shop-rings" className="text-bold">
+                            Pendants
+                        </p>
+
+                        {
+                            this.state.loadingEquip &&
+                            <div style={{ alignItems: 'flex-start', flexDirection: 'column', marginBottom: 30 }}>
+                                <p style={{ fontSize: 16, color: mainTextColor }}>
+                                    Loading pendants...
+                                </p>
+                            </div>
+                        }
+
+                        <div style={{ width: boxW, marginBottom: 30 }}>
+
+                            {
+                                !this.state.loadingEquip && !isMobile &&
+                                <div style={{ width: widthSide, flexDirection: 'column' }}>
+                					{this.renderBoxSearchStat("pendant", "Elements", ["Acid Resistance", "Dark Resistance", "Earth Resistance","Fire Resistance", "Ice Resistance", "Psycho Resistance", "Spirit Resistance", "Sun Resistance", "Thunder Resistance", "Undead Resistance", "Water Resistance", "Wind Resistance"])}
+                                    {this.renderBoxSearchStat("pendant", "Perks", ["Blind Resistance", "Confuse Resistance", "Fear 2 Resistance", "Freeze Resistance", "Paralyze Resistance", "Poison 3 Resistance", "Shock Resistance"])}
+                				</div>
+                            }
+
+                            {
+                                pendantsFinal.length > 0 ?
+                                <div style={{ flexWrap: 'wrap', width: widthNfts }}>
+                                    {pendantsFinal.map((item, index) => {
+                                        return this.renderEquipCard(item, index, isMobile, 'pendant')
+                                    })}
+                                </div>
+                                :
+                                <div style={{ alignItems: 'flex-start', flexDirection: 'column' }}>
+                                    <p style={{ fontSize: 16, color: mainTextColor }}>
+                                        No pendat available
                                     </p>
                                 </div>
                             }
