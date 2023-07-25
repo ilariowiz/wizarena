@@ -1,7 +1,7 @@
 import React from 'react'
 import getImageUrl from '../GetImageUrl'
 
-const boxPairTournament = (item, index, userMinted, mainTextColor, subscribed, history, isDarkmode) => {
+const boxPairTournament = (item, index, userMinted, mainTextColor, subscribed, history, isDarkmode, rankings) => {
 
     let is1mine = false
     let is2mine = false
@@ -38,6 +38,26 @@ const boxPairTournament = (item, index, userMinted, mainTextColor, subscribed, h
         }
     }
 
+    let score1;
+    let score2;
+    if (rankings && rankings.length > 0) {
+        let rankingItem1 = rankings.find(i => i.id === item.s1.id)
+        if (!rankingItem1) {
+            score1 = 500
+        }
+        else {
+            score1 = rankingItem1.ranking
+        }
+
+        let rankingItem2 = rankings.find(i => i.id === item.s2.id)
+        if (!rankingItem2) {
+            score2 = 500
+        }
+        else {
+            score2 = rankingItem2.ranking
+        }
+    }
+
     return (
         <div
             style={Object.assign({}, styles.boxPair, { borderColor } )}
@@ -61,6 +81,14 @@ const boxPairTournament = (item, index, userMinted, mainTextColor, subscribed, h
                 <p style={{ fontSize: name1.length > 5 ? 13 : 16, color: mainTextColor, maxWidth: 110, textAlign: 'center' }} className="text-medium">
                     {name1}
                 </p>
+
+                {
+                    score1 &&
+                    <p style={{ fontSize: 13, color: mainTextColor, marginTop: 5 }}>
+                        Rating {score1}
+                    </p>
+                }
+
             </div>
 
             <div style={{ height: '100%', justifyContent: 'center', alignItems: 'center' }}>
@@ -90,6 +118,13 @@ const boxPairTournament = (item, index, userMinted, mainTextColor, subscribed, h
                     <p style={{ fontSize: name2.length > 5 ? 13 : 16, color: mainTextColor, maxWidth: 110, textAlign: 'center' }} className="text-medium">
                         {name2}
                     </p>
+
+                    {
+                        score2 &&
+                        <p style={{ fontSize: 13, color: mainTextColor, marginTop: 5 }}>
+                            Rating {score2}
+                        </p>
+                    }
                 </div>
                 :
                 <div style={{ flexDirection: 'column', alignItems: 'center' }}>

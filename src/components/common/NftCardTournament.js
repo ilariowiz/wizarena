@@ -84,7 +84,7 @@ class NftCardTournament extends Component {
 	}
 
 	render() {
-		const { item, history, width, account, tournamentSeason, mainTextColor, isDarkmode } = this.props
+		const { item, history, width, account, tournamentSeason, mainTextColor, isDarkmode, rankings } = this.props
 		const { potion, ring, infoEquipment } = this.state
 
 		//console.log(tournamentSeason);
@@ -122,6 +122,16 @@ class NftCardTournament extends Component {
 			descPotion = "Vial of Speed +4"
 		}
 
+		let score;
+		if (rankings && rankings.length > 0) {
+			let rankingItem = rankings.find(i => i.id === item.id)
+			if (!rankingItem) {
+				score = 500
+			}
+			else {
+				score = rankingItem.ranking
+			}
+		}
 
 		return (
 			<a
@@ -140,16 +150,16 @@ class NftCardTournament extends Component {
 					alt={`#${item.id}`}
 				/>
 
-				<div style={{ justifyContent: 'space-between', width, height: 73, alignItems: 'center' }}>
+				<div style={{ justifyContent: 'space-between', width, minHeight: 73, alignItems: 'center' }}>
 
 					<div style={{ flex: 0.8, flexDirection: 'column', justifyContent: 'space-between', marginTop: 5 }}>
 						{
 							item.nickname ?
-							<p style={{ color: mainTextColor, fontSize: 13, marginLeft: 10, marginRight: 3, overflowWrap: 'anywhere' }} className="text-bold">
+							<p style={{ color: mainTextColor, fontSize: 13, marginLeft: 10, marginRight: 3, minHeight: 30, overflowWrap: 'anywhere' }} className="text-bold">
 								<span style={{ fontSize: 13 }}>{item.name}</span> {item.nickname}
 							</p>
 							:
-							<p style={{ color: mainTextColor, fontSize: 14, marginLeft: 10, marginBottom: 4 }} className="text-bold">
+							<p style={{ color: mainTextColor, fontSize: 14, marginLeft: 10, minHeight: 30 }} className="text-bold">
 								{item.name}
 							</p>
 						}
@@ -163,6 +173,13 @@ class NftCardTournament extends Component {
 								{item.level}
 							</p>
 						</div>
+
+						{
+							score &&
+							<p style={{ fontSize: 15, color: mainTextColor, marginTop: 3, marginBottom: 5, marginLeft: 10 }}>
+								Rating {score}
+							</p>
+						}
 					</div>
 
 					<div style={{ flex: 0.2, flexDirection: 'column', justifyContent: 'space-between', marginTop: 5, marginRight: 10 }}>

@@ -39,7 +39,8 @@ class Tournament extends Component {
             userMinted: [],
             potionsEquipped: [],
             ringsEquipped: [],
-            subscribed: []
+            subscribed: [],
+            rankings: []
 		}
 	}
 
@@ -65,6 +66,27 @@ class Tournament extends Component {
 		}
 	}
 
+    async loadWizardsScore(id) {
+        //console.log(id);
+        const querySnapshot = await getDocs(collection(firebasedb, id))
+
+        let rankings = []
+
+        querySnapshot.forEach(doc => {
+            //console.log(doc.data());
+            const idDoc = doc.id
+			const data = doc.data()
+
+            //console.log(idDoc, data);
+
+            rankings.push({ id: idDoc, ranking: data.ranking })
+        })
+
+        //console.log(rankings);
+
+        this.setState({ rankings })
+    }
+
     async loadTournament() {
         const { chainId, gasPrice, gasLimit, networkUrl, subscribedWiza } = this.props
 
@@ -72,12 +94,16 @@ class Tournament extends Component {
 
         querySnapshot.forEach(doc => {
             //console.log(doc.data());
-			const tournament = doc.data()
+			let tournament = doc.data()
+
+            if (tournament.showLeague) {
+                this.loadWizardsScore(`ranking_${tournament.season}`)
+            }
 
             //console.log(subscribedWiza);
 
             /*
-            const tournament = {
+            tournament = {
                 canSubscribe: false,
                 nRounds: 6,
                 name: "t7_r1",
@@ -232,7 +258,7 @@ class Tournament extends Component {
     }
 
     renderRow(item, index, width) {
-        const { potionsEquipped, tournament, ringsEquipped } = this.state
+        const { potionsEquipped, tournament, ringsEquipped, rankings } = this.state
 
         //per ogni row creiamo un array di GameCard
 		return (
@@ -246,6 +272,7 @@ class Tournament extends Component {
                     ringsEquipped={ringsEquipped}
                     tournamentName={tournament.name.split("_")[0]}
                     tournamentSeason={tournament.season}
+                    rankings={rankings}
                 />
             </div>
         )
@@ -348,7 +375,7 @@ class Tournament extends Component {
     }
 
     renderMatchPair(boxW, isMobile, padding) {
-        const { matchPair, tournament, userMinted, subscribed } = this.state
+        const { matchPair, tournament, userMinted, subscribed, rankings } = this.state
         const { mainTextColor, buyinWiza, subscribedWiza, isDarkmode } = this.props
 
         const roundName = tournament.name.split("_")[1]
@@ -362,7 +389,7 @@ class Tournament extends Component {
 
                 <div style={{ width: boxW, flexWrap: 'wrap' }}>
                     {matchPair.map((item, index) => {
-                        return boxPairTournament(item, index, userMinted, mainTextColor, subscribed, this.props.history, isDarkmode)
+                        return boxPairTournament(item, index, userMinted, mainTextColor, subscribed, this.props.history, isDarkmode, rankings)
                     })}
                 </div>
             </div>
