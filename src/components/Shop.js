@@ -1985,7 +1985,7 @@ class Shop extends Component {
                             }
                         </div>
 
-                        <p style={{ fontSize: 25, color: mainTextColor, marginBottom: 15 }} id="shop-rings" className="text-bold">
+                        <p style={{ fontSize: 25, color: mainTextColor, marginBottom: 15 }} id="shop-pendants" className="text-bold">
                             Pendants
                         </p>
 
