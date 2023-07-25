@@ -260,11 +260,25 @@ class Profile extends Component {
             return
         }
 
-		let result = equipment.filter(i => i.name.toLowerCase().includes(searchText.toLowerCase()))
+		//console.log(searchText);
 
-        if (result.length === 0) {
-            result = equipment.filter(i => i.id === searchText)
-        }
+		let result;
+
+		if (searchText === "Ring" || searchText === "Pendant") {
+			result = equipment.filter(i => i.type === searchText.toLowerCase())
+		}
+		else if (searchText.includes("Resistance")) {
+			let newValue = searchText.replace(" Resistance", "").toLowerCase()
+
+			result = equipment.filter(i => i.bonus.includes(newValue))
+		}
+		else {
+			result = equipment.filter(i => i.name.toLowerCase().includes(searchText.toLowerCase()))
+
+	        if (result.length === 0) {
+	            result = equipment.filter(i => i.id === searchText)
+	        }
+		}
 
 		this.setState({ itemsToShow: result, searchedText: searchText })
 	}
@@ -763,7 +777,7 @@ class Profile extends Component {
 						{this.renderBoxSearchStat("resistance", "Resistance", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
 						{this.renderBoxSearchStat("weakness", "Weakness", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
 						{this.renderBoxSearchStat("spellbook", "Spellbook", [1, 2, 3, 4])}
-						{this.renderBoxSearchStat("level", "Level", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 275", "276 - 300", "301 - 325", "326 - 350"].reverse())}
+						{this.renderBoxSearchStat("level", "Level", ["122 - 150", "151 - 175", "176 - 200", "201 - 225", "226 - 250", "251 - 275", "276 - 300", "301 - 325", "326 - 350", "351 - 375"].reverse())}
 					</div>
 				}
 
@@ -842,11 +856,14 @@ class Profile extends Component {
 				{
 					equipment.length > 0 && !isMobile &&
 					<div style={{ width: widthSide, flexDirection: 'column' }}>
+						{this.renderBoxSearchEquip("Type", ["Pendant", "Ring"])}
 						{this.renderBoxSearchEquip("HP", ["Ring of HP +4", "Ring of HP +8", "Ring of HP +12", "Ring of HP +16", "Ring of HP +20", "Ring of Life", "Ring of Last Defense", "Ring of Power"].reverse())}
 						{this.renderBoxSearchEquip("Defense", ["Ring of Defense +1", "Ring of Defense +2", "Ring of Defense +3", "Ring of Defense +4", "Ring of Defense +5", "Ring of Magic Shield", "Ring of Last Defense", "Ring of Power"].reverse())}
 						{this.renderBoxSearchEquip("Attack", ["Ring of Attack +1", "Ring of Attack +2", "Ring of Attack +3", "Ring of Attack +4", "Ring of Attack +5", "Ring of Accuracy", "Ring of Destruction", "Ring of Swift Death", "Ring of Power"].reverse())}
 						{this.renderBoxSearchEquip("Damage", ["Ring of Damage +2", "Ring of Damage +4", "Ring of Damage +6", "Ring of Damage +8", "Ring of Damage +10", "Ring of Force", "Ring of Destruction", "Ring of Power"].reverse())}
 						{this.renderBoxSearchEquip("Speed", ["Ring of Speed +2", "Ring of Speed +4", "Ring of Speed +6", "Ring of Speed +8", "Ring of Speed +10", "Ring of Lightning", "Ring of Swift Death", "Ring of Power"].reverse())}
+						{this.renderBoxSearchEquip("Element resistance", ["Acid Resistance", "Dark Resistance", "Earth Resistance","Fire Resistance", "Ice Resistance", "Psycho Resistance", "Spirit Resistance", "Sun Resistance", "Thunder Resistance", "Undead Resistance", "Water Resistance", "Wind Resistance"])}
+						{this.renderBoxSearchEquip("Perk resistance", ["Blind Resistance", "Confuse Resistance", "Fear 2 Resistance", "Freeze Resistance", "Paralyze Resistance", "Poison 3 Resistance", "Shock Resistance"])}
 					</div>
 				}
 
