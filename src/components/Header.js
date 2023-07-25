@@ -737,6 +737,7 @@ class Header extends Component {
 						src={logo_img}
 						style={{ width: isMobile ? 40 : 50 }}
 						alt='logo'
+						id="logo"
 					/>
 				}
 			</div>
@@ -828,7 +829,7 @@ class Header extends Component {
 
 					if (location === window.location.href) {
 						window.location.reload()
-					}		
+					}
 				}}
 				mintFail={(pactCode, requestKey) => {
 					//console.log(pactCode);

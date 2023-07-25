@@ -1,6 +1,7 @@
 import Pact from "pact-lang-api";
 import SignClient from "@walletconnect/sign-client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
+import anime from 'animejs/lib/anime.es.js';
 import { getDoc, doc, setDoc, getDocs, query, collection, where, documentId } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import moment from 'moment'
@@ -3724,6 +3725,19 @@ export const signTransaction = (cmdToSign, isXWallet, isQRWalletConnect, qrWalle
 
 		if (parsedLocalRes && parsedLocalRes.result && parsedLocalRes.result.status === "success") {
 			let data = null
+
+			const logo = document.querySelector('#logo').getBoundingClientRect()
+			const loaderModalTransaction = document.querySelector('#loaderModalTransaction').getBoundingClientRect()
+
+			const diffLeft = logo.left - loaderModalTransaction.left
+			const diffTop = logo.top - loaderModalTransaction.top
+
+			anime({
+				targets: "#loaderModalTransaction",
+				translateX: diffLeft,
+				translateY: diffTop,
+				duration: 850
+			})
 
 			/*
 			let newCmdSigned = Object.assign({}, JSON.parse(signedCmd.cmd))

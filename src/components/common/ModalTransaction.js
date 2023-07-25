@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { doc, updateDoc, setDoc, increment } from "firebase/firestore";
 import { firebasedb } from '../Firebase';
+import anime from 'animejs/lib/anime.es.js';
 import { IoClose } from 'react-icons/io5'
 import DotLoader from 'react-spinners/DotLoader';
+import BounceLoader from 'react-spinners/BounceLoader';
 import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, sendMessageUpdateNickname, sendMessageUpgrade, sendMessageListedEquipment, sendMessageDelistedEquipment, sendMessageSalesEquipment, sendMessageOfferItem, sendMessageDeclineOffer, sendMessageChallenge, sendMessageFlashT, sendMessageFlashTSub } from './WebhookDiscord'
 import '../../css/Modal.css'
 import {
@@ -14,9 +16,8 @@ import {
 	clearTransactionByPactCode,
 	addTxKeyToListed
 } from '../../actions'
-import { CTA_COLOR } from '../../actions/types'
+import { CTA_COLOR, TEXT_SECONDARY_COLOR } from '../../actions/types'
 import '../../css/Nft.css'
-
 
 //const POLL_INTERVAL_S = 4
 
@@ -296,6 +297,16 @@ class ModalTransaction extends Component {
 								size={25}
 							/>
 						</button>
+					}
+
+					{
+						content.title.toLowerCase().includes("submitting") &&
+						<div id="loaderModalTransaction">
+							<BounceLoader
+								color={TEXT_SECONDARY_COLOR}
+								size={31}
+							/>
+						</div>
 					}
 
 				</div>
