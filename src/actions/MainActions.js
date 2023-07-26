@@ -765,7 +765,7 @@ export const loadUserMintedNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 				})
 
 				//block sono tutti gli oggetti dell'utente
-				let userMintedGasLimit = block.length * 270
+				let userMintedGasLimit = block.length * 1000
 				dispatch(loadBlockUserMintedNfts(chainId, gasPrice, userMintedGasLimit, networkUrl, block, callback))
 			}
 		})
