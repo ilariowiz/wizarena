@@ -2805,6 +2805,61 @@ export const unequipItem = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, iditem
 	}
 }
 
+
+export const improveSpell = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft, stat) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.improve-spell "${idnft}" "${account.account}" "${stat}" free.wiza)`;
+
+		let cmd = {
+			pactCode,
+			caps: [
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME}.OWNER`,
+          			[account.account, idnft]
+        		),
+				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+			],
+			sender: account.account,
+			gasLimit: 5000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("unequipItem", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const getSpellUpgradeCost = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 50000, networkUrl, idnft, spellName, callback) => {
+	return (dispatch) => {
+
+		const key = `${idnft}_${spellName}`
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-wiza-cost-for-improve-spell "${key}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (!response.status && callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
 export const swapKdaWiza = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, amountKda, amountWiza, account) => {
 	return (dispatch) => {
 

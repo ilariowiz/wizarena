@@ -41,7 +41,9 @@ import {
     buyDowngrade,
     getWizaValue,
     updateInfoTransactionModal,
-    swapSpell
+    swapSpell,
+    getSpellUpgradeCost,
+    improveSpell
 } from '../actions'
 import { MAIN_NET_ID, CTA_COLOR, MAX_LEVEL } from '../actions/types'
 import '../css/Nft.css'
@@ -72,6 +74,7 @@ const retrain_speed = require('../assets/retrain_speed.png')
 const retrain_hp = require('../assets/retrain_hp.png')
 
 const book_shop = require('../assets/book_shop.png')
+const book_spell = require('../assets/book.png')
 
 
 class Shop extends Component {
@@ -103,7 +106,8 @@ class Shop extends Component {
             searchText: "",
             showModalBuy: false,
             showModalSwapSpell: false,
-            newSpellToLearn: {}
+            newSpellToLearn: {},
+            spellUpgradeWizaCost: undefined
         }
     }
 
@@ -118,7 +122,6 @@ class Shop extends Component {
 
             if (this.props.wizardSelectedIdShop) {
                 this.getPotionEquipped()
-
                 this.getBaseStats()
             }
 		}, 500)
@@ -144,6 +147,7 @@ class Shop extends Component {
 		if (account && account.account) {
 			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
 				this.setState({ loading: false })
+                this.getSpellUpgradeCost()
 			})
 		}
 	}
@@ -282,6 +286,23 @@ class Shop extends Component {
                 this.setState({ baseStats: data })
             }
         }
+    }
+
+    getSpellUpgradeCost() {
+        const { chainId, gasPrice, gasLimit, networkUrl, wizardSelectedIdShop } = this.props
+
+        const wizard = this.getWizardSelected()
+        //console.log(wizard);
+
+        if (wizard) {
+            const spellName = wizard.spellSelected.name
+
+            this.props.getSpellUpgradeCost(chainId, gasPrice, gasLimit, networkUrl, wizardSelectedIdShop, spellName, (response) => {
+                console.log(response);
+                this.setState({ spellUpgradeWizaCost: response })
+            })
+        }
+
     }
 
     getWizardSelected() {
@@ -506,6 +527,18 @@ class Shop extends Component {
 		})
 
         this.props.swapSpell(chainId, gasPrice, netId, account, wizard.id, oldspell.name, newSpellToLearn.name)
+    }
+
+    upgradeSpell(wizard, stat) {
+        const { account, chainId, gasPrice, netId } = this.props
+
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will improve the ${stat} of the spell ${wizard.spellSelected.name}`,
+			typeModal: 'improvespell',
+			transactionOkText: `Spell successfully improved!`
+		})
+
+        this.props.improveSpell(chainId, gasPrice, netId, account, wizard.id, stat)
     }
 
     sortById() {
@@ -1708,6 +1741,128 @@ class Shop extends Component {
 		)
 	}
 
+    renderSpellToUpgrade(wizard) {
+        const { wizaValue } = this.state
+        const { mainTextColor } = this.props
+
+        const spell = allSpells.find(i => i.name === wizard.spellSelected.name)
+
+		const marginRight = 12
+
+		//console.log(item);
+		let condDesc;
+		if (spell.condition && spell.condition.name) {
+			let condInfo = conditions.find(i => i.name === spell.condition.name)
+			if (condInfo) {
+				condDesc = `${condInfo.effect} - Chance of success: ${spell.condition.pct}%`
+			}
+		}
+
+		return (
+			<div style={{ alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 20, flexDirection: 'column' }}>
+
+                <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
+
+    				<p style={{ color: mainTextColor, fontSize: 14, marginRight: 5 }}>
+    					Name
+    				</p>
+    				<p style={{ color: mainTextColor, fontSize: 17, marginRight }} className="text-medium">
+    					{spell.name}
+    				</p>
+    				<p style={{ color: mainTextColor, fontSize: 14, marginRight: 5 }}>
+    					Perk
+    				</p>
+
+    				{
+    					spell.condition && spell.condition.name ?
+    					<Popup
+    						trigger={open => (
+    							<button style={{ color: mainTextColor, fontSize: 17, marginRight }} className="text-medium">
+    								{spell.condition.name}
+    							</button>
+    						)}
+    						position="top center"
+    						on="hover"
+    					>
+    						<div style={{ padding: 10, fontSize: 16 }}>
+    							{condDesc}
+    						</div>
+    					</Popup>
+    					:
+    					<p style={{ color: mainTextColor, fontSize: 17, marginRight }}>
+    						-
+    					</p>
+    				}
+
+    				<p style={{ color: mainTextColor, fontSize: 14, marginRight: 5 }}>
+    					Base Atk
+    				</p>
+    				<p style={{ color: mainTextColor, fontSize: 17, marginRight }} className="text-medium">
+    					{spell.atkBase + wizard['upgrades-spell'].attack.int}
+    				</p>
+
+    				<p style={{ color: mainTextColor, fontSize: 14, marginRight: 5 }}>
+    					Base Dmg
+    				</p>
+    				<p style={{ color: mainTextColor, fontSize: 17 }} className="text-medium">
+    					{spell.dmgBase + wizard['upgrades-spell'].damage.int}
+    				</p>
+                </div>
+
+                <div style={{ alignItems: 'center', marginBottom: 10 }}>
+                    <p style={{ color: mainTextColor, fontSize: 14 }}>
+                        Current upgrades: Attack +{wizard['upgrades-spell'].attack.int} | Damage +{wizard['upgrades-spell'].damage.int}
+                    </p>
+                </div>
+
+                <div style={{ alignItems: 'center' }}>
+
+                    <button
+                        className="btnH"
+                        style={styles.btnSwap}
+                        onClick={() => this.upgradeSpell(wizard, "attack")}
+                    >
+                        <p style={{ fontSize: 14, color: 'white', marginBottom: 3 }} className="text-bold">
+                            {round(this.state.spellUpgradeWizaCost, 2)} $WIZA
+                        </p>
+                        <p style={{ fontSize: 14, color: 'white', marginBottom: 8 }} className="text-bold">
+                            10 AP
+                        </p>
+                        <p style={{ fontSize: 15, color: 'white', marginBottom: 8 }} className="text-bold">
+                            +1 Attack
+                        </p>
+
+                        <p style={{ fontSize: 16, color: 'white' }} className="text-medium">
+                            Upgrade
+                        </p>
+                    </button>
+
+                    <button
+                        className="btnH"
+                        style={styles.btnSwap}
+                        onClick={() => this.upgradeSpell(wizard, "damage")}
+                    >
+                        <p style={{ fontSize: 14, color: 'white', marginBottom: 3 }} className="text-bold">
+                            {round(this.state.spellUpgradeWizaCost, 2)} $WIZA
+                        </p>
+                        <p style={{ fontSize: 14, color: 'white', marginBottom: 8 }} className="text-bold">
+                            10 AP
+                        </p>
+                        <p style={{ fontSize: 15, color: 'white', marginBottom: 8 }} className="text-bold">
+                            +1 Damage
+                        </p>
+
+                        <p style={{ fontSize: 16, color: 'white' }} className="text-medium">
+                            Upgrade
+                        </p>
+                    </button>
+
+                </div>
+
+			</div>
+		)
+	}
+
     renderBoxMenu(key) {
 
         let img;
@@ -1742,6 +1897,10 @@ class Shop extends Component {
         }
         else if (key === "Spellbook") {
             img = book_shop
+            imgStyle = { height: 34 }
+        }
+        else if (key === "Spell") {
+            img = book_spell
             imgStyle = { height: 34 }
         }
 
@@ -1939,6 +2098,7 @@ class Shop extends Component {
                                 {this.renderBoxMenu("Retrain")}
                                 {this.renderBoxMenu("Vials")}
                                 {this.renderBoxMenu("Spellbook")}
+                                {this.renderBoxMenu("Spell")}
                                 {this.renderBoxMenu("Nickname")}
                             </div>
                         </div>
@@ -2136,17 +2296,33 @@ class Shop extends Component {
                             </div>
                         }
 
-                        <div style={{ flexDirection: 'column' }} id="shop-spellbook">
+                        <div style={{ flexDirection: 'column', marginTop: 15 }} id="shop-spellbook">
 
                             <p style={{ fontSize: 25, color: mainTextColor, marginBottom: 5 }} className="text-bold">
                                 Spellbook
                             </p>
 
-                            <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 10 }}>
+                            <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 5 }}>
                                 Swap a spell you know for a new one
                             </p>
 
                             {this.renderSpellUnkown(isMobile)}
+                        </div>
+
+                        <div style={{ flexDirection: 'column' }} id="shop-spell">
+
+                            <p style={{ fontSize: 25, color: mainTextColor, marginBottom: 5 }} className="text-bold">
+                                Spell
+                            </p>
+
+                            <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 9 }}>
+                                Improve your chosen spell:
+                            </p>
+                            <p style={{ fontSize: 13, color: mainTextColor, marginBottom: 14 }}>
+                                (each upgrade will increase the WIZA costs of the next upgrade)
+                            </p>
+
+                            {this.renderSpellToUpgrade(wizard)}
                         </div>
 
                         <div style={{ flexDirection: 'column' }} id="shop-nickname">
@@ -2416,5 +2592,7 @@ export default connect(mapStateToProps, {
     buyDowngrade,
     getWizaValue,
     updateInfoTransactionModal,
-    swapSpell
+    swapSpell,
+    getSpellUpgradeCost,
+    improveSpell
 })(Shop)
