@@ -27,7 +27,7 @@ const fight = (s1, s2, ev, callback) => {
             s1copy[infos[1]] += parseInt(infos[0])
         })
 
-        history.push(`${s1copy.name} wear a ${s1copy.ring.name}`)
+        history.push({desc: `${s1copy.name} wear a ${s1copy.ring.name}`, [`hp_${s1copy.id}`]: s1copy.hp, [`hp_${s2copy.id}`]: s2copy.hp})
     }
 
     // S2 RING
@@ -38,7 +38,7 @@ const fight = (s1, s2, ev, callback) => {
             s2copy[infos[1]] += parseInt(infos[0])
         })
 
-        history.push(`${s2copy.name} wear a ${s2copy.ring.name}`)
+        history.push({desc: `${s2copy.name} wear a ${s2copy.ring.name}`, [`hp_${s1copy.id}`]: s1copy.hp, [`hp_${s2copy.id}`]: s2copy.hp})
     }
 
     //console.log(s1copy, s2copy);
@@ -190,7 +190,7 @@ const turno = (attaccante, difensore) => {
             let checkTriggerEvent = Math.floor(Math.random() * 100) + 1; //da 1 a 100
             if (checkTriggerEvent > 50) {
                 isEventActive = true
-                history.push(evento.descriptionOn)
+                history.push({desc: evento.descriptionOn})
             }
         }
         // se l'evento è attivo, c'è il 10% che si fermi
@@ -198,7 +198,7 @@ const turno = (attaccante, difensore) => {
             let checkTriggerEvent = Math.floor(Math.random() * 100) + 1; //da 1 a 100
             if (checkTriggerEvent < 10) {
                 isEventActive = false
-                history.push(evento.descriptionOff)
+                history.push({desc: evento.descriptionOff})
             }
         }
     }
