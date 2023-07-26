@@ -429,6 +429,8 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 					let maxStats = { hp: 0, defense: 0, attack: 0, damage: 0, speed: 0 }
 
 					final.map(i => {
+						//console.log(i);
+
 						i.level = i.level.int
 
 						if (i.hp.int > maxStats.hp) {
@@ -438,10 +440,10 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 							maxStats['defense'] = i.defense.int
 						}
 						if (i.attack.int > maxStats.attack) {
-							maxStats['attack'] = i.attack.int
+							maxStats['attack'] = i.attack.int + i['upgrades-spell'].attack.int
 						}
 						if (i.damage.int > maxStats.damage) {
-							maxStats['damage'] = i.damage.int
+							maxStats['damage'] = i.damage.int + i['upgrades-spell'].damage.int
 						}
 						if (i.speed.int > maxStats.speed) {
 							maxStats['speed'] = i.speed.int
@@ -836,7 +838,7 @@ export const loadBlockUserMintedNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, g
 	}
 }
 
-export const loadSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, idNft, callback) => {
+export const loadSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 2000, networkUrl, idNft, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -845,7 +847,7 @@ export const loadSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 		}
 
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
-			//console.log(response)
+			console.log(response)
 
 			if (response) {
 
