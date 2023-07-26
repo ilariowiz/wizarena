@@ -86,7 +86,7 @@ const createMonster = (key, level) => {
 
     //console.log(monsterLevel, hp, attack, damage, defense, speed, element, resistance, weakness, spellSelected);
 
-    return { name: `${key} Orc`, id: 'orc', image: monsterImage, level: Math.round(monsterLevel), hp, attack, damage, defense, speed, element, resistance, weakness, spellSelected }
+    return { name: `${key} Orc`, id: 'orc', image: monsterImage, level: Math.round(monsterLevel), hp, attack, damage, defense, speed, element, resistance, weakness, spellSelected, "upgrades-spell": {"attack": {int: 0}, "damage": {int: 0}} }
 }
 
 export default createMonster
