@@ -173,6 +173,10 @@
         @event true
     )
 
+    (defcap UPGRADE_SPELL (idnft:string spellname:string)
+        @event true
+    )
+
  ; --------------------------------------------------------------------------
   ; Schema and tables
   ; --------------------------------------------------------------------------
@@ -380,6 +384,11 @@
         winner:string
     )
 
+    (defschema upgrade-spells-schema
+        attack:integer
+        damage:integer
+    )
+
     (deftable nfts:{nft-main-schema})
     (deftable nfts-market:{nft-listed-schema})
     (deftable creation:{creation-schema})
@@ -411,6 +420,8 @@
 
     (deftable auto-tournaments:{auto-tournaments-schema})
     (deftable fights-db:{fights-db-schema})
+
+    (deftable upgrade-spells:{upgrade-spells-schema})
 
     ; --------------------------------------------------------------------------
   ; Can only happen once
@@ -2552,6 +2563,71 @@
     )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;; UPGRADE SPELL ;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (defun improve-spell (idnft:string address:string stat:string m:module{wiza1-interface-v3})
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+        (enforce (contains stat ["attack" "damage"]) "invalid stat")
+        (with-capability (OWNER address idnft)
+            (let* (
+                    (data (get-wizard-fields-for-id (str-to-int idnft)))
+                    (spellName (at "name" (at "spellSelected" data)))
+                    (key (format "{}_{}" [idnft spellName]))
+                    (wiza-cost (get-wiza-cost-for-improve-spell key))
+                )
+                (with-default-read stats idnft
+                    {"ap": 0}
+                    {"ap":=ap}
+                    (enforce (> ap 0) "You have no AP available")
+                    (enforce (>= ap 10) "You don't have enough AP")
+                    (update stats idnft {
+                        "ap": (- ap 10)
+                    })
+                )
+                (spend-wiza wiza-cost address m)
+                (with-default-read upgrade-spells key
+                    {"attack":0, "damage":0}
+                    {"attack":=attack, "damage":=damage}
+                    (if
+                        (= stat "attack")
+                        (write upgrade-spells key {"attack": (+ attack 1), "damage": damage})
+                        (write upgrade-spells key {"damage": (+ damage 1), "attack": attack})
+                    )
+                )
+                (emit-event (UPGRADE_SPELL idnft spellName))
+            )
+        )
+    )
+
+    (defun get-upgrades-spell (idnft:string spell:string)
+        (let (
+                (key (format "{}_{}" [idnft spell]))
+            )
+            (with-default-read upgrade-spells key
+                {"attack":0, "damage":0}
+                {"attack":=attack, "damage":=damage}
+                {"attack": attack, "damage":damage}
+            )
+        )
+    )
+
+    (defun get-wiza-cost-for-improve-spell (key:string)
+        (with-default-read upgrade-spells key
+            {"attack":0, "damage":0}
+            {"attack":=attack, "damage":=damage}
+            (let* (
+                    (base-cost (round (* (get-wiza-value) 1.7) 2))
+                    (mod (* (+ attack damage) 30))
+                    (mod2 (round (/ (* base-cost mod) 100) 2))
+                    (wiza-cost (+ base-cost mod2))
+                )
+                wiza-cost
+            )
+        )
+    )
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;; GENERIC FUN ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -2713,11 +2789,13 @@
             ; per fare il reveal vediamo quale id ha la richeista, se è più di 1023 allora è un cleric
             (if
                 (< id max-reveal)
-                (let (
+                (let* (
                         (info (read nfts (int-to-str 10 id)))
                         (info-stat (read stats (int-to-str 10 id) ['attack 'damage 'weakness 'defense 'element 'hp 'medals 'resistance 'spellSelected 'spellbook 'ap 'speed 'downgrades] ))
+                        (spellSelectedName (at "name" (at "spellSelected" info-stat)))
+                        (upgrades-spell (get-upgrades-spell (int-to-str 10 id) spellSelectedName))
                     )
-                    (+ (+ (+ (+ info info-market) info-stat) {"confirmBurn":confirmBurn}) {"level":level})
+                    (+ (+ (+ (+ (+ info info-market) info-stat) {"confirmBurn":confirmBurn}) {"level":level}) {"upgrades-spell":upgrades-spell})
                 )
                 (let (
                         (info (read nfts (int-to-str 10 id) ['created 'owner 'name 'id 'imageHash]))
@@ -2823,6 +2901,8 @@
 
     (create-table auto-tournaments)
     (create-table fights-db)
+
+    (create-table upgrade-spells)
 
     (initialize)
     (insertValuesUpgrade)
