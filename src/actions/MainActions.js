@@ -847,7 +847,7 @@ export const loadSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 		}
 
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
-			console.log(response)
+			//console.log(response)
 
 			if (response) {
 
