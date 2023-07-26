@@ -134,6 +134,8 @@ class DoFight extends Component {
 
                         this.player2InitialHp = this.player2.hp
 
+                        //console.log(this.player1);
+
 
                         fight(this.player1, this.player2, undefined, (history, winner) => {
                             //console.log(history, winner);

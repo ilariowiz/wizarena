@@ -640,9 +640,10 @@ class Nft extends Component {
 
 	renderSpell(item, index) {
 		const { mainTextColor } = this.props
+		const { nft } = this.state
 		const marginRight = 12
 
-		//console.log(item);
+		//console.log(nft);
 
 		let spell = allSpells.find(i => i.name === item.name)
 
@@ -652,6 +653,14 @@ class Nft extends Component {
 			if (condInfo) {
 				condDesc = `${condInfo.effect} - Chance of success: ${spell.condition.pct}%`
 			}
+		}
+
+		let spellAtk = spell.atkBase
+		let spellDmg = spell.dmgBase
+		
+		if (item.name === nft.spellSelected.name) {
+			spellAtk += nft['upgrades-spell'].attack.int
+			spellDmg += nft['upgrades-spell'].damage.int
 		}
 
 		return (
@@ -687,20 +696,18 @@ class Nft extends Component {
 					</p>
 				}
 
-
-
 				<p style={{ color: '#707070', fontSize: 15, marginRight: 5, marginBottom: 1 }}>
 					Base Atk
 				</p>
 				<p style={{ color: mainTextColor, fontSize: 17, marginRight }}>
-					{spell.atkBase}
+					{spellAtk}
 				</p>
 
 				<p style={{ color: '#707070', fontSize: 15, marginRight: 5, marginBottom: 1 }}>
 					Base Dmg
 				</p>
 				<p style={{ color: mainTextColor, fontSize: 17 }}>
-					{spell.dmgBase}
+					{spellDmg}
 				</p>
 
 			</div>
