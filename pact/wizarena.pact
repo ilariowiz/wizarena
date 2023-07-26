@@ -2618,7 +2618,7 @@
             {"attack":=attack, "damage":=damage}
             (let* (
                     (base-cost (round (* (get-wiza-value) 1.7) 2))
-                    (mod (* (+ attack damage) 30))
+                    (mod (* (+ attack damage) 60))
                     (mod2 (round (/ (* base-cost mod) 100) 2))
                     (wiza-cost (+ base-cost mod2))
                 )
