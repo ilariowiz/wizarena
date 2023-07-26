@@ -55,8 +55,8 @@ const cardStats = (item, numberOfMedalsForTournament, width, bonusFromRing, main
     }
     */
 
-    let atkTotal = atkSpell + atkBase
-    let dmgTotal = dmgSpell + dmgBase
+    let atkTotal = atkSpell + atkBase + item['upgrades-spell'].attack.int
+    let dmgTotal = dmgSpell + dmgBase + item['upgrades-spell'].damage.int
 
     if (bonusFromRing) {
         //console.log(bonusFromRing);

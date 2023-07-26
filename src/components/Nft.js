@@ -185,9 +185,6 @@ class Nft extends Component {
 
 		this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, idNft, (response) => {
 			//console.log(response);
-
- 			//console.log(calcLevelWizardAfterUpgrade({hp: response.hp.int, attack: response.attack.int, defense: response.defense.int, damage: response.damage.int, speed: response.speed.int}, "damage"));
-
 			if (response.name) {
 				this.loadExtraInfo(response)
 			}
@@ -365,6 +362,14 @@ class Nft extends Component {
 			if (difference > 0) {
 				historyUpgrades.push({ stat: "speed", value: difference })
 			}
+		}
+
+		if (nft['upgrades-spell'].attack.int > 0) {
+			historyUpgrades.push({ stat: `${nft.spellSelected.name} attack`, value: nft['upgrades-spell'].attack.int })
+		}
+
+		if (nft['upgrades-spell'].damage.int > 0) {
+			historyUpgrades.push({ stat: `${nft.spellSelected.name} damage`, value: nft['upgrades-spell'].damage.int })
 		}
 
 		this.setState({ historyUpgrades })
@@ -1533,8 +1538,8 @@ class Nft extends Component {
 							{this.renderStat("HP", nft.hp.int)}
 							{this.renderStat("Defense", nft.defense.int)}
 
-							{this.renderStat("Attack", nft.attack.int + spellSelected.atkBase)}
-							{this.renderStat("Damage", nft.damage.int + spellSelected.dmgBase)}
+							{this.renderStat("Attack", nft.attack.int + spellSelected.atkBase + nft['upgrades-spell'].attack.int)}
+							{this.renderStat("Damage", nft.damage.int + spellSelected.dmgBase + nft['upgrades-spell'].damage.int)}
 							{this.renderStat("Speed", nft.speed ? nft.speed.int : 0)}
 
 							{this.renderStat("AP", nft.ap.int)}

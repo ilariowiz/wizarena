@@ -254,7 +254,7 @@ const turno = (attaccante, difensore) => {
     }
     else {
         const spellSelectedAtk = attaccante.spellSelected
-        let atkAttaccante = attaccante.attack + spellSelectedAtk.atkBase
+        let atkAttaccante = attaccante.attack + spellSelectedAtk.atkBase + attaccante['upgrades-spell'].attack.int
 
         //controlliamo se ha bonus dall'evento
         if (isEventActive && evento.elements.includes(attaccante.element.toLowerCase())) {
@@ -287,7 +287,7 @@ const turno = (attaccante, difensore) => {
         if ((atkTot >= difesaDif || tiro >= 18) && tiro !== 1) {
 
             const dannoBase = attaccante.damage
-            let dannoSpell = dannoBase + attaccante.spellSelected.dmgBase
+            let dannoSpell = dannoBase + attaccante.spellSelected.dmgBase + attaccante['upgrades-spell'].damage.int
 
             if (isEventActive && evento.elements.includes(attaccante.element.toLowerCase())) {
                 dannoSpell += evento.bonus.damage
