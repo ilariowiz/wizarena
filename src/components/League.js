@@ -7,7 +7,7 @@ import Header from './Header'
 import DotLoader from 'react-spinners/DotLoader';
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
-import calcMedals from './common/CalcMedals'
+//import calcMedals from './common/CalcMedals'
 import { TEXT_SECONDARY_COLOR, MAIN_NET_ID } from '../actions/types'
 import {
     setNetworkSettings,
@@ -102,7 +102,7 @@ class League extends Component {
             const r = rankings2[i]
 
             if (finalRankings.length === 0) {
-                let subr = finalRankings.push([r])
+                finalRankings.push([r])
                 continue
             }
 
@@ -116,7 +116,7 @@ class League extends Component {
                 latestSubArray.push(r)
             }
             else {
-                let subr = finalRankings.push([r])
+                finalRankings.push([r])
             }
         }
 
