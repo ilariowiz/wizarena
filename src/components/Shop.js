@@ -298,7 +298,7 @@ class Shop extends Component {
             const spellName = wizard.spellSelected.name
 
             this.props.getSpellUpgradeCost(chainId, gasPrice, gasLimit, networkUrl, wizardSelectedIdShop, spellName, (response) => {
-                console.log(response);
+                //console.log(response);
                 this.setState({ spellUpgradeWizaCost: response })
             })
         }
@@ -532,10 +532,14 @@ class Shop extends Component {
     upgradeSpell(wizard, stat) {
         const { account, chainId, gasPrice, netId } = this.props
 
+        const wizardName = wizard.nickname ? `${wizard.id} ${wizard.nickname}` : wizard.id
+
         this.props.updateInfoTransactionModal({
 			transactionToConfirmText: `You will improve the ${stat} of the spell ${wizard.spellSelected.name}`,
 			typeModal: 'improvespell',
-			transactionOkText: `Spell successfully improved!`
+			transactionOkText: `Spell successfully improved!`,
+            idNft: wizard.id,
+            nameNft: `${wizardName} has improved the ${stat} of the spell ${wizard.spellSelected.name}`
 		})
 
         this.props.improveSpell(chainId, gasPrice, netId, account, wizard.id, stat)
@@ -575,6 +579,7 @@ class Shop extends Component {
                         this.getPotionEquipped()
                         this.loadEquip()
                         this.getBaseStats()
+                        this.getSpellUpgradeCost()
                     }, 200)
                 }}
 			/>

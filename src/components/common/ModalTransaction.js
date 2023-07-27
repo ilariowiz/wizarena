@@ -105,6 +105,9 @@ class ModalTransaction extends Component {
                 const msg = `${nameNft} bought a ${statToUpgrade.toUpperCase()} vial`
                 sendMessageUpgrade(idNft, msg)
             }
+			else if (typeModal === "improvespell" && nameNft) {
+                sendMessageUpgrade(idNft, nameNft)
+            }
             else if (typeModal === "makeoffer") {
                 sendMessage(makeOfferValues.id, makeOfferValues.amount, makeOfferValues.duration, makeOfferValues.owner)
             }
