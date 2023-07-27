@@ -454,7 +454,7 @@ class Profile extends Component {
 			nameNft: `#${id}`
 		})
 
-		this.props.delistNft(chainId, gasPrice, 700, netId, account, id)
+		this.props.delistNft(chainId, gasPrice, 2000, netId, account, id)
 	}
 
 	acceptOffer(offer) {

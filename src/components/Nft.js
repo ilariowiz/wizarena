@@ -469,7 +469,7 @@ class Nft extends Component {
 			nameNft: `#${nft.id}`,
 		})
 
-		this.props.delistNft(chainId, gasPrice, 700, netId, account, nft.id)
+		this.props.delistNft(chainId, gasPrice, 2000, netId, account, nft.id)
 	}
 
 	buy() {
@@ -657,7 +657,7 @@ class Nft extends Component {
 
 		let spellAtk = spell.atkBase
 		let spellDmg = spell.dmgBase
-		
+
 		if (item.name === nft.spellSelected.name) {
 			spellAtk += nft['upgrades-spell'].attack.int
 			spellDmg += nft['upgrades-spell'].damage.int
