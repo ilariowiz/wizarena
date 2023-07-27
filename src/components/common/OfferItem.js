@@ -182,7 +182,7 @@ class OfferItem extends Component {
 						style={Object.assign({}, styles.btnAccept, { marginLeft: 10 })}
 						onClick={() => this.props.onDeclineOffer()}
 					>
-						<p style={{ fontSize: 15, color: "white" }} className="text-medium">
+						<p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
 							Decline
 						</p>
 					</button>
