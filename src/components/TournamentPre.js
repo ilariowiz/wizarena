@@ -1158,9 +1158,7 @@ class Tournament extends Component {
 
                 {this.renderSubsInfo(marginBottom, mainTextColor, tournamentEliteSubs, avgLevelElite)}
 
-                <p style={{ fontSize: 14, color: mainTextColor, marginBottom, height: 40 }}>
-                    Participation reward: (for each wizard) {tournamentElite.reward}
-                </p>
+                <div style={{ height: 40, width: '100%', backgroundColor: 'transparent', marginBottom }}></div>
 
                 <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
