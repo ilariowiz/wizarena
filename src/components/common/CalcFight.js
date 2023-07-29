@@ -21,22 +21,26 @@ const fight = (s1, s2, ev, callback) => {
 
     // S1 RING
     if (s1copy.ring && s1copy.ring['bonus']) {
+        /*
         const stats = s1copy.ring.bonus.split(",")
         stats.map(i => {
             const infos = i.split("_")
             s1copy[infos[1]] += parseInt(infos[0])
         })
+        */
 
         history.push({desc: `${s1copy.name} wear a ${s1copy.ring.name}`, [`hp_${s1copy.id}`]: s1copy.hp, [`hp_${s2copy.id}`]: s2copy.hp})
     }
 
     // S2 RING
     if (s2copy.ring && s2copy.ring['bonus']) {
+        /*
         const stats = s2copy.ring.bonus.split(",")
         stats.map(i => {
             const infos = i.split("_")
             s2copy[infos[1]] += parseInt(infos[0])
         })
+        */
 
         history.push({desc: `${s2copy.name} wear a ${s2copy.ring.name}`, [`hp_${s1copy.id}`]: s1copy.hp, [`hp_${s2copy.id}`]: s2copy.hp})
     }

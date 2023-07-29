@@ -95,13 +95,14 @@ class DoFight extends Component {
                     this.player1.speed = this.player1.speed.int
                     this.player1.spellSelected = this.refactorSpellSelected(response.spellSelected)
 
-                    //console.log(this.player1);
                     if (ring && ring.equipped) {
                         const stats = ring.bonus.split(",")
                         stats.map(i => {
                             const infos = i.split("_")
                             this.player1[infos[1]] += parseInt(infos[0])
                         })
+
+                        this.player1.ring = ring
                     }
 
                     this.player1InitialHp = this.player1.hp
