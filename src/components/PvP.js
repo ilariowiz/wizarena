@@ -676,6 +676,11 @@ class PvP extends Component {
         let dmg = bonusEquipment && bonusEquipment['damage'] ? item.damage.int + bonusEquipment['damage'] : item.damage.int
         let speed = bonusEquipment && bonusEquipment['speed'] ? item.speed.int + bonusEquipment['speed'] : item.speed.int
 
+        if (item['upgrades-spell']) {
+            atk += item['upgrades-spell'].attack.int
+            dmg += item['upgrades-spell'].damage.int
+        }
+
         return (
             <div
                 key={index}
