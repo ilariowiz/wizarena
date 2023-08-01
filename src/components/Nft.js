@@ -1968,7 +1968,7 @@ class Nft extends Component {
 							{
 								showOverlayBurn ?
 								<img
-									style={{ width: 370, height: 370, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', position: 'absolute', top: 0, left: 0 }}
+									style={{ width: 400, height: 400, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', position: 'absolute', top: 0, left: 0 }}
 									src={burn_overlay}
 									alt={nft.id}
 								/>
