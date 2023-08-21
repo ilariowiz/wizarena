@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where, documentId } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import Media from 'react-media';
 import Header from './Header'
@@ -13,13 +13,16 @@ import { TEXT_SECONDARY_COLOR, MAIN_NET_ID } from '../actions/types'
 import {
     setNetworkSettings,
     setNetworkUrl,
-    loadAllNftsIds
+    loadAllNftsIds,
+    loadUserMintedNfts
 } from '../actions'
 
 const cup_gold = require('../assets/cup_gold.png')
 const cup_silver = require('../assets/cup_silver.png')
 const cup_bronze = require('../assets/cup_bronze.png')
 const medal = require('../assets/medal.png')
+
+const LEAGUE_NAME = "ranking_s4"
 
 
 class League extends Component {
@@ -31,11 +34,13 @@ class League extends Component {
             loading: true,
             error: "",
             tournament: {},
+            yourNftsRanking: [],
+            loadingYourRanking: true
         }
     }
 
     componentDidMount() {
-        const { allNfts } = this.props
+        const { allNfts, userMintedNfts } = this.props
 
 		document.title = "League - Wizards Arena"
 
@@ -45,6 +50,10 @@ class League extends Component {
         setTimeout(() => {
             if (!allNfts) {
                 this.loadAllNfts()
+            }
+
+            if (!userMintedNfts) {
+                this.loadMinted()
             }
 		}, 500)
 
@@ -59,6 +68,58 @@ class League extends Component {
         this.props.loadAllNftsIds(chainId, gasPrice, gasLimit, networkUrl)
     }
 
+    async loadMinted() {
+        const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
+
+        this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, async (response) => {
+
+            let onlyIds = []
+            response.map(i => onlyIds.push(i.id))
+
+            const onlyIdsBy10 = onlyIds.reduce((rows, item, index) => {
+				//console.log(index);
+				//se array row è piena, aggiungiamo una nuova row = [] alla lista
+				if (index % 10 === 0 && index > 0) {
+					rows.push([]);
+				}
+
+				//prendiamo l'ultima array della lista e aggiungiamo item
+				rows[rows.length - 1].push(item);
+				return rows;
+			}, [[]]);
+
+            //console.log(onlyIdsBy10);
+
+            let yourNftsRanking = []
+
+            await Promise.all(
+				onlyIdsBy10.map(async (chunks) => {
+					const results = await getDocs(
+						query(
+							collection(firebasedb, LEAGUE_NAME),
+							where(documentId(), 'in', chunks)
+						)
+					)
+
+					return results.docs.map(doc => {
+						//console.log(doc.id);
+						const data = doc.data()
+                        //console.log(data);
+
+                        const obj = { id: doc.id, ...data }
+
+                        yourNftsRanking.push(obj)
+
+					})
+				})
+			)
+
+            //console.log(yourNftsRanking);
+
+            this.setState({ yourNftsRanking, loadingYourRanking: false })
+        })
+    }
+
     async loadTournament() {
         const queryT = await getDocs(collection(firebasedb, "stage_low"))
 
@@ -67,7 +128,7 @@ class League extends Component {
             this.setState({ tournament })
         })
 
-        const querySnapshot = await getDocs(collection(firebasedb, "ranking_s4"))
+        const querySnapshot = await getDocs(collection(firebasedb, LEAGUE_NAME))
 
         let rankings = []
 
@@ -96,7 +157,7 @@ class League extends Component {
         for (let i = 0; i < rankings.length; i++) {
             const r = rankings[i]
 
-            if (i < 50) {
+            if (i < 30) {
                 rankings2.push(r)
                 continue
             }
@@ -147,7 +208,7 @@ class League extends Component {
 
         finalRankings.map((items, index) => {
             places = items.length + places
-            const placesString = items.length === 1 ? `${places}° place` : `${places - items.length + 1}° to ${places}° places`
+            const placesString = items.length === 1 ? `${places}${this.getOrdinal(places)} place` : `${places - items.length + 1}${this.getOrdinal(places - items.length + 1)} to ${places}${this.getOrdinal(places)} places`
             const obj = { ranking: placesString, nfts: items }
             final2.push(obj)
         })
@@ -158,13 +219,29 @@ class League extends Component {
 
     }
 
+    getOrdinal(n) {
+        let ord = "th"
+
+        if (n % 10 == 1 && n % 100 != 11) {
+            ord = 'st';
+        }
+        else if (n % 10 == 2 && n % 100 != 12) {
+            ord = 'nd';
+        }
+        else if (n % 10 == 3 && n % 100 != 13) {
+            ord = 'rd';
+        }
+
+        return ord
+    }
+
     renderSingleCard(item, index, widthNft) {
-        const { account, mainTextColor, allNfts } = this.props
+        const { account, mainTextColor, allNfts, userMintedNfts } = this.props
 
         //console.log(allNfts);
 
         //console.log(item);
-        const isOwner = account.account === item.owner
+        let isOwner = false
 
         let nickname;
 
@@ -175,10 +252,17 @@ class League extends Component {
             }
         }
 
+        if (userMintedNfts) {
+            const nft = userMintedNfts.find(i => i.id === item.id)
+            if (nft) {
+                isOwner = true
+            }
+        }
+
         return (
             <a
                 href={`${window.location.protocol}//${window.location.host}/nft/${item.id}`}
-                style={styles.boxImage}
+                style={Object.assign({}, styles.boxImage, { borderColor: isOwner ? "gold" : "#d7d7d7" })}
                 key={item.id}
                 onClick={(e) => {
                     e.preventDefault()
@@ -187,11 +271,82 @@ class League extends Component {
             >
                 <img
                     src={getImageUrl(item.id)}
-                    style={{ width: widthNft, height: widthNft, borderWidth: 1, borderColor: isOwner ? '#840fb2' : "#d7d7d7", borderRadius: 4, borderStyle: "solid" }}
+                    style={{ width: widthNft, height: widthNft, borderWidth: 1, borderColor: "#d7d7d7", borderRadius: 4, borderStyle: "solid" }}
                     alt={`#${item.id}`}
                 />
                 <p style={{ fontSize: 14, color: mainTextColor, marginTop: 5, marginBottom: 5, maxWidth: widthNft, textAlign: 'center' }}>
                     #{item.id} {nickname || ""}
+                </p>
+
+                {
+                    item.oldRanking &&
+                    <div style={{ alignItems: 'center', marginBottom: 5 }}>
+
+                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 5 }}>
+                            Old ranking:
+                        </p>
+
+                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 3 }}>
+                            {item.oldRanking}
+                        </p>
+
+                        {
+                            item.oldRanking > item.ranking &&
+                            <BsChevronDoubleDown
+                                color='red'
+                                size={17}
+                            />
+                        }
+
+                        {
+                            item.oldRanking < item.ranking &&
+                            <BsChevronDoubleUp
+                                color='green'
+                                size={17}
+                            />
+                        }
+                    </div>
+                }
+            </a>
+        )
+    }
+
+    renderYourSingleCard(item, index, widthNft) {
+        const { account, mainTextColor, userMintedNfts } = this.props
+
+        //console.log(allNfts);
+
+        //console.log(item);
+        let nickname;
+
+        if (userMintedNfts) {
+            const nft = userMintedNfts.find(i => i.id === item.id)
+            if (nft && nft.nickname) {
+                nickname = nft.nickname
+            }
+        }
+
+        return (
+            <a
+                href={`${window.location.protocol}//${window.location.host}/nft/${item.id}`}
+                style={Object.assign({}, styles.boxImage, { borderColor: "gold" })}
+                key={item.id}
+                onClick={(e) => {
+                    e.preventDefault()
+                    this.props.history.push(`/nft/${item.id}`)
+                }}
+            >
+                <img
+                    src={getImageUrl(item.id)}
+                    style={{ width: widthNft, height: widthNft, borderWidth: 1, borderColor: "#d7d7d7", borderRadius: 4, borderStyle: "solid" }}
+                    alt={`#${item.id}`}
+                />
+                <p style={{ fontSize: 14, color: mainTextColor, marginTop: 5, marginBottom: 5, maxWidth: widthNft, textAlign: 'center' }}>
+                    #{item.id} {nickname || ""}
+                </p>
+
+                <p style={{ fontSize: 14, color: mainTextColor, marginBottom: 5 }}>
+                    Ranking: {item.ranking}
                 </p>
 
                 {
@@ -314,7 +469,7 @@ class League extends Component {
 
 
     renderBody(isMobile) {
-        const { loading, error, ranking, tournament } = this.state
+        const { loading, error, ranking, tournament, yourNftsRanking, loadingYourRanking } = this.state
         const { mainTextColor } = this.props
 
         const { boxW, padding } = getBoxWidth(isMobile)
@@ -361,6 +516,32 @@ class League extends Component {
 
                     {
                         ranking.length === 0 && !loading &&
+                        <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center' }}>
+                            No data available
+                        </p>
+                    }
+                </div>
+
+                <div style={{ width: '100%', flexDirection: 'column', marginTop: 30 }}>
+
+                    <p style={{ color: mainTextColor, fontSize: 20, marginBottom: 10 }}>
+                        Your Wizards
+                    </p>
+
+                    {
+                        yourNftsRanking && yourNftsRanking.length > 0 ?
+
+                        <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                            {yourNftsRanking.map((item, index) => {
+                                return this.renderYourSingleCard(item, index, 200)
+                            })}
+                        </div>
+                        :
+                        null
+                    }
+
+                    {
+                        yourNftsRanking.length === 0 && !loadingYourRanking &&
                         <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center' }}>
                             No data available
                         </p>
@@ -446,20 +627,20 @@ const styles = {
         display: 'flex',
         cursor: 'pointer',
         borderRadius: 4,
-        borderColor: "#d7d7d7",
         borderWidth: 1,
         borderStyle: "solid"
     }
 }
 
 const mapStateToProps = (state) => {
-    const { chainId, gasPrice, gasLimit, networkUrl, account, mainTextColor, mainBackgroundColor, allNfts } = state.mainReducer
+    const { chainId, gasPrice, gasLimit, networkUrl, account, mainTextColor, mainBackgroundColor, allNfts, userMintedNfts } = state.mainReducer
 
-    return { chainId, gasPrice, gasLimit, networkUrl, account, mainTextColor, mainBackgroundColor, allNfts }
+    return { chainId, gasPrice, gasLimit, networkUrl, account, mainTextColor, mainBackgroundColor, allNfts, userMintedNfts }
 }
 
 export default connect(mapStateToProps, {
     setNetworkUrl,
     setNetworkSettings,
-    loadAllNftsIds
+    loadAllNftsIds,
+    loadUserMintedNfts
 })(League)
