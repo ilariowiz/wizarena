@@ -5,6 +5,7 @@ import { firebasedb } from '../components/Firebase';
 import Media from 'react-media';
 import Header from './Header'
 import DotLoader from 'react-spinners/DotLoader';
+import { BsChevronDoubleDown, BsChevronDoubleUp } from 'react-icons/bs'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 //import calcMedals from './common/CalcMedals'
@@ -29,21 +30,36 @@ class League extends Component {
             ranking: [],
             loading: true,
             error: "",
-            tournament: {}
+            tournament: {},
         }
     }
 
     componentDidMount() {
+        const { allNfts } = this.props
+
 		document.title = "League - Wizards Arena"
 
         this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
+        setTimeout(() => {
+            if (!allNfts) {
+                this.loadAllNfts()
+            }
+		}, 500)
+
+
+
         this.loadTournament()
 	}
 
-    async loadTournament() {
+    loadAllNfts() {
+        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
+        this.props.loadAllNftsIds(chainId, gasPrice, gasLimit, networkUrl)
+    }
+
+    async loadTournament() {
         const queryT = await getDocs(collection(firebasedb, "stage_low"))
 
         queryT.forEach(doc => {
@@ -62,7 +78,7 @@ class League extends Component {
 
             //console.log(idDoc, data);
 
-            rankings.push({ id: idDoc, ranking: data.ranking })
+            rankings.push({ id: idDoc, ranking: data.ranking, oldRanking: data.oldRanking })
         })
 
         //se non ci sono ancora dati ***************************
@@ -95,6 +111,9 @@ class League extends Component {
         }
 
         //console.log(rankings2);
+
+        let onlyIds = []
+        rankings2.map(i => onlyIds.push(i.id))
 
         let finalRankings = []
 
@@ -136,67 +155,25 @@ class League extends Component {
         //console.log(final2);
 
         this.setState({ ranking: final2, loading: false })
+
     }
 
-    /*
-    loadAll() {
-		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
-        const { tournament } = this.state
-
-		this.setState({ loading: true })
-
-        this.props.loadAllNftsIds(chainId, gasPrice, gasLimit, networkUrl, (res) => {
-
-            //console.log(res);
-
-            let places = {}
-
-            for (let i = 0; i < res.length; i++) {
-                let nft = res[i]
-
-                const medals = calcMedals(nft, tournament.season)
-
-                //console.log(medals);
-
-                if (medals > 0) {
-                    nft["totMedals"] = medals
-                    if (!places[`${medals}`]) {
-                        places[`${medals}`] = []
-                    }
-
-                    if (places[`${medals}`]) {
-                        places[`${medals}`].push(nft)
-                    }
-                }
-            }
-
-            let sorted = []
-
-            Object.keys(places)
-                    .sort((a, b) => {
-                        return b - a
-                    })
-                    .forEach((v, k) => {
-                        sorted.push(places[parseInt(v)])
-                    })
-
-            //console.log(sorted);
-
-            sorted = sorted.slice(0, 12)
-
-            //console.log(sorted);
-
-            this.setState({ ranking: sorted, loading: false })
-
-        })
-	}
-    */
-
     renderSingleCard(item, index, widthNft) {
-        const { account, mainTextColor } = this.props
+        const { account, mainTextColor, allNfts } = this.props
+
+        //console.log(allNfts);
 
         //console.log(item);
         const isOwner = account.account === item.owner
+
+        let nickname;
+
+        if (allNfts) {
+            const nft = allNfts.find(i => i.id === item.id)
+            if (nft && nft.nickname) {
+                nickname = nft.nickname
+            }
+        }
 
         return (
             <a
@@ -213,14 +190,38 @@ class League extends Component {
                     style={{ width: widthNft, height: widthNft, borderWidth: 1, borderColor: isOwner ? '#840fb2' : "#d7d7d7", borderRadius: 4, borderStyle: "solid" }}
                     alt={`#${item.id}`}
                 />
-                <p style={{ fontSize: 14, color: mainTextColor, marginTop: 2 }}>
-                    #{item.id}
+                <p style={{ fontSize: 14, color: mainTextColor, marginTop: 5, marginBottom: 5, maxWidth: widthNft, textAlign: 'center' }}>
+                    #{item.id} {nickname || ""}
                 </p>
+
                 {
-                    item.nickname &&
-                    <p style={{ fontSize: 13, color: mainTextColor, marginTop: 3, marginBottom: 3, textAlign: 'center', maxWidth: widthNft, wordBreak: "break-word" }}>
-                        {item.nickname}
-                    </p>
+                    item.oldRanking &&
+                    <div style={{ alignItems: 'center', marginBottom: 5 }}>
+
+                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 5 }}>
+                            Old ranking:
+                        </p>
+
+                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 3 }}>
+                            {item.oldRanking}
+                        </p>
+
+                        {
+                            item.oldRanking > item.ranking &&
+                            <BsChevronDoubleDown
+                                color='red'
+                                size={17}
+                            />
+                        }
+
+                        {
+                            item.oldRanking < item.ranking &&
+                            <BsChevronDoubleUp
+                                color='green'
+                                size={17}
+                            />
+                        }
+                    </div>
                 }
             </a>
         )
@@ -452,9 +453,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-    const { chainId, gasPrice, gasLimit, networkUrl, account, mainTextColor, mainBackgroundColor } = state.mainReducer
+    const { chainId, gasPrice, gasLimit, networkUrl, account, mainTextColor, mainBackgroundColor, allNfts } = state.mainReducer
 
-    return { chainId, gasPrice, gasLimit, networkUrl, account, mainTextColor, mainBackgroundColor }
+    return { chainId, gasPrice, gasLimit, networkUrl, account, mainTextColor, mainBackgroundColor, allNfts }
 }
 
 export default connect(mapStateToProps, {
