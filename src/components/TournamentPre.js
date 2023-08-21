@@ -72,7 +72,7 @@ class Tournament extends Component {
 	}
 
     componentDidMount() {
-		document.title = "Tournament Intro - Wizards Arena"
+		document.title = "Tournaments - Wizards Arena"
 
         this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
