@@ -1161,6 +1161,7 @@ class PvP extends Component {
                         showModal={this.state.showModalSpellbook}
                         onCloseModal={() => this.setState({ showModalSpellbook: false })}
                         width={modalW}
+                        equipment={this.state.equipment}
                         stats={this.state.itemChangeSpell}
                         onSub={(spellSelected) => {
                             this.changeSpell(spellSelected)

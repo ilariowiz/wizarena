@@ -184,6 +184,7 @@ class NftCardChoice extends Component {
                         showModal={this.state.showModalSpellbook}
                         onCloseModal={() => this.setState({ showModalSpellbook: false })}
                         width={this.props.modalWidth}
+                        equipment={this.props.equipment}
                         stats={item}
                         onSub={(spellSelected) => {
                             this.onSubscribe(spellSelected)

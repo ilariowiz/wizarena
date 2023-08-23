@@ -15,8 +15,34 @@ class ModalSpellbook extends Component {
         }
     }
 
+    getBonusEquipment() {
+        const { equipment, stats } = this.props
+
+        let ring = equipment.find(i => i.equippedToId === stats.id)
+
+        let bonus = {}
+
+        if (ring && ring.equipped) {
+            const st = ring.bonus.split(",")
+            st.map(i => {
+                const infos = i.split("_")
+                //console.log(infos);
+
+                bonus[infos[1]] = parseInt(infos[0])
+            })
+        }
+
+        //console.log(bonus);
+
+        return bonus
+    }
+
     renderSpell(item, index, width) {
-        const { stats, mainTextColor } = this.props
+        const { stats, mainTextColor, equipment } = this.props
+
+        //console.log(stats);
+
+        const bonuses = this.getBonusEquipment()
 
         const spell = allSpells.find(i => i.name === item.name)
 
@@ -29,6 +55,21 @@ class ModalSpellbook extends Component {
 
         let atkFinal = atkBase + spell.atkBase
         let dmgFinal = dmgBase + spell.dmgBase
+
+        if (bonuses) {
+            if (bonuses.attack) {
+                atkFinal += bonuses.attack
+            }
+
+            if (bonuses.damage) {
+                dmgFinal += bonuses.damage
+            }
+        }
+
+        if (isSelected) {
+            atkFinal += stats["upgrades-spell"].attack.int
+            dmgFinal += stats['upgrades-spell'].damage.int
+        }
 
         let textPerk = ""
         if (spell.condition.name) {
