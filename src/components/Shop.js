@@ -2323,8 +2323,12 @@ class Shop extends Component {
                             <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 9 }}>
                                 Improve your chosen spell:
                             </p>
-                            <p style={{ fontSize: 13, color: mainTextColor, marginBottom: 14 }}>
-                                (each upgrade will increase the WIZA costs of the next upgrade)
+                            <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10 }}>
+                                The total of improvements on a spell cannot exceed 12 points. Each upgrade will increase the WIZA costs of the next upgrade
+                            </p>
+
+                            <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15 }} className="text-medium">
+                                AP available: {wizard.ap ? wizard.ap.int : 0}
                             </p>
 
                             {this.renderSpellToUpgrade(wizard)}

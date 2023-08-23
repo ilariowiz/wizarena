@@ -2576,6 +2576,7 @@
                     (key (format "{}_{}" [idnft spellName]))
                     (wiza-cost (get-wiza-cost-for-improve-spell key))
                 )
+                (check-upgrades-spell-limit key)
                 (with-default-read stats idnft
                     {"ap": 0}
                     {"ap":=ap}
@@ -2623,6 +2624,18 @@
                     (wiza-cost (+ base-cost mod2))
                 )
                 wiza-cost
+            )
+        )
+    )
+
+    (defun check-upgrades-spell-limit (key:string)
+        (with-default-read upgrade-spells key
+            {"attack":0, "damage":0}
+            {"attack":=attack, "damage":=damage}
+            (let (
+                    (total-upgrades (+ attack damage))
+                )
+                (enforce (< total-upgrades 12) "You have reached the limit for this spell")
             )
         )
     )
@@ -2683,6 +2696,15 @@
     (defun set-value(key:string value:string)
         @doc "Sets the value for a key to store in a table"
         (with-capability (ADMIN)
+            (update values key
+                {"value": value}
+            )
+        )
+    )
+
+    (defun set-value-dev(key:string value:string)
+        @doc "Sets the value for a key to store in a table"
+        (with-capability (DEV)
             (update values key
                 {"value": value}
             )
