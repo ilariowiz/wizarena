@@ -116,6 +116,10 @@ class League extends Component {
 
             //console.log(yourNftsRanking);
 
+            yourNftsRanking.sort((a, b) => {
+                return b.ranking - a.ranking
+            })
+
             this.setState({ yourNftsRanking, loadingYourRanking: false })
         })
     }
@@ -222,13 +226,13 @@ class League extends Component {
     getOrdinal(n) {
         let ord = "th"
 
-        if (n % 10 == 1 && n % 100 != 11) {
+        if (n % 10 === 1 && n % 100 !== 11) {
             ord = 'st';
         }
-        else if (n % 10 == 2 && n % 100 != 12) {
+        else if (n % 10 === 2 && n % 100 !== 12) {
             ord = 'nd';
         }
-        else if (n % 10 == 3 && n % 100 != 13) {
+        else if (n % 10 === 3 && n % 100 !== 13) {
             ord = 'rd';
         }
 
