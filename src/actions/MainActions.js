@@ -1339,7 +1339,7 @@ export const getWizaValue = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3
 	return (dispatch) => {
 
 		let cmd = {
-			pactCode: `(free.wiz-dexinfo.get-wiza-value)`,
+			pactCode: `(free.wiz-arena.get-wiza-value)`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 

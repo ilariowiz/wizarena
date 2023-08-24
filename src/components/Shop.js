@@ -1408,7 +1408,7 @@ class Shop extends Component {
         }
 
         let bonus;
-        let costo = round(wizaValue * 2.1, 2);
+        let costo = round(wizaValue * 2.4, 2);
 
         let img;
         if (key === "hp") {
@@ -1532,7 +1532,7 @@ class Shop extends Component {
                     $WIZA
                 </p>
                 <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 20 }} className="text-bold">
-                    {round(wizaValue * 0.4, 2)}
+                    {round(wizaValue * 0.6, 2)}
                 </p>
 
                 <button
@@ -1690,7 +1690,7 @@ class Shop extends Component {
                     onClick={() => this.setState({ showModalSwapSpell: true, newSpellToLearn: spell })}
                 >
                     <p style={{ fontSize: 13, color: 'white', marginBottom: 3 }} className="text-bold">
-                        {round((wizaValue * 10), 2)} $WIZA
+                        {round((wizaValue * 14), 2)} $WIZA
                     </p>
                     <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
                         Swap

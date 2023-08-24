@@ -1713,7 +1713,7 @@
                         )
                         (enforce (>= ap ap-cost) "You don't have enough AP")
                         (let (
-                                (wiza-cost (round (/ (* (fold (+) 0 (map (calculate-wiza-cost-from stat) array-levels-to)) 9) 100) 2))
+                                (wiza-cost (round (/ (* (fold (+) 0 (map (calculate-wiza-cost-from stat) array-levels-to)) 12) 100) 2))
                             )
                             (spend-wiza wiza-cost account m)
                         )
@@ -1838,7 +1838,7 @@
             (let (
                     (current-level (calculate-level idnft))
                     (tournament-open (get-value TOURNAMENT_OPEN))
-                    (wiza-cost (* (get-wiza-value) 2.1))
+                    (wiza-cost (* (get-wiza-value) 2.4))
                 )
                 (enforce (= tournament-open "1") "You can't buy vial now")
                 (with-default-read potions-table key
@@ -2198,7 +2198,7 @@
                 (account-xp (get-wallet-xp account))
                 (oldspell-info (get-spell-info oldspell))
                 (newspell-info (get-spell-info newspell))
-                (wiza-cost (* (get-wiza-value) 10))
+                (wiza-cost (* (get-wiza-value) 14))
             )
             (enforce (= (length (at "spellbook" data)) 4) "The wizard must have 4 spells to do the swap")
             (enforce (>= account-xp 250) "You must have at least 250 xp to do the swap")
@@ -2618,7 +2618,7 @@
             {"attack":0, "damage":0}
             {"attack":=attack, "damage":=damage}
             (let* (
-                    (base-cost (round (* (get-wiza-value) 1.7) 2))
+                    (base-cost (round (* (get-wiza-value) 2.2) 2))
                     (mod (* (+ attack damage) 60))
                     (mod2 (round (/ (* base-cost mod) 100) 2))
                     (wiza-cost (+ base-cost mod2))
@@ -2647,7 +2647,7 @@
     (defun update-nickname (id:string address:string nickname:string m:module{wiza1-interface-v3})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (let (
-                (wiza-cost (round (* (get-wiza-value) 0.4) 2))
+                (wiza-cost (round (* (get-wiza-value) 0.6) 2))
             )
             (with-capability (OWNER address id)
                 (update nfts id {
@@ -2748,8 +2748,16 @@
     ;;;;;; NON STATE MODIFYING HELPER FUNCTIONS ;;;;;;;;;
 
     (defun get-wiza-value ()
-        36.5464
-        ;(free.wiz-dexinfo.get-wiza-value)
+        50.0001
+        ; (let (
+        ;         (wiza-value (free.wiz-dexinfo.get-wiza-value))
+        ;     )
+        ;     (if
+        ;         (> wiza-value 50.0)
+        ;         50.0001
+        ;         wiza-value
+        ;     )
+        ; )
     )
 
     (defun get-value-tournament(key:string)
