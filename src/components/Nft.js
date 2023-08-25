@@ -1246,7 +1246,7 @@ class Nft extends Component {
 		let title = titles[nft.id]
 
 		return (
-			<div style={{ flexDirection: 'column', marginBottom }}>
+			<div style={{ flexDirection: 'column', marginBottom, alignItems: 'center' }}>
 				{
 					nft.nickname ?
 					<p style={{ color: mainTextColor, fontSize: 24 }} className="text-bold">

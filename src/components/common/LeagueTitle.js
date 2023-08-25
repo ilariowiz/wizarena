@@ -126,6 +126,31 @@ const titles = {
         img: cup_gold,
         textColor: 'gold'
     }],
+    "1269": [{
+        title: "The Apprentice League I Champion",
+        img: cup_gold,
+        textColor: 'gold'
+    }],
+    "2181": [{
+        title: "The Apprentice League I 2nd place",
+        img: cup_silver,
+        textColor: '#c0c0c0'
+    }],
+    "2714": [{
+        title: "The Apprentice League I 3rd place",
+        img: cup_bronze,
+        textColor: '#cd7f32'
+    }],
+    "2358": [{
+        title: "The Apprentice League I 4th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "2765": [{
+        title: "The Apprentice League I 5th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }]
 }
 
 export default titles
