@@ -239,6 +239,17 @@ class League extends Component {
         return ord
     }
 
+    getDiffRanking(ranking, oldRanking) {
+
+        let result = ranking - oldRanking
+
+        if (result > 0) {
+            return `(+${result})`
+        }
+
+        return `(${result})`
+    }
+
     renderSingleCard(item, index, widthNft) {
         const { account, mainTextColor, allNfts, userMintedNfts } = this.props
 
@@ -291,7 +302,7 @@ class League extends Component {
                         </p>
 
                         <p style={{ fontSize: 14, color: mainTextColor, marginRight: 3 }}>
-                            {item.oldRanking}
+                            {item.oldRanking} <span style={{ fontSize: 12 }} className="text-light">{this.getDiffRanking(item.ranking, item.oldRanking)}</span>
                         </p>
 
                         {

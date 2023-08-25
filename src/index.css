@@ -84,6 +84,10 @@ a {
     font-family: FigtreeBold
 }
 
+.text-light {
+    font-family: FigtreeLight
+}
+
 #walletconnect-wrapper div {
     display: block;
 }
