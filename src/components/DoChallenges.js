@@ -147,8 +147,8 @@ class DoChallenges extends Component {
         //console.log(info);
 
         let infoEquipment;
-        if (info.equipment && info.equipment.bonus) {
-            infoEquipment = getRingBonuses(info.equipment)
+        if (info.ring && info.ring.bonus) {
+            infoEquipment = getRingBonuses(info.ring)
         }
         //console.log(infoEquipment);
 
@@ -189,15 +189,15 @@ class DoChallenges extends Component {
                     {cardStats(info, undefined, '100%', infoEquipment ? infoEquipment.bonusesDict : undefined, mainTextColor)}
 
                     {
-                        info.equipment && info.equipment.bonus ?
+                        info.ring && info.ring.bonus ?
                         <div style={{ alignItems: 'center', marginBottom: 10 }}>
                             <img
-                                src={info.equipment.url}
+                                src={info.ring.url}
                                 style={{ width: 50, height: 50, borderRadius: 4, borderColor: '#d7d7d7', borderWidth: 1, borderStyle: 'solid', marginRight: 10 }}
                                 alt="Ring"
                             />
                             <p style={{ fontSize: 14, color: mainTextColor }}>
-                                {info.equipment.name}
+                                {info.ring.name}
                             </p>
                         </div>
                         :
@@ -310,7 +310,10 @@ class DoChallenges extends Component {
 				onSubscribe={(spellSelected) => {
                     item['spellSelected'] = spellSelected
                     const ring = equipment.find(i => i.equippedToId === item.id && i.equipped)
-                    item['equipment'] = ring
+                    item['ring'] = ring
+
+                    const pendant = equipment.find(i => i.equippedToId === `${item.id}pendant` && i.equipped)
+                    item['pendant'] = pendant
 
                     this.setState({ yourChampion: item }, () => {
                         document.getElementById("box-top").scrollIntoView({ behavior: 'smooth' })
