@@ -81,86 +81,94 @@ class DoFight extends Component {
     loadNft(idNft, isPlayer1) {
 		const { chainId, gasPrice, gasLimit, networkUrl, sfida } = this.props
 
-		this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, idNft, (response) => {
+		this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, idNft, async (response) => {
             //console.log(response);
             if (response.name) {
 
-                this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, idNft, (ring) => {
+                const ring = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, idNft)
+                //console.log(ring);
+                const pendant = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, `${idNft}pendant`)
 
-                    if (isPlayer1) {
-                        this.player1 = response
-                        this.player1.attack = this.player1.attack.int
-                        this.player1.damage = this.player1.damage.int
-                        this.player1.defense = this.player1.defense.int
-                        this.player1.hp = this.player1.hp.int
-                        this.player1.speed = this.player1.speed.int
-                        this.player1.spellSelected = this.refactorSpellSelected(sfida.player1.spellSelected)
+                if (isPlayer1) {
+                    this.player1 = response
+                    this.player1.attack = this.player1.attack.int
+                    this.player1.damage = this.player1.damage.int
+                    this.player1.defense = this.player1.defense.int
+                    this.player1.hp = this.player1.hp.int
+                    this.player1.speed = this.player1.speed.int
+                    this.player1.spellSelected = this.refactorSpellSelected(sfida.player1.spellSelected)
 
-                        //console.log(this.player1);
-                        if (ring && ring.equipped) {
-                            const stats = ring.bonus.split(",")
-                            stats.map(i => {
-                                const infos = i.split("_")
-                                this.player1[infos[1]] += parseInt(infos[0])
-                            })
-
-                            this.player1.ring = ring
-                        }
-
-                        this.player1InitialHp = this.player1.hp
-
-                        this.loadNft(sfida.player2.idnft, false)
-                    }
-                    else {
-                        this.player2 = response
-                        this.player2.attack = this.player2.attack.int
-                        this.player2.damage = this.player2.damage.int
-                        this.player2.defense = this.player2.defense.int
-                        this.player2.hp = this.player2.hp.int
-                        this.player2.speed = this.player2.speed.int
-                        this.player2.spellSelected = this.refactorSpellSelected(sfida.player2.spellSelected)
-
-                        if (ring && ring.equipped) {
-                            const stats = ring.bonus.split(",")
-                            //console.log("stats ring 2", stats);
-                            stats.map(i => {
-                                const infos = i.split("_")
-                                //console.log(infos[1], infos[0]);
-                                this.player2[infos[1]] += parseInt(infos[0])
-                            })
-
-                            this.player2.ring = ring
-                        }
-
-                        this.player2InitialHp = this.player2.hp
-
-                        //console.log(this.player1);
-
-
-                        fight(this.player1, this.player2, undefined, (history, winner) => {
-                            //console.log(history, winner);
-
-                            this.setState({ winner, loading: false }, () => {
-                                this.history = history
-
-                                //console.log(this.history);
-                                //console.log(winner);
-
-                                let attaccante = this.player1.id === winner ? this.player1 : this.player2
-                                let difensore = this.player1.id === winner ? this.player2 : this.player1
-
-                                this.updateFirebase(sfida, attaccante, difensore, this.history, sfida.fightsStart)
-
-                                this.indexShow = 0
-
-                                setTimeout(() => {
-                                    this.showFight()
-                                }, 600)
-                            })
-
+                    //console.log(this.player1);
+                    if (ring && ring.equipped) {
+                        const stats = ring.bonus.split(",")
+                        stats.map(i => {
+                            const infos = i.split("_")
+                            this.player1[infos[1]] += parseInt(infos[0])
                         })
+
+                        this.player1.ring = ring
                     }
-                })
+
+                    if (pendant && pendant.equipped) {
+                        this.player1.pendant = pendant
+                    }
+
+                    this.player1InitialHp = this.player1.hp
+
+                    this.loadNft(sfida.player2.idnft, false)
+                }
+                else {
+                    this.player2 = response
+                    this.player2.attack = this.player2.attack.int
+                    this.player2.damage = this.player2.damage.int
+                    this.player2.defense = this.player2.defense.int
+                    this.player2.hp = this.player2.hp.int
+                    this.player2.speed = this.player2.speed.int
+                    this.player2.spellSelected = this.refactorSpellSelected(sfida.player2.spellSelected)
+
+                    if (ring && ring.equipped) {
+                        const stats = ring.bonus.split(",")
+                        //console.log("stats ring 2", stats);
+                        stats.map(i => {
+                            const infos = i.split("_")
+                            //console.log(infos[1], infos[0]);
+                            this.player2[infos[1]] += parseInt(infos[0])
+                        })
+
+                        this.player2.ring = ring
+                    }
+
+                    if (pendant && pendant.equipped) {
+                        this.player2.pendant = pendant
+                    }
+
+                    this.player2InitialHp = this.player2.hp
+
+                    //console.log(this.player1);
+
+                    fight(this.player1, this.player2, undefined, (history, winner) => {
+                        //console.log(history, winner);
+
+                        this.setState({ winner, loading: false }, () => {
+                            this.history = history
+
+                            //console.log(this.history);
+                            //console.log(winner);
+
+                            let attaccante = this.player1.id === winner ? this.player1 : this.player2
+                            let difensore = this.player1.id === winner ? this.player2 : this.player1
+
+                            this.updateFirebase(sfida, attaccante, difensore, this.history, sfida.fightsStart)
+
+                            this.indexShow = 0
+
+                            setTimeout(() => {
+                                this.showFight()
+                            }, 600)
+                        })
+
+                    })
+                }
 			}
 			else {
 				this.setState({ error: '404', loading: false })

@@ -81,55 +81,56 @@ class DoFight extends Component {
     loadNft(idNft) {
 		const { chainId, gasPrice, gasLimit, networkUrl, sfidaPvE } = this.props
 
-		this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, idNft, (response) => {
+		this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, idNft, async (response) => {
             //console.log(response);
             if (response.name) {
 
-                this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, idNft, (ring) => {
+                const ring = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, idNft)
+                //console.log(ring);
+                const pendant = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, `${idNft}pendant`)
 
-                    this.player1 = response
-                    this.player1.attack = this.player1.attack.int
-                    this.player1.damage = this.player1.damage.int
-                    this.player1.defense = this.player1.defense.int
-                    this.player1.hp = this.player1.hp.int
-                    this.player1.speed = this.player1.speed.int
-                    this.player1.spellSelected = this.refactorSpellSelected(response.spellSelected)
+                this.player1 = response
+                this.player1.attack = this.player1.attack.int
+                this.player1.damage = this.player1.damage.int
+                this.player1.defense = this.player1.defense.int
+                this.player1.hp = this.player1.hp.int
+                this.player1.speed = this.player1.speed.int
+                this.player1.spellSelected = this.refactorSpellSelected(response.spellSelected)
 
-                    if (ring && ring.equipped) {
-                        const stats = ring.bonus.split(",")
-                        stats.map(i => {
-                            const infos = i.split("_")
-                            this.player1[infos[1]] += parseInt(infos[0])
-                        })
+                if (ring && ring.equipped) {
+                    const stats = ring.bonus.split(",")
+                    stats.map(i => {
+                        const infos = i.split("_")
+                        this.player1[infos[1]] += parseInt(infos[0])
+                    })
 
-                        this.player1.ring = ring
-                    }
+                    this.player1.ring = ring
+                }
 
-                    this.player1InitialHp = this.player1.hp
+                if (pendant && pendant.equipped) {
+                    this.player1.pendant = pendant
+                }
 
-
-                    const monster = createMonster(sfidaPvE.chosenMonster, this.player1.level)
-
-                    this.player2 = monster
-                    this.player2InitialHp = this.player2.hp
+                this.player1InitialHp = this.player1.hp
 
 
-                    fight(this.player1, this.player2, undefined, (history, winner) => {
-                        //console.log(history, winner);
+                const monster = createMonster(sfidaPvE.chosenMonster, this.player1.level)
 
-                        this.setState({ winner, loading: false }, () => {
-                            this.history = history
+                this.player2 = monster
+                this.player2InitialHp = this.player2.hp
 
-                            setTimeout(() => {
-                                this.showFight()
-                            }, 600)
-                        })
+                fight(this.player1, this.player2, undefined, (history, winner) => {
+                    //console.log(history, winner);
 
+                    this.setState({ winner, loading: false }, () => {
+                        this.history = history
+
+                        setTimeout(() => {
+                            this.showFight()
+                        }, 600)
                     })
 
                 })
-
-
 			}
 			else {
 				this.setState({ error: '404', loading: false })
