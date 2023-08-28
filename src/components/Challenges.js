@@ -20,7 +20,6 @@ import {
     updateInfoTransactionModal,
     acceptChallenge,
     loadSingleNft,
-    getInfoItemEquipped,
     setChallengeReplay
 } from '../actions'
 
@@ -369,6 +368,5 @@ export default connect(mapStateToProps, {
     updateInfoTransactionModal,
     acceptChallenge,
     loadSingleNft,
-    getInfoItemEquipped,
     setChallengeReplay
 })(Challenges)
