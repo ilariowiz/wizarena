@@ -1,5 +1,7 @@
 import React from 'react'
 
+import getPendantBonus from './GetPendantBonus'
+
 let history = []
 let isEnd = false
 let winner = undefined
@@ -19,30 +21,54 @@ const fight = (s1, s2, ev, callback) => {
     s1copy['condizione'] = {}
     s2copy['condizione'] = {}
 
-    // S1 RING
-    if (s1copy.ring && s1copy.ring['bonus']) {
-        /*
-        const stats = s1copy.ring.bonus.split(",")
-        stats.map(i => {
-            const infos = i.split("_")
-            s1copy[infos[1]] += parseInt(infos[0])
-        })
-        */
+    // S1 RING & PENDANT
+    if ((s1copy.ring && s1copy.ring['bonus']) || s1copy.pendant && s1copy.pendant['bonus']) {
 
-        history.push({desc: `${s1copy.name} wear a ${s1copy.ring.name}`, [`hp_${s1copy.id}`]: s1copy.hp, [`hp_${s2copy.id}`]: s2copy.hp})
+        let desc = ""
+        if (s1copy.ring) {
+            desc = `${s1copy.name} wear a ${s1copy.ring.name}`
+        }
+
+        if (s1copy.pendant) {
+
+            const pendantBonus = getPendantBonus(s1copy.pendant)
+            s1copy['pendantBonus'] = pendantBonus.bonusesDict
+
+            if (desc && desc.length > 0) {
+                desc = `and a ${s1copy.pendant.name}`
+            }
+            // non c'è l'anello
+            else {
+                desc = `${s1copy.name} wear a ${s1copy.pendant.name}`
+            }
+        }
+
+        history.push({ desc, [`hp_${s1copy.id}`]: s1copy.hp, [`hp_${s2copy.id}`]: s2copy.hp })
     }
 
-    // S2 RING
-    if (s2copy.ring && s2copy.ring['bonus']) {
-        /*
-        const stats = s2copy.ring.bonus.split(",")
-        stats.map(i => {
-            const infos = i.split("_")
-            s2copy[infos[1]] += parseInt(infos[0])
-        })
-        */
+    // S2 RING & PENDANT
+    if ((s2copy.ring && s2copy.ring['bonus']) || s2copy.pendant && s2copy.pendant['bonus']) {
 
-        history.push({desc: `${s2copy.name} wear a ${s2copy.ring.name}`, [`hp_${s1copy.id}`]: s1copy.hp, [`hp_${s2copy.id}`]: s2copy.hp})
+        let desc = ""
+        if (s2copy.ring) {
+            desc = `${s1copy.name} wear a ${s2copy.ring.name}`
+        }
+
+        if (s2copy.pendant) {
+
+            const pendantBonus = getPendantBonus(s2copy.pendant)
+            s2copy['pendantBonus'] = pendantBonus.bonusesDict
+
+            if (desc && desc.length > 0) {
+                desc = `and a ${s2copy.pendant.name}`
+            }
+            // non c'è l'anello
+            else {
+                desc = `${s2copy.name} wear a ${s2copy.pendant.name}`
+            }
+        }
+
+        history.push({ desc, [`hp_${s1copy.id}`]: s1copy.hp, [`hp_${s2copy.id}`]: s2copy.hp })
     }
 
     //console.log(s1copy, s2copy);
@@ -210,45 +236,69 @@ const turno = (attaccante, difensore) => {
     let malus = 0
     let malusTipo = ''
     let skipTurn = false
+    let hasPerkResFromPendant = false
 
     let desc = ""
 
     if (attaccante.condizione.name) {
-
         //console.log(attaccante.condizione);
+        //console.log(attaccante.pendantBonus);
 
-        if (attaccante.condizione.effect.includes("skip")) {
+        //ha un pendente che da resistenza a questa condizione
+        if (attaccante.pendantBonus && attaccante.pendantBonus[attaccante.condizione.name.toLowerCase()]) {
+            let checkSkipPct = Math.floor(Math.random() * 15) + 75; //da 75 a 90
+            //console.log(checkSkipPct);
             let checkSkip = Math.floor(Math.random() * 100) + 1; //da 1 a 100
-            //console.log(checkSkip, attaccante.condizione.pct);
-            if (checkSkip <= attaccante.condizione.pct) {
-                const textCondizione = convertConditionName(attaccante.condizione.name)
-                desc = `${attaccante.name} ${textCondizione}! Skip his turn! `
-                //console.log("condizione skip", desc);
-                skipTurn = true
-            }
-            else {
+            //console.log(checkSkip);
+
+            //ts superato
+            if (checkSkip <= checkSkipPct) {
                 const textCondizione = convertConditionNamePositive(attaccante.condizione.name)
                 desc = `${attaccante.name} ${textCondizione}! `
                 //console.log("condizione superata", desc);
                 attaccante.condizione = {}
+
+                hasPerkResFromPendant = true
             }
         }
-        else {
-            let checkCondizione = Math.floor(Math.random() * 100) + 1; //da 1 a 100
 
-            if (attaccante.condizione.pct < checkCondizione) {
-                const textCondizione = convertConditionNamePositive(attaccante.condizione.name)
-                desc = `${attaccante.name} ${textCondizione}! `
-                //console.log("condizione superata", desc);
-                attaccante.condizione = {}
+        //console.log("hasPerkResFromPendant = ", hasPerkResFromPendant);
+
+        // se non ha superato il ts grazie al pendente
+        if (!hasPerkResFromPendant) {
+            if (attaccante.condizione.effect.includes("skip")) {
+                let checkSkip = Math.floor(Math.random() * 100) + 1; //da 1 a 100
+                //console.log(checkSkip, attaccante.condizione.pct);
+                if (checkSkip <= attaccante.condizione.pct) {
+                    const textCondizione = convertConditionName(attaccante.condizione.name)
+                    desc = `${attaccante.name} ${textCondizione}! Skip his turn! `
+                    //console.log("condizione skip", desc);
+                    skipTurn = true
+                }
+                else {
+                    const textCondizione = convertConditionNamePositive(attaccante.condizione.name)
+                    desc = `${attaccante.name} ${textCondizione}! `
+                    //console.log("condizione superata", desc);
+                    attaccante.condizione = {}
+                }
             }
             else {
-                const infoMalus = attaccante.condizione.effect.split("_")
-                malus = infoMalus[1]
-                malusTipo = infoMalus[2]
-                const textCondizione = convertConditionName(attaccante.condizione.name)
-                desc = `${attaccante.name} ${textCondizione}! `
-                //console.log("condizione malus", desc);
+                let checkCondizione = Math.floor(Math.random() * 100) + 1; //da 1 a 100
+
+                if (attaccante.condizione.pct < checkCondizione) {
+                    const textCondizione = convertConditionNamePositive(attaccante.condizione.name)
+                    desc = `${attaccante.name} ${textCondizione}! `
+                    //console.log("condizione superata", desc);
+                    attaccante.condizione = {}
+                }
+                else {
+                    const infoMalus = attaccante.condizione.effect.split("_")
+                    malus = infoMalus[1]
+                    malusTipo = infoMalus[2]
+                    const textCondizione = convertConditionName(attaccante.condizione.name)
+                    desc = `${attaccante.name} ${textCondizione}! `
+                    //console.log("condizione malus", desc);
+                }
             }
         }
     }
@@ -310,6 +360,15 @@ const turno = (attaccante, difensore) => {
             else if (attaccante.element.toLowerCase() === difensore.resistance.toLowerCase()) {
                 danno = Math.floor(danno/2)
                 hasResistenza = true
+            }
+
+            //ha un pendente con una flat resistance all'elemento dell'attaccante
+            if (difensore.pendantBonus && difensore.pendantBonus[attaccante.element.toLowerCase()]) {
+                danno -= difensore.pendantBonus[attaccante.element.toLowerCase()]
+            }
+
+            if (danno < 1) {
+                danno = 1
             }
 
             difensore.hp -= danno
