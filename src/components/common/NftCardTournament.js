@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { IoMedalOutline } from 'react-icons/io5'
 import Popup from 'reactjs-popup';
 import getRingBonuses from './GetRingBonuses'
+import getPendantBonuses from './GetPendantBonus'
 import getImageUrl from './GetImageUrl'
 import calcMedals from './CalcMedals'
 import { getColorTextBasedOnLevel } from './CalcLevelWizard'
@@ -26,11 +27,14 @@ class NftCardTournament extends Component {
 
 		this.loadPotion = false
 		this.loadRing = false
+		this.loadPendant = false
 
 		this.state = {
 			potion: undefined,
 			ring: undefined,
-			infoEquipment: undefined
+			infoRing: undefined,
+			pendant: undefined,
+			infoPendant: undefined
 		}
 	}
 
@@ -39,6 +43,11 @@ class NftCardTournament extends Component {
 		if (this.props.ringsEquipped.length > 0 && !this.loadRing) {
 			this.loadRing = true
 			this.getRingEquipped()
+		}
+
+		if (this.props.pendantsEquipped.length > 0 && !this.loadPendant) {
+			this.loadPendant = true
+			this.getPendantEquipped()
 		}
 
 		if (this.props.potionsEquipped.length > 0 && !this.loadPotion) {
@@ -78,14 +87,33 @@ class NftCardTournament extends Component {
 		const ring = ringsEquipped.find(i => i.equippedToId === item.id)
 		//console.log(ring);
 		if (ring && ring.equipped) {
-			const infoEquipment = getRingBonuses(ring)
-			this.setState({ ring, infoEquipment })
+			const infoRing = getRingBonuses(ring)
+			this.setState({ ring, infoRing })
+		}
+	}
+
+	getPendantEquipped() {
+		const { pendantsEquipped, item } = this.props
+
+		//console.log(ringsEquipped);
+
+		if (!pendantsEquipped || pendantsEquipped.length === 0) {
+			return ""
+		}
+
+		this.loadPendant = true
+
+		const pendant = pendantsEquipped.find(i => i.equippedToId === `${item.id}pendant`)
+		//console.log(pendant);
+		if (pendant && pendant.equipped) {
+			const infoPendant = getPendantBonuses(pendant)
+			this.setState({ pendant, infoPendant })
 		}
 	}
 
 	render() {
 		const { item, history, width, account, tournamentSeason, mainTextColor, isDarkmode, rankings } = this.props
-		const { potion, ring, infoEquipment } = this.state
+		const { potion, ring, infoRing, pendant, infoPendant } = this.state
 
 		//console.log(tournamentSeason);
 
@@ -150,40 +178,21 @@ class NftCardTournament extends Component {
 					alt={`#${item.id}`}
 				/>
 
-				<div style={{ justifyContent: 'space-between', width, minHeight: 73, alignItems: 'center' }}>
+				<div style={{ justifyContent: 'space-between', flexDirection: 'column', width, minHeight: 73, alignItems: 'center' }}>
 
-					<div style={{ flex: 0.8, flexDirection: 'column', justifyContent: 'space-between', marginTop: 5 }}>
+					<div style={{ alignItems: 'center', justifyContent: 'space-between', width: width-20, marginTop: 5, marginBottom: 5 }}>
 						{
 							item.nickname ?
-							<p style={{ color: mainTextColor, fontSize: 13, marginLeft: 10, marginRight: 3, minHeight: 30, overflowWrap: 'anywhere' }} className="text-bold">
+							<p style={{ color: mainTextColor, fontSize: 13, marginRight: 3, width: '100%', overflowWrap: 'anywhere' }} className="text-bold">
 								<span style={{ fontSize: 13 }}>{item.name}</span> {item.nickname}
 							</p>
 							:
-							<p style={{ color: mainTextColor, fontSize: 14, marginLeft: 10, minHeight: 30 }} className="text-bold">
+							<p style={{ color: mainTextColor, fontSize: 14, marginRight: 3, width: '100%' }} className="text-bold">
 								{item.name}
 							</p>
 						}
 
-						<div style={{ alignItems: 'center', marginLeft: 10, height: 28 }}>
-							<p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
-								level
-							</p>
-
-							<p style={{ color: getColorTextBasedOnLevel(item.level, isDarkmode), fontSize: 17 }} className="text-bold">
-								{item.level}
-							</p>
-						</div>
-
-						{
-							score &&
-							<p style={{ fontSize: 15, color: mainTextColor, marginTop: 3, marginBottom: 5, marginLeft: 10 }}>
-								Rating {score}
-							</p>
-						}
-					</div>
-
-					<div style={{ flex: 0.2, flexDirection: 'column', justifyContent: 'space-between', marginTop: 5, marginRight: 10 }}>
-						<div style={{ width: '100%', alignItems: 'center', justifyContent: 'flex-end', marginBottom: 4 }}>
+						<div style={{ alignItems: 'center', justifyContent: 'flex-end', minHeight: 30 }}>
 							<IoMedalOutline
 								color={mainTextColor}
 								size={20}
@@ -192,6 +201,21 @@ class NftCardTournament extends Component {
 
 							<p style={{ color: mainTextColor, fontSize: 16 }}>
 								{totalMedals}
+							</p>
+						</div>
+
+					</div>
+
+
+					<div style={{ alignItems: 'center', justifyContent: 'space-between', width: width-20, marginBottom: 5 }}>
+
+						<div style={{ alignItems: 'center', height: 28 }}>
+							<p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
+								level
+							</p>
+
+							<p style={{ color: getColorTextBasedOnLevel(item.level, isDarkmode), fontSize: 17 }} className="text-bold">
+								{item.level}
 							</p>
 						</div>
 
@@ -213,7 +237,29 @@ class NftCardTournament extends Component {
 									on="hover"
 								>
 									<div style={{ padding: 5, fontSize: 16, color: "#1d1d1f" }}>
-										{ring.name} : {infoEquipment.bonusesText.join(", ")}
+										{ring.name} : {infoRing.bonusesText.join(", ")}
+									</div>
+								</Popup>
+								: null
+							}
+
+							{
+								pendant ?
+								<Popup
+									trigger={open => (
+										<div style={{ alignItems: 'center' }}>
+											<img
+												src={pendant.url}
+												style={{ width: 32, height: 32 }}
+												alt={`Pendant Equipped: ${pendant.name}`}
+											/>
+										</div>
+									)}
+									position="top center"
+									on="hover"
+								>
+									<div style={{ padding: 5, fontSize: 16, color: "#1d1d1f" }}>
+										{pendant.name} : {infoPendant.bonusesText.join(", ")}
 									</div>
 								</Popup>
 								: null
@@ -242,10 +288,18 @@ class NftCardTournament extends Component {
 								: null
 							}
 
-
 						</div>
 
 					</div>
+
+					{
+						score &&
+						<div style={{ alignItems: 'center', justifyContent: 'space-between', width: width-20, marginBottom: 5 }}>
+							<p style={{ fontSize: 15, color: mainTextColor }}>
+								Rating {score}
+							</p>
+						</div>
+					}
 
 				</div>
 			</a>
