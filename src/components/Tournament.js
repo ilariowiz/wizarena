@@ -39,7 +39,8 @@ class Tournament extends Component {
             matchPair: [],
             userMinted: [],
             potionsEquipped: [],
-            ringsEquipped: []
+            ringsEquipped: [],
+            pendantsEquipped: []
 		}
 	}
 
@@ -122,7 +123,7 @@ class Tournament extends Component {
         const tournamentName = tournament.name.split("_")[0]
 
         this.getAllPotionsEquipped(subscribed, tournamentName)
-        this.getRingsEquipped(subscribed)
+        this.getEquipmentEquipped(subscribed)
 
         const winners = []
         const winners4 = []
@@ -200,20 +201,23 @@ class Tournament extends Component {
         })
     }
 
-    getRingsEquipped(subscribers) {
+    async getEquipmentEquipped(subscribers) {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
         let idnfts = []
+        let idnftsPendants = []
         subscribers.map(i => {
             idnfts.push(i.id)
+            idnftsPendants.push(`${i.id}pendant`)
         })
 
         //console.log(idnfts);
 
-        this.props.getInfoItemEquippedMass(chainId, gasPrice, gasLimit, networkUrl, idnfts, (response) => {
-            //console.log(response);
-            this.setState({ ringsEquipped: response })
-        })
+        const rings = await this.props.getInfoItemEquippedMass(chainId, gasPrice, gasLimit, networkUrl, idnfts)
+
+        const pendants = await this.props.getInfoItemEquippedMass(chainId, gasPrice, gasLimit, networkUrl, idnftsPendants)
+
+        this.setState({ ringsEquipped: rings, pendantsEquipped: pendants })
     }
 
     async loadPair(id) {
@@ -240,7 +244,7 @@ class Tournament extends Component {
     }
 
     renderRow(item, index, width) {
-        const { potionsEquipped, tournament, ringsEquipped } = this.state
+        const { potionsEquipped, tournament, ringsEquipped, pendantsEquipped } = this.state
 
         //per ogni row creiamo un array di GameCard
 		return (
@@ -252,6 +256,7 @@ class Tournament extends Component {
                     width={width}
                     potionsEquipped={potionsEquipped}
                     ringsEquipped={ringsEquipped}
+                    pendantsEquipped={pendantsEquipped}
                     tournamentName={tournament.name.split("_")[0]}
                     tournamentSeason={tournament.season}
                 />
