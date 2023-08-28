@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import getRingBonuses from './GetRingBonuses'
+import getPendantBonus from './GetPendantBonus'
 import '../../css/ItemCard.css'
 
 
@@ -10,7 +11,14 @@ class EquipmentCardForge extends Component {
 
         //console.log(item);
 
-        const infoEquipment = getRingBonuses(item)
+        let infoEquipment;
+
+        if (item.type === "ring") {
+            infoEquipment = getRingBonuses(item)
+        }
+        else if (item.type === "pendant") {
+            infoEquipment = getPendantBonus(item)
+        }
 
         return (
             <button

@@ -8,6 +8,7 @@ import HistoryItemEquipment from './common/HistoryItemEquipment'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import ModalTransfer from './common/ModalTransfer'
 import getRingBonuses from './common/GetRingBonuses'
+import getPendantBonus from './common/GetPendantBonus'
 import getImageUrl from './common/GetImageUrl'
 import ringsRarity from './common/RankRings'
 import getBoxWidth from './common/GetBoxW'
@@ -452,9 +453,17 @@ class ItemEquipment extends Component {
 		const { equipment } = this.state
         const { mainTextColor } = this.props
 
-        let infoEquipment = equipment && equipment.bonus ? getRingBonuses(equipment) : undefined
+        if (!equipment) {
+            return undefined
+        }
 
-        //console.log(infoEquipment);
+        let infoEquipment;
+        if (equipment.type === "ring") {
+            infoEquipment = getRingBonuses(equipment)
+        }
+        else if (equipment.type === "pendant") {
+            infoEquipment = getPendantBonus(equipment)
+        }
 
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>

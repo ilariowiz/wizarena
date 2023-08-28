@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import getRingBonuses from './GetRingBonuses'
+import getPendantBonus from './GetPendantBonus'
 import getImageUrl from './GetImageUrl'
 import '../../css/ItemCard.css'
 
@@ -13,7 +14,15 @@ class EquipmentCard extends Component {
 
         //console.log(item);
 
-        const infoEquipment = item.bonus ? getRingBonuses(item) : undefined
+        let infoEquipment;
+        if (item.bonus) {
+            if (item.type === "ring") {
+                infoEquipment = getRingBonuses(item)
+            }
+            else if (item.type === "pendant") {
+                infoEquipment = getPendantBonus(item)
+            }
+        }
 
         return (
             <a
