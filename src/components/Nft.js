@@ -18,6 +18,7 @@ import HistoryItemNft from './common/HistoryItemNft'
 import OfferItem from './common/OfferItem'
 import getImageUrl from './common/GetImageUrl'
 import getRingBonuses from './common/GetRingBonuses'
+import getPendantBonus from './common/GetPendantBonus'
 import traits_qty from './common/Traits_qty'
 import traits_qty_clerics from './common/Traits_qty_clerics'
 import traits_qty_druids from './common/Traits_qty_druids'
@@ -79,7 +80,8 @@ class Nft extends Component {
 			showModalOffer: false,
 			offerInfoRecap: "",
 			saleValues: {},
-			equipment: {},
+			ring: {},
+			pendant: {},
 			maxStats: undefined,
 			showMedals: false,
 			showFights: false,
@@ -308,13 +310,16 @@ class Nft extends Component {
     }
 
 
-	loadEquipment(idNft) {
+	async loadEquipment(idNft) {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-		this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, idNft, (response) => {
-			//console.log(response);
-			this.setState({ equipment: response })
-		})
+		const ring = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, idNft)
+		//console.log(ring);
+
+		const pendant = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, `${idNft}pendant`)
+		//console.log(pendant);
+
+		this.setState({ ring, pendant })
 	}
 
 
@@ -638,7 +643,7 @@ class Nft extends Component {
 		)
 	}
 
-	renderSpell(item, index) {
+	renderSpell(item, index, numberOfSpells) {
 		const { mainTextColor } = this.props
 		const { nft } = this.state
 		const marginRight = 12
@@ -664,7 +669,7 @@ class Nft extends Component {
 		}
 
 		return (
-			<div key={index} style={{ alignItems: 'flex-end', flexWrap: 'wrap', marginBottom: 30 }}>
+			<div key={index} style={{ alignItems: 'flex-end', flexWrap: 'wrap', marginBottom: numberOfSpells-1 === index ? 10 : 30 }}>
 				<p style={{ color: '#707070', fontSize: 15, marginRight: 5, marginBottom: 1 }}>
 					Name
 				</p>
@@ -950,7 +955,7 @@ class Nft extends Component {
 	}
 
 	renderBtnChallenge(width) {
-		const { nft, equipment } = this.state
+		const { nft, ring, pendant } = this.state
 
 		return (
 			<button
@@ -958,7 +963,8 @@ class Nft extends Component {
 				style={Object.assign({}, styles.btnBuy, { width, marginBottom: 20 })}
 				onClick={() => {
 					let nftCopy = Object.assign({}, nft)
-					nftCopy['equipment'] = equipment
+					nftCopy['ring'] = ring
+					nftCopy['pendant'] = pendant
 					//console.log(nftCopy);
 					this.props.setWizardSfidato(nftCopy)
 					this.props.history.push(`/startchallenge`)
@@ -1395,10 +1401,10 @@ class Nft extends Component {
 	}
 
 	renderStat(title, value) {
-		const { equipment, maxStats } = this.state
+		const { ring, maxStats } = this.state
 		const { mainTextColor } = this.props
 
-		//console.log(equipment);
+		//console.log(ring);
 
 		let fixedValue = value
 
@@ -1443,8 +1449,8 @@ class Nft extends Component {
 			)
 		}
 
-		if (equipment.equipped && equipment.bonus && equipment.bonus.includes(title.toLowerCase())) {
-			const ringBonus = getRingBonuses(equipment)
+		if (ring.equipped && ring.bonus && ring.bonus.includes(title.toLowerCase())) {
+			const ringBonus = getRingBonuses(ring)
 			//console.log(ringBonus);
 			fixedValue = fixedValue + ringBonus.bonusesDict[title.toLowerCase()]
 		}
@@ -1501,7 +1507,7 @@ class Nft extends Component {
     }
 
 	renderBoxStats(width) {
-		const { nft, historyUpgrades, equipment } = this.state
+		const { nft, historyUpgrades } = this.state
 		const { mainTextColor, isDarkmode } = this.props
 
 		let rev = false
@@ -1582,11 +1588,6 @@ class Nft extends Component {
 						: null
 					}
 
-					{
-						equipment && equipment.equipped &&
-						this.renderBoxEquipment(width)
-					}
-
 				</div>
 			</div>
 		)
@@ -1610,7 +1611,7 @@ class Nft extends Component {
 					</p>
 				</div>
 
-				<div style={Object.assign({}, styles.boxTraits, { width, flexDirection: 'column' })}>
+				<div style={Object.assign({}, styles.boxTraits, { width: width-20, flexDirection: 'column' })}>
 					{
 						!nft || !nft.spellbook || (nft && nft.spellbook.length === 0) || !rev ?
 						<p style={{ fontSize: 16, color: this.props.mainTextColor, margin: 15 }}>
@@ -1618,7 +1619,7 @@ class Nft extends Component {
 						</p>
 						:
 						nft && nft.spellbook && nft.spellbook.map((item, index) => {
-							return this.renderSpell(item, index)
+							return this.renderSpell(item, index, nft.spellbook.length)
 						})
 					}
 
@@ -1742,48 +1743,84 @@ class Nft extends Component {
 		)
 	}
 
-
 	renderBoxEquipment(width) {
-		const { equipment } = this.state
+		const { ring, pendant } = this.state
 		const { isDarkmode } = this.props
 
-		const infoEquipment = getRingBonuses(equipment)
-		//console.log(infoEquipment);
+		let infoRing;
+		if (ring && ring.bonus) {
+			infoRing = getRingBonuses(ring)
+		}
 
-		//console.log(equipment);
+		let infoPendant;
+		if (pendant && pendant.equipped) {
+			infoPendant = getPendantBonus(pendant)
+		}
 
 		return (
-			<div style={{ width: width - 20 }}>
-				<div style={Object.assign({}, styles.subBoxEquipment, { backgroundColor: isDarkmode ? "#f4f4f473" : "#f4f4f4" })}>
-					<p style={{ fontSize: 18, color: "#1d1d1f" }}>
+			<div style={Object.assign({}, styles.boxSection, { width })}>
+
+				<div style={{ backgroundColor: isDarkmode ? "#f4f4f433" : '#f4f4f4', width: '100%', borderTopLeftRadius: 2, borderTopRightRadius: 2 }}>
+					<p style={{ marginLeft: 10, marginBottom: 10, marginTop: 10, fontSize: 20, color: 'black' }} className="text-medium">
 						Equipment
 					</p>
-
-					<div style={{ alignItems: 'center' }}>
-						<img
-							src={equipment.url}
-							style={{ width: 90 }}
-							alt="Equipment"
-						/>
-
-						<div style={{ flexDirection: 'column' }}>
-							<p style={{ fontSize: 16, color: "#1d1d1f", marginBottom: 5 }}>
-								#{equipment.id} {equipment.name}
-							</p>
-
-							<p style={{ fontSize: 15, color: "#1d1d1f" }}>
-								{infoEquipment.bonusesText.join(", ")}
-							</p>
-						</div>
-					</div>
 				</div>
+
+				<div style={Object.assign({}, styles.boxHistory, { width })}>
+
+					{
+						infoRing ?
+						<div style={{ alignItems: 'center', backgroundColor: isDarkmode ? "#f4f4f473" : "#f4f4f4", margin: 15, borderRadius: 4 }}>
+							<img
+								src={ring.url}
+								style={{ width: 90 }}
+								alt="Ring"
+							/>
+
+							<div style={{ flexDirection: 'column' }}>
+								<p style={{ fontSize: 16, color: "#1d1d1f", marginBottom: 5 }}>
+									#{ring.id} {ring.name}
+								</p>
+
+								<p style={{ fontSize: 15, color: "#1d1d1f" }}>
+									{infoRing.bonusesText.join(", ")}
+								</p>
+							</div>
+						</div>
+						: null
+					}
+
+					{
+						infoPendant ?
+						<div style={{ alignItems: 'center', backgroundColor: isDarkmode ? "#f4f4f473" : "#f4f4f4", margin: 15, borderRadius: 4 }}>
+							<img
+								src={pendant.url}
+								style={{ width: 90 }}
+								alt="Pendant"
+							/>
+
+							<div style={{ flexDirection: 'column' }}>
+								<p style={{ fontSize: 16, color: "#1d1d1f", marginBottom: 5 }}>
+									#{pendant.id} {pendant.name}
+								</p>
+
+								<p style={{ fontSize: 15, color: "#1d1d1f" }}>
+									{infoPendant.bonusesText.join(", ")}
+								</p>
+							</div>
+						</div>
+						: null
+					}
+
+				</div>
+
 			</div>
 		)
 	}
 
 
 	renderBodySmall() {
-		const { nft, loading, infoBurn } = this.state
+		const { nft, loading, infoBurn, ring, pendant } = this.state
 		const { account } = this.props
 
 		const { boxW, padding } = getBoxWidth(true)
@@ -1905,6 +1942,12 @@ class Nft extends Component {
 
 				{this.renderBoxStats(imageWidth)}
 
+				{
+					(ring && ring.equipped) || (pendant && pendant.equipped) ?
+					this.renderBoxEquipment(imageWidth)
+					: null
+				}
+
 				{this.renderBoxSpellbook(imageWidth)}
 
 				{this.renderBoxProperties(imageWidth)}
@@ -1931,10 +1974,8 @@ class Nft extends Component {
 	}
 
 	renderBodyLarge() {
-		const { nft, loading, infoBurn } = this.state
+		const { nft, loading, infoBurn, ring, pendant } = this.state
 		const { account } = this.props
-
-		//console.log(nft);
 
 		const { boxW, padding } = getBoxWidth(false)
 
@@ -2053,9 +2094,19 @@ class Nft extends Component {
 				<div style={{ width: insideWidth, justifyContent: 'space-between' }}>
 					{this.renderBoxStats((insideWidth/2) - 10)}
 
-					{this.renderBoxSpellbook(insideWidth/2 - 10)}
-
+					{
+						(ring && ring.equipped) || (pendant && pendant.equipped) ?
+						this.renderBoxEquipment(insideWidth/2 - 10)
+						:
+						this.renderBoxSpellbook(insideWidth/2 - 10)
+					}
 				</div>
+
+				{
+					(ring && ring.equipped) || (pendant && pendant.equipped) ?
+					this.renderBoxSpellbook(insideWidth)
+					: null
+				}
 
 				{this.renderBoxProperties(insideWidth)}
 
