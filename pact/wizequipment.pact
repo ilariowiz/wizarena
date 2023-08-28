@@ -264,7 +264,6 @@
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   (defun create-all-equipment (amount:integer type:string)
-      @doc "take a list of multiple wizards, and create each wizard"
       (with-capability (ADMIN)
           (map
               (create-equipment type)
@@ -274,7 +273,6 @@
   )
 
   (defun create-equipment (type:string amount:integer)
-      @doc "take a list of traits, to create a wizard"
       (require-capability (ADMIN))
       (let
           (
@@ -343,9 +341,9 @@
               (mint-start (get-value MINT_START))
               (max-to-mint (get-max-items owner))
               (minted (get-minted owner))
-              (wiza-cost (* (get-wiza-value) 2))
+              (wiza-cost (get-wiza-mint-price))
           )
-          (enforce (= mint-start "1") "the chests are still empty")
+          (enforce (= mint-start "1") "Chests are still empty")
           (enforce (<= (+ equipment-minted amount) equipment-created) "Tried to mint more items then available! Please reduce the amount")
           (enforce (>= (- max-to-mint amount) minted) "Exceed max mint per wallet")
 
@@ -591,7 +589,7 @@
               (dmg (at "damage" data))
               (speed (at "speed" data))
           )
-          (round(+ (+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* dmg 2.67)) (* speed 2.67)))
+          (round(+ (+ (+ (+ (+ hp (* def 4.67)) (* atk 4.67)) (* dmg 2.67)) (* speed 2.67)) 0.000001))
       )
   )
 
@@ -1068,6 +1066,14 @@
   (defun get-wiza-value ()
       36.5464
       ;(free.wiz-dexinfo.get-wiza-value)
+  )
+
+  (defun get-wiza-mint-price ()
+    (let (
+            (mint-price (get-price))
+        )
+        (* mint-price 20)
+    )
   )
 
 )
