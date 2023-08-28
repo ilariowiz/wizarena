@@ -155,57 +155,36 @@ export const getEquipmentVolume = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 	}
 }
 
-export const getInfoItemEquippedMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 125000, networkUrl, idnfts, callback) => {
-	return (dispatch) => {
+export const getInfoItemEquippedMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 125000, networkUrl, idnfts) => {
+	return async (dispatch) => {
 
 		let cmd = {
 			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.get-equipped-fields-for-ids ${JSON.stringify(idnfts)})`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
-		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
-			//console.log(response)
+        const response = await dispatch(readFromContract(cmd, true, networkUrl))
+		//console.log(response);
 
-			if (callback) {
-				callback(response)
-			}
-		})
+		return response
 	}
 }
 
-
-export const getInfoItemEquipped = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3000, networkUrl, idnft, callback) => {
-	return (dispatch) => {
+export const getInfoItemEquipped = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3000, networkUrl, idnft) => {
+	return async (dispatch) => {
 
 		let cmd = {
 			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.get-equipped-fields-for-id "${idnft}")`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
-		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
-			//console.log(response)
+        const response = await dispatch(readFromContract(cmd, true, networkUrl))
+		//console.log(response);
 
-			if (callback) {
-				callback(response)
-			}
-		})
+		return response
 	}
 }
 
-/*
-export const getInfoItemEquipped = async (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3000, networkUrl, idnft, callback) => {
-
-    let cmd = {
-        pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.get-equipped-fields-for-id "${idnft}")`,
-        meta: defaultMeta(chainId, gasPrice, gasLimit)
-    }
-
-    const data = await dispatch(readFromContract(cmd, true, networkUrl))
-
-    console.log(data);
-    return data
-}
-*/
 
 export const getInfoNftEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3000, networkUrl, iditem, callback) => {
 	return (dispatch) => {
