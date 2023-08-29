@@ -1693,9 +1693,6 @@
                 )
             )
         )
-        (with-capability (PRIVATE)
-            (add-xp-to-wallet account (* increase 2))
-        )
     )
 
     (defun buy-upgrades-ap (account:string idnft:string stat:string increase:integer m:module{wiza1-interface-v3})
@@ -1760,9 +1757,6 @@
                     )
                 )
             )
-        )
-        (with-capability (PRIVATE)
-            (add-xp-to-wallet account increase)
         )
     )
 
@@ -2159,11 +2153,6 @@
                         )
                     ]
                 )
-                ; (if
-                ;     (>= buyin 30.0)
-                ;     (map (add-xp-to-wallet-flash-t) wallets)
-                ;     ""
-                ; )
                 (update auto-tournaments tournamentid
                     {
                         "completed":true,
@@ -2173,11 +2162,6 @@
                 )
             )
         )
-    )
-
-    (defun add-xp-to-wallet-flash-t (account:string)
-        (require-capability (PRIVATE))
-        (add-xp-to-wallet account 1)
     )
 
     (defun get-pending-auto-tournaments ()
