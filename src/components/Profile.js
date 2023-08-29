@@ -863,7 +863,7 @@ class Profile extends Component {
 						{this.renderBoxSearchEquip("Damage", ["Ring of Damage +2", "Ring of Damage +4", "Ring of Damage +6", "Ring of Damage +8", "Ring of Damage +10", "Ring of Force", "Ring of Destruction", "Ring of Power"].reverse())}
 						{this.renderBoxSearchEquip("Speed", ["Ring of Speed +2", "Ring of Speed +4", "Ring of Speed +6", "Ring of Speed +8", "Ring of Speed +10", "Ring of Lightning", "Ring of Swift Death", "Ring of Power"].reverse())}
 						{this.renderBoxSearchEquip("Element resistance", ["Acid Resistance", "Dark Resistance", "Earth Resistance","Fire Resistance", "Ice Resistance", "Psycho Resistance", "Spirit Resistance", "Sun Resistance", "Thunder Resistance", "Undead Resistance", "Water Resistance", "Wind Resistance"])}
-						{this.renderBoxSearchEquip("Perk resistance", ["Blind Resistance", "Confuse Resistance", "Fear 2 Resistance", "Freeze Resistance", "Paralyze Resistance", "Poison 3 Resistance", "Shock Resistance"])}
+						{this.renderBoxSearchEquip("Perk resistance", ["Blind Resistance", "Confuse Resistance", "Fear 2 Resistance", "Freeze Resistance", "Paralyze 2 Resistance", "Poison 3 Resistance", "Shock Resistance"])}
 					</div>
 				}
 

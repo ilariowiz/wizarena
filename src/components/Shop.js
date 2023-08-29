@@ -2169,7 +2169,7 @@ class Shop extends Component {
                                 !this.state.loadingEquip && !isMobile &&
                                 <div style={{ width: widthSide, flexDirection: 'column' }}>
                 					{this.renderBoxSearchStat("pendant", "Elements", ["Acid Resistance", "Dark Resistance", "Earth Resistance","Fire Resistance", "Ice Resistance", "Psycho Resistance", "Spirit Resistance", "Sun Resistance", "Thunder Resistance", "Undead Resistance", "Water Resistance", "Wind Resistance"])}
-                                    {this.renderBoxSearchStat("pendant", "Perks", ["Blind Resistance", "Confuse Resistance", "Fear 2 Resistance", "Freeze Resistance", "Paralyze Resistance", "Poison 3 Resistance", "Shock Resistance"])}
+                                    {this.renderBoxSearchStat("pendant", "Perks", ["Blind Resistance", "Confuse Resistance", "Fear 2 Resistance", "Freeze Resistance", "Paralyze 2 Resistance", "Poison 3 Resistance", "Shock Resistance"])}
                 				</div>
                             }
 
