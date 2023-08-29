@@ -7,12 +7,15 @@ import '../../css/ItemCard.css'
 
 const logoWiza = require('../../assets/wzlogo_bg_transparent.png')
 const placeholder = require('../../assets/ring_placeholder.png')
+const placeholderPendant = require('../../assets/pendant_placeholder.png')
 
 class EquipmentCard extends Component {
     render() {
         const { item, history, nftWidth, mainTextColor, isDarkmode } = this.props
 
         //console.log(item);
+
+        let placeh = item.type === "ring" ? placeholder : placeholderPendant
 
         let infoEquipment;
         if (item.bonus) {
@@ -44,7 +47,7 @@ class EquipmentCard extends Component {
                         />
                         :
                         <img
-                            src={placeholder}
+                            src={placeh}
                             style={{ width: 110, marginBottom: 10 }}
                             alt='placeholder'
                         />
