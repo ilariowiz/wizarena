@@ -11,6 +11,7 @@ import getRingBonuses from './common/GetRingBonuses'
 import getPendantBonus from './common/GetPendantBonus'
 import getImageUrl from './common/GetImageUrl'
 import ringsRarity from './common/RankRings'
+import pendantsRarity from './common/RankPendants'
 import getBoxWidth from './common/GetBoxW'
 import { MAIN_NET_ID, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import {
@@ -213,8 +214,16 @@ class ItemEquipment extends Component {
 		const { equipment } = this.state
         const { mainTextColor } = this.props
 
-        const rarity = ringsRarity[equipment.name]
+        let rarity;
+        if (equipment.type === "ring") {
+            rarity = ringsRarity[equipment.name]
+        }
+        else if (equipment.type === "pendant") {
+            rarity = pendantsRarity[equipment.name]
+        }
+
         //console.log(rarity);
+
 		return (
 			<div style={{ flexDirection: 'column', marginBottom }}>
                 <p style={{ color: mainTextColor, fontSize: 22, marginBottom: 5 }} className="text-medium">
