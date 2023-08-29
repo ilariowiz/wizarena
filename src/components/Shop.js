@@ -161,7 +161,7 @@ class Shop extends Component {
                 //console.log(response);
 
                 //rimuoviamo i listed
-                let equipment = response.filter(i => !i.listed)
+                let equipment = response.filter(i => !i.listed && i.bonus)
 
                 let rings = equipment.filter(i => i.type === "ring")
                 let pendants = equipment.filter(i => i.type === "pendant")
