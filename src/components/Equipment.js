@@ -52,7 +52,6 @@ class Equipment extends Component {
 			searchedText: '',
             numberOfChest: 1,
             showModalConnection: false,
-            wizaValue: 0,
             mintStart: false,
             mintPrice: 0,
             maxMintable: 0,
@@ -68,10 +67,9 @@ class Equipment extends Component {
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
         setTimeout(() => {
-            //this.loadWizaValue()
 			this.loadAll()
 			this.getMarketVolume()
-            //this.getInfoMint()
+            this.getInfoMint()
 		}, 500)
 	}
 
@@ -110,15 +108,6 @@ class Equipment extends Component {
 			})
 		}
     }
-
-    loadWizaValue() {
-		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
-
-		this.props.getWizaValue(chainId, gasPrice, gasLimit, networkUrl, (wizaValue) => {
-            console.log(wizaValue);
-            this.setState({ wizaValue })
-        })
-	}
 
     getInfoMint() {
 		const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
@@ -224,9 +213,9 @@ class Equipment extends Component {
 
     buyChest() {
         const { account, chainId, gasPrice, netId } = this.props
-        const { numberOfChest, mintPrice, wizaValue } = this.state
+        const { numberOfChest, mintPrice } = this.state
 
-        const wizaPrice = round(wizaValue * 2) * numberOfChest
+        const wizaPrice = numberOfChest * mintPrice * 20
 
         this.props.updateInfoTransactionModal({
 			transactionToConfirmText: `You will buy ${numberOfChest} ${numberOfChest > 1 ? "chests" : "chest"} for ${numberOfChest*mintPrice} $KDA and ${wizaPrice} $WIZA`,
@@ -405,7 +394,7 @@ class Equipment extends Component {
 	}
 
     renderChestCard(isMobile) {
-        const { numberOfChest, mintStart, mintPrice, wizaValue, maxMintable, minted } = this.state
+        const { numberOfChest, mintStart, mintPrice, maxMintable, minted } = this.state
         const { account, mainTextColor } = this.props
 
         const leftToMint = maxMintable - minted
@@ -485,7 +474,7 @@ class Equipment extends Component {
                             $WIZA
                         </p>
                         <p style={{ fontSize: 15, color: mainTextColor, width: 25, marginRight: isMobile ? 0 : 20 }}>
-                            {numberOfChest * round(wizaValue*2)}
+                            {(numberOfChest * mintPrice * 20)}
                         </p>
                     </div>
                 </div>
@@ -562,7 +551,7 @@ class Equipment extends Component {
 
 		let items = totalMintedItems || 0
 
-        let maxItems = 5400
+        let maxItems = 5254
 
         let pctMinted = items * 100 / maxItems
 
@@ -613,7 +602,7 @@ class Equipment extends Component {
 
 				</div>
 
-                {/*<div style={{ flexWrap: 'wrap', flexDirection: 'column', alignItems: 'center' }}>
+                <div style={{ flexWrap: 'wrap', flexDirection: 'column', alignItems: 'center' }}>
 
                     <p style={{ fontSize: 20, color: mainTextColor, marginBottom: 12 }}>
                         Buy a mystery chest
@@ -625,7 +614,7 @@ class Equipment extends Component {
                         {this.renderProgress()}
                     </div>
 
-                </div>*/}
+                </div>
 
                 <div style={{ flexWrap: 'wrap', alignItems: 'center', justifyContent: isMobile ? 'space-between' : 'space-around', marginBottom: 10, width: boxStatsW }}>
                     {this.renderBoxHeader(`${listed}/${items.toLocaleString()}`, 'Listed', isMobile)}
