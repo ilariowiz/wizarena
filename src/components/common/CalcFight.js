@@ -21,54 +21,69 @@ const fight = (s1, s2, ev, callback) => {
     s1copy['condizione'] = {}
     s2copy['condizione'] = {}
 
-    // S1 RING & PENDANT
-    if ((s1copy.ring && s1copy.ring['bonus']) || s1copy.pendant && s1copy.pendant['bonus']) {
+    let s1hasRing = false
+    let s1hasPendant = false
 
-        let desc = ""
-        if (s1copy.ring) {
-            desc = `${s1copy.name} wear a ${s1copy.ring.name}`
-        }
+    if (s1copy.ring && s1copy.ring.equipped) {
 
-        if (s1copy.pendant) {
-
-            const pendantBonus = getPendantBonus(s1copy.pendant)
-            s1copy['pendantBonus'] = pendantBonus.bonusesDict
-
-            if (desc && desc.length > 0) {
-                desc = `and a ${s1copy.pendant.name}`
-            }
-            // non c'è l'anello
-            else {
-                desc = `${s1copy.name} wear a ${s1copy.pendant.name}`
-            }
-        }
-
-        history.push({ desc, [`hp_${s1copy.id}`]: s1copy.hp, [`hp_${s2copy.id}`]: s2copy.hp })
+        s1hasRing = true
     }
 
-    // S2 RING & PENDANT
-    if ((s2copy.ring && s2copy.ring['bonus']) || s2copy.pendant && s2copy.pendant['bonus']) {
+    if (s1copy.pendant && s1copy.pendant.equipped) {
 
-        let desc = ""
-        if (s2copy.ring) {
-            desc = `${s1copy.name} wear a ${s2copy.ring.name}`
-        }
+        s1hasPendant = true
 
-        if (s2copy.pendant) {
+        const pendantBonus = getPendantBonus(s1copy.pendant)
+        s1copy['pendantBonus'] = pendantBonus.bonusesDict
+    }
 
-            const pendantBonus = getPendantBonus(s2copy.pendant)
-            s2copy['pendantBonus'] = pendantBonus.bonusesDict
+    let desc1;
 
-            if (desc && desc.length > 0) {
-                desc = `and a ${s2copy.pendant.name}`
-            }
-            // non c'è l'anello
-            else {
-                desc = `${s2copy.name} wear a ${s2copy.pendant.name}`
-            }
-        }
+    if (s1hasRing && s1hasPendant) {
+        desc1 = `${s1copy.name} wear a ${s1copy.ring.name} and a ${s1copy.pendant.name}`
+    }
+    else if (s1hasRing && !s1hasPendant) {
+        desc1 = `${s1copy.name} wear a ${s1copy.ring.name}`
+    }
+    else if (!s1hasRing && s1hasPendant) {
+        desc1 = `${s1copy.name} wear a ${s1copy.pendant.name}`
+    }
 
-        history.push({ desc, [`hp_${s1copy.id}`]: s1copy.hp, [`hp_${s2copy.id}`]: s2copy.hp })
+    if (desc1) {
+        history.push({ desc: desc1, [`hp_${s1copy.id}`]: s1copy.hp, [`hp_${s2copy.id}`]: s2copy.hp })
+    }
+
+    /////// PLAYER 2
+    let s2hasRing = false
+    let s2hasPendant = false
+
+    if (s2copy.ring && s2copy.ring.equipped) {
+
+        s2hasRing = true
+    }
+
+    if (s2copy.pendant && s2copy.pendant.equipped) {
+
+        s2hasPendant = true
+
+        const pendantBonus = getPendantBonus(s2copy.pendant)
+        s2copy['pendantBonus'] = pendantBonus.bonusesDict
+    }
+
+    let desc2;
+
+    if (s2hasRing && s2hasPendant) {
+        desc2 = `${s2copy.name} wear a ${s2copy.ring.name} and a ${s2copy.pendant.name}`
+    }
+    else if (s2hasRing && !s2hasPendant) {
+        desc2 = `${s2copy.name} wear a ${s2copy.ring.name}`
+    }
+    else if (!s2hasRing && s2hasPendant) {
+        desc2 = `${s2copy.name} wear a ${s2copy.pendant.name}`
+    }
+
+    if (desc2) {
+        history.push({ desc: desc2, [`hp_${s1copy.id}`]: s1copy.hp, [`hp_${s2copy.id}`]: s2copy.hp })
     }
 
     //console.log(s1copy, s2copy);
