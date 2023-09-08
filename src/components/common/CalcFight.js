@@ -235,7 +235,7 @@ const turno = (attaccante, difensore) => {
             let checkTriggerEvent = Math.floor(Math.random() * 100) + 1; //da 1 a 100
             if (checkTriggerEvent > 50) {
                 isEventActive = true
-                history.push({desc: evento.descriptionOn})
+                history.push({ desc: evento.descriptionOn, [`hp_${attaccante.id}`]: attaccante.hp, [`hp_${difensore.id}`]: difensore.hp })
             }
         }
         // se l'evento è attivo, c'è il 10% che si fermi
@@ -243,7 +243,7 @@ const turno = (attaccante, difensore) => {
             let checkTriggerEvent = Math.floor(Math.random() * 100) + 1; //da 1 a 100
             if (checkTriggerEvent < 10) {
                 isEventActive = false
-                history.push({desc: evento.descriptionOff})
+                history.push({ desc: evento.descriptionOff, [`hp_${attaccante.id}`]: attaccante.hp, [`hp_${difensore.id}`]: difensore.hp })
             }
         }
     }
