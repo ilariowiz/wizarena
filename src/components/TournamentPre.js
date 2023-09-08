@@ -10,6 +10,7 @@ import { AiFillCheckCircle, AiOutlineLock } from 'react-icons/ai'
 import { IoClose } from 'react-icons/io5'
 import Popup from 'reactjs-popup';
 import NftCardChoice from './common/NftCardChoice'
+import NftCardChoiced from './common/NftCardChoiced'
 import ModalSpellbook from './common/ModalSpellbook'
 import CardSingleFightProfile from './common/CardSingleFightProfile'
 import Header from './Header'
@@ -1396,6 +1397,23 @@ class Tournament extends Component {
 		)
 	}
 
+    renderRowChoised(item, index, modalWidth) {
+		const { tournamentSubs, toSubscribe, subscriptionsInfo } = this.state
+
+		return (
+			<NftCardChoiced
+				key={index}
+				item={item}
+				width={230}
+                subscriptionsInfo={subscriptionsInfo}
+				modalWidth={modalWidth}
+                onChangeSpell={() => {
+                    this.setState({ showModalSpellbook: true, wizardToChangeSpell: item })
+                }}
+			/>
+		)
+	}
+
     renderListStat(item, index, statName) {
 		return (
 			<button
@@ -1536,7 +1554,7 @@ class Tournament extends Component {
                         </p>
 
                         <div style={{ marginBottom: 30, flexWrap: 'wrap', justifyContent: 'center' }}>
-                            {yourSubs[0].map((item, index) => this.renderRowChoise(item, index, modalW))}
+                            {yourSubs[0].map((item, index) => this.renderRowChoised(item, index, modalW))}
                         </div>
                     </div>
                 }
