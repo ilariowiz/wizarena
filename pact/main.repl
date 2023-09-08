@@ -1130,7 +1130,7 @@
 
 (free.wiz-arena.get-wallets-xp-1)
 
-(free.wiz-arena.get-wallet-xp "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+;(free.wiz-arena.get-wallet-xp "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
 
 (commit-tx)
 
@@ -1922,6 +1922,22 @@
 }])
 
 (free.wiz-equipment.get-equipment-fields-for-id "0")
+
+(commit-tx)
+
+(begin-tx "SUBSCRIBE to SEASON")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.subscribe-to-lord-season-mass "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "season1" ["0"])
+
+(free.wiz-arena.get-all-subscription-for-season "season1")
 
 (commit-tx)
 

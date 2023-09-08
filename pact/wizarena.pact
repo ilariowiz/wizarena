@@ -39,8 +39,6 @@
     (defconst WIZARDS_OFFERS_COUNT_KEY "wizards-offers-count-key")
     (defconst WIZARDS_OFFERS_BANK:string "wizards-offers-bank" "Account holding offers")
 
-    (defconst BUYIN_PVP "buyin-pvp")
-
     ;tournament in wiza
     (defconst BUYIN_WIZA_KEY "buyin-wiza-key")
     (defconst FEE_TOURNAMENT_WIZA_KEY "fee-tournament-wiza-key")
@@ -59,6 +57,9 @@
 
     (defconst AUTO_TOURNAMENTS_ID "auto-tournaments-id")
     (defconst WIZ_AUTO_TOURNAMENTS_BANK:string "wiz-auto-tournaments-bank" "Account holding auto tournaments buyins")
+
+    (defconst CONQUEST_BUYIN "conquest_buyin")
+    (defconst CONQUEST_OPEN "conquest_open")
 
 ; --------------------------------------------------------------------------
 ; Capabilities
@@ -389,6 +390,11 @@
         damage:integer
     )
 
+    (defschema conquest-schema
+        idnft:string
+        season:string
+    )
+
     (deftable nfts:{nft-main-schema})
     (deftable nfts-market:{nft-listed-schema})
     (deftable creation:{creation-schema})
@@ -423,6 +429,8 @@
 
     (deftable upgrade-spells:{upgrade-spells-schema})
 
+    (deftable conquest-table:{conquest-schema})
+
     ; --------------------------------------------------------------------------
   ; Can only happen once
   ; --------------------------------------------------------------------------
@@ -437,7 +445,6 @@
         (insert values-tournament BUYIN_KEY {"value": 4.0})
         (insert values-tournament FEE_KEY {"value": 7.0})
         (insert values-tournament FEE_TOURNAMENT_KEY {"value": 20.0})
-        (insert values-tournament BUYIN_PVP {"value": 200.0})
 
         (insert values TOURNAMENT_OPEN {"value": "0"})
 
@@ -474,6 +481,9 @@
         (insert counts AUTO_TOURNAMENTS_ID {"count": 0})
         (coin.create-account WIZ_AUTO_TOURNAMENTS_BANK (create-BANK-guard))
         (create-account WIZ_AUTO_TOURNAMENTS_BANK (create-BANK-guard))
+
+        (insert values-tournament CONQUEST_BUYIN {"value": 6.0})
+        (insert values CONQUEST_OPEN {"value": "1"})
     )
 
     (defun insertValuesUpgrade ()
@@ -1509,6 +1519,54 @@
         (update stats idnft {
           "spellSelected": spellSelected
         })
+    )
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;; LORD SEASON ;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (defun subscribe-to-lord-season-mass (address:string season:string subscribers:list)
+        (let (
+                (is-open (get-value CONQUEST_OPEN))
+                (buyin (* (get-value-tournament CONQUEST_BUYIN) (length subscribers)))
+            )
+            (enforce (= is-open "1") "Conquest season registrations are closed")
+            (with-capability (ACCOUNT_GUARD address)
+                (install-capability (coin.TRANSFER address ADMIN_ADDRESS buyin))
+                (coin.transfer address ADMIN_ADDRESS buyin)
+            )
+            (with-capability (PRIVATE)
+                (map
+                    (subscribe-to-lord-season address season)
+                    subscribers
+                )
+            )
+        )
+    )
+
+    (defun subscribe-to-lord-season (address:string season:string idnft:string)
+        (require-capability (PRIVATE))
+        (let (
+                (data-wiz (get-wizard-fields-for-id (str-to-int idnft)))
+            )
+            (enforce (= (at "confirmBurn" data-wiz) false) "You can't subscribe a wizard in burning queue")
+        )
+        (with-default-read conquest-table (+ idnft season)
+            {"idnft": ""}
+            {"idnft":= idnft }
+            (enforce (= (length idnft) 0) "Already subscribed to this season")
+        )
+        (with-capability (OWNER address idnft)
+            (insert conquest-table (+ idnft season) {
+                "season": season,
+                "idnft": idnft
+            })
+        )
+        (add-xp-to-wallet address 5)
+    )
+
+    (defun get-all-subscription-for-season (season:string)
+        (select conquest-table ['idnft] (where "season" (= season)))
     )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2925,6 +2983,8 @@
     (create-table fights-db)
 
     (create-table upgrade-spells)
+
+    (create-table conquest-table)
 
     (initialize)
     (insertValuesUpgrade)
