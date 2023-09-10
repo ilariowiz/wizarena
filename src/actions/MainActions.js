@@ -767,7 +767,7 @@ export const loadUserMintedNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 				})
 
 				//block sono tutti gli oggetti dell'utente
-				let userMintedGasLimit = block.length * 1000
+				let userMintedGasLimit = block.length * 1500
 				dispatch(loadBlockUserMintedNfts(chainId, gasPrice, userMintedGasLimit, networkUrl, block, callback))
 			}
 		})
@@ -1073,7 +1073,7 @@ export const getPotionEquipped = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimi
 	}
 }
 
-export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, pvpWeek, callback) => {
+export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 1800000, networkUrl, pvpWeek, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -1196,6 +1196,21 @@ export const getPvPsubscription = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 				callback(response)
 			}
 		})
+	}
+}
+
+export const getConquestSubscribersIdsPerSeason = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 200000, networkUrl, season) => {
+	return async (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-all-subscription-for-season "${season}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+        const response = await dispatch(readFromContract(cmd, true, networkUrl))
+		//console.log(response);
+
+		return response
 	}
 }
 
@@ -2251,6 +2266,50 @@ export const subscribeToTournamentMassELITE = (chainId, gasPrice = DEFAULT_GAS_P
 		}
 
 		//console.log("subscribeToTournamentMassWIZA", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const subscribeToLords = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, seasonId, list) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.subscribe-to-lord-season-mass "${account.account}" "${seasonId}" ${JSON.stringify(list)})`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
+				[account.account]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		//console.log(caps);
+
+		let gasL = 3000 * list.length
+		if (gasL > 180000) {
+			gasL = 180000
+		}
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit: gasL,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("subscribeToLords", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
