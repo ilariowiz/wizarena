@@ -120,13 +120,13 @@ class Equipment extends Component {
 		})
 
         this.props.getEquipmentMintPrice(chainId, gasPrice, gasLimit, networkUrl, (res) => {
-			//console.log(res);
+		    //console.log(res);
             this.setState({ mintPrice: res })
 		})
 
         if (account && account.account) {
             this.props.getMaxMintable(chainId, gasPrice, gasLimit, networkUrl, account.account, (res) => {
-    			//console.log(res);
+    			console.log(res);
                 if (!res.status) {
                     this.setState({ maxMintable: res })
                 }
@@ -510,7 +510,7 @@ class Equipment extends Component {
                         </button>
 
                         <p style={{ color: mainTextColor, marginTop: 4, fontSize: 14, textAlign: 'center' }}>
-                            You can mint up {leftToMint}
+                            You can mint up to {leftToMint}
                         </p>
                     </div>
                 }
@@ -530,14 +530,18 @@ class Equipment extends Component {
 
                 {
                     account && account.account && !mintStart &&
-                    <div
-                        style={Object.assign({}, styles.btnChoose, { marginRight: isMobile ? 0 : 15 })}
-                        //onClick={() => {
-                        //    this.buyChest()
-                        //}}
-                    >
-                        <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }}>
-                            Mint not started
+                    <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: isMobile ? 0 : 15 }}>
+                        <div
+                            className='btnH'
+                            style={styles.btnChoose}
+                        >
+                            <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }}>
+                                Mint not started
+                            </p>
+                        </div>
+
+                        <p style={{ color: mainTextColor, marginTop: 4, fontSize: 14, textAlign: 'center' }}>
+                            You can mint up to {leftToMint}
                         </p>
                     </div>
                 }
