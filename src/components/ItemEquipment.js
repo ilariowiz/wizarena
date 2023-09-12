@@ -26,6 +26,8 @@ import {
     updateInfoTransactionModal
 } from '../actions'
 
+const placeholderPendant = require('../assets/pendant_placeholder.png')
+
 
 class ItemEquipment extends Component {
 
@@ -152,10 +154,10 @@ class ItemEquipment extends Component {
 			return
 		}
 
-        let saleValues = { id: equipment.id, amount: inputPrice, url: equipment.url, name: equipment.name }
+        let saleValues = { id: equipment.id, amount: inputPrice, url: equipment.url, name: equipment.name || equipment.id }
 
         this.props.updateInfoTransactionModal({
-			transactionToConfirmText: `You will list ${equipment.name} for ${inputPrice} WIZA. Marketplace Fee: 2%`,
+			transactionToConfirmText: `You will list ${equipment.name || equipment.id} for ${inputPrice} WIZA. Marketplace Fee: 2%`,
 			typeModal: 'listequipment',
 			transactionOkText: 'Listing successfully',
             saleValues
@@ -169,7 +171,7 @@ class ItemEquipment extends Component {
 		const { equipment } = this.state;
 		const { account, chainId, gasPrice, netId } = this.props
 
-        let saleValues = { id: equipment.id, url: equipment.url, name: equipment.name }
+        let saleValues = { id: equipment.id, url: equipment.url, name: equipment.name || equipment.id }
 
         this.props.updateInfoTransactionModal({
 			transactionToConfirmText: `You will delist #${equipment.id}`,
@@ -185,12 +187,12 @@ class ItemEquipment extends Component {
 		const { equipment } = this.state
 		const { account, chainId, gasPrice, netId } = this.props
 
-		let saleValues = { id: equipment.id, amount: equipment.price, url: equipment.url, name: equipment.name }
+		let saleValues = { id: equipment.id, amount: equipment.price, url: equipment.url, name: equipment.name || equipment.id }
 
         this.props.updateInfoTransactionModal({
-			transactionToConfirmText: `You will buy ${equipment.name} (you will need WIZA on chain 1)`,
+			transactionToConfirmText: `You will buy ${equipment.name || equipment.id} (you will need WIZA on chain 1)`,
 			typeModal: 'buyequipment',
-			transactionOkText: `You bought ${equipment.name}`,
+			transactionOkText: `You bought ${equipment.name || equipment.id}`,
             saleValues
 		})
 
@@ -218,7 +220,7 @@ class ItemEquipment extends Component {
         if (equipment.type === "ring") {
             rarity = ringsRarity[equipment.name]
         }
-        else if (equipment.type === "pendant") {
+        else if (equipment.type === "pendant" && equipment.name) {
             rarity = pendantsRarity[equipment.name]
         }
 
@@ -227,12 +229,16 @@ class ItemEquipment extends Component {
 		return (
 			<div style={{ flexDirection: 'column', marginBottom }}>
                 <p style={{ color: mainTextColor, fontSize: 22, marginBottom: 5 }} className="text-medium">
-                    #{equipment.id} {equipment.name}
+                    #{equipment.id} {equipment.name || ""}
                 </p>
 
-                <p style={{ color: mainTextColor, fontSize: 16 }}>
-                    1 of {rarity} {rarity > 1 ? "rings" : "ring"}
-                </p>
+                {
+                    rarity &&
+                    <p style={{ color: mainTextColor, fontSize: 16 }}>
+                        1 of {rarity} {rarity > 1 ? `${equipment.type}s` : equipment.type}
+                    </p>
+                }
+
 			</div>
 		)
 	}
@@ -470,7 +476,7 @@ class ItemEquipment extends Component {
         if (equipment.type === "ring") {
             infoEquipment = getRingBonuses(equipment)
         }
-        else if (equipment.type === "pendant") {
+        else if (equipment.type === "pendant" && equipment.bonus) {
             infoEquipment = getPendantBonus(equipment)
         }
 
@@ -606,7 +612,7 @@ class ItemEquipment extends Component {
 
                     <img
                         style={{ width: imageWidth, height: imageWidth }}
-                        src={equipment.url}
+                        src={equipment.url || placeholderPendant}
                         alt={equipment.id}
                     />
 
@@ -712,7 +718,7 @@ class ItemEquipment extends Component {
 
                         <img
                             style={{ width: 220, height: 220, marginBottom: 30 }}
-                            src={equipment.url}
+                            src={equipment.url || placeholderPendant}
                             alt={equipment.id}
                         />
 
