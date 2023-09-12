@@ -4,6 +4,7 @@ import getRingBonuses from './GetRingBonuses'
 import getPendantBonus from './GetPendantBonus'
 import '../../css/ItemCard.css'
 
+const placeholderPendant = require('../../assets/pendant_placeholder.png')
 
 class EquipmentCardForge extends Component {
     render() {
@@ -16,7 +17,7 @@ class EquipmentCardForge extends Component {
         if (item.type === "ring") {
             infoEquipment = getRingBonuses(item)
         }
-        else if (item.type === "pendant") {
+        else if (item.type === "pendant" && item.bonus) {
             infoEquipment = getPendantBonus(item)
         }
 
@@ -27,19 +28,22 @@ class EquipmentCardForge extends Component {
 			>
                 <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center' }}>
                     <img
-                        src={item.url}
+                        src={item.url || placeholderPendant}
                         style={{ width: 90, marginBottom: 10 }}
                         alt="Equipment"
                     />
                 </div>
 
                 <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 10, maxWidth: 180 }}>
-                    #{item.id} {item.name}
+                    #{item.id} {item.name || ""}
                 </p>
 
-                <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 15, maxWidth: 180 }}>
-                    {infoEquipment.bonusesText.join(", ")}
-                </p>
+                {
+                    infoEquipment &&
+                    <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 15, maxWidth: 180 }}>
+                        {infoEquipment.bonusesText.join(", ")}
+                    </p>
+                }
 
             </button>
         )
