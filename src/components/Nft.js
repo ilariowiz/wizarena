@@ -14,6 +14,7 @@ import Header from './Header';
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import ModalTransfer from './common/ModalTransfer'
 import ModalMakeOffer from './common/ModalMakeOffer'
+import ModalSpellbook from './common/ModalSpellbook'
 import HistoryItemNft from './common/HistoryItemNft'
 import OfferItem from './common/OfferItem'
 import getImageUrl from './common/GetImageUrl'
@@ -44,7 +45,8 @@ import {
 	getInfoItemEquipped,
 	updateInfoTransactionModal,
 	setWizardSfidato,
-	getFightPerNfts
+	getFightPerNfts,
+	changeSpellTournament
 } from '../actions'
 import { MAIN_NET_ID, REVEAL_CAP, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -85,7 +87,8 @@ class Nft extends Component {
 			maxStats: undefined,
 			showMedals: false,
 			showFights: false,
-			winRate: 0
+			winRate: 0,
+			showModalSpellbook: false
 		}
 	}
 
@@ -549,6 +552,21 @@ class Nft extends Component {
 
 		this.props.acceptOffer(chainId, gasPrice, 5000, netId, offer.id, nft.id, account)
 	}
+
+	changeSpell(spellSelected) {
+        const { chainId, gasPrice, netId, account } = this.props
+        const { nft } = this.state
+
+        //console.log(wizardToChangeSpell);
+
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will change the spell of #${nft.id}`,
+			typeModal: 'changespell_pvp',
+			transactionOkText: `Spell changed!`,
+		})
+
+		this.props.changeSpellTournament(chainId, gasPrice, 3000, netId, account, nft.id, spellSelected)
+    }
 
 	copyLink() {
 		//console.log(window.location.href)
@@ -1622,8 +1640,22 @@ class Nft extends Component {
 							return this.renderSpell(item, index, nft.spellbook.length)
 						})
 					}
-
 				</div>
+
+				{
+					nft && nft.spellbook && nft.spellbook.length > 1 &&
+					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginBottom: 15, marginTop: 25 }}>
+						<button
+							className="btnH"
+							style={Object.assign({}, styles.btnBuy, { width: 150 })}
+							onClick={() => this.setState({ showModalSpellbook: true })}
+						>
+							<p style={styles.btnBuyText} className="text-medium">
+								Change selected spell
+							</p>
+						</button>
+					</div>
+				}
 
 			</div>
 		)
@@ -2237,6 +2269,21 @@ class Nft extends Component {
 					submitOffer={(amount, duration) => this.submitOffer(amount, duration)}
 				/>
 
+				{
+                    this.state.showModalSpellbook &&
+                    <ModalSpellbook
+                        showModal={this.state.showModalSpellbook}
+                        onCloseModal={() => this.setState({ showModalSpellbook: false })}
+                        width={modalW}
+                        equipment={[this.state.ring]}
+                        stats={this.state.nft}
+                        onSub={(spellSelected) => {
+                            this.changeSpell(spellSelected)
+                            this.setState({ showModalSpellbook: false })
+                        }}
+                    />
+                }
+
 			</div>
 		)
 	}
@@ -2432,5 +2479,6 @@ export default connect(mapStateToProps, {
 	getInfoItemEquipped,
 	updateInfoTransactionModal,
 	setWizardSfidato,
-	getFightPerNfts
+	getFightPerNfts,
+	changeSpellTournament
 })(Nft);

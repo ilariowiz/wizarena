@@ -177,7 +177,7 @@ class ModalSpellbook extends Component {
                         onClick={() => this.props.onSub(this.state.selected)}
                     >
                         <p style={{ color: 'white', fontSize: 15 }} className="text-medium">
-                            Subscribe
+                            Send
                         </p>
                     </button>
 
