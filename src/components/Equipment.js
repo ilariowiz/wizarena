@@ -723,7 +723,7 @@ class Equipment extends Component {
 				<input
 					style={Object.assign({}, styles.inputSearch, { width: widthSearch, color: this.props.mainTextColor, backgroundColor: mainBackgroundColor })}
                     className="text-medium"
-					placeholder='Search by name or id'
+					placeholder='Search by name, id or wallet'
 					value={searchText}
 					onChange={(e) => this.setState({ searchText: e.target.value })}
 				/>
