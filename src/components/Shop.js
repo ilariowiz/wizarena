@@ -653,7 +653,7 @@ class Shop extends Component {
                     #{item.id} {item.name}
                 </p>
 
-                <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10, textAlign: 'center' }}>
+                <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10, textAlign: 'center', marginLeft: 5, marginRight: 5 }}>
                     {bonuses.join(", ")}
                 </p>
 
