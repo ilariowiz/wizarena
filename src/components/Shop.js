@@ -2183,7 +2183,7 @@ class Shop extends Component {
                                 :
                                 <div style={{ alignItems: 'flex-start', flexDirection: 'column' }}>
                                     <p style={{ fontSize: 16, color: mainTextColor }}>
-                                        No pendat available
+                                        No pendant available
                                     </p>
                                 </div>
                             }
