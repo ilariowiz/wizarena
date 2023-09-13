@@ -147,21 +147,40 @@ class NftCardStake extends Component {
 
 					<div style={{ width: '100%', flexDirection: 'column', justifyContent: 'center' }}>
 
-                        {
-                            item.medals &&
+
+                        <div style={{ alignItems: 'center' }}>
+                            {
+                                item.medals &&
+                                <div style={{ alignItems: 'center', marginLeft: 10, marginBottom: 5 }}>
+
+                                    <p style={{ color: mainTextColor, fontSize: 16, lineHeight: 1, marginRight: 3 }} className="text-medium">
+                                        {this.calcMedals()}
+                                    </p>
+
+                                    <IoMedalOutline
+                                        color={mainTextColor}
+                                        size={16}
+                                        style={{ marginRight: 10 }}
+                                    />
+
+                                    <p style={{ color: mainTextColor, fontSize: 16, lineHeight: 1 }}>
+                                        |
+                                    </p>
+                                </div>
+                            }
+
                             <div style={{ alignItems: 'center', marginLeft: 10, marginBottom: 5 }}>
 
-                                <IoMedalOutline
-                                    color={mainTextColor}
-                                    size={18}
-                                    style={{ marginRight: 8 }}
-                                />
+                                <p style={{ color: mainTextColor, fontSize: 16, lineHeight: 1, marginRight: 3 }} className="text-medium">
+                                    {item.ap.int}
+                                </p>
 
-                                <p style={{ color: mainTextColor, fontSize: 16, lineHeight: 1 }} className="text-medium">
-                                    {this.calcMedals()}
+                                <p style={{ color: mainTextColor, fontSize: 16, lineHeight: 1 }}>
+                                    AP
                                 </p>
                             </div>
-                        }
+
+                        </div>
 
                         {
                             item.level &&
