@@ -126,7 +126,7 @@ class Equipment extends Component {
 
         if (account && account.account) {
             this.props.getMaxMintable(chainId, gasPrice, gasLimit, networkUrl, account.account, (res) => {
-    			console.log(res);
+    			//console.log(res);
                 if (!res.status) {
                     this.setState({ maxMintable: res })
                 }
@@ -352,6 +352,37 @@ class Equipment extends Component {
         }
 
 		let result = allItems.filter(i => i.name.toLowerCase().includes(searchText.toLowerCase()))
+
+        //se nel nome non c'è sto cercando per id
+        if (result.length === 0) {
+            result = allItems.filter(i => i.id === searchText)
+        }
+
+        //se anche nell'id non c'è allora cerchiamo per wallet
+        if (result.length === 0) {
+            result = allItems.filter(i => i.owner === searchText)
+        }
+
+		//this.props.storeFiltersStatsEquip(undefined)
+        this.loadBlock(0)
+		this.setState({ loading: false, itemsToShow: result, searchedText: searchText })
+	}
+
+    searchByList(statDisplay) {
+		const { allItems } = this.props
+		const { searchText } = this.state
+
+        if (!searchText) {
+            return
+        }
+
+        let result = []
+        if (statDisplay === "Type") {
+            result = allItems.filter(i => i.type.toLowerCase() === searchText.toLowerCase())
+        }
+        else {
+            result = allItems.filter(i => i.name.toLowerCase().includes(searchText.toLowerCase()))
+        }
 
         if (result.length === 0) {
             result = allItems.filter(i => i.id === searchText)
@@ -781,7 +812,7 @@ class Equipment extends Component {
 		)
 	}
 
-    renderListStat(item, index) {
+    renderListStat(item, index, statDisplay) {
 		return (
 			<button
 				key={index}
@@ -789,7 +820,7 @@ class Equipment extends Component {
 				onClick={() => {
 					this.listPopup.close()
                     this.setState({ searchText: item, showFilters: false }, () => {
-                        this.searchByName()
+                        this.searchByList(statDisplay)
                     })
 				}}
 			>
@@ -809,6 +840,8 @@ class Equipment extends Component {
                 {this.renderBoxSearchStat("Attack", ["Ring of Attack +1", "Ring of Attack +2", "Ring of Attack +3", "Ring of Attack +4", "Ring of Attack +5", "Ring of Accuracy", "Ring of Destruction", "Ring of Swift Death", "Ring of Power"].reverse())}
                 {this.renderBoxSearchStat("Damage", ["Ring of Damage +2", "Ring of Damage +4", "Ring of Damage +6", "Ring of Damage +8", "Ring of Damage +10", "Ring of Force", "Ring of Destruction", "Ring of Power"].reverse())}
                 {this.renderBoxSearchStat("Speed", ["Ring of Speed +2", "Ring of Speed +4", "Ring of Speed +6", "Ring of Speed +8", "Ring of Speed +10", "Ring of Lightning", "Ring of Swift Death", "Ring of Power"].reverse())}
+                {this.renderBoxSearchStat("Element resistance", ["Acid Resistance", "Dark Resistance", "Earth Resistance","Fire Resistance", "Ice Resistance", "Psycho Resistance", "Spirit Resistance", "Sun Resistance", "Thunder Resistance", "Undead Resistance", "Water Resistance", "Wind Resistance"])}
+                {this.renderBoxSearchStat("Perk resistance", ["Blind Resistance", "Confuse Resistance", "Fear 2 Resistance", "Freeze Resistance", "Paralyze 2 Resistance", "Poison 3 Resistance", "Shock Resistance"])}
             </div>
         )
     }
@@ -831,7 +864,7 @@ class Equipment extends Component {
 			>
 				<div style={{ flexDirection: 'column', paddingTop: 10 }}>
 					{list.map((item, index) => {
-						return this.renderListStat(item, index)
+						return this.renderListStat(item, index, statDisplay)
 					})}
 				</div>
 			</Popup>
