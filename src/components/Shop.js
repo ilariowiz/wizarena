@@ -179,7 +179,7 @@ class Shop extends Component {
                             rings = rings.filter(i => !i.equipped)
                         }
 
-                        const equippedPendant = rings.find(i => i.equippedToId === wizard.id && i.type === "pendant")
+                        const equippedPendant = pendants.find(i => i.equippedToId === wizard.id && i.type === "pendant")
                         if (equippedPendant) {
                             //mostriamo solo quello equippato
                             pendants = [equippedPendant]
@@ -636,7 +636,7 @@ class Shop extends Component {
 
         const wizard = this.getWizardSelected()
 
-        const isEquipped = item.equippedToId === wizard.id
+        let isEquipped = item.equippedToId === wizard.id
 
         return (
             <div
