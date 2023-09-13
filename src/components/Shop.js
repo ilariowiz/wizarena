@@ -624,7 +624,7 @@ class Shop extends Component {
             }
             else {
                 if (b[1] === 'res') {
-                    btext = `70-90% resistant to ${b[0]}`
+                    btext = `75-90% resistant to ${b[0]}`
                 }
                 else {
                     btext = `Fixed resistance of ${b[0]} against ${b[1]}`
