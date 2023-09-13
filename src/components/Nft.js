@@ -1643,7 +1643,7 @@ class Nft extends Component {
 				</div>
 
 				{
-					nft && nft.spellbook && nft.spellbook.length > 1 && nft.owner === account.account &&
+					nft && nft.spellbook && nft.spellbook.length > 1 && account && nft.owner === account.account &&
 					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginBottom: 15, marginTop: 25 }}>
 						<button
 							className="btnH"
