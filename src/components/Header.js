@@ -509,7 +509,7 @@ class Header extends Component {
 		const { showPopupMenu } = this.state
 		const { mainTextColor, mainBackgroundColor } = this.props
 
-		const panelWidth = isMobile ? "70%" : "42%"
+		const panelWidth = isMobile ? "90%" : "50%"
 
 		return (
 			<div style={styles.panelShadow}>
@@ -543,7 +543,7 @@ class Header extends Component {
 
 					</div>
 
-					<div style={{ width: "80%", flexDirection: 'row', marginLeft: isMobile ? 15 : 30, flexWrap: 'wrap' }}>
+					<div style={{ width: "100%", flexDirection: 'row', flexWrap: 'wrap' }}>
 					{
 						this.renderPlayMenu()
 					}
@@ -557,48 +557,77 @@ class Header extends Component {
 		const { isDarkmode } = this.props
 
 		return (
-			<div style={{ flexDirection: "column", flexWrap: 'wrap' }}>
+			<div style={{ flexDirection: "column", flexWrap: 'wrap', width: '100%' }}>
 
-				{this.renderBtnMenu(
-					'pvp',
-					isDarkmode ? pvp_icon_night : pvp_icon,
-					"PvP",
-					99,
-					16)
-				}
+				<div style={Object.assign({}, styles.boxGradient, { backgroundImage: `linear-gradient(to right, #3a3aaf, transparent)` })}>
 
-				{this.renderBtnMenu(
-					'pve',
-					isDarkmode ? pvp_icon_night : pvp_icon,
-					"PvE (FREE Beta)",
-					99,
-					16)
-				}
+					{this.renderBtnMenuPlay(
+						'lords',
+						profile_icon_night,
+						"Lords of Wizards World",
+						99,
+						17)
+					}
+				</div>
 
-				{this.renderBtnMenu(
-					'flashtournaments',
-					isDarkmode ? flash_icon_night : flash_icon,
-					"Flash Tournaments",
-					99,
-					16)
-				}
+				<div style={Object.assign({}, styles.boxGradient, { backgroundImage: `linear-gradient(to right, #6a36bf, transparent)` })}>
 
-				{this.renderBtnMenu(
-					'tournaments',
-					isDarkmode ? tournaments_icon_night : tournaments_icon,
-					"Weekly Tournaments",
-					99,
-					16)
-				}
+					{this.renderBtnMenuPlay(
+						'challenges',
+						challenges_icon_night,
+						"Challenges",
+						99,
+						17)
+					}
+				</div>
 
+				<div style={Object.assign({}, styles.boxGradient, { backgroundImage: `linear-gradient(to right, #b33a78, transparent)` })}>
 
-				{this.renderBtnMenu(
-					'challenges',
-					isDarkmode ? challenges_icon_night : challenges_icon,
-					"Challenges",
-					99,
-					16)
-				}
+					{this.renderBtnMenuPlay(
+						'pvp',
+						pvp_icon_night,
+						"PvP",
+						99,
+						17)
+					}
+
+				</div>
+
+				<div style={Object.assign({}, styles.boxGradient, { backgroundImage: `linear-gradient(to right, #d6863e, transparent)` })}>
+
+					{this.renderBtnMenuPlay(
+						'pve',
+						pvp_icon_night,
+						"PvE (FREE Beta)",
+						99,
+						17)
+					}
+
+				</div>
+
+				<div style={Object.assign({}, styles.boxGradient, { backgroundImage: `linear-gradient(to right, #b99642, transparent)` })}>
+					{this.renderBtnMenuPlay(
+						'flashtournaments',
+						flash_icon_night,
+						"Flash Tournaments",
+						99,
+						17)
+					}
+
+				</div>
+
+				<div style={Object.assign({}, styles.boxGradient, { backgroundImage: `linear-gradient(to right, #b35448, transparent)` })}>
+
+					{this.renderBtnMenuPlay(
+						'tournaments',
+						tournaments_icon_night,
+						"Weekly Tournaments",
+						99,
+						17)
+					}
+
+				</div>
+
 			</div>
 		)
 	}
@@ -609,33 +638,6 @@ class Header extends Component {
 		let iconSize = 28
 
 		const className = section === id ? 'text-bold' : 'text-medium'
-
-		if (title.toLowerCase() === "play") {
-			return (
-				<Popup
-					trigger={open => (
-						<div
-							style={styles.boxBtnMenu}
-						>
-							<img
-								style={{ width: iconSize, height: iconSize, marginRight: 5 }}
-								src={icon}
-								alt={title}
-							/>
-							<p style={{ fontSize: 14, color: mainTextColor }} className={className}>
-								{title}
-							</p>
-						</div>
-					)}
-					position="bottom center"
-					on="hover"
-				>
-					<div style={{ width: 200, overflowWrap: "anywhere", padding: 12 }}>
-						{this.renderPlayMenu(false)}
-					</div>
-				</Popup>
-			)
-		}
 
 		return (
 			<a
@@ -652,6 +654,34 @@ class Header extends Component {
 					alt={title}
 				/>
 				<p style={{ fontSize, color: mainTextColor }} className={className}>
+					{title}
+				</p>
+			</a>
+		)
+	}
+
+	renderBtnMenuPlay(goto, icon, title, id, fontSize) {
+		const { section } = this.props
+
+		let iconSize = 28
+
+		const className = section === id ? 'text-bold' : 'text-medium'
+
+		return (
+			<a
+				href={`${window.location.protocol}//${window.location.host}/${goto}`}
+				style={styles.boxBtnMenuPlay}
+				onClick={(e) => {
+					e.preventDefault()
+					this.props.history.replace(`/${goto}`)
+				}}
+			>
+				<img
+					style={{ width: iconSize, height: iconSize, marginRight: 5 }}
+					src={icon}
+					alt={title}
+				/>
+				<p style={{ fontSize, color: "white" }} className={className}>
 					{title}
 				</p>
 			</a>
@@ -1091,6 +1121,23 @@ const styles = {
 		flexDirection: 'row',
 		cursor: 'pointer',
 		padding: 16
+	},
+	boxBtnMenuPlay: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'flex-start',
+		flexDirection: 'row',
+		cursor: 'pointer',
+		height: 30,
+		paddingLeft: 20
+	},
+	boxGradient: {
+		alignItems: 'center',
+		width: '100%',
+		flexWrap: 'wrap',
+		paddingTop: 10,
+		paddingBottom: 10,
+		marginBottom: 20
 	},
 	btnDarkMode: {
 		display: 'flex',

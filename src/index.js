@@ -36,10 +36,11 @@ import DoChallenges from './components/DoChallenges'
 import ChallengeReplay from './components/ChallengeReplay'
 
 //import DoFightTEST from './components/DoFightTEST'
-
 import FlashTournaments from './components/FlashTournaments'
-
 import WalletsXpLeaderboard from './components/WalletsXpLeaderboard'
+
+import Conquest from './components/Conquest'
+import FightsLordReplay from './components/FightsLordReplay'
 
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'
@@ -83,6 +84,8 @@ ReactDOM.render(
             <Route path="/challengereplay/" component={ChallengeReplay} />
             <Route path="/flashtournaments" component={FlashTournaments} />
             <Route path="/walletsxp" component={WalletsXpLeaderboard} />
+            <Route path="/lords" component={Conquest} />
+            <Route path="/lordsfightreplay" component={FightsLordReplay} />
           </Switch>
         </div>
       </BrowserRouter>

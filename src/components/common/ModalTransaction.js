@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { doc, updateDoc, setDoc, increment } from "firebase/firestore";
+import { doc, updateDoc, setDoc, increment, serverTimestamp, collection } from "firebase/firestore";
 import { firebasedb } from '../Firebase';
 import anime from 'animejs/lib/anime.es.js';
 import { IoClose } from 'react-icons/io5'
@@ -80,6 +80,9 @@ class ModalTransaction extends Component {
             const ringToEquipName = info.ringToEquipName || ""
             const nicknameToSet = info.nicknameToSet || ""
 
+			const toSubscribeLords = info.toSubscribeLords || ""
+			const lordsSeasonId = info.lordsSeasonId || ""
+
 			if (typeModal === "subscribe_pvp") {
 				toSubscribePvP.map(i => {
 					const docRef = doc(firebasedb, "pvp_results", `${i.week}_#${i.idnft}`)
@@ -92,6 +95,38 @@ class ModalTransaction extends Component {
 			else if (typeModal === "increment_fight_pvp") {
 				const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_${nameNft}`)
 				updateDoc(docRef, {"maxFights": increment(wizaAmount) })
+			}
+			else if (typeModal === "subscribe_lords") {
+				toSubscribeLords.map(i => {
+					const startingElo = 500
+
+			        const initialDoc = {
+			            idnft: i,
+			            fightsDone: 0,
+			            lastFightTime: serverTimestamp(),
+			            eloSitenor: startingElo,
+			            oldeloSitenor: startingElo,
+			            eloDruggorial: startingElo,
+			            oldeloDruggorial: startingElo,
+			            eloVedrenon: startingElo,
+			            oldeloVedrenon: startingElo,
+			            eloOceorah: startingElo,
+			            oldeloOceorah: startingElo,
+			            eloOpherus: startingElo,
+			            oldeloOpherus: startingElo,
+			            eloUlidalar: startingElo,
+			            oldeloUlidalar: startingElo,
+			            eloWastiaxus: startingElo,
+			            oldeloWastiaxus: startingElo,
+			            eloUlanara: startingElo,
+			            oldeloUlanara: startingElo,
+			            eloBremonon: startingElo,
+			            oldeloBremonon: startingElo
+			        }
+
+			        const docRef = doc(collection(firebasedb, lordsSeasonId))
+			        setDoc(docRef, initialDoc)	
+				})
 			}
 			else if (typeModal === "upgrade" && nameNft && statToUpgrade && howMuchIncrement) {
                 const msg = `${nameNft} upgrade ${statToUpgrade.toUpperCase()} by ${howMuchIncrement}`
