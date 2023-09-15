@@ -194,19 +194,22 @@ class Conquest extends Component {
         ////// TEST
         //subscribersId = ["396", "777", "2121", "2022", "1455", "183", "2999"]
 
+        let onlySubsIds = []
+        subscribersId.map(i => {
+            onlySubsIds.push(i.idnft)
+        })
+
         let yourSubs = []
         let notSubbed = []
 
         userMintedNfts.map(i => {
 
-            subscribersId.map(z => {
-                if (z.idnft === i.id) {
-                    yourSubs.push(i)
-                }
-                else {
-                    notSubbed.push(i)
-                }
-            })
+            if (onlySubsIds.includes(i.id)) {
+                yourSubs.push(i)
+            }
+            else {
+                notSubbed.push(i)
+            }
         })
 
         //console.log(yourSubs);
