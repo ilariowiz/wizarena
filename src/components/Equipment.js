@@ -637,7 +637,7 @@ class Equipment extends Component {
 
 				</div>
 
-                <div style={{ flexWrap: 'wrap', flexDirection: 'column', alignItems: 'center' }}>
+                {/*<div style={{ flexWrap: 'wrap', flexDirection: 'column', alignItems: 'center' }}>
 
                     <p style={{ fontSize: 20, color: mainTextColor, marginBottom: 12 }}>
                         Buy a mystery chest
@@ -649,7 +649,7 @@ class Equipment extends Component {
                         {this.renderProgress()}
                     </div>
 
-                </div>
+                </div>*/}
 
                 <div style={{ flexWrap: 'wrap', alignItems: 'center', justifyContent: isMobile ? 'space-between' : 'space-around', marginBottom: 10, width: boxStatsW }}>
                     {this.renderBoxHeader(`${listed}/${items.toLocaleString()}`, 'Listed', isMobile)}
