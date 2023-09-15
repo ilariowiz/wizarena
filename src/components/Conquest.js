@@ -198,12 +198,15 @@ class Conquest extends Component {
         let notSubbed = []
 
         userMintedNfts.map(i => {
-            if (subscribersId.includes(i.id)) {
-                yourSubs.push(i)
-            }
-            else {
-                notSubbed.push(i)
-            }
+
+            subscribersId.map(z => {
+                if (z.idnft === i.id) {
+                    yourSubs.push(i)
+                }
+                else {
+                    notSubbed.push(i)
+                }
+            })
         })
 
         //console.log(yourSubs);
@@ -811,14 +814,14 @@ class Conquest extends Component {
         const { loadingYourChampion } = this.state
 
         return (
-            <div style={styles.yourSubCard} key={index}>
+            <div style={Object.assign({}, styles.yourSubCard, { maxWidth: 120 })} key={index}>
                 <img
                     style={{ width: 120, height: 120, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
                     src={getImageUrl(item.id)}
                     alt={`#${item.id}`}
                 />
 
-                <p style={{ color: mainTextColor, fontSize: 16, marginTop: 10, marginBottom: 10 }}>
+                <p style={{ color: mainTextColor, fontSize: 16, marginTop: 10, marginBottom: 10, textAlign: 'center', paddingLeft: 3, paddingRight: 3 }}>
                     {item.name} {item.nickname || ""}
                 </p>
 
@@ -1252,7 +1255,8 @@ const styles = {
         borderStyle: 'solid',
         borderColor: '#d7d7d7',
         marginRight: 15,
-        marginBottom: 15
+        marginBottom: 15,
+        justifyContent: 'space-between'
     },
     footerSubscribe: {
 		position: 'sticky',
