@@ -20,7 +20,7 @@ import fight from './common/CalcFight'
 import getNewRating from './common/CalcElo'
 import NftCardChoiceFlashT from './common/NftCardChoiceFlashT'
 import ModalFightConquest from './common/ModalFightConquest'
-import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
+import { MAIN_NET_ID, CTA_COLOR, MAX_LEVEL } from '../actions/types'
 import {
     setNetworkSettings,
     setNetworkUrl,
@@ -204,11 +204,13 @@ class Conquest extends Component {
 
         userMintedNfts.map(i => {
 
-            if (onlySubsIds.includes(i.id)) {
-                yourSubs.push(i)
-            }
-            else {
-                notSubbed.push(i)
+            if (i.level <= MAX_LEVEL) {
+                if (onlySubsIds.includes(i.id)) {
+                    yourSubs.push(i)
+                }
+                else {
+                    notSubbed.push(i)
+                }
             }
         })
 
