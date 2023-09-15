@@ -69,7 +69,7 @@ class Equipment extends Component {
         setTimeout(() => {
 			this.loadAll()
 			this.getMarketVolume()
-            this.getInfoMint()
+            //this.getInfoMint()
 		}, 500)
 	}
 
