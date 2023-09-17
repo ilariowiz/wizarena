@@ -16,7 +16,7 @@ import { CTA_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID, REVEAL_CAP } from '../act
 import "../css/Fight.css"
 
 
-class FightsLordReplay extends Component {
+class FightsReplay extends Component {
     constructor(props) {
         super(props)
 
@@ -72,10 +72,17 @@ class FightsLordReplay extends Component {
 
     async loadFight() {
         const { pathname } = this.props.location;
-		const fightId = pathname.replace('/lordsfightreplay/', '')
+
+        //console.log(pathname.split("/"));
+
+        const paths = pathname.split("/")
+
+		//const fightId = pathname.replace('/fightreplay/', '')
+        const db = paths[2]
+        const fightId = paths[3]
 
         //console.log(fightId);
-        const docRef = doc(firebasedb, this.SEASON_ID_FIGHTS, fightId)
+        const docRef = doc(firebasedb, db, fightId)
 
 		const docSnap = await getDoc(docRef)
 		const data = docSnap.data()
@@ -128,6 +135,25 @@ class FightsLordReplay extends Component {
         }
 
         this.showFight()
+    }
+
+    showResult() {
+        if (this.turnTimeout) {
+            clearTimeout(this.turnTimeout)
+            this.turnTimeout = undefined
+        }
+
+        let historyShow = []
+
+        this.history.map((item, index) => {
+            item['turn'] = index+1
+
+            historyShow.splice(0, 0, item)
+        })
+
+        //console.log(historyShow);
+
+        this.setState({ historyShow, isEnd: true })
     }
 
     getColorHpBar(currentHp, maxHp) {
@@ -346,7 +372,9 @@ class FightsLordReplay extends Component {
                         style={styles.btnOverlay}
                         onClick={() => {
                             if (isEnd) {
-                                this.props.history.replace("/lords")
+                                //this.props.history.replace("/lords")
+                                //console.log(this.props.history);
+                                this.props.history.goBack()
                             }
                             else {
                                 this.nextTurn()
@@ -365,7 +393,7 @@ class FightsLordReplay extends Component {
                             style={styles.btnOverlayTop}
                             onClick={() => {
                                 if (isEnd) {
-                                    this.props.history.replace("/lord")
+                                    this.props.history.goBack()
                                 }
                                 else {
                                     this.showResult()
@@ -453,12 +481,12 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { sfida, chainId, gasPrice, gasLimit, networkUrl, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
+	const { mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { sfida, chainId, gasPrice, gasLimit, networkUrl, mainTextColor, mainBackgroundColor, isDarkmode };
+	return { mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {
     setNetworkSettings,
     setNetworkUrl,
-})(FightsLordReplay)
+})(FightsReplay)
