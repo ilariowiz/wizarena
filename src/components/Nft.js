@@ -806,22 +806,39 @@ class Nft extends Component {
 	renderFight(item, index) {
 		const { nft } = this.state
 
-		//let tournament = item.tournament.split("_")[0]
+		//console.log(item);
+
+		let tournamentName = item.tournament.split("_")[0].replace("t","")
 		let round = item.tournament.split("_")[1]
 
 		const textWinner = item.winner === nft.id ? "Winner" : "Loser"
 		const textWinnerColor = textWinner === "Winner" ? "#1d1d1f" : "#707070"
 
+		//codice per identificare i fights con la struttura vecchia
+		let isOldData = true
+		if (parseInt(tournamentName) > 48 && parseInt(tournamentName) < 1000) {
+			isOldData = false
+		}
+		else if (parseInt(tournamentName) > 1028 && parseInt(tournamentName) < 3000) {
+			isOldData = false
+		}
+		else if (parseInt(tournamentName) > 3013) {
+			isOldData = false
+		}
+
+		const link = !isOldData ?
+					`${window.location.protocol}//${window.location.host}/fightreplay/fights/${item.fightId}`
+					:
+					`${window.location.protocol}//${window.location.host}/fight/${item.fightId}`
+
 		return (
 			<a
-				href={`${window.location.protocol}//${window.location.host}/fight/${item.fightId}`}
+				href={link}
+				target="_blank"
+				rel="noopener noreferrer"
 				className='btnH'
 				style={Object.assign({}, styles.boxSingleTrait, { backgroundColor: "#dfdfdf" })}
 				key={index}
-				onClick={(e) => {
-					e.preventDefault()
-					this.props.history.push(`/fight/${item.fightId}`)
-				}}
 			>
 				<p style={{ color: '#707070', fontSize: 14, marginBottom: 5 }}>
 					Round {round.replace("r", "")}
