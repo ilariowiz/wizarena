@@ -426,7 +426,7 @@ class Conquest extends Component {
             //console.log(wizardSelected);
 
             fight(wizardSelected, response, eventoInfo, async (history, winner) => {
-                console.log(history, winner);
+                //console.log(history, winner);
 
                 /*
                     1- inviare fight a firebase, oltre a history e winner e info player, add seasonId e serverTimestamp (in modo da prenderli dal più recente)
@@ -437,9 +437,7 @@ class Conquest extends Component {
                 */
 
                 // SEND FIGHT to firebase **************
-                let attaccante = wizardSelected.id === winner ? wizardSelected : response
-                let difensore = wizardSelected.id === winner ? response : wizardSelected
-                this.sendFightToFirebase(history, attaccante, difensore)
+                this.sendFightToFirebase(history, wizardSelected, response, winner)
 
                 // **************
 
@@ -487,20 +485,20 @@ class Conquest extends Component {
         })
     }
 
-    sendFightToFirebase(history, attaccante, difensore) {
+    sendFightToFirebase(history, player1, player2, winner) {
 
         const fightObj = {
             actions: history,
-            idnft1: attaccante.id,
-            idnft2: difensore.id,
+            idnft1: player1.id,
+            idnft2: player2.id,
             season: this.SEASON_ID,
-            winner: attaccante.id,
-            info1: attaccante,
-            info2: difensore,
-            hp1: attaccante.hp,
-            hp2: difensore.hp,
+            winner,
+            info1: player1,
+            info2: player2,
+            hp1: player1.hp,
+            hp2: player2.hp,
             timestamp: serverTimestamp(),
-            wizards: [attaccante.id, difensore.id]
+            wizards: [player1.id, player2.id]
         }
 
         const fightRef = doc(collection(firebasedb, this.SEASON_ID_FIGHTS))

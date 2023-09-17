@@ -155,10 +155,7 @@ class DoFight extends Component {
                             //console.log(this.history);
                             //console.log(winner);
 
-                            let attaccante = this.player1.id === winner ? this.player1 : this.player2
-                            let difensore = this.player1.id === winner ? this.player2 : this.player1
-
-                            this.updateFirebase(sfida, attaccante, difensore, this.history, sfida.fightsStart)
+                            this.updateFirebase(sfida, this.player1, this.player2, winner, this.history, sfida.fightsStart)
 
                             this.indexShow = 0
 
@@ -176,11 +173,11 @@ class DoFight extends Component {
 		})
 	}
 
-    async updateFirebase(sfida, attaccante, difensore, history, fightsStart) {
+    async updateFirebase(sfida, player1, player2, winner, history, fightsStart) {
 
         let keyDb = fightsStart ? "pvp_results" : "pvp_training"
 
-        const docRef = doc(firebasedb, keyDb, `${sfida.pvpWeek}_#${attaccante.id}`)
+        const docRef = doc(firebasedb, keyDb, `${sfida.pvpWeek}_#${winner}`)
         try {
             await updateDoc(docRef, {
                 "win": increment(1)
@@ -190,7 +187,9 @@ class DoFight extends Component {
             console.log(error);
         }
 
-        const docRef2 = doc(firebasedb, keyDb, `${sfida.pvpWeek}_#${difensore.id}`)
+        const loser = player1.id === winner ? player2.id : player1.id
+
+        const docRef2 = doc(firebasedb, keyDb, `${sfida.pvpWeek}_#${loser}`)
         try {
             await updateDoc(docRef2, {
                 "lose": increment(1)
@@ -203,14 +202,15 @@ class DoFight extends Component {
         if (fightsStart) {
             const fightObj = {
                 actions: history,
-                idnft1: attaccante.id,
-                idnft2: difensore.id,
+                idnft1: player1.id,
+                idnft2: player2.id,
                 pvpWeek: sfida.pvpWeek,
-                winner: attaccante.id,
-                info1: attaccante,
-                info2: difensore,
+                winner,
+                info1: player1,
+                info2: player2,
                 hp1: this.player1InitialHp,
-                hp2: this.player2InitialHp
+                hp2: this.player2InitialHp,
+                wizards: [player1.id, player2.id]
             }
 
             //console.log(fightObj);
@@ -218,8 +218,6 @@ class DoFight extends Component {
             const fightRef = doc(collection(firebasedb, "fights_pvp"))
             const newDoc = setDoc(fightRef, fightObj)
         }
-
-
     }
 
     showFight() {
