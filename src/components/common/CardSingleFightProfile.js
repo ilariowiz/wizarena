@@ -46,12 +46,12 @@ class CardSingleFightProfile extends Component {
                             </div>
 
                             <a
-                                href={`${window.location.protocol}//${window.location.host}/fight/${item.fightId}`}
+                                href={`${window.location.protocol}//${window.location.host}/fightreplay/fights/${item.fightId}`}
                                 style={styles.btnChoice}
                                 className="btnH"
                                 onClick={(e) => {
                                     this.preventDefault()
-                                    this.props.history.push(`/fight/${item.fightId}`)
+                                    this.props.history.push(`/fightreplay/fights/${item.fightId}`)
                                 }}
                             >
                                 <p style={{ color: 'white', fontSize: 15 }} className="text-medium">
@@ -75,12 +75,12 @@ class CardSingleFightProfile extends Component {
                             </button>
 
                             <a
-                                href={`${window.location.protocol}//${window.location.host}/fight/${item.fightId}`}
+                                href={`${window.location.protocol}//${window.location.host}/fightreplay/fights/${item.fightId}`}
                                 style={styles.btnChoice}
                                 className="btnH"
                                 onClick={(e) => {
                                     this.preventDefault()
-                                    this.props.history.push(`/fight/${item.fightId}`)
+                                    this.props.history.push(`/fightreplay/fights/${item.fightId}`)
                                 }}
                             >
                                 <p style={{ color: 'white', fontSize: 15 }} className="text-medium">
