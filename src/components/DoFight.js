@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
-import { doc, updateDoc, collection, setDoc, increment } from "firebase/firestore";
+import { doc, updateDoc, collection, setDoc, increment, serverTimestamp } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Rainbow from 'rainbowvis.js'
 import fight from './common/CalcFight'
@@ -210,7 +210,8 @@ class DoFight extends Component {
                 info2: player2,
                 hp1: this.player1InitialHp,
                 hp2: this.player2InitialHp,
-                wizards: [player1.id, player2.id]
+                wizards: [player1.id, player2.id],
+                timestamp: serverTimestamp()
             }
 
             //console.log(fightObj);
