@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
-import { doc, updateDoc, collection, getDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Rainbow from 'rainbowvis.js'
 import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
@@ -20,10 +20,6 @@ class FightsReplay extends Component {
     constructor(props) {
         super(props)
 
-        this.SEASON_NAME = ""
-        this.SEASON_ID = ""
-        this.SEASON_ID_FIGHTS = ""
-
         this.player1InitialHp = 0
         this.player2InitialHp = 0
 
@@ -39,7 +35,8 @@ class FightsReplay extends Component {
             loading: true,
             historyShow: [],
             winner: undefined,
-            isEnd: false
+            isEnd: false,
+            showOnlyOne: false
         }
 
         this.player1 = {}
@@ -49,25 +46,9 @@ class FightsReplay extends Component {
     async componentDidMount() {
         document.title = "Fight Replay - Wizards Arena"
 
-        const seasonInfo = await this.loadInfoSeason()
-        this.SEASON_NAME = seasonInfo.seasonName
-        this.SEASON_ID = seasonInfo.seasonId
-        this.SEASON_ID_FIGHTS = seasonInfo.seasonIdFights
-
         setTimeout(() => {
             this.loadFight()
         }, 500)
-    }
-
-    async loadInfoSeason() {
-        const docRef = doc(firebasedb, "season_info", 'main')
-
-		const docSnap = await getDoc(docRef)
-		const data = docSnap.data()
-
-        //console.log(data);
-
-        return data
     }
 
     async loadFight() {
@@ -76,8 +57,6 @@ class FightsReplay extends Component {
         //console.log(pathname.split("/"));
 
         const paths = pathname.split("/")
-
-		//const fightId = pathname.replace('/fightreplay/', '')
         const db = paths[2]
         const fightId = paths[3]
 
@@ -92,17 +71,27 @@ class FightsReplay extends Component {
 
     preloadFight(data) {
         this.player1 = data.info1
-        this.player2 = data.info2
 
-        this.player1InitialHp = data.hp1
-        this.player2InitialHp = data.hp2
+        if (data.info2 && data.info2.id) {
+            this.player2 = data.info2
 
-        this.history = data.actions
+            this.player1InitialHp = data.hp1
+            this.player2InitialHp = data.hp2
 
-        this.setState({ loading: false })
-        setTimeout(() => {
-            this.showFight()
-        }, 500)
+            this.history = data.actions
+
+            this.setState({ loading: false })
+            setTimeout(() => {
+                this.showFight()
+            }, 500)
+        }
+        else {
+            this.setState({ loading: false, showOnlyOne: true })
+            setTimeout(() => {
+                this.showResult()
+            }, 500)
+        }
+
     }
 
     showFight() {
@@ -291,7 +280,8 @@ class FightsReplay extends Component {
     }
 
     renderBody(isMobile) {
-        const { historyShow, loading, isEnd } = this.state
+        const { historyShow, loading, isEnd, showOnlyOne } = this.state
+        const { mainTextColor } = this.props
 
         let { boxW } = getBoxWidth(isMobile)
 
@@ -303,6 +293,34 @@ class FightsReplay extends Component {
             return (
                 <div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30 }}>
                     <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+                </div>
+            )
+        }
+
+        if (showOnlyOne && this.player1 && this.player1.id) {
+            return (
+                <div style={{ flexDirection: 'column', width: boxW, overflowY: 'auto', overflowX: 'hidden', alignItems: 'center' }}>
+
+                    <img
+                        style={{ borderRadius: 4, borderColor: '#d7d7d7', borderStyle: 'solid', borderWidth: 1, width: 200, height: 200, marginBottom: 30 }}
+                    />
+
+                    <p style={{ fontSize: 18, marginBottom: 15, color: TEXT_SECONDARY_COLOR }}>
+                        Actions
+                    </p>
+
+                    <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15 }}>
+                        {historyShow[0].desc}
+                    </p>
+
+                    <p style={{ fontSize: 18, marginTop: 10, marginBottom: 10, color: TEXT_SECONDARY_COLOR }}>
+                        WINNER
+                    </p>
+
+                    <p style={{ fontSize: 22, color: TEXT_SECONDARY_COLOR, marginBottom: 30  }} className="text-bold">
+                        #{this.player1.id}
+                    </p>
+
                 </div>
             )
         }
