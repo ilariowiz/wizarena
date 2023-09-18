@@ -5,6 +5,7 @@ import DotLoader from 'react-spinners/DotLoader';
 import { doc, getDoc } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Rainbow from 'rainbowvis.js'
+import Header from './Header'
 import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
 import {
@@ -394,7 +395,7 @@ class FightsReplay extends Component {
                         onClick={() => {
                             if (isEnd) {
                                 //this.props.history.replace("/lords")
-                                //console.log(this.props.history);
+                                console.log(this.props.history);
                                 this.props.history.goBack()
                             }
                             else {
@@ -432,18 +433,47 @@ class FightsReplay extends Component {
         )
     }
 
+    renderTopHeader(isMobile) {
+		const { account } = this.props
+
+		return (
+			<div>
+				<Header
+					page='nft'
+					section={32}
+					account={account}
+					isMobile={isMobile}
+					history={this.props.history}
+				/>
+			</div>
+		)
+	}
+
     render() {
 		return (
 			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
-				<Media
-					query="(max-width: 600px)"
-					render={() => this.renderBody(true)}
-				/>
+                <Media
+                    query="(max-width: 999px)"
+                    render={() => this.renderTopHeader(true)}
+                />
 
-				<Media
-					query="(min-width: 601px)"
-					render={() => this.renderBody(false)}
-				/>
+                <Media
+                    query="(min-width: 1000px)"
+                    render={() => this.renderTopHeader(false)}
+                />
+
+                <div style={{ alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+
+    				<Media
+    					query="(max-width: 600px)"
+    					render={() => this.renderBody(true)}
+    				/>
+
+    				<Media
+    					query="(min-width: 601px)"
+    					render={() => this.renderBody(false)}
+    				/>
+                </div>
 			</div>
 		)
 	}
@@ -452,7 +482,6 @@ class FightsReplay extends Component {
 const styles = {
 	container: {
 		flexDirection: 'column',
-		alignItems: 'center',
 		position: 'absolute',
 		top: 0,
 		left: 0,
