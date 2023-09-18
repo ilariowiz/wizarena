@@ -1,21 +1,38 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import getImageUrl from './GetImageUrl'
+import moment from 'moment'
 import '../../css/Modal.css'
 import { CTA_COLOR } from '../../actions/types'
 
 
 class ModalFightsFlashTournament extends Component {
 
+	getLinkForReplay(item) {
+		const { tournamentInfo } = this.props
+
+		//console.log(tournamentInfo);
+
+		const completedAt = moment(tournamentInfo.completedAt.timep)
+		const updateDate = moment("18/09/2023 14:00:00", "DD/MM/YYYY HH:mm:ss")
+
+		//console.log(updateDate, completedAt, updateDate > completedAt);
+
+		let link = `${window.location.protocol}//${window.location.host}/fight/${item.fightId}`
+
+		if (updateDate < completedAt) {
+			link = `${window.location.protocol}//${window.location.host}/fightreplay/fights/${item.fightId}`
+		}
+
+		return link
+	}
+
 	renderFight(item, index, showHorizontal, width) {
-		const { mainTextColor, isDarkmode, tournamentInfo } = this.props
+		const { mainTextColor, isDarkmode } = this.props
 
 		const imgWidth = width || 60
 
-		const link = parseInt(tournamentInfo.id) < 1720 ?
-						`${window.location.protocol}//${window.location.host}/fight/${item.fightId}`
-						:
-						`${window.location.protocol}//${window.location.host}/fightreplay/fights/${item.fightId}`
+		const link = this.getLinkForReplay(item)
 
 		return (
 			<a
@@ -60,10 +77,7 @@ class ModalFightsFlashTournament extends Component {
 
 		const imgWidth = width || 40
 
-		const link = parseInt(tournamentInfo.id) < 1720 ?
-						`${window.location.protocol}//${window.location.host}/fight/${item.fightId}`
-						:
-						`${window.location.protocol}//${window.location.host}/fightreplay/fights/${item.fightId}`
+		const link = this.getLinkForReplay(item)
 
 		return (
 			<a
