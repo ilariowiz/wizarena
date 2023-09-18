@@ -83,7 +83,8 @@ class Conquest extends Component {
             showSubscribe: false,
             equipment: [],
             notSubbed: [],
-            toSubscribe: []
+            toSubscribe: [],
+            countSubbedWizards: 0
         }
     }
 
@@ -216,7 +217,7 @@ class Conquest extends Component {
 
         //console.log(yourSubs);
 
-        this.setState({ loadingYourSubs: false, yourSubs, notSubbed })
+        this.setState({ loadingYourSubs: false, yourSubs, notSubbed, countSubbedWizards: subscribersId.length })
 	}
 
     async loadLords(key) {
@@ -949,7 +950,7 @@ class Conquest extends Component {
     }
 
     renderBody(isMobile) {
-        const { loadingYourSubs, loadingChampions, yourSubs, wizardSelected, infoFight, isFightDone, showSubscribe, seasonInfo, notSubbed } = this.state
+        const { loadingYourSubs, loadingChampions, yourSubs, wizardSelected, infoFight, isFightDone, showSubscribe, seasonInfo, notSubbed, countSubbedWizards } = this.state
         const { mainTextColor, mainBackgroundColor } = this.props
 
         const { boxW, modalW, padding } = getBoxWidth(isMobile)
@@ -1071,7 +1072,11 @@ class Conquest extends Component {
                     </button>
                 </div>
 
-                <div style={{ alignItems: 'center', marginBottom: 25 }}>
+                <p style={{ fontSize: 20, color: mainTextColor, marginBottom: 25 }}>
+                    {countSubbedWizards} participating Wizards
+                </p>
+
+                <div style={{ alignItems: 'center', marginBottom: 25, flexWrap: 'wrap' }}>
                     {
                         startSeasonText &&
                         <div style={{ alignItems: 'center', marginRight: 20 }}>
