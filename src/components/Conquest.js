@@ -271,7 +271,17 @@ class Conquest extends Component {
         infoNft['speed'] = infoNft.speed.int
         infoNft['spellSelected'] = allSpells.find(i => i.name === infoNft.spellSelected.name)
 
-        //console.log(infoNft);
+        if (infoNft.ring && infoNft.ring.equipped) {
+            const stats = infoNft.ring.bonus.split(",")
+            //console.log("stats ring 2", stats);
+            stats.map(i => {
+                const infos = i.split("_")
+                //console.log(infos[1], infos[0]);
+                infoNft[infos[1]] += parseInt(infos[0])
+            })
+        }
+
+        console.log(infoNft);
 
         this.setState({ wizardSelectedElos: data, wizardSelected: infoNft, loadingYourChampion: false }, () => {
             this.calcDailyFights()
@@ -413,6 +423,16 @@ class Conquest extends Component {
             response['hp'] = response.hp.int
             response['speed'] = response.speed.int
             response['spellSelected'] = allSpells.find(i => i.name === response.spellSelected.name)
+
+            if (response.ring && response.ring.equipped) {
+                const stats = response.ring.bonus.split(",")
+                //console.log("stats ring 2", stats);
+                stats.map(i => {
+                    const infos = i.split("_")
+                    //console.log(infos[1], infos[0]);
+                    response[infos[1]] += parseInt(infos[0])
+                })
+            }
 
             //console.log(response);
 
