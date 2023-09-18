@@ -33,7 +33,6 @@ import Forge from './components/Forge'
 
 import Challenges from './components/Challenges'
 import DoChallenges from './components/DoChallenges'
-import ChallengeReplay from './components/ChallengeReplay'
 
 //import DoFightTEST from './components/DoFightTEST'
 import FlashTournaments from './components/FlashTournaments'
@@ -81,7 +80,6 @@ ReactDOM.render(
             <Route path="/forge" component={Forge} />
             <Route path="/challenges" component={Challenges} />
             <Route path="/startchallenge" component={DoChallenges} />
-            <Route path="/challengereplay/" component={ChallengeReplay} />
             <Route path="/flashtournaments" component={FlashTournaments} />
             <Route path="/walletsxp" component={WalletsXpLeaderboard} />
             <Route path="/lords" component={Conquest} />
