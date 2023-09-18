@@ -155,6 +155,14 @@ class Challenges extends Component {
     async onShowResult(item) {
         //console.log(item);
 
+        if (parseInt(item.id) < 370) {
+            this.props.history.push(`/fight/${item.fightId}`)
+        }
+        else {
+            this.props.history.push(`/fightreplay/fights_duels/${item.fightId}`)
+        }
+
+        /*
         //lasciamo questo pezzo per supportare i replay vecchi
         if (!item.coin) {
             this.setState({ showModalLoading: true, textModalLoading: "Loading..." })
@@ -179,6 +187,7 @@ class Challenges extends Component {
         else {
             this.props.history.push(`/fight/${item.fightId}`)
         }
+        */
     }
 
     renderChallenges(array, loading, isReceived, isMobile) {

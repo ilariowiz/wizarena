@@ -8,19 +8,22 @@ import { CTA_COLOR } from '../../actions/types'
 class ModalFightsFlashTournament extends Component {
 
 	renderFight(item, index, showHorizontal, width) {
-		const { mainTextColor, isDarkmode } = this.props
+		const { mainTextColor, isDarkmode, tournamentInfo } = this.props
 
 		const imgWidth = width || 60
+
+		const link = parseInt(tournamentInfo.id) < 1720 ?
+						`${window.location.protocol}//${window.location.host}/fight/${item.fightId}`
+						:
+						`${window.location.protocol}//${window.location.host}/fightreplay/fights/${item.fightId}`
 
 		return (
 			<a
 				key={index}
-				href={`${window.location.protocol}//${window.location.host}/fight/${item.fightId}`}
+				href={link}
+				target="_blank"
+				rel="noopener noreferrer"
 				style={Object.assign({}, styles.boxFight, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2", flexDirection: showHorizontal ? 'column' : 'row' })}
-				onClick={(e) => {
-					e.preventDefault()
-					this.props.history.push(`/fight/${item.fightId}`)
-				}}
 			>
 				<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
 					<img
@@ -53,19 +56,22 @@ class ModalFightsFlashTournament extends Component {
 	}
 
 	renderFightMobile(item, index, showHorizontal, width) {
-		const { mainTextColor, isDarkmode } = this.props
+		const { mainTextColor, isDarkmode, tournamentInfo } = this.props
 
 		const imgWidth = width || 40
+
+		const link = parseInt(tournamentInfo.id) < 1720 ?
+						`${window.location.protocol}//${window.location.host}/fight/${item.fightId}`
+						:
+						`${window.location.protocol}//${window.location.host}/fightreplay/fights/${item.fightId}`
 
 		return (
 			<a
 				key={index}
-				href={`${window.location.protocol}//${window.location.host}/fight/${item.fightId}`}
+				href={link}
+				target="_blank"
+				rel="noopener noreferrer"
 				style={Object.assign({}, styles.boxFight, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2", flexDirection: showHorizontal ? 'row' : 'column' })}
-				onClick={(e) => {
-					e.preventDefault()
-					this.props.history.push(`/fight/${item.fightId}`)
-				}}
 			>
 				<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
 					<img
