@@ -372,7 +372,7 @@ class Conquest extends Component {
         // CHECK IF CHAMPION IS DIFFERENT, se hai guardato la pagina per svariati minuti, magari nel frattempo il champion è cambiato e quindi
         // e quindi dobbiamo controllare che stai facendo il fight contro il wizard giusto
         const currentChampion = await this.loadLords(keyElo)
-        //console.log(currentChampion);
+        console.log(currentChampion);
 
         if (currentChampion.idnft !== champion.idnft) {
             //// CAMPIONE CAMBIATO
@@ -444,14 +444,14 @@ class Conquest extends Component {
 
                 //calc ELO ********************
                 const elo1 = wizardSelectedElos[keyElo]
-                const newRanking1 = getNewRating(elo1, champion[keyElo], winner === wizardSelected.id ? 1 : 0)
-                const newRanking2 = getNewRating(champion[keyElo], elo1, winner === champion.idnft ? 1 : 0)
+                const newRanking1 = getNewRating(elo1, currentChampion[keyElo], winner === wizardSelected.id ? 1 : 0)
+                const newRanking2 = getNewRating(currentChampion[keyElo], elo1, winner === champion.idnft ? 1 : 0)
 
                 //console.log(elo1, champion[keyElo]);
                 //console.log(newRanking1, newRanking2);
 
                 const eloIncrement1 = newRanking1 - elo1
-                const eloIncrement2 = newRanking2 - champion[keyElo]
+                const eloIncrement2 = newRanking2 - currentChampion[keyElo]
                 //console.log(eloIncrement1, eloIncrement2);
 
                 //ELO
@@ -460,7 +460,7 @@ class Conquest extends Component {
 
                 // OLD ELO
                 await this.updateOldElo(elo1, `old${keyElo}`, wizardSelectedElos.docId)
-                await this.updateOldElo(champion[keyElo], `old${keyElo}`, champion.docId)
+                await this.updateOldElo(currentChampion[keyElo], `old${keyElo}`, champion.docId)
 
                 //****************************
 
