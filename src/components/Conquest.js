@@ -881,7 +881,7 @@ class Conquest extends Component {
 
                 <a
                     style={Object.assign({}, styles.btnSubscribe, { width: 100, height: 30, cursor: 'pointer' })}
-                    href={`${window.location.protocol}//${window.location.host}/fightreplay/${this.seasonIdFights}/${item.docId}`}
+                    href={`${window.location.protocol}//${window.location.host}/fightreplay/${this.SEASON_ID_FIGHTS}/${item.docId}`}
                     target="_blank"
                     rel="noopener noreferrer"
                 >
