@@ -389,24 +389,35 @@ class FightsReplay extends Component {
                         })
                     }
 
-                    <button
-                        className="btnH"
-                        style={styles.btnOverlay}
-                        onClick={() => {
-                            if (isEnd) {
-                                //this.props.history.replace("/lords")
-                                console.log(this.props.history);
-                                this.props.history.goBack()
-                            }
-                            else {
+                    {
+                        !isEnd &&
+                        <button
+                            className="btnH"
+                            style={styles.btnOverlay}
+                            onClick={() => {
                                 this.nextTurn()
-                            }
-                        }}
-                    >
-                        <p style={{ fontSize: 15, color: 'white' }}>
-                            {isEnd ? "Back" : "Next turn"}
-                        </p>
-                    </button>
+                            }}
+                        >
+                            <p style={{ fontSize: 15, color: 'white' }}>
+                                Next turn
+                            </p>
+                        </button>
+                    }
+
+                    {
+                        isEnd && this.props.history.length > 1 &&
+                        <button
+                            className="btnH"
+                            style={styles.btnOverlay}
+                            onClick={() => {
+                                this.props.history.goBack()
+                            }}
+                        >
+                            <p style={{ fontSize: 15, color: 'white' }}>
+                                Back
+                            </p>
+                        </button>
+                    }
 
                     {
                         !isEnd &&
@@ -414,12 +425,7 @@ class FightsReplay extends Component {
                             className="btnH"
                             style={styles.btnOverlayTop}
                             onClick={() => {
-                                if (isEnd) {
-                                    this.props.history.goBack()
-                                }
-                                else {
-                                    this.showResult()
-                                }
+                                this.showResult()
                             }}
                         >
                             <p style={{ fontSize: 15, color: 'white' }}>
