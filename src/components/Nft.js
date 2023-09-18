@@ -1514,6 +1514,8 @@ class Nft extends Component {
 			}
 		}
 
+		//{max ? `/${max}` : ''}
+
 		return (
 			<div style={{ alignItems: 'center', marginBottom: 10 }}>
 				<p style={styles.textTitleStat}>{title}</p>
@@ -1525,7 +1527,7 @@ class Nft extends Component {
 					</div>
 				}
 
-				<p style={Object.assign({}, styles.textValueStat, { color: mainTextColor })}>{fixedValue}{max ? `/${max}` : ''}</p>
+				<p style={Object.assign({}, styles.textValueStat, { color: mainTextColor })}>{fixedValue}</p>
 			</div>
 		)
 	}
