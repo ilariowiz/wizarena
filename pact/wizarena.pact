@@ -1751,6 +1751,9 @@
                 )
             )
         )
+        (with-capability (PRIVATE)
+            (add-xp-to-wallet account (* increase 2))
+        )
     )
 
     (defun buy-upgrades-ap (account:string idnft:string stat:string increase:integer m:module{wiza1-interface-v3})
@@ -1815,6 +1818,9 @@
                     )
                 )
             )
+        )
+        (with-capability (PRIVATE)
+            (add-xp-to-wallet account increase)
         )
     )
 
