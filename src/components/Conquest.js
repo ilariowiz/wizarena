@@ -914,7 +914,7 @@ class Conquest extends Component {
                         />
                     </a>
 
-                    <p style={{ color: mainTextColor, fontSize: 18, marginTop: 10, marginBottom: 10 }} className="text-medium">
+                    <p style={{ color: mainTextColor, fontSize: 18, marginTop: 10, marginBottom: 10, maxWidth: 220, textAlign: 'center' }} className="text-medium">
                         {wizardSelected.name} {wizardSelected.nickname}
                     </p>
 
