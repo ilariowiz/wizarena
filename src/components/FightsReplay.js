@@ -70,13 +70,16 @@ class FightsReplay extends Component {
     }
 
     preloadFight(data) {
+
+        //console.log(data);
+
         this.player1 = data.info1
 
         if (data.info2 && data.info2.id) {
             this.player2 = data.info2
 
-            this.player1InitialHp = data.hp1
-            this.player2InitialHp = data.hp2
+            this.player1InitialHp = this.player1.hp
+            this.player2InitialHp = this.player2.hp
 
             this.history = data.actions
 
@@ -218,7 +221,7 @@ class FightsReplay extends Component {
 
                 </div>
 
-                {/*<div style={{ alignItems: 'center', flexDirection: 'row', width: innerWidth, justifyContent: 'flex-start', marginTop: 4 }}>
+                <div style={{ alignItems: 'center', flexDirection: 'row', width: innerWidth, justifyContent: 'flex-start', marginTop: 4 }}>
 
                     {
                         item.ring && item.ring.url &&
@@ -240,7 +243,7 @@ class FightsReplay extends Component {
                             </p>
                         }
                     </div>
-                </div>*/}
+                </div>
 
                 <div style={{ position: 'relative', width: innerWidth, height: 15, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', borderRadius: 4, overflow: "hidden", marginTop: 8 }}>
                     <div
