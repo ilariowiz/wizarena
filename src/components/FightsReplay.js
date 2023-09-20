@@ -92,7 +92,7 @@ class FightsReplay extends Component {
 
     preloadFight(data) {
 
-        console.log(data);
+        //console.log(data);
 
         this.player1 = data.info1
 
