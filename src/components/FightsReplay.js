@@ -70,26 +70,6 @@ class FightsReplay extends Component {
         this.preloadFight(data)
     }
 
-    /*
-    reconstructHistory(history, player1id, player1StartingHp, player2id, player2StartingHp) {
-        if (!history[0][`hp_${player1id}`]) {
-            for (var i = 0; i < history.length; i++) {
-                let h = history[i]
-
-                if (i === 0) {
-                    h[`hp_${player1id}`] = player1StartingHp
-                    h[`hp_${player2id}`] = player2StartingHp
-                }
-                else {
-                    if (h.desc(includes("deals"))) {
-
-                    }
-                }
-            }
-        }
-    }
-    */
-
     preloadFight(data) {
 
         //console.log(data);
