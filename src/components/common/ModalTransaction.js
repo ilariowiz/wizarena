@@ -89,7 +89,7 @@ class ModalTransaction extends Component {
 					setDoc(docRef, { "lose": 0, "win": 0, "maxFights": i.wizaAmount, week: i.week })
 
 					const docRefTraining = doc(firebasedb, "pvp_training", `${i.week}_#${i.idnft}`)
-					setDoc(docRefTraining, { "lose": 0, "win": 0 })
+					setDoc(docRefTraining, { "lose": 0, "win": 0, week: i.week })
 				})
 			}
 			else if (typeModal === "increment_fight_pvp") {
