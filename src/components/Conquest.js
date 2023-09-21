@@ -411,7 +411,7 @@ class Conquest extends Component {
         // CHECK IF CHAMPION IS DIFFERENT, se hai guardato la pagina per svariati minuti, magari nel frattempo il champion è cambiato e quindi
         // e quindi dobbiamo controllare che stai facendo il fight contro il wizard giusto
         const currentChampion = await this.loadLords(keyElo)
-        console.log(currentChampion);
+        //console.log(currentChampion);
 
         if (currentChampion.idnft !== champion.idnft) {
             //// CAMPIONE CAMBIATO
