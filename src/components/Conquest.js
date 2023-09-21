@@ -30,7 +30,8 @@ import {
     loadSingleNft,
     loadEquipMinted,
     updateInfoTransactionModal,
-    subscribeToLords
+    subscribeToLords,
+    loadBlockNftsSplit
 } from '../actions'
 import {ReactComponent as VedrenonIcon} from '../assets/regions/svg/vedrenon.svg'
 import {ReactComponent as WastiaxusIcon} from '../assets/regions/svg/wastiaxus.svg'
@@ -84,7 +85,8 @@ class Conquest extends Component {
             equipment: [],
             notSubbed: [],
             toSubscribe: [],
-            countSubbedWizards: 0
+            countSubbedWizards: 0,
+            infoLords: {}
         }
     }
 
@@ -103,9 +105,8 @@ class Conquest extends Component {
 
         setTimeout(() => {
             this.loadMinted()
+            this.loadChampions()
         }, 500)
-
-        this.loadChampions()
 	}
 
     async loadInfoSeason() {
@@ -120,6 +121,7 @@ class Conquest extends Component {
     }
 
     async loadChampions() {
+        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
         this.setState({ loadingChampions: true })
 
@@ -163,8 +165,16 @@ class Conquest extends Component {
         champions['Bremonon'] = bremononChampion
         idsToLoad.push(bremononChampion.idnft)
 
+        const infoLordsArray = await this.props.loadBlockNftsSplit(chainId, gasPrice, gasLimit, networkUrl, idsToLoad)
 
-        this.setState({ champions, loadingChampions: false })
+        const infoLords = {}
+        infoLordsArray.map(i => {
+            infoLords[i.id] = i.nickname ? `#${i.id} ${i.nickname}` : `#${i.id}`
+        })
+
+        //console.log(infoLords);
+
+        this.setState({ champions, loadingChampions: false, infoLords })
     }
 
     loadMinted() {
@@ -657,7 +667,7 @@ class Conquest extends Component {
 
     renderRegion(regionName, regionImage, RegionIcon, keyElo, seasonStarted, seasonEnded) {
 
-        const { wizardSelected, wizardSelectedElos, champions, loadingStartFight, fightsDone } = this.state
+        const { wizardSelected, wizardSelectedElos, champions, loadingStartFight, fightsDone, infoLords } = this.state
         const { mainTextColor } = this.props
 
         const possibleBoosts = this.eventsPerRegion(regionName)
@@ -668,6 +678,8 @@ class Conquest extends Component {
         if (!champion) {
             return undefined
         }
+
+        const championName = infoLords[champion.idnft]
 
         const fightsLeft = 5 - fightsDone
 
@@ -713,8 +725,8 @@ class Conquest extends Component {
 
                 <div style={{ alignItems: 'center', flexDirection: 'column', zIndex: 100 }}>
 
-                    <p style={{ color: mainTextColor, fontSize: 16, textAlign: 'center', marginBottom: 5 }} className="text-bold">
-                        LORD {champion.idnft ? `#${champion.idnft}` : ""}
+                    <p style={{ color: mainTextColor, fontSize: 15, textAlign: 'center', marginBottom: 5, maxWidth: 180, height: 36 }} className="text-bold">
+                        LORD {championName}
                     </p>
 
                     <a
@@ -1317,5 +1329,6 @@ export default connect(mapStateToProps, {
     loadSingleNft,
     loadEquipMinted,
     updateInfoTransactionModal,
-    subscribeToLords
+    subscribeToLords,
+    loadBlockNftsSplit
 })(Conquest)
