@@ -871,7 +871,7 @@ class Conquest extends Component {
 
         //console.log(item);
 
-        const fightsLeft = item.fightsDone ? 5 - item.fightsDone : 0
+        const fightsLeft = 5 - item.fightsDone
 
         return (
             <div style={Object.assign({}, styles.yourSubCard, { maxWidth: 120 })} key={index}>
@@ -886,7 +886,7 @@ class Conquest extends Component {
                 </p>
 
                 <p style={{ color: mainTextColor, fontSize: 15, marginTop: 10, marginBottom: 10, textAlign: 'center', paddingLeft: 3, paddingRight: 3 }}>
-                    Fights left {fightsLeft}
+                    Fights left {fightsLeft || "..."}
                 </p>
 
                 {
