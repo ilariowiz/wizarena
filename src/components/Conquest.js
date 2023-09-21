@@ -225,10 +225,25 @@ class Conquest extends Component {
             }
         })
 
-        //console.log(yourSubs);
-
-        this.setState({ loadingYourSubs: false, yourSubs, notSubbed, countSubbedWizards: subscribersId.length })
+        this.setState({ loadingYourSubs: false, yourSubs, notSubbed, countSubbedWizards: subscribersId.length }, () => {
+            this.loadYourSubsFightsLeft()
+        })
 	}
+
+    loadYourSubsFightsLeft() {
+        const { yourSubs } = this.state
+
+        let newSubs = Object.assign([], yourSubs)
+        //console.log(newSubs);
+        newSubs.map(async (i) => {
+            const data = await this.getElosDataSingleNft(i.id)
+            //console.log(data);
+
+            i['fightsDone'] = data.fightsDone
+
+            this.calcDailyFights(false, data)
+        })
+    }
 
     async loadLords(key) {
         const q = query(collection(firebasedb, this.SEASON_ID), orderBy(key, "desc"), limit(1))
@@ -291,10 +306,10 @@ class Conquest extends Component {
             })
         }
 
-        console.log(infoNft);
+        //console.log(infoNft);
 
         this.setState({ wizardSelectedElos: data, wizardSelected: infoNft, loadingYourChampion: false }, () => {
-            this.calcDailyFights()
+            this.calcDailyFights(true, data)
             this.loadWizardSelectedLastFights(infoNft.id)
         })
     }
@@ -338,16 +353,14 @@ class Conquest extends Component {
         this.props.subscribeToLords(chainId, gasPrice, gasLimit, netId, account, this.SEASON_ID, toSubscribe)
     }
 
-    calcDailyFights() {
-        const { wizardSelectedElos } = this.state
+    calcDailyFights(updateState, wizard) {
+        //console.log(updateState, wizard);
 
-        //console.log(wizardSelectedElos);
-
-        if (!wizardSelectedElos || !wizardSelectedElos.lastFightTime) {
+        if (!wizard || !wizard.lastFightTime) {
             return undefined
         }
 
-        const lastFightTime = moment(wizardSelectedElos.lastFightTime.seconds * 1000)
+        const lastFightTime = moment(wizard.lastFightTime.seconds * 1000)
 
         //console.log(lastFightTime);
 
@@ -355,13 +368,19 @@ class Conquest extends Component {
         //console.log(isSame);
 
         if (!isSame) {
-            const docRef = doc(firebasedb, this.SEASON_ID, wizardSelectedElos.docId)
+            const docRef = doc(firebasedb, this.SEASON_ID, wizard.docId)
             updateDoc(docRef, {"fightsDone": 0, lastFightTime: serverTimestamp() })
 
-            this.setState({ fightsDone: 0 })
+            if (updateState) {
+                this.setState({ fightsDone: 0 })
+            }
+
         }
         else {
-            this.setState({ fightsDone: wizardSelectedElos.fightsDone })
+            if (updateState) {
+                this.setState({ fightsDone: wizard.fightsDone })
+            }
+
         }
     }
 
@@ -506,7 +525,8 @@ class Conquest extends Component {
 
                 setTimeout(() => {
                     this.setState({ wizardSelectedElos: dataElo, isFightDone: true, infoFight: { nft1: wizardSelected, nft2: response, evento: eventoInfo, winner } }, () => {
-                        this.calcDailyFights()
+                        this.calcDailyFights(true, dataElo)
+                        this.loadYourSubsFightsLeft()
                         this.loadWizardSelectedLastFights(wizardSelected.id)
                     })
                 }, 3000)
@@ -849,6 +869,10 @@ class Conquest extends Component {
         const { mainTextColor } = this.props
         const { loadingYourChampion } = this.state
 
+        //console.log(item);
+
+        const fightsLeft = item.fightsDone ? 5 - item.fightsDone : 0
+
         return (
             <div style={Object.assign({}, styles.yourSubCard, { maxWidth: 120 })} key={index}>
                 <img
@@ -859,6 +883,10 @@ class Conquest extends Component {
 
                 <p style={{ color: mainTextColor, fontSize: 16, marginTop: 10, marginBottom: 10, textAlign: 'center', paddingLeft: 3, paddingRight: 3 }}>
                     {item.name} {item.nickname || ""}
+                </p>
+
+                <p style={{ color: mainTextColor, fontSize: 15, marginTop: 10, marginBottom: 10, textAlign: 'center', paddingLeft: 3, paddingRight: 3 }}>
+                    Fights left {fightsLeft}
                 </p>
 
                 {
