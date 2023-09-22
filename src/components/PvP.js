@@ -197,7 +197,7 @@ class PvP extends Component {
             //console.log(doc.data());
             let data = doc.data()
             data['id'] = doc.id.replace(`${week}_#`, "")
-            const fightsLeft = data.maxFights - (data.win + data.lose)
+            const fightsLeft = isTraining ? 9999 : data.maxFights - (data.win + data.lose)
 
             data['fightsLeft'] = fightsLeft
 
@@ -205,10 +205,10 @@ class PvP extends Component {
         })
 
         //console.log(subscribers);
-        this.loadYourSubs(subscribers, dateFightsStart)
+        this.loadYourSubs(subscribers, dateFightsStart, isTraining)
     }
 
-    async loadYourSubs(subs, dateFightsStart) {
+    async loadYourSubs(subs, dateFightsStart, isTraining) {
 
         const { userMintedNfts, chainId, gasPrice, networkUrl } = this.props
 
@@ -231,7 +231,7 @@ class PvP extends Component {
             //console.log(yourSub);
             if (yourSub) {
                 //yourSub["spellSelected"] = y.spellSelected
-                yourSub["rounds"] = i.maxFights
+                yourSub["rounds"] = isTraining ? 9999 : i.maxFights
                 yourSub["fightsLeft"] = i.fightsLeft
                 //console.log(yourSub, i);
                 yourSubs.push(yourSub)
@@ -695,6 +695,7 @@ class PvP extends Component {
         //console.log(item);
 
         const totalFights = item.win + item.lose
+        //console.log(totalFights, item);
 
         const fightsStart = moment().isAfter(pvpFightsStartDate)
         //console.log(fightsStart);
