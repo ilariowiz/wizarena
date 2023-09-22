@@ -159,7 +159,7 @@ class Challenges extends Component {
             this.props.history.push(`/fight/${item.fightId}`)
         }
         else {
-            this.props.history.push(`/fightreplay/fights_duels/${item.fightId}`)
+            this.props.history.push(`/fightreplay/fights/${item.fightId}`)
         }
 
         /*
