@@ -5,7 +5,6 @@ import '../../css/NftCardChoice.css'
 import cardStats from './CardStats'
 import getRingBonuses from './GetRingBonuses'
 import { getColorTextBasedOnLevel } from './CalcLevelWizard'
-import ModalWizaPvP from './ModalWizaPvP'
 import {
     getPvPsubscription
 } from '../../actions'
@@ -20,7 +19,6 @@ class NftCardChoicePvP extends Component {
             loading: true,
             isSubscribed: false,
             subscriptionInfo: {},
-            showModalWizaPvP: false,
             spellSelected: undefined
         }
     }
@@ -155,7 +153,7 @@ class NftCardChoicePvP extends Component {
                             <button
                                 className='btnSubscribe'
                                 style={styles.btnSubscribe}
-                                onClick={() => this.setState({ showModalWizaPvP: true })}
+                                onClick={() => this.onSubscribe(item.spellSelected, 30)}
                             >
                                 <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
                                     Select to subscribe
@@ -209,20 +207,6 @@ class NftCardChoicePvP extends Component {
                     </div>
 
 				</div>
-
-                {
-                    this.state.showModalWizaPvP &&
-                    <ModalWizaPvP
-                        showModal={this.state.showModalWizaPvP}
-                        onCloseModal={() => this.setState({ showModalWizaPvP: false })}
-                        width={this.props.modalWidth}
-                        wizaBalance={this.props.wizaBalance}
-                        callback={(wizaAmount) => {
-                            this.onSubscribe(this.props.item.spellSelected, wizaAmount)
-                            this.setState({ showModalWizaPvP: false })
-                        }}
-                    />
-                }
 
 			</div>
 		)

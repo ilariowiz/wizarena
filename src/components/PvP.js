@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getDoc, doc, updateDoc } from "firebase/firestore";
+import { getDoc, doc, updateDoc, query, collection, where, limit, orderBy, getDocs } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
@@ -33,7 +33,8 @@ import {
     getWizaBalance,
     loadSingleNft,
     loadEquipMinted,
-    updateInfoTransactionModal
+    updateInfoTransactionModal,
+    loadBlockNftsSplit
 } from '../actions'
 import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -65,6 +66,9 @@ class PvP extends Component {
             idNftIncrementFights: "",
             equipment: [],
             toSubscribe: [],
+            replay: {},
+            loadingReplay: false,
+            allSubscribers: []
         }
     }
 
@@ -76,9 +80,23 @@ class PvP extends Component {
 
         setTimeout(() => {
             this.loadMinted()
-			this.loadProfile()
 		}, 500)
 	}
+
+    loadMinted() {
+        const { account, chainId, gasPrice, gasLimit, networkUrl, userMintedNfts } = this.props
+
+        if (account.account) {
+            if (userMintedNfts) {
+                this.loadProfile()
+            }
+            else {
+                this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
+                    this.loadProfile()
+                })
+            }
+        }
+    }
 
     async loadProfile() {
 
@@ -100,22 +118,12 @@ class PvP extends Component {
         }
 	}
 
-    loadMinted() {
-        const { account, chainId, gasPrice, gasLimit, networkUrl, userMintedNfts } = this.props
-
-        if (account.account) {
-            this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account)
-        }
-    }
-
     loadEquip() {
         const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
         if (account && account.account) {
-
 			this.props.loadEquipMinted(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
                 //console.log(response);
-
                 this.setState({ equipment: response })
 			})
 		}
@@ -160,73 +168,6 @@ class PvP extends Component {
         })
     }
 
-    loadInfoPvP(week, dateFightsStart) {
-        const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
-
-        //console.log(dateFightsStart);
-
-        let isTraining = false
-        if (moment() < dateFightsStart) {
-            isTraining = true
-        }
-
-        if (!this.props.subscribersPvP) {
-            this.props.getAllSubscribersPvP(chainId, gasPrice, gasLimit, networkUrl, week, (subs) => {
-                //console.log(subs);
-                //console.log(this.props.userMintedNfts);
-                if (account && account.account) {
-
-                    if (this.props.userMintedNfts && this.props.userMintedNfts.length > 0) {
-                        this.loadYourSubs(this.props.userMintedNfts, subs, dateFightsStart)
-                    }
-                    else {
-                        this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
-
-                            this.loadYourSubs(response, subs, dateFightsStart)
-            			})
-                    }
-                }
-            })
-
-            return
-        }
-
-
-        if (isTraining) {
-            this.props.getAllSubscribersPvP(chainId, gasPrice, gasLimit, networkUrl, week, (subs) => {
-                //console.log(subs);
-                //console.log(this.props.userMintedNfts);
-                if (account && account.account) {
-
-                    if (this.props.userMintedNfts && this.props.userMintedNfts.length > 0) {
-                        this.loadYourSubs(this.props.userMintedNfts, subs, dateFightsStart)
-                    }
-                    else {
-                        this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
-
-                            this.loadYourSubs(response, subs, dateFightsStart)
-            			})
-                    }
-                }
-            })
-        }
-        else {
-            if (account && account.account) {
-
-                if (this.props.userMintedNfts && this.props.userMintedNfts.length > 0) {
-                    this.loadYourSubs(this.props.userMintedNfts, this.props.subscribersPvP, dateFightsStart)
-                }
-                else {
-                    this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
-
-                        this.loadYourSubs(this.props.userMintedNfts, this.props.subscribersPvP, dateFightsStart)
-                    })
-                }
-            }
-        }
-
-    }
-
     loadPvpOpen() {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
@@ -235,22 +176,62 @@ class PvP extends Component {
         })
     }
 
-    loadYourSubs(response, subs, dateFightsStart) {
+    async loadInfoPvP(week, dateFightsStart) {
+        const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+        //console.log(dateFightsStart);
+
+        let isTraining = false
+        let keydb = "pvp_results"
+        if (moment() < dateFightsStart) {
+            isTraining = true
+            keydb = "pvp_training"
+        }
+
+        const q = query(collection(firebasedb, keydb), where("week", "==", week))
+        const querySnapshot = await getDocs(q)
+
+        let subscribers = []
+
+        querySnapshot.forEach(doc => {
+            //console.log(doc.data());
+            let data = doc.data()
+            data['id'] = doc.id.replace(`${week}_#`, "")
+            const fightsLeft = data.maxFights - (data.win + data.lose)
+
+            data['fightsLeft'] = fightsLeft
+
+            subscribers.push(data)
+        })
+
+        //console.log(subscribers);
+        this.loadYourSubs(subscribers, dateFightsStart)
+    }
+
+    async loadYourSubs(subs, dateFightsStart) {
+
+        const { userMintedNfts, chainId, gasPrice, networkUrl } = this.props
+
         let yourSubs = []
         let activeSubs = 0
 
+        //console.log(response, subs);
+
+        let onlySubIds = []
+
         subs.map(i => {
             //console.log(i);
+            onlySubIds.push(i.id)
+
             if (i.fightsLeft && i.fightsLeft > 0) {
                 activeSubs += 1
             }
 
-            const idSub = i.idnft
-
-            let yourSub = response.find(z => z.id === idSub)
+            let yourSub = userMintedNfts.find(z => z.id === i.id)
+            //console.log(yourSub);
             if (yourSub) {
-                yourSub["spellSelected"] = i.spellSelected
-                yourSub["rounds"] = i.rounds.int
+                //yourSub["spellSelected"] = y.spellSelected
+                yourSub["rounds"] = i.maxFights
                 yourSub["fightsLeft"] = i.fightsLeft
                 //console.log(yourSub, i);
                 yourSubs.push(yourSub)
@@ -259,8 +240,16 @@ class PvP extends Component {
         })
         //console.log(yourSubs);
         //console.log(activeSubs);
+        let infoSubs = await this.props.loadBlockNftsSplit(chainId, gasPrice, 1000000, networkUrl, onlySubIds)
+        //console.log(infoSubs);
+        infoSubs.map(i => {
+            const w = subs.find(z => z.id === i.id)
+            if (w) {
+                i['fightsLeft'] = w.fightsLeft
+            }
+        })
 
-        this.setState({ loading: false, yourSubscribers: yourSubs, activeSubs })
+        this.setState({ loading: false, yourSubscribers: yourSubs, activeSubs, allSubscribers: subs, allSubscribersInfo: infoSubs })
     }
 
     subscribe(idNft, spellSelected, wizaAmount) {
@@ -411,9 +400,12 @@ class PvP extends Component {
         this.setState({ yourSubscribersResults: temp })
     }
 
-    async chooseOpponent(item, level) {
-        const { pvpWeek, pvpFightsStartDate } = this.state
-        const { account, subscribersPvP } = this.props
+    async chooseOpponent(item) {
+        const { pvpWeek, pvpFightsStartDate, allSubscribersInfo } = this.state
+        const { account } = this.props
+
+        //console.log(item);
+        //console.log(allSubscribersInfo);
 
         this.setState({ loading: true })
 
@@ -428,8 +420,8 @@ class PvP extends Component {
 
         const fightsStart = moment().isAfter(pvpFightsStartDate)
 
-        let maxL = level+25
-        let minL = level-25
+        let maxL = item.level+25
+        let minL = item.level-25
         let validSubs = []
 
         if (fightsStart) {
@@ -437,7 +429,7 @@ class PvP extends Component {
             const docSnap = await getDoc(docRef)
             let data = docSnap.data()
 
-            //console.log(item);
+            //console.log(data);
 
             //se per caso hai fatto un update rounds ma nel BE non si sono aggiornati, li aggiorniamo e facciamo un refresh della pagina
             if (data && data.maxFights < item.rounds) {
@@ -468,10 +460,10 @@ class PvP extends Component {
             //se vengono dallo stesso account
             // se il livello è compreso tra max e min
             //se ha ancora fights left
-            validSubs = subscribersPvP.filter(i => {
-                return i.idnft !== item.id
-                    && i.address !== account.account
-                    && i.level >= minL && i.level <= maxL
+            validSubs = allSubscribersInfo.filter(i => {
+                return i.id !== item.id
+                    && i.owner !== account.account
+                    && i.level.int >= minL && i.level.int <= maxL
                     && i.fightsLeft > 0
             })
         }
@@ -479,16 +471,14 @@ class PvP extends Component {
             //rimuoviamo se stessi
             //se vengono dallo stesso account
             // se il livello è compreso tra max e min
-            validSubs = subscribersPvP.filter(i => {
-                return i.idnft !== item.id
-                    && i.address !== account.account
-                    && i.level >= minL && i.level <= maxL
+            validSubs = allSubscribersInfo.filter(i => {
+                return i.id !== item.id
+                    && i.owner !== account.account
+                    && i.level.int >= minL && i.level.int <= maxL
             })
         }
 
-
-        //console.log(subs);
-        //return
+        //console.log(validSubs);
 
         if (validSubs.length === 0) {
             this.setState({ loading: false })
@@ -498,31 +488,24 @@ class PvP extends Component {
 
         const idxRandom = Math.floor(Math.random() * validSubs.length) //da 0 a validSubs.length -1
 
+        //console.log(idxRandom);
+
         let opponent = validSubs[idxRandom]
 
         //console.log(opponent);
 
         if (fightsStart) {
-            const docRefOpponent = doc(firebasedb, "pvp_results", `${pvpWeek}_#${opponent.idnft}`)
+            const docRefOpponent = doc(firebasedb, "pvp_results", `${pvpWeek}_#${opponent.id}`)
             const docSnapOppo = await getDoc(docRefOpponent)
             let dataOppo = docSnapOppo.data()
 
+            //console.log(dataOppo);
+            const fightsLeftAggiornato = dataOppo.lose + dataOppo.win
+
             if (dataOppo) {
-
                 //facciamo un refresh per aggiornare i dati sia su FE che su BE
-                if (dataOppo.maxFights < opponent.rounds.int) {
-                    await updateDoc(docRefOpponent, {"maxFights": opponent.rounds.int })
-                    window.location.reload()
-                    return
-                }
-                //vuol dire che il FE non è aggiornato con gli ultimi dati
-                else if (dataOppo.maxFights > opponent.rounds.int) {
-                    window.location.reload()
-                    return
-                }
-
-                const fightsDone = dataOppo.win + dataOppo.lose
-                if (fightsDone >= opponent.rounds.int) {
+                if (dataOppo.maxFights <= fightsLeftAggiornato) {
+                    //await updateDoc(docRefOpponent, {"maxFights": opponent.rounds.int })
                     window.location.reload()
                     return
                 }
@@ -541,6 +524,7 @@ class PvP extends Component {
             pvpWeek: pvpWeek,
             fightsStart
         }
+
         //console.log(sfida);
         //return
 
@@ -549,6 +533,34 @@ class PvP extends Component {
         this.setState({ loading: false }, () => {
             this.props.history.push('/fightpvp')
         })
+    }
+
+    async loadReplay(item) {
+        //console.log(item);
+        this.setState({ loadingReplay: true })
+
+        let q1 = query(collection(firebasedb, "fights_pvp"), where("wizards", "array-contains-any", [item.id]), limit(4), orderBy("timestamp", "desc"))
+        const querySnapshot = await getDocs(q1)
+
+        let fights = []
+
+        querySnapshot.forEach(doc => {
+            //console.log(doc.data());
+
+            let data = doc.data()
+            data['docId'] = doc.id
+
+            //console.log(moment(data.timestamp.seconds * 1000));
+
+            fights.push(data)
+        })
+
+        //console.log(fights);
+
+        let oldReplay = Object.assign({}, this.state.replay)
+        oldReplay[item.id] = fights
+
+        this.setState({ replay: oldReplay, loadingReplay: false })
     }
 
     openPopupChangeSpell(id) {
@@ -617,6 +629,36 @@ class PvP extends Component {
 		)
 	}
 
+    renderReplay(currentWizId, item, index) {
+        const { mainTextColor } = this.props
+
+        //console.log(item);
+
+        const sfidanteId = item.idnft1 === currentWizId ? item.idnft2 : item.idnft1
+
+        //console.log(sfidanteId);
+
+        return (
+            <a
+                href={`${window.location.protocol}//${window.location.host}/fightreplay/fights_pvp/${item.docId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className='btnH'
+                style={{ flexDirection: 'column', alignItems: 'center', borderRadius: 4, marginBottom: 8, marginRight: 8, marginTop: 8 }}
+                key={index}
+            >
+                <img
+                    src={getImageUrl(sfidanteId)}
+                    style={{ width: 70, height: 70, borderRadius: 4, marginBottom: 5 }}
+                />
+
+                <p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center', maxWidth: 70 }}>
+                    #{sfidanteId}
+                </p>
+            </a>
+        )
+    }
+
     getRingEquipped(item) {
 		const { equipment } = this.state
 
@@ -640,7 +682,7 @@ class PvP extends Component {
 
     renderRowSub(item, index, isMobile, maxWidth) {
         //console.log(item);
-        const { pvpFightsStartDate } = this.state
+        const { pvpFightsStartDate, replay, loadingReplay } = this.state
         const { userMintedNfts, mainTextColor, isDarkmode } = this.props
 
         const winRate = this.calcWinRate(item)
@@ -684,141 +726,149 @@ class PvP extends Component {
         return (
             <div
                 key={index}
-                style={Object.assign({}, styles.boxSubscribed, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2", flexDirection: isMobile ? 'column' : 'row', maxWidth: maxWidth - 10, marginRight: isMobile ? 5 : 20 })}
+                style={Object.assign({}, styles.boxSubscribed, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2", maxWidth: maxWidth - 10, marginRight: isMobile ? 5 : 20 })}
             >
-                <img
-                    src={getImageUrl(item.id)}
-                    style={{ width: 100, height: 100, borderRadius: 4, borderColor: '#d7d7d7', borderWidth: 1, borderStyle: 'solid', marginRight: 10, marginBottom: isMobile ? 7 : 0 }}
-                    alt={item.id}
-                />
 
-                <div style={{ flexDirection: 'column', justifyContent: 'space-around', height: '100%' }}>
+                <div style={{ flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'center' : 'start' }}>
+                    <img
+                        src={getImageUrl(item.id)}
+                        style={{ width: 100, height: 100, borderRadius: 4, borderColor: '#d7d7d7', borderWidth: 1, borderStyle: 'solid', marginRight: 10, marginBottom: isMobile ? 7 : 0 }}
+                        alt={item.id}
+                    />
 
-                    <div style={{ alignItems: 'center', marginBottom: 10 }}>
-                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 20, width: 50 }} className="text-medium">
-                            #{item.id}
-                        </p>
+                    <div style={{ flexDirection: 'column', justifyContent: 'space-around', height: '100%' }}>
 
-                        <p style={{ fontSize: 16, color: mainTextColor, width: 170 }}>
-                            Win rate <span className="text-bold">{winRate}%</span>
-                        </p>
-                    </div>
-
-                    <div style={{ alignItems: 'center', marginBottom: 10, minWidth: 283 }}>
-                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 10 }}>
-                            Win <span className="text-bold">{item.win}</span>
-                        </p>
-
-                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 10 }}>
-                            Lose <span className="text-bold">{item.lose}</span>
-                        </p>
-
-                        {
-                            item.rounds && fightsStart &&
-                            <p style={{ fontSize: 16, color: mainTextColor }}>
-                                {totalFights}/{item.rounds} fights
-                            </p>
-                        }
-
-                        {
-                            !fightsStart &&
-                            <p style={{ fontSize: 16, color: mainTextColor }}>
-                                {item.win + item.lose} fights
-                            </p>
-                        }
-                    </div>
-
-                    {
-                        item.level &&
                         <div style={{ alignItems: 'center', marginBottom: 10 }}>
-                            <p style={{ fontSize: 14, color: mainTextColor, marginRight: 7 }}>
-                                Level
+                            <p style={{ fontSize: 16, color: mainTextColor, marginRight: 20, width: 50 }} className="text-medium">
+                                #{item.id}
                             </p>
 
-                            <p style={{ fontSize: 17, color: getColorTextBasedOnLevel(item.level, isDarkmode) }} className="text-bold">
-                                {item.level}
-                            </p>
-                        </div>
-                    }
-
-                    <div style={{ alignItems: 'center', marginBottom: 10, flexWrap: 'wrap' }}>
-                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
-                            HP
-                        </p>
-
-                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
-                            {hp}
-                        </p>
-
-                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
-                            Def
-                        </p>
-
-                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
-                            {def}
-                        </p>
-
-                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
-                            Atk
-                        </p>
-
-                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
-                            {atk + spellSelectedInfo.atkBase}
-                        </p>
-
-                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
-                            Dmg
-                        </p>
-
-                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
-                            {dmg + spellSelectedInfo.dmgBase}
-                        </p>
-
-                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
-                            Speed
-                        </p>
-
-                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
-                            {speed}
-                        </p>
-                    </div>
-
-                    <p style={{ fontSize: 14, color: mainTextColor, marginBottom: 10 }}>
-                        Spell selected: {item.spellSelected.name}
-                    </p>
-
-                    {
-                        this.state.loading ?
-                        <div
-                            style={styles.btnPlay}
-                        >
-                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                Loading...
+                            <p style={{ fontSize: 16, color: mainTextColor, width: 170 }}>
+                                Win rate <span className="text-bold">{winRate}%</span>
                             </p>
                         </div>
-                        :
-                        null
-                    }
 
-                    {
-                        !this.state.loading && !fightsStart &&
-                        <div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: isMobile ? 'space-around' : 'space-between' }}>
-                            <button
-                                className="btnH"
-                                style={Object.assign({}, styles.btnPlay, { marginRight: 10 })}
-                                onClick={() => {
-                                    if (this.state.loading) {
-                                        return
-                                    }
+                        <div style={{ alignItems: 'center', marginBottom: 10, minWidth: 283 }}>
+                            <p style={{ fontSize: 16, color: mainTextColor, marginRight: 10 }}>
+                                Win <span className="text-bold">{item.win}</span>
+                            </p>
 
-                                    this.chooseOpponent(item, item.level)
-                                }}
+                            <p style={{ fontSize: 16, color: mainTextColor, marginRight: 10 }}>
+                                Lose <span className="text-bold">{item.lose}</span>
+                            </p>
+
+                            {
+                                item.rounds && fightsStart &&
+                                <p style={{ fontSize: 16, color: mainTextColor }}>
+                                    {totalFights}/{item.rounds} fights
+                                </p>
+                            }
+
+                            {
+                                !fightsStart &&
+                                <p style={{ fontSize: 16, color: mainTextColor }}>
+                                    {item.win + item.lose} fights
+                                </p>
+                            }
+                        </div>
+
+                        {
+                            item.level &&
+                            <div style={{ alignItems: 'center', marginBottom: 10 }}>
+                                <p style={{ fontSize: 14, color: mainTextColor, marginRight: 7 }}>
+                                    Level
+                                </p>
+
+                                <p style={{ fontSize: 17, color: getColorTextBasedOnLevel(item.level, isDarkmode) }} className="text-bold">
+                                    {item.level}
+                                </p>
+                            </div>
+                        }
+
+                        <div style={{ alignItems: 'center', marginBottom: 10, flexWrap: 'wrap' }}>
+                            <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
+                                HP
+                            </p>
+
+                            <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
+                                {hp}
+                            </p>
+
+                            <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
+                                Def
+                            </p>
+
+                            <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
+                                {def}
+                            </p>
+
+                            <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
+                                Atk
+                            </p>
+
+                            <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
+                                {atk + spellSelectedInfo.atkBase}
+                            </p>
+
+                            <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
+                                Dmg
+                            </p>
+
+                            <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
+                                {dmg + spellSelectedInfo.dmgBase}
+                            </p>
+
+                            <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
+                                Speed
+                            </p>
+
+                            <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
+                                {speed}
+                            </p>
+                        </div>
+
+                        <p style={{ fontSize: 14, color: mainTextColor, marginBottom: 10 }}>
+                            Spell selected: {item.spellSelected.name}
+                        </p>
+
+                        {
+                            this.state.loading ?
+                            <div
+                                style={styles.btnPlay}
                             >
                                 <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                    Training
+                                    Loading...
                                 </p>
-                            </button>
+                            </div>
+                            :
+                            null
+                        }
 
+                    </div>
+
+                </div>
+
+
+                {
+                    !this.state.loading && !loadingReplay && !replay[item.id] ?
+                    <div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', width: '100%' }}>
+                        <button
+                            className="btnH"
+                            style={styles.btnPlay}
+                            onClick={() => {
+                                if (this.state.loading) {
+                                    return
+                                }
+                                this.loadReplay(item)
+                            }}
+                        >
+                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                Last fights
+                            </p>
+                        </button>
+
+                        {
+                            totalFights < item.rounds &&
                             <button
                                 className="btnH"
                                 style={styles.btnPlay}
@@ -826,76 +876,55 @@ class PvP extends Component {
                                     if (this.state.loading) {
                                         return
                                     }
-
-                                    this.openPopupChangeSpell(item.id)
-                                }}
-                            >
-                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                    Change spell
-                                </p>
-                            </button>
-                        </div>
-                    }
-
-                    {
-                        !this.state.loading && totalFights < item.rounds && fightsStart ?
-                        <div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: isMobile ? 'space-around' : 'space-between' }}>
-                            <button
-                                className="btnH"
-                                style={Object.assign({}, styles.btnPlay, { marginRight: 10 })}
-                                onClick={() => {
-                                    if (this.state.loading) {
-                                        return
-                                    }
-
-                                    this.chooseOpponent(item, item.level)
+                                    this.chooseOpponent(item)
                                 }}
                             >
                                 <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
                                     Fight
                                 </p>
                             </button>
+                        }
 
+                        {
+                            fightsStart && totalFights >= item.rounds &&
                             <button
                                 className="btnH"
-                                style={styles.btnPlay}
+                                style={Object.assign({}, styles.btnPlay, { width: 190 })}
                                 onClick={() => {
                                     if (this.state.loading) {
                                         return
                                     }
-
-                                    this.openPopupChangeSpell(item.id)
+                                    this.openPopupIncrementFights(item.id)
                                 }}
                             >
                                 <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                    Change spell
+                                    Increment max fights
                                 </p>
                             </button>
-                        </div>
-                        : null
-                    }
+                        }
+                    </div>
+                    : null
+                }
 
-                    {
-                        !this.state.loading && totalFights >= item.rounds && fightsStart ?
-                        <button
-                            className="btnH"
-                            style={Object.assign({}, styles.btnPlay, { width: 210 })}
-                            onClick={() => {
-                                if (this.state.loading) {
-                                    return
-                                }
-                                this.openPopupIncrementFights(item.id)
-                            }}
-                        >
-                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                Increment max fights
-                            </p>
-                        </button>
-                        : null
-                    }
+                {
+                    loadingReplay &&
+                    <div
+                        style={styles.btnPlay}
+                    >
+                        <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                            Loading...
+                        </p>
+                    </div>
+                }
 
-                </div>
-
+                {
+                    replay[item.id] &&
+                    <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                        {replay[item.id].map((items, index) => {
+                            return this.renderReplay(item.id, items, index)
+                        })}
+                    </div>
+                }
             </div>
         )
     }
@@ -966,8 +995,8 @@ class PvP extends Component {
 	}
 
     renderBody(isMobile) {
-        const { isConnected, showModalConnection, pvpOpen, yourSubscribersResults, error, activeSubs, pvpWeekEnd, pvpFightsStart, pvpFightsStartDate } = this.state
-        const { account, userMintedNfts, mainTextColor, mainBackgroundColor, subscribersPvP } = this.props
+        const { isConnected, showModalConnection, pvpOpen, yourSubscribersResults, error, activeSubs, pvpWeekEnd, pvpFightsStart, pvpFightsStartDate, allSubscribers, loading } = this.state
+        const { account, userMintedNfts, mainTextColor, mainBackgroundColor } = this.props
 
         const { boxW, modalW, padding } = getBoxWidth(isMobile)
 
@@ -1067,11 +1096,11 @@ class PvP extends Component {
 
                     <div style={{  flexDirection: "column", marginLeft: isMobile ? 10 : 50 }}>
                         <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10 }}>
-                            Subscribers {subscribersPvP ? subscribersPvP.length : 0}
+                            Subscribers {allSubscribers.length}
                         </p>
 
                         {
-                            activeSubs && subscribersPvP && subscribersPvP.length > 0 ?
+                            activeSubs && allSubscribers && allSubscribers.length > 0 ?
                             <div style={{ alignItems: 'center' }}>
                                 <p style={{ fontSize: 15, color: mainTextColor, marginRight: 10 }}>
                                     Active subs
@@ -1129,14 +1158,14 @@ class PvP extends Component {
                 <div style={{ width: '100%', height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginBottom: 30 }} />
 
                 {
-                    !fightsStart &&
+                    !fightsStart && !loading &&
                     <p style={{ fontSize: 18, color: mainTextColor, marginBottom: 40 }} className="text-bold">
                         Select the wizard you want to enroll in the PvP Arena
                     </p>
                 }
 
                 {
-                    !fightsStart &&
+                    !fightsStart && !loading &&
                     <div style={{ flexWrap: 'wrap', marginBottom: 30, justifyContent: isMobile ? 'center' : 'flex-start' }}>
                         {
                             sorted && sorted.length > 0 &&
@@ -1288,6 +1317,7 @@ const styles = {
         borderColor: '#d7d7d7',
         borderStyle: 'solid',
         borderRadius: 4,
+        flexDirection: 'column'
     },
     footerSubscribe: {
 		width: '100%',
@@ -1306,9 +1336,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance, userMintedNfts, mainTextColor, mainBackgroundColor, isDarkmode, subscribersPvP } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance, userMintedNfts, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance, userMintedNfts, mainTextColor, mainBackgroundColor, isDarkmode, subscribersPvP };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance, userMintedNfts, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {
@@ -1326,5 +1356,6 @@ export default connect(mapStateToProps, {
     getWizaBalance,
     loadSingleNft,
     loadEquipMinted,
-    updateInfoTransactionModal
+    updateInfoTransactionModal,
+    loadBlockNftsSplit
 })(PvP)
