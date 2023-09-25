@@ -210,7 +210,7 @@ class DoFight extends Component {
 
             //console.log(fightObj);
 
-            const fightRef = doc(collection(firebasedb, "fights_pvp"))
+            const fightRef = doc(collection(firebasedb, "fights_pvp2"))
             const newDoc = setDoc(fightRef, fightObj)
         }
     }

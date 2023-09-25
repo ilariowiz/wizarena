@@ -539,7 +539,7 @@ class PvP extends Component {
         //console.log(item);
         this.setState({ loadingReplay: true })
 
-        let q1 = query(collection(firebasedb, "fights_pvp"), where("wizards", "array-contains-any", [item.id]), limit(4), orderBy("timestamp", "desc"))
+        let q1 = query(collection(firebasedb, "fights_pvp2"), where("wizards", "array-contains-any", [item.id]), limit(4), orderBy("timestamp", "desc"))
         const querySnapshot = await getDocs(q1)
 
         let fights = []
@@ -556,6 +556,7 @@ class PvP extends Component {
         })
 
         //console.log(fights);
+        //console.log(moment(fights[0]['timestamp']['seconds'] * 1000));
 
         let oldReplay = Object.assign({}, this.state.replay)
         oldReplay[item.id] = fights
@@ -640,7 +641,7 @@ class PvP extends Component {
 
         return (
             <a
-                href={`${window.location.protocol}//${window.location.host}/fightreplay/fights_pvp/${item.docId}`}
+                href={`${window.location.protocol}//${window.location.host}/fightreplay/fights_pvp2/${item.docId}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className='btnH'
