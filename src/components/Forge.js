@@ -124,7 +124,11 @@ class Forge extends Component {
                 recipeBook.map(r => {
 
                     if (r.ingredients.includes(item.bonus) && r.ingredients.includes(e.bonus)) {
-                        selectionRing2.push(e)
+
+                        const alreadyIncludes = selectionRing2.find(i => i.id === e.id)
+                        if (!alreadyIncludes) {
+                            selectionRing2.push(e)
+                        }
                     }
                 })
             }
@@ -137,7 +141,11 @@ class Forge extends Component {
     selectRing2(item) {
         const { ring1 } = this.state
 
-        let finalRecipe = recipeBook.find(i => i.ingredients === `${ring1.bonus}_${item.bonus}`)
+        let finalRecipe = recipeBook.find(i => {
+            if (i.ingredients === `${ring1.bonus}_${item.bonus}` || i.ingredients === `${item.bonus}_${ring1.bonus}`) {
+                return i
+            }
+        })
 
         this.setState({ ring2: item, finalRecipe, showModalYourRings: false })
     }
@@ -152,9 +160,9 @@ class Forge extends Component {
 
         //console.log(ring1, finalRecipe);
         this.props.updateInfoTransactionModal({
-            transactionToConfirmText: 'You are about to forge a ring.',
+            transactionToConfirmText: 'You are about to forge a a new powerful item.',
             typeModal: 'forge',
-            transactionOkText: 'Ring forged successfully'
+            transactionOkText: 'Item forged successfully'
         })
 
         this.props.forgeItem(chainId, gasPrice, netId, finalRecipe.ingredients, [ring1.id, ring2.id], account)
@@ -188,7 +196,7 @@ class Forge extends Component {
     }
 
     renderBody(isMobile) {
-        const { loading, error, ring1, ring2, ringIdxSelected, finalRecipe, discount } = this.state
+        const { loading, error, ring1, ring2, ringIdxSelected, finalRecipe, discount, level } = this.state
         const { mainTextColor } = this.props
 
         const { boxW, padding } = getBoxWidth(isMobile)
@@ -196,8 +204,12 @@ class Forge extends Component {
         let imageW = 100
 
         let wizaFee = 0
+        let finalRecipeLevel = 1
         if (finalRecipe) {
             wizaFee = (finalRecipe.wiza - (finalRecipe.wiza * discount / 100))
+            if (finalRecipe.level) {
+                finalRecipeLevel = finalRecipe.level
+            }
         }
 
         return (
@@ -218,19 +230,21 @@ class Forge extends Component {
                             Select a ring and find out what you can combine it with
                         </p>
 
-                        <button
+                        <a
                             style={styles.recipeBookBtn}
-                            onClick={() => this.setState({ showModalRecipe: true })}
+                            href={`${window.location.protocol}//${window.location.host}/recipes`}
+                            target="_blank"
+                            rel="noopener noreferrer"
                         >
                             <img
                                 src={recipe_book}
                                 style={{ width: 60 }}
-                                alt="Recipe Book"
+                                alt="Recipes Book"
                             />
                             <p style={{ fontSize: 13, color: mainTextColor, textAlign: 'center' }}>
-                                Recipe Book
+                                Recipes Book
                             </p>
-                        </button>
+                        </a>
 
                     </div>
 
@@ -353,17 +367,36 @@ class Forge extends Component {
                         }
                     </div>
 
-                    <button
-                        className='btnH'
-                        style={styles.btnForge}
-                        onClick={() => {
-                            this.forge()
-                        }}
-                    >
-                        <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                            FORGE
-                        </p>
-                    </button>
+                    {
+                        finalRecipeLevel && level < finalRecipeLevel ?
+                        <div style={{ flexDirection: 'column', alignItems: 'center', marginTop: 35 }}>
+                            <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 5 }} className="text-medium">
+                                Recipe Level {finalRecipeLevel}
+                            </p>
+
+                            <div
+                                style={Object.assign({}, styles.btnForge, { backgroundColor: 'transparent', marginTop: 0 })}
+                            >
+                                <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
+                                    Low Forge Level
+                                </p>
+                            </div>
+                        </div>
+                        :
+                        <button
+                            className='btnH'
+                            style={styles.btnForge}
+                            onClick={() => {
+                                this.forge()
+                            }}
+                        >
+                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                Forge
+                            </p>
+                        </button>
+                    }
+
+
 
                 </div>
 
@@ -478,7 +511,10 @@ const styles = {
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: CTA_COLOR,
-        marginBottom: 30
+        marginBottom: 30,
+        borderWidth: 1,
+        borderColor: CTA_COLOR,
+        borderStyle: 'solid'
     },
     recipeBookBtn: {
         display: 'flex',

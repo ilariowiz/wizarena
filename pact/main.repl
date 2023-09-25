@@ -1636,25 +1636,27 @@
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
-(free.wiz-equipment.set-recipe-book-value "4_hp_4_hp" "https://storage.googleapis.com/wizarena/equipment/ring_hp_4.png" "8_hp" "Ring of HP +8" 70.0 1 "ring")
-(free.wiz-equipment.set-recipe-book-value "8_hp_8_hp" "https://storage.googleapis.com/wizarena/equipment/ring_hp_3.png" "12_hp" "Ring of HP +12" 90.0 1 "ring")
-(free.wiz-equipment.set-recipe-book-value "12_hp_12_hp" "https://storage.googleapis.com/wizarena/equipment/ring_hp_2.png" "16_hp" "Ring of HP +16" 120.0 1 "ring")
+(free.wiz-equipment.add-recipes [{ "key":"4_hp_4_hp", "url":"https://storage.googleapis.com/wizarena/equipment/ring_hp_4.png", "bonus":"8_hp", "name":"Ring of HP +8", "wiza":70.0, "level":1, "type":"ring"},
+{
+    "key": "4_fire_4_fire",
+    "url": "https://storage.googleapis.com/wizarena/equipment/pendant_fire_res_m.png",
+    "bonus": "5_fire",
+    "name": "Pendant of Fire Resistance (medium)",
+    "wiza": 300.01,
+    "level": 1,
+    "type": "pendant"
+  }])
 
-(free.wiz-equipment.set-recipe-book-value "1_defense_1_defense" "https://storage.googleapis.com/wizarena/equipment/ring_def_4.png" "2_defense" "Ring of Defense +2" 70.0 1 "ring")
-(free.wiz-equipment.set-recipe-book-value "2_defense_2_defense" "https://storage.googleapis.com/wizarena/equipment/ring_def_3.png" "3_defense" "Ring of Defense +3" 90.0 1 "ring")
-(free.wiz-equipment.set-recipe-book-value "3_defense_3_defense" "https://storage.googleapis.com/wizarena/equipment/ring_def_2.png" "4_defense" "Ring of Defense +4" 120.0 1 "ring")
+; (free.wiz-equipment.set-recipe-book-value )
+; (free.wiz-equipment.set-recipe-book-value "8_hp_8_hp" "https://storage.googleapis.com/wizarena/equipment/ring_hp_3.png" "12_hp" "Ring of HP +12" 90.0 1 "ring" ["8_hp", "8_hp"])
+; (free.wiz-equipment.set-recipe-book-value "12_hp_12_hp" "https://storage.googleapis.com/wizarena/equipment/ring_hp_2.png" "16_hp" "Ring of HP +16" 120.0 1 "ring" ["12_hp", "12_hp"])
+;
+; (free.wiz-equipment.set-recipe-book-value "1_defense_1_defense" "https://storage.googleapis.com/wizarena/equipment/ring_def_4.png" "2_defense" "Ring of Defense +2" 70.0 1 "ring" ["1_defense", "1_defense"])
+; (free.wiz-equipment.set-recipe-book-value "2_defense_2_defense" "https://storage.googleapis.com/wizarena/equipment/ring_def_3.png" "3_defense" "Ring of Defense +3" 90.0 1 "ring" ["2_defense", "2_defense"])
+; (free.wiz-equipment.set-recipe-book-value "3_defense_3_defense" "https://storage.googleapis.com/wizarena/equipment/ring_def_2.png" "4_defense" "Ring of Defense +4" 120.0 1 "ring" ["3_defense", "3_defense"])
+;
+; (free.wiz-equipment.set-recipe-book-value "2_defense_8_hp" "https://storage.googleapis.com/wizarena/equipment/ring_def_2.png" "4_defense" "Ring of Defense +4" 120.0 1 "ring" ["2_defense", "8_hp"])
 
-(free.wiz-equipment.set-recipe-book-value "1_attack_1_attack" "https://storage.googleapis.com/wizarena/equipment/ring_atk_4.png" "2_attack" "Ring of Attack +2" 70.0 1 "ring")
-(free.wiz-equipment.set-recipe-book-value "2_attack_2_attack" "https://storage.googleapis.com/wizarena/equipment/ring_atk_3.png" "3_attack" "Ring of Attack +3" 90.0 1 "ring")
-(free.wiz-equipment.set-recipe-book-value "3_attack_3_attack" "https://storage.googleapis.com/wizarena/equipment/ring_atk_2.png" "4_attack" "Ring of Attack +4" 120.0 1 "ring")
-
-(free.wiz-equipment.set-recipe-book-value "2_damage_2_damage" "https://storage.googleapis.com/wizarena/equipment/ring_dmg_4.png" "4_damage" "Ring of Damage +4" 70.0 1 "ring")
-(free.wiz-equipment.set-recipe-book-value "4_damage_4_damage" "https://storage.googleapis.com/wizarena/equipment/ring_dmg_3.png" "6_damage" "Ring of Damage +6" 90.0 1 "ring")
-(free.wiz-equipment.set-recipe-book-value "6_damage_6_damage" "https://storage.googleapis.com/wizarena/equipment/ring_dmg_2.png" "8_damage" "Ring of Damage +8" 120.0 1 "ring")
-
-(free.wiz-equipment.set-recipe-book-value "2_speed_2_speed" "https://storage.googleapis.com/wizarena/equipment/ring_speed_4.png" "4_speed" "Ring of Speed +4" 70.0 1 "ring")
-(free.wiz-equipment.set-recipe-book-value "4_speed_4_speed" "https://storage.googleapis.com/wizarena/equipment/ring_speed_6.png" "6_speed" "Ring of Speed +6" 90.0 1 "ring")
-(free.wiz-equipment.set-recipe-book-value "6_speed_6_speed" "https://storage.googleapis.com/wizarena/equipment/ring_speed_8.png" "8_speed" "Ring of Speed +8" 120.0 1 "ring")
 
 (commit-tx)
 
@@ -1691,13 +1693,13 @@
     {
         "id": "0",
         "url":"https:/prova.it",
-        "bonus":"1_defense",
+        "bonus":"2_defense",
         "name": "ring of defense +1"
     },
     {
         "id": "1",
         "url":"https:/prova.it",
-        "bonus":"1_defense",
+        "bonus":"2_defense",
         "name": "ring of defense +1"
     },
     {
@@ -1727,7 +1729,7 @@
 
 (free.wiz-equipment.get-equipment-fields-for-id "2")
 
-(free.wiz-equipment.forge-combination "2_speed_2_speed")
+(free.wiz-equipment.forge-combination "4_hp_4_hp")
 
 (commit-tx)
 
@@ -1764,20 +1766,20 @@
 
 (commit-tx)
 
-; (begin-tx "FORGE")
-;
-; (env-sigs [{
-;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-;   "caps": [
-;     (free.wiz-equipment.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
-;     (free.wiz-equipment.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "1"),
-;     (coin.GAS)
-;   ]
-; }])
-;
-; (free.wiz-equipment.forge "1_defense_1_defense" ["0", "1"] "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" free.wiza)
-;
-; (commit-tx)
+(begin-tx "FORGE")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-equipment.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (free.wiz-equipment.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "1"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-equipment.forge "2_defense_2_defense" ["1", "0"] "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" free.wiza)
+
+(commit-tx)
 ;
 ; (begin-tx "GET ALL OFFERS")
 ;

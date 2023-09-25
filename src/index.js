@@ -30,6 +30,7 @@ import TournamentWiza from './components/TournamentWiza'
 import TournamentElite from './components/TournamentElite'
 
 import Forge from './components/Forge'
+import Recipes from './components/Recipes'
 
 import Challenges from './components/Challenges'
 import DoChallenges from './components/DoChallenges'
@@ -78,6 +79,7 @@ ReactDOM.render(
             <Route path="/tournamentW" component={TournamentWiza} />
             <Route path="/tournamentE" component={TournamentElite} />
             <Route path="/forge" component={Forge} />
+            <Route path="/recipes" component={Recipes} />
             <Route path="/challenges" component={Challenges} />
             <Route path="/startchallenge" component={DoChallenges} />
             <Route path="/flashtournaments" component={FlashTournaments} />

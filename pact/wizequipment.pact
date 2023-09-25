@@ -754,6 +754,8 @@
                 "wiza":=wiza,
                 "level":=level,
                 "type":=type}
+                (check-requirements recipe ingredients)
+
                 (let (
                         (final-cost (- wiza (/ (* wiza discount) 100)))
                         (id (id-for-forged-equipment))
@@ -799,6 +801,23 @@
             (enforce (= (contains (at "bonus" data) ",") false) "can't melt this item")
             (enforce (= (at "equipped" data) false) "You can't melt an equipped item")
             (enforce (= (at "listed" data) false) "You can't melt a listed item")
+        )
+    )
+  )
+
+  (defun check-requirements (recipe:string ingredients:list)
+    (let* (
+            (id1 (at 0 ingredients))
+            (id2 (at 1 ingredients))
+            (data1 (get-equipment-fields-for-id id1))
+            (data2 (get-equipment-fields-for-id id2))
+            (keyreq1 (format "{}_{}" [(at "bonus" data1), (at "bonus" data2)]))
+            (keyreq2 (format "{}_{}" [(at "bonus" data2), (at "bonus" data1)]))
+        )
+        (if
+            (!= keyreq1 recipe)
+            (enforce (= keyreq2 recipe) "The ingredients are wrong")
+            ""
         )
     )
   )
@@ -1049,22 +1068,29 @@
       )
   )
 
-  (defun set-recipe-book-value (key:string url:string bonus:string name:string wiza:decimal level:integer type:string)
-      @doc "Sets the value for a key to store in a table"
-      (with-capability (ADMIN)
-          (insert recipe-book key
-              {"url": url,
-            "bonus":bonus,
-            "name":name,
-            "wiza":wiza,
-            "level":level,
-            "type":type}
-          )
+  (defun add-recipes (recipes:list)
+    (with-capability (ADMIN)
+        (map
+            (set-recipe-book-value)
+            recipes
+        )
+    )
+  )
+
+  (defun set-recipe-book-value (recipe:object)
+    (require-capability (ADMIN))
+      (insert recipe-book (at "key" recipe)
+          {"url": (at "url" recipe),
+        "bonus":(at "bonus" recipe),
+        "name":(at "name" recipe),
+        "wiza":(at "wiza" recipe),
+        "level":(at "level" recipe),
+        "type":(at "type" recipe)}
       )
   )
 
   (defun get-wiza-value ()
-      36.5464
+      50.0001
       ;(free.wiz-dexinfo.get-wiza-value)
   )
 
