@@ -371,14 +371,7 @@ class Tournament extends Component {
         const levelCap = tournament.levelCap
 
         //console.log(subscriptionsInfo);
-        let yourPossibleSubs = []
-
-        if (tournament.type && tournament.type === "elite") {
-            yourPossibleSubs = userMintedNfts.filter(i => i.level >= levelCap)
-        }
-        else {
-            yourPossibleSubs = userMintedNfts.filter(i => i.level <= levelCap)
-        }
+        let yourPossibleSubs = userMintedNfts.filter(i => i.level <= levelCap)
 
         let yourSubs = this.setYourSub(yourPossibleSubs)
         //console.log(yourSubs);
