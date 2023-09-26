@@ -32,34 +32,42 @@ const headerLeague = (tournament, mainTextColor, history) => {
                 </div>
             }
 
-            <div style={{ alignItems: 'center', marginBottom: 15 }}>
-                <p style={{ fontSize: 16, color: mainTextColor, marginRight: 10 }}>
-                    Event:
-                </p>
-                <Popup
-                    trigger={open => (
-                        <p style={{ textDecoration: "underline", fontSize: 16, color: mainTextColor, cursor: 'pointer' }}>
-                            {tournament.event}
-                        </p>
-                    )}
-                    position="bottom center"
-                    on="hover"
-                >
-                    <div style={{ padding: 10 }}>
-                        <p style={{ fontSize: 16, color: "#1d1d1f", lineHeight: 1.2 }}>
-                            {tournament.eventDescription}
-                        </p>
-                    </div>
-                </Popup>
-            </div>
+            {
+                tournament.event &&
+                <div style={{ alignItems: 'center', marginBottom: 15 }}>
+                    <p style={{ fontSize: 16, color: mainTextColor, marginRight: 10 }}>
+                        Event:
+                    </p>
+                    <Popup
+                        trigger={open => (
+                            <p style={{ textDecoration: "underline", fontSize: 16, color: mainTextColor, cursor: 'pointer' }}>
+                                {tournament.event}
+                            </p>
+                        )}
+                        position="bottom center"
+                        on="hover"
+                    >
+                        <div style={{ padding: 10 }}>
+                            <p style={{ fontSize: 16, color: "#1d1d1f", lineHeight: 1.2 }}>
+                                {tournament.eventDescription}
+                            </p>
+                        </div>
+                    </Popup>
+                </div>
+            }
 
             <a
                 className="btnH"
-                href={`${window.location.protocol}//${window.location.host}/league`}
+                href={ tournament.type === "elite" ? `${window.location.protocol}//${window.location.host}/leaguefarmers` : `${window.location.protocol}//${window.location.host}/league`}
                 style={styles.btnRanking}
                 onClick={(e) => {
                     e.preventDefault()
-                    history.push(`./league`)
+                    if (tournament.type === "elite") {
+                        history.push(`./leaguefarmers`)
+                    }
+                    else {
+                        history.push(`./league`)
+                    }
                 }}
             >
                 <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">

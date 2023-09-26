@@ -20,6 +20,7 @@ import DoFightPvE from './components/DoFightPvE'
 import PvE from './components/PvE'
 
 import League from './components/League'
+import LeagueFarmers from './components/LeagueFarmers'
 import Equipment from './components/Equipment'
 import ItemEquipment from './components/ItemEquipment'
 import EquipmentOffers from './components/EquipmentOffers'
@@ -71,6 +72,7 @@ ReactDOM.render(
             <Route path="/pvp" component={PvP} />
             <Route path="/pve" component={PvE} />
             <Route path="/league" component={League} />
+            <Route path="/leaguefarmers" component={LeagueFarmers} />
             <Route path="/equipment" component={Equipment} />
             <Route path="/equipmentoffers" component={EquipmentOffers} />
             <Route path="/item/" component={ItemEquipment} />

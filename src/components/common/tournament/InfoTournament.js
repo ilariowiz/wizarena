@@ -13,7 +13,8 @@ const renderInfoTournament = (tournament, montepremi, buyin, subscribed, mainTex
     let titleLeague = "The Twelve League"
 
     if (tournament.type === "elite") {
-        titleTour = "The Chaos Tournament"
+        titleTour = "The Farmers Tournament"
+        titleLeague = "The Farmers League"
     }
     else if (tournament.type === "apprentice") {
         titleTour = "The Apprentice Tournament"
@@ -36,16 +37,9 @@ const renderInfoTournament = (tournament, montepremi, buyin, subscribed, mainTex
 
             <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
-            {
-                tournament.type === "elite" ?
-                <p style={{ fontSize: 18, color: mainTextColor, marginBottom: 10 }}>
-                    Buyin <span className="text-bold">FREE</span>
-                </p>
-                :
-                <p style={{ fontSize: 18, color: mainTextColor, marginBottom: 10 }}>
-                    Buyin <span className="text-bold">{buyin || '...'}</span> ${tournament.coinBuyin}
-                </p>
-            }
+            <p style={{ fontSize: 18, color: mainTextColor, marginBottom: 10 }}>
+                Buyin <span className="text-bold">{buyin || '...'}</span> ${tournament.coinBuyin}
+            </p>
 
             <p style={{ fontSize: 17, color: mainTextColor, marginBottom: 10 }}>
                 Registered Wizards <span className="text-bold">{subscribed ? subscribed.length : '...'}</span>
@@ -58,16 +52,9 @@ const renderInfoTournament = (tournament, montepremi, buyin, subscribed, mainTex
                 headerLeague(tournament, mainTextColor, history)
             }
 
-            {
-                tournament.type === "elite" ?
-                <p style={{ fontSize: 17, color: mainTextColor, marginBottom: 15 }} className="text-bold">
-                    Prize: 4 medals 1000 $WIZA, 3 medals 300 $WIZA
-                </p>
-                :
-                <p style={{ fontSize: 17, color: mainTextColor, marginBottom: 15 }} className="text-bold">
-                    Total prize {montepremi || '...'} ${tournament.coinBuyin}
-                </p>
-            }
+            <p style={{ fontSize: 17, color: mainTextColor, marginBottom: 15 }} className="text-bold">
+                Total prize {montepremi || '...'} ${tournament.coinBuyin}
+            </p>
 
             {
                 !infoText ?

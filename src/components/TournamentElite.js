@@ -18,7 +18,9 @@ import {
     getSubscribed,
     loadUserMintedNfts,
     getPotionEquippedMass,
-    getInfoItemEquippedMass
+    getInfoItemEquippedMass,
+    getBuyin,
+    getFeeTournament
 } from '../actions'
 import '../css/Nft.css'
 
@@ -93,7 +95,8 @@ class TournamentElite extends Component {
                     this.calcSubscribers(subscribedElite, tournament)
                 }
 
-				//this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-elite-key")
+				this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-elite-key")
+				this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-wiza-key")
 
                 this.loadPair(tournament.name)
                 const tournamentName = tournament.name.split("_")[0]
@@ -116,7 +119,7 @@ class TournamentElite extends Component {
         const roundEnded = tournament.roundEnded
         const tournamentName = tournament.name.split("_")[0]
 
-        this.getEquipmentEquipped(subscribed)
+        //this.getEquipmentEquipped(subscribed)
 
         let subs = []
         let yourWizards = 0
@@ -217,19 +220,19 @@ class TournamentElite extends Component {
         return Math.round(sum / array.length)
     }
 
-    /*
     calcMontepremi() {
-        const { buyinElite, subscribedElite } = this.props
+        const { buyinElite, feeTournamentWiza, subscribedElite } = this.props
 
-        if (buyinElite && subscribedElite) {
-            let montepremi = subscribedElite.length * buyinElite
+        if (buyinElite && feeTournamentWiza && subscribedElite) {
+            const fee = buyinElite * feeTournamentWiza / 100
+            const totalFee = fee * subscribedElite.length
+            let montepremi = (subscribedElite.length * buyinElite) - totalFee
 
             return montepremi
         }
 
         return ""
     }
-    */
 
     renderRow(item, index, width) {
         const { potionsEquipped, tournament, ringsEquipped, pendantsEquipped } = this.state
@@ -286,7 +289,7 @@ class TournamentElite extends Component {
 			return (
 				<div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                    {renderInfoTournament(tournament, "", "", subscribedElite, mainTextColor, undefined, this.props.history)}
+                    {renderInfoTournament(tournament, this.calcMontepremi(), buyinElite, subscribedElite, mainTextColor, undefined, this.props.history)}
 
                     {
                         subscribedElite && subscribedElite.length > 0 &&
@@ -322,7 +325,7 @@ class TournamentElite extends Component {
 			return (
 				<div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                    {renderInfoTournament(tournament, "", "", subscribedElite, mainTextColor, text, this.props.history)}
+                    {renderInfoTournament(tournament, this.calcMontepremi(), buyinElite, subscribedElite, mainTextColor, text, this.props.history)}
 
                     {
                         subscribed && subscribed.length > 0 &&
@@ -350,7 +353,7 @@ class TournamentElite extends Component {
 
     renderMatchPair(boxW, isMobile, padding) {
         const { matchPair, tournament, userMinted, subscribed } = this.state
-        const { mainTextColor, subscribedElite, isDarkmode } = this.props
+        const { mainTextColor, subscribedElite, isDarkmode, buyinElite } = this.props
 
         //console.log(subscribed);
         const roundName = tournament.name.split("_")[1]
@@ -360,7 +363,7 @@ class TournamentElite extends Component {
         return (
              <div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                {renderInfoTournament(tournament, "", "", subscribedElite, mainTextColor, infoText, this.props.history)}
+                {renderInfoTournament(tournament, this.calcMontepremi(), buyinElite, subscribedElite, mainTextColor, infoText, this.props.history)}
 
                 <div style={{ width: boxW, flexWrap: 'wrap' }}>
                     {matchPair.map((item, index) => {
@@ -373,7 +376,7 @@ class TournamentElite extends Component {
 
     renderRoundConcluso(boxW, isMobile, padding) {
         const { tournament, subscribed, yourStat } = this.state
-        const { mainTextColor, subscribedElite } = this.props
+        const { mainTextColor, buyinElite, subscribedElite } = this.props
 
         if (!subscribed || subscribed.length === 0) {
             return <div />
@@ -407,7 +410,7 @@ class TournamentElite extends Component {
         return (
             <div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                {renderInfoTournament(tournament, "", "", subscribedElite, mainTextColor, titleText, this.props.history)}
+                {renderInfoTournament(tournament, this.calcMontepremi(), buyinElite, subscribedElite, mainTextColor, titleText, this.props.history)}
 
                 {
                     yourStat &&
@@ -539,12 +542,14 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, subscribedElite, subscribedEliteSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinElite, feeTournamentWiza, subscribedElite, subscribedEliteSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, subscribedElite, subscribedEliteSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinElite, feeTournamentWiza, subscribedElite, subscribedEliteSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {
+    getBuyin,
+    getFeeTournament,
     setNetworkSettings,
     setNetworkUrl,
     getSubscribed,

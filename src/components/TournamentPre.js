@@ -268,7 +268,9 @@ class Tournament extends Component {
 
             this.setState({ tournamentElite: tournament }, async () => {
 
-				//this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-elite-key")
+                this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-elite-key")
+				this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-wiza-key")
+
                 const tournamentName = tournament.name.split("_")[0]
 
                 this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "elite", (subscribed) => {
@@ -893,7 +895,11 @@ class Tournament extends Component {
 
     renderTournamentElite(boxTournamentWidth) {
         const { tournamentElite, tournamentEliteSubs, avgLevelElite, loadingElite } = this.state
-        const { mainTextColor, isDarkmode } = this.props
+        const { mainTextColor, isDarkmode, buyinElite, feeTournamentWiza } = this.props
+
+        const fee = buyinElite * feeTournamentWiza / 100
+        const totalFee = fee * tournamentEliteSubs
+        let montepremi = (tournamentEliteSubs * buyinElite) - totalFee
 
         const tournamentName = tournamentElite.name.split("_")[0]
         const tournamentValue = tournamentName.replace("t", "")
@@ -926,7 +932,7 @@ class Tournament extends Component {
                     tournamentElite.showLeague ?
                     <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom }}>
                         <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
-                            The Twelve League <span style={{ fontSize: 15 }}>{tournamentElite.leagueTournament}</span>
+                            The Farmers League <span style={{ fontSize: 15 }}>{tournamentElite.leagueTournament}</span>
                         </p>
                     </div>
                     :
@@ -947,21 +953,27 @@ class Tournament extends Component {
                     Structure: {tournamentElite.structure}
                 </p>
 
-                {this.renderBuyinInfo(marginBottom, mainTextColor, "FREE", "", "0")}
+                {this.renderBuyinInfo(marginBottom, mainTextColor, buyinElite, "$WIZA", feeTournamentWiza)}
 
                 <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
-                <p style={{ fontSize: 16, color: mainTextColor, marginBottom }}>
+                {/*<p style={{ fontSize: 16, color: mainTextColor, marginBottom }}>
                     Prize: <span className="text-bold">4 medals 1000 WIZA</span>
-                </p>
+                </p>*/}
+
+                {this.renderPrizeInfo(marginBottom, mainTextColor, montepremi, "WIZA")}
 
                 {this.renderSubsInfo(marginBottom, mainTextColor, tournamentEliteSubs, avgLevelElite)}
 
-                <div style={{ height: 40, width: '100%', backgroundColor: 'transparent', marginBottom }}></div>
+                {/*<div style={{ height: 40, width: '100%', backgroundColor: 'transparent', marginBottom }}></div>*/}
+
+                <p style={{ fontSize: 14, color: mainTextColor, marginBottom, height: 40 }}>
+                    Participation reward: (for each wizard) {tournamentElite.reward}
+                </p>
 
                 <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
-                <div style={{ alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
+                {/*<div style={{ alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
 
                     <div style={{ alignItems: 'center' }}>
                         <p style={{ fontSize: 16, color: mainTextColor, marginRight: 7 }}>
@@ -980,7 +992,48 @@ class Tournament extends Component {
                             {finalDate}
                         </p>
                     }
+                </div>*/}
+
+                <div style={{ alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
+
+                    <div style={{ alignItems: 'center' }}>
+                        <p style={{ fontSize: 15, color: mainTextColor, marginRight: 7 }}>
+                            Registrations {tournamentElite.canSubscribe ? "open" : "closed"}
+                        </p>
+
+                        {
+                            tournamentElite.canSubscribe ?
+                            <AiFillCheckCircle
+                                color='green'
+                                size={26}
+                            />
+                            :
+                            <AiFillCheckCircle
+                                color='#504f4f'
+                                size={26}
+                            />
+                        }
+                    </div>
+
+                    {
+                        finalDate &&
+                        <p style={{ fontSize: 15, color: mainTextColor }} className="text-bold">
+                            {finalDate}
+                        </p>
+                    }
                 </div>
+
+                {
+                    tournamentElite.canSubscribe && !loadingElite ?
+                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: marginBottom }}>
+                        {this.renderBtnSubscribe(tournamentElite)}
+
+                        {this.renderBtnOpenTournament('tournamentE')}
+
+                    </div>
+                    :
+                    null
+                }
 
                 {
                     !tournamentElite.canSubscribe && !loadingElite &&
