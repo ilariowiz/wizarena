@@ -503,25 +503,13 @@ class Conquest extends Component {
                 const eloIncrement2 = newRanking2 - currentChampion[keyElo]
                 //console.log(eloIncrement1, eloIncrement2);
 
-                //ELO
-                await this.doEloIncrement(eloIncrement1, keyElo, wizardSelectedElos.docId)
-                await this.doEloIncrement(eloIncrement2, keyElo, champion.docId)
-
-                // OLD ELO
-                await this.updateOldElo(elo1, `old${keyElo}`, wizardSelectedElos.docId)
-                await this.updateOldElo(currentChampion[keyElo], `old${keyElo}`, champion.docId)
-
-                //****************************
-
-                // UPDATE FIGHTS LEFT ****************************
-                await this.updateFightsLeft(wizardSelectedElos.docId)
-                //****************************
+                this.updateDataFirebase(wizardSelectedElos.docId, eloIncrement1, keyElo, elo1, `old${keyElo}`)
+                this.updateDataFirebase(champion.docId, eloIncrement2, keyElo, currentChampion[keyElo], `old${keyElo}`)
+                //reload your champion
+                const dataElo = await this.getElosDataSingleNft(wizardSelected.id)
 
                 // reload all champions
                 this.loadChampions()
-
-                //reload your champion
-                const dataElo = await this.getElosDataSingleNft(wizardSelected.id)
 
                 setTimeout(() => {
                     this.setState({ wizardSelectedElos: dataElo, isFightDone: true, infoFight: { nft1: wizardSelected, nft2: response, evento: eventoInfo, winner } }, () => {
@@ -556,28 +544,12 @@ class Conquest extends Component {
         setDoc(fightRef, fightObj)
     }
 
-    async doEloIncrement(eloIncrement, keyElo, docId) {
-        //console.log(eloIncrement, keyElo, docId);
+    async updateDataFirebase(docId, eloIncrement, keyElo, oldElo, oldkeyElo) {
         const docRef = doc(firebasedb, this.SEASON_ID, docId)
 
-        await updateDoc(docRef, {
-            [keyElo]: increment(eloIncrement)
-        })
-    }
-
-    async updateOldElo(elo, keyElo, docId) {
-        //console.log(eloIncrement, keyElo, docId);
-        const docRef = doc(firebasedb, this.SEASON_ID, docId)
-
-        await updateDoc(docRef, {
-            [keyElo]: elo
-        })
-    }
-
-    async updateFightsLeft(docId) {
-        const docRef = doc(firebasedb, this.SEASON_ID, docId)
-
-        await updateDoc(docRef, {
+        updateDoc(docRef, {
+            [keyElo]: increment(eloIncrement),
+            [oldkeyElo]: oldElo,
             "fightsDone": increment(1)
         })
     }
