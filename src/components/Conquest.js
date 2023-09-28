@@ -505,13 +505,14 @@ class Conquest extends Component {
 
                 this.updateDataFirebase(wizardSelectedElos.docId, eloIncrement1, keyElo, elo1, `old${keyElo}`)
                 this.updateDataFirebase(champion.docId, eloIncrement2, keyElo, currentChampion[keyElo], `old${keyElo}`)
-                //reload your champion
-                const dataElo = await this.getElosDataSingleNft(wizardSelected.id)
 
-                // reload all champions
-                this.loadChampions()
+                setTimeout(async () => {
+                    const dataElo = await this.getElosDataSingleNft(wizardSelected.id)
 
-                setTimeout(() => {
+                    // reload all champions
+                    await this.loadChampions()
+
+
                     this.setState({ wizardSelectedElos: dataElo, isFightDone: true, infoFight: { nft1: wizardSelected, nft2: response, evento: eventoInfo, winner } }, () => {
                         this.calcDailyFights(true, dataElo)
                         this.loadYourSubsFightsLeft()
@@ -665,7 +666,8 @@ class Conquest extends Component {
         const possibleBoosts = this.eventsPerRegion(regionName)
 
         const champion = champions && champions[regionName] ? champions[regionName] : undefined
-        //console.log(champion);
+
+        //console.log(wizardSelectedElos);
 
         if (!champion) {
             return undefined
