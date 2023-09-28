@@ -813,7 +813,7 @@ class Conquest extends Component {
                             }
 
                             {
-                                !loadingStartFight && fightsLeft === 0 &&
+                                !loadingStartFight && fightsLeft <= 0 &&
                                 <div
                                     style={Object.assign({}, styles.btnSubscribe, { width: maxWidth, height: 30, marginBottom: 8, cursor: 'default' })}
                                 >
