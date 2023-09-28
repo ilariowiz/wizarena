@@ -503,8 +503,8 @@ class Conquest extends Component {
                 const eloIncrement2 = newRanking2 - currentChampion[keyElo]
                 //console.log(eloIncrement1, eloIncrement2);
 
-                this.updateDataFirebase(wizardSelectedElos.docId, eloIncrement1, keyElo, elo1, `old${keyElo}`)
-                this.updateDataFirebase(champion.docId, eloIncrement2, keyElo, currentChampion[keyElo], `old${keyElo}`)
+                this.updateDataFirebase(wizardSelectedElos.docId, eloIncrement1, keyElo, elo1, `old${keyElo}`, true)
+                this.updateDataFirebase(champion.docId, eloIncrement2, keyElo, currentChampion[keyElo], `old${keyElo}`, false)
 
                 setTimeout(async () => {
                     const dataElo = await this.getElosDataSingleNft(wizardSelected.id)
@@ -545,14 +545,23 @@ class Conquest extends Component {
         setDoc(fightRef, fightObj)
     }
 
-    async updateDataFirebase(docId, eloIncrement, keyElo, oldElo, oldkeyElo) {
+    async updateDataFirebase(docId, eloIncrement, keyElo, oldElo, oldkeyElo, doIncrement) {
         const docRef = doc(firebasedb, this.SEASON_ID, docId)
 
-        updateDoc(docRef, {
-            [keyElo]: increment(eloIncrement),
-            [oldkeyElo]: oldElo,
-            "fightsDone": increment(1)
-        })
+        if (doIncrement) {
+            updateDoc(docRef, {
+                [keyElo]: increment(eloIncrement),
+                [oldkeyElo]: oldElo,
+                "fightsDone": increment(1)
+            })
+        }
+        else {
+            updateDoc(docRef, {
+                [keyElo]: increment(eloIncrement),
+                [oldkeyElo]: oldElo
+            })
+        }
+
     }
 
     eventsPerRegion(regionName) {
