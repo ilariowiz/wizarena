@@ -539,7 +539,7 @@ class PvP extends Component {
         //console.log(item);
         this.setState({ loadingReplay: true })
 
-        let q1 = query(collection(firebasedb, "fights_pvp2"), where("wizards", "array-contains-any", [item.id]), limit(4), orderBy("timestamp", "desc"))
+        let q1 = query(collection(firebasedb, "fights_pvp2"), where("wizards", "array-contains", item.id), limit(40), orderBy("timestamp", "desc"))
         const querySnapshot = await getDocs(q1)
 
         let fights = []
@@ -550,10 +550,25 @@ class PvP extends Component {
             let data = doc.data()
             data['docId'] = doc.id
 
-            //console.log(moment(data.timestamp.seconds * 1000));
+            //console.log(moment(data.timestamp.seconds * 1000).fromNow());
 
             fights.push(data)
         })
+
+        //console.log(fights);
+
+        fights.sort((a,b) => {
+            const dateA = moment(a.timestamp.seconds * 1000)
+            const dateB = moment(b.timestamp.seconds * 1000)
+
+            //console.log(dateA, dateB);
+
+            return dateB - dateA
+        })
+
+        //console.log(fights);
+
+        fights = fights.slice(0, 4)
 
         //console.log(fights);
         //console.log(moment(fights[0]['timestamp']['seconds'] * 1000));
