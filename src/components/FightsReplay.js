@@ -8,6 +8,7 @@ import Rainbow from 'rainbowvis.js'
 import Header from './Header'
 import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
+import getImageUrl from './common/GetImageUrl'
 import {
     setNetworkSettings,
     setNetworkUrl,
@@ -71,18 +72,14 @@ class FightsReplay extends Component {
     }
 
     preloadFight(data) {
-
-        //console.log(data);
-
         this.player1 = data.info1
+        this.history = data.actions
 
         if (data.info2 && data.info2.id) {
             this.player2 = data.info2
 
             this.player1InitialHp = this.player1.hp
             this.player2InitialHp = this.player2.hp
-
-            this.history = data.actions
 
             this.setState({ loading: false })
             setTimeout(() => {
@@ -95,10 +92,12 @@ class FightsReplay extends Component {
                 this.showResult()
             }, 500)
         }
-
     }
 
     showFight() {
+
+        console.log(this.history);
+
         let historyToShow = this.history[this.indexShow]
         historyToShow["turn"] = this.indexShow+1
 
@@ -305,12 +304,18 @@ class FightsReplay extends Component {
             )
         }
 
-        if (showOnlyOne && this.player1 && this.player1.id) {
+        if (historyShow.length === 0) {
+            return <div />
+        }
+
+        if (showOnlyOne && this.player1 && this.player1.id && historyShow.length > 0) {
+
             return (
                 <div style={{ flexDirection: 'column', width: boxW, overflowY: 'auto', overflowX: 'hidden', alignItems: 'center' }}>
 
                     <img
-                        style={{ borderRadius: 4, borderColor: '#d7d7d7', borderStyle: 'solid', borderWidth: 1, width: 200, height: 200, marginBottom: 30 }}
+                        style={{ borderRadius: 4, borderColor: '#d7d7d7', borderStyle: 'solid', borderWidth: 1, width: 200, height: 200, marginBottom: 30 , marginTop: 30 }}
+                        src={getImageUrl(this.player1.id)}
                     />
 
                     <p style={{ fontSize: 18, marginBottom: 15, color: TEXT_SECONDARY_COLOR }}>
@@ -332,9 +337,6 @@ class FightsReplay extends Component {
                 </div>
             )
         }
-
-        //console.log(historyShow, this.player1InitialHp);
-        //console.log(historyShow);
 
         const player1CurrentHp = historyShow.length > 0 ? historyShow[0][`hp_${this.player1.id}`] : this.player1InitialHp
         const player2CurrentHp = historyShow.length > 0 ? historyShow[0][`hp_${this.player2.id}`] : this.player2InitialHp
