@@ -295,14 +295,10 @@ class LeagueFarmers extends Component {
 
                 {
                     item.oldRanking &&
-                    <div style={{ alignItems: 'center', marginBottom: 5 }}>
+                    <div style={{ alignItems: 'center', marginBottom: 5, flexWrap: 'wrap', marginLeft: 5, marginRight: 5, justifyContent: 'center', maxWidth: widthNft }}>
 
-                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 5 }}>
-                            Old ranking:
-                        </p>
-
-                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 3 }}>
-                            {item.oldRanking} <span style={{ fontSize: 12 }} className="text-light">{this.getDiffRanking(item.ranking, item.oldRanking)}</span>
+                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 3, textAlign: 'center' }}>
+                            Old ranking: {item.oldRanking} <span style={{ fontSize: 12 }} className="text-light">{this.getDiffRanking(item.ranking, item.oldRanking)}</span>
                         </p>
 
                         {
@@ -431,8 +427,8 @@ class LeagueFarmers extends Component {
         }
 
         let widthNft = (boxW - 100) / items.nfts.length;
-        if (widthNft < 75) {
-            widthNft = 75
+        if (widthNft < 90) {
+            widthNft = 90
         }
         else if (widthNft > 200) {
             widthNft = 200
@@ -464,7 +460,7 @@ class LeagueFarmers extends Component {
                         {nPoints}
                     </p>
                     <p style={{ fontSize: 16, color: borderColor, marginLeft: 9 }}>
-                        points
+                        ranking
                     </p>
 
                     <p style={{ fontSize: 16, color: borderColor, marginLeft: 9, width: 100, textAlign: 'center' }} className="text-bold">
