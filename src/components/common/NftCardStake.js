@@ -4,9 +4,11 @@ import moment from 'moment'
 import _ from 'lodash'
 import { IoMedalOutline } from 'react-icons/io5'
 import DotLoader from 'react-spinners/DotLoader';
+import Popup from 'reactjs-popup';
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCard.css'
 import '../../css/Nft.css'
+import 'reactjs-popup/dist/index.css';
 import { getColorTextBasedOnLevel } from './CalcLevelWizard'
 import {
     getInfoNftBurning,
@@ -47,6 +49,22 @@ class NftCardStake extends Component {
             this.setState({ infoBurn: response })
         })
     }
+
+    getEquipment() {
+		const { equipment, item } = this.props
+
+        //console.log(equipment);
+
+		if (!equipment || equipment.length === 0) {
+			return ""
+		}
+
+		const ring = equipment.filter(i => i.equippedToId === item.id)
+
+		console.log(ring);
+
+		return ring
+	}
 
     renderBurningTop() {
         const { infoBurn } = this.state
@@ -114,11 +132,37 @@ class NftCardStake extends Component {
         return totalMedals
     }
 
+    renderEquipment(item, index) {
+        return (
+            <Popup
+                trigger={open => (
+                    <div style={{ alignItems: 'center' }}>
+                        <img
+                            src={item.url}
+                            style={{ width: 32, height: 32 }}
+                            alt={item.name}
+                        />
+                    </div>
+                )}
+                position="top center"
+                on="hover"
+            >
+                <div style={{ padding: 5, fontSize: 16, color: "#1d1d1f" }}>
+                    {item.name}
+                </div>
+            </Popup>
+        )
+    }
+
 	render() {
 		const { item, history, width, stakeInfo, loading, mainTextColor, isDarkmode } = this.props
 		const { inBurnQueue } = this.state
 
         //console.log(stakeInfo);
+
+        const equipment = this.getEquipment()
+
+        //console.log(equipment);
 
 		return (
 			<a
@@ -129,13 +173,19 @@ class NftCardStake extends Component {
                     this.props.selectWizard(item.id)
                     history.push(`/nft/${item.id}`)
                 }}
-                style={{ marginBottom: 12 }}
+                style={{ marginBottom: 12, position: 'relative' }}
 			>
 				<img
 					style={{ width, height: width, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
 					src={getImageUrl(item.id)}
 					alt={`#${item.id}`}
 				/>
+
+                <div style={{ position: 'absolute', top: width - 32, right: 0, borderTopLeftRadius: 4, alignItems: 'center', backgroundColor: '#ffffff60', paddingLeft: 5, paddingRight: 5 }}>
+                    {equipment && equipment.length > 0 && equipment.map((item, index) => {
+                        return this.renderEquipment(item, index)
+                    })}
+                </div>
 
                 <div style={{ width, marginTop: 5, minHeight: 28, alignItems: 'center' }}>
                     <p style={{ color: mainTextColor, fontSize: 14, lineHeight: 1, marginLeft: 10, marginRight: 10 }} className="text-medium">

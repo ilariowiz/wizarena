@@ -587,7 +587,7 @@ class Profile extends Component {
 	}
 
 	renderRow(item, index) {
-		const { stakeInfo, loadingStake } = this.state
+		const { stakeInfo, loadingStake, equipment } = this.state
 
 		//console.log(item);
 
@@ -606,6 +606,7 @@ class Profile extends Component {
 				onDelist={() => this.delist(item.id)}
 				stakeInfo={stakeInfo.find(i => i.idnft === item.id)}
 				loading={loadingStake}
+				equipment={equipment}
 			/>
 		)
 	}
