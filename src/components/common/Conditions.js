@@ -80,8 +80,12 @@ const conditions = [
         effect: "Inflicts a penalty of 3 on the opponent's damage",
     },
     {
-        name: "Fear 3",
-        effect: "Inflicts a penalty of 4 on the opponent's defense",
+        name: "Slow 3",
+        effect: "Inflicts a penalty of 7 on the opponent's attack",
+    },
+    {
+        name: "Poison 4",
+        effect: "Inflicts a penalty of 8 on the opponent's defense",
     },
 ]
 

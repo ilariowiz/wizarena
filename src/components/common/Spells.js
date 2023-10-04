@@ -502,6 +502,20 @@ const allSpells = [
 		"dmgBase": 5,
 		"condition": { "name": "Fear 3", "effect": "malus_4_def", "pct": 70 },
 		"element": "Psycho"
+	},
+	{
+	    "name": "Vortex",
+	    "atkBase": 7,
+	    "dmgBase": 7,
+	    "condition": { "name": 'Slow 3', "effect": "malus_7_atk", "pct": 70 },
+	    "element": 'Wind'
+	},
+	{
+	    "name": "Necrosis",
+	    "atkBase": 7,
+	    "dmgBase": 7,
+	    "condition": { "name": 'Poison 4', "effect": "malus_8_def", "pct": 80 },
+	    "element": 'Acid'
 	}
 ]
 
