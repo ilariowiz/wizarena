@@ -7,8 +7,8 @@ import moment from 'moment'
 import _ from 'lodash'
 import Header from './Header'
 import DotLoader from 'react-spinners/DotLoader';
+import Popup from 'reactjs-popup';
 import toast, { Toaster } from 'react-hot-toast';
-//import { GiCrenelCrown } from 'react-icons/gi'
 import { FaRankingStar, FaStar } from 'react-icons/fa6'
 import { CgArrowTopRightR } from 'react-icons/cg'
 import { MdOutlineDateRange } from 'react-icons/md'
@@ -21,6 +21,7 @@ import getNewRating from './common/CalcElo'
 import NftCardChoiceFlashT from './common/NftCardChoiceFlashT'
 import ModalFightConquest from './common/ModalFightConquest'
 import { MAIN_NET_ID, CTA_COLOR, MAX_LEVEL } from '../actions/types'
+import 'reactjs-popup/dist/index.css';
 import {
     setNetworkSettings,
     setNetworkUrl,
@@ -169,7 +170,7 @@ class Conquest extends Component {
 
         const infoLords = {}
         infoLordsArray.map(i => {
-            infoLords[i.id] = i.nickname ? `#${i.id} ${i.nickname}` : `#${i.id}`
+            infoLords[i.id] = i
         })
 
         //console.log(infoLords);
@@ -667,6 +668,22 @@ class Conquest extends Component {
 		)
 	}
 
+    showInfoLord(info) {
+        return (
+            <div style={{ flexDirection: 'column' }}>
+                <p style={{ fontSize: 16, color: 'black', marginBottom: 7 }}>
+                    Element {info.element.toUpperCase()}
+                </p>
+                <p style={{ fontSize: 16, color: 'black', marginBottom: 7 }}>
+                    Resistance {info.resistance.toUpperCase()}
+                </p>
+                <p style={{ fontSize: 16, color: 'black', marginBottom: 7 }}>
+                    Weakness {info.weakness.toUpperCase()}
+                </p>
+            </div>
+        )
+    }
+
     renderRegion(regionName, regionImage, RegionIcon, keyElo, seasonStarted, seasonEnded) {
 
         const { wizardSelected, wizardSelectedElos, champions, loadingStartFight, fightsDone, infoLords } = this.state
@@ -676,13 +693,16 @@ class Conquest extends Component {
 
         const champion = champions && champions[regionName] ? champions[regionName] : undefined
 
-        //console.log(wizardSelectedElos);
+        //console.log(infoLords);
 
         if (!champion) {
             return undefined
         }
 
-        const championName = infoLords[champion.idnft]
+        let championName;
+        if (infoLords[champion.idnft]) {
+            championName = infoLords[champion.idnft].nickname ? `#${infoLords[champion.idnft].id} ${infoLords[champion.idnft].nickname}` : `#${infoLords[champion.idnft].id}`
+        }
 
         const fightsLeft = 5 - fightsDone
 
@@ -732,18 +752,30 @@ class Conquest extends Component {
                         LORD {championName}
                     </p>
 
-                    <a
-                        href={`${window.location.protocol}//${window.location.host}/nft/${champion.idnft}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ cursor: 'pointer', borderColor: '#d7d7d7', borderTopLeftRadius: 4, borderTopRightRadius: 4, borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderBottomWidth: 0, borderStyle: 'solid' }}
+                    <Popup
+                        trigger={open => (
+                            <a
+                                href={`${window.location.protocol}//${window.location.host}/nft/${champion.idnft}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ cursor: 'pointer', borderColor: '#d7d7d7', borderTopLeftRadius: 4, borderTopRightRadius: 4, borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderBottomWidth: 0, borderStyle: 'solid' }}
+                            >
+                                <img
+                                    style={{ width: 180, height: 180, backgroundColor: "#ffffff30" }}
+                                    src={champion.idnft ? `https://storage.googleapis.com/wizarena/wizards_nobg/${champion.idnft}.png` : placeholderWiz}
+                                    alt={`#${champion.idnft}`}
+                                />
+                            </a>
+                        )}
+                        position="top center"
+                        on="hover"
                     >
-                        <img
-                            style={{ width: 180, height: 180, backgroundColor: "#ffffff30" }}
-                            src={champion.idnft ? `https://storage.googleapis.com/wizarena/wizards_nobg/${champion.idnft}.png` : placeholderWiz}
-                            alt={`#${champion.idnft}`}
-                        />
-                    </a>
+                        {
+                            infoLords[champion.idnft] ?
+                            this.showInfoLord(infoLords[champion.idnft])
+                            : '...'
+                        }
+                    </Popup>
 
                     <div style={{ alignItems: 'center', justifyContent: 'center', height: 30, width: maxWidth, backgroundColor: 'gold', borderRadius: 4, marginBottom: 10 }}>
                         <p style={{ color: "#232222", fontSize: 16, textAlign: 'center' }} className="text-bold">
