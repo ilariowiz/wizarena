@@ -849,7 +849,7 @@ export const loadSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
 
-			if (response) {
+			if (response && response.level) {
 
 				response["level"] = response.level.int
 
@@ -857,6 +857,12 @@ export const loadSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 					callback(response)
 				}
 
+				dispatch({ type: 'fake' })
+			}
+			else {
+				if (callback) {
+					callback({ error: true })
+				}
 				dispatch({ type: 'fake' })
 			}
 		})
