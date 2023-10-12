@@ -23,6 +23,8 @@ import getPendantBonus from './common/GetPendantBonus'
 import traits_qty from './common/Traits_qty'
 import traits_qty_clerics from './common/Traits_qty_clerics'
 import traits_qty_druids from './common/Traits_qty_druids'
+import traits_qty_elders from './common/Traits_qty_elders'
+import getName from './common/GetName'
 import conditions from './common/Conditions'
 import allSpells from './common/Spells'
 import titles from './common/LeagueTitle'
@@ -600,11 +602,18 @@ class Nft extends Component {
 
 				percentString = qty * 100 / 1024
 			}
-			else if (parseInt(nft.id) >= 2048) {
+			else if (parseInt(nft.id) >= 2048 && parseInt(nft.id) < 3072) {
 				const section = traits_qty_druids[item.trait_type.toLowerCase()]
 				const qty = section[item.value]
 
 				percentString = qty * 100 / 1024
+			}
+			//elder
+			else if (parseInt(nft.id) >= 3072 && parseInt(nft.id) < 3081) {
+				const section = traits_qty_elders[item.trait_type.toLowerCase()]
+				const qty = section[item.value]
+
+				percentString = qty * 100 / 3080
 			}
 		}
 		else {
@@ -1276,13 +1285,7 @@ class Nft extends Component {
 		const { nft, winRate } = this.state
 		const { mainTextColor } = this.props
 
-		let type = "Wizard"
-		if (parseInt(nft.id) >= 1023 && parseInt(nft.id) < 2048) {
-			type = "Cleric"
-		}
-		else if (parseInt(nft.id) >= 2048 && parseInt(nft.id) < 3072) {
-			type = 'Druid'
-		}
+		const prename = getName(nft.id)
 
 		let title = titles[nft.id]
 
@@ -1295,7 +1298,7 @@ class Nft extends Component {
 					</p>
 					:
 					<p style={{ color: mainTextColor, fontSize: 24 }} className="text-bold">
-						{type} {nft.name}
+						{prename} {nft.name}
 					</p>
 				}
 
@@ -2207,8 +2210,8 @@ class Nft extends Component {
 					alt='Placeholder'
 				/>
 
-				<p style={{ fontSize: 23, color: 'white', textAlign: 'center' }}>
-					The Arena is empty...
+				<p style={{ fontSize: 20, color: 'white', textAlign: 'center' }}>
+					This Wizard has not yet arrived in Wizards World...
 				</p>
 			</div>
 		)

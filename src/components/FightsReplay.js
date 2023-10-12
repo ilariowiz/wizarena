@@ -9,6 +9,7 @@ import Header from './Header'
 import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
+import getName from './common/GetName'
 import {
     setNetworkSettings,
     setNetworkUrl,
@@ -175,15 +176,9 @@ class FightsReplay extends Component {
         return w
     }
 
-    getName(item) {
+    getFullName(item) {
 
-		let type = "Wizard"
-		if (parseInt(item.id) >= 1023 && parseInt(item.id) < 2048) {
-			type = "Cleric"
-		}
-        if (parseInt(item.id) >= 2048 && parseInt(item.id) < REVEAL_CAP) {
-			type = "Druid"
-		}
+        const type = getName(item.id)
 
 		if (item.nickname) {
             return `${item.name} ${item.nickname}`
@@ -210,7 +205,7 @@ class FightsReplay extends Component {
                 <div style={{ justifyContent: 'space-between', alignItems: 'center', width: innerWidth, flexDirection: isMobile ? 'column' : 'row' }}>
 
                     <p style={{ fontSize: 15, color: TEXT_SECONDARY_COLOR }} className="text-bold">
-                        {this.getName(item)}
+                        {this.getFullName(item)}
                     </p>
 
                     <div style={{ alignItems: 'center' }}>

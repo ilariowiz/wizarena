@@ -10,6 +10,7 @@ import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
 import createMonster from './common/CreateMonster'
 import allSpells from './common/Spells'
+import getName from './common/GetName'
 import {
     setNetworkSettings,
     setNetworkUrl,
@@ -217,15 +218,9 @@ class DoFight extends Component {
     }
 
 
-    getName(item) {
+    getFullName(item) {
 
-		let type = "Wizard"
-		if (parseInt(item.id) >= 1023 && parseInt(item.id) < 2048) {
-			type = "Cleric"
-		}
-        if (parseInt(item.id) >= 2048 && parseInt(item.id) < REVEAL_CAP) {
-			type = "Druid"
-		}
+        const type = getName(item.id)
 
 		if (item.nickname) {
             return `${item.name} ${item.nickname}`
@@ -259,7 +254,7 @@ class DoFight extends Component {
                         }}
                     >
                         <p style={{ fontSize: 15, color: TEXT_SECONDARY_COLOR }} className="text-bold">
-                            {index === 1 ? `${item.name} - ${item.element}` : this.getName(item)}
+                            {index === 1 ? `${item.name} - ${item.element}` : this.getFullName(item)}
                         </p>
                     </button>
 
