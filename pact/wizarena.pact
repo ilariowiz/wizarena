@@ -660,6 +660,51 @@
         )
     )
 
+    (defun mint-elders-1 (amount:integer)
+        (with-capability (ADMIN)
+            (map
+                (mint-elder-2 "k:461ae9f3c9c255112ac3797f6b15699c656c9bc44ed089551a0f792085ef9504")
+                (make-list amount 1)
+            )
+        )
+    )
+
+    (defun mint-elder-2 (owner:string number:integer)
+        (enforce (= number 1) "Number enforced to be 1 to avoid confusion but allow mapping to work")
+        (require-capability (PRIVATE))
+
+        (let (
+                (id (id-for-new-wizard))
+            )
+            (let (
+                    (data (get-latest-wizard-data id))
+                )
+                (mint-elder-3 id {
+                    "id": id,
+                    "created": (at "block-time" (chain-data)),
+                    "traits": [],
+                    "owner": owner,
+                    "name": (at "name" data),
+                    "imageHash": (at "imageHash" data),
+                    "nickname": ""
+                })
+            )
+        )
+        (increase-count MINTED_COUNT_KEY)
+    )
+
+    (defun mint-elder-3 (id:string data:object)
+        @doc "Mint part 3"
+        (require-capability (PRIVATE))
+        (insert nfts id data)
+        (insert nfts-market id {
+            "id": id,
+            "price": 0.0,
+            "listed": false
+        })
+        (increase-count MINTED_POST_COUNT_KEY)
+    )
+
     (defun add-spells (objects-list:list)
         (with-capability (ADMIN)
             (map
