@@ -1945,7 +1945,7 @@
             (let (
                     (current-level (calculate-level idnft))
                     (tournament-open (get-value TOURNAMENT_OPEN))
-                    (wiza-cost (* (get-wiza-value) 2.4))
+                    (wiza-cost (* (get-wiza-value) 1.4))
                 )
                 (enforce (= tournament-open "1") "You can't buy vial now")
                 (with-default-read potions-table key
@@ -2735,6 +2735,36 @@
                     (total-upgrades (+ attack damage))
                 )
                 (enforce (< total-upgrades 12) "You have reached the limit for this spell")
+            )
+        )
+    )
+
+    (defun remove-all-upgrades-spell (idnft:string address:string)
+        (with-capability (OWNER address idnft)
+            (let* (
+                    (data (get-wizard-fields-for-id (str-to-int idnft)))
+                    (spellName (at "name" (at "spellSelected" data)))
+                    (key (format "{}_{}" [idnft spellName]))
+                )
+                (with-default-read upgrade-spells key
+                    {"attack":0, "damage":0}
+                    {"attack":=attack, "damage":=damage}
+                    (let (
+                            (ap-to-reimburse (* (+ attack damage) 5))
+                        )
+                        (update upgrade-spells key
+                            {"attack":0, "damage":0}
+                        )
+                        (with-default-read stats idnft
+                            {"ap":0}
+                            {"ap":=ap}
+                            (update stats idnft
+                                {"id": idnft,
+                                "ap": (+ ap ap-to-reimburse)}
+                            )
+                        )
+                    )
+                )
             )
         )
     )

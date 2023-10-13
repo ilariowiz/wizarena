@@ -1452,6 +1452,22 @@
 
 (commit-tx)
 
+(begin-tx "REMOVE ALL SPELL UPGRADES")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.remove-all-upgrades-spell "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+
+(free.wiz-arena.get-wizard-fields-for-id 0)
+
+(commit-tx)
+
 
 (begin-tx "RETRAIN")
 

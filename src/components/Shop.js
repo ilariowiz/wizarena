@@ -43,7 +43,8 @@ import {
     updateInfoTransactionModal,
     swapSpell,
     getSpellUpgradeCost,
-    improveSpell
+    improveSpell,
+    resetSpellUpgrades
 } from '../actions'
 import { MAIN_NET_ID, CTA_COLOR, MAX_LEVEL } from '../actions/types'
 import '../css/Nft.css'
@@ -543,6 +544,22 @@ class Shop extends Component {
 		})
 
         this.props.improveSpell(chainId, gasPrice, netId, account, wizard.id, stat)
+    }
+
+    resetUpgradeSpell(wizard) {
+        const { account, chainId, gasPrice, netId } = this.props
+
+        const wizardName = wizard.nickname ? `${wizard.id} ${wizard.nickname}` : wizard.id
+
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will reset the stats of the spell ${wizard.spellSelected.name}`,
+			typeModal: 'resetspell',
+			transactionOkText: `Spell reset successfully!`,
+            idNft: wizard.id,
+            nameNft: `${wizardName} has reset the stats of the spell ${wizard.spellSelected.name}`
+		})
+
+        this.props.resetSpellUpgrades(chainId, gasPrice, netId, account, wizard.id)
     }
 
     sortById() {
@@ -1408,7 +1425,7 @@ class Shop extends Component {
         }
 
         let bonus;
-        let costo = round(wizaValue * 2.4, 2);
+        let costo = round(wizaValue * 1.4, 2);
 
         let img;
         if (key === "hp") {
@@ -1820,7 +1837,7 @@ class Shop extends Component {
                     </p>
                 </div>
 
-                <div style={{ alignItems: 'center' }}>
+                <div>
 
                     <button
                         className="btnH"
@@ -1859,6 +1876,26 @@ class Shop extends Component {
 
                         <p style={{ fontSize: 16, color: 'white' }} className="text-medium">
                             Upgrade
+                        </p>
+                    </button>
+
+                    <button
+                        className="btnH"
+                        style={Object.assign({}, styles.btnSwap, { backgroundColor: "#e83420" })}
+                        onClick={() => this.resetUpgradeSpell(wizard)}
+                    >
+                        <p style={{ fontSize: 14, color: 'white', marginBottom: 8, maxWidth: 110 }} className="text-bold">
+                            Reset ALL spell upgrades
+                        </p>
+                        <p style={{ fontSize: 14, color: 'white', marginBottom: 3 }} className="text-bold">
+                            Gain
+                        </p>
+                        <p style={{ fontSize: 15, color: 'white', marginBottom: 8 }} className="text-bold">
+                            {(wizard['upgrades-spell'].attack.int + wizard['upgrades-spell'].damage.int) * 5} AP
+                        </p>
+
+                        <p style={{ fontSize: 16, color: 'white' }} className="text-medium">
+                            Reset
                         </p>
                     </button>
 
@@ -2603,5 +2640,6 @@ export default connect(mapStateToProps, {
     updateInfoTransactionModal,
     swapSpell,
     getSpellUpgradeCost,
-    improveSpell
+    improveSpell,
+    resetSpellUpgrades
 })(Shop)

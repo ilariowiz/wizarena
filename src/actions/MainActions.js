@@ -2900,7 +2900,42 @@ export const improveSpell = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, accou
 			networkId: netId
 		}
 
-		//console.log("unequipItem", cmd)
+		//console.log("improveSpell", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const resetSpellUpgrades = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.remove-all-upgrades-spell "${idnft}" "${account.account}")`;
+
+		let cmd = {
+			pactCode,
+			caps: [
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME}.OWNER`,
+          			[account.account, idnft]
+        		),
+				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+			],
+			sender: account.account,
+			gasLimit: 5000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("resetSpellUpgrades", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
