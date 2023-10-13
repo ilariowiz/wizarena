@@ -536,7 +536,7 @@ class Profile extends Component {
 
 			oldStat.map(i => {
 
-				if (i.stat === "hp" || i.stat === "defense" || i.stat === "attack" || i.stat === "damage" || i.stat === "speed") {
+				if (i.stat === "hp" || i.stat === "defense" || i.stat === "attack" || i.stat === "damage" || i.stat === "speed" || i.stat === "ap") {
 					const values = i.value.split(" - ")
 					const minV = parseInt(values[0])
 					const maxV = parseInt(values[1])
@@ -774,6 +774,7 @@ class Profile extends Component {
 						{this.renderBoxSearchStat("attack", "Attack", filtriProfileRanges["attack"])}
 						{this.renderBoxSearchStat("damage", "Damage", filtriProfileRanges["damage"])}
 						{this.renderBoxSearchStat("speed", "Speed", filtriProfileRanges["speed"])}
+						{this.renderBoxSearchStat("ap", "AP", filtriProfileRanges["ap"])}
 						{this.renderBoxSearchStat("element", "Element", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
 						{this.renderBoxSearchStat("resistance", "Resistance", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
 						{this.renderBoxSearchStat("weakness", "Weakness", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}

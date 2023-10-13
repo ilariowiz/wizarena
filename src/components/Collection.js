@@ -259,7 +259,7 @@ class Collection extends Component {
 					}
 				}
 
-				if (i.stat === "hp" || i.stat === "defense" || i.stat === "attack" || i.stat === "damage" || i.stat === "speed") {
+				if (i.stat === "hp" || i.stat === "defense" || i.stat === "attack" || i.stat === "damage" || i.stat === "speed" || i.stat === "ap") {
 					const values = i.value.split(" - ")
 					const minV = parseInt(values[0])
 					const maxV = parseInt(values[1])
@@ -294,61 +294,6 @@ class Collection extends Component {
 					})
 				}
 			})
-
-			/*
-			let arrayQuery = []
-			oldStat.map(i => {
-				if (i.stat !== "spellbook" && i.stat !== "level") {
-					const query = where(i.stat, "==", i.value)
-					arrayQuery.push(query)
-				}
-			})
-
-			//console.log(arrayQuery);
-
-
-
-			if (arrayQuery.length > 0) {
-				let q = query(collection(firebasedb, "stats"), ...arrayQuery)
-
-				const querySnapshot = await getDocs(q)
-
-
-				querySnapshot.forEach(doc => {
-					//console.log(doc.data());
-
-					const d = doc.data()
-
-					const item = allNfts.find(i => i.name === d.name)
-					if (item) {
-						newData.push(item)
-					}
-				})
-			}
-			else {
-				newData = Object.assign([], allNfts)
-			}
-
-			oldStat.map(i => {
-				if (i.stat === "spellbook") {
-					//console.log(newData);
-					newData = newData.filter(n => {
-						return n.spellbook && n.spellbook.length === i.value
-					})
-				}
-
-				if (i.stat === "level") {
-					//console.log(newData);
-					const rangeLevels = i.value.split(" - ")
-					const minLevel = rangeLevels[0]
-					const maxLevel = rangeLevels[1]
-
-					newData = newData.filter(n => {
-						return n.level >= parseInt(minLevel) && n.level <= parseInt(maxLevel)
-					})
-				}
-			})
-			*/
 
 			newData.sort((a, b) => {
 				if (parseInt(a.price) === 0) return 1;
@@ -789,6 +734,7 @@ class Collection extends Component {
 							{this.renderBoxSearchStat("attack", "Attack", filtriRanges["attack"])}
 							{this.renderBoxSearchStat("damage", "Damage", filtriRanges["damage"])}
 							{this.renderBoxSearchStat("speed", "Speed", filtriRanges["speed"])}
+							{this.renderBoxSearchStat("ap", "AP", filtriRanges["ap"])}
 							{this.renderBoxSearchStat("element", "Element", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
 							{this.renderBoxSearchStat("resistance", "Resistance", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
 							{this.renderBoxSearchStat("weakness", "Weakness", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
@@ -828,6 +774,7 @@ class Collection extends Component {
 		const { loading, nftsToShow, searchedText } = this.state
 
 		//console.log(allNftsIds)
+		//console.log(filtriRanges);
 		const { boxW, padding } = getBoxWidth(isMobile)
 
 		const widthSide = 180
@@ -894,6 +841,7 @@ class Collection extends Component {
 							{this.renderBoxSearchStat("attack", "Attack", filtriRanges["attack"])}
 							{this.renderBoxSearchStat("damage", "Damage", filtriRanges["damage"])}
 							{this.renderBoxSearchStat("speed", "Speed", filtriRanges["speed"])}
+							{this.renderBoxSearchStat("ap", "AP", filtriRanges["ap"])}
 							{this.renderBoxSearchStat("element", "Element", ["Acid", "Dark", "Earth", "Fire", "Ice", "Psycho", "Spirit", "Sun", "Thunder", "Undead", "Water", "Wind"])}
 							{this.renderBoxSearchStat("resistance", "Resistance", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}
 							{this.renderBoxSearchStat("weakness", "Weakness", ["acid", "dark", "earth", "fire", "ice", "psycho", "spirit", "sun", "thunder", "undead", "water", "wind"])}

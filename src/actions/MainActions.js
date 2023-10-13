@@ -426,7 +426,7 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 
 					let totalCountNfts = final.length
 
-					let maxStats = { hp: 0, defense: 0, attack: 0, damage: 0, speed: 0 }
+					let maxStats = { hp: 0, defense: 0, attack: 0, damage: 0, speed: 0, ap: 0 }
 
 					final.map(i => {
 						//console.log(i);
@@ -447,6 +447,9 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 						}
 						if (i.speed.int > maxStats.speed) {
 							maxStats['speed'] = i.speed.int
+						}
+						if (i.ap.int > maxStats.ap) {
+							maxStats['ap'] = i.ap.int
 						}
 					})
 
@@ -564,6 +567,20 @@ const calcRanges = (maxStats) => {
 		}
 
 		ranges["speed"] = ranges["speed"].reverse()
+
+		ranges["ap"] = []
+		const rangeAp = Math.round(maxStats["ap"] / 2) + 1
+		//console.log(rangeHp);
+		for (var i = 0; i < rangeAp; i++) {
+			let start = (i * 10)
+			let end = start + 9
+
+			if (start <= maxStats["ap"] + 1) {
+				ranges['ap'].push(`${start} - ${end}`)
+			}
+		}
+
+		ranges["ap"] = ranges["ap"].reverse()
 
 		return ranges
 	}
@@ -787,7 +804,7 @@ export const loadBlockUserMintedNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, g
 
 			if (response) {
 
-				let maxStats = { hp: 0, defense: 0, attack: 0, damage: 0, speed: 0 }
+				let maxStats = { hp: 0, defense: 0, attack: 0, damage: 0, speed: 0, ap: 0 }
 
 				response.map(i => {
 					i.level = i.level.int
@@ -806,6 +823,9 @@ export const loadBlockUserMintedNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, g
 					}
 					if (i.speed.int > maxStats.speed) {
 						maxStats['speed'] = i.speed.int
+					}
+					if (i.ap.int > maxStats.ap) {
+						maxStats['ap'] = i.ap.int
 					}
 				})
 

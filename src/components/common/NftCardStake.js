@@ -61,7 +61,7 @@ class NftCardStake extends Component {
 
 		const ring = equipment.filter(i => i.equippedToId === item.id)
 
-		console.log(ring);
+		//console.log(ring);
 
 		return ring
 	}
@@ -146,6 +146,7 @@ class NftCardStake extends Component {
                 )}
                 position="top center"
                 on="hover"
+                key={index}
             >
                 <div style={{ padding: 5, fontSize: 16, color: "#1d1d1f" }}>
                     {item.name}
