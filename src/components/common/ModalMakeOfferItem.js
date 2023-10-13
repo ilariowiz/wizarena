@@ -5,6 +5,7 @@ import { IoClose } from 'react-icons/io5'
 import { AiOutlineCheck } from 'react-icons/ai'
 import Popup from 'reactjs-popup';
 import ringsRarity from './RankRings'
+import pendantsRarity from './RankPendants'
 import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
 import '../../css/Nft.css'
 import '../../css/Modal.css'
@@ -52,7 +53,7 @@ class ModalMakeOfferItem extends Component {
 		}
 
 		if (!ringType) {
-			this.setState({ error: 'Please select a ring type' })
+			this.setState({ error: 'Please select a ring or pendant type' })
 			return
 		}
 
@@ -92,6 +93,9 @@ class ModalMakeOfferItem extends Component {
 		//console.log(moment().add(duration, 'days').format("dddd, MMMM Do YYYY, h:mm:ss a"))
 
 		const listKeys = Object.keys(ringsRarity)
+		const listKeysPendants = Object.keys(pendantsRarity)
+
+		const finalListKeys = [...listKeys, ...listKeysPendants]
 
 		return (
 			<div className={classContainer}>
@@ -137,7 +141,7 @@ class ModalMakeOfferItem extends Component {
 						ref={ref => this.listPopup = ref}
 						trigger={
 							<button style={styles.btnTypeRing}>
-								<p style={{ fontSize: 15, color: 'white' }} className="text-medium">RING TYPE</p>
+								<p style={{ fontSize: 15, color: 'white' }} className="text-medium">Ring or Pendant type</p>
 							</button>
 						}
 						position="bottom center"
@@ -146,7 +150,7 @@ class ModalMakeOfferItem extends Component {
 						arrow={true}
 					>
 						<div style={{ flexDirection: 'column', paddingTop: 10, overflow: 'auto', maxHeight: 300 }}>
-							{listKeys.map((item, index) => {
+							{finalListKeys.map((item, index) => {
 								return this.renderListTypeRing(item, index)
 							})}
 						</div>
