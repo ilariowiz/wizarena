@@ -8,7 +8,7 @@ export const TEXT_NIGHT_COLOR = 'white'
 export const MIN_LEVEL = 122
 export const MAX_LEVEL = 375
 
-export const REVEAL_CAP = 3080
+export const REVEAL_CAP = 3081
 
 export const RING_MINT_PRICE = 4.0
 
@@ -24,7 +24,7 @@ export const WIZA_TOKEN_BANK = 'wiza-token-bank'
 export const CONTRACT_NAME_EQUIPMENT = 'wiz-equipment'
 
 export const DEFAULT_GAS_PRICE = 0.00000001;
-export const MAIN_NET_ID = "mainnet01"; 
+export const MAIN_NET_ID = "mainnet01";
 export const TEST_NET_ID = "testnet04";
 
 export const LOAD_USER = 'LOAD_USER';
