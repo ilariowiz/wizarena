@@ -1302,12 +1302,12 @@ class Nft extends Component {
 					</p>
 				}
 
-				{
+				{/*
 					parseInt(winRate) > 0 &&
 					<p style={{ color: mainTextColor, fontSize: 15, textAlign: 'center', marginTop: 7 }} className="text-bold">
 						Win Rate {winRate}%
 					</p>
-				}
+				*/}
 
 				{
 					title ?
