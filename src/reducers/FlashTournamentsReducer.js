@@ -81,8 +81,16 @@ export default (state = INITIAL_STATE, action) => {
             if (key === 'completedAt') {
                 oldPending.sort((a, b) => {
 
-                    const moment1 = b.completedAt ? moment(b.completedAt.timep) : moment(b.createdAt.timep)
-                    const moment2 = a.completedAt ? moment(a.completedAt.timep) : moment(a.createdAt.timep)
+                    let aCompletedAtKey = Object.keys(a.completedAt)
+                    let bCompletedAtKey = Object.keys(b.completedAt)
+
+                    //console.log(aCompletedAtKey);
+
+                    let aCompletedTime = a.completedAt[aCompletedAtKey[0]]
+                    let bCompletedTime = b.completedAt[bCompletedAtKey[0]]
+
+                    const moment1 = b.completedAt ? moment(bCompletedTime) : moment(bCompletedTime)
+                    const moment2 = a.completedAt ? moment(aCompletedTime) : moment(aCompletedTime)
 
                     return moment1 - moment2
                 })

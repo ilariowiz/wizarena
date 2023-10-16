@@ -57,13 +57,29 @@ export const getCompletedTournaments = (chainId, gasPrice = DEFAULT_GAS_PRICE, g
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
 
+            response = response.filter(i => i.completedAt)
+
             response.sort((a, b) => {
+                //console.log(a);
+                if (a.completedAt && b.completedAt) {
 
-                const moment1 = b.completedAt ? moment(b.completedAt.timep) : moment(b.createdAt.timep)
-                const moment2 = a.completedAt ? moment(a.completedAt.timep) : moment(a.createdAt.timep)
+                    let aCompletedAtKey = Object.keys(a.completedAt)
+                    let bCompletedAtKey = Object.keys(b.completedAt)
 
-                return moment1 - moment2
+                    //console.log(aCompletedAtKey);
+
+                    let aCompletedTime = a.completedAt[aCompletedAtKey[0]]
+                    let bCompletedTime = b.completedAt[bCompletedAtKey[0]]
+
+                    const moment1 = b.completedAt ? moment(bCompletedTime) : moment(bCompletedTime)
+                    const moment2 = a.completedAt ? moment(aCompletedTime) : moment(aCompletedTime)
+
+                    return moment1 - moment2
+
+                }
             })
+
+            //console.log(response);
 
             if (response) {
                 dispatch({
