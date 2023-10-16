@@ -407,6 +407,15 @@ class Conquest extends Component {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
         const { wizardSelected, wizardSelectedElos } = this.state
 
+        let seasonEnded = this.checkSeasonEnded()
+        //console.log(seasonEnded);
+        if (seasonEnded) {
+            //season finita mentre stavi ancora con la pagina aperta e ti fa fare i fights
+            window.location.reload()
+            return
+        }
+
+
         this.setState({ loadingStartFight: true, showModalFight: true, infoFight: { nft1: wizardSelected, nft2: { id: champion.idnft }, evento: "", winner: "" } })
 
         // CHECK IF CHAMPION IS DIFFERENT, se hai guardato la pagina per svariati minuti, magari nel frattempo il champion è cambiato e quindi
@@ -1024,6 +1033,20 @@ class Conquest extends Component {
         )
     }
 
+    checkSeasonEnded() {
+        const { seasonInfo } = this.state
+
+        let seasonEnded = false
+        if (seasonInfo && seasonInfo.end) {
+            const endSeason = moment(seasonInfo.end.seconds * 1000)
+            if (endSeason < moment()) {
+                seasonEnded = true
+            }
+        }
+
+        return seasonEnded
+    }
+
     renderBody(isMobile) {
         const { loadingYourSubs, loadingChampions, yourSubs, wizardSelected, infoFight, isFightDone, showSubscribe, seasonInfo, notSubbed, countSubbedWizards } = this.state
         const { mainTextColor, mainBackgroundColor } = this.props
@@ -1040,16 +1063,14 @@ class Conquest extends Component {
         let endSeasonText;
         let endLongText;
         let endSeason;
-        let seasonEnded = false
+        let seasonEnded;
         if (seasonInfo && seasonInfo.end) {
+            seasonEnded = this.checkSeasonEnded()
             endSeason = moment(seasonInfo.end.seconds * 1000)
             endSeasonText = moment().to(endSeason)
             endLongText = endSeason.format("DD/MM HH:mm")
-
-            if (endSeason < moment()) {
-                seasonEnded = true
-            }
         }
+
         //console.log(seasonEnded);
 
         let startSeasonText;
