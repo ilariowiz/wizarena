@@ -5,7 +5,6 @@ import Header from './Header'
 import DotLoader from 'react-spinners/DotLoader';
 import { AiOutlinePlus } from 'react-icons/ai'
 import ModalForgeEquipment from './common/ModalForgeEquipment'
-import ModalRecipeBook from './common/ModalRecipeBook'
 import getBoxWidth from './common/GetBoxW'
 import recipeBook from './common/RecipeBook'
 import forgeLevel from './common/ForgeLevel'
@@ -38,7 +37,6 @@ class Forge extends Component {
             yourEquip: [],
             selectionRing2: [],
             finalRecipe: undefined,
-            showModalRecipe: false,
             discount: 1,
             forgeXP: 0,
             level: 1,
@@ -426,14 +424,6 @@ class Forge extends Component {
                             }
                         }
                     }}
-                />
-
-                <ModalRecipeBook
-                    showModal={this.state.showModalRecipe}
-                    onCloseModal={() => {
-                         this.setState({ showModalRecipe: false })
-                    }}
-                    isMobile={isMobile}
                 />
 
             </div>
