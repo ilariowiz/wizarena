@@ -648,7 +648,7 @@ export const loadEquipMinted = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit,
 
 		let cmd = {
 			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.equipment-owned-by "${account.account}")`,
-			meta: defaultMeta(chainId, gasPrice, gasLimit)
+			meta: defaultMeta(chainId, gasPrice, 1000000)
 		}
 
 		const response = await dispatch(readFromContract(cmd, true, networkUrl))
