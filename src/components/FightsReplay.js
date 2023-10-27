@@ -97,7 +97,7 @@ class FightsReplay extends Component {
 
     showFight() {
 
-        console.log(this.history);
+        //console.log(this.history);
 
         let historyToShow = this.history[this.indexShow]
         historyToShow["turn"] = this.indexShow+1

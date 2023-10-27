@@ -199,6 +199,8 @@ class Conquest extends Component {
 
     async getSubscribers() {
         const { chainId, gasPrice, gasLimit, networkUrl, userMintedNfts } = this.props
+        const { seasonInfo } = this.state
+
         let subscribersId = await this.props.getConquestSubscribersIdsPerSeason(chainId, gasPrice, gasLimit, networkUrl, this.SEASON_ID)
 
         //console.log(subscribersId);
@@ -216,7 +218,7 @@ class Conquest extends Component {
 
         userMintedNfts.map(i => {
 
-            if (i.level <= MAX_LEVEL) {
+            if (i.level >= seasonInfo.minLevel) {
                 if (onlySubsIds.includes(i.id)) {
                     yourSubs.push(i)
                 }
@@ -586,19 +588,19 @@ class Conquest extends Component {
         }
 
         if (regionName === "Vedrenon") {
-            events = ["Sun", "Undead", "Wind"]
+            events = ["Fire", "Sun", "Wind"]
         }
 
         if (regionName === "Oceorah") {
-            events = ["Water", "Psycho", "Earth"]
+            events = ["Earth", "Psycho", "Water"]
         }
 
         if (regionName === "Opherus") {
-            events = ["Spirit", "Psycho", "Dark"]
+            events = ["Acid", "Psycho", "Spirit"]
         }
 
         if (regionName === "Ulidalar") {
-            events = ["Thunder", "Wind", "Earth"]
+            events = ["Earth", "Thunder", "Wind"]
         }
 
         if (regionName === "Wastiaxus") {
@@ -606,7 +608,7 @@ class Conquest extends Component {
         }
 
         if (regionName === "Ulanara") {
-            events = ["Psycho", "Spirit", "Thunder"]
+            events = ["Ice", "Psycho", "Spirit"]
         }
 
         if (regionName === "Bremonon") {
