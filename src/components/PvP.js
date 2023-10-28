@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getDoc, doc, updateDoc, query, collection, where, limit, orderBy, getDocs } from "firebase/firestore";
+import { getDoc, doc, updateDoc, query, collection, where, limit, orderBy, getDocs, serverTimestamp, setDoc, increment } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
@@ -17,6 +17,7 @@ import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import allSpells from './common/Spells'
 import getRingBonuses from './common/GetRingBonuses'
+import fight from './common/CalcFight'
 import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import {
     loadUserMintedNfts,
@@ -34,7 +35,8 @@ import {
     loadSingleNft,
     loadEquipMinted,
     updateInfoTransactionModal,
-    loadBlockNftsSplit
+    loadBlockNftsSplit,
+    getInfoItemEquippedMass
 } from '../actions'
 import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -402,7 +404,7 @@ class PvP extends Component {
 
     async chooseOpponent(item) {
         const { pvpWeek, pvpFightsStartDate, allSubscribersInfo } = this.state
-        const { account } = this.props
+        const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
         //console.log(item);
         //console.log(allSubscribersInfo);
@@ -516,23 +518,126 @@ class PvP extends Component {
             }
         }
 
+        //console.log(item, opponent);
 
-        //return
-        const sfida = {
-            player1: item,
-            player2: opponent,
-            pvpWeek: pvpWeek,
-            fightsStart
+        const rings = await this.props.getInfoItemEquippedMass(chainId, gasPrice, gasLimit, networkUrl, [item.id, opponent.id])
+        //console.log(ring);
+        const pendants = await this.props.getInfoItemEquippedMass(chainId, gasPrice, gasLimit, networkUrl, [`${item.id}pendant`, `${opponent.id}pendant`])
+
+        //console.log(rings, pendants);
+
+        const finalInfo = this.clearInfo([item, opponent], rings, pendants)
+
+        //console.log(finalInfo);
+
+        const finalInfo1 = finalInfo[0]
+        const finalInfo2 = finalInfo[1]
+
+        fight(finalInfo1, finalInfo2, undefined, async (history, winner) => {
+            //console.log(history, winner)
+
+            //inviare a firebase il fight
+            //e poi aggiungere a obj il fightId
+
+            const fightObj = {
+                actions: history,
+                idnft1: finalInfo1.id,
+                idnft2: finalInfo2.id,
+                info1: finalInfo1,
+                info2: finalInfo2,
+                winner,
+                wizards: [finalInfo1.id, finalInfo2.id],
+                timestamp: serverTimestamp()
+            }
+
+            const fightRef = doc(collection(firebasedb, "fights_pvp2"))
+            const newDoc = setDoc(fightRef, fightObj)
+
+            //console.log(fightRef.id)
+
+            let keyDb = fightsStart ? "pvp_results" : "pvp_training"
+
+            const docRef = doc(firebasedb, keyDb, `${pvpWeek}_#${winner}`)
+            try {
+                updateDoc(docRef, {
+                    "win": increment(1)
+                })
+            }
+            catch (error) {
+                console.log(error);
+            }
+
+            const loserId = finalInfo1.id === winner ? finalInfo2.id : finalInfo1.id
+
+            const docRef2 = doc(firebasedb, keyDb, `${pvpWeek}_#${loserId}`)
+            try {
+                updateDoc(docRef2, {
+                    "lose": increment(1)
+                })
+            }
+            catch (error) {
+                console.log(error);
+            }
+
+            this.setState({ loading: false }, () => {
+                this.props.history.push(`/fightreplay/fights_pvp2/${fightRef.id}`)
+            })
+        })
+    }
+
+    clearInfo(infoNfts, rings, pendants) {
+    	let newInfo = []
+
+    	for (var i = 0; i < infoNfts.length; i++) {
+            let info = infoNfts[i]
+
+            info['attack'] = info.attack.int
+            info['damage'] = info.damage.int
+            info['defense'] = info.defense.int
+            info['hp'] = info.hp.int
+            info['speed'] = info.speed.int
+
+            //console.log(info.spellSelected);
+
+            if (info.spellSelected) {
+                info['spellSelected'] = this.refactorSpell(info.spellSelected)
+            }
+
+
+            //RING
+            const ring = rings.find(i => i.equippedToId === info.id)
+            if (ring && ring.equipped) {
+                info['ring'] = ring
+
+                const stats = ring.bonus.split(",")
+                stats.map(i => {
+                    const infos = i.split("_")
+                    info[infos[1]] += parseInt(infos[0])
+                })
+            }
+            else {
+                info['ring'] = {}
+            }
+
+            // PENDANT
+            const pendant = pendants.find(i => i.equippedToId === `${info.id}pendant`)
+            if (pendant && pendant.equipped) {
+                info['pendant'] = pendant
+            }
+            else {
+                info['pendant'] = {}
+            }
+
+            newInfo.push(info)
         }
 
-        //console.log(sfida);
-        //return
+        return newInfo
+    }
 
-        this.props.setSfida(sfida)
+    refactorSpell(spell) {
+        const newSpell = allSpells.find(i => i.name === spell.name)
 
-        this.setState({ loading: false }, () => {
-            this.props.history.push('/fightpvp')
-        })
+        return newSpell;
     }
 
     async loadReplay(item) {
@@ -1374,5 +1479,6 @@ export default connect(mapStateToProps, {
     loadSingleNft,
     loadEquipMinted,
     updateInfoTransactionModal,
-    loadBlockNftsSplit
+    loadBlockNftsSplit,
+    getInfoItemEquippedMass
 })(PvP)
