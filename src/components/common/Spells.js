@@ -516,6 +516,13 @@ const allSpells = [
 	    "dmgBase": 7,
 	    "condition": { "name": "Poison 4", "effect": "malus_8_def", "pct": 80 },
 	    "element": "Acid"
+	},
+	{
+		"name": "Bones of the Earth",
+		"atkBase": 7,
+		"dmgBase": 7,
+		"condition": { "name": "Shock", "effect": "skip", "pct": 40 },
+		"element": "Earth"
 	}
 ]
 
