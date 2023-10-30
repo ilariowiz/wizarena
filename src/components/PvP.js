@@ -852,11 +852,19 @@ class PvP extends Component {
             >
 
                 <div style={{ flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'center' : 'start' }}>
-                    <img
-                        src={getImageUrl(item.id)}
-                        style={{ width: 100, height: 100, borderRadius: 4, borderColor: '#d7d7d7', borderWidth: 1, borderStyle: 'solid', marginRight: 10, marginBottom: isMobile ? 7 : 0 }}
-                        alt={item.id}
-                    />
+
+                    <a
+                        href={`${window.location.protocol}//${window.location.host}/nft/${item.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ cursor: 'pointer' }}
+                    >
+                        <img
+                            src={getImageUrl(item.id)}
+                            style={{ width: 100, height: 100, borderRadius: 4, borderColor: '#d7d7d7', borderWidth: 1, borderStyle: 'solid', marginRight: 10, marginBottom: isMobile ? 7 : 0 }}
+                            alt={item.id}
+                        />
+                    </a>
 
                     <div style={{ flexDirection: 'column', justifyContent: 'space-around', height: '100%' }}>
 
