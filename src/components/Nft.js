@@ -409,6 +409,9 @@ class Nft extends Component {
 	async loadMaxMedalsPerTournament() {
 		const { nft } = this.state
 
+		let numbersOfMaxMedalsPerTournament = []
+
+		/*
 		const docSnap = await getDocs(collection(firebasedb, "history_tournament"))
 
 		let numbersOfMaxMedalsPerTournament = []
@@ -423,6 +426,9 @@ class Nft extends Component {
 
 			numbersOfMaxMedalsPerTournament.push(obj)
 		})
+
+		//console.log(numbersOfMaxMedalsPerTournament);
+		*/
 
 		let dictWin = { win: 0, maxMedals: 0 }
 
@@ -645,8 +651,6 @@ class Nft extends Component {
 	renderMedal(item) {
 		const { nft, numbersOfMaxMedalsPerTournament } = this.state
 
-		//console.log(numbersOfMaxMedalsPerTournament);
-
 		let numbersOfMedals = '0'
 
 		if (nft.medals[item]) {
@@ -655,7 +659,7 @@ class Nft extends Component {
 
 		//console.log(numbersOfMedals);
 
-		const maxMedals = numbersOfMaxMedalsPerTournament.length > 0 ? numbersOfMaxMedalsPerTournament.find(i => i.tournamentName === item) : '0'
+		const maxMedals = {maxMedals: 4} //numbersOfMaxMedalsPerTournament.length > 0 ? numbersOfMaxMedalsPerTournament.find(i => i.tournamentName === item) : '0'
 
 		return (
 			<div style={styles.boxSingleTrait} key={item}>
