@@ -629,6 +629,7 @@ class Shop extends Component {
 
     renderEquipCard(item, index, isMobile, type) {
         const { mainTextColor, isDarkmode } = this.props
+        const { wizaValue } = this.state
 
         const bonusValues = item.bonus.split(",")
 
@@ -654,6 +655,8 @@ class Shop extends Component {
         const wizard = this.getWizardSelected()
 
         let isEquipped = item.equippedToId === wizard.id
+
+        let costo = round(wizaValue * 0.33, 2);
 
         return (
             <div
@@ -684,7 +687,7 @@ class Shop extends Component {
                         }}
                     >
                         <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                            Unequip <br /><span style={{ fontSize: 12 }}>({Math.floor(wizard.level / 5)} $WIZA)</span>
+                            Unequip <br /><span style={{ fontSize: 12 }}>({costo} $WIZA)</span>
                         </p>
                     </button>
                     :

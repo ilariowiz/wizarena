@@ -537,10 +537,11 @@
         (let (
                 (item-data (get-equipment-fields-for-id iditem))
                 (nft-data (ma::get-wizard-fields-for-id (str-to-int idnft)))
+                (wiza-cost (* (get-wiza-value) 0.33))
             )
             (enforce (= (at "owner" nft-data) owner) "you are not the owner of this wizard")
             (enforce (= (at "equipped" item-data) true) "this item is not equipped")
-            (mw::spend-wiza (floor (+ (/ (calculate-level nft-data) 5) 0.0) 1) owner)
+            (mw::spend-wiza wiza-cost owner)
 
             (if
                 (= "ring" (at "type" item-data))
