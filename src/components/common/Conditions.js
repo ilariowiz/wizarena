@@ -68,6 +68,10 @@ const conditions = [
         effect: "The opponent is too scared to move and loses the turn",
     },
     {
+        name: "Fear 3",
+        effect: "Inflicts a penalty of 4 on the opponent's defense",
+    },
+    {
         name: "Harden",
         effect: "Inflicts a penalty of 4 on the opponent's damage",
     },
