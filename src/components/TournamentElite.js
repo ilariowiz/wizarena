@@ -40,7 +40,8 @@ class TournamentElite extends Component {
             potionsEquipped: [],
             ringsEquipped: [],
             pendantsEquipped: [],
-            subscribed: []
+            subscribed: [],
+            rankings: []
 		}
 	}
 
@@ -71,7 +72,7 @@ class TournamentElite extends Component {
 
         const querySnapshot = await getDocs(collection(firebasedb, "stage_elite"))
 
-        querySnapshot.forEach(doc => {
+        querySnapshot.forEach(async (doc) => {
             //console.log(doc.data());
 			const tournament = doc.data()
 
@@ -80,16 +81,31 @@ class TournamentElite extends Component {
             /*
             const tournament = {
                 canSubscribe: false,
-                nRounds: 6,
-                name: "t7_r4",
-                roundEnded: "3",
+                nRounds: 4,
+                name: "t3019_r3",
+                roundEnded: "2",
                 showPair: true,
                 start: {seconds: 1671715800, nanoseconds: 843000000},
-                tournamentEnd: false
+                tournamentEnd: false,
+                rankingKey: "ranking_s5",
+                showLeague: true,
+                type: 'elite'
             }
             */
 
-            this.setState({ tournament }, async () => {
+
+            let rankings = []
+            if (tournament.showLeague) {
+                const querySnapshotRanking = await getDocs(collection(firebasedb, tournament.rankingKey))
+                querySnapshotRanking.forEach(doc => {
+                    const d = doc.data()
+                    //console.log(d, doc.id);
+                    const obj = { id: doc.id, ranking: d.ranking }
+                    rankings.push(obj)
+                })
+            }
+
+            this.setState({ tournament, rankings }, async () => {
 
                 if (subscribedElite) {
                     this.calcSubscribers(subscribedElite, tournament)
@@ -235,7 +251,7 @@ class TournamentElite extends Component {
     }
 
     renderRow(item, index, width) {
-        const { potionsEquipped, tournament, ringsEquipped, pendantsEquipped } = this.state
+        const { potionsEquipped, tournament, ringsEquipped, pendantsEquipped, rankings } = this.state
 
         //per ogni row creiamo un array di GameCard
 		return (
@@ -250,6 +266,7 @@ class TournamentElite extends Component {
                     pendantsEquipped={pendantsEquipped}
                     tournamentName={tournament.name.split("_")[0]}
                     tournamentSeason={tournament.season}
+                    rankings={rankings}
                 />
             </div>
         )
@@ -352,7 +369,7 @@ class TournamentElite extends Component {
     }
 
     renderMatchPair(boxW, isMobile, padding) {
-        const { matchPair, tournament, userMinted, subscribed } = this.state
+        const { matchPair, tournament, userMinted, subscribed, rankings } = this.state
         const { mainTextColor, subscribedElite, isDarkmode, buyinElite } = this.props
 
         //console.log(subscribed);
@@ -367,7 +384,7 @@ class TournamentElite extends Component {
 
                 <div style={{ width: boxW, flexWrap: 'wrap' }}>
                     {matchPair.map((item, index) => {
-                        return boxPairTournament(item, index, userMinted, mainTextColor, subscribed, this.props.history, isDarkmode)
+                        return boxPairTournament(item, index, userMinted, mainTextColor, subscribed, this.props.history, isDarkmode, rankings)
                     })}
                 </div>
             </div>
