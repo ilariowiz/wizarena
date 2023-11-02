@@ -22,8 +22,6 @@ const cup_silver = require('../assets/cup_silver.png')
 const cup_bronze = require('../assets/cup_bronze.png')
 const medal = require('../assets/medal.png')
 
-const LEAGUE_NAME = "ranking_s5"
-
 
 class LeagueFarmers extends Component {
     constructor(props) {
@@ -40,26 +38,20 @@ class LeagueFarmers extends Component {
     }
 
     componentDidMount() {
-        const { allNfts, userMintedNfts } = this.props
+        const { allNfts } = this.props
 
 		document.title = "League - Wizards Arena"
 
         this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
+        this.loadTournament()
+
         setTimeout(() => {
             if (!allNfts) {
                 this.loadAllNfts()
             }
-
-            if (!userMintedNfts) {
-                this.loadMinted()
-            }
 		}, 500)
-
-
-
-        this.loadTournament()
 	}
 
     loadAllNfts() {
@@ -96,7 +88,7 @@ class LeagueFarmers extends Component {
 				onlyIdsBy10.map(async (chunks) => {
 					const results = await getDocs(
 						query(
-							collection(firebasedb, LEAGUE_NAME),
+							collection(firebasedb, this.state.tournament.rankingKey),
 							where(documentId(), 'in', chunks)
 						)
 					)
@@ -127,12 +119,13 @@ class LeagueFarmers extends Component {
     async loadTournament() {
         const queryT = await getDocs(collection(firebasedb, "stage_elite"))
 
+        let tournament = {}
+
         queryT.forEach(doc => {
-			const tournament = doc.data()
-            this.setState({ tournament })
+			tournament = doc.data()
         })
 
-        const querySnapshot = await getDocs(collection(firebasedb, LEAGUE_NAME))
+        const querySnapshot = await getDocs(collection(firebasedb, tournament.rankingKey))
 
         let rankings = []
 
@@ -219,7 +212,13 @@ class LeagueFarmers extends Component {
 
         //console.log(final2);
 
-        this.setState({ ranking: final2, loading: false })
+        this.setState({ ranking: final2, loading: false, tournament }, () => {
+            setTimeout(() => {
+                if (!this.props.userMintedNfts) {
+                    this.loadMinted()
+                }
+            }, 500)
+        })
 
     }
 
