@@ -857,15 +857,32 @@
         )
     )
 
+    (defun update-downgrades-dev (objects-list:list)
+        (with-capability (DEV)
+            (map
+                (update-downgrade)
+                objects-list
+            )
+        )
+    )
+
     (defun update-downgrade (item:object)
-        (require-capability (ADMIN))
+        (require-capability (PRIVATE))
         (let
             (
                 (id (at "id" item))
             )
-            (update stats id
-                {"id": id,
-                "downgrades": 32}
+            (with-default-read stats id
+                {"downgrades":0}
+                {"downgrades":=downgrades}
+                (if
+                    (<= (+ downgrades (at "downgrades" item)) 32)
+                    (update stats id
+                        {"id": id,
+                        "downgrades": (+ downgrades (at "downgrades" item))}
+                    )
+                    ""
+                )
             )
         )
     )
@@ -879,8 +896,17 @@
         )
     )
 
+    (defun update-aps-dev (objects-list:list)
+        (with-capability (DEV)
+            (map
+                (update-ap)
+                objects-list
+            )
+        )
+    )
+
     (defun update-ap (item:object)
-        (require-capability (ADMIN))
+        (require-capability (PRIVATE))
         (let
             (
                 (id (at "id" item))

@@ -960,6 +960,8 @@
 
 (free.wiz-arena.update-aps [{"id":"0", "ap": 8}])
 
+(free.wiz-arena.update-downgrades [{"id":"0", "downgrades": 0}])
+
 (commit-tx)
 
 ;;; MINT NFT
