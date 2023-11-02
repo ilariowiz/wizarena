@@ -280,7 +280,7 @@ class NftCardTournament extends Component {
 								potion ?
 								<Popup
 									trigger={open => (
-										<div style={{ alignItems: 'center', marginLeft: 5 }}>
+										<div style={{ alignItems: 'center' }}>
 											<img
 					                            src={imagePotion}
 					                            style={{ width: 24, height: 28 }}
