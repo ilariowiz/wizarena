@@ -70,24 +70,28 @@ const boxPairTournament = (item, index, userMinted, mainTextColor, subscribed, h
                         e.preventDefault()
                         history.push(`/nft/${item.s1.id}`)
                     }}
+                    style={{ position: 'relative' }}
                 >
                     <img
                         style={{ width: widthImage, height: widthImage, borderRadius: 4, borderWidth: 1, borderColor: is1mine ? '#840fb2' : 'white', borderStyle: 'solid', marginBottom: 4 }}
                         src={getImageUrl(item.s1.id)}
                         alt={`#${item.s1.id}`}
                     />
+
+                    {
+                        score1 &&
+                        <div style={{ position: 'absolute', right: 0, bottom: 8, backgroundColor: 'white', height: 15, justifyContent: 'center', alignItems: 'center', borderTopLeftRadius: 4, borderBottomRightRadius: 4, paddingLeft: 5, paddingRight: 5 }}>
+                            <p style={{ fontSize: 13, color: 'black' }}>
+                                elo {score1}
+                            </p>
+                        </div>
+                    }
+
                 </a>
 
                 <p style={{ fontSize: name1.length > 5 ? 13 : 16, color: mainTextColor, maxWidth: 110, textAlign: 'center' }} className="text-medium">
                     {name1}
                 </p>
-
-                {
-                    score1 &&
-                    <p style={{ fontSize: 13, color: mainTextColor, marginTop: 5 }}>
-                        Rating {score1}
-                    </p>
-                }
 
             </div>
 
@@ -107,24 +111,28 @@ const boxPairTournament = (item, index, userMinted, mainTextColor, subscribed, h
                             e.preventDefault()
                             history.push(`/nft/${item.s2.id}`)
                         }}
+                        style={{ position: 'relative' }}
                     >
                         <img
                             style={{ width: widthImage, height: widthImage, borderRadius: 4, borderWidth: 1, borderColor: is2mine ? '#840fb2' : 'white', borderStyle: 'solid', marginBottom: 4 }}
                             src={getImageUrl(item.s2.id)}
                             alt={`#${item.s2.id}`}
                         />
+
+                        {
+                            score2 &&
+                            <div style={{ position: 'absolute', left: 0, bottom: 8, backgroundColor: 'white', height: 15, justifyContent: 'center', alignItems: 'center', borderTopRightRadius: 4, borderBottomLeftRadius: 4, paddingLeft: 5, paddingRight: 5 }}>
+                                <p style={{ fontSize: 13, color: 'black' }}>
+                                    elo {score2}
+                                </p>
+                            </div>
+                        }
                     </a>
 
                     <p style={{ fontSize: name2.length > 5 ? 13 : 16, color: mainTextColor, maxWidth: 110, textAlign: 'center' }} className="text-medium">
                         {name2}
                     </p>
 
-                    {
-                        score2 &&
-                        <p style={{ fontSize: 13, color: mainTextColor, marginTop: 5 }}>
-                            Rating {score2}
-                        </p>
-                    }
                 </div>
                 :
                 <div style={{ flexDirection: 'column', alignItems: 'center' }}>

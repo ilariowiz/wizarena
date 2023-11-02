@@ -161,11 +161,13 @@ class NftCardTournament extends Component {
 			}
 		}
 
+		let borderMineColor = isDarkmode ? "gold" : "#840fb2"
+
 		return (
 			<a
 				href={`${window.location.protocol}//${window.location.host}/nft/${item.id}`}
 				className='container'
-				style={{ borderColor: isMine ? "#840fb2" : "#d7d7d7" }}
+				style={{ borderColor: isMine ? borderMineColor : "#d7d7d7", position: 'relative' }}
 				onClick={(e) => {
 					e.preventDefault()
 					this.props.selectWizard(item.id)
@@ -177,6 +179,15 @@ class NftCardTournament extends Component {
 					src={getImageUrl(item.id)}
 					alt={`#${item.id}`}
 				/>
+
+				{
+					score &&
+					<div style={{ position: 'absolute', right: 0, top: width - 20, backgroundColor: 'white', height: 20, justifyContent: 'center', alignItems: 'center', borderTopLeftRadius: 4, paddingLeft: 8, paddingRight: 8 }}>
+						<p style={{ fontSize: 15, color: 'black' }} className="text-medium">
+							elo {score}
+						</p>
+					</div>
+				}
 
 				<div style={{ justifyContent: 'space-between', flexDirection: 'column', width, minHeight: 73, alignItems: 'center' }}>
 
@@ -291,15 +302,6 @@ class NftCardTournament extends Component {
 						</div>
 
 					</div>
-
-					{
-						score &&
-						<div style={{ alignItems: 'center', justifyContent: 'space-between', width: width-20, marginBottom: 5 }}>
-							<p style={{ fontSize: 15, color: mainTextColor }}>
-								Rating {score}
-							</p>
-						</div>
-					}
 
 				</div>
 			</a>
