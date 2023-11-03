@@ -1265,6 +1265,10 @@ class PvP extends Component {
                     </div>
                 </div>
 
+                <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 20 }}>
+                    A bot will do all your wizards' fights for you, but you can also do them manually
+                </p>
+
                 <div style={{ width: '100%', height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginBottom: 30 }} />
 
                 <p style={{ fontSize: 18, color: mainTextColor, marginBottom: 5 }} className="text-bold">
