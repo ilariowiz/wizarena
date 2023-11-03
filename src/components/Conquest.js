@@ -1116,16 +1116,20 @@ class Conquest extends Component {
                         </button>
                     </div>
 
-                    <div style={{ flexWrap: 'wrap', alignItems: 'center', marginBottom: 20 }}>
-                        <p style={{ fontSize: 17, color: mainTextColor, textAlign: 'center', marginRight: 20, marginBottom: 15 }}>
+                    <div style={{ flexWrap: 'wrap', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap' }}>
+                        <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center', marginRight: 20, marginBottom: 15 }}>
                             Buyin {seasonInfo.buyin} $KDA
                         </p>
 
-                        <p style={{ fontSize: 17, color: mainTextColor, textAlign: 'center', marginRight: 20, marginBottom: 15 }}>
+                        <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center', marginRight: 20, marginBottom: 15 }}>
+                            Min Level {seasonInfo.minLevel}
+                        </p>
+
+                        <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center', marginRight: 20, marginBottom: 15 }}>
                             Start {startSeasonText} ({startLongText})
                         </p>
 
-                        <p style={{ fontSize: 17, color: mainTextColor, textAlign: 'center', marginRight: 20, marginBottom: 15 }}>
+                        <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center', marginRight: 20, marginBottom: 15 }}>
                             End {endSeasonText} ({endLongText})
                         </p>
                     </div>
