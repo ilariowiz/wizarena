@@ -802,6 +802,7 @@
         )
     )
 
+    ;quanti wiza per spell si guadagnano
     (defun set-multiplier (multiplier:decimal)
         (with-capability (ADMIN)
             (write base-multiplier-table ""

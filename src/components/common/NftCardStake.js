@@ -100,7 +100,7 @@ class NftCardStake extends Component {
         //console.log(diffMinsFromStaked);
         const minAday = 1440
         const daysPassed = (diffMinsFromStaked / minAday)
-        const unclaimedWiza = daysPassed * multiplier * 2
+        const unclaimedWiza = daysPassed * multiplier * 1 //uno è quanti wiza a spell si guadagnano
 
 		return (
 			<div style={{ flexDirection: 'column', width: '100%', marginRight: 10, alignItems: 'flex-end' }}>

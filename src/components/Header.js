@@ -114,7 +114,7 @@ class Header extends Component {
 	calcMinutesToHalvening() {
 		const { wizaNotClaimed, totalMined, allNftsIds, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-		const halvening = 9930000
+		const halvening = 11585000
 
 		if (allNftsIds && allNftsIds.length > 0) {
 			this.props.getWizardsStakeInfo(chainId, gasPrice, gasLimit, networkUrl, allNftsIds, (response) => {
@@ -131,14 +131,21 @@ class Header extends Component {
 				avgMultiplier = _.round((avgMultiplier / staked), 2)
 				//console.log(avgMultiplier);
 
-				const wizaDaily = avgMultiplier * 4 * staked
+				const wizaDaily = avgMultiplier * 1 * staked
 				const wizaMinute = _.round(((wizaDaily / 24) / 60), 2)
 				//console.log(wizaDaily, wizaMinute);
 
 				//console.log(wizaNotClaimed);
 
+				const wizaLeft = halvening - totalMined - wizaNotClaimed
+				//console.log(wizaLeft);
+				if (wizaLeft < 0) {
+					this.props.setTimeToHalvening(`The halvening is happening now!`)
+					return
+				}
+
 				//const dayremaining = (halvening - totalMined - wizaNotClaimed) / wizaDaily
-				const minuteremaining = (halvening - totalMined - wizaNotClaimed) / wizaMinute
+				const minuteremaining = wizaLeft / wizaMinute
 				//console.log(_.round(dayremaining, 2), _.round(minuteremaining));
 
 				const dateHalvening = moment().add(minuteremaining, "minutes")
