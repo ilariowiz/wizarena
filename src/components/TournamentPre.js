@@ -960,8 +960,12 @@ class Tournament extends Component {
 
                 {/*<div style={{ height: 40, width: '100%', backgroundColor: 'transparent', marginBottom }}></div>*/}
 
-                <p style={{ fontSize: 14, color: mainTextColor, marginBottom, height: 40 }}>
+                <p style={{ fontSize: 14, color: mainTextColor, marginBottom, height: 24 }}>
                     Participation reward: (for each wizard) {tournamentElite.reward}
+                </p>
+
+                <p style={{ fontSize: 14, color: mainTextColor }} className="text-bold">
+                    Rings and Pendants are not allowed
                 </p>
 
                 <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
