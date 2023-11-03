@@ -847,7 +847,7 @@ class Tournament extends Component {
 
                     {
                         finalDate &&
-                        <p style={{ fontSize: 15, color: mainTextColor }} className="text-bold">
+                        <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
                             {finalDate}
                         </p>
                     }
@@ -970,27 +970,6 @@ class Tournament extends Component {
 
                 <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
-                {/*<div style={{ alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
-
-                    <div style={{ alignItems: 'center' }}>
-                        <p style={{ fontSize: 16, color: mainTextColor, marginRight: 7 }}>
-                            Registrations private
-                        </p>
-
-                        <AiOutlineLock
-                            color={mainTextColor}
-                            size={26}
-                        />
-                    </div>
-
-                    {
-                        finalDate &&
-                        <p style={{ fontSize: 15, color: mainTextColor }} className="text-bold">
-                            {finalDate}
-                        </p>
-                    }
-                </div>*/}
-
                 <div style={{ alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
 
                     <div style={{ alignItems: 'center' }}>
@@ -1014,7 +993,7 @@ class Tournament extends Component {
 
                     {
                         finalDate &&
-                        <p style={{ fontSize: 15, color: mainTextColor }} className="text-bold">
+                        <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
                             {finalDate}
                         </p>
                     }
@@ -1149,7 +1128,7 @@ class Tournament extends Component {
 
                     {
                         finalDate &&
-                        <p style={{ fontSize: 15, color: mainTextColor }} className="text-bold">
+                        <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
                             {finalDate}
                         </p>
                     }
