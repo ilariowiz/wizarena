@@ -199,7 +199,7 @@ class PvP extends Component {
             //console.log(doc.data());
             let data = doc.data()
             data['id'] = doc.id.replace(`${week}_#`, "")
-            const fightsLeft = isTraining ? 9999 : data.maxFights - (data.win + data.lose)
+            const fightsLeft = isTraining ? data.maxFights : data.maxFights - (data.win + data.lose)
 
             data['fightsLeft'] = fightsLeft
 
@@ -233,7 +233,7 @@ class PvP extends Component {
             //console.log(yourSub);
             if (yourSub) {
                 //yourSub["spellSelected"] = y.spellSelected
-                yourSub["rounds"] = isTraining ? 9999 : i.maxFights
+                yourSub["rounds"] = i.maxFights
                 yourSub["fightsLeft"] = i.fightsLeft
                 //console.log(yourSub, i);
                 yourSubs.push(yourSub)
@@ -435,14 +435,14 @@ class PvP extends Component {
 
             //se per caso hai fatto un update rounds ma nel BE non si sono aggiornati, li aggiorniamo e facciamo un refresh della pagina
             if (data && data.maxFights < item.rounds) {
-                await updateDoc(docRef, {"maxFights": item.rounds })
+                //await updateDoc(docRef, {"maxFights": item.rounds })
                 window.location.reload()
                 return
             }
 
             //questo non ho ancora chiaro quando capita ma nel BE non dovresti avere più rounds di quelli che hai nel contratto
             if (data && data.maxFights > item.rounds) {
-                await updateDoc(docRef, {"maxFights": item.rounds })
+                //await updateDoc(docRef, {"maxFights": item.rounds })
                 window.location.reload()
                 return
             }
@@ -507,7 +507,6 @@ class PvP extends Component {
             if (dataOppo) {
                 //facciamo un refresh per aggiornare i dati sia su FE che su BE
                 if (dataOppo.maxFights <= fightsLeftAggiornato) {
-                    //await updateDoc(docRefOpponent, {"maxFights": opponent.rounds.int })
                     window.location.reload()
                     return
                 }
