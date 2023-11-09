@@ -99,7 +99,7 @@ class FlashTournaments extends Component {
         }
     }
 
-    createTournament(idnft, buyin, maxLevel, name, winners, nPlayers) {
+    createTournament(idnft, buyin, maxLevel, name, winners, nPlayers, type) {
         const { account, chainId, gasPrice, netId } = this.props
 
         if (!account || (account && !account.account)) {
@@ -112,10 +112,10 @@ class FlashTournaments extends Component {
             transactionToConfirmText: 'You are about to create a tournament.',
             typeModal: 'createtournament',
             transactionOkText: 'Tournament created successfully',
-            makeOfferValues: { buyin, maxLevel, name, winners, nPlayers }
+            makeOfferValues: { buyin, maxLevel, name, winners, nPlayers, type }
         })
 
-        this.props.createTournament(chainId, gasPrice, netId, idnft, account, buyin, maxLevel, name, winners, nPlayers)
+        this.props.createTournament(chainId, gasPrice, netId, idnft, account, buyin, maxLevel, name, winners, nPlayers, type)
     }
 
     joinTournament(idnft) {
@@ -857,9 +857,9 @@ class FlashTournaments extends Component {
                     wizaBalance={this.props.wizaBalance}
                     equipment={this.state.equipment}
                     yourWizards={userMintedNfts}
-                    createTournament={(idnft, buyin, maxLevel, name, winners, nPlayers) => {
+                    createTournament={(idnft, buyin, maxLevel, name, winners, nPlayers, type) => {
                         this.setState({ showModalCreate: false })
-                        this.createTournament(idnft, buyin, maxLevel, name, winners, nPlayers)
+                        this.createTournament(idnft, buyin, maxLevel, name, winners, nPlayers, type)
                     }}
                 />
 

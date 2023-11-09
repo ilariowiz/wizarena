@@ -376,6 +376,7 @@
         nPlayers:integer
         name:string
         winners:integer
+        type:string
     )
 
     (defschema fights-db-schema
@@ -2139,7 +2140,7 @@
     ;;;;;; AUTO TOURNAMENTS ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun create-tournament (idnft:string account:string buyin:decimal maxLevel:integer name:string winners:integer nPlayers:integer m:module{wiza1-interface-v3})
+    (defun create-tournament (idnft:string account:string buyin:decimal maxLevel:integer name:string winners:integer nPlayers:integer type:string m:module{wiza1-interface-v3})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (enforce (> buyin 0.0) "Buyin must be greater than 0")
         (enforce (> maxLevel 0) "Max Level must be greater than 0")
@@ -2167,7 +2168,8 @@
                     "fights":{},
                     "nPlayers": nPlayers,
                     "name": name,
-                    "winners": winners}
+                    "winners": winners,
+                    "type":type}
                 )
                 (install-capability (m::TRANSFER account WIZ_AUTO_TOURNAMENTS_BANK buyin))
                 (m::transfer-create account WIZ_AUTO_TOURNAMENTS_BANK bank-guard buyin)

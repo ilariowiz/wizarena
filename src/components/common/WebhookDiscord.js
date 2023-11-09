@@ -333,7 +333,7 @@ export const sendMessageFlashT = (info) => {
 
     const winners = info.winners === 1 ? "Winner takes all" : "70% 1st, 30% 2nd"
 
-    const message = `There is a new Flash tournament! Buyin **${info.buyin}** WIZA, Max level **${info.maxLevel}**, Players: **${info.nPlayers}**, Prizes: ${winners}. *(it will be visible in about 30 seconds)*`
+    const message = `There is a new Flash tournament! Buyin **${info.buyin}** WIZA, Max level **${info.maxLevel}**, Players: **${info.nPlayers}**, Prizes: ${winners}, Type: ${info.type}. *(it will be visible in about 30 seconds)*`
 
     const params = {
         username: `Wizard Bot`,

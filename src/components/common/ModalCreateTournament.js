@@ -19,7 +19,8 @@ class ModalCreateTournament extends Component {
             showChooseWizard: false,
             winners: 1,
             name: "",
-            nPlayers: 8
+            nPlayers: 8,
+            type: "classic"
 		}
 	}
 
@@ -28,7 +29,7 @@ class ModalCreateTournament extends Component {
 	}
 
     create() {
-        const { idnft, buyin, maxLevel, name, winners, nPlayers } = this.state
+        const { idnft, buyin, maxLevel, name, winners, nPlayers, type } = this.state
 
         //console.log(winners);
 
@@ -46,7 +47,7 @@ class ModalCreateTournament extends Component {
 
         let finalLevel = parseInt(maxLevel) > 375 ? 375 : parseInt(maxLevel)
 
-        this.props.createTournament(idnft, buyin, finalLevel, name, winners, nPlayers)
+        this.props.createTournament(idnft, buyin, finalLevel, name, winners, nPlayers, type)
     }
 
 	render() {

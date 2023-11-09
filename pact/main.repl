@@ -1237,7 +1237,7 @@
   ]
 }])
 
-(free.wiz-arena.create-tournament "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" 50.0 350 "" 2 2 free.wiza)
+(free.wiz-arena.create-tournament "0" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" 50.0 350 "" 2 2 "classic" free.wiza)
 
 (commit-tx)
 
