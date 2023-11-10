@@ -422,6 +422,14 @@ class PvP extends Component {
 
         const fightsStart = moment().isAfter(pvpFightsStartDate)
 
+        //praticamente non puoi più fare fights manuali durante il periodo attivo del Pvp
+        //quindi ser per caso hai la pagina aperta e passa l'ora dei training e clicchi su fights, non dovresti fare fights
+        //quindi aggiorniamo la pagina in modo che poi il bottone fight scompare
+        if (fightsStart) {
+            window.location.reload()
+            return
+        }
+
         let maxL = item.level+25
         let minL = item.level-25
         let validSubs = []
@@ -997,7 +1005,7 @@ class PvP extends Component {
                         </button>
 
                         {
-                            totalFights < item.rounds &&
+                            !fightsStart &&
                             <button
                                 className="btnH"
                                 style={styles.btnPlay}
@@ -1265,7 +1273,7 @@ class PvP extends Component {
                 </div>
 
                 <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 20 }}>
-                    A bot will do all your wizards' fights for you, but you can also do them manually
+                    A bot will do all your wizards' fights for you, but you can do them manually during the Training period
                 </p>
 
                 <div style={{ width: '100%', height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginBottom: 30 }} />
