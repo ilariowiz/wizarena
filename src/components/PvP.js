@@ -199,7 +199,7 @@ class PvP extends Component {
             //console.log(doc.data());
             let data = doc.data()
             data['id'] = doc.id.replace(`${week}_#`, "")
-            const fightsLeft = isTraining ? data.maxFights : data.maxFights - (data.win + data.lose)
+            const fightsLeft = isTraining ? 30 : data.maxFights - (data.win + data.lose)
 
             data['fightsLeft'] = fightsLeft
 
@@ -233,7 +233,7 @@ class PvP extends Component {
             //console.log(yourSub);
             if (yourSub) {
                 //yourSub["spellSelected"] = y.spellSelected
-                yourSub["rounds"] = i.maxFights
+                yourSub["rounds"] = isTraining ? i.fightsLeft : i.maxFights
                 yourSub["fightsLeft"] = i.fightsLeft
                 //console.log(yourSub, i);
                 yourSubs.push(yourSub)
@@ -556,6 +556,8 @@ class PvP extends Component {
                 wizards: [finalInfo1.id, finalInfo2.id],
                 timestamp: serverTimestamp()
             }
+
+            //console.log(fightObj);
 
             const fightRef = doc(collection(firebasedb, "fights_pvp2"))
             const newDoc = setDoc(fightRef, fightObj)
