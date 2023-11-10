@@ -324,7 +324,7 @@ class Nft extends Component {
 		const pendant = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, `${idNft}pendant`)
 		//console.log(pendant);
 
-		this.setState({ ring, pendant })
+		this.setState({ ring: ring.equipped ? ring : {}, pendant: pendant.equipped ? pendant : {} })
 	}
 
 
