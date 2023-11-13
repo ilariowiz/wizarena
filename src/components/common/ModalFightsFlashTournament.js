@@ -206,7 +206,13 @@ class ModalFightsFlashTournament extends Component {
 		let howManyFights = 3 //8 players
 		let widthImg = isMobile ? 40 : 60
 		if (tournamentInfo.nPlayers.int === 4) {
-			howManyFights = 2
+			if (tournamentInfo.type && tournamentInfo.type === "brawl") {
+				howManyFights = 1
+				widthImg = isMobile ? 30 : 42
+			}
+			else {
+				howManyFights = 2
+			}
 		}
 		else if (tournamentInfo.nPlayers.int === 16) {
 			howManyFights = 4
@@ -215,10 +221,9 @@ class ModalFightsFlashTournament extends Component {
 		else if (tournamentInfo.nPlayers.int === 2) {
 			howManyFights = 1
 		}
-		else if (tournamentInfo.type && tournamentInfo.type === "brawl") {
-			howManyFights = 1
-			widthImg = isMobile ? 30 : 42
-		}
+
+
+		//console.log(howManyFights, tournamentInfo);
 
 
 		return (
