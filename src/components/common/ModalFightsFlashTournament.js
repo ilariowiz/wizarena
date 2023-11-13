@@ -208,7 +208,7 @@ class ModalFightsFlashTournament extends Component {
 		if (tournamentInfo.nPlayers.int === 4) {
 			if (tournamentInfo.type && tournamentInfo.type === "brawl") {
 				howManyFights = 1
-				widthImg = isMobile ? 30 : 42
+				widthImg = isMobile ? 40 : 60
 			}
 			else {
 				howManyFights = 2
