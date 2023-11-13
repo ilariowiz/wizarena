@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import _ from 'lodash'
+import Popup from 'reactjs-popup';
 import { IoClose } from 'react-icons/io5'
+import { AiOutlineQuestionCircle } from 'react-icons/ai'
 import ModalChooseWizard from './ModalChooseWizard'
 import getImageUrl from './GetImageUrl'
 import '../../css/Modal.css'
+import 'reactjs-popup/dist/index.css';
 import { CTA_COLOR } from '../../actions/types'
 
 
@@ -75,27 +78,29 @@ class ModalCreateTournament extends Component {
 
                             {
                                 idnft ?
-                                <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                                <div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
 
                                     <img
                                         src={getImageUrl(idnft)}
-                                        style={{ width: 120, height: 120, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', marginBottom: 5 }}
+                                        style={{ width: 120, height: 120, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', marginRight: 20 }}
                                         alt="Wizard"
                                     />
 
-                                    <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10 }} className="text-bold">
-                                        #{idnft}
-                                    </p>
-
-                                    <button
-                                        style={Object.assign({}, styles.btnConnect, { width: 120 })}
-                                        className="btnH"
-                                        onClick={() => this.setState({ showChooseWizard: true })}
-                                    >
-                                        <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                            Change
+                                    <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                                        <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 10 }} className="text-bold">
+                                            #{idnft}
                                         </p>
-                                    </button>
+
+                                        <button
+                                            style={Object.assign({}, styles.btnConnect, { width: 120 })}
+                                            className="btnH"
+                                            onClick={() => this.setState({ showChooseWizard: true })}
+                                        >
+                                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                                Change
+                                            </p>
+                                        </button>
+                                    </div>
                                 </div>
                                 :
                                 <button
@@ -114,7 +119,7 @@ class ModalCreateTournament extends Component {
 
                         <div style={Object.assign({}, styles.box, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}>
 
-                            <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
+                            <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 5 }}>
                                 <p style={{ fontSize: 16, color: mainTextColor }}>
                                     Flash Tournament Name
                                 </p>
@@ -132,7 +137,7 @@ class ModalCreateTournament extends Component {
 
                         <div style={Object.assign({}, styles.box, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}>
 
-                            <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
+                            <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 5 }}>
                                 <p style={{ fontSize: 16, color: mainTextColor }}>
                                     Buyin
                                 </p>
@@ -154,7 +159,7 @@ class ModalCreateTournament extends Component {
 
                         <div style={Object.assign({}, styles.box, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}>
 
-                            <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
+                            <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 5 }}>
                                 <p style={{ fontSize: 16, color: mainTextColor }}>
                                     Max level
                                 </p>
@@ -172,13 +177,77 @@ class ModalCreateTournament extends Component {
 
                         <div style={Object.assign({}, styles.box, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}>
 
-                            <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
+                            <div style={{ width: '100%', alignItems: 'center', marginBottom: 5 }}>
+                                <p style={{ fontSize: 16, color: mainTextColor, marginRight: 10 }}>
+                                    Tournament type
+                                </p>
+
+                                <Popup
+									trigger={open => (
+                                        <div>
+    										<AiOutlineQuestionCircle
+                                                size={22}
+                                                color={mainTextColor}
+                                            />
+                                        </div>
+									)}
+									position={['top center', 'center center', 'bottom center']}
+									on="hover"
+                                    keepTooltipInside=".containerPopup"
+								>
+									<div style={{ padding: 5, flexDirection: 'column' }}>
+										<p style={{ fontSize: 15, color: "#1d1d1f", marginBottom: 4 }}>
+                                            Classic: the bot will pair the wizards and the winners will compete until there are 1 or 2 winners
+                                        </p>
+
+                                        <p style={{ fontSize: 15, color: "#1d1d1f" }}>
+                                            Brawl: 4 wizards, all vs all. Every turn there will be an attacking wizard who will attack a random wizard among those left alive. There will only be one winner
+                                        </p>
+									</div>
+								</Popup>
+                            </div>
+
+                            <div style={{ alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingBottom: 5 }}>
+                                <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+
+                                    <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }}>
+                                        Classic
+                                    </p>
+
+                                    <input
+                                        type='radio'
+                                        value={"classic"}
+                                        checked={this.state.type === "classic"}
+                                        onChange={(e) => this.setState({ type: "classic" })}
+                                    />
+                                </div>
+
+                                <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+
+                                    <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }}>
+                                        Brawl
+                                    </p>
+
+                                    <input
+                                        type='radio'
+                                        value={"brawl"}
+                                        checked={this.state.type === "brawl"}
+                                        onChange={(e) => this.setState({ type: "brawl", nPlayers: 4, winners: 1 })}
+                                    />
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div style={Object.assign({}, styles.box, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}>
+
+                            <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 5 }}>
                                 <p style={{ fontSize: 16, color: mainTextColor }}>
                                     Number of Players
                                 </p>
                             </div>
 
-                            <div style={{ alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingBottom: 10 }}>
+                            <div style={{ alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingBottom: 5 }}>
 
                                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
@@ -190,7 +259,7 @@ class ModalCreateTournament extends Component {
                                         type='radio'
                                         value={4}
                                         checked={this.state.nPlayers === 2}
-                                        onChange={(e) => this.setState({ nPlayers: 2 })}
+                                        onChange={(e) => this.setState({ nPlayers: 2, type: 'classic' })}
                                     />
                                 </div>
 
@@ -218,7 +287,7 @@ class ModalCreateTournament extends Component {
                                         type='radio'
                                         value={8}
                                         checked={this.state.nPlayers === 8}
-                                        onChange={(e) => this.setState({ nPlayers: 8 })}
+                                        onChange={(e) => this.setState({ nPlayers: 8, type: 'classic' })}
                                     />
                                 </div>
 
@@ -232,7 +301,7 @@ class ModalCreateTournament extends Component {
                                         type='radio'
                                         value={16}
                                         checked={this.state.nPlayers === 16}
-                                        onChange={(e) => this.setState({ nPlayers: 16 })}
+                                        onChange={(e) => this.setState({ nPlayers: 16, type: 'classic' })}
                                     />
                                 </div>
                             </div>
@@ -241,13 +310,13 @@ class ModalCreateTournament extends Component {
 
                         <div style={Object.assign({}, styles.box, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}>
 
-                            <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 10 }}>
+                            <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 5 }}>
                                 <p style={{ fontSize: 16, color: mainTextColor }}>
                                     Prizes
                                 </p>
                             </div>
 
-                            <div style={{ alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingBottom: 10 }}>
+                            <div style={{ alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingBottom: 5 }}>
                                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
                                     <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }}>
@@ -274,7 +343,7 @@ class ModalCreateTournament extends Component {
                                         type='radio'
                                         value={2}
                                         checked={this.state.winners === 2}
-                                        onChange={(e) => this.setState({ winners: 2 })}
+                                        onChange={(e) => this.setState({ winners: 2, type: 'classic' })}
                                     />
                                 </div>
                             </div>
@@ -358,7 +427,7 @@ const styles = {
 		appearance: 'none',
 		outline: 'none',
         backgroundColor: 'transparent',
-        marginBottom: 10
+        marginBottom: 5
 	},
 	btnConnect: {
 		width: 200,

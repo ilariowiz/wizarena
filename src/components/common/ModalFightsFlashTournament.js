@@ -27,6 +27,81 @@ class ModalFightsFlashTournament extends Component {
 		return link
 	}
 
+	renderFightBrawl(item, index, width) {
+		const { mainTextColor, isDarkmode } = this.props
+
+		const imgWidth = width || 60
+
+		const link = `${window.location.protocol}//${window.location.host}/fightreplaybrawl/fights/${item.fightId}`
+
+		return (
+			<a
+				key={index}
+				href={link}
+				target="_blank"
+				rel="noopener noreferrer"
+				style={Object.assign({}, styles.boxFight, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2", flexWrap: 'wrap' })}
+			>
+				<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+					<img
+						src={getImageUrl(item.s1)}
+						style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', marginBottom: 4 }}
+						alt={item.s1}
+					/>
+
+					<p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center' }} className="text-medium">
+						#{item.s1}
+					</p>
+				</div>
+
+				<p style={{ fontSize: 13, color: mainTextColor, marginRight: 8, marginLeft: 8 }}>
+					VS
+				</p>
+
+				<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+					<img
+						src={getImageUrl(item.s2)}
+						style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', marginBottom: 4 }}
+						alt={item.s2}
+					/>
+					<p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center' }} className="text-medium">
+						#{item.s2}
+					</p>
+				</div>
+
+				<p style={{ fontSize: 13, color: mainTextColor, marginRight: 8, marginLeft: 8 }}>
+					VS
+				</p>
+
+				<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+					<img
+						src={getImageUrl(item.s3)}
+						style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', marginBottom: 4 }}
+						alt={item.s3}
+					/>
+					<p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center' }} className="text-medium">
+						#{item.s3}
+					</p>
+				</div>
+
+				<p style={{ fontSize: 13, color: mainTextColor, marginRight: 8, marginLeft: 8 }}>
+					VS
+				</p>
+
+				<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+					<img
+						src={getImageUrl(item.s4)}
+						style={{ width: imgWidth, height: imgWidth, borderRadius: imgWidth/2, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', marginBottom: 4 }}
+						alt={item.s4}
+					/>
+					<p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center' }} className="text-medium">
+						#{item.s4}
+					</p>
+				</div>
+			</a>
+		)
+	}
+
 	renderFight(item, index, showHorizontal, width) {
 		const { mainTextColor, isDarkmode } = this.props
 
@@ -126,10 +201,6 @@ class ModalFightsFlashTournament extends Component {
 			return <div />
 		}
 
-		//let rounds = fights ? Object.keys(fights) : undefined
-		//console.log(fights);
-		//console.log(fights[`${tournamentid}_r1`]);
-
 		const tournamentid = tournamentInfo.id
 
 		let howManyFights = 3 //8 players
@@ -144,6 +215,10 @@ class ModalFightsFlashTournament extends Component {
 		else if (tournamentInfo.nPlayers.int === 2) {
 			howManyFights = 1
 		}
+		else if (tournamentInfo.type && tournamentInfo.type === "brawl") {
+			howManyFights = 1
+			widthImg = isMobile ? 30 : 42
+		}
 
 
 		return (
@@ -153,6 +228,9 @@ class ModalFightsFlashTournament extends Component {
 					<div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', marginBottom: 25 }}>
 						{
 							fights && fights[`${tournamentid}_r1`].map((item, index) => {
+								if (tournamentInfo.type && tournamentInfo.type === "brawl") {
+									return this.renderFightBrawl(item, index, widthImg)
+								}
 								if (isMobile) {
 									return this.renderFightMobile(item, index, howManyFights === 1 ? true : false, widthImg)
 								}

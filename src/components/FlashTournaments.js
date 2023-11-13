@@ -320,6 +320,12 @@ class FlashTournaments extends Component {
 
                         <div style={{ alignItems: 'center', marginBottom: 10 }}>
                             <p style={{ fontSize: 14, color: mainTextColor }}>
+                                Type: {item.type || 'Classic'}
+                            </p>
+                        </div>
+
+                        <div style={{ alignItems: 'center', marginBottom: 10 }}>
+                            <p style={{ fontSize: 14, color: mainTextColor }}>
                                 Prizes: {prizes}
                             </p>
                         </div>

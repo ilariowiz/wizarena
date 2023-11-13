@@ -24,6 +24,7 @@
     "countdown": "^2.6.0",
     "firebase": "^9.8.3",
     "lodash": "^4.17.21",
+    "lottie-react": "^2.4.0",
     "moment": "^2.29.3",
     "moment-countdown": "^0.0.3",
     "pact-lang-api": "^4.3.3",

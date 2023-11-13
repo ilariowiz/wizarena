@@ -40,6 +40,7 @@ import WalletsXpLeaderboard from './components/WalletsXpLeaderboard'
 
 import Conquest from './components/Conquest'
 import FightsReplay from './components/FightsReplay'
+import FightsReplayBrawl from './components/FightsReplayBrawl'
 
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'
@@ -85,6 +86,7 @@ ReactDOM.render(
             <Route path="/walletsxp" component={WalletsXpLeaderboard} />
             <Route path="/lords" component={Conquest} />
             <Route path="/fightreplay" component={FightsReplay} />
+            <Route path="/fightreplaybrawl" component={FightsReplayBrawl} />
           </Switch>
         </div>
       </BrowserRouter>
