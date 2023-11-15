@@ -21,6 +21,10 @@ const calcMedals = (item, tournamentSeason) => {
             tournaments = ["t3015", "t3016", "t3017", "t3018", "t3019", "t3020", "t3021", "t3022"]
         }
 
+        if (tournamentSeason === "s6") {
+            tournaments = ["t57", "t58", "t59", "t60", "t61", "t62", "t63", "t64", "t65", "t66", "t67", "t68"]
+        }
+
         for (const [key, value] of Object.entries(item.medals)) {
             if (tournaments.includes(key)) {
                 totalMedals += parseInt(value)
