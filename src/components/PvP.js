@@ -58,6 +58,7 @@ class PvP extends Component {
             pvpWeekEnd: undefined,
             pvpFightsStart: undefined,
             pvpFightsStartDate: undefined,
+            dailyFights: 40,
             yourSubscribers: [],
             yourSubscribersResults: [],
             activeSubs: 0,
@@ -160,7 +161,7 @@ class PvP extends Component {
                 //console.log(dateEnd);
                 const dateEndTo = moment().to(dateEnd)
 
-                this.setState({ pvpWeek: res, pvpWeekEnd: dateEndTo, pvpFightsStart: dateFightsStartTo, pvpFightsStartDate: dateFightsStart })
+                this.setState({ pvpWeek: res, pvpWeekEnd: dateEndTo, pvpFightsStart: dateFightsStartTo, pvpFightsStartDate: dateFightsStart, dailyFights: data.dailyFights })
             }
             else {
                 this.setState({ pvpWeek: res })
@@ -402,6 +403,28 @@ class PvP extends Component {
         this.setState({ yourSubscribersResults: temp })
     }
 
+    hoursDiffFromStart(totalFights) {
+        const { pvpFightsStartDate, dailyFights } = this.state
+
+        //console.log(pvpFightsStartDate);
+        const hours = moment().diff(pvpFightsStartDate, 'hours')
+        //console.log(hours);
+
+        let canFight = false
+
+        if (hours < 24 && totalFights < dailyFights) {
+            canFight = true
+        }
+        else if (hours >= 24 && hours < 48 && totalFights < (dailyFights * 2)) {
+            canFight = true
+        }
+        else if (hours >= 48 && totalFights < (dailyFights * 3)) {
+            canFight = true
+        }
+
+        return canFight
+    }
+
     async chooseOpponent(item) {
         const { pvpWeek, pvpFightsStartDate, allSubscribersInfo } = this.state
         const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
@@ -422,13 +445,6 @@ class PvP extends Component {
 
         const fightsStart = moment().isAfter(pvpFightsStartDate)
 
-        //praticamente non puoi più fare fights manuali durante il periodo attivo del Pvp
-        //quindi ser per caso hai la pagina aperta e passa l'ora dei training e clicchi su fights, non dovresti fare fights
-        //quindi aggiorniamo la pagina in modo che poi il bottone fight scompare
-        if (fightsStart) {
-            window.location.reload()
-            return
-        }
 
         let maxL = item.level+25
         let minL = item.level-25
@@ -461,6 +477,12 @@ class PvP extends Component {
                 //quindi facciamo il check con i fights dal BE e se sono >= dei tuoi rounds allora facciamo un refresh
                 const fightsDone = data.win + data.lose
                 if (fightsDone >= item.rounds) {
+                    window.location.reload()
+                    return
+                }
+
+                const canFight = this.hoursDiffFromStart(fightsDone)
+                if (!canFight) {
                     window.location.reload()
                     return
                 }
@@ -842,6 +864,7 @@ class PvP extends Component {
 		}
 
         //console.log(bonusEquipment['hp']);
+        const canFight = !fightsStart ? true : this.hoursDiffFromStart(totalFights)
 
         let hp = bonusEquipment && bonusEquipment['hp'] ? item.hp.int + bonusEquipment['hp'] : item.hp.int
         let def = bonusEquipment && bonusEquipment['defense'] ? item.defense.int + bonusEquipment['defense'] : item.defense.int
@@ -1007,7 +1030,7 @@ class PvP extends Component {
                         </button>
 
                         {
-                            !fightsStart &&
+                            canFight && totalFights < item.rounds &&
                             <button
                                 className="btnH"
                                 style={styles.btnPlay}
