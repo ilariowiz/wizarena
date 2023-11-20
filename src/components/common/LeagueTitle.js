@@ -200,7 +200,47 @@ const titles = {
         title: "The Apprentice League I 5th place",
         img: medal,
         textColor: '#cd7f32'
-    }]
+    }],
+    "731": [{
+        title: "The Farmers League I Champion",
+        img: cup_gold,
+        textColor: '#cd7f32'
+    }],
+    "703": [{
+        title: "The Farmers League I 2nd place",
+        img: cup_silver,
+        textColor: '#c0c0c0'
+    }],
+    "1957": [{
+        title: "The Farmers League I 3rd place",
+        img: cup_bronze,
+        textColor: '#cd7f32'
+    }],
+    "253": [{
+        title: "The Farmers League I 4th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "1472": [{
+        title: "The Farmers League I 5th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "846": [{
+        title: "The Farmers League I 6th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "349": [{
+        title: "The Farmers League I 7th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "690": [{
+        title: "The Farmers League I 8th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
 }
 
 export default titles
