@@ -865,6 +865,8 @@ class PvP extends Component {
 
         //console.log(bonusEquipment['hp']);
         const canFight = !fightsStart ? true : this.hoursDiffFromStart(totalFights)
+        const hasFightsLeft = !fightsStart ? true : totalFights < item.rounds
+
 
         let hp = bonusEquipment && bonusEquipment['hp'] ? item.hp.int + bonusEquipment['hp'] : item.hp.int
         let def = bonusEquipment && bonusEquipment['defense'] ? item.defense.int + bonusEquipment['defense'] : item.defense.int
@@ -1030,7 +1032,7 @@ class PvP extends Component {
                         </button>
 
                         {
-                            canFight && totalFights < item.rounds &&
+                            canFight && hasFightsLeft &&
                             <button
                                 className="btnH"
                                 style={styles.btnPlay}
