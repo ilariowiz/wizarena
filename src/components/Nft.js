@@ -1445,7 +1445,7 @@ class Nft extends Component {
 	}
 
 	renderStat(title, value) {
-		const { ring, maxStats } = this.state
+		const { ring, maxStats, nft } = this.state
 		const { mainTextColor } = this.props
 
 		//console.log(ring);
@@ -1493,8 +1493,9 @@ class Nft extends Component {
 			)
 		}
 
+		let ringBonus;
 		if (ring.equipped && ring.bonus && ring.bonus.includes(title.toLowerCase())) {
-			const ringBonus = getRingBonuses(ring)
+			ringBonus = getRingBonuses(ring)
 			//console.log(ringBonus);
 			fixedValue = fixedValue + ringBonus.bonusesDict[title.toLowerCase()]
 		}
@@ -1524,6 +1525,69 @@ class Nft extends Component {
 		}
 
 		//{max ? `/${max}` : ''}
+		//console.log(nft);
+
+		let textPopup;
+		if (title === "HP") {
+			let temp = []
+			temp.push(`Base stat: ${nft.hp.int}`)
+			if (ringBonus && ringBonus.bonusesDict.hp) {
+				temp.push(`Ring: ${ringBonus.bonusesDict.hp}`)
+			}
+			textPopup = temp.join("\r\n")
+		}
+		else if (title === "Defense") {
+			let temp = []
+			temp.push(`Base stat: ${nft.defense.int}`)
+			if (ringBonus && ringBonus.bonusesDict.defense) {
+				temp.push(`Ring: ${ringBonus.bonusesDict.defense}`)
+			}
+			textPopup = temp.join("\r\n")
+		}
+		else if (title === "Attack") {
+
+			const spellSelected = this.refactorSpellSelected(nft.spellSelected)
+
+			let temp = []
+			temp.push(`Base stat: ${nft.attack.int}`)
+			temp.push(`Spell attack: ${spellSelected.atkBase}`)
+
+			if (nft['upgrades-spell'].attack.int) {
+				temp.push(`Spell upgrades: ${nft['upgrades-spell'].attack.int}`)
+			}
+
+			if (ringBonus && ringBonus.bonusesDict.attack) {
+				temp.push(`Ring: ${ringBonus.bonusesDict.attack}`)
+			}
+
+			textPopup = temp.join("\r\n")
+		}
+		else if (title === "Damage") {
+
+			const spellSelected = this.refactorSpellSelected(nft.spellSelected)
+
+			let temp = []
+			temp.push(`Base stat: ${nft.damage.int}`)
+			temp.push(`Spell damage: ${spellSelected.dmgBase}`)
+
+			if (nft['upgrades-spell'].damage.int) {
+				temp.push(`Spell upgrades: ${nft['upgrades-spell'].damage.int}`)
+			}
+
+			if (ringBonus && ringBonus.bonusesDict.damage) {
+				temp.push(`Ring: ${ringBonus.bonusesDict.damage}`)
+			}
+
+			textPopup = temp.join("\r\n")
+		}
+		else if (title === "Speed") {
+			let temp = []
+			temp.push(`Base stat: ${nft.speed.int}`)
+			if (ringBonus && ringBonus.bonusesDict.speed) {
+				temp.push(`Ring: ${ringBonus.bonusesDict.speed}`)
+			}
+			textPopup = temp.join("\r\n")
+		}
 
 		return (
 			<div style={{ alignItems: 'center', marginBottom: 10 }}>
@@ -1536,7 +1600,20 @@ class Nft extends Component {
 					</div>
 				}
 
-				<p style={Object.assign({}, styles.textValueStat, { color: mainTextColor })}>{fixedValue}</p>
+				{
+					textPopup ?
+					<Popup
+						trigger={open => (
+							<p style={Object.assign({}, styles.textValueStat, { color: mainTextColor, cursor: 'pointer' })}>{fixedValue}</p>
+						)}
+						position="top center"
+						on="hover"
+					>
+						<p style={Object.assign({}, styles.textValueStat, { color: 'black', whiteSpace: 'pre' })}>{textPopup}</p>
+					</Popup>
+					:
+					<p style={Object.assign({}, styles.textValueStat, { color: mainTextColor })}>{fixedValue}</p>
+				}
 			</div>
 		)
 	}
