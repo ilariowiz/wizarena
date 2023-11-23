@@ -403,12 +403,14 @@ class PvP extends Component {
         this.setState({ yourSubscribersResults: temp })
     }
 
-    hoursDiffFromStart(totalFights) {
+    checkIfCanDoManualFights(item) {
         const { pvpFightsStartDate, dailyFights } = this.state
 
         //console.log(pvpFightsStartDate);
         const hours = moment().diff(pvpFightsStartDate, 'hours')
         //console.log(hours);
+
+        const totalFights = item.manualFights || 0
 
         let canFight = false
 
@@ -481,7 +483,7 @@ class PvP extends Component {
                     return
                 }
 
-                const canFight = this.hoursDiffFromStart(fightsDone)
+                const canFight = this.checkIfCanDoManualFights(item)
                 if (!canFight) {
                     window.location.reload()
                     return
@@ -586,13 +588,23 @@ class PvP extends Component {
 
             //console.log(fightRef.id)
 
+            const playerIsWinner = finalInfo1.id === winner
+
             let keyDb = fightsStart ? "pvp_results" : "pvp_training"
 
             const docRef = doc(firebasedb, keyDb, `${pvpWeek}_#${winner}`)
             try {
-                updateDoc(docRef, {
-                    "win": increment(1)
-                })
+                if (playerIsWinner) {
+                    updateDoc(docRef, {
+                        "win": increment(1),
+                        "manualFights": increment(1)
+                    })
+                }
+                else {
+                    updateDoc(docRef, {
+                        "win": increment(1)
+                    })
+                }
             }
             catch (error) {
                 console.log(error);
@@ -602,13 +614,22 @@ class PvP extends Component {
 
             const docRef2 = doc(firebasedb, keyDb, `${pvpWeek}_#${loserId}`)
             try {
-                updateDoc(docRef2, {
-                    "lose": increment(1)
-                })
+                if (!playerIsWinner) {
+                    updateDoc(docRef2, {
+                        "lose": increment(1),
+                        "manualFights": increment(1)
+                    })
+                }
+                else {
+                    updateDoc(docRef2, {
+                        "lose": increment(1)
+                    })
+                }
             }
             catch (error) {
                 console.log(error);
             }
+
 
             this.setState({ loading: false }, () => {
                 this.props.history.push(`/fightreplay/fights_pvp2/${fightRef.id}`)
@@ -864,7 +885,7 @@ class PvP extends Component {
 		}
 
         //console.log(bonusEquipment['hp']);
-        const canFight = !fightsStart ? true : this.hoursDiffFromStart(totalFights)
+        const canFight = !fightsStart ? true : this.checkIfCanDoManualFights(item)
         const hasFightsLeft = !fightsStart ? true : totalFights < item.rounds
 
 
