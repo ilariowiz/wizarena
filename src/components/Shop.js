@@ -2311,7 +2311,7 @@ class Shop extends Component {
                                 </p>
 
                                 <p style={{ fontSize: 14, color: 'red', marginBottom: 15 }} className="text-medium">
-                                    ATTENTION! Vials will not work in the apprentice or chaos tournament
+                                    ATTENTION! Vials will not work in the apprentice or farmers tournament
                                 </p>
 
                                 <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>

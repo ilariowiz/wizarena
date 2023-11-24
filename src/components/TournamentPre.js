@@ -931,7 +931,7 @@ class Tournament extends Component {
                     :
                     <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom }}>
                         <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
-                            The Chaos Tournament
+                            The Farmers Tournament
                         </p>
                     </div>
                 }
