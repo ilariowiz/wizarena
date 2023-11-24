@@ -50,7 +50,7 @@
 
     (defconst TOURNAMENT_ELITE_NAME "tournament-elite-name")
     (defconst TOURNAMENT_ELITE_OPEN "tournament_elite_open")
-    (defconst TOURNAMENT_FARMERS_MAX_LEVEL 175)
+    (defconst TOURNAMENT_FARMERS_MAX_LEVEL 185)
     (defconst BUYIN_ELITE_KEY "buyin-elite-key")
 
     (defconst WIZARDS_CHALLENGES_COUNT_KEY "wizards-challenges-count-key")
