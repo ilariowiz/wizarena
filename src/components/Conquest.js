@@ -181,9 +181,9 @@ class Conquest extends Component {
     loadMinted() {
 		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-		this.setState({ loadingYourSubs: true })
-
 		if (account && account.account) {
+
+            this.setState({ loadingYourSubs: true })
 
             this.props.loadEquipMinted(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
                 //console.log(response);
@@ -195,6 +195,9 @@ class Conquest extends Component {
 				this.getSubscribers()
 			})
 		}
+        else {
+            this.setState({ loadingYourSubs: false })
+        }
 	}
 
     async getSubscribers() {
@@ -1152,6 +1155,8 @@ class Conquest extends Component {
             )
         }
 
+        //console.log(loadingYourSubs);
+
         ///// SECTION PLAY ******************************
         return (
             <div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: padding/2, overflowY: 'auto', overflowX: 'hidden' }}>
@@ -1161,17 +1166,64 @@ class Conquest extends Component {
                         Lords of Wizards World - {this.SEASON_NAME}
                     </p>
 
-                    <button
-                        className='btnH'
-                        style={styles.btnSubscribe}
-                        onClick={() => {
-                            this.setState({ showSubscribe: true })
-                        }}
-                    >
-                        <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
-                            Subscribe your wizards
-                        </p>
-                    </button>
+                    <div style={{ flexDirection: 'column' }}>
+                        <button
+                            className='btnH'
+                            style={Object.assign({}, styles.btnSubscribe, { marginBottom: 10 })}
+                            onClick={() => {
+                                this.setState({ showSubscribe: true })
+                            }}
+                        >
+                            <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
+                                Subscribe your wizards
+                            </p>
+                        </button>
+
+                        <Popup
+                            trigger={
+                                <button
+                                    className='btnH'
+                                    style={styles.btnRules}
+                                    onClick={() => {
+                                        this.setState({ showSubscribe: true })
+                                    }}
+                                >
+                                    <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }} className="text-medium">
+                                        Rules
+                                    </p>
+                                </button>
+                            }
+                            modal
+                            nested
+                        >
+                            {close => (
+                                <div style={{ flexDirection: 'column' }}>
+                                    <div style={{ justifyContent: 'center', fontSize: 19, color: 'black', marginBottom: 10, marginTop: 5 }}>Rules</div>
+                                    <div style={{ fontSize: 16, color: 'black', paddingLeft: 5, paddingRight: 5, marginBottom: 15 }}>
+                                      {' '}
+                                      Each region of Wizards World has its own leaderboard. Whoever has the most ELO points is the current Lord.
+                                      <br />
+                                      Each wizard can do a maximum of 5 fights per day and he will be able to challenge the current Lord of one of the 9 regions. There are no constraints, you can do a single fight for 5 different regions, or all 5 fights in the same region.
+                                      <br />
+                                      The important thing is that you will always challenge the current Lord of that region. By winning you will be able to gain points and at the same time make the current Lord lose points. However, by losing your gap will increase.
+                                      <br />
+                                      <br />
+                                      Each region has 3 possible boosts. These boosts are associated with the elements closest to the region, for example Sitenor can have Fire, Earth or Dark boost. Each fight will have a random boost chosen from the 3 possible elements in the region. So it is important to understand if your wizard can take full advantage of the boosts that region can offer.
+                                    </div>
+                                    <div style={{ justifyContent: 'center', marginBottom: 10 }}>
+                                        <button
+                                            style={{ color: 'black', fontSize: 16 }}
+                                            onClick={() => {
+                                              close();
+                                            }}
+                                          >
+                                            Close
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </Popup>
+                    </div>
                 </div>
 
                 <p style={{ fontSize: 20, color: mainTextColor, marginBottom: 25 }}>
@@ -1354,6 +1406,19 @@ const styles = {
 		justifyContent: 'center',
 		alignItems: 'center',
 		borderRadius: 4,
+        display: 'flex',
+        cursor: 'pointer'
+	},
+    btnRules: {
+        width: 170,
+		height: 40,
+		backgroundColor: 'transparent',
+		justifyContent: 'center',
+		alignItems: 'center',
+		borderRadius: 4,
+        borderWidth: 1,
+        borderColor: CTA_COLOR,
+        borderStyle: 'solid',
         display: 'flex',
         cursor: 'pointer'
 	},
