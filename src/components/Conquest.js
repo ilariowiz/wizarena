@@ -820,7 +820,7 @@ class Conquest extends Component {
 	}
 
     renderRowChoise(item, index) {
-		const { equipment } = this.state
+		const { equipment, toSubscribe } = this.state
 
 		return (
             <NftCardChoiceFlashT
@@ -828,7 +828,16 @@ class Conquest extends Component {
                 item={item}
                 equipment={equipment}
                 onSelect={(id) => {
-                    this.addToSubscribers(id)
+                    if (!toSubscribe.includes(id)) {
+                        this.addToSubscribers(id)
+                    }
+                    else {
+                        const toSubscribeCopy = Object.assign([], toSubscribe)
+                        const idx = toSubscribeCopy.findIndex(i => i === id)
+                        toSubscribeCopy.splice(idx, 1)
+
+                        this.setState({ toSubscribe: toSubscribeCopy })
+                    }
                 }}
                 width={230}
             />
