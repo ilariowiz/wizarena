@@ -547,9 +547,6 @@ class Conquest extends Component {
             return
         }
 
-
-        this.setState({ loadingStartFight: true, showModalFight: true, infoFight: { nft1: wizardSelected, nft2: { id: champion.idnft }, evento: "", winner: "" } })
-
         /*
         // CHECK IF CHAMPION IS DIFFERENT, se hai guardato la pagina per svariati minuti, magari nel frattempo il champion è cambiato e quindi
         // e quindi dobbiamo controllare che stai facendo il fight contro il wizard giusto
@@ -563,7 +560,12 @@ class Conquest extends Component {
         }
         */
 
-        const champion = _.sample(champions)
+        //questo filter serve per rimuovere il tuo wizard nel caso in cui tu sei nella top 3
+        const filterTop3 = champions.filter(i => i.idnft !== wizardSelected.id)
+
+        const champion = _.sample(filterTop3)
+
+        this.setState({ loadingStartFight: true, showModalFight: true, infoFight: { nft1: wizardSelected, nft2: { id: champion.idnft }, evento: "", winner: "" } })
 
 
         this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, champion.idnft, async (response) => {
