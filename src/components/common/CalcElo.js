@@ -9,4 +9,4 @@ const getNewRating = (myRating, opponentRating, myGameResult) => {
     return myRating + getRatingDelta(myRating, opponentRating, myGameResult)
 }
 
-export default getNewRating
+export default getRatingDelta

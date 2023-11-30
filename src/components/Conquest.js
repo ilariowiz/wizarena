@@ -17,7 +17,7 @@ import allEvents from './common/Events'
 import getImageUrl from './common/GetImageUrl'
 import allSpells from './common/Spells'
 import fight from './common/CalcFight'
-import getNewRating from './common/CalcElo'
+import getRatingDelta from './common/CalcElo'
 import NftCardChoiceFlashT from './common/NftCardChoiceFlashT'
 import ModalFightConquest from './common/ModalFightConquest'
 import { MAIN_NET_ID, CTA_COLOR, MAX_LEVEL } from '../actions/types'
@@ -104,6 +104,9 @@ class Conquest extends Component {
 
         this.setState({ seasonInfo })
 
+        //console.log(getRatingDelta(630, 500, 0));
+        //console.log(getRatingDelta(500, 630, 1));
+
         setTimeout(() => {
             this.loadMinted()
             this.loadChampions()
@@ -126,52 +129,165 @@ class Conquest extends Component {
 
         this.setState({ loadingChampions: true })
 
-        const champions = {}
+        let allData = []
+        let champions = {}
         const idsToLoad = []
 
-        const sitenorChampion = await this.loadLords("eloSitenor")
+        const q = query(collection(firebasedb, this.SEASON_ID))
+        const querySnapshot = await getDocs(q)
+
+        querySnapshot.forEach(doc => {
+            //console.log(doc.data());
+            const d = doc.data()
+            //console.log(d);
+            let champion = {}
+
+            champion = d
+            champion['docId'] = doc.id
+
+            allData.push(champion)
+        })
+
+        //console.log(allData);
+
+        allData.sort((a, b) => {
+            return b["eloSitenor"] - a["eloSitenor"]
+        })
+
+        const sitenorChampion = allData.slice(0, 3)
+        //const sitenorChampion = await this.loadLords("eloSitenor")
         //console.log(sitenorChampion);
         champions['Sitenor'] = sitenorChampion
-        idsToLoad.push(sitenorChampion.idnft)
-
-        const druggorialChampion = await this.loadLords("eloDruggorial")
-        champions['Druggorial'] = druggorialChampion
-        idsToLoad.push(druggorialChampion.idnft)
-
-        const vedrenonChampion = await this.loadLords("eloVedrenon")
-        champions['Vedrenon'] = vedrenonChampion
-        idsToLoad.push(vedrenonChampion.idnft)
-
-        const oceorahChampion = await this.loadLords("eloOceorah")
-        champions['Oceorah'] = oceorahChampion
-        idsToLoad.push(oceorahChampion.idnft)
-
-        const opherusChampion = await this.loadLords("eloOpherus")
-        champions['Opherus'] = opherusChampion
-        idsToLoad.push(opherusChampion.idnft)
-
-        const ulidalarChampion = await this.loadLords("eloUlidalar")
-        champions['Ulidalar'] = ulidalarChampion
-        idsToLoad.push(ulidalarChampion.idnft)
-
-        const wastiaxusChampion = await this.loadLords("eloWastiaxus")
-        champions['Wastiaxus'] = wastiaxusChampion
-        idsToLoad.push(wastiaxusChampion.idnft)
-
-        const ulanaraChampion = await this.loadLords("eloUlanara")
-        champions['Ulanara'] = ulanaraChampion
-        idsToLoad.push(ulanaraChampion.idnft)
-
-        const bremononChampion = await this.loadLords("eloBremonon")
-        champions['Bremonon'] = bremononChampion
-        idsToLoad.push(bremononChampion.idnft)
-
-        const infoLordsArray = await this.props.loadBlockNftsSplit(chainId, gasPrice, gasLimit, networkUrl, idsToLoad)
-
-        const infoLords = {}
-        infoLordsArray.map(i => {
-            infoLords[i.id] = i
+        sitenorChampion.map(i => {
+            if (!idsToLoad.includes(i.idnft)) {
+                idsToLoad.push(i.idnft)
+            }
         })
+        //idsToLoad.push(sitenorChampion.idnft)
+
+        allData.sort((a, b) => {
+            return b["eloDruggorial"] - a["eloDruggorial"]
+        })
+
+        const druggorialChampion = allData.slice(0, 3)
+        //const druggorialChampion = await this.loadLords("eloDruggorial")
+        champions['Druggorial'] = druggorialChampion
+        druggorialChampion.map(i => {
+            if (!idsToLoad.includes(i.idnft)) {
+                idsToLoad.push(i.idnft)
+            }
+        })
+        //idsToLoad.push(druggorialChampion.idnft)
+
+        allData.sort((a, b) => {
+            return b["eloVedrenon"] - a["eloVedrenon"]
+        })
+
+        const vedrenonChampion = allData.slice(0, 3)
+        //const vedrenonChampion = await this.loadLords("eloVedrenon")
+        champions['Vedrenon'] = vedrenonChampion
+        vedrenonChampion.map(i => {
+            if (!idsToLoad.includes(i.idnft)) {
+                idsToLoad.push(i.idnft)
+            }
+        })
+        //idsToLoad.push(vedrenonChampion.idnft)
+
+        allData.sort((a, b) => {
+            return b["eloOceorah"] - a["eloOceorah"]
+        })
+
+        const oceorahChampion = allData.slice(0, 3)
+        //const oceorahChampion = await this.loadLords("eloOceorah")
+        champions['Oceorah'] = oceorahChampion
+        oceorahChampion.map(i => {
+            if (!idsToLoad.includes(i.idnft)) {
+                idsToLoad.push(i.idnft)
+            }
+        })
+        //idsToLoad.push(oceorahChampion.idnft)
+
+        allData.sort((a, b) => {
+            return b["eloOpherus"] - a["eloOpherus"]
+        })
+
+        const opherusChampion = allData.slice(0, 3)
+        //const opherusChampion = await this.loadLords("eloOpherus")
+        champions['Opherus'] = opherusChampion
+        opherusChampion.map(i => {
+            if (!idsToLoad.includes(i.idnft)) {
+                idsToLoad.push(i.idnft)
+            }
+        })
+        //idsToLoad.push(opherusChampion.idnft)
+
+        allData.sort((a, b) => {
+            return b["eloUlidalar"] - a["eloUlidalar"]
+        })
+
+        const ulidalarChampion = allData.slice(0, 3)
+        //const ulidalarChampion = await this.loadLords("eloUlidalar")
+        champions['Ulidalar'] = ulidalarChampion
+        ulidalarChampion.map(i => {
+            if (!idsToLoad.includes(i.idnft)) {
+                idsToLoad.push(i.idnft)
+            }
+        })
+        //idsToLoad.push(ulidalarChampion.idnft)
+
+        allData.sort((a, b) => {
+            return b["eloWastiaxus"] - a["eloWastiaxus"]
+        })
+
+        const wastiaxusChampion = allData.slice(0, 3)
+        //const wastiaxusChampion = await this.loadLords("eloWastiaxus")
+        champions['Wastiaxus'] = wastiaxusChampion
+        wastiaxusChampion.map(i => {
+            if (!idsToLoad.includes(i.idnft)) {
+                idsToLoad.push(i.idnft)
+            }
+        })
+        //idsToLoad.push(wastiaxusChampion.idnft)
+
+        allData.sort((a, b) => {
+            return b["eloUlanara"] - a["eloUlanara"]
+        })
+
+        const ulanaraChampion = allData.slice(0, 3)
+        //const ulanaraChampion = await this.loadLords("eloUlanara")
+        champions['Ulanara'] = ulanaraChampion
+        ulanaraChampion.map(i => {
+            if (!idsToLoad.includes(i.idnft)) {
+                idsToLoad.push(i.idnft)
+            }
+        })
+        //idsToLoad.push(ulanaraChampion.idnft)
+
+        allData.sort((a, b) => {
+            return b["eloBremonon"] - a["eloBremonon"]
+        })
+
+        const bremononChampion = allData.slice(0, 3)
+        //const bremononChampion = await this.loadLords("eloBremonon")
+        champions['Bremonon'] = bremononChampion
+        bremononChampion.map(i => {
+            if (!idsToLoad.includes(i.idnft)) {
+                idsToLoad.push(i.idnft)
+            }
+        })
+        //idsToLoad.push(bremononChampion.idnft)
+
+        //console.log(idsToLoad);
+
+        let infoLords = {}
+
+        if (idsToLoad.length > 1) {
+            const infoLordsArray = await this.props.loadBlockNftsSplit(chainId, gasPrice, gasLimit, networkUrl, idsToLoad)
+
+            infoLordsArray.map(i => {
+                infoLords[i.id] = i
+            })
+        }
 
         //console.log(infoLords);
 
@@ -197,6 +313,7 @@ class Conquest extends Component {
 		}
         else {
             this.setState({ loadingYourSubs: false })
+            this.getSubscribers()
         }
 	}
 
@@ -219,7 +336,7 @@ class Conquest extends Component {
         let yourSubs = []
         let notSubbed = []
 
-        userMintedNfts.map(i => {
+        userMintedNfts && userMintedNfts.map(i => {
 
             if (i.level >= seasonInfo.minLevel) {
                 if (onlySubsIds.includes(i.id)) {
@@ -251,23 +368,33 @@ class Conquest extends Component {
         })
     }
 
+    /*
     async loadLords(key) {
-        const q = query(collection(firebasedb, this.SEASON_ID), orderBy(key, "desc"), limit(1))
+        const q = query(collection(firebasedb, this.SEASON_ID), orderBy(key, "desc"), limit(3))
         const querySnapshot = await getDocs(q)
 
-        let champion = {}
+        let champions = []
 
         querySnapshot.forEach(doc => {
             //console.log(doc.data());
             const d = doc.data()
             //console.log(d);
+            let champion = {}
 
             champion = d
             champion['docId'] = doc.id
+
+            champions.push(champion)
         })
 
-        return champion
+        //console.log(champions);
+        champions.sort((a,b) => {
+            return b[key] - a[key]
+        })
+
+        return champions
     }
+    */
 
     async loadYourChampion(infoNft) {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
@@ -408,7 +535,7 @@ class Conquest extends Component {
         this.setState({ wizardSelectedLastFights: fights })
     }
 
-    async startFight(champion, keyElo, possibleBoosts) {
+    async startFight(champions, keyElo, possibleBoosts) {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
         const { wizardSelected, wizardSelectedElos } = this.state
 
@@ -423,6 +550,7 @@ class Conquest extends Component {
 
         this.setState({ loadingStartFight: true, showModalFight: true, infoFight: { nft1: wizardSelected, nft2: { id: champion.idnft }, evento: "", winner: "" } })
 
+        /*
         // CHECK IF CHAMPION IS DIFFERENT, se hai guardato la pagina per svariati minuti, magari nel frattempo il champion è cambiato e quindi
         // e quindi dobbiamo controllare che stai facendo il fight contro il wizard giusto
         const currentChampion = await this.loadLords(keyElo)
@@ -433,6 +561,10 @@ class Conquest extends Component {
             window.location.reload()
             return
         }
+        */
+
+        const champion = _.sample(champions)
+
 
         this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, champion.idnft, async (response) => {
 
@@ -508,18 +640,37 @@ class Conquest extends Component {
 
                 //calc ELO ********************
                 const elo1 = wizardSelectedElos[keyElo]
-                const newRanking1 = getNewRating(elo1, currentChampion[keyElo], winner === wizardSelected.id ? 1 : 0)
-                const newRanking2 = getNewRating(currentChampion[keyElo], elo1, winner === champion.idnft ? 1 : 0)
+                const eloChampion = champion[keyElo]
+
+                let getDelta1 = getRatingDelta(elo1, eloChampion, winner === wizardSelected.id ? 1 : 0)
+                let getDeltaChampion = getRatingDelta(eloChampion, elo1, winner === champion.idnft ? 1 : 0)
+
+                if (getDelta1 < 0) {
+                    getDelta1 = Math.floor(getDelta1 / 2)
+                }
+
+                if (getDeltaChampion < 0) {
+                    getDeltaChampion = Math.floor(getDeltaChampion / 2)
+                }
+
+                //console.log(getRatingDelta(590, 500, 1));
+                //console.log(Math.floor(getRatingDelta(500, 590, 0)/2));
+
 
                 //console.log(elo1, champion[keyElo]);
                 //console.log(newRanking1, newRanking2);
 
+                /*
                 const eloIncrement1 = newRanking1 - elo1
-                const eloIncrement2 = newRanking2 - currentChampion[keyElo]
+                const eloIncrement2 = newRanking2 - champion[keyElo]
                 //console.log(eloIncrement1, eloIncrement2);
 
                 this.updateDataFirebase(wizardSelectedElos.docId, eloIncrement1, keyElo, elo1, `old${keyElo}`, true)
-                this.updateDataFirebase(champion.docId, eloIncrement2, keyElo, currentChampion[keyElo], `old${keyElo}`, false)
+                this.updateDataFirebase(champion.docId, eloIncrement2, keyElo, champion[keyElo], `old${keyElo}`, false)
+                */
+
+                this.updateDataFirebase(wizardSelectedElos.docId, getDelta1, keyElo, elo1, `old${keyElo}`, true)
+                this.updateDataFirebase(champion.docId, getDeltaChampion, keyElo, eloChampion, `old${keyElo}`, false)
 
                 setTimeout(async () => {
                     const dataElo = await this.getElosDataSingleNft(wizardSelected.id)
@@ -698,6 +849,48 @@ class Conquest extends Component {
         )
     }
 
+    renderSingleNft(champion, keyElo) {
+
+        const { infoLords } = this.state
+
+        //console.log(champion);
+
+        return (
+            <div style={{ flexDirection: 'column', alignItems: 'center' }}>
+                <Popup
+                    trigger={open => (
+                        <a
+                            href={champion && parseInt(champion.idnft) < 10000 ? `${window.location.protocol}//${window.location.host}/nft/${champion.idnft}` : undefined}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ cursor: 'pointer', borderRadius: 50 }}
+                        >
+                            <img
+                                style={{ width: 100, height: 100, backgroundColor: "#ffffff30", borderRadius: 50 }}
+                                src={champion && champion.idnft && parseInt(champion.idnft) < 10000 ? `https://storage.googleapis.com/wizarena/wizards_nobg/${champion.idnft}.png` : placeholderWiz}
+                                alt={champion ? `#${champion.idnft}` : '...'}
+                            />
+                        </a>
+                    )}
+                    position="top center"
+                    on="hover"
+                >
+                    {
+                        champion && parseInt(champion.idnft) < 10000 && infoLords[champion.idnft] ?
+                        this.showInfoLord(infoLords[champion.idnft])
+                        : '...'
+                    }
+                </Popup>
+
+                <div style={{ alignItems: 'center', justifyContent: 'center', height: 22, width: 100, backgroundColor: "#090606", borderRadius: 4, marginBottom: 10 }}>
+                    <p style={{ color: "#d5d4ce", fontSize: 14, textAlign: 'center' }} className="text-bold">
+                        ELO {champion && parseInt(champion.idnft) < 10000 ? champion[keyElo] : "..."}
+                    </p>
+                </div>
+            </div>
+        )
+    }
+
     renderRegion(regionName, regionImage, RegionIcon, keyElo, seasonStarted, seasonEnded) {
 
         const { wizardSelected, wizardSelectedElos, champions, loadingStartFight, fightsDone, infoLords } = this.state
@@ -705,16 +898,24 @@ class Conquest extends Component {
 
         const possibleBoosts = this.eventsPerRegion(regionName)
 
-        const champion = champions && champions[regionName] ? champions[regionName] : undefined
-
         //console.log(infoLords);
+
+        //console.log(champions[regionName], regionName);
+        let champion, second, third;
+
+        if (champions && champions[regionName]) {
+            champion = champions[regionName].length > 0 ? champions[regionName][0] : undefined
+            second = champions[regionName].length > 1 ? champions[regionName][1] : undefined
+            third = champions[regionName].length > 2 ? champions[regionName][2] : undefined
+        }
+        //const champion = champions && champions[regionName] ? champions[regionName] : undefined
 
         if (!champion) {
             return undefined
         }
 
         let championName;
-        if (infoLords[champion.idnft]) {
+        if (infoLords && infoLords[champion.idnft]) {
             championName = infoLords[champion.idnft].nickname ? `#${infoLords[champion.idnft].id} ${infoLords[champion.idnft].nickname}` : `#${infoLords[champion.idnft].id}`
         }
 
@@ -723,6 +924,8 @@ class Conquest extends Component {
         const oldElo = wizardSelectedElos[keyElo] - wizardSelectedElos[`old${keyElo}`]
 
         const maxWidth = 210
+
+        //console.log(champion);
 
         return (
             <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', paddingLeft: 15, paddingRight: 15, position: 'relative', marginRight: 20, marginBottom: 20 }}>
@@ -766,35 +969,14 @@ class Conquest extends Component {
                         LORD {championName}
                     </p>
 
-                    <Popup
-                        trigger={open => (
-                            <a
-                                href={`${window.location.protocol}//${window.location.host}/nft/${champion.idnft}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{ cursor: 'pointer', borderColor: '#d7d7d7', borderTopLeftRadius: 4, borderTopRightRadius: 4, borderTopWidth: 1, borderLeftWidth: 1, borderRightWidth: 1, borderBottomWidth: 0, borderStyle: 'solid' }}
-                            >
-                                <img
-                                    style={{ width: 180, height: 180, backgroundColor: "#ffffff30" }}
-                                    src={champion.idnft ? `https://storage.googleapis.com/wizarena/wizards_nobg/${champion.idnft}.png` : placeholderWiz}
-                                    alt={`#${champion.idnft}`}
-                                />
-                            </a>
-                        )}
-                        position="top center"
-                        on="hover"
-                    >
-                        {
-                            infoLords[champion.idnft] ?
-                            this.showInfoLord(infoLords[champion.idnft])
-                            : '...'
-                        }
-                    </Popup>
+                    {this.renderSingleNft(champion, keyElo)}
 
-                    <div style={{ alignItems: 'center', justifyContent: 'center', height: 30, width: maxWidth, backgroundColor: 'gold', borderRadius: 4, marginBottom: 10 }}>
-                        <p style={{ color: "#232222", fontSize: 16, textAlign: 'center' }} className="text-bold">
-                            ELO {champion[keyElo] || "..."}
-                        </p>
+                    <div style={{ alignItems: 'center', justifyContent: 'space-between' }}>
+                        {this.renderSingleNft(second, keyElo)}
+
+                        <div style={{ width: 20, height: 1 }} />
+
+                        {this.renderSingleNft(third, keyElo)}
                     </div>
 
                     <div style={{ marginBottom: 3, alignItems: 'center' }}>
@@ -850,7 +1032,7 @@ class Conquest extends Component {
                                 !loadingStartFight && fightsLeft > 0 &&
                                 <button
                                     style={Object.assign({}, styles.btnSubscribe, { width: maxWidth, height: 30, marginBottom: 8, boxShadow: "black 0px 0px 15px", })}
-                                    onClick={() => this.startFight(champion, keyElo, possibleBoosts)}
+                                    onClick={() => this.startFight(champions[regionName], keyElo, possibleBoosts)}
                                 >
                                     <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
                                         Fight
@@ -886,7 +1068,7 @@ class Conquest extends Component {
 
                 <img
                     src={regionImage}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, zIndex: 90, opacity: '0.2' }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, zIndex: 90, opacity: '0.1' }}
                     alt={regionName}
                 />
 
@@ -1203,9 +1385,9 @@ class Conquest extends Component {
                                       {' '}
                                       Each region of Wizards World has its own leaderboard. Whoever has the most ELO points is the current Lord.
                                       <br />
-                                      Each wizard can do a maximum of 5 fights per day and he will be able to challenge the current Lord of one of the 9 regions. There are no constraints, you can do a single fight for 5 different regions, or all 5 fights in the same region.
+                                      Each wizard has 5 daily fights and will be able to challenge one of the top 3 wizards from each of the 9 regions. There are no constraints, you can do a single fight for 5 different regions, or all 5 fights in the same region.
                                       <br />
-                                      The important thing is that you will always challenge the current Lord of that region. By winning you will be able to gain points and at the same time make the current Lord lose points. However, by losing your gap will increase.
+                                      To calculate the ranking the website uses a modified version of the ELO rating. When you win, you gain points and your opponent loses half of the points you won.
                                       <br />
                                       <br />
                                       Each region has 3 possible boosts. These boosts are associated with the elements closest to the region, for example Sitenor can have Fire, Earth or Dark boost. Each fight will have a random boost chosen from the 3 possible elements in the region. So it is important to understand if your wizard can take full advantage of the boosts that region can offer.
