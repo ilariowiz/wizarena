@@ -37,11 +37,18 @@ class NftCardShopSelected extends Component {
                 style={{ padding: 10 }}
 			>
                 <div style={{ width, alignItems: 'center' }}>
-    				<img
-    					style={{ width: width/2, height: width/2, borderRadius: 4, borderColor: '#d7d7d7', borderWidth: 1, borderStyle: 'solid' }}
-    					src={getImageUrl(item.id)}
-    					alt={`#${item.id}`}
-    				/>
+    				<a
+                        style={{ cursor: 'pointer' }}
+                        href={`${window.location.protocol}//${window.location.host}/nft/${item.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <img
+                            style={{ width: width/2, height: width/2, borderRadius: 4, borderColor: '#d7d7d7', borderWidth: 1, borderStyle: 'solid' }}
+                            src={getImageUrl(item.id)}
+                            alt={`#${item.id}`}
+                        />
+                    </a>
 
                     <div style={{ flexDirection: 'column', width: width/2 }}>
 
