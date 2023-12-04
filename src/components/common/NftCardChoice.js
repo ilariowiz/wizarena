@@ -5,19 +5,10 @@ import '../../css/NftCardChoice.css'
 import cardStats from './CardStats'
 import getRingBonuses from './GetRingBonuses'
 import { getColorTextBasedOnLevel } from './CalcLevelWizard'
-import ModalSpellbook from './ModalSpellbook'
 import { CTA_COLOR } from '../../actions/types'
 
 
 class NftCardChoice extends Component {
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            showModalSpellbook: false
-        }
-    }
-
     calcMedals() {
         const { item } = this.props
 
@@ -52,6 +43,7 @@ class NftCardChoice extends Component {
 	}
 
     onSubscribe(spellSelected) {
+        //console.log(spellSelected);
         this.props.onSubscribe(spellSelected)
     }
 
@@ -123,7 +115,11 @@ class NftCardChoice extends Component {
                             <button
                                 className='btnSubscribe'
                                 style={styles.btnSubscribe}
-                                onClick={() => this.setState({ showModalSpellbook: true })}
+                                onClick={() => {
+                                    //console.log(item);
+                                    //this.setState({ showModalSpellbook: true })
+                                    this.onSubscribe({ name: item.spellSelected.name })
+                                }}
                             >
                                 <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
                                     Select to subscribe
@@ -177,21 +173,6 @@ class NftCardChoice extends Component {
                     </div>
 
 				</div>
-
-                {
-                    this.state.showModalSpellbook &&
-                    <ModalSpellbook
-                        showModal={this.state.showModalSpellbook}
-                        onCloseModal={() => this.setState({ showModalSpellbook: false })}
-                        width={this.props.modalWidth}
-                        equipment={this.props.equipment}
-                        stats={item}
-                        onSub={(spellSelected) => {
-                            this.onSubscribe(spellSelected)
-                            this.setState({ showModalSpellbook: false })
-                        }}
-                    />
-                }
 
 			</div>
 		)
