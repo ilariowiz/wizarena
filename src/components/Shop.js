@@ -913,8 +913,13 @@ class Shop extends Component {
 
             //console.log(arrayLevelsTo);
             arrayLevelsTo.map(s => {
+
+                //console.log(s, key, wizaValue);
+
                 costoWiza += calcUpgradeCost(s, key, wizaValue)
             })
+
+            //console.log(costoWiza);
 
             //console.log(arrayLevelsTo);
 
@@ -937,7 +942,7 @@ class Shop extends Component {
             newLevel = calcLevelWizardAfterUpgrade(copySelected, key)
         }
 
-        costoWiza = round((costoWiza * 9 / 100), 2)
+        costoWiza = round((costoWiza * 12 / 100), 2)
         //console.log(costoWiza);
 
         let colorTextLevel = getColorTextBasedOnLevel(newLevel, isDarkmode)
