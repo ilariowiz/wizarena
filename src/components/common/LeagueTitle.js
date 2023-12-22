@@ -10,8 +10,20 @@ const titles = {
         img: cup_gold,
         textColor: 'gold'
     }],
-    "235": [{
-        title: "Lord of Sitenor - Season 1",
+    "235": [
+        {
+            title: "Lord of Sitenor - Season 1",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Wastiaxus - Season 3",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
+    "3080": [{
+        title: "Lord of Sitenor - Season 3",
         img: crown,
         textColor: 'gold'
     }],
@@ -30,16 +42,38 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
+    "1471": [{
+        title: "Lord of Druggorial - Season 3",
+        img: crown,
+        textColor: 'gold'
+    }],
     "1016": [{
         title: "Lord of Bremonon - Season 1",
         img: crown,
         textColor: 'gold'
     }],
-    "815": [{
-        title: "Lord of Bremonon - Season 2",
+    "2755": [{
+        title: "Lord of Bremonon - Season 3",
         img: crown,
         textColor: 'gold'
     }],
+    "815": [
+        {
+            title: "Lord of Bremonon - Season 2",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Opherus - Season 3",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Ulidalar - Season 3",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
     "2107": [
         {
             title: "Lord of Vedrenon - Season 1",
@@ -52,8 +86,25 @@ const titles = {
             textColor: 'gold'
         }
     ],
-    "226": [{
-        title: "Lord of Vedrenon - Season 2",
+    "226": [
+        {
+            title: "Lord of Vedrenon - Season 2",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Oceorah - Season 3",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Ulanara - Season 3",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
+    "143": [{
+        title: "Lord of Vedrenon - Season 3",
         img: crown,
         textColor: 'gold'
     }],
