@@ -648,28 +648,13 @@ class Conquest extends Component {
                 let getDeltaChampion = getRatingDelta(eloChampion, elo1, winner === champion.idnft ? 1 : 0)
 
                 if (getDelta1 < 0) {
-                    getDelta1 = Math.floor(getDelta1 / 2)
+                    getDelta1 = Math.floor((getDelta1 * 80) / 100)
                 }
 
                 if (getDeltaChampion < 0) {
-                    getDeltaChampion = Math.floor(getDeltaChampion / 2)
+                    getDeltaChampion = Math.floor((getDeltaChampion * 80) / 100)
                 }
 
-                //console.log(getRatingDelta(590, 500, 1));
-                //console.log(Math.floor(getRatingDelta(500, 590, 0)/2));
-
-
-                //console.log(elo1, champion[keyElo]);
-                //console.log(newRanking1, newRanking2);
-
-                /*
-                const eloIncrement1 = newRanking1 - elo1
-                const eloIncrement2 = newRanking2 - champion[keyElo]
-                //console.log(eloIncrement1, eloIncrement2);
-
-                this.updateDataFirebase(wizardSelectedElos.docId, eloIncrement1, keyElo, elo1, `old${keyElo}`, true)
-                this.updateDataFirebase(champion.docId, eloIncrement2, keyElo, champion[keyElo], `old${keyElo}`, false)
-                */
 
                 this.updateDataFirebase(wizardSelectedElos.docId, getDelta1, keyElo, elo1, `old${keyElo}`, true)
                 this.updateDataFirebase(champion.docId, getDeltaChampion, keyElo, eloChampion, `old${keyElo}`, false)
@@ -1398,7 +1383,7 @@ class Conquest extends Component {
                                       <br />
                                       Each wizard has 5 daily fights and will be able to challenge one of the top 3 wizards from each of the 9 regions. There are no constraints, you can do a single fight for 5 different regions, or all 5 fights in the same region.
                                       <br />
-                                      To calculate the ranking the website uses a modified version of the ELO rating. When you win, you gain points and your opponent loses half of the points you won.
+                                      To calculate the ranking the website uses a modified version of the ELO rating. When you win, you gain points and your opponent loses 80% of the points you won.
                                       <br />
                                       <br />
                                       Each region has 3 possible boosts. These boosts are associated with the elements closest to the region, for example Sitenor can have Fire, Earth or Dark boost. Each fight will have a random boost chosen from the 3 possible elements in the region. So it is important to understand if your wizard can take full advantage of the boosts that region can offer.
