@@ -28,8 +28,15 @@ class ModalTransfer extends Component {
             const response = await fetch(`https://www.kadenanames.com/api/v1/address/${addr}`);
             const { address } = await response.json();
             //console.log(address);
-            this.setState({ loading: false, error: '' })
-            this.props.callback(address)
+
+            if (address) {
+                this.setState({ loading: false, error: '' })
+                this.props.callback(address)
+            }
+            else {
+                this.setState({ error: "Invalid Kadena Name.", loading: false })
+            }
+
         }
         else {
             if (!addr.includes("k:")) {
