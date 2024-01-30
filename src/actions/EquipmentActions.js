@@ -155,7 +155,7 @@ export const getEquipmentVolume = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 	}
 }
 
-export const getInfoItemEquippedMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 125000, networkUrl, idnfts) => {
+export const getInfoItemEquippedMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 500000, networkUrl, idnfts) => {
 	return async (dispatch) => {
 
 		let cmd = {
@@ -201,6 +201,36 @@ export const getInfoNftEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLi
 				callback(response)
 			}
 		})
+	}
+}
+
+export const getInfoAura = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 500000, networkUrl, idnft) => {
+	return async (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.get-aura-for-nft "${idnft}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+        const response = await dispatch(readFromContract(cmd, true, networkUrl))
+		//console.log(response);
+
+		return response
+	}
+}
+
+export const getInfoAuraMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 500000, networkUrl, idnfts) => {
+	return async (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.get-aura-for-nfts ${JSON.stringify(idnfts)})`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+        const response = await dispatch(readFromContract(cmd, true, networkUrl))
+		//console.log(response);
+
+		return response
 	}
 }
 
