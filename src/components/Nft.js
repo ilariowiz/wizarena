@@ -25,6 +25,8 @@ import traits_qty_clerics from './common/Traits_qty_clerics'
 import traits_qty_druids from './common/Traits_qty_druids'
 import traits_qty_elders from './common/Traits_qty_elders'
 import getName from './common/GetName'
+import getAuraForElement from '../assets/gifs/AuraForElement'
+import getBgNft from './common/GetBgNft'
 import conditions from './common/Conditions'
 import allSpells from './common/Spells'
 import titles from './common/LeagueTitle'
@@ -48,7 +50,8 @@ import {
 	updateInfoTransactionModal,
 	setWizardSfidato,
 	getFightPerNfts,
-	changeSpellTournament
+	changeSpellTournament,
+	getInfoAura
 } from '../actions'
 import { MAIN_NET_ID, REVEAL_CAP, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -86,6 +89,7 @@ class Nft extends Component {
 			saleValues: {},
 			ring: {},
 			pendant: {},
+			aura: {},
 			maxStats: undefined,
 			showMedals: false,
 			showFights: false,
@@ -324,7 +328,11 @@ class Nft extends Component {
 		const pendant = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, `${idNft}pendant`)
 		//console.log(pendant);
 
-		this.setState({ ring: ring.equipped ? ring : {}, pendant: pendant.equipped ? pendant : {} })
+		const aura = await this.props.getInfoAura(chainId, gasPrice, gasLimit, networkUrl, idNft)
+
+		//console.log(aura);
+
+		this.setState({ ring: ring.equipped ? ring : {}, pendant: pendant.equipped ? pendant : {}, aura: aura.bonus.int > -1 ? aura : {} })
 	}
 
 
@@ -1957,7 +1965,7 @@ class Nft extends Component {
 
 
 	renderBodySmall() {
-		const { nft, loading, infoBurn, ring, pendant } = this.state
+		const { nft, loading, infoBurn, ring, pendant, aura } = this.state
 		const { account } = this.props
 
 		const { boxW, padding } = getBoxWidth(true)
@@ -1970,6 +1978,8 @@ class Nft extends Component {
 
 		let ctaWidth = (viewTopsW/2) - 5
 		//if (ctaWidth > 150) ctaWidth = 150
+
+		const bgName = nft.traits ? nft.traits.find(i => i.trait_type === "Background")["value"] : ""
 
 		return (
 			<div style={{ flexDirection: 'column', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden', alignItems: 'center' }}>
@@ -1984,11 +1994,35 @@ class Nft extends Component {
 				<div style={{ width: imageWidth, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 25 }}>
 
 					<div style={{ position: 'relative' }}>
+
 						<img
-							style={{ width: imageWidth, height: imageWidth, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid' }}
-							src={getImageUrl(nft.id)}
+							style={{ width: imageWidth, height: imageWidth, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', backgroundColor: getBgNft(bgName), position: 'absolute', left: 0, top: 0, right: 0, bottom: 0 }}
 							alt={nft.id}
 						/>
+
+						{
+							aura && aura.bonus ?
+							<img
+								style={{ width: imageWidth, position: 'absolute', top: 0, right: 0 }}
+								src={getAuraForElement(nft.element)}
+								alt={nft.id}
+							/>
+							: null
+						}
+
+						{
+							nft.id ?
+							<img
+								style={{ width: imageWidth, height: imageWidth, zIndex: 100 }}
+								//src={getImageUrl(nft.id)}
+								src={`https://storage.googleapis.com/wizarena/wizards_nobg/${nft.id}.png`}
+								alt={nft.id}
+							/>
+							:
+							<img
+								style={{ width: imageWidth, height: imageWidth, zIndex: 100 }}
+							/>
+						}
 
 						{
 							showOverlayBurn ?
@@ -2111,7 +2145,7 @@ class Nft extends Component {
 	}
 
 	renderBodyLarge() {
-		const { nft, loading, infoBurn, ring, pendant } = this.state
+		const { nft, loading, infoBurn, ring, pendant, aura } = this.state
 		const { account } = this.props
 
 		const { boxW, padding } = getBoxWidth(false)
@@ -2123,6 +2157,11 @@ class Nft extends Component {
 		//if (ctaWidth > 250) ctaWidth = 250
 
 		let showOverlayBurn = infoBurn && infoBurn.burned
+
+		//console.log(nft);
+
+		const bgName = nft.traits ? nft.traits.find(i => i.trait_type === "Background")["value"] : ""
+		//console.log(bgName);
 
 		return (
 			<div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: padding/2, overflowY: 'auto', overflowX: 'hidden', alignItems: 'center' }}>
@@ -2137,16 +2176,40 @@ class Nft extends Component {
 				<div style={{ width: insideWidth, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 25 }}>
 
 						<div style={{ position: 'relative', marginRight: 30 }}>
+
 							<img
-								style={{ width: 400, height: 400, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid' }}
-								src={getImageUrl(nft.id)}
+								style={{ width: 400, height: 400, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', backgroundColor: getBgNft(bgName), position: 'absolute', left: 0, top: 0, right: 0, bottom: 0 }}
 								alt={nft.id}
 							/>
 
 							{
+								aura && aura.bonus ?
+								<img
+									style={{ width: 400, position: 'absolute', top: 16, right: 0 }}
+									src={getAuraForElement(nft.element)}
+									alt={nft.id}
+								/>
+								: null
+							}
+
+							{
+								nft.id ?
+								<img
+									style={{ width: 400, height: 400, zIndex: 100 }}
+									//src={getImageUrl(nft.id)}
+									src={`https://storage.googleapis.com/wizarena/wizards_nobg/${nft.id}.png`}
+									alt={nft.id}
+								/>
+								:
+								<img
+									style={{ width: 400, height: 400, zIndex: 100 }}
+								/>
+							}
+
+							{
 								showOverlayBurn ?
 								<img
-									style={{ width: 400, height: 400, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', position: 'absolute', top: 0, left: 0 }}
+									style={{ width: 400, height: 400, borderRadius: 4, position: 'absolute', top: 0, left: 0 }}
 									src={burn_overlay}
 									alt={nft.id}
 								/>
@@ -2585,5 +2648,6 @@ export default connect(mapStateToProps, {
 	updateInfoTransactionModal,
 	setWizardSfidato,
 	getFightPerNfts,
-	changeSpellTournament
+	changeSpellTournament,
+	getInfoAura
 })(Nft);
