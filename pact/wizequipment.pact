@@ -176,6 +176,10 @@
       amount:integer
   )
 
+  (defschema aura-schema
+      bonus:integer
+  )
+
   (deftable equipment:{equip-main-schema})
   (deftable creation:{creation-schema})
   (deftable equipped:{equipped-schema})
@@ -193,6 +197,7 @@
   (deftable wl-minted:{wl-mint-schema})
 
   (deftable price-table:{price-schema})
+  (deftable aura-table:{aura-schema})
 
   ; Can only happen once
   ; --------------------------------------------------------------------------
@@ -904,6 +909,54 @@
   )
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;;;;;;; AURA  ;;;;;;;;;;;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (defun buy-aura (idnft:string owner:string coin:string ma:module{wizarena-interface-v2} mw:module{wiza1-interface-v3})
+    (enforce (= (format "{}" [ma]) "free.wiz-arena") "not allowed, security reason")
+    (enforce (= (format "{}" [mw]) "free.wiza") "not allowed, security reason")
+    (let (
+            (nft-data (ma::get-wizard-fields-for-id (str-to-int idnft)))
+            (wiza-cost (* (get-wiza-value) 15.0))
+        )
+        (enforce (= (at "owner" nft-data) owner) "you are not the owner of this wizard")
+        (with-default-read aura-table idnft
+            {"bonus": -1}
+            {"bonus":= bonus }
+            (enforce (< bonus 0) "you have already purchased this upgrade")
+        )
+        (if
+            (= coin "kda")
+            (with-capability (ACCOUNT_GUARD owner)
+                (install-capability (coin.TRANSFER owner ADMIN_ADDRESS 15.0))
+                (coin.transfer owner ADMIN_ADDRESS 15.0)
+            )
+            (with-capability (ACCOUNT_GUARD owner)
+                (mw::spend-wiza wiza-cost owner)
+            )
+        )
+        (write aura-table idnft
+            {"bonus": 0}
+        )
+    )
+  )
+
+  (defun get-aura-for-nft (idnft:string)
+      (with-default-read aura-table idnft
+          {"bonus": -1}
+          {"bonus":= bonus }
+          {"bonus": bonus, "idnft": idnft}
+      )
+  )
+
+  (defun get-aura-for-nfts (ids:list)
+    (map
+        (get-aura-for-nft)
+        ids
+    )
+  )
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;;;;;;;; UTILS  ;;;;;;;;;;;;
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -1125,6 +1178,7 @@
     (create-table wl-minted)
 
     (create-table price-table)
+    (create-table aura-table)
 
     (initialize)
 

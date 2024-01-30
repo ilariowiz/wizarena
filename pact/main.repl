@@ -2012,6 +2012,24 @@
 ;
 ; (commit-tx)
 
+(begin-tx "BUY AURA")
+
+(env-sigs [{
+  "key": "94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd",
+  "caps": [
+    (free.wiz-equipment.ACCOUNT_GUARD "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd"),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-equipment.buy-aura "2" "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" "wiza" free.wiz-arena free.wiza)
+
+(free.wiz-equipment.get-aura-for-nft "2")
+
+(free.wiz-equipment.get-aura-for-nfts ["2", "0"])
+
+(commit-tx)
+
 (begin-tx "STAKE ONE")
 
 (env-sigs [{
