@@ -1997,7 +1997,6 @@ class Nft extends Component {
 
 						<img
 							style={{ width: imageWidth, height: imageWidth, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', backgroundColor: getBgNft(bgName), position: 'absolute', left: 0, top: 0, right: 0, bottom: 0 }}
-							alt={nft.id}
 						/>
 
 						{
@@ -2005,7 +2004,6 @@ class Nft extends Component {
 							<img
 								style={{ width: imageWidth, position: 'absolute', top: 0, right: 0 }}
 								src={getAuraForElement(nft.element)}
-								alt={nft.id}
 							/>
 							: null
 						}
@@ -2016,7 +2014,6 @@ class Nft extends Component {
 								style={{ width: imageWidth, height: imageWidth, zIndex: 100 }}
 								//src={getImageUrl(nft.id)}
 								src={`https://storage.googleapis.com/wizarena/wizards_nobg/${nft.id}.png`}
-								alt={nft.id}
 							/>
 							:
 							<img
@@ -2029,7 +2026,6 @@ class Nft extends Component {
 							<img
 								style={{ width: imageWidth, height: imageWidth, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', position: 'absolute', top: 0, left: 0 }}
 								src={burn_overlay}
-								alt={nft.id}
 							/>
 							: null
 						}
@@ -2179,7 +2175,6 @@ class Nft extends Component {
 
 							<img
 								style={{ width: 400, height: 400, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', backgroundColor: getBgNft(bgName), position: 'absolute', left: 0, top: 0, right: 0, bottom: 0 }}
-								alt={nft.id}
 							/>
 
 							{
@@ -2187,7 +2182,6 @@ class Nft extends Component {
 								<img
 									style={{ width: 400, position: 'absolute', top: 16, right: 0 }}
 									src={getAuraForElement(nft.element)}
-									alt={nft.id}
 								/>
 								: null
 							}
@@ -2198,7 +2192,6 @@ class Nft extends Component {
 									style={{ width: 400, height: 400, zIndex: 100 }}
 									//src={getImageUrl(nft.id)}
 									src={`https://storage.googleapis.com/wizarena/wizards_nobg/${nft.id}.png`}
-									alt={nft.id}
 								/>
 								:
 								<img
@@ -2211,7 +2204,6 @@ class Nft extends Component {
 								<img
 									style={{ width: 400, height: 400, borderRadius: 4, position: 'absolute', top: 0, left: 0 }}
 									src={burn_overlay}
-									alt={nft.id}
 								/>
 								: null
 							}
