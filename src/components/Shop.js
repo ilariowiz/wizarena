@@ -16,6 +16,7 @@ import ModalConnectionWidget from './common/ModalConnectionWidget'
 import ModalSetName from './common/ModalSetName'
 import NftCardShop from './common/NftCardShop'
 import NftCardShopSelected from './common/NftCardShopSelected'
+import getAuraForElement from '../assets/gifs/AuraForElement'
 import calcUpgradeCost from './common/CalcUpgradeCost'
 import allSpells from './common/Spells'
 import conditions from './common/Conditions'
@@ -44,7 +45,9 @@ import {
     swapSpell,
     getSpellUpgradeCost,
     improveSpell,
-    resetSpellUpgrades
+    resetSpellUpgrades,
+    getInfoAuraMass,
+    buyAura
 } from '../actions'
 import { MAIN_NET_ID, CTA_COLOR, MAX_LEVEL } from '../actions/types'
 import '../css/Nft.css'
@@ -77,6 +80,8 @@ const retrain_hp = require('../assets/retrain_hp.png')
 const book_shop = require('../assets/book_shop.png')
 const book_spell = require('../assets/book.png')
 
+const aura_placeholder = require('../assets/gifs/aura_placeholder.png')
+
 
 class Shop extends Component {
     constructor(props) {
@@ -98,6 +103,7 @@ class Shop extends Component {
             apToBurn: 1,
             rings: [],
             pendants: [],
+            auras: [],
             decrease: { hp: 1, defense: 1, attack: 1, damage: 1, speed: 1},
             baseStats: undefined,
             wizaValue: 0,
@@ -146,9 +152,11 @@ class Shop extends Component {
 		this.setState({ loading: true })
 
 		if (account && account.account) {
-			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
+			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (nfts) => {
+                //console.log(nfts);
 				this.setState({ loading: false })
                 this.getSpellUpgradeCost()
+                this.loadAuras(nfts)
 			})
 		}
 	}
@@ -194,6 +202,18 @@ class Shop extends Component {
                 }, 500)
 			})
 		}
+    }
+
+    async loadAuras(nfts) {
+        const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+        const idnfts = nfts.map(i => i.id)
+        //console.log(idnfts);
+
+        const auras = await this.props.getInfoAuraMass(chainId, gasPrice, gasLimit, networkUrl, idnfts)
+        //console.log(auras);
+
+        this.setState({ auras })
     }
 
 	loadWizaBalance() {
@@ -560,6 +580,21 @@ class Shop extends Component {
 		})
 
         this.props.resetSpellUpgrades(chainId, gasPrice, netId, account, wizard.id)
+    }
+
+    buyAura(idnft, coin) {
+        const { account, chainId, gasPrice, netId } = this.props
+
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will buy the aura for the wizard #${idnft}`,
+			typeModal: 'buyaura',
+			transactionOkText: `Aura bought successfully!`,
+            idNft: idnft,
+            //nameNft: `${wizardName} has reset the stats of the spell ${wizard.spellSelected.name}`
+		})
+
+        this.props.buyAura(chainId, gasPrice, netId, account, idnft, coin)
+
     }
 
     sortById() {
@@ -1945,6 +1980,10 @@ class Shop extends Component {
             img = pendant_menu
             imgStyle = { height: 58 }
         }
+        else if (key === "Aura") {
+            img = aura_placeholder
+            imgStyle = { height: 42 }
+        }
         else if (key === "Spellbook") {
             img = book_shop
             imgStyle = { height: 34 }
@@ -2042,7 +2081,7 @@ class Shop extends Component {
 	}
 
     renderBody(isMobile) {
-        const { isConnected, showModalConnection, historyUpgrades, potionEquipped, rings, pendants, ringsToShow, pendantsToShow } = this.state
+        const { isConnected, showModalConnection, historyUpgrades, potionEquipped, rings, pendants, ringsToShow, pendantsToShow, auras, wizaValue } = this.state
         const { account, wizaBalance, mainTextColor } = this.props
 
         const { boxW, modalW, padding } = getBoxWidth(isMobile)
@@ -2096,6 +2135,9 @@ class Shop extends Component {
         const ringsFinal = ringsToShow.length > 0 ? ringsToShow : rings
         const pendantsFinal = pendantsToShow.length > 0 ? pendantsToShow : pendants
 
+        const aura = auras.length > 0 ? auras.find(i => i.idnft === wizard.id) : {}
+        //console.log(aura);
+
         const widthSide = 180
 		const widthNfts = isMobile ? boxW : boxW - widthSide
 
@@ -2143,6 +2185,7 @@ class Shop extends Component {
                             <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 30 }}>
                                 {this.renderBoxMenu("Rings")}
                                 {this.renderBoxMenu("Pendants")}
+                                {this.renderBoxMenu("Aura")}
                                 {this.renderBoxMenu("Upgrades")}
                                 {this.renderBoxMenu("AP")}
                                 {this.renderBoxMenu("Retrain")}
@@ -2230,6 +2273,70 @@ class Shop extends Component {
                                     <p style={{ fontSize: 16, color: mainTextColor }}>
                                         No pendant available
                                     </p>
+                                </div>
+                            }
+                        </div>
+
+                        <p style={{ fontSize: 25, color: mainTextColor, marginBottom: 15 }} id="shop-aura" className="text-bold">
+                            Aura
+                        </p>
+
+                        {
+                            this.state.loadingEquip &&
+                            <div style={{ alignItems: 'flex-start', flexDirection: 'column', marginBottom: 30 }}>
+                                <p style={{ fontSize: 16, color: mainTextColor }}>
+                                    Loading Aura...
+                                </p>
+                            </div>
+                        }
+
+                        <div style={{ width: boxW, marginBottom: 30 }}>
+
+                            {
+                                auras.length > 0 && aura.bonus.int > -1 ?
+                                <div style={{ alignItems: 'flex-start', flexDirection: 'column' }}>
+                                    <p style={{ fontSize: 16, color: mainTextColor }}>
+                                        You've already bought the Aura!
+                                    </p>
+                                </div>
+                                :
+                                <div style={{ alignItems: 'flex-start', flexDirection: 'column' }}>
+                                    <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 10 }}>
+                                        The Aura is a fantastic cosmetic upgrade that will give you the ability to bring even more magic to your wizard!
+                                    </p>
+
+                                    <img
+                                        style={{ width: 150, marginBottom: 15 }}
+                                        src={getAuraForElement(wizard.element)}
+                                        alt={wizard.id}
+                                    />
+
+                                    <div style={{ alignItems: 'center' }}>
+                                        <button
+                                            className='btnH'
+                                            style={Object.assign({}, styles.btnChoose, { width: 140, marginRight: 15 })}
+                                            onClick={() => {
+                                                this.buyAura(wizard.id, "kda")
+                                            }}
+                                        >
+                                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                                Buy 15 $KDA
+                                            </p>
+                                        </button>
+
+                                        <button
+                                            className='btnH'
+                                            style={Object.assign({}, styles.btnChoose, { width: 140 })}
+                                            onClick={() => {
+                                                this.buyAura(wizard.id, "wiza")
+                                            }}
+                                        >
+                                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                                Buy {round(15 * wizaValue, 2)} $WIZA
+                                            </p>
+                                        </button>
+                                    </div>
+
                                 </div>
                             }
                         </div>
@@ -2649,5 +2756,7 @@ export default connect(mapStateToProps, {
     swapSpell,
     getSpellUpgradeCost,
     improveSpell,
-    resetSpellUpgrades
+    resetSpellUpgrades,
+    getInfoAuraMass,
+    buyAura
 })(Shop)

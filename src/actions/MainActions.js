@@ -3264,6 +3264,43 @@ export const getChallengesReceived = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 	}
 }
 
+/////////  BUY AURA
+
+export const buyAura = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft, coin) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME_EQUIPMENT}.buy-aura "${idnft}" "${account.account}" "${coin}" free.wiz-arena free.wiza)`;
+
+		let cmd = {
+			pactCode,
+			caps: [
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME_EQUIPMENT}.ACCOUNT_GUARD`,
+          			[account.account]
+        		),
+				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+			],
+			sender: account.account,
+			gasLimit: 5000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("buyAura", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
 
 /************************************************************************
 
