@@ -37,6 +37,18 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
+    "3075": [
+        {
+            title: "Lord of Druggorial - Season 4",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Vedrenon - Season 4",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
     "1425": [{
         title: "Lord of Druggorial - Season 2",
         img: crown,
@@ -70,6 +82,16 @@ const titles = {
         },
         {
             title: "Lord of Ulidalar - Season 3",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Opherus - Season 4",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Ulanara - Season 4",
             img: crown,
             textColor: 'gold'
         }
@@ -118,6 +140,11 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
+    "976": [{
+        title: "Lord of Ulidalar - Season 4",
+        img: crown,
+        textColor: 'gold'
+    }],
     "2932": [{
         title: "Lord of Ulidalar - Season 2",
         img: crown,
@@ -128,11 +155,23 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
-    "3078": [{
-        title: "Lord of Wastiaxus - Season 2",
-        img: crown,
-        textColor: 'gold'
-    }],
+    "3078": [
+        {
+            title: "Lord of Wastiaxus - Season 2",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Sitenor - Season 4",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Wastiaxus - Season 4",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
     "488": [{
         title: "Lord of Opherus - Season 2",
         img: crown,
@@ -175,16 +214,30 @@ const titles = {
         img: medal,
         textColor: "#cd7f32"
     }],
-    "1117": [{
-        title: "The Twelve League 8th place",
-        img: medal,
-        textColor: "#cd7f32"
-    }],
-    "1443": [{
-        title: "The Twelve League 9th place",
-        img: medal,
-        textColor: "#cd7f32"
-    }],
+    "1117": [
+        {
+            title: "The Twelve League 8th place",
+            img: medal,
+            textColor: "#cd7f32"
+        },
+        {
+            title: "Lord of Ulanara - Season 4",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
+    "1443": [
+        {
+            title: "The Twelve League 9th place",
+            img: medal,
+            textColor: "#cd7f32"
+        },
+        {
+            title: "Lord of Oceorah - Season 4",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
     "1379": [{
         title: "The Twelve League 10th place",
         img: medal,
