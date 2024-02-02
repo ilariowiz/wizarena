@@ -2024,7 +2024,7 @@ class Nft extends Component {
 						{
 							showOverlayBurn ?
 							<img
-								style={{ width: imageWidth, height: imageWidth, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', position: 'absolute', top: 0, left: 0 }}
+								style={{ width: imageWidth, height: imageWidth, borderRadius: 4, position: 'absolute', top: 1, left: 1, zIndex: 120 }}
 								src={burn_overlay}
 							/>
 							: null
@@ -2202,7 +2202,7 @@ class Nft extends Component {
 							{
 								showOverlayBurn ?
 								<img
-									style={{ width: 400, height: 400, borderRadius: 4, position: 'absolute', top: 0, left: 0 }}
+									style={{ width: 400, height: 400, borderRadius: 4, position: 'absolute', top: 1, left: 1, zIndex: 120 }}
 									src={burn_overlay}
 								/>
 								: null
