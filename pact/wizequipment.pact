@@ -1156,6 +1156,14 @@
     )
   )
 
+  (defun force-unequip (idnft:string)
+    (with-capability (ADMIN)
+        (update equipped idnft
+            {"equipped": false}
+        )
+    )
+  )
+
 )
 
 (if (read-msg "upgrade")
