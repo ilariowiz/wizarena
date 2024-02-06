@@ -52,8 +52,8 @@ class Tournament extends Component {
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
         setTimeout(() => {
-            this.loadTournament()
             this.loadMinted()
+            this.loadTournament()
         }, 500)
 	}
 
@@ -62,6 +62,7 @@ class Tournament extends Component {
 
 		if (account && account.account) {
 			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
+                //console.log(response);
 				this.setState({ userMinted: response })
 			})
 		}
@@ -107,8 +108,8 @@ class Tournament extends Component {
             tournament = {
                 canSubscribe: false,
                 nRounds: 6,
-                name: "t7_r1",
-                roundEnded: "0",
+                name: "t1047_r2",
+                roundEnded: "1",
                 showPair: true,
                 start: {seconds: 1671715800, nanoseconds: 843000000},
                 tournamentEnd: false
@@ -125,22 +126,22 @@ class Tournament extends Component {
 				this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-wiza-key")
 
 
-                this.loadPair(tournament.name)
+                const matchPair = await this.loadPair(tournament.name)
+
                 const tournamentName = tournament.name.split("_")[0]
 
                 this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "wiza", (subscribed) => {
-
                     //console.log(subscribed);
 
                     //this.getAllPotionsEquipped(subscribed, tournamentName)
-                    this.calcSubscribers(subscribed, tournament)
+                    this.calcSubscribers(subscribed, tournament, matchPair)
                 })
 
             })
         })
     }
 
-    calcSubscribers(subscribed, tournament) {
+    calcSubscribers(subscribed, tournament, matchPair) {
         const { account } = this.props
 
         const roundEnded = tournament.roundEnded
@@ -188,7 +189,36 @@ class Tournament extends Component {
         const avgLevel = this.calcAvgLevel(subscribed)
         //console.log(avgLevel);
 
-        this.setState({ subscribed: subs, yourStat, avgLevel, loading: false })
+        if (matchPair && matchPair.length > 0) {
+
+            let yourPairings = []
+
+            for (let i = 0; i < matchPair.length; i++) {
+                const pairing = matchPair[i]
+                const wiz1 = pairing.s1.id
+                const wiz2 = pairing.s2.id
+
+                const wiz1info = subscribed.find(i => i.id === wiz1)
+                const wiz2info = subscribed.find(i => i.id === wiz2)
+
+                //console.log(wiz2info, account.account);
+                if ((wiz1info.owner === account.account) || (wiz2info && wiz2info.owner === account.account)) {
+                    //console.log("your");
+
+                    yourPairings.push(pairing)
+                    matchPair.splice(i, 1)
+                }
+            }
+
+            //console.log(yourPairings);
+
+            if (yourPairings.length > 0) {
+                //aggiungiamo i tuoi pairings all'inizio
+                matchPair.splice(0, 0, ...yourPairings)
+            }
+        }
+
+        this.setState({ subscribed: subs, yourStat, avgLevel, matchPair, loading: false })
     }
 
     getAllPotionsEquipped(subscribers, tournamentName) {
@@ -229,11 +259,15 @@ class Tournament extends Component {
 
 		const docSnap = await getDoc(docRef)
 		const data = docSnap.data()
+
         //console.log(data);
 
         if (data) {
-            this.setState({ matchPair: data.couples })
+            //this.setState({ matchPair: data.couples })
+            return data.couples
         }
+
+        return []
     }
 
     calcAvgLevel(array) {
