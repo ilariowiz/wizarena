@@ -6,7 +6,7 @@ const crown = require('../../assets/crown.png')
 
 const titles = {
     "1653": [{
-        title: "The Twelve League Champion",
+        title: "The Twelve League I Champion",
         img: cup_gold,
         textColor: 'gold'
     }],
@@ -54,21 +54,35 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
-    "1471": [{
-        title: "Lord of Druggorial - Season 3",
-        img: crown,
-        textColor: 'gold'
-    }],
+    "1471": [
+        {
+            title: "Lord of Druggorial - Season 3",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "The Twelve League III 6th place",
+            img: medal,
+            textColor: '#cd7f32'
+        }
+    ],
     "1016": [{
         title: "Lord of Bremonon - Season 1",
         img: crown,
         textColor: 'gold'
     }],
-    "2755": [{
-        title: "Lord of Bremonon - Season 3",
-        img: crown,
-        textColor: 'gold'
-    }],
+    "2755": [
+        {
+            title: "Lord of Bremonon - Season 3",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "The Twelve League III 5th place",
+            img: medal,
+            textColor: '#cd7f32'
+        }
+    ],
     "815": [
         {
             title: "Lord of Bremonon - Season 2",
@@ -94,6 +108,11 @@ const titles = {
             title: "Lord of Ulanara - Season 4",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "The Twelve League III 3rd place",
+            img: cup_bronze,
+            textColor: '#cd7f32'
         }
     ],
     "2107": [
@@ -123,13 +142,40 @@ const titles = {
             title: "Lord of Ulanara - Season 3",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "The Twelve League III 8th place",
+            img: medal,
+            textColor: '#cd7f32'
         }
     ],
-    "143": [{
-        title: "Lord of Vedrenon - Season 3",
-        img: crown,
-        textColor: 'gold'
+    "714": [{
+        title: "The Twelve League III 9th place",
+        img: medal,
+        textColor: '#cd7f32'
     }],
+    "1488": [{
+        title: "The Twelve League III 11th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "289": [{
+        title: "The Twelve League III 12th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "143": [
+        {
+            title: "Lord of Vedrenon - Season 3",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "The Twelve League III 10th place",
+            img: medal,
+            textColor: '#cd7f32'
+        }
+    ],
     "2564": [{
         title: "Lord of Oceorah - Season 1",
         img: crown,
@@ -170,6 +216,11 @@ const titles = {
             title: "Lord of Wastiaxus - Season 4",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "The Twelve League III 4th place",
+            img: medal,
+            textColor: '#cd7f32'
         }
     ],
     "488": [{
@@ -185,7 +236,7 @@ const titles = {
         },
         {
             title: "The Twelve League II 4th place",
-            img: cup_bronze,
+            img: medal,
             textColor: '#cd7f32'
         }
     ],
@@ -214,6 +265,11 @@ const titles = {
         img: medal,
         textColor: "#cd7f32"
     }],
+    "137": [{
+        title: "The Twelve League 7th place",
+        img: medal,
+        textColor: "#cd7f32"
+    }],
     "1117": [
         {
             title: "The Twelve League 8th place",
@@ -235,6 +291,11 @@ const titles = {
         {
             title: "Lord of Oceorah - Season 4",
             img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "The Twelve League III Champion",
+            img: cup_gold,
             textColor: 'gold'
         }
     ],
@@ -319,6 +380,11 @@ const titles = {
     }],
     "2377": [{
         title: "The Twelve League II 2nd place",
+        img: cup_silver,
+        textColor: '#c0c0c0'
+    }],
+    "1726": [{
+        title: "The Twelve League III 2nd place",
         img: cup_silver,
         textColor: '#c0c0c0'
     }],
