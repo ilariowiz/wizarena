@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCardChoice.css'
+import ModalStats from './ModalStats'
 import cardStats from './CardStats'
 import getRingBonuses from './GetRingBonuses'
 import { getColorTextBasedOnLevel } from './CalcLevelWizard'
@@ -9,38 +10,101 @@ import { CTA_COLOR } from '../../actions/types'
 
 
 class NftCardChoice extends Component {
-    calcMedals() {
-        const { item } = this.props
+    constructor(props) {
+        super(props)
 
-        const medals = item.medals
-
-        let tot = 0
-
-        Object.keys(medals).forEach(i => {
-            tot += parseInt(medals[i])
-        })
-
-        return tot
+        this.state = {
+            showModalStats: false
+        }
     }
 
-    getRingEquipped() {
-		const { equipment, item } = this.props
+    renderActionsSection(section, item, canSubscribe, inToSubscribe) {
 
-		if (!equipment || equipment.length === 0) {
-			return ""
-		}
+        if (section === 'tournament') {
+            return (
+                <div style={{ width: '100%' }}>
+                    {
+                        canSubscribe && item.level && !inToSubscribe ?
+                        <button
+                            className='btnSubscribe'
+                            style={styles.btnSubscribe}
+                            onClick={() => {
+                                this.onSubscribe({ name: item.spellSelected.name })
+                            }}
+                        >
+                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                Select to subscribe
+                            </p>
+                        </button>
+                        :
+                        null
+                    }
 
-		const ring = equipment.find(i => i.equippedToId === item.id)
+                    {
+                        !canSubscribe ?
+                        <div
+                            style={styles.btnSubscribe}
+                        >
+                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                Registrations closed
+                            </p>
+                        </div>
+                        :
+                        null
 
-		//console.log(ring);
+                    }
 
-		if (ring && ring.equipped) {
-			return ring
-		}
-		//console.log(ring);
-
-		return ""
-	}
+                    {
+                        inToSubscribe && canSubscribe ?
+                        <button
+                            className='btnSubscribe'
+                            style={styles.btnSubscribe}
+                            onClick={() => this.props.removeFromSubscribers(item.id)}
+                        >
+                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                Remove from subscribers
+                            </p>
+                        </button>
+                        : null
+                    }
+                </div>
+            )
+        }
+        else if (section === 'challenge') {
+            return (
+                <div style={{ width: '100%' }}>
+                    <button
+                        className='btnSubscribe'
+                        style={styles.btnSubscribe}
+                        onClick={() => {
+                            this.onSubscribe(item.spellSelected)
+                        }}
+                    >
+                        <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                            Select
+                        </p>
+                    </button>
+                </div>
+            )
+        }
+        else if (section === "flash" || section === "lords") {
+            return (
+                <div style={{ width: '100%' }}>
+                    <button
+                        className='btnSubscribe'
+                        style={styles.btnSubscribe}
+                        onClick={() => {
+                            this.props.onSubscribe(item.id)
+                        }}
+                    >
+                        <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                            Select
+                        </p>
+                    </button>
+                </div>
+            )
+        }
+    }
 
     onSubscribe(spellSelected) {
         //console.log(spellSelected);
@@ -48,50 +112,40 @@ class NftCardChoice extends Component {
     }
 
 	render() {
-		const { item, width, canSubscribe, toSubscribe, subscriptionsInfo, mainTextColor, isDarkmode } = this.props
+		const { item, width, canSubscribe, toSubscribe, mainTextColor, isDarkmode, section } = this.props
 
         //console.log(item)
 
-        let isSubscribed;
-        //console.log(isSubscribed);
-        if (subscriptionsInfo && subscriptionsInfo.length > 0) {
-            isSubscribed = subscriptionsInfo.some(i => i.idnft === item.id)
-        }
+        const inToSubscribe = toSubscribe ? toSubscribe.some(i => i.idnft === item.id) : false
 
-        const numberOfTotalMedals = item.medals ? this.calcMedals() : 0
-
-        const inToSubscribe = toSubscribe.some(i => i.idnft === item.id)
-
-        const ring = this.getRingEquipped()
-		let infoEquipment;
-		if (ring) {
-			infoEquipment = getRingBonuses(ring)
-            //console.log(infoEquipment);
-		}
-
-		return (
+        return (
 			<div
 				className='containerChoice'
 			>
-				<img
-					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
-					src={getImageUrl(item.id)}
-					alt={`#${item.id}`}
-				/>
+                <a
+                    href={`${window.location.protocol}//${window.location.host}/nft/${item.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ cursor: 'pointer' }}
+                >
+    				<img
+    					style={{ width, height: width, borderTopLeftRadius: 2, borderTopRightRadius: 2 }}
+    					src={getImageUrl(item.id)}
+    					alt={`#${item.id}`}
+    				/>
+                </a>
 
 				<div style={{ flexDirection: 'column', width, alignItems: 'center' }}>
 
 					<div style={{ width: '90%', justifyContent: 'space-between', alignItems: 'center', marginTop: 5, marginBottom: 10 }}>
-						<p style={{ color: mainTextColor, fontSize: 16 }} className="text-bold">
+
+                        <p style={{ color: mainTextColor, fontSize: 16 }} className="text-bold">
 							{item.name}
 						</p>
-					</div>
-
-					<div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
                         {
                             item.level ?
-                            <div style={{ width: '90%', alignItems: 'center', marginBottom: 8 }}>
+                            <div style={{ alignItems: 'center' }}>
                                 <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
                                     Level
                                 </p>
@@ -101,78 +155,30 @@ class NftCardChoice extends Component {
                             </div>
                             : null
                         }
+					</div>
 
-                        {
-                            item.hp ?
-                            cardStats(item, numberOfTotalMedals, undefined, infoEquipment ? infoEquipment.bonusesDict : undefined, mainTextColor)
-                            :
-                            null
-                        }
+                    <button
+                        style={{ marginBottom: 10, width: 100, height: 23, alignItems: 'center', borderRadius: 4, borderColor: CTA_COLOR, borderWidth: 1, borderStyle: 'solid' }}
+                        onClick={() => this.setState({ showModalStats: true })}
+                    >
+                        <p style={{ fontSize: 14, color: mainTextColor }} className="text-regular">
+                            see stats
+                        </p>
+                    </button>
 
-
-                        {
-                            !isSubscribed && canSubscribe && item.level && !inToSubscribe ?
-                            <button
-                                className='btnSubscribe'
-                                style={styles.btnSubscribe}
-                                onClick={() => {
-                                    //console.log(item);
-                                    //this.setState({ showModalSpellbook: true })
-                                    this.onSubscribe({ name: item.spellSelected.name })
-                                }}
-                            >
-                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                    Select to subscribe
-                                </p>
-                            </button>
-                            :
-                            null
-                        }
-
-                        {
-                            !isSubscribed && !canSubscribe ?
-                            <div
-                                style={styles.btnSubscribe}
-                            >
-                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                    Registrations closed
-                                </p>
-                            </div>
-                            :
-                            null
-
-                        }
-
-                        {
-                            isSubscribed ?
-                            <button
-                                className='btnSubscribe'
-                                style={styles.btnSubscribe}
-                                onClick={() => this.props.onChangeSpell()}
-                            >
-                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                    Change spell
-                                </p>
-                            </button>
-                            : null
-                        }
-
-                        {
-                            inToSubscribe && !isSubscribed && canSubscribe ?
-                            <button
-                                className='btnSubscribe'
-                                style={styles.btnSubscribe}
-                                onClick={() => this.props.removeFromSubscribers(item.id)}
-                            >
-                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                    Remove from subscribers
-                                </p>
-                            </button>
-                            : null
-                        }
-                    </div>
+                    {this.renderActionsSection(section, item, canSubscribe, inToSubscribe)}
 
 				</div>
+
+                {
+                    this.state.showModalStats ?
+                    <ModalStats
+                        item={item}
+                        showModal={this.state.showModalStats}
+                        onCloseModal={() => this.setState({ showModalStats: false })}
+                    />
+                    : undefined
+                }
 
 			</div>
 		)
