@@ -6,12 +6,10 @@ import _ from 'lodash'
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import DotLoader from 'react-spinners/DotLoader';
-import { AiFillCheckCircle, AiOutlineLock } from 'react-icons/ai'
+import { AiFillCheckCircle } from 'react-icons/ai'
 import { IoClose } from 'react-icons/io5'
 import Popup from 'reactjs-popup';
 import NftCardChoice from './common/NftCardChoice'
-import NftCardChoiced from './common/NftCardChoiced'
-import ModalSpellbook from './common/ModalSpellbook'
 import CardSingleFightProfile from './common/CardSingleFightProfile'
 import Header from './Header'
 import getBoxWidth from './common/GetBoxW'
@@ -24,12 +22,10 @@ import {
     setNetworkUrl,
     getSubscribed,
     loadUserMintedNfts,
-    loadEquipMinted,
     subscribeToTournamentMass,
     clearTransaction,
     subscribeToTournamentMassWIZA,
     getSubscriptions,
-    changeSpellTournament,
     subscribeToTournamentMassELITE,
     updateInfoTransactionModal,
     fetchAccountDetails,
@@ -64,11 +60,8 @@ class Tournament extends Component {
             yourSubs: [],
             tournamentSubs: {},
             toSubscribe: [],
-			equipment: [],
             statSearched: [],
-            subscriptionsInfo: [],
-            showModalSpellbook: false,
-            wizardToChangeSpell: undefined
+            subscriptionsInfo: []
 		}
 	}
 
@@ -139,24 +132,19 @@ class Tournament extends Component {
                 }
 
                 if (isSubs) {
-                    this.props.loadEquipMinted(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
-                        //console.log(response);
+                    let idsSubscription = []
+                    const tName = tournament.name.split("_")[0]
 
-                        let idsSubscription = []
-                        const tName = tournament.name.split("_")[0]
+                    minted.map(i => {
+                        idsSubscription.push(`${tName}_${i.id}`)
+                    })
 
-                        minted.map(i => {
-                            idsSubscription.push(`${tName}_${i.id}`)
+                    this.props.getSubscriptions(chainId, gasPrice, gasLimit, networkUrl, idsSubscription, async (subscriptions) => {
+
+                        this.setState({ subscriptionsInfo: subscriptions }, () => {
+                            this.loadSubs(tournament)
                         })
-
-                        this.props.getSubscriptions(chainId, gasPrice, gasLimit, networkUrl, idsSubscription, (subscriptions) => {
-                            //console.log(subscriptions);
-
-                            this.setState({ equipment: response, subscriptionsInfo: subscriptions }, () => {
-                                this.loadSubs(tournament)
-                            })
-                        })
-        			})
+                    })
 
                 }
             })
@@ -298,7 +286,6 @@ class Tournament extends Component {
     }
 
     async loadProfileFights(tournament, subscribed) {
-        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
 		const tournamentName = tournament.name.split("_")[0]
 		//console.log(tournamentName);
@@ -370,7 +357,6 @@ class Tournament extends Component {
 
         const levelCap = tournament.levelCap
 
-        //console.log(subscriptionsInfo);
         let yourPossibleSubs = userMintedNfts.filter(i => i.level <= levelCap)
 
         let yourSubs = this.setYourSub(yourPossibleSubs)
@@ -474,21 +460,6 @@ class Tournament extends Component {
 
 		this.props.subscribeToTournamentMassELITE(chainId, gasPrice, 3000, netId, account, toSubscribe)
 	}
-
-    changeSpellTournament(spellSelected) {
-        const { chainId, gasPrice, netId, account } = this.props
-        const { wizardToChangeSpell } = this.state
-
-        //console.log(wizardToChangeSpell);
-
-        this.props.updateInfoTransactionModal({
-			transactionToConfirmText: `You will change the spell of #${wizardToChangeSpell.id}`,
-			typeModal: 'changespell_pvp',
-			transactionOkText: `Spell changed!`,
-		})
-
-		this.props.changeSpellTournament(chainId, gasPrice, 3000, netId, account, wizardToChangeSpell.id, spellSelected)
-    }
 
     async searchByStat(stat) {
 		const { statSearched, tournamentSubs } = this.state
@@ -1194,16 +1165,15 @@ class Tournament extends Component {
 	}
 
     renderRowChoise(item, index, modalWidth) {
-		const { tournamentSubs, toSubscribe, equipment, subscriptionsInfo } = this.state
+		const { tournamentSubs, toSubscribe } = this.state
 
 		return (
 			<NftCardChoice
 				key={index}
 				item={item}
 				width={230}
-                subscriptionsInfo={subscriptionsInfo}
-				tournament={tournamentSubs.name.split("_")[0]}
 				canSubscribe={tournamentSubs.canSubscribe}
+                toSubscribe={toSubscribe}
 				onSubscribe={(spellSelected) => this.subscribe(item.id, spellSelected)}
 				removeFromSubscribers={(idnft) => {
 					let toSubscribe = Object.assign([], this.state.toSubscribe)
@@ -1215,28 +1185,22 @@ class Tournament extends Component {
 					this.setState({ toSubscribe })
 				}}
 				modalWidth={modalWidth}
-				toSubscribe={toSubscribe}
-				equipment={equipment}
-                onChangeSpell={() => {
-                    this.setState({ showModalSpellbook: true, wizardToChangeSpell: item })
-                }}
+				section={"tournament"}
+
 			/>
 		)
 	}
 
     renderRowChoised(item, index, modalWidth) {
-		const { tournamentSubs, toSubscribe, subscriptionsInfo } = this.state
+		const { subscriptionsInfo } = this.state
 
 		return (
-			<NftCardChoiced
+			<NftCardChoice
 				key={index}
 				item={item}
 				width={230}
                 subscriptionsInfo={subscriptionsInfo}
 				modalWidth={modalWidth}
-                onChangeSpell={() => {
-                    this.setState({ showModalSpellbook: true, wizardToChangeSpell: item })
-                }}
 			/>
 		)
 	}
@@ -1433,21 +1397,6 @@ class Tournament extends Component {
 					</div>
                 }
 
-                {
-                    this.state.showModalSpellbook &&
-                    <ModalSpellbook
-                        showModal={this.state.showModalSpellbook}
-                        onCloseModal={() => this.setState({ showModalSpellbook: false })}
-                        width={modalW}
-                        equipment={this.state.equipment}
-                        stats={this.state.wizardToChangeSpell}
-                        onSub={(spellSelected) => {
-                            this.changeSpellTournament(spellSelected)
-                            this.setState({ showModalSpellbook: false })
-                        }}
-                    />
-                }
-
             </div>
         )
     }
@@ -1576,12 +1525,10 @@ export default connect(mapStateToProps, {
     setNetworkUrl,
     getSubscribed,
     loadUserMintedNfts,
-    loadEquipMinted,
     subscribeToTournamentMass,
     clearTransaction,
     subscribeToTournamentMassWIZA,
     getSubscriptions,
-    changeSpellTournament,
     subscribeToTournamentMassELITE,
     updateInfoTransactionModal,
     fetchAccountDetails,
