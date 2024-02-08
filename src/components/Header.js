@@ -864,8 +864,11 @@ class Header extends Component {
 					this.props.clearTransaction(requestKey)
 					this.props.removeInfo(requestKey)
 
+					//console.log(requestKey);
 					if (location === window.location.href) {
-						window.location.reload()
+						setTimeout(() => {
+							window.location.reload()
+						}, 200)
 					}
 				}}
 				mintFail={(pactCode, requestKey) => {
