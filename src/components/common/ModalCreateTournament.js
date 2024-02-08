@@ -376,7 +376,6 @@ class ModalCreateTournament extends Component {
                 <ModalChooseWizard
                     showModal={this.state.showChooseWizard}
                     onCloseModal={() => this.setState({ showChooseWizard: false })}
-                    equipment={this.props.equipment}
                     yourWizards={this.props.yourWizards}
                     onSelect={(id) => {
                         this.setState({ idnft: id, showChooseWizard: false })
