@@ -92,6 +92,10 @@
       @event true
   )
 
+  (defcap UPGRADE_AURA (idnft:string)
+      @event true
+  )
+
   ;;;; SCHEMAS AND TABLES ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
   (defschema creation-schema
@@ -954,6 +958,56 @@
         (get-aura-for-nft)
         ids
     )
+  )
+
+  (defun upgrade-aura (idnft:string owner:string ma:module{wizarena-interface-v2} mw:module{wiza1-interface-v3})
+    (enforce (= (format "{}" [ma]) "free.wiz-arena") "not allowed, security reason")
+    (enforce (= (format "{}" [mw]) "free.wiza") "not allowed, security reason")
+    (let (
+            (nft-data (ma::get-wizard-fields-for-id (str-to-int idnft)))
+            (ap-cost 10)
+            (wiza-cost (get-wiza-cost-for-upgrade-aura idnft))
+        )
+        (enforce (= (at "owner" nft-data) owner) "you are not the owner of this wizard")
+        (check-upgrades-aura-limit idnft)
+        (with-capability (ACCOUNT_GUARD owner)
+            (with-default-read aura-table idnft
+                {"bonus":-1}
+                {"bonus":=bonus}
+                (enforce (>= bonus 0) "This wizard does not have an aura")
+                (update aura-table idnft
+                    {"bonus": (+ bonus 1)}
+                )
+                (mw::spend-wiza wiza-cost owner)
+                (ma::spend-ap ap-cost owner idnft)
+                (emit-event (UPGRADE_AURA idnft))
+            )
+        )
+    )
+  )
+
+  (defun get-wiza-cost-for-upgrade-aura (idnft:string)
+      (with-default-read aura-table idnft
+          {"bonus":-1}
+          {"bonus":=bonus}
+          (enforce (>= bonus 0) "This wizard does not have an aura")
+          (let* (
+                  (base-cost (round (* (get-wiza-value) 2.2) 2))
+                  (mod (* (+ bonus 1) 60))
+                  (mod2 (round (/ (* base-cost mod) 100) 2))
+                  (wiza-cost (+ base-cost mod2))
+              )
+              wiza-cost
+          )
+      )
+  )
+
+  (defun check-upgrades-aura-limit (idnft:string)
+      (with-default-read aura-table idnft
+          {"bonus":0}
+          {"bonus":=bonus}
+          (enforce (< bonus 4) "You have reached the limit")
+      )
   )
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
