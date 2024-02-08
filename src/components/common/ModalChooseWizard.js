@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { IoClose } from 'react-icons/io5'
-import NftCardChoiceFlashT from './NftCardChoiceFlashT'
+import NftCardChoice from './NftCardChoice'
 import '../../css/Modal.css'
 
 
 class ModalChooseWizard extends Component {
 	render() {
-		const { showModal, onCloseModal, yourWizards, equipment, mainTextColor, mainBackgroundColor } = this.props;
+		const { showModal, onCloseModal, yourWizards, mainTextColor, mainBackgroundColor } = this.props;
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 
@@ -18,14 +18,13 @@ class ModalChooseWizard extends Component {
 					<div style={{ flexWrap: 'wrap', overflowY: 'auto', overflowX: 'hidden', justifyContent: 'center', marginTop: 30 }}>
 						{yourWizards && yourWizards.map((item, index) => {
 							return (
-								<NftCardChoiceFlashT
+								<NftCardChoice
 									key={index}
 									item={item}
-									equipment={equipment}
-									onSelect={(id) => {
-										this.props.onSelect(id)
-									}}
 									width={230}
+									onSubscribe={(id) => this.props.onSelect(id)}
+									modalWidth={230}
+									section={"flash"}
 								/>
 							)
 						})}
