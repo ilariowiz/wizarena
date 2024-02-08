@@ -19,7 +19,6 @@ import {
     getPendingTournaments,
     getCompletedTournaments,
     getWizaBalance,
-    loadEquipMinted,
     loadUserMintedNfts,
     updateInfoTransactionModal,
     selectWizard,
@@ -46,7 +45,6 @@ class FlashTournaments extends Component {
             maxLevelChooseWizard: 0,
             fights: {},
             tournamentInfo: {},
-            equipment: [],
             joinTournamentid: "",
             sortByKey: "playersDesc",
             completedToShowAmount: 15
@@ -91,10 +89,6 @@ class FlashTournaments extends Component {
         const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
         if (account && account.account) {
-            this.props.loadEquipMinted(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
-                this.setState({ equipment: response })
-            })
-
             this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account)
         }
     }
@@ -867,7 +861,6 @@ class FlashTournaments extends Component {
                     onCloseModal={() => this.setState({ showModalCreate: false })}
                     width={modalW}
                     wizaBalance={this.props.wizaBalance}
-                    equipment={this.state.equipment}
                     yourWizards={userMintedNfts}
                     createTournament={(idnft, buyin, maxLevel, name, winners, nPlayers, type) => {
                         this.setState({ showModalCreate: false })
@@ -878,7 +871,6 @@ class FlashTournaments extends Component {
                 <ModalChooseWizard
                     showModal={showModalChooseWizard}
                     onCloseModal={() => this.setState({ showModalChooseWizard: false })}
-                    equipment={this.state.equipment}
                     yourWizards={wizardsPool}
                     onSelect={(id) => {
                         this.setState({ showModalChooseWizard: false })
@@ -1004,7 +996,6 @@ export default connect(mapStateToProps, {
     getPendingTournaments,
     getCompletedTournaments,
     getWizaBalance,
-    loadEquipMinted,
     loadUserMintedNfts,
     updateInfoTransactionModal,
     selectWizard,
