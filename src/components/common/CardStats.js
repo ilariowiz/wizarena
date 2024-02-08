@@ -1,7 +1,7 @@
 import React from 'react'
 import allSpells from './Spells'
 
-const cardStats = (item, numberOfMedalsForTournament, width, bonusFromRing, mainTextColor) => {
+const cardStats = (item, numberOfMedalsForTournament, width, bonusFromEquipment, mainTextColor) => {
 
     //console.log(item);
 
@@ -63,12 +63,12 @@ const cardStats = (item, numberOfMedalsForTournament, width, bonusFromRing, main
         dmgTotal += item['upgrades-spell'].damage.int
     }
 
-    if (bonusFromRing) {
-        //console.log(bonusFromRing);
-        Object.keys(bonusFromRing).map(key => {
+    if (bonusFromEquipment) {
+        //console.log(bonusFromEquipment);
+        Object.keys(bonusFromEquipment).map(key => {
             //console.log(key);
 
-            let bonus = bonusFromRing[key]
+            let bonus = bonusFromEquipment[key]
 
             if (key === "hp") {
                 hpBase += bonus
