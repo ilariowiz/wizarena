@@ -9,7 +9,7 @@ import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import cardStats from './common/CardStats'
 import getRingBonuses from './common/GetRingBonuses'
 import getImageUrl from './common/GetImageUrl'
-import NftCardChoiceDuel from './common/NftCardChoiceDuel'
+import NftCardChoice from './common/NftCardChoice'
 import { TEXT_SECONDARY_COLOR, MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import {
     loadUserMintedNfts,
@@ -17,7 +17,8 @@ import {
     setNetworkUrl,
     loadEquipMinted,
     sendChallenge,
-    updateInfoTransactionModal
+    updateInfoTransactionModal,
+    getInfoAuraMass
 } from '../actions'
 import '../css/Nft.css'
 
@@ -32,6 +33,7 @@ class DoChallenges extends Component {
             error: "",
             yourNfts: [],
             equipment: [],
+            auras: [],
             yourChampion: {},
             showYourNfts: false,
             inputPrice: '',
@@ -57,12 +59,15 @@ class DoChallenges extends Component {
 		this.setState({ loading: true })
 
 		if (account && account.account) {
-			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
+			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, async (response) => {
 				//console.log(response);
                 const yourNfts = response.filter(i => !i.listed)
                 //console.log(yourNfts);
 
-				this.setState({ loading: false, yourNfts })
+                let idnfts = yourNfts.map(i => i.id)
+                const auras = await this.props.getInfoAuraMass(chainId, gasPrice, gasLimit, networkUrl, idnfts)
+
+				this.setState({ loading: false, yourNfts, auras })
 			})
 		}
 	}
@@ -152,6 +157,23 @@ class DoChallenges extends Component {
         }
         //console.log(infoEquipment);
 
+        if (info.aura && info.aura.bonus.int > 0) {
+            if (infoEquipment) {
+                infoEquipment.bonusesText.push(`+${info.aura.bonus.int} Aura defense`)
+                if (infoEquipment.bonusesDict['defense']) {
+                    infoEquipment.bonusesDict['defense'] += info.aura.bonus.int
+                }
+                else {
+                    infoEquipment.bonusesDict['defense'] = info.aura.bonus.int
+                }
+            }
+            else {
+                infoEquipment.bonusesText = [`+${info.aura.bonus.int} Aura defense`]
+                infoEquipment.bonusesDict = {}
+                infoEquipment['defense'] = info.aura.bonus.int
+            }
+        }
+
         const widthImg = isMobile ? width : width-10
 
         return (
@@ -188,7 +210,7 @@ class DoChallenges extends Component {
 
                     {cardStats(info, undefined, '100%', infoEquipment ? infoEquipment.bonusesDict : undefined, mainTextColor)}
 
-                    {
+                    {/*
                         info.ring && info.ring.bonus ?
                         <div style={{ alignItems: 'center', marginBottom: 10 }}>
                             <img
@@ -202,7 +224,7 @@ class DoChallenges extends Component {
                         </div>
                         :
                         null
-                    }
+                    */}
                 </div>
             </div>
         )
@@ -296,17 +318,15 @@ class DoChallenges extends Component {
     }
 
     renderRowChoise(item, index, modalWidth) {
-        const { yourChampion, equipment } = this.state
+        const { equipment, auras } = this.state
 
         //console.log(item);
 
 		return (
-			<NftCardChoiceDuel
+			<NftCardChoice
 				key={index}
 				item={item}
 				width={230}
-                equipment={equipment}
-                subscriptionsInfo={yourChampion}
 				onSubscribe={(spellSelected) => {
                     item['spellSelected'] = spellSelected
                     const ring = equipment.find(i => i.equippedToId === item.id && i.equipped)
@@ -315,11 +335,17 @@ class DoChallenges extends Component {
                     const pendant = equipment.find(i => i.equippedToId === `${item.id}pendant` && i.equipped)
                     item['pendant'] = pendant
 
+                    const aura = auras.find(i => i.idnft === item.id)
+                    if (aura && aura.bonus.int > 0) {
+                        item['aura'] = aura
+                    }
+
                     this.setState({ yourChampion: item }, () => {
                         document.getElementById("box-top").scrollIntoView({ behavior: 'smooth' })
                     })
                 }}
 				modalWidth={modalWidth}
+                section={"challenge"}
 			/>
 		)
 	}
@@ -531,5 +557,6 @@ export default connect(mapStateToProps, {
     setNetworkUrl,
     loadEquipMinted,
     sendChallenge,
-    updateInfoTransactionModal
+    updateInfoTransactionModal,
+    getInfoAuraMass
 })(DoChallenges)
