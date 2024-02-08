@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import getImageUrl from './GetImageUrl'
+import ModalStats from './ModalStats'
 import '../../css/NftCardChoice.css'
-import cardStats from './CardStats'
-import getRingBonuses from './GetRingBonuses'
 import { getColorTextBasedOnLevel } from './CalcLevelWizard'
 import {
     getPvPsubscription
@@ -19,7 +18,8 @@ class NftCardChoicePvP extends Component {
             loading: true,
             isSubscribed: false,
             subscriptionInfo: {},
-            spellSelected: undefined
+            spellSelected: undefined,
+            showModalStats: false
         }
     }
 
@@ -41,39 +41,6 @@ class NftCardChoicePvP extends Component {
         }, index*30)
     }
 
-    calcMedals() {
-        const { item } = this.props
-
-        const medals = item.medals
-
-        let tot = 0
-
-        Object.keys(medals).forEach(i => {
-            tot += parseInt(medals[i])
-        })
-
-        return tot
-    }
-
-    getRingEquipped() {
-		const { equipment, item } = this.props
-
-		if (!equipment || equipment.length === 0) {
-			return ""
-		}
-
-		const ring = equipment.find(i => i.equippedToId === item.id)
-
-		//console.log(ring);
-
-		if (ring && ring.equipped) {
-			return ring
-		}
-		//console.log(ring);
-
-		return ""
-	}
-
     onSubscribe(spellSelected, wizaAmount) {
         this.props.onSubscribe(spellSelected, wizaAmount)
     }
@@ -83,15 +50,6 @@ class NftCardChoicePvP extends Component {
         const { isSubscribed, loading } = this.state
 
         //console.log(tournament)
-
-        //const numberOfTotalMedals = item.medals ? this.calcMedals() : 0
-
-        const ring = this.getRingEquipped()
-		let infoEquipment;
-		if (ring) {
-			infoEquipment = getRingBonuses(ring)
-            //console.log(infoEquipment);
-		}
 
         const inToSubscribe = toSubscribe.some(i => i.idnft === item.id)
 
@@ -105,108 +63,117 @@ class NftCardChoicePvP extends Component {
 					alt={`#${item.id}`}
 				/>
 
-				<div style={{ flexDirection: 'column', width, alignItems: 'center' }}>
+                <div style={{ flexDirection: 'column', width, alignItems: 'center' }}>
 
 					<div style={{ width: '90%', justifyContent: 'space-between', alignItems: 'center', marginTop: 5, marginBottom: 10 }}>
-						<p style={{ color: mainTextColor, fontSize: 16 }} className="text-medium">
+
+                        <p style={{ color: mainTextColor, fontSize: 16 }} className="text-bold">
 							{item.name}
 						</p>
-					</div>
-
-					<div style={{  width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
 
                         {
                             item.level ?
-                            <div style={{ width: '90%', alignItems: 'center', marginBottom: 8 }}>
+                            <div style={{ alignItems: 'center' }}>
                                 <p style={{ color: mainTextColor, fontSize: 14, marginRight: 10 }}>
                                     Level
                                 </p>
-                                <p style={{ color: getColorTextBasedOnLevel(item.level, isDarkmode), fontSize: 16 }} className="text-bold">
+                                <p style={{ color: getColorTextBasedOnLevel(item.level, isDarkmode), fontSize: 17 }} className="text-bold">
                                     {item.level}
                                 </p>
                             </div>
                             : null
                         }
+					</div>
 
-                        {
-                            item.hp ?
-                            cardStats(item, undefined, undefined, infoEquipment ? infoEquipment.bonusesDict : undefined, mainTextColor)
-                            :
-                            null
-                        }
+                    <button
+                        style={{ marginBottom: 10, width: 100, height: 23, alignItems: 'center', borderRadius: 4, borderColor: CTA_COLOR, borderWidth: 1, borderStyle: 'solid' }}
+                        onClick={() => this.setState({ showModalStats: true })}
+                    >
+                        <p style={{ fontSize: 14, color: mainTextColor }} className="text-regular">
+                            see stats
+                        </p>
+                    </button>
 
-                        {
-                            loading ?
-                            <div
-                                style={styles.btnSubscribe}
-                            >
-                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                    Loading
-                                </p>
-                            </div>
-                            : null
-                        }
+                    {
+                        loading ?
+                        <div
+                            style={styles.btnSubscribe}
+                        >
+                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                Loading
+                            </p>
+                        </div>
+                        : null
+                    }
 
 
-                        {
-                            !isSubscribed && canSubscribe && item.level && !loading && !inToSubscribe ?
-                            <button
-                                className='btnSubscribe'
-                                style={styles.btnSubscribe}
-                                onClick={() => this.onSubscribe(item.spellSelected, 30)}
-                            >
-                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                    Select to subscribe
-                                </p>
-                            </button>
-                            :
-                            null
+                    {
+                        !isSubscribed && canSubscribe && item.level && !loading && !inToSubscribe ?
+                        <button
+                            className='btnSubscribe'
+                            style={styles.btnSubscribe}
+                            onClick={() => this.onSubscribe(item.spellSelected, 30)}
+                        >
+                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                Select to subscribe
+                            </p>
+                        </button>
+                        :
+                        null
 
-                        }
+                    }
 
-                        {
-                            !isSubscribed && !canSubscribe && !loading ?
-                            <div
-                                style={styles.btnSubscribe}
-                            >
-                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                    Registrations closed
-                                </p>
-                            </div>
-                            :
-                            null
+                    {
+                        !isSubscribed && !canSubscribe && !loading ?
+                        <div
+                            style={styles.btnSubscribe}
+                        >
+                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                Registrations closed
+                            </p>
+                        </div>
+                        :
+                        null
 
-                        }
+                    }
 
-                        {
-                            isSubscribed && !loading ?
-                            <div
-                                style={styles.btnSubscribe}
-                            >
-                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                    Already subscribed
-                                </p>
-                            </div>
-                            : null
-                        }
+                    {
+                        isSubscribed && !loading ?
+                        <div
+                            style={styles.btnSubscribe}
+                        >
+                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                Already subscribed
+                            </p>
+                        </div>
+                        : null
+                    }
 
-                        {
-                            inToSubscribe && !isSubscribed && canSubscribe && !loading ?
-                            <button
-                                className='btnSubscribe'
-                                style={styles.btnSubscribe}
-                                onClick={() => this.props.removeFromSubscribers(item.id)}
-                            >
-                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                    Remove from subscribers
-                                </p>
-                            </button>
-                            : null
-                        }
-
-                    </div>
+                    {
+                        inToSubscribe && !isSubscribed && canSubscribe && !loading ?
+                        <button
+                            className='btnSubscribe'
+                            style={styles.btnSubscribe}
+                            onClick={() => this.props.removeFromSubscribers(item.id)}
+                        >
+                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                Remove from subscribers
+                            </p>
+                        </button>
+                        : null
+                    }
 
 				</div>
+
+                {
+                    this.state.showModalStats ?
+                    <ModalStats
+                        item={item}
+                        showModal={this.state.showModalStats}
+                        onCloseModal={() => this.setState({ showModalStats: false })}
+                    />
+                    : undefined
+                }
 
 			</div>
 		)
