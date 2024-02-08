@@ -12,7 +12,6 @@ import { TEXT_SECONDARY_COLOR, CTA_COLOR, MAIN_NET_ID } from '../actions/types'
 import {
     setNetworkUrl,
     setNetworkSettings,
-    loadEquipMinted,
     loadUserMintedNfts,
     setSfidaPvE
 } from '../actions'
@@ -32,7 +31,6 @@ class PvE extends Component {
         this.state = {
             loading: true,
             error: "",
-            equipment: [],
             chosenMonster: "",
             showModalChooseWizard: false
         }
@@ -51,11 +49,6 @@ class PvE extends Component {
 
     loadMinted() {
         const { account, chainId, gasPrice, gasLimit, networkUrl, userMintedNfts } = this.props
-
-        //console.log(userMintedNfts);
-        this.props.loadEquipMinted(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
-            this.setState({ equipment: response })
-        })
 
         if (account && account.account && !userMintedNfts) {
             this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, () => {
@@ -145,7 +138,6 @@ class PvE extends Component {
                 <ModalChooseWizard
                     showModal={showModalChooseWizard}
                     onCloseModal={() => this.setState({ showModalChooseWizard: false })}
-                    equipment={this.state.equipment}
                     yourWizards={userMintedNfts}
                     onSelect={(id) => {
                         this.setState({ showModalChooseWizard: false })
@@ -229,7 +221,6 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
     setNetworkUrl,
     setNetworkSettings,
-    loadEquipMinted,
     loadUserMintedNfts,
     setSfidaPvE
 })(PvE)
