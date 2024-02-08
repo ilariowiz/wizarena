@@ -38,7 +38,7 @@ class ModalSpellbook extends Component {
     }
 
     renderSpell(item, index, width) {
-        const { stats, mainTextColor, equipment } = this.props
+        const { stats, mainTextColor } = this.props
 
         //console.log(stats);
 
