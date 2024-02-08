@@ -10,13 +10,12 @@ import _ from 'lodash'
 import Popup from 'reactjs-popup';
 import Header from './Header'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
-import ModalSpellbook from './common/ModalSpellbook'
 import ModalWizaPvP from './common/ModalWizaPvP'
+import ModalStats from './common/ModalStats'
 import NftCardChoicePvP from './common/NftCardChoicePvP'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import allSpells from './common/Spells'
-import getRingBonuses from './common/GetRingBonuses'
 import fight from './common/CalcFight'
 import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import {
@@ -62,16 +61,15 @@ class PvP extends Component {
             yourSubscribers: [],
             yourSubscribersResults: [],
             activeSubs: 0,
-            showModalSpellbook: false,
             showModalWizaPvP: false,
-            itemChangeSpell: {},
             wizaAmount: 0,
             idNftIncrementFights: "",
-            equipment: [],
             toSubscribe: [],
             replay: {},
             loadingReplay: false,
-            allSubscribers: []
+            allSubscribers: [],
+            showModalStats: false,
+            itemShowStats: undefined
         }
     }
 
@@ -114,23 +112,11 @@ class PvP extends Component {
             this.loadPvpWeek()
             this.loadPvpOpen()
             this.loadWizaBalance()
-            this.loadEquip()
         }
         else {
             this.setState({ error: "Firebase/Firestore not available, check if you have an adblocker or firewall blocking the connection" })
         }
 	}
-
-    loadEquip() {
-        const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
-
-        if (account && account.account) {
-			this.props.loadEquipMinted(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
-                //console.log(response);
-                this.setState({ equipment: response })
-			})
-		}
-    }
 
     loadWizaBalance() {
 		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
@@ -180,8 +166,6 @@ class PvP extends Component {
     }
 
     async loadInfoPvP(week, dateFightsStart) {
-        const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
-
         //console.log(dateFightsStart);
 
         let isTraining = false
@@ -736,15 +720,6 @@ class PvP extends Component {
         this.setState({ replay: oldReplay, loadingReplay: false })
     }
 
-    openPopupChangeSpell(id) {
-        const { userMintedNfts } = this.props
-
-        const item = userMintedNfts.find(i => i.id === id)
-
-        //console.log(item);
-
-        this.setState({ showModalSpellbook: true, itemChangeSpell: item })
-    }
 
     openPopupIncrementFights(id) {
         this.setState({ showModalWizaPvP: true, idNftIncrementFights: id })
@@ -768,7 +743,7 @@ class PvP extends Component {
     }
 
     renderRowChoise(item, index, modalWidth) {
-        const { pvpWeek, pvpOpen, equipment, toSubscribe } = this.state
+        const { pvpWeek, pvpOpen, toSubscribe } = this.state
         const { wizaBalance } = this.props
 
 
@@ -787,7 +762,6 @@ class PvP extends Component {
 				modalWidth={modalWidth}
                 index={index}
                 wizaBalance={wizaBalance || 0}
-                equipment={equipment}
                 toSubscribe={toSubscribe}
                 removeFromSubscribers={(idnft) => {
 					let toSubscribe = Object.assign([], this.state.toSubscribe)
@@ -832,27 +806,6 @@ class PvP extends Component {
         )
     }
 
-    getRingEquipped(item) {
-		const { equipment } = this.state
-
-        //console.log(equipment);
-
-		if (!equipment || equipment.length === 0) {
-			return ""
-		}
-
-		const ring = equipment.find(i => i.equippedToId === item.id)
-
-		//console.log(ring);
-
-		if (ring && ring.equipped) {
-			return ring
-		}
-		//console.log(ring);
-
-		return ""
-	}
-
     renderRowSub(item, index, isMobile, maxWidth) {
         //console.log(item);
         const { pvpFightsStartDate, replay, loadingReplay } = this.state
@@ -860,45 +813,15 @@ class PvP extends Component {
 
         const winRate = this.calcWinRate(item)
 
-        const nftInfo = userMintedNfts.find(i => i.id === item.id)
-
-
-        //console.log(nftInfo);
-
-        //console.log(item);
-
         const totalFights = item.win + item.lose
         //console.log(totalFights, item);
 
         const fightsStart = moment().isAfter(pvpFightsStartDate)
         //console.log(fightsStart);
 
-        const spellSelectedInfo = allSpells.find(i => i.name === item.spellSelected.name)
-        const ringEquipped = this.getRingEquipped(item)
-
-        //console.log(ringEquipped);
-
-        let bonusEquipment;
-		if (ringEquipped) {
-			bonusEquipment = getRingBonuses(ringEquipped).bonusesDict
-            //console.log(bonusEquipment);
-		}
-
         //console.log(bonusEquipment['hp']);
         const canFight = !fightsStart ? true : this.checkIfCanDoManualFights(item)
         const hasFightsLeft = !fightsStart ? true : totalFights < item.rounds
-
-
-        let hp = bonusEquipment && bonusEquipment['hp'] ? item.hp.int + bonusEquipment['hp'] : item.hp.int
-        let def = bonusEquipment && bonusEquipment['defense'] ? item.defense.int + bonusEquipment['defense'] : item.defense.int
-        let atk = bonusEquipment && bonusEquipment['attack'] ? item.attack.int + bonusEquipment['attack'] : item.attack.int
-        let dmg = bonusEquipment && bonusEquipment['damage'] ? item.damage.int + bonusEquipment['damage'] : item.damage.int
-        let speed = bonusEquipment && bonusEquipment['speed'] ? item.speed.int + bonusEquipment['speed'] : item.speed.int
-
-        if (item['upgrades-spell']) {
-            atk += item['upgrades-spell'].attack.int
-            dmg += item['upgrades-spell'].damage.int
-        }
 
         return (
             <div
@@ -970,51 +893,14 @@ class PvP extends Component {
                             </div>
                         }
 
-                        <div style={{ alignItems: 'center', marginBottom: 10, flexWrap: 'wrap' }}>
-                            <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
-                                HP
+                        <button
+                            style={{ marginBottom: 10, width: 100, height: 23, alignItems: 'center', borderRadius: 4, borderColor: CTA_COLOR, borderWidth: 1, borderStyle: 'solid' }}
+                            onClick={() => this.setState({ showModalStats: true, itemShowStats: item })}
+                        >
+                            <p style={{ fontSize: 14, color: mainTextColor }} className="text-regular">
+                                see stats
                             </p>
-
-                            <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
-                                {hp}
-                            </p>
-
-                            <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
-                                Def
-                            </p>
-
-                            <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
-                                {def}
-                            </p>
-
-                            <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
-                                Atk
-                            </p>
-
-                            <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
-                                {atk + spellSelectedInfo.atkBase}
-                            </p>
-
-                            <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
-                                Dmg
-                            </p>
-
-                            <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
-                                {dmg + spellSelectedInfo.dmgBase}
-                            </p>
-
-                            <p style={{ fontSize: 14, color: mainTextColor, marginRight: 4 }}>
-                                Speed
-                            </p>
-
-                            <p style={{ fontSize: 16, color: mainTextColor, marginRight: 8 }} className="text-bold">
-                                {speed}
-                            </p>
-                        </div>
-
-                        <p style={{ fontSize: 14, color: mainTextColor, marginBottom: 10 }}>
-                            Spell selected: {item.spellSelected.name}
-                        </p>
+                        </button>
 
                         {
                             this.state.loading ?
@@ -1372,23 +1258,6 @@ class PvP extends Component {
 					</div>
                 }
 
-
-                {
-                    this.state.showModalSpellbook ?
-                    <ModalSpellbook
-                        showModal={this.state.showModalSpellbook}
-                        onCloseModal={() => this.setState({ showModalSpellbook: false })}
-                        width={modalW}
-                        equipment={this.state.equipment}
-                        stats={this.state.itemChangeSpell}
-                        onSub={(spellSelected) => {
-                            this.changeSpell(spellSelected)
-                            this.setState({ showModalSpellbook: false })
-                        }}
-                    />
-                    : null
-                }
-
                 {
                     this.state.showModalWizaPvP &&
                     <ModalWizaPvP
@@ -1401,6 +1270,16 @@ class PvP extends Component {
                             this.setState({ showModalWizaPvP: false })
                         }}
                     />
+                }
+
+                {
+                    this.state.showModalStats ?
+                    <ModalStats
+                        item={this.state.itemShowStats}
+                        showModal={this.state.showModalStats}
+                        onCloseModal={() => this.setState({ showModalStats: false })}
+                    />
+                    : undefined
                 }
 
             </div>
