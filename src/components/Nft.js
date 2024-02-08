@@ -216,7 +216,6 @@ class Nft extends Component {
 		this.setState({ nft: response, loading: false }, () => {
 			this.loadFights(response)
 			this.loadHistory(response.id)
-			this.getHistoryUpgrades()
 
 			this.loadOffers(response.id)
 
@@ -332,12 +331,14 @@ class Nft extends Component {
 
 		//console.log(aura);
 
-		this.setState({ ring: ring.equipped ? ring : {}, pendant: pendant.equipped ? pendant : {}, aura: aura.bonus.int > -1 ? aura : {} })
+		this.setState({ ring: ring.equipped ? ring : {}, pendant: pendant.equipped ? pendant : {}, aura: aura.bonus.int > -1 ? aura : {} }, () => {
+			this.getHistoryUpgrades()
+		})
 	}
 
 
 	async getHistoryUpgrades() {
-		const { nft } = this.state
+		const { nft, aura } = this.state
 
 		//console.log(nft);
 
@@ -388,6 +389,10 @@ class Nft extends Component {
 
 		if (nft['upgrades-spell'].damage.int > 0) {
 			historyUpgrades.push({ stat: `${nft.spellSelected.name} damage`, value: nft['upgrades-spell'].damage.int })
+		}
+
+		if (aura && aura.bonus && aura.bonus.int > 0) {
+			historyUpgrades.push({ stat: `Aura defense`, value: aura.bonus.int })
 		}
 
 		this.setState({ historyUpgrades })
@@ -1453,7 +1458,7 @@ class Nft extends Component {
 	}
 
 	renderStat(title, value) {
-		const { ring, maxStats, nft } = this.state
+		const { ring, maxStats, nft, aura } = this.state
 		const { mainTextColor } = this.props
 
 		//console.log(ring);
@@ -1550,6 +1555,11 @@ class Nft extends Component {
 			if (ringBonus && ringBonus.bonusesDict.defense) {
 				temp.push(`Ring: ${ringBonus.bonusesDict.defense}`)
 			}
+
+			if (aura && aura.bonus && aura.bonus.int > 0) {
+				temp.push(`Aura: ${aura.bonus.int}`)
+			}
+
 			textPopup = temp.join("\r\n")
 		}
 		else if (title === "Attack") {
@@ -1638,7 +1648,7 @@ class Nft extends Component {
     }
 
 	renderBoxStats(width) {
-		const { nft, historyUpgrades } = this.state
+		const { nft, historyUpgrades, aura } = this.state
 		const { mainTextColor, isDarkmode } = this.props
 
 		let rev = false
@@ -1647,6 +1657,11 @@ class Nft extends Component {
 		}
 
 		const spellSelected = this.refactorSpellSelected(nft.spellSelected)
+
+		let finalDefense = nft && nft.hp && rev ? nft.defense.int : undefined
+		if (finalDefense && aura && aura.bonus && aura.bonus.int > 0) {
+			finalDefense += aura.bonus.int
+		}
 
 		return (
 			<div style={Object.assign({}, styles.boxSection, { width })}>
@@ -1680,7 +1695,7 @@ class Nft extends Component {
 							</div>
 
 							{this.renderStat("HP", nft.hp.int)}
-							{this.renderStat("Defense", nft.defense.int)}
+							{this.renderStat("Defense", finalDefense)}
 
 							{this.renderStat("Attack", nft.attack.int + spellSelected.atkBase + nft['upgrades-spell'].attack.int)}
 							{this.renderStat("Damage", nft.damage.int + spellSelected.dmgBase + nft['upgrades-spell'].damage.int)}
