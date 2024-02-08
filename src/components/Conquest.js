@@ -18,7 +18,7 @@ import getImageUrl from './common/GetImageUrl'
 import allSpells from './common/Spells'
 import fight from './common/CalcFight'
 import getRatingDelta from './common/CalcElo'
-import NftCardChoiceFlashT from './common/NftCardChoiceFlashT'
+import NftCardChoice from './common/NftCardChoice'
 import ModalFightConquest from './common/ModalFightConquest'
 import { MAIN_NET_ID, CTA_COLOR, MAX_LEVEL } from '../actions/types'
 import 'reactjs-popup/dist/index.css';
@@ -83,7 +83,6 @@ class Conquest extends Component {
             infoFight: {},
             isFightDone: false,
             showSubscribe: false,
-            equipment: [],
             notSubbed: [],
             toSubscribe: [],
             countSubbedWizards: 0,
@@ -300,11 +299,6 @@ class Conquest extends Component {
 		if (account && account.account) {
 
             this.setState({ loadingYourSubs: true })
-
-            this.props.loadEquipMinted(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
-                //console.log(response);
-                this.setState({ equipment: response })
-            })
 
 			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
 				//console.log(response);
@@ -805,14 +799,14 @@ class Conquest extends Component {
 	}
 
     renderRowChoise(item, index) {
-		const { equipment, toSubscribe } = this.state
+		const { toSubscribe } = this.state
 
-		return (
-            <NftCardChoiceFlashT
-                key={index}
-                item={item}
-                equipment={equipment}
-                onSelect={(id) => {
+        return (
+			<NftCardChoice
+				key={index}
+				item={item}
+				width={230}
+				onSubscribe={(id) => {
                     if (!toSubscribe.includes(id)) {
                         this.addToSubscribers(id)
                     }
@@ -824,8 +818,10 @@ class Conquest extends Component {
                         this.setState({ toSubscribe: toSubscribeCopy })
                     }
                 }}
-                width={230}
-            />
+				modalWidth={230}
+				section={"lords"}
+
+			/>
 		)
 	}
 
