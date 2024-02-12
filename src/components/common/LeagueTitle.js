@@ -423,11 +423,23 @@ const titles = {
         img: cup_gold,
         textColor: '#cd7f32'
     }],
-    "703": [{
-        title: "The Farmers League I 2nd place",
-        img: cup_silver,
-        textColor: '#c0c0c0'
+    "1001": [{
+        title: "The Farmers League II Champion",
+        img: cup_gold,
+        textColor: '#cd7f32'
     }],
+    "703": [
+        {
+            title: "The Farmers League I 2nd place",
+            img: cup_silver,
+            textColor: '#c0c0c0'
+        },
+        {
+            title: "The Farmers League II 2nd place",
+            img: cup_silver,
+            textColor: '#c0c0c0'
+        }
+    ],
     "1957": [{
         title: "The Farmers League I 3rd place",
         img: cup_bronze,
@@ -438,13 +450,35 @@ const titles = {
         img: medal,
         textColor: '#cd7f32'
     }],
-    "1472": [{
-        title: "The Farmers League I 5th place",
+    "98": [{
+        title: "The Farmers League II 4th place",
         img: medal,
         textColor: '#cd7f32'
     }],
+    "1472": [
+        {
+            title: "The Farmers League I 5th place",
+            img: medal,
+            textColor: '#cd7f32'
+        },
+        {
+            title: "The Farmers League II 3rd place",
+            img: cup_bronze,
+            textColor: '#cd7f32'
+        }
+    ],
     "846": [{
         title: "The Farmers League I 6th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "1699": [{
+        title: "The Farmers League II 6th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "1952": [{
+        title: "The Farmers League II 5th place",
         img: medal,
         textColor: '#cd7f32'
     }],
@@ -453,8 +487,18 @@ const titles = {
         img: medal,
         textColor: '#cd7f32'
     }],
+    "621": [{
+        title: "The Farmers League II 7th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
     "690": [{
         title: "The Farmers League I 8th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "1993": [{
+        title: "The Farmers League II 8th place",
         img: medal,
         textColor: '#cd7f32'
     }],
