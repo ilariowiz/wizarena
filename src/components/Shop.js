@@ -47,7 +47,9 @@ import {
     improveSpell,
     resetSpellUpgrades,
     getInfoAuraMass,
-    buyAura
+    buyAura,
+    getAuraUpgradeCost,
+    upgradeAura
 } from '../actions'
 import { MAIN_NET_ID, CTA_COLOR, MAX_LEVEL } from '../actions/types'
 import '../css/Nft.css'
@@ -114,7 +116,8 @@ class Shop extends Component {
             showModalBuy: false,
             showModalSwapSpell: false,
             newSpellToLearn: {},
-            spellUpgradeWizaCost: undefined
+            spellUpgradeWizaCost: undefined,
+            auraUpgradeWizaCost: undefined
         }
     }
 
@@ -156,6 +159,7 @@ class Shop extends Component {
                 //console.log(nfts);
 				this.setState({ loading: false })
                 this.getSpellUpgradeCost()
+                this.getAuraUpgradeCost()
                 this.loadAuras(nfts)
 			})
 		}
@@ -321,6 +325,20 @@ class Shop extends Component {
             this.props.getSpellUpgradeCost(chainId, gasPrice, gasLimit, networkUrl, wizardSelectedIdShop, spellName, (response) => {
                 //console.log(response);
                 this.setState({ spellUpgradeWizaCost: response })
+            })
+        }
+    }
+
+    getAuraUpgradeCost() {
+        const { chainId, gasPrice, gasLimit, networkUrl, wizardSelectedIdShop } = this.props
+
+        const wizard = this.getWizardSelected()
+        //console.log(wizard);
+
+        if (wizard) {
+            this.props.getAuraUpgradeCost(chainId, gasPrice, gasLimit, networkUrl, wizardSelectedIdShop, (response) => {
+                //console.log(response);
+                this.setState({ auraUpgradeWizaCost: response })
             })
         }
 
@@ -594,7 +612,22 @@ class Shop extends Component {
 		})
 
         this.props.buyAura(chainId, gasPrice, netId, account, idnft, coin)
+    }
 
+    upgradeAura(wizard) {
+        const { account, chainId, gasPrice, netId } = this.props
+
+        const wizardName = wizard.nickname ? `${wizard.id} ${wizard.nickname}` : wizard.id
+
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will improve the Aura of ${wizardName}`,
+			typeModal: 'improvespell',
+			transactionOkText: `Aura successfully improved!`,
+            idNft: wizard.id,
+            nameNft: `${wizardName} has improved the Aura`
+		})
+
+        this.props.upgradeAura(chainId, gasPrice, netId, account, wizard.id)
     }
 
     sortById() {
@@ -632,6 +665,7 @@ class Shop extends Component {
                         this.loadEquip()
                         this.getBaseStats()
                         this.getSpellUpgradeCost()
+                        this.getAuraUpgradeCost()
                     }, 200)
                 }}
 			/>
@@ -1948,6 +1982,69 @@ class Shop extends Component {
 		)
 	}
 
+    renderAuraToUpgrade(wizard, aura) {
+        const { wizaValue, auraUpgradeWizaCost } = this.state
+        const { mainTextColor } = this.props
+
+		const marginRight = 12
+
+		return (
+			<div style={{ alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 20, flexDirection: 'column' }}>
+
+                <div style={{ alignItems: 'center', marginBottom: 10 }}>
+                    <p style={{ color: mainTextColor, fontSize: 14 }}>
+                        Current upgrades: Defense +{aura.bonus.int}
+                    </p>
+                </div>
+
+                <div>
+
+                    <button
+                        className="btnH"
+                        style={styles.btnSwap}
+                        onClick={() => this.upgradeAura(wizard)}
+                    >
+                        <p style={{ fontSize: 14, color: 'white', marginBottom: 3 }} className="text-bold">
+                            {round(auraUpgradeWizaCost, 2)} $WIZA
+                        </p>
+                        <p style={{ fontSize: 14, color: 'white', marginBottom: 8 }} className="text-bold">
+                            10 AP
+                        </p>
+                        <p style={{ fontSize: 15, color: 'white', marginBottom: 8 }} className="text-bold">
+                            +1 Defense
+                        </p>
+
+                        <p style={{ fontSize: 16, color: 'white' }} className="text-medium">
+                            Upgrade
+                        </p>
+                    </button>
+
+                    {/*<button
+                        className="btnH"
+                        style={Object.assign({}, styles.btnSwap, { backgroundColor: "#e83420" })}
+                        onClick={() => this.resetUpgradeSpell(wizard)}
+                    >
+                        <p style={{ fontSize: 14, color: 'white', marginBottom: 8, maxWidth: 110 }} className="text-bold">
+                            Reset ALL spell upgrades
+                        </p>
+                        <p style={{ fontSize: 14, color: 'white', marginBottom: 3 }} className="text-bold">
+                            Gain
+                        </p>
+                        <p style={{ fontSize: 15, color: 'white', marginBottom: 8 }} className="text-bold">
+                            {(wizard['upgrades-spell'].attack.int + wizard['upgrades-spell'].damage.int) * 5} AP
+                        </p>
+
+                        <p style={{ fontSize: 16, color: 'white' }} className="text-medium">
+                            Reset
+                        </p>
+                    </button>*/}
+
+                </div>
+
+			</div>
+		)
+	}
+
     renderBoxMenu(key) {
 
         let img;
@@ -2295,9 +2392,18 @@ class Shop extends Component {
                             {
                                 auras.length > 0 && aura.bonus.int > -1 ?
                                 <div style={{ alignItems: 'flex-start', flexDirection: 'column' }}>
-                                    <p style={{ fontSize: 16, color: mainTextColor }}>
-                                        You've already bought the Aura!
+                                    <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 9 }}>
+                                        Improve the aura:
                                     </p>
+                                    <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10 }}>
+                                        The total of improvements on an aura cannot exceed 4 points. Each upgrade will increase the WIZA costs of the next upgrade
+                                    </p>
+
+                                    <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15 }} className="text-medium">
+                                        AP available: {wizard.ap ? wizard.ap.int : 0}
+                                    </p>
+
+                                    {this.renderAuraToUpgrade(wizard, aura)}
                                 </div>
                                 :
                                 <div style={{ alignItems: 'flex-start', flexDirection: 'column' }}>
@@ -2758,5 +2864,7 @@ export default connect(mapStateToProps, {
     improveSpell,
     resetSpellUpgrades,
     getInfoAuraMass,
-    buyAura
+    buyAura,
+    getAuraUpgradeCost,
+    upgradeAura
 })(Shop)

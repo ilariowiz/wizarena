@@ -16,7 +16,8 @@ import {
     setNetworkUrl,
     loadSingleNft,
     getInfoItemEquipped,
-    setSfidaPvE
+    setSfidaPvE,
+    getInfoAura
 } from '../actions'
 import { CTA_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID, REVEAL_CAP } from '../actions/types'
 
@@ -90,6 +91,8 @@ class DoFight extends Component {
                 //console.log(ring);
                 const pendant = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, `${idNft}pendant`)
 
+                const aura = await this.props.getInfoAura(chainId, gasPrice, gasLimit, networkUrl, idNft)
+
                 this.player1 = response
                 this.player1.attack = this.player1.attack.int
                 this.player1.damage = this.player1.damage.int
@@ -110,6 +113,11 @@ class DoFight extends Component {
 
                 if (pendant && pendant.equipped) {
                     this.player1.pendant = pendant
+                }
+
+                if (aura && aura.bonus && aura.bonus.int > 0) {
+                    this.player1['defense'] += aura.bonus.int
+                    this.player1.aura = aura
                 }
 
                 this.player1InitialHp = this.player1.hp
@@ -515,5 +523,6 @@ export default connect(mapStateToProps, {
     setNetworkUrl,
     loadSingleNft,
     getInfoItemEquipped,
-    setSfidaPvE
+    setSfidaPvE,
+    getInfoAura
 })(DoFight)

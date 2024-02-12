@@ -11,6 +11,29 @@ let isEventActive = false
 let player1 = ""
 let player2 = ""
 
+const getStartingText = (player, hasRing, hasPendant, hasAura) => {
+
+    if (!hasRing && !hasPendant && !hasAura) {
+        return undefined
+    }
+
+    let desc = [`${player.name} have:`]
+
+    if (hasRing) {
+        desc.push(`a ${player.ring.name}`)
+    }
+
+    if (hasPendant) {
+        desc.push(`a ${player.pendant.name}`)
+    }
+
+    if (hasAura) {
+        desc.push(`a Defensive Aura +${player.aura.bonus.int}`)
+    }
+
+    return desc.join(' - ')
+}
+
 const fight = (s1, s2, ev, callback) => {
     let s1copy = Object.assign({}, s1)
     let s2copy = Object.assign({}, s2)
@@ -23,31 +46,24 @@ const fight = (s1, s2, ev, callback) => {
 
     let s1hasRing = false
     let s1hasPendant = false
+    let s1hasAura = false
 
     if (s1copy.ring && s1copy.ring.equipped) {
-
         s1hasRing = true
     }
 
     if (s1copy.pendant && s1copy.pendant.equipped) {
-
         s1hasPendant = true
 
         const pendantBonus = getPendantBonus(s1copy.pendant)
         s1copy['pendantBonus'] = pendantBonus.bonusesDict
     }
 
-    let desc1;
+    if (s1copy.aura && s1copy.aura.bonus) {
+        s1hasAura = true
+    }
 
-    if (s1hasRing && s1hasPendant) {
-        desc1 = `${s1copy.name} wear a ${s1copy.ring.name} and a ${s1copy.pendant.name}`
-    }
-    else if (s1hasRing && !s1hasPendant) {
-        desc1 = `${s1copy.name} wear a ${s1copy.ring.name}`
-    }
-    else if (!s1hasRing && s1hasPendant) {
-        desc1 = `${s1copy.name} wear a ${s1copy.pendant.name}`
-    }
+    let desc1 = getStartingText(s1copy, s1hasRing, s1hasPendant, s1hasAura)
 
     if (desc1) {
         history.push({ desc: desc1, [`hp_${s1copy.id}`]: s1copy.hp, [`hp_${s2copy.id}`]: s2copy.hp })
@@ -56,6 +72,7 @@ const fight = (s1, s2, ev, callback) => {
     /////// PLAYER 2
     let s2hasRing = false
     let s2hasPendant = false
+    let s2hasAura = false
 
     if (s2copy.ring && s2copy.ring.equipped) {
 
@@ -70,17 +87,11 @@ const fight = (s1, s2, ev, callback) => {
         s2copy['pendantBonus'] = pendantBonus.bonusesDict
     }
 
-    let desc2;
+    if (s2copy.aura && s2copy.aura.bonus) {
+        s2hasAura = true
+    }
 
-    if (s2hasRing && s2hasPendant) {
-        desc2 = `${s2copy.name} wear a ${s2copy.ring.name} and a ${s2copy.pendant.name}`
-    }
-    else if (s2hasRing && !s2hasPendant) {
-        desc2 = `${s2copy.name} wear a ${s2copy.ring.name}`
-    }
-    else if (!s2hasRing && s2hasPendant) {
-        desc2 = `${s2copy.name} wear a ${s2copy.pendant.name}`
-    }
+    let desc2 = getStartingText(s2copy, s2hasRing, s2hasPendant, s2hasAura)
 
     if (desc2) {
         history.push({ desc: desc2, [`hp_${s1copy.id}`]: s1copy.hp, [`hp_${s2copy.id}`]: s2copy.hp })

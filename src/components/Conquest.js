@@ -32,7 +32,8 @@ import {
     loadEquipMinted,
     updateInfoTransactionModal,
     subscribeToLords,
-    loadBlockNftsSplit
+    loadBlockNftsSplit,
+    getInfoAura
 } from '../actions'
 import {ReactComponent as VedrenonIcon} from '../assets/regions/svg/vedrenon.svg'
 import {ReactComponent as WastiaxusIcon} from '../assets/regions/svg/wastiaxus.svg'
@@ -401,6 +402,7 @@ class Conquest extends Component {
 
         const ring = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, infoNft.id)
         const pendant = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, `${infoNft.id}pendant`)
+        const aura = await this.props.getInfoAura(chainId, gasPrice, gasLimit, networkUrl, infoNft.id)
 
         if (ring && ring.equipped) {
             infoNft['ring'] = ring
@@ -414,6 +416,13 @@ class Conquest extends Component {
         }
         else {
             infoNft['pendant'] = {}
+        }
+
+        if (aura && aura.bonus.int > 0) {
+            infoNft['aura'] = aura
+        }
+        else {
+            infoNft['aura'] = {}
         }
 
         infoNft['attack'] = infoNft.attack.int
@@ -431,6 +440,10 @@ class Conquest extends Component {
                 //console.log(infos[1], infos[0]);
                 infoNft[infos[1]] += parseInt(infos[0])
             })
+        }
+
+        if (infoNft.aura && infoNft.aura.bonus) {
+            infoNft['defense'] += parseInt(infoNft.aura.bonus.int)
         }
 
         //console.log(infoNft);
@@ -541,19 +554,6 @@ class Conquest extends Component {
             return
         }
 
-        /*
-        // CHECK IF CHAMPION IS DIFFERENT, se hai guardato la pagina per svariati minuti, magari nel frattempo il champion è cambiato e quindi
-        // e quindi dobbiamo controllare che stai facendo il fight contro il wizard giusto
-        const currentChampion = await this.loadLords(keyElo)
-        //console.log(currentChampion);
-
-        if (currentChampion.idnft !== champion.idnft) {
-            //// CAMPIONE CAMBIATO
-            window.location.reload()
-            return
-        }
-        */
-
         //questo filter serve per rimuovere il tuo wizard nel caso in cui tu sei nella top 3
         const filterTop3 = champions.filter(i => i.idnft !== wizardSelected.id)
 
@@ -574,6 +574,7 @@ class Conquest extends Component {
 
             const ring = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, champion.idnft)
             const pendant = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, `${champion.idnft}pendant`)
+            const aura = await this.props.getInfoAura(chainId, gasPrice, gasLimit, networkUrl, champion.idnft)
 
             if (ring && ring.equipped) {
                 response['ring'] = ring
@@ -587,6 +588,13 @@ class Conquest extends Component {
             }
             else {
                 response['pendant'] = {}
+            }
+
+            if (aura && aura.bonus.int > 0) {
+                response['aura'] = aura
+            }
+            else {
+                response['aura'] = {}
             }
 
             response['attack'] = response.attack.int
@@ -604,6 +612,10 @@ class Conquest extends Component {
                     //console.log(infos[1], infos[0]);
                     response[infos[1]] += parseInt(infos[0])
                 })
+            }
+
+            if (response.aura && response.aura.bonus) {
+                response['defense'] += parseInt(response.aura.bonus.int)
             }
 
             //console.log(response);
@@ -1639,5 +1651,6 @@ export default connect(mapStateToProps, {
     loadEquipMinted,
     updateInfoTransactionModal,
     subscribeToLords,
-    loadBlockNftsSplit
+    loadBlockNftsSplit,
+    getInfoAura
 })(Conquest)

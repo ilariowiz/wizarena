@@ -35,7 +35,8 @@ import {
     loadEquipMinted,
     updateInfoTransactionModal,
     loadBlockNftsSplit,
-    getInfoItemEquippedMass
+    getInfoItemEquippedMass,
+    getInfoAuraMass
 } from '../actions'
 import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -539,9 +540,11 @@ class PvP extends Component {
         //console.log(ring);
         const pendants = await this.props.getInfoItemEquippedMass(chainId, gasPrice, gasLimit, networkUrl, [`${item.id}pendant`, `${opponent.id}pendant`])
 
-        //console.log(rings, pendants);
+        const auras = await this.props.getInfoAuraMass(chainId, gasPrice, gasLimit, networkUrl, [item.id, opponent.id])
 
-        const finalInfo = this.clearInfo([item, opponent], rings, pendants)
+        //console.log(rings, pendants, auras);
+
+        const finalInfo = this.clearInfo([item, opponent], rings, pendants, auras)
 
         //console.log(finalInfo);
 
@@ -621,7 +624,7 @@ class PvP extends Component {
         })
     }
 
-    clearInfo(infoNfts, rings, pendants) {
+    clearInfo(infoNfts, rings, pendants, auras) {
     	let newInfo = []
 
     	for (var i = 0; i < infoNfts.length; i++) {
@@ -662,6 +665,16 @@ class PvP extends Component {
             }
             else {
                 info['pendant'] = {}
+            }
+
+            // AURA
+            const aura = auras.find(i => i.idnft === info.id)
+            if (aura && aura.bonus.int > 0) {
+                info['aura'] = aura
+                info['defense'] += parseInt(aura.bonus.int)
+            }
+            else {
+                info['aura'] = {}
             }
 
             newInfo.push(info)
@@ -1426,5 +1439,6 @@ export default connect(mapStateToProps, {
     loadEquipMinted,
     updateInfoTransactionModal,
     loadBlockNftsSplit,
-    getInfoItemEquippedMass
+    getInfoItemEquippedMass,
+    getInfoAuraMass
 })(PvP)
