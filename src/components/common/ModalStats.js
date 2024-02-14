@@ -1,14 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import DotLoader from 'react-spinners/DotLoader';
+import Popup from 'reactjs-popup';
 import '../../css/Modal.css'
 import cardStats from './CardStats'
 import getRingBonuses from './GetRingBonuses'
+import getAuraForElement from '../../assets/gifs/AuraForElement'
 import { CTA_COLOR, TEXT_SECONDARY_COLOR } from '../../actions/types'
 import {
     getInfoItemEquipped,
     getInfoAura
 } from '../../actions'
+import 'reactjs-popup/dist/index.css';
+
 
 class ModalStats extends Component {
     constructor(props) {
@@ -86,9 +90,11 @@ class ModalStats extends Component {
 
 	render() {
 		const { showModal, onCloseModal, item, mainTextColor, mainBackgroundColor } = this.props;
-        const { medals, infoEquipment, loading } = this.state
+        const { medals, infoEquipment, loading, ring, aura, pendant } = this.state
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
+
+        //console.log(ring, pendant, aura);
 
 		return (
 			<div className={classContainer}>
@@ -111,6 +117,66 @@ class ModalStats extends Component {
                             :
                             cardStats(item, medals, '90%', infoEquipment ? infoEquipment.bonusesDict : undefined, mainTextColor)
                         }
+                    </div>
+
+                    <div style={{ alignItems: 'center' }}>
+                        {
+                            ring && ring.equipped ?
+                            <Popup
+        						trigger={open => (
+                                    <img
+                                        style={styles.imgEquip}
+                                        src={ring.url}
+                                    />
+        						)}
+        						position="top center"
+        						on="hover"
+        					>
+                                <p style={{ color: "black", fontSize: 16 }}>
+                                    {ring.name}
+                                </p>
+        					</Popup>
+                            : null
+                        }
+
+                        {
+                            pendant && pendant.equipped ?
+                            <Popup
+        						trigger={open => (
+                                    <img
+                                        style={styles.imgEquip}
+                                        src={pendant.url}
+                                    />
+        						)}
+        						position="top center"
+        						on="hover"
+        					>
+                                <p style={{ color: "black", fontSize: 16 }}>
+                                    {pendant.name}
+                                </p>
+        					</Popup>
+                            : null
+                        }
+
+                        {
+                            aura && aura.bonus && aura.bonus.int > 0 ?
+                            <Popup
+        						trigger={open => (
+                                    <img
+                                        style={styles.imgEquip}
+                                        src={getAuraForElement(item.element)}
+                                    />
+        						)}
+        						position="top center"
+        						on="hover"
+        					>
+                                <p style={{ color: "black", fontSize: 16 }}>
+                                    Aura of Defense +{aura.bonus.int}
+                                </p>
+        					</Popup>
+                            : null
+                        }
+
                     </div>
 
                     <button
@@ -150,6 +216,15 @@ const styles = {
         marginTop: 20,
         marginBottom: 20
     },
+    imgEquip: {
+        marginLeft: 10,
+        marginRight: 10,
+        width: 40,
+        borderRadius: 4,
+        borderWidth: 1,
+        borderColor: TEXT_SECONDARY_COLOR,
+        borderStyle: 'solid'
+    }
 }
 
 const mapStateToProps = (state) => {
