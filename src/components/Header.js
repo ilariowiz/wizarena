@@ -119,6 +119,10 @@ class Header extends Component {
 		if (allNftsIds && allNftsIds.length > 0) {
 			this.props.getWizardsStakeInfo(chainId, gasPrice, gasLimit, networkUrl, allNftsIds, (response) => {
 
+				if (!response) {
+					return
+				}
+
 				let avgMultiplier = 0
 				let staked = 0
 				response.map(i => {
