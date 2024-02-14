@@ -37,12 +37,12 @@ require('moment-countdown');
 const logo_img = require('../assets/wzlogo_bg_transparent.png')
 
 const market_icon = require('../assets/menu/black/marketplace.png')
-const flash_icon = require('../assets/menu/black/flash_tournament.png')
+//const flash_icon = require('../assets/menu/black/flash_tournament.png')
 const profile_icon = require('../assets/menu/black/profile.png')
 const shop_icon = require('../assets/menu/black/shop.png')
 const pvp_icon = require('../assets/menu/black/pvp.png')
-const tournaments_icon = require('../assets/menu/black/tournaments.png')
-const challenges_icon = require('../assets/menu/black/wand.png')
+//const tournaments_icon = require('../assets/menu/black/tournaments.png')
+//const challenges_icon = require('../assets/menu/black/wand.png')
 
 const market_icon_night = require('../assets/menu/marketplace.png')
 const flash_icon_night = require('../assets/menu/flash_tournament.png')
@@ -565,8 +565,6 @@ class Header extends Component {
 	}
 
 	renderPlayMenu() {
-		const { isDarkmode } = this.props
-
 		return (
 			<div style={{ flexDirection: "column", flexWrap: 'wrap', width: '100%' }}>
 
@@ -738,7 +736,7 @@ class Header extends Component {
 	}
 
 	renderLogo(isMobile, width) {
-		const { transactionsState, showModalTx, txInfo, mainTextColor } = this.props
+		const { transactionsState, showModalTx, txInfo } = this.props
 
 		const textToConfirm = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1].transactionToConfirmText : ""
 

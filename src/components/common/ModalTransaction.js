@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { doc, updateDoc, setDoc, increment, serverTimestamp, collection } from "firebase/firestore";
 import { firebasedb } from '../Firebase';
-import anime from 'animejs/lib/anime.es.js';
+//import anime from 'animejs/lib/anime.es.js';
 import { IoClose } from 'react-icons/io5'
 import DotLoader from 'react-spinners/DotLoader';
 import BounceLoader from 'react-spinners/BounceLoader';

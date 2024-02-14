@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { round } from 'lodash'
+//import { round } from 'lodash'
 import Media from 'react-media';
-import { getDoc, doc } from "firebase/firestore";
-import { firebasedb } from '../components/Firebase';
+//import { getDoc, doc } from "firebase/firestore";
+//import { firebasedb } from '../components/Firebase';
 import { AiOutlinePlus, AiOutlineMinus, AiOutlineDoubleLeft, AiOutlineDoubleRight } from 'react-icons/ai'
 import { IoClose } from 'react-icons/io5'
 import { BiFilter } from 'react-icons/bi'
@@ -11,7 +11,7 @@ import Popup from 'reactjs-popup';
 import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
 import EquipmentCard from './common/EquipmentCard'
-import ModalOpenItemsMinted from './common/ModalOpenItemsMinted'
+//import ModalOpenItemsMinted from './common/ModalOpenItemsMinted'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import getBoxWidth from './common/GetBoxW'
 import { MAIN_NET_ID, ITEMS_PER_BLOCK, TEXT_SECONDARY_COLOR, CTA_COLOR } from '../actions/types'
@@ -604,7 +604,7 @@ class Equipment extends Component {
     }
 
     renderHeader(isMobile, boxW) {
-		const { totalCountItems, mainTextColor, isDarkmode, allItems } = this.props
+		const { totalCountItems, mainTextColor, isDarkmode } = this.props
 		const { floor, uniqueOwners, volume, equipped, listed } = this.state
 
 		let items = totalCountItems || 0

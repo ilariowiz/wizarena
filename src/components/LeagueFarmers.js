@@ -250,7 +250,7 @@ class LeagueFarmers extends Component {
     }
 
     renderSingleCard(item, index, widthNft) {
-        const { account, mainTextColor, allNfts, userMintedNfts } = this.props
+        const { mainTextColor, allNfts, userMintedNfts } = this.props
 
         //console.log(allNfts);
 
@@ -322,7 +322,7 @@ class LeagueFarmers extends Component {
     }
 
     renderYourSingleCard(item, index, widthNft) {
-        const { account, mainTextColor, userMintedNfts } = this.props
+        const { mainTextColor, userMintedNfts } = this.props
 
         //console.log(allNfts);
 

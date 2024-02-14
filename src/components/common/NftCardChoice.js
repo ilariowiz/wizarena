@@ -3,8 +3,6 @@ import { connect } from 'react-redux'
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCardChoice.css'
 import ModalStats from './ModalStats'
-import cardStats from './CardStats'
-import getRingBonuses from './GetRingBonuses'
 import { getColorTextBasedOnLevel } from './CalcLevelWizard'
 import { CTA_COLOR } from '../../actions/types'
 
