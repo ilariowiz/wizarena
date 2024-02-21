@@ -274,6 +274,43 @@ class Nft extends Component {
 				})
 			}
 
+			//console.log(response['groupedFights']);
+
+			if (response.tournaments && Object.keys(response.groupedFights).length > 0) {
+
+				//dividiamo per apprentice, elite & weekly
+				let newGroupedFights = {"Farmers": {}, "Weekly": {}, "Apprentice": {}, "Elite": {}, "Chaos": {}}
+
+				for (const [key, value] of Object.entries(response.groupedFights)) {
+
+					const tNumber = parseInt(key.replace("t", ""))
+
+					if (tNumber < 1000) {
+						newGroupedFights['Weekly'][key] = value
+					}
+
+					if (tNumber >= 1000 && tNumber < 3000) {
+						newGroupedFights['Apprentice'][key] = value
+					}
+
+					if (tNumber >= 3000 && tNumber < 3007) {
+						newGroupedFights['Elite'][key] = value
+					}
+
+					if (tNumber >= 3007 && tNumber < 3015) {
+						newGroupedFights['Chaos'][key] = value
+					}
+
+					if (tNumber >= 3015) {
+						newGroupedFights['Farmers'][key] = value
+					}
+				}
+
+				//console.log(newGroupedFights);
+
+				response['groupedFights'] = newGroupedFights
+			}
+
 			this.setState({ nft: response, openFightsSection, loadingFights: false }, () => {
 				this.loadMaxMedalsPerTournament()
 			})
@@ -767,68 +804,93 @@ class Nft extends Component {
 
 	renderMainFight(key, index) {
 		const { nft, openFightsSection } = this.state
-		//console.log(key, index);
+		const { mainTextColor } = this.props
+		//console.log(key);
 
-		if (nft.groupedFights && nft.groupedFights[key].length > 0) {
+		if (nft.groupedFights && Object.keys(nft.groupedFights[key]).length > 0) {
+
+			//console.log(nft.groupedFights[key]);
+
 			return (
-				<div style={Object.assign({}, styles.boxSingleTrait, { alignItems: 'flex-start' })} key={index}>
+				<div style={{ flexDirection: 'column' }} key={key}>
+					<p style={{ fontSize: 19, color: mainTextColor, marginBottom: 10, marginTop: 10 }}>
+						{key}
+					</p>
 
-					<button
-						style={{ alignItems: 'center', marginTop: 4, marginLeft: 6, marginRight: 6, flexDirection: 'row', display: 'flex' }}
-						onClick={() => {
-							let openFightsSectionCopy = Object.assign([], this.state.openFightsSection)
-
-							if (openFightsSectionCopy.includes(key)) {
-								let idx = openFightsSectionCopy.findIndex(i => i === key)
-								if (idx > -1) {
-									openFightsSectionCopy.splice(idx, 1)
-								}
-							}
-							else {
-								openFightsSectionCopy.push(key)
-							}
-
-							//console.log(openFightsSectionCopy);
-
-							this.setState({ openFightsSection: openFightsSectionCopy })
-						}}
-					>
-						<p style={{ fontSize: 15, color: '#707070', marginRight: 15 }}>
-							Tournament <span style={{ fontSize: 16, color: "#1d1d1f" }}>{key.replace("t","")}</span>
-						</p>
-
-						{
-							openFightsSection.includes(key) ?
-							<IoEyeOffOutline
-								size={20}
-								color="#1d1d1f"
-							/>
-							:
-							<IoEyeOutline
-								size={20}
-								color="#1d1d1f"
-							/>
-						}
-
-					</button>
-
+					<div style={{ flexWrap: 'wrap' }}>
 					{
-						openFightsSection.includes(key) ?
-						<div style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
-							{Object.values(nft.groupedFights[key]).map((item, index) => {
-								return this.renderFight(item, index)
-							})}
-						</div>
-						: null
+						Object.keys(nft.groupedFights[key]).map((tName, index) => {
+
+							const values = nft.groupedFights[key][tName]
+							return this.renderSubSectionFights(tName, index, values)
+						})
 					}
-
-
+					</div>
 				</div>
 			)
 		}
 
 		return <div key={index} />
 
+	}
+
+	renderSubSectionFights(key, index, values) {
+		const { nft, openFightsSection } = this.state
+
+		return (
+			<div style={Object.assign({}, styles.boxSingleTrait, { alignItems: 'flex-start' })} key={index}>
+
+				<button
+					style={{ alignItems: 'center', marginTop: 4, marginLeft: 6, marginRight: 6, flexDirection: 'row', display: 'flex' }}
+					onClick={() => {
+						let openFightsSectionCopy = Object.assign([], this.state.openFightsSection)
+
+						if (openFightsSectionCopy.includes(key)) {
+							let idx = openFightsSectionCopy.findIndex(i => i === key)
+							if (idx > -1) {
+								openFightsSectionCopy.splice(idx, 1)
+							}
+						}
+						else {
+							openFightsSectionCopy.push(key)
+						}
+
+						//console.log(openFightsSectionCopy);
+
+						this.setState({ openFightsSection: openFightsSectionCopy })
+					}}
+				>
+					<p style={{ fontSize: 15, color: '#707070', marginRight: 15 }}>
+						Tournament <span style={{ fontSize: 16, color: "#1d1d1f" }}>{key.replace("t","")}</span>
+					</p>
+
+					{
+						openFightsSection.includes(key) ?
+						<IoEyeOffOutline
+							size={20}
+							color="#1d1d1f"
+						/>
+						:
+						<IoEyeOutline
+							size={20}
+							color="#1d1d1f"
+						/>
+					}
+
+				</button>
+
+				{
+					openFightsSection.includes(key) ?
+					<div style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
+						{values.map((item, index) => {
+							return this.renderFight(item, index)
+						})}
+					</div>
+					: null
+				}
+
+			</div>
+		)
 	}
 
 	renderFight(item, index) {
@@ -1113,7 +1175,7 @@ class Nft extends Component {
 		const { showFights, nft, loadingFights } = this.state
 		const { mainTextColor, mainBackgroundColor } = this.props
 
-		const panelWidth = isMobile ? '90%' : "50%"
+		const panelWidth = isMobile ? '90%' : "60%"
 
 
 		return (
