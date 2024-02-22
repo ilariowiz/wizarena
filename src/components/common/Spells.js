@@ -523,6 +523,13 @@ const allSpells = [
 		"dmgBase": 7,
 		"condition": { "name": "Shock", "effect": "skip", "pct": 40 },
 		"element": "Earth"
+	},
+	{
+		"name": "Abyss",
+		"atkBase": 6,
+		"dmgBase": 6,
+		"condition": { "name": "Poison 3", "effect": "skip", "pct": 40 },
+		"element": "Dark"
 	}
 ]
 
