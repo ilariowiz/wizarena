@@ -155,129 +155,108 @@ class Conquest extends Component {
         })
 
         const sitenorChampion = allData.slice(0, 3)
-        //const sitenorChampion = await this.loadLords("eloSitenor")
-        //console.log(sitenorChampion);
         champions['Sitenor'] = sitenorChampion
         sitenorChampion.map(i => {
             if (!idsToLoad.includes(i.idnft)) {
                 idsToLoad.push(i.idnft)
             }
         })
-        //idsToLoad.push(sitenorChampion.idnft)
 
         allData.sort((a, b) => {
             return b["eloDruggorial"] - a["eloDruggorial"]
         })
 
         const druggorialChampion = allData.slice(0, 3)
-        //const druggorialChampion = await this.loadLords("eloDruggorial")
         champions['Druggorial'] = druggorialChampion
         druggorialChampion.map(i => {
             if (!idsToLoad.includes(i.idnft)) {
                 idsToLoad.push(i.idnft)
             }
         })
-        //idsToLoad.push(druggorialChampion.idnft)
 
         allData.sort((a, b) => {
             return b["eloVedrenon"] - a["eloVedrenon"]
         })
 
         const vedrenonChampion = allData.slice(0, 3)
-        //const vedrenonChampion = await this.loadLords("eloVedrenon")
         champions['Vedrenon'] = vedrenonChampion
         vedrenonChampion.map(i => {
             if (!idsToLoad.includes(i.idnft)) {
                 idsToLoad.push(i.idnft)
             }
         })
-        //idsToLoad.push(vedrenonChampion.idnft)
 
         allData.sort((a, b) => {
             return b["eloOceorah"] - a["eloOceorah"]
         })
 
         const oceorahChampion = allData.slice(0, 3)
-        //const oceorahChampion = await this.loadLords("eloOceorah")
         champions['Oceorah'] = oceorahChampion
         oceorahChampion.map(i => {
             if (!idsToLoad.includes(i.idnft)) {
                 idsToLoad.push(i.idnft)
             }
         })
-        //idsToLoad.push(oceorahChampion.idnft)
 
         allData.sort((a, b) => {
             return b["eloOpherus"] - a["eloOpherus"]
         })
 
         const opherusChampion = allData.slice(0, 3)
-        //const opherusChampion = await this.loadLords("eloOpherus")
         champions['Opherus'] = opherusChampion
         opherusChampion.map(i => {
             if (!idsToLoad.includes(i.idnft)) {
                 idsToLoad.push(i.idnft)
             }
         })
-        //idsToLoad.push(opherusChampion.idnft)
 
         allData.sort((a, b) => {
             return b["eloUlidalar"] - a["eloUlidalar"]
         })
 
         const ulidalarChampion = allData.slice(0, 3)
-        //const ulidalarChampion = await this.loadLords("eloUlidalar")
         champions['Ulidalar'] = ulidalarChampion
         ulidalarChampion.map(i => {
             if (!idsToLoad.includes(i.idnft)) {
                 idsToLoad.push(i.idnft)
             }
         })
-        //idsToLoad.push(ulidalarChampion.idnft)
 
         allData.sort((a, b) => {
             return b["eloWastiaxus"] - a["eloWastiaxus"]
         })
 
         const wastiaxusChampion = allData.slice(0, 3)
-        //const wastiaxusChampion = await this.loadLords("eloWastiaxus")
         champions['Wastiaxus'] = wastiaxusChampion
         wastiaxusChampion.map(i => {
             if (!idsToLoad.includes(i.idnft)) {
                 idsToLoad.push(i.idnft)
             }
         })
-        //idsToLoad.push(wastiaxusChampion.idnft)
 
         allData.sort((a, b) => {
             return b["eloUlanara"] - a["eloUlanara"]
         })
 
         const ulanaraChampion = allData.slice(0, 3)
-        //const ulanaraChampion = await this.loadLords("eloUlanara")
         champions['Ulanara'] = ulanaraChampion
         ulanaraChampion.map(i => {
             if (!idsToLoad.includes(i.idnft)) {
                 idsToLoad.push(i.idnft)
             }
         })
-        //idsToLoad.push(ulanaraChampion.idnft)
 
         allData.sort((a, b) => {
             return b["eloBremonon"] - a["eloBremonon"]
         })
 
         const bremononChampion = allData.slice(0, 3)
-        //const bremononChampion = await this.loadLords("eloBremonon")
         champions['Bremonon'] = bremononChampion
         bremononChampion.map(i => {
             if (!idsToLoad.includes(i.idnft)) {
                 idsToLoad.push(i.idnft)
             }
         })
-        //idsToLoad.push(bremononChampion.idnft)
-
-        //console.log(idsToLoad);
 
         let infoLords = {}
 
@@ -362,34 +341,6 @@ class Conquest extends Component {
             this.calcDailyFights(false, data)
         })
     }
-
-    /*
-    async loadLords(key) {
-        const q = query(collection(firebasedb, this.SEASON_ID), orderBy(key, "desc"), limit(3))
-        const querySnapshot = await getDocs(q)
-
-        let champions = []
-
-        querySnapshot.forEach(doc => {
-            //console.log(doc.data());
-            const d = doc.data()
-            //console.log(d);
-            let champion = {}
-
-            champion = d
-            champion['docId'] = doc.id
-
-            champions.push(champion)
-        })
-
-        //console.log(champions);
-        champions.sort((a,b) => {
-            return b[key] - a[key]
-        })
-
-        return champions
-    }
-    */
 
     async loadYourChampion(infoNft) {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
@@ -542,6 +493,27 @@ class Conquest extends Component {
         this.setState({ wizardSelectedLastFights: fights })
     }
 
+    getChampionToFight(filterTop3) {
+
+        let champion;
+
+        //filtriamo per quelli che non hanno mai ricevuto un fight
+        let newFilterTop3 = filterTop3.filter(i => !i.lastFightGet)
+
+        if (newFilterTop3.length > 0) {
+            champion = _.sample(newFilterTop3)
+
+            return champion
+        }
+        else {
+            //in questo caso tutti hanno ricevuto almeno un fight e quindi tutti hanno la key "lastFightGet"
+
+            filterTop3 = _.orderBy(filterTop3, [(obj) => moment(obj.lastFightGet.seconds * 1000)], ['asc'])
+
+            return filterTop3[0]
+        }
+    }
+
     async startFight(champions, keyElo, possibleBoosts) {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
         const { wizardSelected, wizardSelectedElos } = this.state
@@ -557,7 +529,7 @@ class Conquest extends Component {
         //questo filter serve per rimuovere il tuo wizard nel caso in cui tu sei nella top 3
         const filterTop3 = champions.filter(i => i.idnft !== wizardSelected.id)
 
-        const champion = _.sample(filterTop3)
+        const champion = this.getChampionToFight(filterTop3) //_.sample(filterTop3)
 
         this.setState({ loadingStartFight: true, showModalFight: true, infoFight: { nft1: wizardSelected, nft2: { id: champion.idnft }, evento: "", winner: "" } })
 
@@ -717,7 +689,8 @@ class Conquest extends Component {
         else {
             updateDoc(docRef, {
                 [keyElo]: increment(eloIncrement),
-                [oldkeyElo]: oldElo
+                [oldkeyElo]: oldElo,
+                lastFightGet: serverTimestamp()
             })
         }
 
