@@ -43,14 +43,12 @@
     (defconst BUYIN_WIZA_KEY "buyin-wiza-key")
     (defconst FEE_TOURNAMENT_WIZA_KEY "fee-tournament-wiza-key")
     (defconst TOURNAMENT_WIZA_OPEN "tournament_wiza_open")
-    (defconst TOURNAMENT_WIZA_LEVEL_CAP 295)
 
     (defconst TOURNAMENT_NAME "tournament-name")
     (defconst TOURNAMENT_WIZA_NAME "tournament-wiza-name")
 
     (defconst TOURNAMENT_ELITE_NAME "tournament-elite-name")
     (defconst TOURNAMENT_ELITE_OPEN "tournament_elite_open")
-    (defconst TOURNAMENT_FARMERS_MAX_LEVEL 185)
     (defconst BUYIN_ELITE_KEY "buyin-elite-key")
 
     (defconst WIZARDS_CHALLENGES_COUNT_KEY "wizards-challenges-count-key")
@@ -1453,16 +1451,6 @@
                 (current-level (calculate-level idnft))
             )
             (enforce (= (at "confirmBurn" data-wiz) false) "You can't subscribe a wizard in burning queue")
-            (if
-                (= type "wiza")
-                (enforce (<= current-level TOURNAMENT_WIZA_LEVEL_CAP) "you can't subscribe this wizard")
-                ""
-            )
-            (if
-                (= type "elite")
-                (enforce (<= current-level TOURNAMENT_FARMERS_MAX_LEVEL) "you can't subscribe this wizard")
-                ""
-            )
         )
         (subscribe-last id round idnft address spellSelected)
         (cond
