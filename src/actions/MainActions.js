@@ -1353,6 +1353,26 @@ export const getFeeTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit
 	}
 }
 
+export const getSubscribedPre = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 1800000, networkUrl, tournament, tournamentType, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-all-subscription-for-tournament "${tournament}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (response) {
+				if (callback) {
+					callback(response)
+				}
+			}
+		})
+
+	}
+}
+
 export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 1800000, networkUrl, tournament, tournamentType, callback) => {
 	return (dispatch) => {
 

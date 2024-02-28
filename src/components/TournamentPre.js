@@ -20,7 +20,7 @@ import {
     getFeeTournament,
     setNetworkSettings,
     setNetworkUrl,
-    getSubscribed,
+    getSubscribedPre,
     loadUserMintedNfts,
     subscribeToTournamentMass,
     clearTransaction,
@@ -179,13 +179,13 @@ class Tournament extends Component {
 
                 const tournamentName = tournament.name.split("_")[0]
 
-                this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "kda", (subscribed) => {
+                this.props.getSubscribedPre(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "kda", (subscribed) => {
 
                     //console.log(subscribed);
-                    const avgLevel = this.calcAvgLevel(subscribed)
+                    //const avgLevel = this.calcAvgLevel(subscribed)
                     //console.log(avgLevel);
 
-                    this.setState({ tournamentKdaSubs: subscribed.length, avgLevelKda: avgLevel, loadingWeekly: false })
+                    this.setState({ tournamentKdaSubs: subscribed.length, avgLevelKda: 0, loadingWeekly: false })
                 })
 
             })
@@ -220,13 +220,13 @@ class Tournament extends Component {
 
                 const tournamentName = tournament.name.split("_")[0]
 
-                this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "wiza", (subscribed) => {
+                this.props.getSubscribedPre(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "wiza", (subscribed) => {
 
                     //console.log(subscribed);
-                    const avgLevel = this.calcAvgLevel(subscribed)
+                    //const avgLevel = this.calcAvgLevel(subscribed)
                     //console.log(avgLevel);
 
-                    this.setState({ tournamentWizaSubs: subscribed.length, avgLevelWiza: avgLevel, loadingApprentice: false })
+                    this.setState({ tournamentWizaSubs: subscribed.length, avgLevelWiza: 0, loadingApprentice: false })
                 })
 
             })
@@ -261,13 +261,13 @@ class Tournament extends Component {
 
                 const tournamentName = tournament.name.split("_")[0]
 
-                this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "elite", (subscribed) => {
+                this.props.getSubscribedPre(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "elite", (subscribed) => {
 
                     //console.log(subscribed);
-                    const avgLevel = this.calcAvgLevel(subscribed)
+                    //const avgLevel = this.calcAvgLevel(subscribed)
                     //console.log(avgLevel);
 
-                    this.setState({ tournamentEliteSubs: subscribed.length, avgLevelElite: avgLevel, loadingElite: false })
+                    this.setState({ tournamentEliteSubs: subscribed.length, avgLevelElite: 0, loadingElite: false })
                 })
 
             })
@@ -714,9 +714,9 @@ class Tournament extends Component {
                     Subscribed <span className="text-bold">{subs}</span>
                 </p>
 
-                <p style={{ fontSize: 16, color: mainTextColor }}>
+                {/*<p style={{ fontSize: 16, color: mainTextColor }}>
                     Avg level <span className="text-bold">{avgLevel || '...'}</span>
-                </p>
+                </p>*/}
             </div>
         )
     }
@@ -1523,7 +1523,7 @@ export default connect(mapStateToProps, {
     getFeeTournament,
     setNetworkSettings,
     setNetworkUrl,
-    getSubscribed,
+    getSubscribedPre,
     loadUserMintedNfts,
     subscribeToTournamentMass,
     clearTransaction,
