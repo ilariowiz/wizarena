@@ -89,8 +89,9 @@ export const setNetworkUrl = (netId, chainId) => {
 			url = `https://api.testnet.chainweb.com/chainweb/0.0/${TEST_NET_ID}/chain/${chainId}/pact`;
 		}
 		else if (netId === MAIN_NET_ID) {
-			url = `https://api.chainweb.com/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
+			//url = `https://api.chainweb.com/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
 			//url = `https://chainwebnode1679490025815_31351.app.runonflux.io/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
+			url = `https://kda-api.glexia.com/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
 		}
 
 		dispatch({ type: SET_NETWORK_URL, payload: url })
