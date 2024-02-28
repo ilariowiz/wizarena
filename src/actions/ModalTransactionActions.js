@@ -75,7 +75,7 @@ export const pollForTransaction = (props, requestKey) => {
 
         //console.log(pollRes);
 
-        if (pollRes.result.status === "success") {
+        if (pollRes && pollRes.result && pollRes.result.status === "success") {
             dispatch(updateTransactionState("success", 1))
 
             if (txSucceed && txSucceed.includes(requestKey)) {
