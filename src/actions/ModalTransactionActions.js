@@ -6,7 +6,8 @@ import {
     ADD_TX_KEY_TO_INFO,
     REMOVE_INFO_TX,
     ADD_TX_TO_SUCCEED,
-    ADD_TX_KEY_TO_LISTEN
+    ADD_TX_KEY_TO_LISTEN,
+    NODE_URL
 } from './types'
 
 
@@ -65,7 +66,7 @@ export const pollForTransaction = (props, requestKey) => {
             pollRes = await Pact.fetch.listen(
                 { listen: requestKey },
                 "https://api.chainweb.com/chainweb/0.0/mainnet01/chain/1/pact"
-                //"https://kda-api.glexia.com/chainweb/0.0/mainnet01/chain/1/pact"
+                //`https://${NODE_URL}/chainweb/0.0/mainnet01/chain/1/pact`
             )
         }
         catch (e) {

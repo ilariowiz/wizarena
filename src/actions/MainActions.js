@@ -8,6 +8,7 @@ import moment from 'moment'
 import { calcLevelWizard } from '../components/common/CalcLevelWizard'
 import _ from 'lodash'
 import {
+	NODE_URL,
 	CONTRACT_NAME,
 	ADMIN_ADDRESS,
 	CLERIC_MINT_ADDRESS,
@@ -89,8 +90,8 @@ export const setNetworkUrl = (netId, chainId) => {
 			url = `https://api.testnet.chainweb.com/chainweb/0.0/${TEST_NET_ID}/chain/${chainId}/pact`;
 		}
 		else if (netId === MAIN_NET_ID) {
-			url = `https://api.chainweb.com/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
-			//url = `https://chainwebnode1679490025815_31351.app.runonflux.io/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
+			//url = `https://api.chainweb.com/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
+			url = `https://${NODE_URL}/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
 			//url = `https://kda-api.glexia.com/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
 		}
 
@@ -1361,9 +1362,9 @@ export const getSubscribedPre = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
-		let url = `https://kda-api.glexia.com/chainweb/0.0/mainnet01/chain/1/pact`;
+		//let url = `https://kda-api.glexia.com/chainweb/0.0/mainnet01/chain/1/pact`;
 
-		dispatch(readFromContract(cmd, true, url)).then(response => {
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
 			if (response) {
 				if (callback) {
@@ -1383,9 +1384,9 @@ export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
-		let url = `https://kda-api.glexia.com/chainweb/0.0/mainnet01/chain/1/pact`;
+		//let url = `https://kda-api.glexia.com/chainweb/0.0/mainnet01/chain/1/pact`;
 
-		dispatch(readFromContract(cmd, true, url)).then(response => {
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
 
 			if (response) {
