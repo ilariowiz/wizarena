@@ -1361,7 +1361,9 @@ export const getSubscribedPre = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
-		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+		let url = `https://kda-api.glexia.com/chainweb/0.0/mainnet01/chain/1/pact`;
+
+		dispatch(readFromContract(cmd, true, url)).then(response => {
 			//console.log(response)
 			if (response) {
 				if (callback) {
@@ -1381,7 +1383,9 @@ export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
-		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+		let url = `https://kda-api.glexia.com/chainweb/0.0/mainnet01/chain/1/pact`;
+
+		dispatch(readFromContract(cmd, true, url)).then(response => {
 			//console.log(response)
 
 			if (response) {
@@ -4079,6 +4083,8 @@ export const readFromContract = (cmd, returnError, networkUrl) => {
 
 		try {
 			let data = await Pact.fetch.local(cmd, networkUrl);
+
+			//∞console.log(data, cmd);
 
 			if (data && data.result && data.result.status === "success") {
 				//console.log(data.result)
