@@ -69,18 +69,11 @@ class Header extends Component {
 		this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 		this.props.setVisualColors(isDarkmode)
-
-		if (!circulatingSupply) {
-			setTimeout(() => {
-				this.getMined()
-				this.getSupply()
-			}, 1000)
-		}
 	}
 
 	getMined() {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
-
+		
 		this.props.getTotalMined(chainId, gasPrice, gasLimit, networkUrl, () => {
 			this.getWizaNotClaimed()
 		})
@@ -698,7 +691,7 @@ class Header extends Component {
 	}
 
 	renderBtnRight(isMobile) {
-		const { account, kadenaname, mainTextColor } = this.props
+		const { account, kadenaname, mainTextColor, circulatingSupply } = this.props
 
 		return (
 			<div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
@@ -718,8 +711,13 @@ class Header extends Component {
 
 				<button
 					onClick={() => {
-						//document.body.style.overflow = "hidden"
-						//document.body.style.height = "100%"
+						if (!circulatingSupply) {
+							setTimeout(() => {
+								this.getMined()
+								this.getSupply()
+							}, 1000)
+						}
+
 						this.setState({ showPanel: !this.state.showPanel })
 					}}
 					style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}
