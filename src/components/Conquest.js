@@ -268,6 +268,8 @@ class Conquest extends Component {
             })
         }
 
+        //console.log(champions);
+
         //console.log(infoLords);
 
         this.setState({ champions, loadingChampions: false, infoLords })
@@ -510,7 +512,10 @@ class Conquest extends Component {
 
             filterTop3 = _.orderBy(filterTop3, [(obj) => moment(obj.lastFightGet.seconds * 1000)], ['asc'])
 
-            return filterTop3[0]
+            let chooseFromTwo = [filterTop3[0], filterTop3[1]]
+
+            return _.sample(chooseFromTwo)
+            //return filterTop3[0]
         }
     }
 
