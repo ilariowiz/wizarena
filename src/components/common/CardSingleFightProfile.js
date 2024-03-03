@@ -49,10 +49,8 @@ class CardSingleFightProfile extends Component {
                                 href={`${window.location.protocol}//${window.location.host}/fightreplay/fights/${item.fightId}`}
                                 style={styles.btnChoice}
                                 className="btnH"
-                                onClick={(e) => {
-                                    this.preventDefault()
-                                    this.props.history.push(`/fightreplay/fights/${item.fightId}`)
-                                }}
+                                target="_blank"
+                                rel="noopener noreferrer"
                             >
                                 <p style={{ color: 'white', fontSize: 15 }} className="text-medium">
             						Replay
@@ -78,10 +76,8 @@ class CardSingleFightProfile extends Component {
                                 href={`${window.location.protocol}//${window.location.host}/fightreplay/fights/${item.fightId}`}
                                 style={styles.btnChoice}
                                 className="btnH"
-                                onClick={(e) => {
-                                    this.preventDefault()
-                                    this.props.history.push(`/fightreplay/fights/${item.fightId}`)
-                                }}
+                                target="_blank"
+                                rel="noopener noreferrer"
                             >
                                 <p style={{ color: 'white', fontSize: 15 }} className="text-medium">
             						Replay
