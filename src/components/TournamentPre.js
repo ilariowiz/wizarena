@@ -3,7 +3,7 @@ import Media from 'react-media';
 import { connect } from 'react-redux'
 import moment from 'moment'
 import _ from 'lodash'
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import DotLoader from 'react-spinners/DotLoader';
 import { AiFillCheckCircle } from 'react-icons/ai'
@@ -75,8 +75,6 @@ class Tournament extends Component {
             this.loadTournamentKda()
             this.loadTournamentWiza()
             this.loadTournamentElite()
-            this.refreshUser()
-            this.loadWizaBalance()
         }, 500)
 	}
 
@@ -96,7 +94,7 @@ class Tournament extends Component {
 		}
 	}
 
-    loadMinted(tournament, isResults, isSubs) {
+    loadMinted(tournament) {
 		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
         this.setState({ loading: true, showSubs: false, showProfileFights: false }, () => {
@@ -106,47 +104,20 @@ class Tournament extends Component {
 		if (account && account.account) {
 			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (minted) => {
                 //console.log(minted);
-                if (isResults) {
 
-                    let idsSubscription = []
-                    const tName = tournament.name.split("_")[0]
+                let idsSubscription = []
+                const tName = tournament.name.split("_")[0]
 
-                    minted.map(i => {
-                        idsSubscription.push(`${tName}_${i.id}`)
+                minted.map(i => {
+                    idsSubscription.push(`${tName}_${i.id}`)
+                })
+
+                this.props.getSubscriptions(chainId, gasPrice, gasLimit, networkUrl, idsSubscription, async (subscriptions) => {
+
+                    this.setState({ subscriptionsInfo: subscriptions }, () => {
+                        this.loadSubs(tournament)
                     })
-
-                    this.props.getSubscriptions(chainId, gasPrice, gasLimit, networkUrl, idsSubscription, (subscriptions) => {
-                        //console.log(subscriptions);
-
-                        let subscribed = []
-                        subscriptions.map(i => {
-                            if (i.idnft) {
-                                subscribed.push(i.idnft)
-                            }
-                        })
-
-                        //console.log(subscribed);
-
-                        this.loadProfileFights(tournament, subscribed)
-                    })
-                }
-
-                if (isSubs) {
-                    let idsSubscription = []
-                    const tName = tournament.name.split("_")[0]
-
-                    minted.map(i => {
-                        idsSubscription.push(`${tName}_${i.id}`)
-                    })
-
-                    this.props.getSubscriptions(chainId, gasPrice, gasLimit, networkUrl, idsSubscription, async (subscriptions) => {
-
-                        this.setState({ subscriptionsInfo: subscriptions }, () => {
-                            this.loadSubs(tournament)
-                        })
-                    })
-
-                }
+                })
             })
 		}
 	}
@@ -182,8 +153,6 @@ class Tournament extends Component {
                 this.props.getSubscribedPre(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "kda", (subscribed) => {
 
                     //console.log(subscribed);
-                    //const avgLevel = this.calcAvgLevel(subscribed)
-                    //console.log(avgLevel);
 
                     this.setState({ tournamentKdaSubs: subscribed.length, avgLevelKda: 0, loadingWeekly: false })
                 })
@@ -223,8 +192,6 @@ class Tournament extends Component {
                 this.props.getSubscribedPre(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "wiza", (subscribed) => {
 
                     //console.log(subscribed);
-                    //const avgLevel = this.calcAvgLevel(subscribed)
-                    //console.log(avgLevel);
 
                     this.setState({ tournamentWizaSubs: subscribed.length, avgLevelWiza: 0, loadingApprentice: false })
                 })
@@ -264,8 +231,6 @@ class Tournament extends Component {
                 this.props.getSubscribedPre(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "elite", (subscribed) => {
 
                     //console.log(subscribed);
-                    //const avgLevel = this.calcAvgLevel(subscribed)
-                    //console.log(avgLevel);
 
                     this.setState({ tournamentEliteSubs: subscribed.length, avgLevelElite: 0, loadingElite: false })
                 })
@@ -273,84 +238,6 @@ class Tournament extends Component {
             })
         })
     }
-
-    calcAvgLevel(array) {
-        let sum = 0
-        array.map(i => {
-            if (i.level) {
-                sum += i.level
-            }
-        })
-
-        return Math.round(sum / array.length)
-    }
-
-    async loadProfileFights(tournament, subscribed) {
-
-		const tournamentName = tournament.name.split("_")[0]
-		//console.log(tournamentName);
-
-        //subscribed = ["63", "68", "94", "143", "171", "194", "226", "235", "289", "342", "388", "428", "582", "584", "611", "649", "714", "765", "803", "820", "890", "917", "952"]
-        //subscribed = ["63", "68"]
-
-        let tournamentsKey = []
-        for (var i = 1; i < 7; i++) {
-            let tKey = `${tournamentName}_r${i}`
-            tournamentsKey.push(tKey)
-        }
-
-        let q2 = query(collection(firebasedb, "fights"), where("tournament", "in", tournamentsKey))
-
-        Promise.resolve(getDocs(q2)).then(values => {
-
-            let results = []
-
-            values.forEach(doc => {
-                //console.log(doc);
-                let d = doc.data()
-                //console.log(d, subscribed);
-
-                if (subscribed.includes(d.idnft1) || subscribed.includes(d.idnft2)) {
-
-                    const idnft = subscribed.includes(d.idnft1) ? d.idnft1 : d.idnft2
-
-                    const obj = {
-                        fightId: doc.id,
-                        tournament: d.tournament,
-                        winner: d.winner,
-                        id: idnft,
-                        name: `#${idnft}`
-                    }
-
-                    results.push(obj)
-                }
-            })
-
-            results.sort((a, b) => {
-                if (parseInt(a.tournament[a.tournament.length - 1]) === 0) return 1;
-                if (parseInt(b.tournament[b.tournament.length - 1]) === 0) return -1
-                return parseInt(a.tournament[a.tournament.length - 1]) - parseInt(b.tournament[b.tournament.length - 1])
-            })
-
-            //console.log(profileFights);
-
-            let fightsPerRound = {}
-
-            for (var i = 0; i < results.length; i++) {
-                const singleF = results[i]
-
-                if (!fightsPerRound[singleF.tournament]) {
-                    fightsPerRound[singleF.tournament] = []
-                }
-
-                fightsPerRound[singleF.tournament].push(singleF)
-            }
-
-            //console.log(fightsPerRound);
-
-            this.setState({ profileFights: fightsPerRound, loading: false, showProfileFights: true, showSubs: false })
-        })
-	}
 
     loadSubs(tournament) {
         const { userMintedNfts } = this.props
@@ -563,29 +450,15 @@ class Tournament extends Component {
         )
     }
 
-    renderBtnYourResults(tournament) {
-        return (
-            <button
-                className='btnH'
-                style={styles.btnSubscribe}
-                onClick={() => {
-                    this.loadMinted(tournament, true, false)
-                }}
-            >
-                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                    Your results
-                </p>
-            </button>
-        )
-    }
-
     renderBtnSubscribe(tournament) {
         return (
             <button
                 className='btnH'
                 style={styles.btnSubscribe}
                 onClick={() => {
-                    this.loadMinted(tournament, false, true)
+                    this.refreshUser()
+                    this.loadWizaBalance()
+                    this.loadMinted(tournament)
                 }}
             >
                 <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
@@ -838,9 +711,7 @@ class Tournament extends Component {
 
                 {
                     !tournament.canSubscribe && !loadingWeekly &&
-                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: marginBottom }}>
-                        {this.renderBtnYourResults(tournament)}
-
+                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center', marginTop: marginBottom }}>
                         {this.renderBtnOpenTournament('tournamentK')}
 
                     </div>
@@ -984,9 +855,7 @@ class Tournament extends Component {
 
                 {
                     !tournamentElite.canSubscribe && !loadingElite &&
-                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: marginBottom }}>
-                        {this.renderBtnYourResults(tournamentElite)}
-
+                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center', marginTop: marginBottom }}>
                         {this.renderBtnOpenTournament('tournamentE')}
                     </div>
                 }
@@ -1116,9 +985,7 @@ class Tournament extends Component {
 
                 {
                     !tournamentWiza.canSubscribe && !loadingApprentice &&
-                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: marginBottom }}>
-                        {this.renderBtnYourResults(tournamentWiza)}
-
+                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center', marginTop: marginBottom }}>
                         {this.renderBtnOpenTournament('tournamentW')}
                     </div>
                 }
