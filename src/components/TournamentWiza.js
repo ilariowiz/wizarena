@@ -10,6 +10,7 @@ import Header from './Header'
 import boxPairTournament from './common/tournament/BoxPairTournament'
 import renderInfoTournament from './common/tournament/InfoTournament'
 import graphSubscribers from './common/tournament/GraphSubscribers'
+import BoxYourResults from './common/tournament/BoxYourResults'
 import getBoxWidth from './common/GetBoxW'
 import { MAIN_NET_ID, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import {
@@ -41,7 +42,8 @@ class Tournament extends Component {
             ringsEquipped: [],
             pendantsEquipped: [],
             subscribed: [],
-            rankings: []
+            rankings: [],
+            showProfileFights: false
 		}
 	}
 
@@ -426,6 +428,8 @@ class Tournament extends Component {
 
                 {renderInfoTournament(tournament, this.calcMontepremi(), buyinWiza, subscribedWiza, mainTextColor, infoText, this.props.history)}
 
+                {this.renderButtonShowResults()}
+
                 <div style={{ width: boxW, flexWrap: 'wrap' }}>
                     {matchPair.map((item, index) => {
                         return boxPairTournament(item, index, userMinted, mainTextColor, subscribed, this.props.history, isDarkmode, rankings)
@@ -478,6 +482,8 @@ class Tournament extends Component {
                     </p>
                 }
 
+                {this.renderButtonShowResults()}
+
                 <div style={{ flexDirection: 'column', marginBottom: 60, alignItems: 'center' }}>
                     <div style={Object.assign({}, styles.boxPodio, { borderColor: '#CD7F32' })}>
                         <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
@@ -492,6 +498,37 @@ class Tournament extends Component {
                     </div>
                 </div>
 
+            </div>
+        )
+    }
+
+    renderButtonShowResults() {
+        const { mainTextColor, history } = this.props
+        const { tournament, userMinted } = this.state
+
+        return (
+            <div style={{ alignItems: 'center', flexDirection: 'column' }}>
+                <button
+                    className='btnH'
+                    style={styles.btnSubscribe}
+                    onClick={() => this.setState({ showProfileFights: true })}
+                >
+                    <p style={{ fontSize: 16, color: 'white' }} className="text-medium">
+                        Show your results
+                    </p>
+                </button>
+
+                {
+                    this.state.showProfileFights &&
+                    <div style={{ width: "100%" }}>
+                        <BoxYourResults
+                            tournament={tournament}
+                            mainTextColor={mainTextColor}
+                            history={history}
+                            userMintedNfts={userMinted}
+                        />
+                    </div>
+                }
             </div>
         )
     }
