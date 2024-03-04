@@ -55,7 +55,7 @@ class ModalTransaction extends Component {
 	}
 
 	checkTransaction() {
-		const { transactionsState, txInfo } = this.props
+		const { transactionsState, txInfo, account } = this.props
 
 		const txState = transactionsState && transactionsState.length > 0 ? transactionsState[transactionsState.length-1] : {}
 
@@ -121,7 +121,8 @@ class ModalTransaction extends Component {
 			            eloUlanara: startingElo,
 			            oldeloUlanara: startingElo,
 			            eloBremonon: startingElo,
-			            oldeloBremonon: startingElo
+			            oldeloBremonon: startingElo,
+						owner: account.account
 			        }
 
 			        const docRef = doc(collection(firebasedb, lordsSeasonId))
