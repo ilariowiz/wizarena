@@ -520,7 +520,7 @@ class Conquest extends Component {
     }
 
     async startFight(champions, keyElo, possibleBoosts) {
-        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+        const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
         const { wizardSelected, wizardSelectedElos } = this.state
 
         let seasonEnded = this.checkSeasonEnded()
@@ -531,10 +531,23 @@ class Conquest extends Component {
             return
         }
 
-        //questo filter serve per rimuovere il tuo wizard nel caso in cui tu sei nella top 3
-        const filterTop3 = champions.filter(i => i.idnft !== wizardSelected.id)
+        //questo serve per rimuovere i tuoi wizards
+        let filterTop3 = champions.filter(i => i.owner !== account.account)
 
-        const champion = this.getChampionToFight(filterTop3) //_.sample(filterTop3)
+        let champion;
+
+        if (filterTop3.length > 1) {
+            champion = this.getChampionToFight(filterTop3)
+        }
+        else if (filterTop3.length === 1) {
+            champion = filterTop3[0]
+        }
+        else if (filterTop3.length === 0) {
+            this.setState({ showModalFight: false, infoFight: {}, isFightDone: false, loadingStartFight: false }, () => {
+                toast.error(`You can't fight your own wizard`)
+            })
+            return
+        }
 
         this.setState({ loadingStartFight: true, showModalFight: true, infoFight: { nft1: wizardSelected, nft2: { id: champion.idnft }, evento: "", winner: "" } })
 
@@ -890,7 +903,6 @@ class Conquest extends Component {
             second = champions[regionName].length > 1 ? champions[regionName][1] : undefined
             third = champions[regionName].length > 2 ? champions[regionName][2] : undefined
         }
-        //const champion = champions && champions[regionName] ? champions[regionName] : undefined
 
         if (!champion) {
             return undefined
