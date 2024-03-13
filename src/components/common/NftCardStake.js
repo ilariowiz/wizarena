@@ -256,7 +256,7 @@ class NftCardStake extends Component {
 							<div style={{ marginLeft: 10, alignItems: 'center' }}>
 
 								<img
-									style={{ width: 19, marginRight: 6, objectFit: 'contain' }}
+									style={{ width: 23, marginRight: 3, objectFit: 'contain' }}
 									src={logoKda}
 									alt='Kadena logo'
 								/>

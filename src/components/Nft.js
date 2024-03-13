@@ -1430,7 +1430,7 @@ class Nft extends Component {
 
 					<div style={{ alignItems: 'center' }}>
 						<img
-							style={{ width: 20, marginRight: 5 }}
+							style={{ width: 30, marginRight: 5 }}
 							src={logoKda}
 							alt={nft.id}
 						/>

@@ -65,7 +65,7 @@ class NftCard extends Component {
 								<div style={{ alignItems: 'center' }}>
 
 									<img
-										style={{ width: 14, marginRight: 6, objectFit: 'contain' }}
+										style={{ width: 24, marginRight: 3, objectFit: 'contain' }}
 										src={logoKda}
 										alt='Kadena logo'
 									/>
