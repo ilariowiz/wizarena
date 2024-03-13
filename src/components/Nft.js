@@ -209,9 +209,50 @@ class Nft extends Component {
 		document.title = `${response.name} - Wizards Arena`
 
 		//console.log(response)
-		//console.log(Object.keys(response.medals));
+		//console.log(response.medals);
 
-		//console.log(response);
+		let newGroupedMedals = {"Farmers": [], "Weekly": [], "Apprentice": [], "Elite": [], "Chaos": []}
+
+		for (const [key, value] of Object.entries(response.medals)) {
+
+			const tNumber = parseInt(key.replace("t", ""))
+
+			if (tNumber < 1000) {
+				newGroupedMedals['Weekly'].push({ key, value })
+			}
+
+			if (tNumber >= 1000 && tNumber < 3000) {
+				newGroupedMedals['Apprentice'].push({ key, value })
+			}
+
+			if (tNumber >= 3000 && tNumber < 3007) {
+				newGroupedMedals['Elite'].push({ key, value })
+			}
+
+			if (tNumber >= 3007 && tNumber < 3015) {
+				newGroupedMedals['Chaos'].push({ key, value })
+			}
+
+			if (tNumber >= 3015) {
+				newGroupedMedals['Farmers'].push({ key, value })
+			}
+		}
+
+		response['groupedMedals'] = newGroupedMedals
+
+		//ordiniamo le medals in ordine di torneo
+		Object.keys(response.groupedMedals).map(mainKey => {
+			const values = response.groupedMedals[mainKey]
+
+			if (values.length > 0) {
+				values.sort((a, b) => {
+					//console.log(a, b);
+					return parseInt(a.key.replace("t", "")) - parseInt(b.key.replace("t", ""))
+				})
+			}
+		})
+
+		//console.log(response.groupedMedals);
 
 		this.setState({ nft: response, loading: false }, () => {
 			this.loadFights(response)
@@ -240,8 +281,6 @@ class Nft extends Component {
 			let tournaments = []
 
 			if (response.tournaments) {
-
-				//console.log(response.medals);
 
 				for (var i = 0; i < response.tournaments.length; i++) {
 					const f = response.tournaments[i]
@@ -698,26 +737,47 @@ class Nft extends Component {
 		)
 	}
 
-	renderMedal(item) {
-		const { nft, numbersOfMaxMedalsPerTournament } = this.state
+	renderMainMedals(key, index) {
+		const { nft } = this.state
+		const { mainTextColor } = this.props
+		//console.log(key);
 
-		let numbersOfMedals = '0'
+		if (nft.groupedMedals && nft.groupedMedals[key].length > 0) {
 
-		if (nft.medals[item]) {
-			numbersOfMedals = nft.medals[item].int || nft.medals[item]
+			return (
+				<div style={{ flexDirection: 'column' }} key={key}>
+					<p style={{ fontSize: 19, color: mainTextColor, marginBottom: 10, marginTop: 10 }}>
+						{key}
+					</p>
+
+					<div style={{ flexWrap: 'wrap' }}>
+					{
+						nft.groupedMedals[key].map((item, index) => {
+							return this.renderMedal(item, index)
+						})
+					}
+					</div>
+				</div>
+			)
 		}
 
-		//console.log(numbersOfMedals);
+		return <div key={index} />
+
+	}
+
+	renderMedal(item, index) {
 
 		const maxMedals = {maxMedals: 4} //numbersOfMaxMedalsPerTournament.length > 0 ? numbersOfMaxMedalsPerTournament.find(i => i.tournamentName === item) : '0'
 
+		const tName = item.key
+
 		return (
-			<div style={styles.boxSingleTrait} key={item}>
+			<div style={styles.boxSingleTrait} key={index}>
 				<p style={{ color: '#707070', fontSize: 13, marginBottom: 5 }}>
-					Tournament {item.replace("t", "")}
+					Tournament {tName.replace("t", "")}
 				</p>
 				<p style={{ color: "#1d1d1f", fontSize: 16 }}>
-					{numbersOfMedals} / {maxMedals.maxMedals}
+					{item.value} / {maxMedals.maxMedals}
 				</p>
 
 			</div>
@@ -1113,14 +1173,14 @@ class Nft extends Component {
 
 		const panelWidth = isMobile ? '90%' : "50%"
 
-		//console.log(nft.medals)
-
+		/*
 		let sortedKeyMedals = []
 		if (nft.medals) {
 			sortedKeyMedals = Object.keys(nft.medals).sort((a, b) => {
 				return parseInt(a.replace("t","")) - parseInt(b.replace("t", ""))
 			})
 		}
+		*/
 
 		return (
 			<div style={styles.panelShadow}>
@@ -1161,8 +1221,9 @@ class Nft extends Component {
 							This wizard has not yet won a medal
 						</p>
 						:
-						nft && nft.medals && sortedKeyMedals.map((key) => {
-							return this.renderMedal(key)
+						nft && nft.groupedMedals && Object.keys(nft.groupedMedals).map((key, index) => {
+							//console.log(key, index);
+							return this.renderMainMedals(key, index)
 						})
 					}
 					</div>
