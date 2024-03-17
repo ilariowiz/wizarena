@@ -74,6 +74,24 @@ export const sendMessageOfferItem = (info) => {
     request.send(JSON.stringify(params));
 }
 
+export const sendMessageCollectionOffer = (info) => {
+    const request = new XMLHttpRequest()
+
+    request.open("POST", process.env.REACT_APP_DISCORD_WEBHOOK_URL)
+    request.setRequestHeader("Content-type", 'application/json')
+
+
+    const content = `There is a new offer for a Wizard NFT: **${info.amount}** $KDA, expires in **${info.duration}** days`
+
+    const params = {
+        username: "Wizard",
+        avatar_url: "https://storage.googleapis.com/wizarena/placeholder.png",
+        content
+    }
+
+    request.send(JSON.stringify(params));
+}
+
 export const sendMessageSales = (id, amount) => {
     const request = new XMLHttpRequest()
 

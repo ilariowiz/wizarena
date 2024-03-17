@@ -982,6 +982,23 @@ export const getOffersReceived = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimi
 	}
 }
 
+export const getCollectionOffers = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 60000, networkUrl, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-collection-offers)`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (response && callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
 export const getEquipmentActiveOffers = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 60000, networkUrl, callback) => {
 	return (dispatch) => {
 
@@ -1919,6 +1936,117 @@ export const withdrawOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, n
 		}
 
 		//console.log("withdrawOffer", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const makeCollectionOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, days, amount) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.make-collection-offer "${account.account}" ${days} ${_.round(amount).toFixed(1)})`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
+				[account.account]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("makeCollectionOffer", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const acceptCollectionOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idOffer, idNft, account) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.accept-collection-offer "${idOffer}" "${idNft}" free.wiza free.wiz-equipment)`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME}.OWNER`,
+				[account.account, idNft]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("acceptCollectionOffer", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const withdrawCollectionOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idOffer, account) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.cancel-collection-offer "${idOffer}")`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
+				[account.account]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("withdrawCollectionOffer", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}

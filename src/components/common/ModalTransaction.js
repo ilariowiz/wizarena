@@ -6,7 +6,7 @@ import { firebasedb } from '../Firebase';
 import { IoClose } from 'react-icons/io5'
 import DotLoader from 'react-spinners/DotLoader';
 import BounceLoader from 'react-spinners/BounceLoader';
-import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, sendMessageUpdateNickname, sendMessageUpgrade, sendMessageListedEquipment, sendMessageDelistedEquipment, sendMessageSalesEquipment, sendMessageOfferItem, sendMessageDeclineOffer, sendMessageChallenge, sendMessageFlashT, sendMessageFlashTSub } from './WebhookDiscord'
+import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, sendMessageUpdateNickname, sendMessageUpgrade, sendMessageListedEquipment, sendMessageDelistedEquipment, sendMessageSalesEquipment, sendMessageOfferItem, sendMessageDeclineOffer, sendMessageChallenge, sendMessageFlashT, sendMessageFlashTSub, sendMessageCollectionOffer } from './WebhookDiscord'
 import '../../css/Modal.css'
 import {
 	signTransaction,
@@ -153,6 +153,10 @@ class ModalTransaction extends Component {
             else if (typeModal === "makeofferitem") {
                 //console.log(makeOfferValues);
                 sendMessageOfferItem(makeOfferValues)
+            }
+			else if (typeModal === "makecollectionoffer") {
+                //console.log(makeOfferValues);
+                sendMessageCollectionOffer(makeOfferValues)
             }
             else if (typeModal === "acceptoffer" || typeModal === "buy") {
                 sendMessageSales(saleValues.id, saleValues.amount)

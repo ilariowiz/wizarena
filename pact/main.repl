@@ -1303,7 +1303,7 @@
 ; (commit-tx)
 
 
-(begin-tx "MAKE OFFER")
+(begin-tx "MAKE GENERIC OFFER")
 
 (env-sigs [{
   "key": "94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd",
@@ -1313,13 +1313,31 @@
   ]
 }])
 
-(free.wiz-arena.make-offer "0" "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" 1 6.0)
+(free.wiz-arena.make-collection-offer "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" 1 6.0)
 
 (commit-tx)
 
 
+(env-chain-data {
+    "chain-id": "1",
+    "block-height": 20,
+    "block-time": (time "2023-06-01T00:00:01Z")
+})
 
-(begin-tx "DECLINE OFFER")
+(begin-tx "GET GENERIC OFFERS")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.get-collection-offers)
+
+(commit-tx)
+
+(begin-tx "ACCEPT GENERIC OFFER")
 
 (env-sigs [{
   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
@@ -1329,42 +1347,9 @@
   ]
 }])
 
-(free.wiz-arena.decline-offer "0")
+(free.wiz-arena.accept-collection-offer "0" "0" free.wiza free.wiz-equipment)
 
 (commit-tx)
-
-(env-chain-data {
-    "chain-id": "1",
-    "block-height": 20,
-    "block-time": (time "2023-06-01T00:00:01Z")
-})
-
-(begin-tx "GET OFFER ID")
-
-(env-sigs [{
-  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-  "caps": [
-    (coin.GAS)
-  ]
-}])
-
-(free.wiz-arena.get-offers-for-id "0")
-
-(commit-tx)
-
-; (begin-tx "ACCEPT OFFER")
-;
-; (env-sigs [{
-;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-;   "caps": [
-;     (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
-;     (coin.GAS)
-;   ]
-; }])
-;
-; (free.wiz-arena.accept-offer "0" free.wiza free.wiz-equipment)
-;
-; (commit-tx)
 
 (begin-tx "UPGRADE SPELL")
 

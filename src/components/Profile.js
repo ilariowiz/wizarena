@@ -9,6 +9,7 @@ import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
 import OfferItem from './common/OfferItem'
 import OfferEquipmentItem from './common/OfferEquipmentItem'
+import OfferCollectionItem from './common/OfferCollectionItem'
 import NftCardStake from './common/NftCardStake'
 import EquipmentCard from './common/EquipmentCard'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
@@ -39,7 +40,8 @@ import {
 	calculateRewardMass,
 	updateInfoTransactionModal,
 	declineOffer,
-	getWalletXp
+	getWalletXp,
+	getCollectionOffers
 } from '../actions'
 import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -73,7 +75,8 @@ class Profile extends Component {
 			itemsToShow: [],
             searchText: "",
             searchedText: "",
-			showFilters: window.innerWidth > 767
+			showFilters: window.innerWidth > 767,
+			yourCollectionOffers: []
 		}
 	}
 
@@ -107,6 +110,7 @@ class Profile extends Component {
 		this.loadEquip()
 		this.loadOffersMade()
 		this.loadOffersEquipmentMade()
+		this.loadCollectionOffersMade()
 	}
 
 	getWalletXp() {
@@ -211,6 +215,19 @@ class Profile extends Component {
 			this.setState({ offersEquipmentMade: response, loading: false })
 		})
 
+	}
+
+	loadCollectionOffersMade() {
+		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		if (account && account.account) {
+			this.props.getCollectionOffers(chainId, gasPrice, gasLimit, networkUrl, (response) => {
+
+				const yourCollectionOffers = response.filter(i => i.buyer === account.account)
+
+				this.setState({ yourCollectionOffers })
+			})
+		}
 	}
 
 	loadOffersReceived() {
@@ -939,11 +956,41 @@ class Profile extends Component {
 		)
 	}
 
+	renderCollectionOffers(width, isMobile) {
+		const { yourCollectionOffers } = this.state
+
+		return (
+			<div style={{ flexDirection: 'row', flexWrap: 'wrap', width }}>
+				{yourCollectionOffers.map((item, index) => {
+					return (
+						<OfferCollectionItem
+							item={item}
+							key={index}
+							isMobile={isMobile}
+							withdrawOffer={() => this.withdrawEquipmentOffer(item)}
+						/>
+					)
+				})}
+			</div>
+		)
+	}
+
 	renderMenu(isMobile) {
-		const { section, loading, equipment, offersMade, offersReceived, offersEquipmentMade } = this.state;
+		const { section, loading, equipment, offersMade, offersReceived, offersEquipmentMade, yourCollectionOffers } = this.state;
 		const { userMintedNfts, mainTextColor, isDarkmode } = this.props
 
 		let textColor = isDarkmode ? "#1d1d1f" : "white"
+
+		let offerMadeCount = 0
+		if (offersMade && offersMade.length > 0) {
+			offerMadeCount += offersMade.length
+		}
+		if (offersEquipmentMade && offersEquipmentMade.length > 0) {
+			offerMadeCount += offersEquipmentMade.length
+		}
+		if (yourCollectionOffers && yourCollectionOffers.length > 0) {
+			offerMadeCount += yourCollectionOffers.length
+		}
 
 		return (
 			<div style={{ alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', borderColor: '#d7d7d7', borderStyle: 'solid', borderRadius: 4, borderWidth: 1, padding: 6, marginBottom: 30, marginTop: 20 }}>
@@ -986,10 +1033,12 @@ class Profile extends Component {
 
 						this.setState({ section: 3, loading: true })
 						this.loadOffersMade()
+						this.loadOffersEquipmentMade()
+						this.loadCollectionOffersMade()
 					}}
 				>
 					<p style={{ fontSize: 14, color: section === 3 ? textColor : mainTextColor }} className="text-medium">
-						{offersMade && offersMade.length + offersEquipmentMade.length > 0 ? `Offers made (${offersMade.length + offersEquipmentMade.length})` : "Offers made"}
+						{`Offers made (${offerMadeCount})`}
 					</p>
 				</button>
 
@@ -1015,7 +1064,7 @@ class Profile extends Component {
 
 	renderBody(isMobile) {
 		const { account, wizaBalance, walletXp, mainTextColor } = this.props
-		const { showModalConnection, isConnected, section, loading, unclaimedWizaTotal, offersMade, offersReceived, offersEquipmentMade } = this.state
+		const { showModalConnection, isConnected, section, loading, unclaimedWizaTotal, offersMade, offersReceived, offersEquipmentMade, yourCollectionOffers } = this.state
 
 		const { boxW, modalW, padding } = getBoxWidth(isMobile)
 
@@ -1184,6 +1233,13 @@ class Profile extends Component {
 				}
 
 				{
+					section === 3 && !loading && yourCollectionOffers ?
+					this.renderCollectionOffers(boxW, isMobile)
+					:
+					null
+				}
+
+				{
 					section === 4 && !loading && offersReceived ?
 					this.renderOffers(boxW, offersReceived, false, isMobile)
 					:
@@ -1334,5 +1390,6 @@ export default connect(mapStateToProps, {
 	calculateRewardMass,
 	updateInfoTransactionModal,
 	declineOffer,
-	getWalletXp
+	getWalletXp,
+	getCollectionOffers
 })(Profile)

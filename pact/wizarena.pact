@@ -176,6 +176,10 @@
         @event true
     )
 
+    (defcap MAKE_COLLECTION_OFFER (amount:decimal duration:integer)
+        @event true
+    )
+
  ; --------------------------------------------------------------------------
   ; Schema and tables
   ; --------------------------------------------------------------------------
@@ -394,6 +398,17 @@
         season:string
     )
 
+    (defschema collection-offers-schema
+        @doc "schema for generic offers on marketplace"
+        id:string
+        buyer:string
+        timestamp:time
+        expiresat:time
+        amount:decimal
+        withdrawn:bool
+        status:string
+    )
+
     (deftable nfts:{nft-main-schema})
     (deftable nfts-market:{nft-listed-schema})
     (deftable creation:{creation-schema})
@@ -420,15 +435,13 @@
     (deftable wallet-xp:{wallet-xp-schema})
 
     (deftable challenges:{challenges-schema})
-
     (deftable spells:{spells-schema})
-
     (deftable auto-tournaments:{auto-tournaments-schema})
     (deftable fights-db:{fights-db-schema})
-
     (deftable upgrade-spells:{upgrade-spells-schema})
-
     (deftable conquest-table:{conquest-schema})
+
+    (deftable collection-offers-table:{collection-offers-schema})
 
     ; --------------------------------------------------------------------------
   ; Can only happen once
@@ -1320,6 +1333,129 @@
         )
     )
 
+    (defun make-collection-offer (buyer:string duration:integer amount:decimal)
+        @doc "make an offer for a generic nft"
+        (enforce (> amount 0.0) "Amount must be greater then zero")
+        (enforce (> duration 0) "Duration must be at least 1 day")
+        (let (
+            (new-offer-id (int-to-str 10 (get-count WIZARDS_OFFERS_COUNT_KEY)))
+          )
+          (with-capability (ACCOUNT_GUARD buyer)
+            (install-capability (coin.TRANSFER buyer WIZARDS_OFFERS_BANK amount))
+            (coin.transfer buyer WIZARDS_OFFERS_BANK amount)
+
+            (insert collection-offers-table new-offer-id {
+              "id": new-offer-id,
+              "buyer": buyer,
+              "timestamp": (at "block-time" (chain-data)),
+              "expiresat": (add-time (at "block-time" (chain-data)) (days duration)),
+              "amount": amount,
+              "withdrawn": false,
+              "status": "pending"
+            })
+            (with-default-read token-table WIZARDS_OFFERS_BANK
+              {"balance": 0.0}
+              {"balance":= oldbalance }
+              (update token-table WIZARDS_OFFERS_BANK {"balance": (+ oldbalance amount)})
+            )
+            (with-capability (PRIVATE)
+              (increase-count WIZARDS_OFFERS_COUNT_KEY)
+            )
+            (emit-event (MAKE_COLLECTION_OFFER amount duration))
+          )
+        )
+    )
+
+    (defun accept-collection-offer (idoffer:string idnft:string m:module{wiza1-interface-v3} mequip:module{wizequipment-interface-v1})
+        @doc "accept an offer for a generic nft"
+        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+        (enforce (= (format "{}" [mequip]) "free.wiz-equipment") "not allowed, security reason")
+        (with-read collection-offers-table idoffer
+          {
+            "buyer":=buyer,
+            "timestamp":=timestamp,
+            "expiresat":=expiresat,
+            "amount":=amount,
+            "withdrawn":=iswithdrew
+          }
+          (let (
+                (data (get-wizard-fields-for-id (str-to-int idnft)))
+                (is-staked (check-is-staked idnft m))
+                (has-ring (at "equipped" (check-is-equipped idnft mequip)))
+                (has-pendant (at "equipped" (check-is-equipped (+ idnft "pendant") mequip)))
+              )
+              (enforce (= is-staked false) "You can't accept offers if the wizard is staked")
+              (enforce (= has-ring false) "You can't accept offers for an equipped wizard")
+              (enforce (= has-pendant false) "You can't accept offers for an equipped wizard")
+              (enforce (= (at "confirmBurn" data) false) "You can't accept offers if the wizard is in burning queue")
+              (enforce (= iswithdrew false) "Cannot withdraw twice")
+              (enforce (>= expiresat (at "block-time" (chain-data))) "Offer expired.")
+
+              (with-capability (OWNER (at "owner" data) idnft)
+                  (let (
+                      (fee (/ (* (get-value-tournament FEE_KEY) amount) 100))
+                    )
+                    (with-capability (PRIVATE)
+                    (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK (at "owner" data) (- amount fee)))
+                    (with-capability (PRIVATE)(coin.transfer WIZARDS_OFFERS_BANK (at "owner" data) (- amount fee)))
+
+                    (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK ADMIN_ADDRESS fee))
+                    (with-capability (PRIVATE)(coin.transfer WIZARDS_OFFERS_BANK ADMIN_ADDRESS fee))
+
+                        (update collection-offers-table idoffer { "withdrawn": true, "status": "accepted" })
+                        (with-default-read token-table WIZARDS_OFFERS_BANK
+                            {"balance": 0.0}
+                            {"balance":= oldbalance }
+                            (update token-table WIZARDS_OFFERS_BANK {"balance": (- oldbalance amount)})
+                        )
+                        (update nfts idnft {
+                            "owner": buyer
+                        })
+                        (update nfts-market idnft {
+                            "price": 0.0,
+                            "listed": false
+                        })
+                    )
+                    (with-capability (PRIVATE)
+                        (emit-event (WIZ_BUY idnft buyer (at "owner" data) amount))
+                        (increase-volume-by VOLUME_PURCHASE_COUNT amount)
+                    )
+                  )
+              )
+          )
+       )
+    )
+
+    (defun cancel-collection-offer (idoffer:string)
+      @doc "cancel offer"
+
+      (with-read offers-table idoffer
+        {
+          "buyer" := buyer,
+          "expiresat" := expiresat,
+          "amount" := amount,
+          "withdrawn" := iswithdrew
+        }
+        ; enforce some rules
+        (with-capability (ACCOUNT_GUARD buyer)
+          (enforce (= iswithdrew false) "Cannot withdraw twice")
+          (enforce (<= expiresat (at "block-time" (chain-data))) "Cannot cancel offer yet.")
+          (with-capability (PRIVATE)
+            (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK buyer amount))
+            (coin.transfer WIZARDS_OFFERS_BANK buyer amount)
+
+            (update collection-offers-table idoffer { "withdrawn": true, "status": "canceled" })
+            (with-default-read token-table WIZARDS_OFFERS_BANK
+              {"balance": 0.0}
+              {"balance":= oldbalance }
+              (update token-table WIZARDS_OFFERS_BANK {"balance": (- oldbalance amount)})
+            )
+          )
+          (emit-event (WITHDRAW_OFFER idoffer buyer amount))
+        )
+      )
+    )
+
     (defun increase-volume-by (key:string amount:decimal)
         (require-capability (PRIVATE))
         (update volume key
@@ -1347,6 +1483,14 @@
       (select offers-table (and?
                             (where "owner" (= owner))
                             (where "withdrawn" (= false))))
+    )
+
+    (defun get-collection-offers ()
+      @doc "Get all offers for a generic nft"
+      (select collection-offers-table (and?
+                            (where "expiresat" (<= (at "block-time" (chain-data))))
+                            (where "withdrawn" (= false))
+                            ))
     )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3082,6 +3226,8 @@
     (create-table upgrade-spells)
 
     (create-table conquest-table)
+
+    (create-table collection-offers-table)
 
     (initialize)
     (insertValuesUpgrade)

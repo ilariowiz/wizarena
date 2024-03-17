@@ -23,6 +23,7 @@ import LeagueFarmers from './components/LeagueFarmers'
 import Equipment from './components/Equipment'
 import ItemEquipment from './components/ItemEquipment'
 import EquipmentOffers from './components/EquipmentOffers'
+import CollectionOffers from './components/CollectionOffers'
 
 import TournamentPre from './components/TournamentPre'
 import Tournament from './components/Tournament'
@@ -73,6 +74,7 @@ ReactDOM.render(
             <Route path="/leaguefarmers" component={LeagueFarmers} />
             <Route path="/equipment" component={Equipment} />
             <Route path="/equipmentoffers" component={EquipmentOffers} />
+            <Route path="/collectionoffers" component={CollectionOffers} />
             <Route path="/item/" component={ItemEquipment} />
             <Route path="/tournaments/" component={TournamentPre} />
             <Route path="/tournamentK" component={Tournament} />
