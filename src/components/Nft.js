@@ -1431,6 +1431,8 @@ class Nft extends Component {
 
 		let title = titles[nft.id]
 
+		let nftOwner = nft.owner ? `${nft.owner.substring(0, 6)}...${nft.owner.substring(nft.owner.length-4, nft.owner.length)}` : "..."
+
 		return (
 			<div style={{ flexDirection: 'column', marginBottom, alignItems: 'center' }}>
 				{
@@ -1443,6 +1445,10 @@ class Nft extends Component {
 						{prename} {nft.name}
 					</p>
 				}
+
+				<p style={{ color: mainTextColor, fontSize: 14, marginTop: 6 }}>
+					Owned by {nftOwner}
+				</p>
 
 				{/*
 					parseInt(winRate) > 0 &&
