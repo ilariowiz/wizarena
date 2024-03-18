@@ -130,6 +130,7 @@ class CollectionOffers extends Component {
 
         const diff = moment().to(this.getExpire(item))
 
+        let buyer = item.buyer ? `${item.buyer.substring(0, 6)}...${item.buyer.substring(item.buyer.length-4, item.buyer.length)}` : "..."
 
         return (
             <div style={styles.boxOffer} key={index}>
@@ -139,12 +140,16 @@ class CollectionOffers extends Component {
                 />
 
                 <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 15 }}>
-                    <p style={{ fontSize: 18, color: mainTextColor, alignItems: 'center' }}>
+                    <p style={{ fontSize: 18, color: mainTextColor, alignItems: 'center', marginBottom: 4 }}>
                         {item.amount} KDA
                     </p>
 
-                    <p style={{ fontSize: 15, color: mainTextColor, alignItems: 'center' }}>
+                    <p style={{ fontSize: 16, color: mainTextColor, alignItems: 'center', marginBottom: 6 }}>
                         Expiration {diff}
+                    </p>
+
+                    <p style={{ fontSize: 14, color: mainTextColor, alignItems: 'center' }}>
+                        From {buyer}
                     </p>
                 </div>
 
