@@ -41,7 +41,7 @@ import {
 	updateInfoTransactionModal,
 	declineOffer,
 	getWalletXp,
-	getCollectionOffers
+	getCollectionOffersForBuyer
 } from '../actions'
 import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -221,11 +221,8 @@ class Profile extends Component {
 		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
 		if (account && account.account) {
-			this.props.getCollectionOffers(chainId, gasPrice, gasLimit, networkUrl, (response) => {
-
-				const yourCollectionOffers = response.filter(i => i.buyer === account.account)
-
-				this.setState({ yourCollectionOffers })
+			this.props.getCollectionOffersForBuyer(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
+				this.setState({ yourCollectionOffers: response })
 			})
 		}
 	}
@@ -1391,5 +1388,5 @@ export default connect(mapStateToProps, {
 	updateInfoTransactionModal,
 	declineOffer,
 	getWalletXp,
-	getCollectionOffers
+	getCollectionOffersForBuyer
 })(Profile)

@@ -999,6 +999,23 @@ export const getCollectionOffers = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLi
 	}
 }
 
+export const getCollectionOffersForBuyer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 60000, networkUrl, buyer, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-collection-offers-for-buyer "${buyer}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (response && callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
 export const getEquipmentActiveOffers = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 60000, networkUrl, callback) => {
 	return (dispatch) => {
 

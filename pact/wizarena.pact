@@ -1429,7 +1429,7 @@
     (defun cancel-collection-offer (idoffer:string)
       @doc "cancel offer"
 
-      (with-read offers-table idoffer
+      (with-read collection-offers-table idoffer
         {
           "buyer" := buyer,
           "expiresat" := expiresat,
@@ -1491,6 +1491,13 @@
                             (where "expiresat" (<= (at "block-time" (chain-data))))
                             (where "withdrawn" (= false))
                             ))
+    )
+
+    (defun get-collection-offers-for-buyer (buyer:string)
+      @doc "Get all offers for a generic nft"
+      (select collection-offers-table (and?
+                            (where "status" (!= "canceled")) ;se già ritirata non la prendiamo
+                            (where "buyer" (= buyer))))
     )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
