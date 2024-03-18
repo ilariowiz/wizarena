@@ -12,6 +12,7 @@ import Popup from 'reactjs-popup';
 import NftCardChoice from './common/NftCardChoice'
 import CardSingleFightProfile from './common/CardSingleFightProfile'
 import Header from './Header'
+import allEvents from './common/Events'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import { MAIN_NET_ID, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
@@ -34,6 +35,17 @@ import {
 } from '../actions'
 import '../css/Nft.css'
 import 'reactjs-popup/dist/index.css';
+
+
+import {ReactComponent as VedrenonIcon} from '../assets/regions/svg/vedrenon.svg'
+import {ReactComponent as WastiaxusIcon} from '../assets/regions/svg/wastiaxus.svg'
+import {ReactComponent as UlanaraIcon} from '../assets/regions/svg/ulanara.svg'
+import {ReactComponent as UlidalarIcon} from '../assets/regions/svg/ulidalar.svg'
+import {ReactComponent as SitenorIcon} from '../assets/regions/svg/sitenor.svg'
+import {ReactComponent as OceorahIcon} from '../assets/regions/svg/oceorah.svg'
+import {ReactComponent as DruggorialIcon} from '../assets/regions/svg/druggorial.svg'
+import {ReactComponent as OpherusIcon} from '../assets/regions/svg/opherus.svg'
+import {ReactComponent as BremononIcon} from '../assets/regions/svg/bremonon.svg'
 
 
 class Tournament extends Component {
@@ -594,6 +606,47 @@ class Tournament extends Component {
         )
     }
 
+    getImageBoost(element) {
+        if (element === "fire") {
+            return SitenorIcon
+        }
+        if (element === "earth") {
+            return SitenorIcon
+        }
+        if (element === "thunder") {
+            return UlidalarIcon
+        }
+        if (element === "ice") {
+            return BremononIcon
+        }
+        if (element === "acid") {
+            return WastiaxusIcon
+        }
+        if (element === "spirit") {
+            return OpherusIcon
+        }
+        if (element === "water") {
+            return OceorahIcon
+        }
+        if (element === "psycho") {
+            return UlanaraIcon
+        }
+        if (element === "sun") {
+            return VedrenonIcon
+        }
+        if (element === "undead") {
+            return DruggorialIcon
+        }
+        if (element === "dark") {
+            return DruggorialIcon
+        }
+        if (element === "wind") {
+            return UlidalarIcon
+        }
+
+        return OceorahIcon
+    }
+
     renderTournamentHigh(boxTournamentWidth) {
         const { tournament, tournamentKdaSubs, avgLevelKda, loadingWeekly } = this.state
         const { buyin, feeTournament, mainTextColor, isDarkmode } = this.props
@@ -625,16 +678,29 @@ class Tournament extends Component {
 
         const marginBottom = 14
 
+        let RegionIcon;
+        if (tournament.showLeague) {
+            const event = tournament.event
+            const eventInfo = allEvents.find(i => i.name === event)
+            const elementBoosted = eventInfo.elements
+
+            RegionIcon = this.getImageBoost(elementBoosted)
+        }
+
         return (
             <div
                 style={Object.assign({}, styles.boxTournament, { width: boxTournamentWidth, backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
             >
                 {
                     tournament.showLeague ?
-                    <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom }}>
+                    <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom, position: 'relative' }}>
                         <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
                             The Twelve League <span style={{ fontSize: 15 }}>{tournament.leagueTournament}</span>
                         </p>
+
+                        <div style={{ position: 'absolute', right: 5, top: 10 }}>
+                            <RegionIcon width={27} height={27} color={mainTextColor} />
+                        </div>
                     </div>
                     :
                     <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom }}>
