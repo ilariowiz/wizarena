@@ -234,16 +234,6 @@ const titles = {
             textColor: 'gold'
         },
         {
-            title: "Lord of Sitenor - Season 5",
-            img: crown,
-            textColor: 'gold'
-        },
-        {
-            title: "Lord of Druggorial - Season 5",
-            img: crown,
-            textColor: 'gold'
-        },
-        {
             title: "Lord of Wastiaxus - Season 4",
             img: crown,
             textColor: 'gold'
@@ -252,6 +242,16 @@ const titles = {
             title: "The Twelve League III 4th place",
             img: medal,
             textColor: '#cd7f32'
+        },
+        {
+            title: "Lord of Sitenor - Season 5",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Druggorial - Season 5",
+            img: crown,
+            textColor: 'gold'
         }
     ],
     "488": [{
