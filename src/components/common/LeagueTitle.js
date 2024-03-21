@@ -66,11 +66,18 @@ const titles = {
             textColor: '#cd7f32'
         }
     ],
-    "1016": [{
-        title: "Lord of Bremonon - Season 1",
-        img: crown,
-        textColor: 'gold'
-    }],
+    "1016": [
+        {
+            title: "Lord of Bremonon - Season 1",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Ulanara - Season 5",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
     "2755": [
         {
             title: "Lord of Bremonon - Season 3",
@@ -113,6 +120,13 @@ const titles = {
             title: "The Twelve League III 3rd place",
             img: cup_bronze,
             textColor: '#cd7f32'
+        }
+    ],
+    "1818": [
+        {
+            title: "Lord of Vedrenon - Season 5",
+            img: crown,
+            textColor: 'gold'
         }
     ],
     "2107": [
@@ -186,11 +200,18 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
-    "976": [{
-        title: "Lord of Ulidalar - Season 4",
-        img: crown,
-        textColor: 'gold'
-    }],
+    "976": [
+        {
+            title: "Lord of Ulidalar - Season 4",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Ulidalar - Season 5",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
     "2932": [{
         title: "Lord of Ulidalar - Season 2",
         img: crown,
@@ -209,6 +230,16 @@ const titles = {
         },
         {
             title: "Lord of Sitenor - Season 4",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Sitenor - Season 5",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Druggorial - Season 5",
             img: crown,
             textColor: 'gold'
         },
@@ -324,6 +355,11 @@ const titles = {
             title: "Lord of Ulanara - Season 1",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "Lord of Oceorah - Season 5",
+            img: crown,
+            textColor: 'gold'
         }
     ],
     "1391": [{
@@ -368,11 +404,18 @@ const titles = {
         img: medal,
         textColor: '#cd7f32'
     }],
-    "311": [{
-        title: "The Twelve League II 5th place",
-        img: medal,
-        textColor: '#cd7f32'
-    }],
+    "311": [
+        {
+            title: "The Twelve League II 5th place",
+            img: medal,
+            textColor: '#cd7f32'
+        },
+        {
+            title: "Lord of Opherus - Season 5",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
     "540": [{
         title: "The Twelve League II 3rd place",
         img: cup_bronze,
@@ -408,11 +451,23 @@ const titles = {
         img: cup_bronze,
         textColor: '#cd7f32'
     }],
-    "2358": [{
-        title: "The Apprentice League I 4th place",
-        img: medal,
-        textColor: '#cd7f32'
-    }],
+    "2358": [
+        {
+            title: "The Apprentice League I 4th place",
+            img: medal,
+            textColor: '#cd7f32'
+        },
+        {
+            title: "Lord of Wastiaxus - Season 5",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Bremonon - Season 5",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
     "2765": [{
         title: "The Apprentice League I 5th place",
         img: medal,
