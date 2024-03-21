@@ -12,51 +12,51 @@ const titles = {
     }],
     "235": [
         {
-            title: "Lord of Sitenor - Season 1",
+            title: "Lord of Sitenor Season 1",
             img: crown,
             textColor: 'gold'
         },
         {
-            title: "Lord of Wastiaxus - Season 3",
+            title: "Lord of Wastiaxus Season 3",
             img: crown,
             textColor: 'gold'
         }
     ],
     "3080": [{
-        title: "Lord of Sitenor - Season 3",
+        title: "Lord of Sitenor Season 3",
         img: crown,
         textColor: 'gold'
     }],
     "2094": [{
-        title: "Lord of Sitenor - Season 2",
+        title: "Lord of Sitenor Season 2",
         img: crown,
         textColor: 'gold'
     }],
     "1865": [{
-        title: "Lord of Druggorial - Season 1",
+        title: "Lord of Druggorial Season 1",
         img: crown,
         textColor: 'gold'
     }],
     "3075": [
         {
-            title: "Lord of Druggorial - Season 4",
+            title: "Lord of Druggorial Season 4",
             img: crown,
             textColor: 'gold'
         },
         {
-            title: "Lord of Vedrenon - Season 4",
+            title: "Lord of Vedrenon Season 4",
             img: crown,
             textColor: 'gold'
         }
     ],
     "1425": [{
-        title: "Lord of Druggorial - Season 2",
+        title: "Lord of Druggorial Season 2",
         img: crown,
         textColor: 'gold'
     }],
     "1471": [
         {
-            title: "Lord of Druggorial - Season 3",
+            title: "Lord of Druggorial Season 3",
             img: crown,
             textColor: 'gold'
         },
@@ -68,19 +68,19 @@ const titles = {
     ],
     "1016": [
         {
-            title: "Lord of Bremonon - Season 1",
+            title: "Lord of Bremonon Season 1",
             img: crown,
             textColor: 'gold'
         },
         {
-            title: "Lord of Ulanara - Season 5",
+            title: "Lord of Ulanara Season 5",
             img: crown,
             textColor: 'gold'
         }
     ],
     "2755": [
         {
-            title: "Lord of Bremonon - Season 3",
+            title: "Lord of Bremonon Season 3",
             img: crown,
             textColor: 'gold'
         },
@@ -92,27 +92,27 @@ const titles = {
     ],
     "815": [
         {
-            title: "Lord of Bremonon - Season 2",
+            title: "Lord of Bremonon Season 2",
             img: crown,
             textColor: 'gold'
         },
         {
-            title: "Lord of Opherus - Season 3",
+            title: "Lord of Opherus Season 3",
             img: crown,
             textColor: 'gold'
         },
         {
-            title: "Lord of Ulidalar - Season 3",
+            title: "Lord of Ulidalar Season 3",
             img: crown,
             textColor: 'gold'
         },
         {
-            title: "Lord of Opherus - Season 4",
+            title: "Lord of Opherus Season 4",
             img: crown,
             textColor: 'gold'
         },
         {
-            title: "Lord of Ulanara - Season 4",
+            title: "Lord of Ulanara Season 4",
             img: crown,
             textColor: 'gold'
         },
@@ -124,36 +124,36 @@ const titles = {
     ],
     "1818": [
         {
-            title: "Lord of Vedrenon - Season 5",
+            title: "Lord of Vedrenon Season 5",
             img: crown,
             textColor: 'gold'
         }
     ],
     "2107": [
         {
-            title: "Lord of Vedrenon - Season 1",
+            title: "Lord of Vedrenon Season 1",
             img: crown,
             textColor: 'gold'
         },
         {
-            title: "Lord of Ulanara - Season 2",
+            title: "Lord of Ulanara Season 2",
             img: crown,
             textColor: 'gold'
         }
     ],
     "226": [
         {
-            title: "Lord of Vedrenon - Season 2",
+            title: "Lord of Vedrenon Season 2",
             img: crown,
             textColor: 'gold'
         },
         {
-            title: "Lord of Oceorah - Season 3",
+            title: "Lord of Oceorah Season 3",
             img: crown,
             textColor: 'gold'
         },
         {
-            title: "Lord of Ulanara - Season 3",
+            title: "Lord of Ulanara Season 3",
             img: crown,
             textColor: 'gold'
         },
@@ -180,7 +180,7 @@ const titles = {
     }],
     "143": [
         {
-            title: "Lord of Vedrenon - Season 3",
+            title: "Lord of Vedrenon Season 3",
             img: crown,
             textColor: 'gold'
         },
@@ -191,50 +191,50 @@ const titles = {
         }
     ],
     "2564": [{
-        title: "Lord of Oceorah - Season 1",
+        title: "Lord of Oceorah Season 1",
         img: crown,
         textColor: 'gold'
     }],
     "3069": [{
-        title: "Lord of Ulidalar - Season 1",
+        title: "Lord of Ulidalar Season 1",
         img: crown,
         textColor: 'gold'
     }],
     "976": [
         {
-            title: "Lord of Ulidalar - Season 4",
+            title: "Lord of Ulidalar Season 4",
             img: crown,
             textColor: 'gold'
         },
         {
-            title: "Lord of Ulidalar - Season 5",
+            title: "Lord of Ulidalar Season 5",
             img: crown,
             textColor: 'gold'
         }
     ],
     "2932": [{
-        title: "Lord of Ulidalar - Season 2",
+        title: "Lord of Ulidalar Season 2",
         img: crown,
         textColor: 'gold'
     }],
     "2570": [{
-        title: "Lord of Wastiaxus - Season 1",
+        title: "Lord of Wastiaxus Season 1",
         img: crown,
         textColor: 'gold'
     }],
     "3078": [
         {
-            title: "Lord of Wastiaxus - Season 2",
+            title: "Lord of Wastiaxus Season 2",
             img: crown,
             textColor: 'gold'
         },
         {
-            title: "Lord of Sitenor - Season 4",
+            title: "Lord of Sitenor Season 4",
             img: crown,
             textColor: 'gold'
         },
         {
-            title: "Lord of Wastiaxus - Season 4",
+            title: "Lord of Wastiaxus Season 4",
             img: crown,
             textColor: 'gold'
         },
@@ -244,24 +244,24 @@ const titles = {
             textColor: '#cd7f32'
         },
         {
-            title: "Lord of Sitenor - Season 5",
+            title: "Lord of Sitenor Season 5",
             img: crown,
             textColor: 'gold'
         },
         {
-            title: "Lord of Druggorial - Season 5",
+            title: "Lord of Druggorial Season 5",
             img: crown,
             textColor: 'gold'
         }
     ],
     "488": [{
-        title: "Lord of Opherus - Season 2",
+        title: "Lord of Opherus Season 2",
         img: crown,
         textColor: 'gold'
     }],
     "1822": [
         {
-            title: "The Twelve League 2nd place",
+            title: "The Twelve League I 2nd place",
             img: cup_silver,
             textColor: '#c0c0c0'
         },
@@ -272,55 +272,55 @@ const titles = {
         }
     ],
     "1361": [{
-        title: "The Twelve League 3rd place",
+        title: "The Twelve League I 3rd place",
         img: cup_bronze,
         textColor: '#cd7f32'
     }],
     "1280": [{
-        title: "The Twelve League 4th place",
+        title: "The Twelve League I 4th place",
         img: medal,
         textColor: '#cd7f32'
     }],
     "1614": [{
-        title: "The Twelve League 5th place",
+        title: "The Twelve League I 5th place",
         img: medal,
         textColor: '#cd7f32'
     }],
     "1871": [{
-        title: "The Twelve League 6th place",
+        title: "The Twelve League I 6th place",
         img: medal,
         textColor: '#cd7f32'
     }],
     "854": [{
-        title: "The Twelve League 7th place",
+        title: "The Twelve League I 7th place",
         img: medal,
         textColor: "#cd7f32"
     }],
     "137": [{
-        title: "The Twelve League 7th place",
+        title: "The Twelve League III 7th place",
         img: medal,
         textColor: "#cd7f32"
     }],
     "1117": [
         {
-            title: "The Twelve League 8th place",
+            title: "The Twelve League I 8th place",
             img: medal,
             textColor: "#cd7f32"
         },
         {
-            title: "Lord of Ulanara - Season 4",
+            title: "Lord of Ulanara Season 4",
             img: crown,
             textColor: 'gold'
         }
     ],
     "1443": [
         {
-            title: "The Twelve League 9th place",
+            title: "The Twelve League I 9th place",
             img: medal,
             textColor: "#cd7f32"
         },
         {
-            title: "Lord of Oceorah - Season 4",
+            title: "Lord of Oceorah Season 4",
             img: crown,
             textColor: 'gold'
         },
@@ -331,17 +331,17 @@ const titles = {
         }
     ],
     "1379": [{
-        title: "The Twelve League 10th place",
+        title: "The Twelve League I 10th place",
         img: medal,
         textColor: "#cd7f32"
     }],
     "2047": [{
-        title: "The Twelve League 11th place",
+        title: "The Twelve League I 11th place",
         img: medal,
         textColor: "#cd7f32"
     }],
     "94": [{
-        title: "The Twelve League 12th place",
+        title: "The Twelve League I 12th place",
         img: medal,
         textColor: "#cd7f32"
     }],
@@ -352,12 +352,12 @@ const titles = {
             textColor: "#cd7f32"
         },
         {
-            title: "Lord of Ulanara - Season 1",
+            title: "Lord of Ulanara Season 1",
             img: crown,
             textColor: 'gold'
         },
         {
-            title: "Lord of Oceorah - Season 5",
+            title: "Lord of Oceorah Season 5",
             img: crown,
             textColor: 'gold'
         }
@@ -384,12 +384,12 @@ const titles = {
             textColor: "#cd7f32"
         },
         {
-            title: "Lord of Opherus - Season 1",
+            title: "Lord of Opherus Season 1",
             img: crown,
             textColor: 'gold'
         },
         {
-            title: "Lord of Oceorah - Season 2",
+            title: "Lord of Oceorah Season 2",
             img: crown,
             textColor: 'gold'
         }
@@ -411,7 +411,7 @@ const titles = {
             textColor: '#cd7f32'
         },
         {
-            title: "Lord of Opherus - Season 5",
+            title: "Lord of Opherus Season 5",
             img: crown,
             textColor: 'gold'
         }
@@ -458,12 +458,12 @@ const titles = {
             textColor: '#cd7f32'
         },
         {
-            title: "Lord of Wastiaxus - Season 5",
+            title: "Lord of Wastiaxus Season 5",
             img: crown,
             textColor: 'gold'
         },
         {
-            title: "Lord of Bremonon - Season 5",
+            title: "Lord of Bremonon Season 5",
             img: crown,
             textColor: 'gold'
         }
