@@ -8,7 +8,6 @@ import DotLoader from 'react-spinners/DotLoader';
 import { BsChevronDoubleDown, BsChevronDoubleUp } from 'react-icons/bs'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
-//import calcMedals from './common/CalcMedals'
 import { TEXT_SECONDARY_COLOR, MAIN_NET_ID } from '../actions/types'
 import {
     setNetworkSettings,
@@ -276,7 +275,7 @@ class League extends Component {
         return (
             <a
                 href={`${window.location.protocol}//${window.location.host}/nft/${item.id}`}
-                style={Object.assign({}, styles.boxImage, { borderColor: isOwner ? "gold" : "#d7d7d7" })}
+                style={Object.assign({}, styles.boxImage, { borderColor: isOwner ? "gold" : "#d7d7d7", justifyContent: 'space-between' })}
                 key={item.id}
                 onClick={(e) => {
                     e.preventDefault()
@@ -285,7 +284,7 @@ class League extends Component {
             >
                 <img
                     src={getImageUrl(item.id)}
-                    style={{ width: widthNft, height: widthNft, borderWidth: 1, borderColor: "#d7d7d7", borderRadius: 4, borderStyle: "solid" }}
+                    style={{ width: widthNft, height: widthNft, borderWidth: 1, borderColor: "#d7d7d7", borderRadius: 3, borderStyle: "solid" }}
                     alt={`#${item.id}`}
                 />
                 <p style={{ fontSize: 14, color: mainTextColor, marginTop: 5, marginBottom: 5, maxWidth: widthNft, textAlign: 'center' }}>
@@ -294,9 +293,9 @@ class League extends Component {
 
                 {
                     item.oldRanking &&
-                    <div style={{ alignItems: 'center', marginBottom: 5 }}>
+                    <div style={{ alignItems: 'center', marginBottom: 5, marginLeft: 5, marginRight: 5 }}>
 
-                        <p style={{ fontSize: 14, color: mainTextColor, marginRight: 5 }}>
+                        <p style={{ fontSize: 13, color: mainTextColor, marginRight: 5 }}>
                             Old ranking:
                         </p>
 
@@ -308,7 +307,7 @@ class League extends Component {
                             item.oldRanking > item.ranking &&
                             <BsChevronDoubleDown
                                 color='red'
-                                size={17}
+                                size={16}
                             />
                         }
 
@@ -316,7 +315,7 @@ class League extends Component {
                             item.oldRanking < item.ranking &&
                             <BsChevronDoubleUp
                                 color='green'
-                                size={17}
+                                size={16}
                             />
                         }
                     </div>
@@ -640,7 +639,7 @@ const styles = {
         alignItems: 'center',
         display: 'flex',
         cursor: 'pointer',
-        borderRadius: 4,
+        borderRadius: 3,
         borderWidth: 1,
         borderStyle: "solid"
     }
