@@ -1459,17 +1459,17 @@ class Nft extends Component {
 
 				{
 					title ?
-					<div style={{ flexDirection: 'column' }}>
+					<div style={{ flexWrap: 'wrap' }}>
 						{title.map((item, index) => {
 							return (
-								<div style={{ marginTop: 10, alignItems: 'center' }} key={index}>
+								<div style={{ alignItems: 'center', flexDirection: 'column', maxWidth: 100, padding: 3, margin: 5, borderWidth: 1, borderColor: mainTextColor, borderStyle: 'solid', borderRadius: 4 }} key={index}>
 									<img
-										style={{ width: 40, height: 40, marginRight: 6 }}
+										style={{ width: 36, height: 36 }}
 										src={item.img}
 										alt="Cup"
 									/>
 
-									<p style={{ fontSize: 18, color: item.textColor }}>
+									<p style={{ fontSize: 14, color: item.textColor, textAlign: 'center' }}>
 										{item.title}
 									</p>
 								</div>
