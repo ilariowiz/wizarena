@@ -73,7 +73,7 @@ class Header extends Component {
 
 	getMined() {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
-		
+
 		this.props.getTotalMined(chainId, gasPrice, gasLimit, networkUrl, () => {
 			this.getWizaNotClaimed()
 		})
@@ -128,7 +128,7 @@ class Header extends Component {
 				avgMultiplier = _.round((avgMultiplier / staked), 2)
 				//console.log(avgMultiplier);
 
-				const wizaDaily = avgMultiplier * 1 * staked
+				const wizaDaily = avgMultiplier * 0.5 * staked
 				const wizaMinute = _.round(((wizaDaily / 24) / 60), 2)
 				//console.log(wizaDaily, wizaMinute);
 
