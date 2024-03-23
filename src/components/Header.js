@@ -107,7 +107,7 @@ class Header extends Component {
 	calcMinutesToHalvening() {
 		const { wizaNotClaimed, totalMined, allNftsIds, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-		const halvening = 11585000
+		const halvening = 13240000
 
 		if (allNftsIds && allNftsIds.length > 0) {
 			this.props.getWizardsStakeInfo(chainId, gasPrice, gasLimit, networkUrl, allNftsIds, (response) => {
@@ -150,7 +150,8 @@ class Header extends Component {
 
 				//console.log(dateHalvening.countdown().toString());
 
-				this.props.setTimeToHalvening(`${dateHalvening.countdown().toString()} to $WIZA staking rewards halvening`)
+				//this.props.setTimeToHalvening(`${dateHalvening.countdown().toString()} to $WIZA staking rewards halvening`)
+				this.props.setTimeToHalvening(`${dateHalvening.countdown().toString()} to $WIZA staking ends`)
 				//1 month, 27 days, 10 hours, 13 minutes and 14 seconds
 			})
 		}
