@@ -17,7 +17,6 @@ import {
 	setNetworkSettings,
 	setNetworkUrl,
 	logout,
-	getWizaNotClaimed,
 	swapKdaWiza,
 	clearTransaction,
 	updateInfoTransactionModal,
@@ -27,7 +26,8 @@ import {
 	getWizardsStakeInfo,
 	loadAllNftsIds,
 	setTimeToHalvening,
-	setVisualColors
+	setVisualColors,
+	setWizaNotClaimed
 } from '../actions'
 import { TEXT_SECONDARY_COLOR, MAIN_NET_ID } from '../actions/types'
 import 'reactjs-popup/dist/index.css';
@@ -75,7 +75,7 @@ class Header extends Component {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
 		this.props.getTotalMined(chainId, gasPrice, gasLimit, networkUrl, () => {
-			this.getWizaNotClaimed()
+			this.calcMinutesToHalvening()
 		})
 	}
 
@@ -96,16 +96,20 @@ class Header extends Component {
 		return `${_.floor(pct, 2)}%`
 	}
 
-	getWizaNotClaimed() {
-		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+	getWizaMinedForWizard(multiplier, timestamp) {
+		const startStaked = moment(timestamp.timep).fromNow()
 
-		this.props.getWizaNotClaimed(chainId, gasPrice, gasLimit, networkUrl, () => {
-			this.calcMinutesToHalvening()
-		})
+        const diffMinsFromStaked = moment().diff(moment(timestamp.timep), 'minutes')
+        //console.log(diffMinsFromStaked);
+        const minAday = 1440
+        const daysPassed = (diffMinsFromStaked / minAday)
+        const unclaimedWiza = daysPassed * multiplier * 0.5
+
+		return unclaimedWiza
 	}
 
 	calcMinutesToHalvening() {
-		const { wizaNotClaimed, totalMined, allNftsIds, chainId, gasPrice, gasLimit, networkUrl } = this.props
+		const { totalMined, allNftsIds, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
 		const halvening = 13240000
 
@@ -116,14 +120,21 @@ class Header extends Component {
 					return
 				}
 
+				//console.log(response);
+
 				let avgMultiplier = 0
 				let staked = 0
+				let minedNotClaimed = 0
 				response.map(i => {
 					if (i.staked) {
+						minedNotClaimed += this.getWizaMinedForWizard(i.multiplier.int, i.timestamp)
 						staked++
 						avgMultiplier += i.multiplier.int
 					}
 				})
+
+				//console.log(minedNotClaimed);
+				this.props.setWizaNotClaimed(minedNotClaimed)
 
 				avgMultiplier = _.round((avgMultiplier / staked), 2)
 				//console.log(avgMultiplier);
@@ -132,16 +143,16 @@ class Header extends Component {
 				const wizaMinute = _.round(((wizaDaily / 24) / 60), 2)
 				//console.log(wizaDaily, wizaMinute);
 
-				//console.log(wizaNotClaimed);
+				//console.log(minedNotClaimed);
 
-				const wizaLeft = halvening - totalMined - wizaNotClaimed
+				const wizaLeft = halvening - totalMined - minedNotClaimed
 				//console.log(wizaLeft);
 				if (wizaLeft < 0) {
 					this.props.setTimeToHalvening(`The halvening is happening now!`)
 					return
 				}
 
-				//const dayremaining = (halvening - totalMined - wizaNotClaimed) / wizaDaily
+				//const dayremaining = (halvening - totalMined - minedNotClaimed) / wizaDaily
 				const minuteremaining = wizaLeft / wizaMinute
 				//console.log(_.round(dayremaining, 2), _.round(minuteremaining));
 
@@ -1176,7 +1187,6 @@ export default connect(mapStateToProps, {
 	setNetworkSettings,
 	setNetworkUrl,
 	logout,
-	getWizaNotClaimed,
 	swapKdaWiza,
 	clearTransaction,
 	updateInfoTransactionModal,
@@ -1186,5 +1196,6 @@ export default connect(mapStateToProps, {
 	getWizardsStakeInfo,
 	loadAllNftsIds,
 	setTimeToHalvening,
-	setVisualColors
+	setVisualColors,
+	setWizaNotClaimed
 })(Header);

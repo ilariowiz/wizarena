@@ -3669,6 +3669,14 @@ export const getCirculatingSupply = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 	}
 }
 
+export const setWizaNotClaimed = (amount) => {
+	return {
+		type: STORE_WIZA_NOT_CLAIMED,
+		payload: _.floor(amount, 2)
+	}
+}
+
+/*
 export const getWizaNotClaimed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 200000, networkUrl, callback) => {
 	return (dispatch) => {
 
@@ -3698,6 +3706,7 @@ export const getWizaNotClaimed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimi
 		})
 	}
 }
+*/
 
 export const getWizardsStakeInfo = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, nfts, callback) => {
 	return (dispatch) => {
