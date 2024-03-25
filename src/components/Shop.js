@@ -1507,7 +1507,7 @@ class Shop extends Component {
         let img;
         if (key === "hp") {
             img = vial_hp
-            bonus = 8
+            bonus = 10
         }
         else if (key === "defense") {
             img = vial_def
