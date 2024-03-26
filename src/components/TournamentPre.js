@@ -197,7 +197,7 @@ class Tournament extends Component {
             this.setState({ tournamentWiza: tournament }, async () => {
 
 				this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-wiza-key")
-				this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-wiza-key")
+				//this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-wiza-key")
 
                 const tournamentName = tournament.name.split("_")[0]
 
@@ -236,7 +236,7 @@ class Tournament extends Component {
             this.setState({ tournamentElite: tournament }, async () => {
 
                 this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-elite-key")
-				this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-wiza-key")
+				//this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-wiza-key")
 
                 const tournamentName = tournament.name.split("_")[0]
 
@@ -290,10 +290,10 @@ class Tournament extends Component {
     }
 
     subscribe(idNft, spellSelected) {
-		const { account, buyin, feeTournament, buyinWiza, feeTournamentWiza } = this.props
+		const { account, buyin, feeTournament, buyinWiza } = this.props
 		const { tournamentSubs } = this.state
 
-		if (!buyin || !feeTournament || !buyinWiza || !feeTournamentWiza || !spellSelected || !spellSelected.name) {
+		if (!buyin || !feeTournament || !buyinWiza || !spellSelected || !spellSelected.name) {
 			return
 		}
 
@@ -796,9 +796,9 @@ class Tournament extends Component {
 
     renderTournamentElite(boxTournamentWidth) {
         const { tournamentElite, tournamentEliteSubs, avgLevelElite, loadingElite } = this.state
-        const { mainTextColor, isDarkmode, buyinElite, feeTournamentWiza } = this.props
+        const { mainTextColor, isDarkmode, buyinElite } = this.props
 
-        const fee = buyinElite * feeTournamentWiza / 100
+        const fee = buyinElite * tournamentElite.fee / 100
         const totalFee = fee * tournamentEliteSubs
         let montepremi = (tournamentEliteSubs * buyinElite) - totalFee
 
@@ -854,7 +854,7 @@ class Tournament extends Component {
                     Structure: {tournamentElite.structure}
                 </p>
 
-                {this.renderBuyinInfo(marginBottom, mainTextColor, buyinElite, "$WIZA", feeTournamentWiza)}
+                {this.renderBuyinInfo(marginBottom, mainTextColor, buyinElite, "$WIZA", tournamentElite.fee)}
 
                 <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
@@ -939,9 +939,9 @@ class Tournament extends Component {
 
     renderTournamentLow(boxTournamentWidth) {
         const { tournamentWiza, tournamentWizaSubs, avgLevelWiza, loadingApprentice } = this.state
-        const { buyinWiza, feeTournamentWiza, mainTextColor, isDarkmode } = this.props
+        const { buyinWiza, mainTextColor, isDarkmode } = this.props
 
-        const fee = buyinWiza * feeTournamentWiza / 100
+        const fee = buyinWiza * tournamentWiza.fee / 100
         const totalFee = fee * tournamentWizaSubs
         let montepremi = (tournamentWizaSubs * buyinWiza) - totalFee
 
@@ -997,7 +997,7 @@ class Tournament extends Component {
                     Structure: {tournamentWiza.structure}
                 </p>
 
-                 {this.renderBuyinInfo(marginBottom, mainTextColor, buyinWiza, "$WIZA", feeTournamentWiza)}
+                 {this.renderBuyinInfo(marginBottom, mainTextColor, buyinWiza, "$WIZA", tournamentWiza.fee)}
 
                  <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
@@ -1446,9 +1446,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts, wizaBalance, filtriProfileRanges, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, userMintedNfts, wizaBalance, filtriProfileRanges, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, feeTournamentWiza, userMintedNfts, wizaBalance, filtriProfileRanges, mainTextColor, mainBackgroundColor, isDarkmode };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, buyin, buyinWiza, buyinElite, feeTournament, userMintedNfts, wizaBalance, filtriProfileRanges, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {

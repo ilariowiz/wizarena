@@ -114,7 +114,7 @@ class TournamentElite extends Component {
                 }
 
 				this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-elite-key")
-				this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-wiza-key")
+				//this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-wiza-key")
 
                 const matchPair = await this.loadPair(tournament.name)
                 const tournamentName = tournament.name.split("_")[0]
@@ -271,10 +271,11 @@ class TournamentElite extends Component {
     }
 
     calcMontepremi() {
-        const { buyinElite, feeTournamentWiza, subscribedElite } = this.props
+        const { tournament } = this.state
+        const { buyinElite, subscribedElite } = this.props
 
-        if (buyinElite && feeTournamentWiza && subscribedElite) {
-            const fee = buyinElite * feeTournamentWiza / 100
+        if (buyinElite && tournament.fee && subscribedElite) {
+            const fee = buyinElite * tournament.fee / 100
             const totalFee = fee * subscribedElite.length
             let montepremi = (subscribedElite.length * buyinElite) - totalFee
 
@@ -628,9 +629,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinElite, feeTournamentWiza, subscribedElite, subscribedEliteSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinElite, subscribedElite, subscribedEliteSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinElite, feeTournamentWiza, subscribedElite, subscribedEliteSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinElite, subscribedElite, subscribedEliteSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {

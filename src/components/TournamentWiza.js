@@ -125,7 +125,7 @@ class Tournament extends Component {
                 }
 
 				this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-wiza-key")
-				this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-wiza-key")
+				//this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-wiza-key")
 
 
                 const matchPair = await this.loadPair(tournament.name)
@@ -284,10 +284,11 @@ class Tournament extends Component {
     }
 
     calcMontepremi() {
-        const { buyinWiza, feeTournamentWiza, subscribedWiza } = this.props
+        const { tournament } = this.state
+        const { buyinWiza, subscribedWiza } = this.props
 
-        if (buyinWiza && feeTournamentWiza && subscribedWiza) {
-            const fee = buyinWiza * feeTournamentWiza / 100
+        if (buyinWiza && tournament.fee && subscribedWiza) {
+            const fee = buyinWiza * tournament.fee / 100
             const totalFee = fee * subscribedWiza.length
             let montepremi = (subscribedWiza.length * buyinWiza) - totalFee
 
@@ -638,9 +639,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinWiza, feeTournamentWiza, subscribedWiza, subscribedWizaSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinWiza, subscribedWiza, subscribedWizaSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinWiza, feeTournamentWiza, subscribedWiza, subscribedWizaSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinWiza, subscribedWiza, subscribedWizaSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {
