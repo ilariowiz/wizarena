@@ -41,7 +41,6 @@
 
     ;tournament in wiza
     (defconst BUYIN_WIZA_KEY "buyin-wiza-key")
-    (defconst FEE_TOURNAMENT_WIZA_KEY "fee-tournament-wiza-key")
     (defconst TOURNAMENT_WIZA_OPEN "tournament_wiza_open")
 
     (defconst TOURNAMENT_NAME "tournament-name")
@@ -409,6 +408,10 @@
         status:string
     )
 
+    (defschema tournaments-sub-count-schema
+        wizards:integer
+    )
+
     (deftable nfts:{nft-main-schema})
     (deftable nfts-market:{nft-listed-schema})
     (deftable creation:{creation-schema})
@@ -442,6 +445,7 @@
     (deftable conquest-table:{conquest-schema})
 
     (deftable collection-offers-table:{collection-offers-schema})
+    (deftable tournaments-sub-count:{tournaments-sub-count-schema})
 
     ; --------------------------------------------------------------------------
   ; Can only happen once
@@ -477,8 +481,6 @@
 
         ; wiza tornament
         (insert values-tournament BUYIN_WIZA_KEY {"value": 100.0})
-        (insert values-tournament FEE_TOURNAMENT_WIZA_KEY {"value": 11.0})
-
         (insert values-tournament BUYIN_ELITE_KEY {"value": 300.0})
 
         (insert values TOURNAMENT_WIZA_OPEN {"value": "0"})
@@ -1603,7 +1605,7 @@
             )
             (enforce (= (at "confirmBurn" data-wiz) false) "You can't subscribe a wizard in burning queue")
         )
-        (subscribe-last id round idnft address spellSelected)
+        (subscribe-last id round idnft address)
         (cond
             (
                 (= type "kda")
@@ -1715,7 +1717,7 @@
         )
     )
 
-    (defun subscribe-last (id:string round:string idnft:string address:string spellSelected:object)
+    (defun subscribe-last (id:string round:string idnft:string address:string)
         (require-capability (PRIVATE))
         (with-default-read tournaments id
             {"idnft": ""}
@@ -1727,9 +1729,29 @@
             "idnft": idnft,
             "address": address
         })
-        (update stats idnft {
-          "spellSelected": spellSelected
-        })
+        (with-default-read tournaments-sub-count round
+            {"wizards":0}
+            {"wizards":=wizards}
+            (write tournaments-sub-count round
+                {"wizards": (+ wizards 1)}
+            )
+        )
+    )
+
+    (defun set-count-for-tournament (idtournament:string wizards:integer)
+        (with-capability (ADMIN)
+            (write tournaments-sub-count idtournament
+                {"wizards": wizards}
+            )
+        )
+    )
+
+    (defun get-count-for-tournament (idtournament:string)
+        (with-default-read tournaments-sub-count idtournament
+            {"wizards":0}
+            {"wizards":=wizards}
+            wizards
+        )
     )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3235,6 +3257,8 @@
     (create-table conquest-table)
 
     (create-table collection-offers-table)
+
+    (create-table tournaments-sub-count)
 
     (initialize)
     (insertValuesUpgrade)
