@@ -129,6 +129,12 @@ class Tournament extends Component {
 
                 const tournamentName = tournament.name.split("_")[0]
 
+                this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "wiza", (subscribed) => {
+                    //console.log(subscribed);
+                    this.calcSubscribers(subscribed, tournament, matchPair)
+                })
+
+                /*
                 if (tournament.canSubscribe) {
                     this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "wiza", (subscribed) => {
                         //console.log(subscribed);
@@ -153,7 +159,7 @@ class Tournament extends Component {
                         }
                     })
                 }
-
+                */
             })
         })
     }

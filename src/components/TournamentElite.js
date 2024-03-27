@@ -117,6 +117,14 @@ class TournamentElite extends Component {
                 const matchPair = await this.loadPair(tournament.name)
                 const tournamentName = tournament.name.split("_")[0]
 
+
+                this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "elite", (subscribed) => {
+                    //console.log(subscribed);
+                    this.calcSubscribers(subscribed, tournament, matchPair)
+                })
+
+                //non si può fare perché il valore medals è quello che fa vedere chi è rimasto in gara, quindi se non lo prendiamo aggiornato dalla blockchain, non funziona il torneo
+                /*
                 if (tournament.canSubscribe) {
                     this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "elite", (subscribed) => {
                         //console.log(subscribed);
@@ -138,6 +146,7 @@ class TournamentElite extends Component {
                         }
                     })
                 }
+                */
 
             })
         })
