@@ -22,7 +22,8 @@ import {
     getSubscribed,
     loadUserMintedNfts,
     getPotionEquippedMass,
-    getInfoItemEquippedMass
+    getInfoItemEquippedMass,
+    getCountForTournament
 } from '../actions'
 import '../css/Nft.css'
 
@@ -110,20 +111,31 @@ class Tournament extends Component {
                     this.calcSubscribers(subscribed, tournament)
                 }
 
-                //this.props.getMontepremi(chainId, gasPrice, gasLimit, networkUrl)
-				//this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-key")
-				//this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-key")
-
-
                 const matchPair = await this.loadPair(tournament.name)
 
                 const tournamentName = tournament.name.split("_")[0]
 
-                this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "kda", (subscribed) => {
+                if (tournament.canSubscribe) {
+                    this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "kda", (subscribed) => {
+                        //console.log(subscribed);
+                        this.calcSubscribers(subscribed, tournament, matchPair)
+                    })
+                }
+                //questo else serve a non dover ricaricare tutti i wizards se le iscrizioni sono chiuse e il numero degli iscritti è uguale ai wizards nella cache
+                else {
+                    this.props.getCountForTournament(chainId, gasPrice, gasLimit, networkUrl, tournamentName, (count) => {
+                        if (subscribed && subscribed.length === count) {
+                            this.calcSubscribers(subscribed, tournament, matchPair)
+                        }
+                        else {
+                            this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "kda", (subscribed) => {
+                                //console.log(subscribed);
+                                this.calcSubscribers(subscribed, tournament, matchPair)
+                            })
+                        }
+                    })
+                }
 
-                    //console.log(subscribed);
-                    this.calcSubscribers(subscribed, tournament, matchPair)
-                })
 
             })
         })
@@ -674,5 +686,6 @@ export default connect(mapStateToProps, {
     getSubscribed,
     loadUserMintedNfts,
     getPotionEquippedMass,
-    getInfoItemEquippedMass
+    getInfoItemEquippedMass,
+    getCountForTournament
 })(Tournament)
