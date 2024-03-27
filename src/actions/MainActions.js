@@ -1388,15 +1388,13 @@ export const getFeeTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit
 	}
 }
 
-export const getSubscribedPre = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 1000000, networkUrl, tournament, tournamentType, callback) => {
+export const getCountForTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 10000, networkUrl, tournament, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME}.get-all-subscription-for-tournament "${tournament}")`,
+			pactCode: `(free.${CONTRACT_NAME}.get-count-for-tournament "${tournament}")`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
-
-		//let url = `https://kda-api.glexia.com/chainweb/0.0/mainnet01/chain/1/pact`;
 
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
