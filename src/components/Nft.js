@@ -145,14 +145,6 @@ class Nft extends Component {
 				item = userMintedNfts.find(i => i.id === idNft)
 			}
 
-			if (!item && subscribed && subscribed.length > 0) {
-				item = subscribed.find(i => i.id === idNft)
-			}
-
-			if (!item && subscribedWiza && subscribedWiza.length > 0) {
-				item = subscribedWiza.find(i => i.id === idNft)
-			}
-
 			if (item && item.name) {
 				setTimeout(() => {
 					window.scrollTo({ top: 0, behavior: 'smooth' });
