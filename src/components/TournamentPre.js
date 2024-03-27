@@ -21,7 +21,6 @@ import {
     getFeeTournament,
     setNetworkSettings,
     setNetworkUrl,
-    getSubscribedPre,
     loadUserMintedNfts,
     subscribeToTournamentMass,
     clearTransaction,
@@ -31,7 +30,8 @@ import {
     updateInfoTransactionModal,
     fetchAccountDetails,
     getWizaBalance,
-    getFightPerNfts
+    getFightPerNfts,
+    getCountForTournament
 } from '../actions'
 import '../css/Nft.css'
 import 'reactjs-popup/dist/index.css';
@@ -162,11 +162,9 @@ class Tournament extends Component {
 
                 const tournamentName = tournament.name.split("_")[0]
 
-                this.props.getSubscribedPre(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "kda", (subscribed) => {
-
+                this.props.getCountForTournament(chainId,gasPrice,gasLimit, networkUrl, tournamentName, (subscribed) => {
                     //console.log(subscribed);
-
-                    this.setState({ tournamentKdaSubs: subscribed.length, avgLevelKda: 0, loadingWeekly: false })
+                    this.setState({ tournamentKdaSubs: subscribed, avgLevelKda: 0, loadingWeekly: false })
                 })
 
             })
@@ -201,11 +199,8 @@ class Tournament extends Component {
 
                 const tournamentName = tournament.name.split("_")[0]
 
-                this.props.getSubscribedPre(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "wiza", (subscribed) => {
-
-                    //console.log(subscribed);
-
-                    this.setState({ tournamentWizaSubs: subscribed.length, avgLevelWiza: 0, loadingApprentice: false })
+                this.props.getCountForTournament(chainId,gasPrice,gasLimit, networkUrl, tournamentName, (subscribed) => {
+                    this.setState({ tournamentWizaSubs: subscribed, avgLevelWiza: 0, loadingApprentice: false })
                 })
 
             })
@@ -240,11 +235,8 @@ class Tournament extends Component {
 
                 const tournamentName = tournament.name.split("_")[0]
 
-                this.props.getSubscribedPre(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "elite", (subscribed) => {
-
-                    //console.log(subscribed);
-
-                    this.setState({ tournamentEliteSubs: subscribed.length, avgLevelElite: 0, loadingElite: false })
+                this.props.getCountForTournament(chainId,gasPrice,gasLimit, networkUrl, tournamentName, (subscribed) => {
+                    this.setState({ tournamentEliteSubs: subscribed, avgLevelElite: 0, loadingElite: false })
                 })
 
             })
@@ -1456,7 +1448,6 @@ export default connect(mapStateToProps, {
     getFeeTournament,
     setNetworkSettings,
     setNetworkUrl,
-    getSubscribedPre,
     loadUserMintedNfts,
     subscribeToTournamentMass,
     clearTransaction,
@@ -1466,5 +1457,6 @@ export default connect(mapStateToProps, {
     updateInfoTransactionModal,
     fetchAccountDetails,
     getWizaBalance,
-    getFightPerNfts
+    getFightPerNfts,
+    getCountForTournament
 })(Tournament)
