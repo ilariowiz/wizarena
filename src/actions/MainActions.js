@@ -601,44 +601,53 @@ export const loadBlockNftsSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, g
 
 			if (response) {
 				//console.log(response);
+
+				let newResponse = []
+
 				response.map(i => {
-					i.level = i.level.int
+					const temp = {
+						level: i.level.int,
+						element: i.element,
+						id: i.id,
+						medals: i.medals,
+						name: i.name,
+						nickname: i.nickname
+					}
+
+					newResponse.push(temp)
 				})
 
-				response.sort((a, b) => {
+				//console.log(newResponse);
+
+				newResponse.sort((a, b) => {
 					return parseInt(a.id) - parseInt(b.id)
 				})
 
 				let subscribedSpellGraph = {}
 
-				response.map((item) => {
-					const traits = item.traits
-					const spellTrait = traits.find(i => i.trait_type === "Spell")
-
-					const spellMain = spellTrait.value.split(" ")[0]
-
-					if (!subscribedSpellGraph[spellMain]) {
-						subscribedSpellGraph[spellMain] = 1
+				newResponse.map((item) => {
+					if (!subscribedSpellGraph[item.element]) {
+						subscribedSpellGraph[item.element] = 1
 					}
 					else {
-						subscribedSpellGraph[spellMain] += 1
+						subscribedSpellGraph[item.element] += 1
 					}
 				})
 
 				//console.log(subscribedSpellGraph, tournamentType);
 
 				if (callbackSubscribed) {
-					callbackSubscribed(response)
+					callbackSubscribed(newResponse)
 				}
 
 				if (tournamentType === "kda") {
-					dispatch({ type: LOAD_SUBSCRIBED, payload: { nfts: response, subscribedKdaSpellGraph: subscribedSpellGraph } })
+					dispatch({ type: LOAD_SUBSCRIBED, payload: { nfts: newResponse, subscribedKdaSpellGraph: subscribedSpellGraph } })
 				}
 				else if (tournamentType === "wiza") {
-					dispatch({ type: LOAD_SUBSCRIBED_WIZA, payload: { nfts: response, subscribedWizaSpellGraph: subscribedSpellGraph } })
+					dispatch({ type: LOAD_SUBSCRIBED_WIZA, payload: { nfts: newResponse, subscribedWizaSpellGraph: subscribedSpellGraph } })
 				}
 				else if (tournamentType === "elite") {
-					dispatch({ type: LOAD_SUBSCRIBED_ELITE, payload: { nfts: response, subscribedEliteSpellGraph: subscribedSpellGraph } })
+					dispatch({ type: LOAD_SUBSCRIBED_ELITE, payload: { nfts: newResponse, subscribedEliteSpellGraph: subscribedSpellGraph } })
 				}
 			}
 		})
