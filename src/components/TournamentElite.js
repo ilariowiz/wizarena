@@ -272,12 +272,12 @@ class TournamentElite extends Component {
 
     calcMontepremi() {
         const { tournament } = this.state
-        const { buyinElite, subscribedElite } = this.props
+        const { subscribedElite } = this.props
 
-        if (buyinElite && tournament.fee && subscribedElite) {
-            const fee = buyinElite * tournament.fee / 100
+        if (tournament.fee && subscribedElite) {
+            const fee = tournament.buyin * tournament.fee / 100
             const totalFee = fee * subscribedElite.length
-            let montepremi = (subscribedElite.length * buyinElite) - totalFee
+            let montepremi = (subscribedElite.length * tournament.buyin) - totalFee
 
             return montepremi
         }
@@ -309,7 +309,7 @@ class TournamentElite extends Component {
 
     renderBody(isMobile) {
         const { tournament, subscribed, avgLevel } = this.state
-        const { buyinElite, subscribedElite, mainTextColor, subscribedEliteSpellGraph } = this.props
+        const { subscribedElite, mainTextColor, subscribedEliteSpellGraph } = this.props
 
         //console.log(subscribedWiza, tournament);
 
@@ -341,7 +341,7 @@ class TournamentElite extends Component {
 			return (
 				<div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                    {renderInfoTournament(tournament, this.calcMontepremi(), buyinElite, subscribedElite, mainTextColor, undefined, this.props.history)}
+                    {renderInfoTournament(tournament, this.calcMontepremi(), tournament.buyin, subscribedElite, mainTextColor, undefined, this.props.history)}
 
                     {
                         subscribedElite && subscribedElite.length > 0 &&
@@ -377,7 +377,7 @@ class TournamentElite extends Component {
 			return (
 				<div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                    {renderInfoTournament(tournament, this.calcMontepremi(), buyinElite, subscribedElite, mainTextColor, text, this.props.history)}
+                    {renderInfoTournament(tournament, this.calcMontepremi(), tournament.buyin, subscribedElite, mainTextColor, text, this.props.history)}
 
                     {
                         subscribed && subscribed.length > 0 &&
@@ -405,7 +405,7 @@ class TournamentElite extends Component {
 
     renderMatchPair(boxW, isMobile, padding) {
         const { matchPair, tournament, userMinted, subscribed, rankings } = this.state
-        const { mainTextColor, subscribedElite, isDarkmode, buyinElite } = this.props
+        const { mainTextColor, subscribedElite, isDarkmode } = this.props
 
         //console.log(subscribed);
         const roundName = tournament.name.split("_")[1]
@@ -415,7 +415,7 @@ class TournamentElite extends Component {
         return (
              <div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                {renderInfoTournament(tournament, this.calcMontepremi(), buyinElite, subscribedElite, mainTextColor, infoText, this.props.history)}
+                {renderInfoTournament(tournament, this.calcMontepremi(), tournament.buyin, subscribedElite, mainTextColor, infoText, this.props.history)}
 
                 {this.renderButtonShowResults()}
 
@@ -430,7 +430,7 @@ class TournamentElite extends Component {
 
     renderRoundConcluso(boxW, isMobile, padding) {
         const { tournament, subscribed, yourStat } = this.state
-        const { mainTextColor, buyinElite, subscribedElite } = this.props
+        const { mainTextColor, subscribedElite } = this.props
 
         if (!subscribed || subscribed.length === 0) {
             return <div />
@@ -464,7 +464,7 @@ class TournamentElite extends Component {
         return (
             <div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                {renderInfoTournament(tournament, this.calcMontepremi(), buyinElite, subscribedElite, mainTextColor, titleText, this.props.history)}
+                {renderInfoTournament(tournament, this.calcMontepremi(), tournament.buyin, subscribedElite, mainTextColor, titleText, this.props.history)}
 
                 {
                     yourStat &&
@@ -629,9 +629,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinElite, subscribedElite, subscribedEliteSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, subscribedElite, subscribedEliteSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, buyinElite, subscribedElite, subscribedEliteSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, showModalTx, subscribedElite, subscribedEliteSpellGraph, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {

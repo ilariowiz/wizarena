@@ -1388,7 +1388,7 @@ export const getFeeTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit
 	}
 }
 
-export const getSubscribedPre = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 1800000, networkUrl, tournament, tournamentType, callback) => {
+export const getSubscribedPre = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 1000000, networkUrl, tournament, tournamentType, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
