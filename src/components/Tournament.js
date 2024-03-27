@@ -109,7 +109,7 @@ class Tournament extends Component {
 
                 const matchPair = await this.loadPair(tournament.name)
 
-                if (subscribed) {
+                if (subscribed && !tournament.showPair) {
                     this.calcSubscribers(subscribed, tournament)
                 }
 

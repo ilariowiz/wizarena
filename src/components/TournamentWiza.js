@@ -121,11 +121,11 @@ class Tournament extends Component {
 
             this.setState({ tournament }, async () => {
 
-                if (subscribedWiza) {
+                const matchPair = await this.loadPair(tournament.name)
+
+                if (subscribedWiza && !tournament.showPair) {
                     this.calcSubscribers(subscribedWiza, tournament)
                 }
-
-                const matchPair = await this.loadPair(tournament.name)
 
                 const tournamentName = tournament.name.split("_")[0]
 
@@ -430,7 +430,7 @@ class Tournament extends Component {
 			)
 		}
 
-        if (tournament && tournament.showPair && this.state.matchPair.length > 0) {
+        if (tournament && tournament.showPair && this.state.matchPair && this.state.matchPair.length > 0) {
             return this.renderMatchPair(boxW, isMobile, padding)
         }
 

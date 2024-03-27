@@ -611,7 +611,8 @@ export const loadBlockNftsSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, g
 						id: i.id,
 						medals: i.medals,
 						name: i.name,
-						nickname: i.nickname
+						nickname: i.nickname,
+						owner: i.owner
 					}
 
 					newResponse.push(temp)

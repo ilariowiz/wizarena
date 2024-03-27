@@ -110,11 +110,12 @@ class TournamentElite extends Component {
 
             this.setState({ tournament, rankings }, async () => {
 
-                if (subscribedElite) {
+                const matchPair = await this.loadPair(tournament.name)
+
+                if (subscribedElite && !tournament.showPair) {
                     this.calcSubscribers(subscribedElite, tournament)
                 }
 
-                const matchPair = await this.loadPair(tournament.name)
                 const tournamentName = tournament.name.split("_")[0]
 
 
@@ -417,7 +418,7 @@ class TournamentElite extends Component {
 			)
 		}
 
-        if (tournament && tournament.showPair && this.state.matchPair.length > 0) {
+        if (tournament && tournament.showPair && this.state.matchPair && this.state.matchPair.length > 0) {
             return this.renderMatchPair(boxW, isMobile, padding)
         }
 
