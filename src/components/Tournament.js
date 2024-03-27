@@ -107,11 +107,11 @@ class Tournament extends Component {
 
             this.setState({ tournament, rankings }, async () => {
 
+                const matchPair = await this.loadPair(tournament.name)
+
                 if (subscribed) {
                     this.calcSubscribers(subscribed, tournament)
                 }
-
-                const matchPair = await this.loadPair(tournament.name)
 
                 const tournamentName = tournament.name.split("_")[0]
 
@@ -119,7 +119,7 @@ class Tournament extends Component {
                     //console.log(subscribed);
                     this.calcSubscribers(subscribed, tournament, matchPair)
                 })
-                
+
                 /*
                 if (tournament.canSubscribe) {
                     this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "kda", (subscribed) => {
@@ -427,7 +427,7 @@ class Tournament extends Component {
 			)
 		}
 
-        if (tournament && tournament.showPair && this.state.matchPair.length > 0) {
+        if (tournament && tournament.showPair && this.state.matchPair && this.state.matchPair.length > 0) {
             return this.renderMatchPair(boxW, isMobile, padding)
         }
 
