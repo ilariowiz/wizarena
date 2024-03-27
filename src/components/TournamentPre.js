@@ -162,7 +162,7 @@ class Tournament extends Component {
 
                 const tournamentName = tournament.name.split("_")[0]
 
-                this.props.getCountForTournament(chainId,gasPrice,gasLimit, networkUrl, tournamentName, (subscribed) => {
+                this.props.getCountForTournament(chainId, gasPrice, gasLimit, networkUrl, tournamentName, (subscribed) => {
                     //console.log(subscribed);
                     this.setState({ tournamentKdaSubs: subscribed, avgLevelKda: 0, loadingWeekly: false })
                 })
