@@ -87,6 +87,8 @@ class DoFight extends Component {
             //console.log(response);
             if (response.name) {
 
+                let playerExtraLevel = 0
+
                 const ring = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, idNft)
                 //console.log(ring);
                 const pendant = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, `${idNft}pendant`)
@@ -109,21 +111,27 @@ class DoFight extends Component {
                     })
 
                     this.player1.ring = ring
+
+                    playerExtraLevel += 21
                 }
 
                 if (pendant && pendant.equipped) {
                     this.player1.pendant = pendant
+
+                    playerExtraLevel += 10
                 }
 
                 if (aura && aura.bonus && aura.bonus.int > 0) {
                     this.player1['defense'] += aura.bonus.int
                     this.player1.aura = aura
+
+                    playerExtraLevel += 10
                 }
 
                 this.player1InitialHp = this.player1.hp
 
 
-                const monster = createMonster(sfidaPvE.chosenMonster, this.player1.level)
+                const monster = createMonster(sfidaPvE.chosenMonster, this.player1.level + playerExtraLevel)
 
                 this.player2 = monster
                 this.player2InitialHp = this.player2.hp

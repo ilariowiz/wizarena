@@ -24,22 +24,22 @@ const createMonster = (key, level) => {
 
     if (key === "Berserker") {
 
-        spaceHp = Math.floor(Math.random() * 6) + 17; //da 16 a 22
-        spaceAtk = Math.floor(Math.random() * 5) + 41; //da 40 a 44
+        spaceHp = Math.floor(Math.random() * 6) + 18;
+        spaceAtk = Math.floor(Math.random() * 5) + 43;
         spaceDmg = Math.floor(Math.random() * 6) + 29; //da 28 a 32
-        spaceDef = Math.floor(Math.random() * 4) + 19; //da 18 a 21
-        spaceSpeed = Math.floor(Math.random() * 4) + 4; //da 3 a 5
+        spaceDef = Math.floor(Math.random() * 4) + 17;
+        spaceSpeed = Math.floor(Math.random() * 4) + 5;
 
         monsterImage = orc_berserker
     }
 
     if (key === "Defensive") {
 
-        spaceHp = Math.floor(Math.random() * 6) + 21; //da 20 a 27
+        spaceHp = Math.floor(Math.random() * 6) + 16; //da 15 a 24
         spaceAtk = Math.floor(Math.random() * 5) + 17; //da 15 a 19
         spaceDmg = Math.floor(Math.random() * 6) + 19; //da 18 a 22
-        spaceDef = Math.floor(Math.random() * 7) + 48; //da 46 a 49
-        spaceSpeed = Math.floor(Math.random() * 3) + 0; //da 1 a 3
+        spaceDef = Math.floor(Math.random() * 7) + 57; //da 55 a 62
+        spaceSpeed = Math.floor(Math.random() * 2) + 0; //da 1 a 2
 
         monsterImage = orc_defensive
     }
