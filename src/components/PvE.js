@@ -111,7 +111,7 @@ class PvE extends Component {
 					this.state.loading ?
 					<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginBottom: 10, marginTop: 30 }}>
 						<DotLoader size={25} color={mainTextColor} />
-                        <p style={{ fontSize: 14, color: mainTextColor, marginTop: 7 }}>
+                        <p style={{ fontSize: 15, color: mainTextColor, marginTop: 7 }}>
                             Loading your wizards...
                         </p>
 					</div>
@@ -129,10 +129,6 @@ class PvE extends Component {
                         {this.renderBtnStyleFight("Defensive")}
                         {this.renderBtnStyleFight("Average")}
                     </div>
-
-                    <p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center' }}>
-                        The monster will be about your wizard's level
-                    </p>
                 </div>
 
                 <ModalChooseWizard
