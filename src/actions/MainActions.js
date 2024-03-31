@@ -1413,6 +1413,11 @@ export const getCountForTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 					callback(response)
 				}
 			}
+			else {
+				if (callback) {
+					callback(0)
+				}
+			}
 		})
 
 	}
