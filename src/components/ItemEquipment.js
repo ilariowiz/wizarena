@@ -225,6 +225,7 @@ class ItemEquipment extends Component {
         }
 
         //console.log(rarity);
+        let nftOwner = equipment.owner ? `${equipment.owner.substring(0, 6)}...${equipment.owner.substring(equipment.owner.length-4, equipment.owner.length)}` : "..."
 
 		return (
 			<div style={{ flexDirection: 'column', marginBottom }}>
@@ -238,6 +239,10 @@ class ItemEquipment extends Component {
                         1 of {rarity} {rarity > 1 ? `${equipment.type}s` : equipment.type}
                     </p>
                 }
+
+                <p style={{ color: mainTextColor, fontSize: 14, marginTop: 5 }}>
+                    Owned by {nftOwner}
+                </p>
 
 			</div>
 		)
