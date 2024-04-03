@@ -930,7 +930,7 @@ class Arena extends Component {
 
                    <div style={{ flexWrap: 'wrap', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap' }}>
                        <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center', marginRight: 20, marginBottom: 15 }}>
-                           Buyin FREE
+                           FREE TO PLAY
                        </p>
 
                        <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center', marginRight: 20, marginBottom: 15 }}>
