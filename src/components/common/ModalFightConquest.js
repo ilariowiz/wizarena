@@ -30,11 +30,20 @@ class ModalFightConquest extends Component {
                             VS
                         </p>
 
-                        <img
-                            style={{ width: imgSize, height: imgSize, borderRadius: 4 }}
-                            src={getImageUrl(infoFight.nft2.id)}
-                            alt={`#${infoFight.nft2.id}`}
-                        />
+						{
+							infoFight.nft2 && infoFight.nft2.id ?
+							<img
+	                            style={{ width: imgSize, height: imgSize, borderRadius: 4 }}
+	                            src={getImageUrl(infoFight.nft2.id)}
+	                            alt={`#${infoFight.nft2.id}`}
+	                        />
+							:
+							<img
+	                            style={{ width: imgSize, height: imgSize, borderRadius: 4 }}
+	                            src={getImageUrl(undefined)}
+	                        />
+						}
+
 
                     </div>
 

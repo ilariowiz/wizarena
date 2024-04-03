@@ -43,6 +43,8 @@ import Conquest from './components/Conquest'
 import FightsReplay from './components/FightsReplay'
 import FightsReplayBrawl from './components/FightsReplayBrawl'
 
+import Arena from './components/Arena'
+
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
@@ -89,6 +91,7 @@ ReactDOM.render(
             <Route path="/lords" component={Conquest} />
             <Route path="/fightreplay" component={FightsReplay} />
             <Route path="/fightreplaybrawl" component={FightsReplayBrawl} />
+            <Route path="/arena" component={Arena} />
           </Switch>
         </div>
       </BrowserRouter>

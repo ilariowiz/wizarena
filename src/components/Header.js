@@ -610,9 +610,9 @@ class Header extends Component {
 				<div style={Object.assign({}, styles.boxGradient, { backgroundImage: `linear-gradient(to right, #d6863e, transparent)` })}>
 
 					{this.renderBtnMenuPlay(
-						'pve',
+						'arena',
 						pvp_icon_night,
-						"PvE (FREE Beta)",
+						"Arena",
 						99,
 						17)
 					}
