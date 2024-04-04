@@ -158,7 +158,9 @@ class Arena extends Component {
 
 			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
 				//console.log(response);
-				this.getSubscribers()
+				setTimeout(() => {
+                    this.getSubscribers()
+                }, 1000)
 			})
 		}
         else {
