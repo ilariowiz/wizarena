@@ -189,7 +189,9 @@ class Arena extends Component {
             }
         })
 
-        //console.log(notSubbed);
+        yourSubs.sort((a, b) => {
+            return b.level - a.level
+        })
 
         this.setState({ loadingYourSubs: false, loading: false, yourSubs, notSubbed, countSubbedWizards: subscribersId.length }, () => {
             this.loadYourSubsFightsLeft()
@@ -605,17 +607,30 @@ class Arena extends Component {
 
         //console.log(item);
 
+        let color;
+        if (item.level > 300) {
+            color = "gold"
+        }
+
+        if (item.level > 190 && item.level <= 300) {
+            color = "#c0c0c0"
+        }
+
+        if (item.level <= 190) {
+            color = "#cd7f32"
+        }
+
         const fightsLeft = 5 - item.fightsDone
 
         return (
-            <div style={Object.assign({}, styles.yourSubCard, { maxWidth: 120 })} key={index}>
+            <div style={Object.assign({}, styles.yourSubCard, { maxWidth: 120, borderColor: color })} key={index}>
                 <img
                     style={{ width: 120, height: 120, borderTopLeftRadius: 4, borderTopRightRadius: 4 }}
                     src={getImageUrl(item.id)}
                     alt={`#${item.id}`}
                 />
 
-                <p style={{ color: mainTextColor, fontSize: 16, marginTop: 10, marginBottom: 10, textAlign: 'center', paddingLeft: 3, paddingRight: 3 }}>
+                <p style={{ color: mainTextColor, fontSize: 15, marginTop: 10, marginBottom: 10, textAlign: 'center', paddingLeft: 3, paddingRight: 3 }}>
                     {item.name} {item.nickname || ""}
                 </p>
 
@@ -626,7 +641,7 @@ class Arena extends Component {
                 {
                     !loadingYourChampion ?
                     <button
-                        style={Object.assign({}, styles.btnSubscribe, { width: 120, borderTopLeftRadius: 0, borderTopRightRadius: 0 })}
+                        style={Object.assign({}, styles.btnSubscribe, { width: 120, height: 36, borderTopLeftRadius: 0, borderTopRightRadius: 0 })}
                         onClick={() => this.loadYourChampion(item)}
                     >
                         <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
@@ -1234,7 +1249,6 @@ const styles = {
         borderRadius: 4,
         borderWidth: 1,
         borderStyle: 'solid',
-        borderColor: '#d7d7d7',
         marginRight: 15,
         marginBottom: 15,
         justifyContent: 'space-between'
