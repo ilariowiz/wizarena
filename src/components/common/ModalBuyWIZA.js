@@ -160,7 +160,7 @@ class ModalBuyWIZA extends Component {
 
                         <div style={{ width: '100%', justifyContent: 'space-between', marginBottom: 20 }}>
                             <p style={{ fontSize: 14, color: mainTextColor }}>
-                                Max Splippage
+                                Max Slippage
                             </p>
 
                             <p style={{ fontSize: 14, color: mainTextColor }}>
