@@ -812,10 +812,18 @@ class Arena extends Component {
                     src={imageLeft}
                     style={{ width: 34, height: 34, marginRight: 10 }}
                 />
-                <img
-                    src={getImageUrl(item.idnft)}
-                    style={{ height: 70, width: 70, marginRight: 10, borderRadius: 2, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: "solid" }}
-                />
+                <a
+                    href={`${window.location.protocol}//${window.location.host}/nft/${item.idnft}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ cursor: 'pointer' }}
+                >
+                    <img
+                        src={getImageUrl(item.idnft)}
+                        style={{ height: 70, width: 70, marginRight: 10, borderRadius: 2, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: "solid" }}
+                    />
+                </a>
+
                 <p style={{ fontSize: 18, color: mainTextColor, width: 100 }}>
                     #{item.idnft}
                 </p>
