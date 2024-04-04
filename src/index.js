@@ -20,6 +20,7 @@ import PvE from './components/PvE'
 
 import League from './components/League'
 import LeagueFarmers from './components/LeagueFarmers'
+import LeagueApprentice from './components/LeagueApprentice'
 import Equipment from './components/Equipment'
 import ItemEquipment from './components/ItemEquipment'
 import EquipmentOffers from './components/EquipmentOffers'
@@ -74,6 +75,7 @@ ReactDOM.render(
             <Route path="/pve" component={PvE} />
             <Route path="/league" component={League} />
             <Route path="/leaguefarmers" component={LeagueFarmers} />
+            <Route path="/leagueapprentice" component={LeagueApprentice} />
             <Route path="/equipment" component={Equipment} />
             <Route path="/equipmentoffers" component={EquipmentOffers} />
             <Route path="/collectionoffers" component={CollectionOffers} />

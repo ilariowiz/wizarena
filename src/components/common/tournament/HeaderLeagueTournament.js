@@ -5,6 +5,17 @@ import 'reactjs-popup/dist/index.css';
 
 const headerLeague = (tournament, mainTextColor, history) => {
 
+    let href;
+    if (tournament.type === 'elite') {
+        href = `${window.location.protocol}//${window.location.host}/leaguefarmers`
+    }
+    else if (tournament.type === "apprentice") {
+        href = `${window.location.protocol}//${window.location.host}/leagueapprentice`
+    }
+    else {
+        href = `${window.location.protocol}//${window.location.host}/league`
+    }
+
     return (
         <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
 
@@ -58,12 +69,15 @@ const headerLeague = (tournament, mainTextColor, history) => {
 
             <a
                 className="btnH"
-                href={ tournament.type === "elite" ? `${window.location.protocol}//${window.location.host}/leaguefarmers` : `${window.location.protocol}//${window.location.host}/league`}
+                href={href}
                 style={styles.btnRanking}
                 onClick={(e) => {
                     e.preventDefault()
                     if (tournament.type === "elite") {
                         history.push(`./leaguefarmers`)
+                    }
+                    else if (tournament.type === "apprentice") {
+                        history.push('./leagueapprentice')
                     }
                     else {
                         history.push(`./league`)
