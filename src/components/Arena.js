@@ -160,7 +160,7 @@ class Arena extends Component {
 				//console.log(response);
 				setTimeout(() => {
                     this.getSubscribers()
-                }, 1000)
+                }, 1500)
 			})
 		}
         else {
@@ -171,7 +171,7 @@ class Arena extends Component {
 
     async getSubscribers() {
         const { chainId, gasPrice, gasLimit, networkUrl, userMintedNfts } = this.props
-        const { arenaInfo, subscribersId } = this.state
+        const { arenaInfo, subscribersId, allData } = this.state
 
         //console.log(subscribersId);
         ////// TEST
@@ -182,6 +182,14 @@ class Arena extends Component {
 
         userMintedNfts && userMintedNfts.map(i => {
             if (subscribersId.includes(i.id)) {
+
+                const data = allData.find(z => z.idnft === i.id)
+                //console.log(data);
+                if (data && data.fightsDone) {
+                    i['fightsDone'] = data.fightsDone
+                }
+                //console.log(i);
+
                 yourSubs.push(i)
             }
             else {
@@ -620,7 +628,7 @@ class Arena extends Component {
             color = "#cd7f32"
         }
 
-        const fightsLeft = 5 - item.fightsDone
+        const fightsLeft = item.fightsDone ? 5 - item.fightsDone : 5
 
         return (
             <div style={Object.assign({}, styles.yourSubCard, { maxWidth: 120, borderColor: color })} key={index}>
@@ -635,7 +643,7 @@ class Arena extends Component {
                 </p>
 
                 <p style={{ color: mainTextColor, fontSize: 15, marginTop: 10, marginBottom: 10, textAlign: 'center', paddingLeft: 3, paddingRight: 3 }}>
-                    Fights left {fightsLeft || "..."}
+                    Fights left {fightsLeft}
                 </p>
 
                 {
@@ -737,9 +745,9 @@ class Arena extends Component {
                     {
                         fightsLeft <= 0 &&
                         <div
-                            style={Object.assign({}, styles.btnSubscribe, { width: maxWidth, height: 30, marginBottom: 8, cursor: 'default' })}
+                            style={Object.assign({}, styles.btnSubscribe, { width: maxWidth, height: 30, backgroundColor: 'transparent', marginBottom: 8, cursor: 'default', borderWidth: 1, borderColor: CTA_COLOR, borderStyle: 'solid' })}
                         >
-                            <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
+                            <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }} className="text-medium">
                                 No fights left
                             </p>
                         </div>
