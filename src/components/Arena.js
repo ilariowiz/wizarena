@@ -388,12 +388,28 @@ class Arena extends Component {
             return
         }
 
-        let opponents = allData.filter(i => i.level === wizardSelected.level && i.idnft !== wizardSelected.id)
+        let opponents = allData.filter(i => i.idnft !== wizardSelected.id)
         if (lastOpponentId) {
             opponents = opponents.filter(i => i.idnft !== lastOpponentId)
         }
 
-        const opponent = _.sample(opponents)
+        let opponentsByLevel = []
+
+        opponents.map(i => {
+            if (i.level <= 190 && wizardSelected.level <= 190) {
+                opponentsByLevel.push(i)
+            }
+            else if ((i.level > 190 &&  i.level <= 300) && (wizardSelected.level > 190 && wizardSelected.level <= 300)) {
+                opponentsByLevel.push(i)
+            }
+            else if (i.level > 300 && wizardSelected.level > 300) {
+                opponentsByLevel.push(i)
+            }
+        })
+
+        //console.log(opponentsByLevel);
+
+        const opponent = _.sample(opponentsByLevel)
 
         this.setState({ loadingStartFight: true, showModalFight: true, infoFight: { nft1: wizardSelected, nft2: { id: "" }, winner: "" } })
 
