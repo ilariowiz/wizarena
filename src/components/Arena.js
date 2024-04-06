@@ -56,7 +56,8 @@ class Arena extends Component {
             subscribing: false,
             loadingYourChampion: false,
             wizardSelectedLastFights: [],
-            showModalFight: false
+            showModalFight: false,
+            lastOpponentId: ""
         }
     }
 
@@ -323,7 +324,16 @@ class Arena extends Component {
             fights.push(data)
         })
 
-        this.setState({ wizardSelectedLastFights: fights })
+        //console.log(fights);
+        const lastFight = fights.length > 0 ? fights[0] : undefined
+        let lastOpponentId;
+        if (lastFight) {
+            lastOpponentId = lastFight.idnft1 === idnft ? lastFight.idnft2 : lastFight.idnft1
+        }
+
+        //console.log(lastOpponentId);
+
+        this.setState({ wizardSelectedLastFights: fights, lastOpponentId })
     }
 
     subscribeWizards() {
@@ -368,9 +378,7 @@ class Arena extends Component {
 
     async startFight() {
         const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
-        const { wizardSelected, allData } = this.state
-
-        const opponents = allData.filter(i => i.level === wizardSelected.level && i.idnft !== wizardSelected.id)
+        const { wizardSelected, allData, lastOpponentId } = this.state
 
         let seasonEnded = this.checkSeasonEnded()
         //console.log(seasonEnded);
@@ -378,6 +386,11 @@ class Arena extends Component {
             //season finita mentre stavi ancora con la pagina aperta e ti fa fare i fights
             window.location.reload()
             return
+        }
+
+        let opponents = allData.filter(i => i.level === wizardSelected.level && i.idnft !== wizardSelected.id)
+        if (lastOpponentId) {
+            opponents = opponents.filter(i => i.idnft !== lastOpponentId)
         }
 
         const opponent = _.sample(opponents)
