@@ -5,6 +5,7 @@ import moment from 'moment'
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import DotLoader from 'react-spinners/DotLoader';
+import { MdRemoveRedEye } from "react-icons/md";
 import NftCardTournament from './common/NftCardTournament'
 import Header from './Header'
 import boxPairTournament from './common/tournament/BoxPairTournament'
@@ -44,7 +45,8 @@ class Tournament extends Component {
             ringsEquipped: [],
             pendantsEquipped: [],
             rankings: [],
-            showProfileFights: false
+            showProfileFights: false,
+            showWizardsIn: false,
 		}
 	}
 
@@ -110,44 +112,21 @@ class Tournament extends Component {
                 const matchPair = await this.loadPair(tournament.name)
 
                 if (subscribed && !tournament.showPair) {
-                    this.calcSubscribers(subscribed, tournament)
+                    this.calcSubscribers(subscribed, tournament, undefined, true)
                 }
 
                 const tournamentName = tournament.name.split("_")[0]
 
                 this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "kda", (subscribed) => {
                     //console.log(subscribed);
-                    this.calcSubscribers(subscribed, tournament, matchPair)
+                    this.calcSubscribers(subscribed, tournament, matchPair, false)
                 })
-
-                /*
-                if (tournament.canSubscribe) {
-                    this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "kda", (subscribed) => {
-                        //console.log(subscribed);
-                        this.calcSubscribers(subscribed, tournament, matchPair)
-                    })
-                }
-                //questo else serve a non dover ricaricare tutti i wizards se le iscrizioni sono chiuse e il numero degli iscritti è uguale ai wizards nella cache
-                else {
-                    this.props.getCountForTournament(chainId, gasPrice, gasLimit, networkUrl, tournamentName, (count) => {
-                        if (subscribed && subscribed.length === count) {
-                            this.calcSubscribers(subscribed, tournament, matchPair)
-                        }
-                        else {
-                            this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "kda", (subscribed) => {
-                                //console.log(subscribed);
-                                this.calcSubscribers(subscribed, tournament, matchPair)
-                            })
-                        }
-                    })
-                }
-                */
 
             })
         })
     }
 
-    calcSubscribers(subscribed, tournament, matchPair) {
+    calcSubscribers(subscribed, tournament, matchPair, loading) {
         const { account } = this.props
 
         const roundEnded = tournament.roundEnded
@@ -244,7 +223,7 @@ class Tournament extends Component {
             }
         }
 
-        this.setState({ winners, yourStat, avgLevel, matchPair, loading: false })
+        this.setState({ winners, yourStat, avgLevel, matchPair, loading })
     }
 
     getAllPotionsEquipped(subscribers, tournamentName) {
@@ -343,24 +322,30 @@ class Tournament extends Component {
         )
     }
 
+    renderLoading() {
+        const { loading } = this.state
+
+        if (!loading) {
+            return undefined
+        }
+
+        return (
+            <div style={{ flexDirection: 'column', width: "100%", alignItems: 'center', marginTop: 30, marginBottom: 30 }}>
+                <div style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                    <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+                </div>
+            </div>
+        )
+    }
+
     renderBody(isMobile) {
         const { tournament, avgLevel } = this.state
         const { subscribed, mainTextColor, subscribedKdaSpellGraph } = this.props
 
         const { boxW, padding } = getBoxWidth(isMobile)
 
-        if (this.state.loading) {
-            return (
-                <div style={{ flexDirection: 'column', width: boxW, alignItems: 'center', padding, overflowY: 'auto', overflowX: 'hidden' }}>
-                    <div style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                        <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
-                    </div>
-                </div>
-            )
-        }
-
         if (!tournament.name) {
-            return <div> </div>
+            return this.renderLoading()
         }
 
         //console.log(tournament.showLeague);
@@ -371,6 +356,8 @@ class Tournament extends Component {
 
 			return (
 				<div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
+
+                    {this.renderLoading()}
 
 					{renderInfoTournament(tournament, this.calcMontepremi(), tournament.buyin, subscribed, mainTextColor, undefined, this.props.history)}
 
@@ -407,6 +394,8 @@ class Tournament extends Component {
 
 			return (
 				<div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
+
+                    {this.renderLoading()}
 
                     {renderInfoTournament(tournament, this.calcMontepremi(), tournament.buyin, subscribed, mainTextColor, text, this.props.history)}
 
@@ -445,6 +434,8 @@ class Tournament extends Component {
         return (
             <div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
+                {this.renderLoading()}
+
                 {renderInfoTournament(tournament, this.calcMontepremi(), tournament.buyin, subscribed, mainTextColor, infoText, this.props.history)}
 
                 {this.renderButtonShowResults()}
@@ -459,7 +450,7 @@ class Tournament extends Component {
     }
 
     renderRoundConcluso(boxW, isMobile, padding) {
-        const { tournament, winners, yourStat } = this.state
+        const { tournament, winners, yourStat, showWizardsIn } = this.state
         const { mainTextColor, subscribed } = this.props
 
         if (!winners || winners.length === 0) {
@@ -508,13 +499,31 @@ class Tournament extends Component {
         return (
             <div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
+                {this.renderLoading()}
+
                 {renderInfoTournament(tournament, this.calcMontepremi(), tournament.buyin, subscribed, mainTextColor, titleText, this.props.history)}
 
                 {
-                    yourStat &&
+                    yourStat && showWizardsIn ?
                     <p style={{ fontSize: 17, color: mainTextColor, marginBottom: 20, textAlign: 'center' }}>
                         {yourStat}
                     </p>
+                    :
+                    <div style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+                        <p style={{ fontSize: 17, color: mainTextColor, marginRight: 7 }}>
+                            Your winning wizards
+                        </p>
+
+                        <button
+                            style={{ marginTop: 3 }}
+                            onClick={() => this.setState({ showWizardsIn: true })}
+                        >
+                            <MdRemoveRedEye
+                                color={mainTextColor}
+                                size={22}
+                            />
+                        </button>
+                    </div>
                 }
 
                 {this.renderButtonShowResults()}

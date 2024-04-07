@@ -5,6 +5,7 @@ import moment from 'moment'
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import DotLoader from 'react-spinners/DotLoader';
+import { MdRemoveRedEye } from "react-icons/md";
 import NftCardTournament from './common/NftCardTournament'
 import Header from './Header'
 import boxPairTournament from './common/tournament/BoxPairTournament'
@@ -44,7 +45,8 @@ class Tournament extends Component {
             pendantsEquipped: [],
             subscribed: [],
             rankings: [],
-            showProfileFights: false
+            showProfileFights: false,
+            showWizardsIn: false,
 		}
 	}
 
@@ -124,47 +126,20 @@ class Tournament extends Component {
                 const matchPair = await this.loadPair(tournament.name)
 
                 if (subscribedWiza && !tournament.showPair) {
-                    this.calcSubscribers(subscribedWiza, tournament)
+                    this.calcSubscribers(subscribedWiza, tournament, undefined, true)
                 }
 
                 const tournamentName = tournament.name.split("_")[0]
 
                 this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "wiza", (subscribed) => {
                     //console.log(subscribed);
-                    this.calcSubscribers(subscribed, tournament, matchPair)
+                    this.calcSubscribers(subscribed, tournament, matchPair, false)
                 })
-
-                /*
-                if (tournament.canSubscribe) {
-                    this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "wiza", (subscribed) => {
-                        //console.log(subscribed);
-
-                        //this.getAllPotionsEquipped(subscribed, tournamentName)
-                        this.calcSubscribers(subscribed, tournament, matchPair)
-                    })
-                }
-                //questo else serve a non dover ricaricare tutti i wizards se le iscrizioni sono chiuse e il numero degli iscritti è uguale ai wizards nella cache
-                else {
-                    this.props.getCountForTournament(chainId, gasPrice, gasLimit, networkUrl, tournamentName, (count) => {
-                        if (subscribedWiza && subscribedWiza.length === count) {
-                            this.calcSubscribers(subscribedWiza, tournament, matchPair)
-                        }
-                        else {
-                            this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "wiza", (subscribed) => {
-                                //console.log(subscribed);
-
-                                //this.getAllPotionsEquipped(subscribed, tournamentName)
-                                this.calcSubscribers(subscribed, tournament, matchPair)
-                            })
-                        }
-                    })
-                }
-                */
             })
         })
     }
 
-    calcSubscribers(subscribed, tournament, matchPair) {
+    calcSubscribers(subscribed, tournament, matchPair, loading) {
         const { account } = this.props
 
         const roundEnded = tournament.roundEnded
@@ -241,7 +216,7 @@ class Tournament extends Component {
             }
         }
 
-        this.setState({ subscribed: subs, yourStat, avgLevel, matchPair, loading: false })
+        this.setState({ subscribed: subs, yourStat, avgLevel, matchPair, loading })
     }
 
     getAllPotionsEquipped(subscribers, tournamentName) {
@@ -341,6 +316,22 @@ class Tournament extends Component {
         )
     }
 
+    renderLoading() {
+        const { loading } = this.state
+
+        if (!loading) {
+            return undefined
+        }
+
+        return (
+            <div style={{ flexDirection: 'column', width: "100%", alignItems: 'center', marginTop: 30, marginBottom: 30 }}>
+                <div style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                    <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+                </div>
+            </div>
+        )
+    }
+
     renderBody(isMobile) {
         const { tournament, subscribed, avgLevel } = this.state
         const { subscribedWiza, mainTextColor, subscribedWizaSpellGraph } = this.props
@@ -349,18 +340,8 @@ class Tournament extends Component {
 
         const { boxW, padding } = getBoxWidth(isMobile)
 
-        if (this.state.loading) {
-            return (
-                <div style={{ flexDirection: 'column', width: boxW, alignItems: 'center', padding, overflowY: 'auto', overflowX: 'hidden' }}>
-                    <div style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                        <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
-                    </div>
-                </div>
-            )
-        }
-
         if (!tournament.name) {
-            return <div> </div>
+            return this.renderLoading()
         }
 
         //console.log(tournament);
@@ -374,6 +355,8 @@ class Tournament extends Component {
 
 			return (
 				<div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
+
+                    {this.renderLoading()}
 
                     {renderInfoTournament(tournament, this.calcMontepremi(), tournament.buyin, subscribedWiza, mainTextColor, undefined, this.props.history)}
 
@@ -410,6 +393,8 @@ class Tournament extends Component {
 
 			return (
 				<div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
+
+                    {this.renderLoading()}
 
                     {renderInfoTournament(tournament, this.calcMontepremi(), tournament.buyin, subscribedWiza, mainTextColor, text, this.props.history)}
 
@@ -448,6 +433,8 @@ class Tournament extends Component {
         return (
             <div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
+                {this.renderLoading()}
+
                 {renderInfoTournament(tournament, this.calcMontepremi(), tournament.buyin, subscribedWiza, mainTextColor, infoText, this.props.history)}
 
                 {this.renderButtonShowResults()}
@@ -462,7 +449,7 @@ class Tournament extends Component {
     }
 
     renderRoundConcluso(boxW, isMobile, padding) {
-        const { tournament, subscribed, yourStat } = this.state
+        const { tournament, subscribed, yourStat, showWizardsIn } = this.state
         const { mainTextColor, subscribedWiza } = this.props
 
         if (!subscribed || subscribed.length === 0) {
@@ -495,13 +482,31 @@ class Tournament extends Component {
         return (
             <div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
+                {this.renderLoading()}
+
                 {renderInfoTournament(tournament, this.calcMontepremi(), tournament.buyin, subscribedWiza, mainTextColor, titleText, this.props.history)}
 
                 {
-                    yourStat &&
+                    yourStat && showWizardsIn ?
                     <p style={{ fontSize: 17, color: mainTextColor, marginBottom: 20, textAlign: 'center' }}>
                         {yourStat}
                     </p>
+                    :
+                    <div style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+                        <p style={{ fontSize: 17, color: mainTextColor, marginRight: 7 }}>
+                            Your winning wizards
+                        </p>
+
+                        <button
+                            style={{ marginTop: 3 }}
+                            onClick={() => this.setState({ showWizardsIn: true })}
+                        >
+                            <MdRemoveRedEye
+                                color={mainTextColor}
+                                size={22}
+                            />
+                        </button>
+                    </div>
                 }
 
                 {this.renderButtonShowResults()}

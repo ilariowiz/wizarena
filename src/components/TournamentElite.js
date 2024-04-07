@@ -5,6 +5,7 @@ import moment from 'moment'
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import DotLoader from 'react-spinners/DotLoader';
+import { MdRemoveRedEye } from "react-icons/md";
 import NftCardTournament from './common/NftCardTournament'
 import Header from './Header'
 import boxPairTournament from './common/tournament/BoxPairTournament'
@@ -12,7 +13,7 @@ import renderInfoTournament from './common/tournament/InfoTournament'
 import graphSubscribers from './common/tournament/GraphSubscribers'
 import BoxYourResults from './common/tournament/BoxYourResults'
 import getBoxWidth from './common/GetBoxW'
-import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
+import { MAIN_NET_ID, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import {
     setNetworkSettings,
     setNetworkUrl,
@@ -44,7 +45,8 @@ class TournamentElite extends Component {
             pendantsEquipped: [],
             subscribed: [],
             rankings: [],
-            showProfileFights: false
+            showProfileFights: false,
+            showWizardsIn: false,
 		}
 	}
 
@@ -113,47 +115,21 @@ class TournamentElite extends Component {
                 const matchPair = await this.loadPair(tournament.name)
 
                 if (subscribedElite && !tournament.showPair) {
-                    this.calcSubscribers(subscribedElite, tournament)
+                    this.calcSubscribers(subscribedElite, tournament, undefined, true)
                 }
 
                 const tournamentName = tournament.name.split("_")[0]
 
-
                 this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "elite", (subscribed) => {
                     //console.log(subscribed);
-                    this.calcSubscribers(subscribed, tournament, matchPair)
+                    this.calcSubscribers(subscribed, tournament, matchPair, false)
                 })
-
-                //non si può fare perché il valore medals è quello che fa vedere chi è rimasto in gara, quindi se non lo prendiamo aggiornato dalla blockchain, non funziona il torneo
-                /*
-                if (tournament.canSubscribe) {
-                    this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "elite", (subscribed) => {
-                        //console.log(subscribed);
-                        this.calcSubscribers(subscribed, tournament, matchPair)
-                    })
-                }
-                //questo else serve a non dover ricaricare tutti i wizards se le iscrizioni sono chiuse e il numero degli iscritti è uguale ai wizards nella cache
-                else {
-                    this.props.getCountForTournament(chainId, gasPrice, gasLimit, networkUrl, tournamentName, (count) => {
-                        //console.log(count);
-                        if (subscribedElite && subscribedElite.length === count) {
-                            this.calcSubscribers(subscribedElite, tournament, matchPair)
-                        }
-                        else {
-                            this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "elite", (subscribed) => {
-                                //console.log(subscribed);
-                                this.calcSubscribers(subscribed, tournament, matchPair)
-                            })
-                        }
-                    })
-                }
-                */
 
             })
         })
     }
 
-    calcSubscribers(subscribed, tournament, matchPair) {
+    calcSubscribers(subscribed, tournament, matchPair, loading) {
         const { account } = this.props
 
         const roundEnded = tournament.roundEnded
@@ -230,7 +206,7 @@ class TournamentElite extends Component {
             }
         }
 
-        this.setState({ subscribed: subs, yourStat, avgLevel, matchPair, loading: false })
+        this.setState({ subscribed: subs, yourStat, avgLevel, matchPair, loading })
     }
 
     getAllPotionsEquipped(subscribers, tournamentName) {
@@ -329,6 +305,22 @@ class TournamentElite extends Component {
         )
     }
 
+    renderLoading() {
+        const { loading } = this.state
+
+        if (!loading) {
+            return undefined
+        }
+
+        return (
+            <div style={{ flexDirection: 'column', width: "100%", alignItems: 'center', marginTop: 30, marginBottom: 30 }}>
+                <div style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                    <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+                </div>
+            </div>
+        )
+    }
+
     renderBody(isMobile) {
         const { tournament, subscribed, avgLevel } = this.state
         const { subscribedElite, mainTextColor, subscribedEliteSpellGraph } = this.props
@@ -337,18 +329,8 @@ class TournamentElite extends Component {
 
         const { boxW, padding } = getBoxWidth(isMobile)
 
-        if (this.state.loading) {
-            return (
-                <div style={{ flexDirection: 'column', alignItems: 'center', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden' }}>
-                    <div style={{ width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                        <DotLoader size={25} color={mainTextColor} />
-                    </div>
-                </div>
-            )
-        }
-
         if (!tournament.name) {
-            return <div> </div>
+            return this.renderLoading()
         }
 
         //console.log(tournament);
@@ -362,6 +344,8 @@ class TournamentElite extends Component {
 
 			return (
 				<div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
+
+                    {this.renderLoading()}
 
                     {renderInfoTournament(tournament, this.calcMontepremi(), tournament.buyin, subscribedElite, mainTextColor, undefined, this.props.history)}
 
@@ -398,6 +382,8 @@ class TournamentElite extends Component {
 
 			return (
 				<div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
+
+                    {this.renderLoading()}
 
                     {renderInfoTournament(tournament, this.calcMontepremi(), tournament.buyin, subscribedElite, mainTextColor, text, this.props.history)}
 
@@ -437,6 +423,8 @@ class TournamentElite extends Component {
         return (
              <div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
+                {this.renderLoading()}
+
                 {renderInfoTournament(tournament, this.calcMontepremi(), tournament.buyin, subscribedElite, mainTextColor, infoText, this.props.history)}
 
                 {this.renderButtonShowResults()}
@@ -451,7 +439,7 @@ class TournamentElite extends Component {
     }
 
     renderRoundConcluso(boxW, isMobile, padding) {
-        const { tournament, subscribed, yourStat } = this.state
+        const { tournament, subscribed, yourStat, showWizardsIn } = this.state
         const { mainTextColor, subscribedElite } = this.props
 
         if (!subscribed || subscribed.length === 0) {
@@ -486,13 +474,31 @@ class TournamentElite extends Component {
         return (
             <div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
+                {this.renderLoading()}
+
                 {renderInfoTournament(tournament, this.calcMontepremi(), tournament.buyin, subscribedElite, mainTextColor, titleText, this.props.history)}
 
                 {
-                    yourStat &&
+                    yourStat && showWizardsIn ?
                     <p style={{ fontSize: 17, color: mainTextColor, marginBottom: 20, textAlign: 'center' }}>
                         {yourStat}
                     </p>
+                    :
+                    <div style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+                        <p style={{ fontSize: 17, color: mainTextColor, marginRight: 7 }}>
+                            Your winning wizards
+                        </p>
+
+                        <button
+                            style={{ marginTop: 3 }}
+                            onClick={() => this.setState({ showWizardsIn: true })}
+                        >
+                            <MdRemoveRedEye
+                                color={mainTextColor}
+                                size={22}
+                            />
+                        </button>
+                    </div>
                 }
 
                 {this.renderButtonShowResults()}
