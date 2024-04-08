@@ -1,11 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
+import Popup from 'reactjs-popup';
 import getImageUrl from './GetImageUrl'
 import '../../css/NftCardChoice.css'
 import ModalStats from './ModalStats'
 import { getColorTextBasedOnLevel } from './CalcLevelWizard'
 import { CTA_COLOR } from '../../actions/types'
+import 'reactjs-popup/dist/index.css';
 
+const vial_hp = require('../../assets/vial_hp.png')
+const vial_def = require('../../assets/vial_def.png')
+const vial_atk = require('../../assets/vial_atk.png')
+const vial_dmg = require('../../assets/vial_dmg.png')
+const vial_speed = require('../../assets/vial_speed.png')
 
 class NftCardChoice extends Component {
     constructor(props) {
@@ -14,6 +21,60 @@ class NftCardChoice extends Component {
         this.state = {
             showModalStats: false
         }
+    }
+
+    showPotion(potion) {
+
+        let imagePotion;
+        let descPotion = ""
+
+        if (potion && potion === "hp") {
+			imagePotion = vial_hp
+			descPotion = "Vial of HP +8"
+		}
+		else if (potion && potion === "defense") {
+			imagePotion = vial_def
+			descPotion = "Vial of Defense +2"
+		}
+		else if (potion && potion === "attack") {
+			imagePotion = vial_atk
+			descPotion = "Vial of Attack +2"
+		}
+		else if (potion && potion === "damage") {
+			imagePotion = vial_dmg
+			descPotion = "Vial of Damage +4"
+		}
+		else if (potion && potion === "speed") {
+			imagePotion = vial_speed
+			descPotion = "Vial of Speed +4"
+		}
+
+        return (
+            <div style={{ position: 'absolute', right: 5, bottom: 8 }}>
+                {
+                    potion ?
+                    <Popup
+                        trigger={open => (
+                            <div style={{ alignItems: 'center' }}>
+                                <img
+                                    src={imagePotion}
+                                    style={{ width: 24, height: 28 }}
+                                    alt={`Potion Equipped: ${potion ? potion.toUpperCase() : "None"}`}
+                                />
+
+                            </div>
+                        )}
+                        position="top center"
+                        on="hover"
+                    >
+                        <div style={{ padding: 5, fontSize: 16, color: "#1d1d1f" }}>
+                            {descPotion}
+                        </div>
+                    </Popup>
+                    : null
+                }
+            </div>
+        )
     }
 
     renderActionsSection(section, item, canSubscribe, inToSubscribe) {
@@ -110,11 +171,17 @@ class NftCardChoice extends Component {
     }
 
 	render() {
-		const { item, width, canSubscribe, toSubscribe, mainTextColor, isDarkmode, section } = this.props
+		const { item, width, canSubscribe, toSubscribe, mainTextColor, isDarkmode, section, potionsEquipped } = this.props
 
         //console.log(item)
 
         const inToSubscribe = toSubscribe ? toSubscribe.some(i => i.idnft === item.id) : false
+
+        let potion;
+        if (potionsEquipped && potionsEquipped.length > 0) {
+            potion = potionsEquipped.find(i => i.idnft === item.id)
+            //console.log(potion);
+        }
 
         return (
 			<div
@@ -133,7 +200,7 @@ class NftCardChoice extends Component {
     				/>
                 </a>
 
-				<div style={{ flexDirection: 'column', width, alignItems: 'center' }}>
+				<div style={{ flexDirection: 'column', width, alignItems: 'center', position: 'relative' }}>
 
 					<div style={{ width: '90%', justifyContent: 'space-between', alignItems: 'center', marginTop: 5, marginBottom: 10 }}>
 
@@ -163,6 +230,11 @@ class NftCardChoice extends Component {
                             see stats
                         </p>
                     </button>
+
+                    {
+                        potion &&
+                        this.showPotion(potion.potionEquipped)
+                    }
 
                     {this.renderActionsSection(section, item, canSubscribe, inToSubscribe)}
 

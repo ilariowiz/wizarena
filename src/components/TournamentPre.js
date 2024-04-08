@@ -17,21 +17,18 @@ import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import { MAIN_NET_ID, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import {
-    getBuyin,
-    getFeeTournament,
     setNetworkSettings,
     setNetworkUrl,
     loadUserMintedNfts,
     subscribeToTournamentMass,
-    clearTransaction,
     subscribeToTournamentMassWIZA,
     getSubscriptions,
     subscribeToTournamentMassELITE,
     updateInfoTransactionModal,
     fetchAccountDetails,
     getWizaBalance,
-    getFightPerNfts,
-    getCountForTournament
+    getCountForTournament,
+    getPotionEquippedMass,
 } from '../actions'
 import '../css/Nft.css'
 import 'reactjs-popup/dist/index.css';
@@ -73,7 +70,8 @@ class Tournament extends Component {
             tournamentSubs: {},
             toSubscribe: [],
             statSearched: [],
-            subscriptionsInfo: []
+            subscriptionsInfo: [],
+            potionsEquipped: []
 		}
 	}
 
@@ -157,9 +155,6 @@ class Tournament extends Component {
 
             this.setState({ tournament }, async () => {
 
-				//this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-key")
-				//this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-key")
-
                 const tournamentName = tournament.name.split("_")[0]
 
                 this.props.getCountForTournament(chainId, gasPrice, gasLimit, networkUrl, tournamentName, (subscribed) => {
@@ -194,9 +189,6 @@ class Tournament extends Component {
 
             this.setState({ tournamentWiza: tournament }, async () => {
 
-				//this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-wiza-key")
-				//this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-wiza-key")
-
                 const tournamentName = tournament.name.split("_")[0]
 
                 this.props.getCountForTournament(chainId,gasPrice,gasLimit, networkUrl, tournamentName, (subscribed) => {
@@ -230,9 +222,6 @@ class Tournament extends Component {
 
             this.setState({ tournamentElite: tournament }, async () => {
 
-                //this.props.getBuyin(chainId, gasPrice, gasLimit, networkUrl, "buyin-elite-key")
-				//this.props.getFeeTournament(chainId, gasPrice, gasLimit, networkUrl, "fee-tournament-wiza-key")
-
                 const tournamentName = tournament.name.split("_")[0]
 
                 this.props.getCountForTournament(chainId,gasPrice,gasLimit, networkUrl, tournamentName, (subscribed) => {
@@ -251,10 +240,16 @@ class Tournament extends Component {
         let yourPossibleSubs = userMintedNfts.filter(i => i.level <= levelCap)
 
         let yourSubs = this.setYourSub(yourPossibleSubs)
+
         //console.log(yourSubs);
 
         this.setState({ yourSubs, showSubs: true, showProfileFights: false, tournamentSubs: tournament, loading: false }, () => {
             document.getElementById("filters").scrollIntoView({ behavior: 'smooth' })
+
+            if (yourSubs[0] && yourSubs[0].length > 0) {
+                const tournamentName = tournament.name.split("_")[0]
+                this.getAllPotionsEquipped(yourSubs[0], tournamentName)
+            }
         })
 
     }
@@ -279,6 +274,29 @@ class Tournament extends Component {
 
         let temp = [alreadySub, notSub]
         return temp
+    }
+
+    getAllPotionsEquipped(subscribers, tournamentName) {
+        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+        let keys = []
+        subscribers.map(i => {
+            keys.push(`"${tournamentName}_${i.id}"`)
+        })
+
+        this.props.getPotionEquippedMass(chainId, gasPrice, gasLimit, networkUrl, keys, (response) => {
+            //console.log(response);
+
+            let potionsEquipped = []
+            for (var i = 0; i < response.length; i++) {
+                const p = response[i]
+                const idnft = p.key.split("_")[1]
+
+                potionsEquipped.push({ potionEquipped: p.potionEquipped, idnft })
+            }
+
+            this.setState({ potionsEquipped })
+        })
     }
 
     subscribe(idNft, spellSelected) {
@@ -1111,13 +1129,12 @@ class Tournament extends Component {
 				}}
 				modalWidth={modalWidth}
 				section={"tournament"}
-
 			/>
 		)
 	}
 
     renderRowChoised(item, index, modalWidth) {
-		const { subscriptionsInfo } = this.state
+		const { subscriptionsInfo, potionsEquipped } = this.state
 
 		return (
 			<NftCardChoice
@@ -1126,6 +1143,7 @@ class Tournament extends Component {
 				width={230}
                 subscriptionsInfo={subscriptionsInfo}
 				modalWidth={modalWidth}
+                potionsEquipped={potionsEquipped}
 			/>
 		)
 	}
@@ -1444,19 +1462,16 @@ const mapStateToProps = (state) => {
 }
 
 export default connect(mapStateToProps, {
-    getBuyin,
-    getFeeTournament,
     setNetworkSettings,
     setNetworkUrl,
     loadUserMintedNfts,
     subscribeToTournamentMass,
-    clearTransaction,
     subscribeToTournamentMassWIZA,
     getSubscriptions,
     subscribeToTournamentMassELITE,
     updateInfoTransactionModal,
     fetchAccountDetails,
     getWizaBalance,
-    getFightPerNfts,
-    getCountForTournament
+    getCountForTournament,
+    getPotionEquippedMass,
 })(Tournament)
