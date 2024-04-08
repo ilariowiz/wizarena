@@ -15,9 +15,6 @@ import BoxYourResults from './common/tournament/BoxYourResults'
 import getBoxWidth from './common/GetBoxW'
 import { MAIN_NET_ID, CTA_COLOR, TEXT_SECONDARY_COLOR } from '../actions/types'
 import {
-    getMontepremi,
-    getBuyin,
-    getFeeTournament,
     setNetworkSettings,
     setNetworkUrl,
     getSubscribed,
@@ -84,11 +81,11 @@ class Tournament extends Component {
             /*
             const tournament = {
                 canSubscribe: false,
-                nRounds: 6,
-                name: "t7_r6",
-                roundEnded: "5",
-                showPair: true,
-                showLeague: true,
+                nRounds: 4,
+                name: "t72_r4",
+                roundEnded: "3",
+                showPair: false,
+                showLeague: false,
                 region: "ciao",
                 event: "sunburst",
                 start: {seconds: 1671715800, nanoseconds: 843000000},
@@ -136,9 +133,6 @@ class Tournament extends Component {
         this.getEquipmentEquipped(subscribed)
 
         const winners = []
-        const winners4 = []
-        const winners5 = []
-        const winners6 = []
 
         let yourWizards = 0
         let winnerWizards = 0
@@ -156,22 +150,8 @@ class Tournament extends Component {
                     winnerWizards++
                 }
 
-                //se siamo ad un round inferiore al 5
-                if (parseInt(roundEnded) < 5) {
-                    if (item.medals[tournamentName] === roundEnded) {
-                        winners4.push(item)
-                    }
-                }
-                else {
-                    if (item.medals[tournamentName] === "4") {
-                        winners4.push(item)
-                    }
-                    if (item.medals[tournamentName] === "5") {
-                        winners5.push(item)
-                    }
-                    if (item.medals[tournamentName] === "6") {
-                        winners6.push(item)
-                    }
+                if (item.medals[tournamentName] === roundEnded) {
+                    winners.push(item)
                 }
             }
         })
@@ -179,9 +159,6 @@ class Tournament extends Component {
         //console.log(yourWizards , "/", winnerWizards);
 
         //console.log(winners);
-        winners.push(winners4)
-        winners.push(winners5)
-        winners.push(winners6)
 
         let yourStat;
         if (roundEnded === "4") {
@@ -474,21 +451,7 @@ class Tournament extends Component {
 
         //console.log(winners);
 
-        const winners4 = winners[0]
-        const winners5 = winners[1]
-        const winners6 = winners[2]
-
-        let subtitleText4 = ""
-        let subtitleText5 = ""
-        let subtitleText6 = ""
-        if (parseInt(roundEnded) < 5) {
-            subtitleText4 = winners4.length > 1 ?  `The ${winners4.length} winners of ${roundEnded} medals:` : `The winner of ${roundEnded} medals:`
-        }
-        else {
-            subtitleText4 = winners4.length > 1 ? `The ${winners4.length} winners of 4 medals:` : `The winner of 4 medals:`
-            subtitleText5 = winners5.length > 0 ? `The ${winners5.length} winners of 5 medals:` : ""
-            subtitleText6 = winners6.length > 0 ? `The ${winners6.length} winners of 6 medals:` : ""
-        }
+        let subtitleText4 = winners.length > 1 ?  `The ${winners.length} winners of ${roundEnded} medals:` : `The winner of ${roundEnded} medals:`
 
         let titleText = tournament.tournamentEnd ?
                         "The tournament is over! Let's see who the winners are"
@@ -528,43 +491,6 @@ class Tournament extends Component {
 
                 {this.renderButtonShowResults()}
 
-
-                {
-                    subtitleText6 &&
-                    <div style={{ flexDirection: 'column', marginBottom: 60, alignItems: 'center' }}>
-                        <div
-                            style={Object.assign({}, styles.boxPodio, { borderColor: 'gold' })}
-                        >
-                            <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
-                                {subtitleText6}
-                            </p>
-                        </div>
-
-                        <div style={{ flexWrap: 'wrap' }}>
-                            {winners6.map((item, index) => {
-                                return this.renderRow(item, index, 260);
-                            })}
-                        </div>
-                    </div>
-                }
-
-                {
-                    subtitleText5 &&
-                    <div style={{ flexDirection: 'column', marginBottom: 60, alignItems: 'center' }}>
-                        <div style={Object.assign({}, styles.boxPodio, { borderColor: 'silver' })}>
-                            <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
-                                {subtitleText5}
-                            </p>
-                        </div>
-
-                        <div style={{ flexWrap: 'wrap' }}>
-                            {winners5.map((item, index) => {
-                                return this.renderRow(item, index, 260);
-                            })}
-                        </div>
-                    </div>
-                }
-
                 <div style={{ flexDirection: 'column', marginBottom: 60, alignItems: 'center' }}>
                     <div style={Object.assign({}, styles.boxPodio, { borderColor: '#CD7F32' })}>
                         <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
@@ -573,7 +499,7 @@ class Tournament extends Component {
                     </div>
 
                     <div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
-                        {winners4.map((item, index) => {
+                        {winners.map((item, index) => {
                             return this.renderRow(item, index, 260);
                         })}
                     </div>
@@ -693,9 +619,6 @@ const mapStateToProps = (state) => {
 }
 
 export default connect(mapStateToProps, {
-    getBuyin,
-    getMontepremi,
-    getFeeTournament,
     setNetworkSettings,
     setNetworkUrl,
     getSubscribed,
