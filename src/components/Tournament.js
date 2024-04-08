@@ -396,7 +396,7 @@ class Tournament extends Component {
         if (tournament && tournament.showPair && matchPair && matchPair.length > 0) {
             return this.renderMatchPair(boxW, isMobile, padding)
         }
-        else if (tournament && tournament.showPair && !matchPair || (matchPair && matchPair.length === 0)) {
+        else if (tournament && tournament.showPair && (!matchPair || (matchPair && matchPair.length === 0))) {
             return this.renderLoading()
         }
 
