@@ -478,10 +478,10 @@ class Arena extends Component {
                 }
 
                 if (winner === wizardSelected.id) {
-                    this.updateDataFirebase(wizardSelected.id, true, points, true)
+                    this.updateDataFirebase(wizardSelected.id, true, points, true, wizardSelected.level)
                 }
                 else {
-                    this.updateDataFirebase(wizardSelected.id, false, points, true)
+                    this.updateDataFirebase(wizardSelected.id, false, points, true, wizardSelected.level)
                     this.updateDataFirebase(winner, true, points, false)
                 }
 
@@ -520,7 +520,7 @@ class Arena extends Component {
         setDoc(fightRef, fightObj)
     }
 
-    async updateDataFirebase(idnft, doIncrement, points, attaccante) {
+    async updateDataFirebase(idnft, doIncrement, points, attaccante, wizardLevel) {
         const { allData } = this.state
 
         const data = allData.find(i => i.idnft === idnft)
@@ -532,14 +532,16 @@ class Arena extends Component {
             updateDoc(docRef, {
                 "ranking": increment(points),
                 "fightsDone": increment(1),
-                "lastFightTime": serverTimestamp()
+                "lastFightTime": serverTimestamp(),
+                "level": wizardLevel
             })
         }
         //sei l'attaccante ma hai perso
         else if (attaccante && !doIncrement) {
             updateDoc(docRef, {
                 "fightsDone": increment(1),
-                "lastFightTime": serverTimestamp()
+                "lastFightTime": serverTimestamp(),
+                "level": wizardLevel
             })
         }
         //è il difensore che ha vinto
