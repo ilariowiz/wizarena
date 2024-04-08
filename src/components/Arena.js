@@ -482,7 +482,7 @@ class Arena extends Component {
                 }
                 else {
                     this.updateDataFirebase(wizardSelected.id, false, points, true, wizardSelected.level)
-                    this.updateDataFirebase(winner, true, points, false)
+                    this.updateDataFirebase(winner, true, points, false, wizardSelected.level)
                 }
 
                 this.setState({ infoFight: { nft1: wizardSelected, nft2: { id: opponent.idnft }, winner: "" } })
