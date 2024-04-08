@@ -333,7 +333,7 @@ class Tournament extends Component {
     }
 
     renderBody(isMobile) {
-        const { tournament, subscribed, avgLevel } = this.state
+        const { tournament, subscribed, avgLevel, matchPair } = this.state
         const { subscribedWiza, mainTextColor, subscribedWizaSpellGraph } = this.props
 
         //console.log(subscribedWiza, tournament);
@@ -415,8 +415,11 @@ class Tournament extends Component {
 			)
 		}
 
-        if (tournament && tournament.showPair && this.state.matchPair && this.state.matchPair.length > 0) {
+        if (tournament && tournament.showPair && matchPair && matchPair.length > 0) {
             return this.renderMatchPair(boxW, isMobile, padding)
+        }
+        else if (tournament && tournament.showPair && !matchPair || (matchPair && matchPair.length === 0)) {
+            return this.renderLoading()
         }
 
         return this.renderRoundConcluso(boxW, isMobile, padding)
