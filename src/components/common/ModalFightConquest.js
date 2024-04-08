@@ -41,6 +41,7 @@ class ModalFightConquest extends Component {
 							<img
 	                            style={{ width: imgSize, height: imgSize, borderRadius: 4 }}
 	                            src={getImageUrl(undefined)}
+								alt="placeholder"
 	                        />
 						}
 

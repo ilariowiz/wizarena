@@ -2,7 +2,7 @@ import Pact from "pact-lang-api";
 import SignClient from "@walletconnect/sign-client";
 import QRCodeModal from "@walletconnect/qrcode-modal";
 import anime from 'animejs/lib/anime.es.js';
-import { getDoc, doc, setDoc, getDocs, query, collection, where, documentId } from "firebase/firestore";
+import { getDocs, query, collection, where, documentId } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import moment from 'moment'
 import { calcLevelWizard } from '../components/common/CalcLevelWizard'

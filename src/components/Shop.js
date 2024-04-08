@@ -8,7 +8,7 @@ import { AiOutlineMinus } from 'react-icons/ai'
 import { IoClose } from 'react-icons/io5'
 import Media from 'react-media';
 import Popup from 'reactjs-popup';
-import toast, { Toaster } from 'react-hot-toast';
+import { Toaster } from 'react-hot-toast';
 import DotLoader from 'react-spinners/DotLoader';
 import Header from './Header'
 import ModalSwapSpell from './common/ModalSwapSpell'
@@ -209,7 +209,7 @@ class Shop extends Component {
     }
 
     async loadAuras(nfts) {
-        const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
         const idnfts = nfts.map(i => i.id)
         //console.log(idnfts);
@@ -1841,7 +1841,6 @@ class Shop extends Component {
 	}
 
     renderSpellToUpgrade(wizard) {
-        const { wizaValue } = this.state
         const { mainTextColor } = this.props
 
         const spell = allSpells.find(i => i.name === wizard.spellSelected.name)
@@ -1983,10 +1982,8 @@ class Shop extends Component {
 	}
 
     renderAuraToUpgrade(wizard, aura) {
-        const { wizaValue, auraUpgradeWizaCost } = this.state
+        const { auraUpgradeWizaCost } = this.state
         const { mainTextColor } = this.props
-
-		const marginRight = 12
 
 		return (
 			<div style={{ alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 20, flexDirection: 'column' }}>

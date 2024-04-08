@@ -107,6 +107,7 @@ class OfferCollectionItem extends Component {
                     <img
                         style={{ width: 56, height: 56, marginTop: 3, borderRadius: 4, marginLeft: isMobile ? 5 : 20, marginRight: 10, cursor: 'pointer' }}
                         src={getImageUrl(undefined)}
+                        alt="Placeholder"
                     />
                     <p style={{ fontSize: 16, color: mainTextColor, marginLeft: 9 }}>
                         Collection Offer

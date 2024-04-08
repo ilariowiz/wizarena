@@ -148,7 +148,7 @@ class ModalFightsFlashTournament extends Component {
 	}
 
 	renderFightMobile(item, index, showHorizontal, width) {
-		const { mainTextColor, isDarkmode, tournamentInfo } = this.props
+		const { mainTextColor, isDarkmode } = this.props
 
 		const imgWidth = width || 40
 

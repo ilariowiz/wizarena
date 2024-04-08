@@ -810,6 +810,7 @@ class PvP extends Component {
                 <img
                     src={getImageUrl(sfidanteId)}
                     style={{ width: 70, height: 70, borderRadius: 4, marginBottom: 5 }}
+                    alt={`${sfidanteId}`}
                 />
 
                 <p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center', maxWidth: 70 }}>
@@ -822,7 +823,7 @@ class PvP extends Component {
     renderRowSub(item, index, isMobile, maxWidth) {
         //console.log(item);
         const { pvpFightsStartDate, replay, loadingReplay } = this.state
-        const { userMintedNfts, mainTextColor, isDarkmode } = this.props
+        const { mainTextColor, isDarkmode } = this.props
 
         const winRate = this.calcWinRate(item)
 

@@ -4,7 +4,6 @@ import DotLoader from 'react-spinners/DotLoader';
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { firebasedb } from '../../Firebase';
 import CardSingleFightProfile from '../CardSingleFightProfile'
-import getImageUrl from '../GetImageUrl'
 import {
     getSubscriptions
 } from '../../../actions'

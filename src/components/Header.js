@@ -64,7 +64,7 @@ class Header extends Component {
 	}
 
 	componentDidMount() {
-		const { circulatingSupply, isDarkmode } = this.props
+		const { isDarkmode } = this.props
 
 		this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
@@ -97,8 +97,6 @@ class Header extends Component {
 	}
 
 	getWizaMinedForWizard(multiplier, timestamp) {
-		const startStaked = moment(timestamp.timep).fromNow()
-
         const diffMinsFromStaked = moment().diff(moment(timestamp.timep), 'minutes')
         //console.log(diffMinsFromStaked);
         const minAday = 1440

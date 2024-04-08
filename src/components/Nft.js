@@ -31,7 +31,7 @@ import conditions from './common/Conditions'
 import allSpells from './common/Spells'
 import titles from './common/LeagueTitle'
 import getBoxWidth from './common/GetBoxW'
-import { getColorTextBasedOnLevel, calcLevelWizard, calcLevelWizardAfterUpgrade } from './common/CalcLevelWizard'
+import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import 'reactjs-popup/dist/index.css';
 import {
 	setNetworkSettings,
@@ -130,7 +130,7 @@ class Nft extends Component {
 	}
 
 	getPathNft() {
-		const { nftSelected, allNfts, userMintedNfts, subscribed, subscribedWiza } = this.props
+		const { nftSelected, allNfts, userMintedNfts } = this.props
 
 		const { pathname } = this.props.location;
 		const idNft = pathname.replace('/nft/', '')
@@ -855,7 +855,7 @@ class Nft extends Component {
 	}
 
 	renderMainFight(key, index) {
-		const { nft, openFightsSection } = this.state
+		const { nft } = this.state
 		const { mainTextColor } = this.props
 		//console.log(key);
 
@@ -887,7 +887,7 @@ class Nft extends Component {
 	}
 
 	renderSubSectionFights(key, index, values) {
-		const { nft, openFightsSection } = this.state
+		const { openFightsSection } = this.state
 
 		return (
 			<div style={Object.assign({}, styles.boxSingleTrait, { alignItems: 'flex-start' })} key={index}>
@@ -1416,7 +1416,7 @@ class Nft extends Component {
 	}
 
 	renderName(marginBottom) {
-		const { nft, winRate } = this.state
+		const { nft } = this.state
 		const { mainTextColor } = this.props
 
 		const prename = getName(nft.id)
@@ -1441,13 +1441,6 @@ class Nft extends Component {
 				<p style={{ color: mainTextColor, fontSize: 14, marginTop: 6 }}>
 					Owned by {nftOwner}
 				</p>
-
-				{/*
-					parseInt(winRate) > 0 &&
-					<p style={{ color: mainTextColor, fontSize: 15, textAlign: 'center', marginTop: 7 }} className="text-bold">
-						Win Rate {winRate}%
-					</p>
-				*/}
 
 				{
 					title ?
@@ -2112,9 +2105,6 @@ class Nft extends Component {
 
 		const viewTopsW = imageWidth * 75 / 100
 
-		let ctaWidth = (viewTopsW/2) - 5
-		//if (ctaWidth > 150) ctaWidth = 150
-
 		const bgName = nft.traits ? nft.traits.find(i => i.trait_type === "Background")["value"] : ""
 
 		return (
@@ -2133,6 +2123,7 @@ class Nft extends Component {
 
 						<img
 							style={{ width: imageWidth, height: imageWidth, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', backgroundColor: getBgNft(bgName), position: 'absolute', left: 0, top: 0, right: 0, bottom: 0 }}
+							alt="Background"
 						/>
 
 						{
@@ -2140,6 +2131,7 @@ class Nft extends Component {
 							<img
 								style={{ width: imageWidth, position: 'absolute', top: 0, right: 0 }}
 								src={getAuraForElement(nft.element)}
+								alt="Aura"
 							/>
 							: null
 						}
@@ -2148,12 +2140,13 @@ class Nft extends Component {
 							nft.id ?
 							<img
 								style={{ width: imageWidth, height: imageWidth, zIndex: 100 }}
-								//src={getImageUrl(nft.id)}
 								src={`https://storage.googleapis.com/wizarena/wizards_nobg/${nft.id}.png`}
+								alt={`${nft.id}`}
 							/>
 							:
 							<img
 								style={{ width: imageWidth, height: imageWidth, zIndex: 100 }}
+								alt="placeholder"
 							/>
 						}
 
@@ -2162,6 +2155,7 @@ class Nft extends Component {
 							<img
 								style={{ width: imageWidth, height: imageWidth, borderRadius: 4, position: 'absolute', top: 1, left: 1, zIndex: 120 }}
 								src={burn_overlay}
+								alt="Burn overlay"
 							/>
 							: null
 						}
@@ -2286,7 +2280,6 @@ class Nft extends Component {
 
 		const boxWidthRight = insideWidth - 430
 		let ctaWidth = boxWidthRight * 30 / 100
-		//if (ctaWidth > 250) ctaWidth = 250
 
 		let showOverlayBurn = infoBurn && infoBurn.burned
 
@@ -2311,6 +2304,7 @@ class Nft extends Component {
 
 							<img
 								style={{ width: 400, height: 400, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', backgroundColor: getBgNft(bgName), position: 'absolute', left: 0, top: 0, right: 0, bottom: 0 }}
+								alt="Background"
 							/>
 
 							{
@@ -2318,6 +2312,7 @@ class Nft extends Component {
 								<img
 									style={{ width: 400, position: 'absolute', top: 16, right: 0 }}
 									src={getAuraForElement(nft.element)}
+									alt="Aura"
 								/>
 								: null
 							}
@@ -2326,12 +2321,13 @@ class Nft extends Component {
 								nft.id ?
 								<img
 									style={{ width: 400, height: 400, zIndex: 100 }}
-									//src={getImageUrl(nft.id)}
 									src={`https://storage.googleapis.com/wizarena/wizards_nobg/${nft.id}.png`}
+									alt={`${nft.id}`}
 								/>
 								:
 								<img
 									style={{ width: 400, height: 400, zIndex: 100 }}
+									alt="placeholder"
 								/>
 							}
 
@@ -2340,6 +2336,7 @@ class Nft extends Component {
 								<img
 									style={{ width: 400, height: 400, borderRadius: 4, position: 'absolute', top: 1, left: 1, zIndex: 120 }}
 									src={burn_overlay}
+									alt="Burn overlay"
 								/>
 								: null
 							}

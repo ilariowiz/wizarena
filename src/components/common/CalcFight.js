@@ -1,5 +1,3 @@
-import React from 'react'
-
 import getPendantBonus from './GetPendantBonus'
 
 let history = []
@@ -7,9 +5,6 @@ let isEnd = false
 let winner = undefined
 let evento = undefined
 let isEventActive = false
-
-let player1 = ""
-let player2 = ""
 
 const getStartingText = (player, hasRing, hasPendant, hasAura) => {
 
@@ -37,9 +32,6 @@ const getStartingText = (player, hasRing, hasPendant, hasAura) => {
 const fight = (s1, s2, ev, callback) => {
     let s1copy = Object.assign({}, s1)
     let s2copy = Object.assign({}, s2)
-
-    player1 = s1copy.id
-    player2 = s2copy.id
 
     s1copy['condizione'] = {}
     s2copy['condizione'] = {}

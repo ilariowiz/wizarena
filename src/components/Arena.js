@@ -173,8 +173,8 @@ class Arena extends Component {
 	}
 
     async getSubscribers() {
-        const { chainId, gasPrice, gasLimit, networkUrl, userMintedNfts } = this.props
-        const { arenaInfo, subscribersId, allData } = this.state
+        const { userMintedNfts } = this.props
+        const { subscribersId, allData } = this.state
 
         //console.log(subscribersId);
         ////// TEST
@@ -379,7 +379,7 @@ class Arena extends Component {
     }
 
     async startFight() {
-        const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
+        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
         const { wizardSelected, allData, lastOpponentId } = this.state
 
         let seasonEnded = this.checkSeasonEnded()
@@ -867,6 +867,7 @@ class Arena extends Component {
                 <img
                     src={imageLeft}
                     style={{ width: 34, height: 34, marginRight: 10 }}
+                    alt="Cup"
                 />
                 <a
                     href={`${window.location.protocol}//${window.location.host}/nft/${item.idnft}`}
@@ -877,6 +878,7 @@ class Arena extends Component {
                     <img
                         src={getImageUrl(item.idnft)}
                         style={{ height: 70, width: 70, marginRight: 10, borderRadius: 2, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: "solid" }}
+                        alt={`${item.idnft}`}
                     />
                 </a>
 
@@ -891,8 +893,8 @@ class Arena extends Component {
     }
 
     renderRanking(level) {
-        const { mainTextColor, mainBackgroundColor } = this.props
-        const { categories, wizardSelected, allData } = this.state
+        const { mainBackgroundColor } = this.props
+        const { categories } = this.state
 
         let color;
         if (level === 375) {
@@ -930,7 +932,7 @@ class Arena extends Component {
     }
 
     renderBody(isMobile) {
-        const { loading, loadingYourSubs, yourSubs, wizardSelected, infoFight, isFightDone, showSubscribe, arenaInfo, notSubbed, countSubbedWizards, showModalFight } = this.state
+        const { loadingYourSubs, yourSubs, wizardSelected, infoFight, isFightDone, showSubscribe, arenaInfo, notSubbed, countSubbedWizards } = this.state
         const { mainTextColor, mainBackgroundColor } = this.props
 
         const { boxW, modalW, padding } = getBoxWidth(isMobile)
@@ -992,7 +994,7 @@ class Arena extends Component {
                        </button>
                    </div>
 
-                   <div style={{ flexWrap: 'wrap', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap' }}>
+                   <div style={{ flexWrap: 'wrap', alignItems: 'center', marginBottom: 20 }}>
                        <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center', marginRight: 20, marginBottom: 15 }}>
                            FREE TO PLAY
                        </p>

@@ -127,6 +127,7 @@ class ModalStats extends Component {
                                     <img
                                         style={styles.imgEquip}
                                         src={ring.url}
+                                        alt="Ring"
                                     />
         						)}
         						position="top center"
@@ -146,6 +147,7 @@ class ModalStats extends Component {
                                     <img
                                         style={styles.imgEquip}
                                         src={pendant.url}
+                                        alt="Pendant"
                                     />
         						)}
         						position="top center"
@@ -165,6 +167,7 @@ class ModalStats extends Component {
                                     <img
                                         style={styles.imgEquip}
                                         src={getAuraForElement(item.element)}
+                                        alt="Aura"
                                     />
         						)}
         						position="top center"

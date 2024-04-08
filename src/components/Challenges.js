@@ -1,13 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getDocs, collection, query, where, doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { firebasedb } from './Firebase';
 import Media from 'react-media';
 import Header from './Header'
 import DotLoader from 'react-spinners/DotLoader';
 import getBoxWidth from './common/GetBoxW'
-import allSpells from './common/Spells'
-import { calcLevelWizard } from './common/CalcLevelWizard'
 import ChallengeItem from './common/ChallengeItem'
 import ModalLoading from './common/ModalLoading'
 import { TEXT_SECONDARY_COLOR, MAIN_NET_ID } from '../actions/types'
@@ -161,33 +157,6 @@ class Challenges extends Component {
         else {
             this.props.history.push(`/fightreplay/fights/${item.fightId}`)
         }
-
-        /*
-        //lasciamo questo pezzo per supportare i replay vecchi
-        if (!item.coin) {
-            this.setState({ showModalLoading: true, textModalLoading: "Loading..." })
-
-            const q = query(collection(firebasedb, "fights_duels"), where("challengeid", "==", item.id))
-            const querySnapshot = await getDocs(q)
-
-            let dataFightFirebase = undefined
-
-            querySnapshot.forEach(doc => {
-                dataFightFirebase = doc.data()
-            })
-
-            this.setState({ showModalLoading: false, textModalLoading: "" })
-            this.props.setChallengeReplay(dataFightFirebase)
-
-            setTimeout(() => {
-                this.props.history.push(`/challengereplay/${dataFightFirebase.fightId}`)
-            }, 300)
-            //console.log("go to replay");
-        }
-        else {
-            this.props.history.push(`/fight/${item.fightId}`)
-        }
-        */
     }
 
     renderChallenges(array, loading, isReceived, isMobile) {

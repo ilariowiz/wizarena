@@ -1,13 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getDocs, collection, query, where, orderBy } from "firebase/firestore";
-import { firebasedb } from './Firebase';
-import { sample } from 'lodash'
 import Media from 'react-media';
 import Header from './Header'
 import recipeBook from './common/RecipeBook'
 import getBoxWidth from './common/GetBoxW'
-import { TEXT_SECONDARY_COLOR, CTA_COLOR, MAIN_NET_ID } from '../actions/types'
+import { CTA_COLOR } from '../actions/types'
 import {
     setNetworkUrl,
     setNetworkSettings,
@@ -43,7 +40,7 @@ class Recipes extends Component {
 	}
 
     renderCapitolo(item, index) {
-        const { mainTextColor, mainBackgroundColor, isDarkmode } = this.props
+        const { mainTextColor, isDarkmode } = this.props
         const { capitoloSelected } = this.state
 
 
@@ -61,7 +58,7 @@ class Recipes extends Component {
     }
 
     renderRicetta(item, index) {
-        const { isDarkmode, mainTextColor } = this.props
+        const { mainTextColor } = this.props
 
         let level = 1
         if (item.level) {
@@ -120,7 +117,7 @@ class Recipes extends Component {
 
     renderBody(isMobile) {
         const { capitoli, capitoloSelected } = this.state
-        const { mainTextColor, mainBackgroundColor } = this.props
+        const { mainTextColor } = this.props
 
         let { boxW, padding } = getBoxWidth(isMobile)
 
