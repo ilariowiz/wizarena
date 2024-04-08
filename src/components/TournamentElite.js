@@ -206,6 +206,8 @@ class TournamentElite extends Component {
             }
         }
 
+        //console.log(matchPair);
+
         this.setState({ subscribed: subs, yourStat, avgLevel, matchPair, loading })
     }
 
@@ -322,10 +324,10 @@ class TournamentElite extends Component {
     }
 
     renderBody(isMobile) {
-        const { tournament, subscribed, avgLevel } = this.state
+        const { tournament, subscribed, avgLevel, matchPair } = this.state
         const { subscribedElite, mainTextColor, subscribedEliteSpellGraph } = this.props
 
-        //console.log(subscribedWiza, tournament);
+        //console.log(tournament, matchPair);
 
         const { boxW, padding } = getBoxWidth(isMobile)
 
@@ -404,8 +406,11 @@ class TournamentElite extends Component {
 			)
 		}
 
-        if (tournament && tournament.showPair && this.state.matchPair && this.state.matchPair.length > 0) {
+        if (tournament && tournament.showPair && matchPair && matchPair.length > 0) {
             return this.renderMatchPair(boxW, isMobile, padding)
+        }
+        else if (tournament && tournament.showPair && !matchPair || (matchPair && matchPair.length === 0)) {
+            return this.renderLoading()
         }
 
         return this.renderRoundConcluso(boxW, isMobile, padding)
