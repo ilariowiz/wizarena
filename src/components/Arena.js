@@ -147,6 +147,9 @@ class Arena extends Component {
             if (!this.props.userMintedNfts || this.props.userMintedNfts.length === 0) {
                 this.loadMinted()
             }
+            else {
+                this.getSubscribers()
+            }
         })
     }
 
@@ -165,7 +168,6 @@ class Arena extends Component {
 			})
 		}
         else {
-            this.setState({ loadingYourSubs: false })
             this.getSubscribers()
         }
 	}
