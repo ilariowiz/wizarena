@@ -2123,7 +2123,6 @@ class Nft extends Component {
 
 						<img
 							style={{ width: imageWidth, height: imageWidth, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', backgroundColor: getBgNft(bgName), position: 'absolute', left: 0, top: 0, right: 0, bottom: 0 }}
-							alt="Background"
 						/>
 
 						{
@@ -2304,7 +2303,6 @@ class Nft extends Component {
 
 							<img
 								style={{ width: 400, height: 400, borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', backgroundColor: getBgNft(bgName), position: 'absolute', left: 0, top: 0, right: 0, bottom: 0 }}
-								alt="Background"
 							/>
 
 							{
