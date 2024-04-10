@@ -448,7 +448,7 @@ class TournamentElite extends Component {
         const { mainTextColor, subscribedElite } = this.props
 
         if (!subscribed || subscribed.length === 0) {
-            return <div />
+            return this.renderLoading()
         }
 
         const roundName = tournament.name.split("_")[1]

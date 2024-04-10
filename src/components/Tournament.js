@@ -434,7 +434,7 @@ class Tournament extends Component {
         const { mainTextColor, subscribed } = this.props
 
         if (!winners || winners.length === 0) {
-            return <div />
+            return this.renderLoading()
         }
 
         const roundName = tournament.name.split("_")[1]
