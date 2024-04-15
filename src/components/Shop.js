@@ -402,7 +402,7 @@ class Shop extends Component {
         }
 
         this.props.updateInfoTransactionModal({
-			transactionToConfirmText: `You will improve the ${stat} of ${nameNftToUpgrade} using WIZA`,
+			transactionToConfirmText: `You will improve ${nameNftToUpgrade}'s ${stat} by ${increase[stat]} points using WIZA`,
 			typeModal: 'upgrade',
 			transactionOkText: `Your Wizard #${wizard.id} is stronger now!`,
             nameNft: nameNftToUpgrade,
@@ -426,7 +426,7 @@ class Shop extends Component {
         }
 
         this.props.updateInfoTransactionModal({
-			transactionToConfirmText: `You will improve the ${stat} of ${nameNftToUpgrade} using AP`,
+			transactionToConfirmText: `You will improve ${nameNftToUpgrade}'s ${stat} by ${increase[stat]} points using AP`,
 			typeModal: 'upgrade',
 			transactionOkText: `Your Wizard #${wizard.id} is stronger now!`,
             nameNft: nameNftToUpgrade,
@@ -465,7 +465,7 @@ class Shop extends Component {
         }
 
         this.props.updateInfoTransactionModal({
-			transactionToConfirmText: `You will downgrade the ${stat} of ${nameNftToUpgrade}`,
+            transactionToConfirmText: `You will downgrade ${nameNftToUpgrade}'s ${stat} by ${decrease[stat]} points`,
 			typeModal: 'downgrade',
 			transactionOkText: 'Retrain done!',
             nameNft: nameNftToUpgrade,
