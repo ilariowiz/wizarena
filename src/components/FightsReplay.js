@@ -19,6 +19,8 @@ import { CTA_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID, REVEAL_CAP } from '../act
 import "../css/Fight.css"
 
 const druggorial_bg = require('../assets/bg_fights/druggorial_bg_hd.jpg')
+const oceorah_bg = require('../assets/bg_fights/oceorah_bg_hd.jpg')
+
 
 
 class FightsReplay extends Component {
@@ -302,6 +304,9 @@ class FightsReplay extends Component {
 
         if (fightInfo.region.includes("Druggorial")) {
             bgimage = druggorial_bg
+        }
+        else if (fightInfo.region.includes("Oceorah")) {
+            bgimage = oceorah_bg
         }
 
         return (
