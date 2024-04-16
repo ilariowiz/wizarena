@@ -414,7 +414,7 @@ class FightsReplay extends Component {
             				/>
 
                             <div
-                                style={{ height: 15, width: widthImg/2, position: 'absolute', top: widthImg+10, left: ((widthImg/2)-(widthImg/4)), backgroundColor: 'black', opacity: 0.5, borderRadius: '50%' }}
+                                style={{ height: 15, width: widthImg/2, position: 'absolute', top: widthImg+15, left: ((widthImg/2)-(widthImg/4)), backgroundColor: 'black', opacity: 0.5, borderRadius: '50%' }}
                             />
                         </div>
 
