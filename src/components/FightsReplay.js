@@ -18,6 +18,8 @@ import { CTA_COLOR, TEXT_SECONDARY_COLOR, MAIN_NET_ID, REVEAL_CAP } from '../act
 
 import "../css/Fight.css"
 
+const druggorial_bg = require('../assets/bg_fights/druggorial_bg_hd.jpg')
+
 
 class FightsReplay extends Component {
     constructor(props) {
@@ -39,7 +41,8 @@ class FightsReplay extends Component {
             historyShow: [],
             winner: undefined,
             isEnd: false,
-            showOnlyOne: false
+            showOnlyOne: false,
+            fightInfo: {}
         }
 
         this.player1 = {}
@@ -73,6 +76,7 @@ class FightsReplay extends Component {
     }
 
     preloadFight(data) {
+
         this.player1 = data.info1
         this.history = data.actions
 
@@ -82,13 +86,13 @@ class FightsReplay extends Component {
             this.player1InitialHp = this.player1.hp
             this.player2InitialHp = this.player2.hp
 
-            this.setState({ loading: false })
+            this.setState({ loading: false, fightInfo: data })
             setTimeout(() => {
                 this.showFight()
             }, 500)
         }
         else {
-            this.setState({ loading: false, showOnlyOne: true })
+            this.setState({ loading: false, showOnlyOne: true, fightInfo: data })
             setTimeout(() => {
                 this.showResult()
             }, 500)
@@ -188,8 +192,8 @@ class FightsReplay extends Component {
 	}
 
 
-    renderBoxHp(width, item, initialHp, currentHp, level, index, isMobile) {
-        const { mainTextColor, isDarkmode } = this.props
+    renderBoxHp(width, item, initialHp, currentHp, level, index, isMobile, rgbBackgroundColor) {
+        const { mainTextColor, isDarkmode, mainBackgroundColor } = this.props
 
         const innerWidth = width - 40
 
@@ -200,7 +204,7 @@ class FightsReplay extends Component {
         let colorLevel = getColorTextBasedOnLevel(level, isDarkmode)
 
         return (
-            <div style={Object.assign({}, styles.boxHp, { width })}>
+            <div style={Object.assign({}, styles.boxHp, { width, backgroundColor: `rgba(${rgbBackgroundColor[0]}, ${rgbBackgroundColor[1]}, ${rgbBackgroundColor[2]}, 0.85)`, borderColor: mainTextColor })}>
 
                 <div style={{ justifyContent: 'space-between', alignItems: 'center', width: innerWidth, flexDirection: isMobile ? 'column' : 'row' }}>
 
@@ -281,9 +285,36 @@ class FightsReplay extends Component {
         )
     }
 
+    hexToRgb(hex) {
+        return ['0x' + hex[1] + hex[2] | 0, '0x' + hex[3] + hex[4] | 0, '0x' + hex[5] + hex[6] | 0];
+    }
+
+    renderBgRegion() {
+        const { fightInfo } = this.state
+
+        if (!fightInfo || !fightInfo.region) {
+            return undefined
+        }
+
+        const headerHeight = document.getElementById('headerbox').offsetHeight;
+
+        let bgimage;
+
+        if (fightInfo.region.includes("Druggorial")) {
+            bgimage = druggorial_bg
+        }
+
+        return (
+            <img
+                style={{ position: 'absolute', top: headerHeight, left: 0, width: '100%' }}
+                src={bgimage}
+            />
+        )
+    }
+
     renderBody(isMobile) {
-        const { historyShow, loading, isEnd, showOnlyOne } = this.state
-        const { mainTextColor } = this.props
+        const { historyShow, loading, isEnd, showOnlyOne, fightInfo } = this.state
+        const { mainTextColor, mainBackgroundColor } = this.props
 
         let { boxW } = getBoxWidth(isMobile)
 
@@ -343,8 +374,17 @@ class FightsReplay extends Component {
         const pctImg = isMobile ? 90 : 60
         const widthImg = widthSide * pctImg / 100
 
+        //console.log(this.hexToRgb(mainBackgroundColor));
+
+        const rgbBackgroundColor = this.hexToRgb(mainBackgroundColor)
+
         return (
             <div style={{ width: boxW, flexDirection: 'column' }}>
+
+                {
+                    !isMobile &&
+                    this.renderBgRegion()
+                }
 
                 <div style={{ justifyContent: 'space-between', width: boxW, position: 'relative' }}>
 
@@ -352,7 +392,7 @@ class FightsReplay extends Component {
 
                         <div style={{ height: isMobile ? 15 : 60 }} />
 
-                        {this.renderBoxHp(widthSide, this.player2, this.player2InitialHp, player2CurrentHp, this.player2.level, 1, isMobile)}
+                        {this.renderBoxHp(widthSide, this.player2, this.player2InitialHp, player2CurrentHp, this.player2.level, 1, isMobile, rgbBackgroundColor)}
 
                         <div style={{ width: widthImg, marginTop: isMobile ? 70 : 110, position: 'relative' }}>
                             <img
@@ -372,9 +412,13 @@ class FightsReplay extends Component {
                                 src={`https://storage.googleapis.com/wizarena/wizards_nobg/${this.player2.id}.png`}
             					alt={this.player2.id}
             				/>
+
+                            <div
+                                style={{ height: 15, width: widthImg/2, position: 'absolute', top: widthImg, left: ((widthImg/2)-(widthImg/4)), backgroundColor: 'black', opacity: 0.5, borderRadius: '50%' }}
+                            />
                         </div>
 
-                        {this.renderBoxHp(widthSide, this.player1, this.player1InitialHp, player1CurrentHp, this.player1.level, 2, isMobile)}
+                        {this.renderBoxHp(widthSide, this.player1, this.player1InitialHp, player1CurrentHp, this.player1.level, 2, isMobile, rgbBackgroundColor)}
 
                         <div style={{ height: isMobile ? 15 : 30 }} />
 
@@ -382,7 +426,7 @@ class FightsReplay extends Component {
 
                 </div>
 
-                <div style={styles.boxDesc}>
+                <div style={Object.assign({}, styles.boxDesc, { backgroundColor: `rgba(${rgbBackgroundColor[0]}, ${rgbBackgroundColor[1]}, ${rgbBackgroundColor[2]}, 0.85)`, borderColor: mainTextColor })}>
                     {
                         historyShow.length > 0 &&
                         historyShow.map((item, index) => {
@@ -501,7 +545,6 @@ const styles = {
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 2,
-        borderColor: TEXT_SECONDARY_COLOR,
         borderStyle: 'solid',
         borderRadius: 4
     },
@@ -509,7 +552,6 @@ const styles = {
         position: 'relative',
         height: 160,
         borderWidth: 2,
-        borderColor: TEXT_SECONDARY_COLOR,
         borderStyle: 'solid',
         borderRadius: 4,
         padding: 10,
