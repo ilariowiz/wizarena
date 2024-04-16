@@ -20,6 +20,7 @@ import "../css/Fight.css"
 
 const druggorial_bg = require('../assets/bg_fights/druggorial_bg_hd.jpg')
 const oceorah_bg = require('../assets/bg_fights/oceorah_bg_hd.jpg')
+const sitenor_bg = require('../assets/bg_fights/sitenor_bg_hd.jpg')
 
 
 
@@ -307,6 +308,9 @@ class FightsReplay extends Component {
         }
         else if (fightInfo.region.includes("Oceorah")) {
             bgimage = oceorah_bg
+        }
+        else if (fightInfo.region.includes("Sitenor")) {
+            bgimage = sitenor_bg
         }
 
         return (
