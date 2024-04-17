@@ -658,7 +658,6 @@ class Conquest extends Component {
                 [oldkeyElo]: oldElo
             })
         }
-
     }
 
     eventsPerRegion(regionName) {
