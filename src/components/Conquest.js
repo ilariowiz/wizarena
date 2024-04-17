@@ -338,11 +338,10 @@ class Conquest extends Component {
         newSubs.map(async (i) => {
             const data = await this.getElosDataSingleNft(i.id)
             //console.log(data);
-
             i['fightsDone'] = data.fightsDone
-
-            this.calcDailyFights(false, data)
         })
+
+        this.setState({ yourSubs: newSubs })
     }
 
     async loadYourChampion(infoNft) {
@@ -402,8 +401,7 @@ class Conquest extends Component {
 
         //console.log(infoNft);
 
-        this.setState({ wizardSelectedElos: data, wizardSelected: infoNft, loadingYourChampion: false }, () => {
-            this.calcDailyFights(true, data)
+        this.setState({ wizardSelectedElos: data, wizardSelected: infoNft, fightsDone: data.fightsDone, loadingYourChampion: false }, () => {
             this.loadWizardSelectedLastFights(infoNft.id)
         })
     }
@@ -447,37 +445,6 @@ class Conquest extends Component {
         this.props.subscribeToLords(chainId, gasPrice, gasLimit, netId, account, this.SEASON_ID, toSubscribe)
     }
 
-    calcDailyFights(updateState, wizard) {
-        //console.log(updateState, wizard);
-
-        if (!wizard || !wizard.lastFightTime) {
-            return undefined
-        }
-
-        const lastFightTime = moment(wizard.lastFightTime.seconds * 1000)
-
-        //console.log(lastFightTime);
-
-        const isSame = moment().isSame(lastFightTime, 'days')
-        //console.log(isSame);
-
-        if (!isSame) {
-            const docRef = doc(firebasedb, this.SEASON_ID, wizard.docId)
-            updateDoc(docRef, {"fightsDone": 0, lastFightTime: serverTimestamp() })
-
-            if (updateState) {
-                this.setState({ fightsDone: 0 })
-            }
-
-        }
-        else {
-            if (updateState) {
-                this.setState({ fightsDone: wizard.fightsDone })
-            }
-
-        }
-    }
-
     async loadWizardSelectedLastFights(idnft) {
         let q1 = query(collection(firebasedb, this.SEASON_ID_FIGHTS), where("wizards", "array-contains-any", [idnft]), limit(5), orderBy("timestamp", "desc"))
         const querySnapshot = await getDocs(q1)
@@ -500,30 +467,6 @@ class Conquest extends Component {
         }
 
         this.setState({ wizardSelectedLastFights: fights, lastOpponentId })
-    }
-
-    getChampionToFight(filterTop3) {
-
-        let champion;
-
-        //filtriamo per quelli che non hanno mai ricevuto un fight
-        let newFilterTop3 = filterTop3.filter(i => !i.lastFightGet)
-
-        if (newFilterTop3.length > 0) {
-            champion = _.sample(newFilterTop3)
-
-            return champion
-        }
-        else {
-            //in questo caso tutti hanno ricevuto almeno un fight e quindi tutti hanno la key "lastFightGet"
-
-            filterTop3 = _.orderBy(filterTop3, [(obj) => moment(obj.lastFightGet.seconds * 1000)], ['asc'])
-
-            let chooseFromTwo = [filterTop3[0], filterTop3[1]]
-
-            return _.sample(chooseFromTwo)
-            //return filterTop3[0]
-        }
     }
 
     async startFight(champions, keyElo, possibleBoosts) {
@@ -669,9 +612,7 @@ class Conquest extends Component {
                     await this.loadChampions()
 
 
-                    this.setState({ wizardSelectedElos: dataElo, isFightDone: true, infoFight: { nft1: wizardSelected, nft2: response, evento: eventoInfo, winner } }, () => {
-                        this.calcDailyFights(true, dataElo)
-                        this.loadYourSubsFightsLeft()
+                    this.setState({ fightsDone: dataElo.fightsDone, wizardSelectedElos: dataElo, isFightDone: true, infoFight: { nft1: wizardSelected, nft2: response, evento: eventoInfo, winner } }, () => {
                         this.loadWizardSelectedLastFights(wizardSelected.id)
                     })
                 }, 3000)
@@ -714,8 +655,7 @@ class Conquest extends Component {
         else {
             updateDoc(docRef, {
                 [keyElo]: increment(eloIncrement),
-                [oldkeyElo]: oldElo,
-                lastFightGet: serverTimestamp()
+                [oldkeyElo]: oldElo
             })
         }
 
