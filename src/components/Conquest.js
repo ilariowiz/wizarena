@@ -1376,9 +1376,6 @@ class Conquest extends Component {
                                 <button
                                     className='btnH'
                                     style={styles.btnRules}
-                                    onClick={() => {
-                                        this.setState({ showSubscribe: true })
-                                    }}
                                 >
                                     <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }} className="text-medium">
                                         Rules
@@ -1395,12 +1392,12 @@ class Conquest extends Component {
                                       {' '}
                                       Each region of Wizards World has its own leaderboard. Whoever has the most ELO points is the current Lord.
                                       <br />
-                                      Each wizard has 5 daily fights and will be able to challenge one of the top 3 wizards from each of the 9 regions. There are no constraints, you can do a single fight for 5 different regions, or all 5 fights in the same region.
+                                      Each wizard has 5 daily fights and will be able to challenge one of the top 3 wizards of the regions that include his Element.
                                       <br />
                                       To calculate the ranking the website uses a modified version of the ELO rating. When you win, you gain points and your opponent loses 80% of the points you won.
                                       <br />
                                       <br />
-                                      Each region has 3 possible boosts. These boosts are associated with the elements closest to the region, for example Sitenor can have Fire, Earth or Dark boost. Each fight will have a random boost chosen from the 3 possible elements in the region. So it is important to understand if your wizard can take full advantage of the boosts that region can offer.
+                                      Each region has 3 possible boosts. These boosts are associated with the elements closest to the region, for example Sitenor can have Fire, Earth or Dark boost. Each fight will have a random boost chosen from the 3 possible elements in the region.
                                     </div>
                                     <div style={{ justifyContent: 'center', marginBottom: 10 }}>
                                         <button
