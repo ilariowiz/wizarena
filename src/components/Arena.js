@@ -463,8 +463,6 @@ class Arena extends Component {
                 response['defense'] += parseInt(response.aura.bonus.int)
             }
 
-            this.setState({ infoFight: { nft1: wizardSelected, nft2: response, winner: "" }, showModalFight: true, loadingStartFight: false })
-
             fight(wizardSelected, response, undefined, async (history, winner) => {
 
                 this.sendFightToFirebase(history, wizardSelected, response, winner)
@@ -485,7 +483,7 @@ class Arena extends Component {
                     this.updateDataFirebase(winner, true, points, false, wizardSelected.level)
                 }
 
-                this.setState({ infoFight: { nft1: wizardSelected, nft2: { id: opponent.idnft }, winner: "" } })
+                this.setState({ infoFight: { nft1: wizardSelected, nft2: response, winner: "" }, loadingStartFight: false })
 
                 setTimeout(async () => {
                     await this.loadSubscribers()
@@ -494,7 +492,7 @@ class Arena extends Component {
                         this.loadWizardSelectedLastFights(wizardSelected.id)
                     })
 
-                }, 2000)
+                }, 3000)
 
             })
         })
