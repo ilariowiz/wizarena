@@ -87,7 +87,8 @@ class Conquest extends Component {
             notSubbed: [],
             toSubscribe: [],
             countSubbedWizards: 0,
-            infoLords: {}
+            infoLords: {},
+            lastOpponentId: ""
         }
     }
 
@@ -492,7 +493,13 @@ class Conquest extends Component {
             fights.push(data)
         })
 
-        this.setState({ wizardSelectedLastFights: fights })
+        const lastFight = fights.length > 0 ? fights[0] : undefined
+        let lastOpponentId;
+        if (lastFight) {
+            lastOpponentId = lastFight.idnft1 === idnft ? lastFight.idnft2 : lastFight.idnft1
+        }
+
+        this.setState({ wizardSelectedLastFights: fights, lastOpponentId })
     }
 
     getChampionToFight(filterTop3) {
@@ -521,7 +528,7 @@ class Conquest extends Component {
 
     async startFight(champions, keyElo, possibleBoosts) {
         const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
-        const { wizardSelected, wizardSelectedElos } = this.state
+        const { wizardSelected, wizardSelectedElos, lastOpponentId } = this.state
 
         let seasonEnded = this.checkSeasonEnded()
         //console.log(seasonEnded);
@@ -531,29 +538,30 @@ class Conquest extends Component {
             return
         }
 
-        //questo serve per rimuovere i tuoi wizards
-        let filterTop3 = champions.filter(i => i.owner !== account.account)
+        //questo serve per rimuovere il wizard selezionato
+        let filterTop3 = champions.filter(i => i.idnft !== wizardSelected.id)
+        //non puoi sfidare l'ultimo che hai sfidato
+        if (lastOpponentId) {
+            filterTop3 = filterTop3.filter(i => i.idnft !== lastOpponentId)
+        }
 
         let champion;
 
-        if (filterTop3.length > 1) {
-            champion = this.getChampionToFight(filterTop3)
-        }
-        else if (filterTop3.length === 1) {
-            champion = filterTop3[0]
+        if (filterTop3.length > 0) {
+            champion = _.sample(filterTop3)
         }
         else if (filterTop3.length === 0) {
             this.setState({ showModalFight: false, infoFight: {}, isFightDone: false, loadingStartFight: false }, () => {
-                toast.error(`You can't fight your own wizard`)
+                toast.error(`No wizards available to fight`)
             })
             return
         }
 
-        this.setState({ loadingStartFight: true, showModalFight: true, infoFight: { nft1: wizardSelected, nft2: { id: champion.idnft }, evento: "", winner: "" } })
-
+        this.setState({ loadingStartFight: true, showModalFight: true, infoFight: { nft1: wizardSelected, nft2: { id: "" }, evento: "", winner: "" } })
 
         this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, champion.idnft, async (response) => {
 
+            /*
             if (wizardSelected.owner === response.owner) {
                 console.log('you can\'t fight your own wizard');
                 this.setState({ showModalFight: false, infoFight: {}, isFightDone: false, loadingStartFight: false }, () => {
@@ -561,6 +569,7 @@ class Conquest extends Component {
                 })
                 return
             }
+            */
 
             const ring = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, champion.idnft)
             const pendant = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, `${champion.idnft}pendant`)
@@ -616,10 +625,6 @@ class Conquest extends Component {
             const eventoInfo = allEvents.find(i => i.elements === boostName.toLowerCase())
             //console.log(eventoInfo);
 
-            this.setState({ infoFight: { nft1: wizardSelected, nft2: response, evento: eventoInfo, winner: "" }, showModalFight: true, loadingStartFight: false })
-
-            //console.log(wizardSelected);
-
             fight(wizardSelected, response, eventoInfo, async (history, winner) => {
                 //console.log(history, winner);
 
@@ -654,6 +659,8 @@ class Conquest extends Component {
 
                 this.updateDataFirebase(wizardSelectedElos.docId, getDelta1, keyElo, elo1, `old${keyElo}`, true)
                 this.updateDataFirebase(champion.docId, getDeltaChampion, keyElo, eloChampion, `old${keyElo}`, false)
+
+                this.setState({ infoFight: { nft1: wizardSelected, nft2: response, evento: eventoInfo, winner: "" }, showModalFight: true, loadingStartFight: false })
 
                 setTimeout(async () => {
                     const dataElo = await this.getElosDataSingleNft(wizardSelected.id)
@@ -886,6 +893,15 @@ class Conquest extends Component {
         )
     }
 
+    canFightInRegion(wizardElement, events) {
+        //console.log(events, wizardElement);
+        if (events.includes(wizardElement)) {
+            return true
+        }
+
+        return false
+    }
+
     renderRegion(regionName, regionImage, RegionIcon, keyElo, seasonStarted, seasonEnded) {
 
         const { wizardSelected, wizardSelectedElos, champions, loadingStartFight, fightsDone, infoLords } = this.state
@@ -1023,7 +1039,7 @@ class Conquest extends Component {
                             }
 
                             {
-                                !loadingStartFight && fightsLeft > 0 &&
+                                !loadingStartFight && fightsLeft > 0 && this.canFightInRegion(wizardSelected.element, possibleBoosts) &&
                                 <button
                                     style={Object.assign({}, styles.btnSubscribe, { width: maxWidth, height: 30, marginBottom: 8, boxShadow: "black 0px 0px 15px", })}
                                     onClick={() => this.startFight(champions[regionName], keyElo, possibleBoosts)}
