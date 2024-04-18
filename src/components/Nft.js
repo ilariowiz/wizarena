@@ -2145,7 +2145,6 @@ class Nft extends Component {
 							:
 							<img
 								style={{ width: imageWidth, height: imageWidth, zIndex: 100 }}
-								alt="placeholder"
 							/>
 						}
 
@@ -2325,7 +2324,6 @@ class Nft extends Component {
 								:
 								<img
 									style={{ width: 400, height: 400, zIndex: 100 }}
-									alt="placeholder"
 								/>
 							}
 
