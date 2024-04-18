@@ -469,6 +469,25 @@ class Conquest extends Component {
         this.setState({ wizardSelectedLastFights: fights, lastOpponentId })
     }
 
+    async checkIfFightsLeft(idnft) {
+
+        const q = query(collection(firebasedb, this.SEASON_ID), where("idnft", "==", idnft))
+        const querySnapshot = await getDocs(q)
+
+        let data = undefined
+
+        querySnapshot.forEach(doc => {
+            data = doc.data()
+            data['docId'] = doc.id
+        })
+
+        if (data.fightsDone < 5) {
+            return true
+        }
+
+        return false
+    }
+
     async startFight(champions, keyElo, possibleBoosts, regionName) {
         const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
         const { wizardSelected, wizardSelectedElos, lastOpponentId } = this.state
@@ -477,6 +496,13 @@ class Conquest extends Component {
         //console.log(seasonEnded);
         if (seasonEnded) {
             //season finita mentre stavi ancora con la pagina aperta e ti fa fare i fights
+            window.location.reload()
+            return
+        }
+
+        const hasFightsLeft = await this.checkIfFightsLeft(wizardSelected.id)
+        //console.log(hasFightsLeft);
+        if (!hasFightsLeft) {
             window.location.reload()
             return
         }
@@ -498,6 +524,10 @@ class Conquest extends Component {
                 toast.error(`No wizards available to fight`)
             })
             return
+        }
+
+        if (champion) {
+            this.incrementFights(wizardSelectedElos.docId)
         }
 
         this.setState({ loadingStartFight: true, showModalFight: true, infoFight: { nft1: wizardSelected, nft2: { id: "" }, evento: "", winner: "" } })
@@ -643,6 +673,14 @@ class Conquest extends Component {
         setDoc(fightRef, fightObj)
     }
 
+    async incrementFights(docId) {
+        const docRef = doc(firebasedb, this.SEASON_ID, docId)
+
+        updateDoc(docRef, {
+            "fightsDone": increment(1),
+        })
+    }
+
     async updateDataFirebase(docId, eloIncrement, keyElo, oldElo, oldkeyElo, doIncrement) {
         const docRef = doc(firebasedb, this.SEASON_ID, docId)
 
@@ -650,7 +688,6 @@ class Conquest extends Component {
             updateDoc(docRef, {
                 [keyElo]: increment(eloIncrement),
                 [oldkeyElo]: oldElo,
-                "fightsDone": increment(1)
             })
         }
         else {
