@@ -344,7 +344,7 @@ class Arena extends Component {
 
         this.setState({ subscribing: true })
 
-        console.log(toSubscribe);
+        //console.log(toSubscribe);
 
         toSubscribe.map(async i => {
 
@@ -358,7 +358,7 @@ class Arena extends Component {
                 level: nftInfo.level
             }
 
-            console.log(nftInfo, initialDoc);
+            //console.log(nftInfo, initialDoc);
 
             const docRef = doc(collection(firebasedb, this.SEASON_ID))
             await setDoc(docRef, initialDoc)
@@ -378,6 +378,25 @@ class Arena extends Component {
         this.setState({ toSubscribe: newToSub })
     }
 
+    async checkIfFightsLeft(idnft) {
+
+        const q = query(collection(firebasedb, this.SEASON_ID), where("idnft", "==", idnft))
+        const querySnapshot = await getDocs(q)
+
+        let data = undefined
+
+        querySnapshot.forEach(doc => {
+            data = doc.data()
+            data['docId'] = doc.id
+        })
+
+        if (data.fightsDone < 5) {
+            return true
+        }
+
+        return false
+    }
+
     async startFight() {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
         const { wizardSelected, allData, lastOpponentId } = this.state
@@ -386,6 +405,13 @@ class Arena extends Component {
         //console.log(seasonEnded);
         if (seasonEnded) {
             //season finita mentre stavi ancora con la pagina aperta e ti fa fare i fights
+            window.location.reload()
+            return
+        }
+
+        const hasFightsLeft = await this.checkIfFightsLeft(wizardSelected.id)
+        //console.log(hasFightsLeft);
+        if (!hasFightsLeft) {
             window.location.reload()
             return
         }
@@ -412,6 +438,10 @@ class Arena extends Component {
         //console.log(opponentsByLevel);
 
         const opponent = _.sample(opponentsByLevel)
+
+        if (opponent) {
+            this.incrementFights(wizardSelected.id)
+        }
 
         this.setState({ loadingStartFight: true, showModalFight: true, infoFight: { nft1: wizardSelected, nft2: { id: "" }, winner: "" } })
 
@@ -518,6 +548,18 @@ class Arena extends Component {
         setDoc(fightRef, fightObj)
     }
 
+    async incrementFights(idnft) {
+        const { allData } = this.state
+
+        const data = allData.find(i => i.idnft === idnft)
+
+        const docRef = doc(firebasedb, this.SEASON_ID, data.docId)
+
+        updateDoc(docRef, {
+            "fightsDone": increment(1),
+        })
+    }
+
     async updateDataFirebase(idnft, doIncrement, points, attaccante, wizardLevel) {
         const { allData } = this.state
 
@@ -529,7 +571,6 @@ class Arena extends Component {
         if (attaccante && doIncrement) {
             updateDoc(docRef, {
                 "ranking": increment(points),
-                "fightsDone": increment(1),
                 "lastFightTime": serverTimestamp(),
                 "level": wizardLevel
             })
@@ -537,7 +578,6 @@ class Arena extends Component {
         //sei l'attaccante ma hai perso
         else if (attaccante && !doIncrement) {
             updateDoc(docRef, {
-                "fightsDone": increment(1),
                 "lastFightTime": serverTimestamp(),
                 "level": wizardLevel
             })
