@@ -308,7 +308,7 @@ class FightsReplay extends Component {
 
         const headerHeight = document.getElementById('headerbox').offsetHeight;
 
-        let bgimage;
+        let bgimage = oceorah_bg
 
         if (fightInfo.region.includes("Druggorial")) {
             bgimage = druggorial_bg
