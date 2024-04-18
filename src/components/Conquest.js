@@ -469,7 +469,7 @@ class Conquest extends Component {
         this.setState({ wizardSelectedLastFights: fights, lastOpponentId })
     }
 
-    async startFight(champions, keyElo, possibleBoosts) {
+    async startFight(champions, keyElo, possibleBoosts, regionName) {
         const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
         const { wizardSelected, wizardSelectedElos, lastOpponentId } = this.state
 
@@ -580,7 +580,7 @@ class Conquest extends Component {
                 */
 
                 // SEND FIGHT to firebase **************
-                this.sendFightToFirebase(history, wizardSelected, response, winner)
+                this.sendFightToFirebase(history, wizardSelected, response, winner, regionName)
 
                 // **************
 
@@ -622,7 +622,7 @@ class Conquest extends Component {
         })
     }
 
-    sendFightToFirebase(history, player1, player2, winner) {
+    sendFightToFirebase(history, player1, player2, winner, regionName) {
 
         const fightObj = {
             actions: history,
@@ -635,7 +635,8 @@ class Conquest extends Component {
             hp1: player1.hp,
             hp2: player2.hp,
             timestamp: serverTimestamp(),
-            wizards: [player1.id, player2.id]
+            wizards: [player1.id, player2.id],
+            region: regionName
         }
 
         const fightRef = doc(collection(firebasedb, this.SEASON_ID_FIGHTS))
@@ -981,7 +982,7 @@ class Conquest extends Component {
                                 !loadingStartFight && fightsLeft > 0 && this.canFightInRegion(wizardSelected.element, possibleBoosts) &&
                                 <button
                                     style={Object.assign({}, styles.btnSubscribe, { width: maxWidth, height: 30, marginBottom: 8, boxShadow: "black 0px 0px 15px", })}
-                                    onClick={() => this.startFight(champions[regionName], keyElo, possibleBoosts)}
+                                    onClick={() => this.startFight(champions[regionName], keyElo, possibleBoosts, regionName)}
                                 >
                                     <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
                                         Fight
