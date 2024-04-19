@@ -397,6 +397,21 @@ class Arena extends Component {
         return false
     }
 
+    getOpponent(opponents) {
+        opponents = opponents.sort((a,b) => {
+
+            let fightsGetA = a.fightsGet || 0
+            let fightsGetB = b.fightsGet || 0
+
+            return fightsGetA - fightsGetB
+        })
+        //console.log(opponents);
+
+        const top10 = opponents.slice(0, opponents.length/2)
+
+        return _.sample(top10)
+    }
+
     async startFight() {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
         const { wizardSelected, allData, lastOpponentId } = this.state
@@ -416,11 +431,13 @@ class Arena extends Component {
             return
         }
 
+        // rimuoviamo il wiz selezionato e l'ultimo wizard sfidato
         let opponents = allData.filter(i => i.idnft !== wizardSelected.id)
         if (lastOpponentId) {
             opponents = opponents.filter(i => i.idnft !== lastOpponentId)
         }
 
+        //filtriamo per categoria
         let opponentsByLevel = []
 
         opponents.map(i => {
@@ -437,7 +454,7 @@ class Arena extends Component {
 
         //console.log(opponentsByLevel);
 
-        const opponent = _.sample(opponentsByLevel)
+        const opponent = this.getOpponent(opponentsByLevel)//_.sample(opponentsByLevel)
 
         if (opponent) {
             this.incrementFights(wizardSelected.id)
@@ -585,7 +602,8 @@ class Arena extends Component {
         //è il difensore che ha vinto
         else {
             updateDoc(docRef, {
-                "ranking": increment(points)
+                "ranking": increment(points),
+                "fightsGet": increment(1)
             })
         }
     }
