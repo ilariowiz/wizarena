@@ -69,7 +69,7 @@ class Arena extends Component {
 
         const arenaInfo = await this.loadArenaInfo()
 
-        this.SEASON_ID = "arena_ranking"
+        this.SEASON_ID = arenaInfo.ranking
         this.SEASON_ID_FIGHTS = "arena_fights"
 
         this.setState({ arenaInfo })
@@ -108,13 +108,18 @@ class Arena extends Component {
 
         //console.log(allData);
 
+        let sub160 = []
         let sub190 = []
         let sub300 = []
         let sub375 = []
         let subscribersId = []
 
         allData.map(i => {
-            if (i.level <= 190) {
+            if (i.level <= 160) {
+                sub160.push(i)
+            }
+
+            else if (i.level > 160 && i.level <= 190) {
                 sub190.push(i)
             }
             else if (i.level > 190 && i.level <= 300) {
@@ -125,6 +130,10 @@ class Arena extends Component {
             }
 
             subscribersId.push(i.idnft)
+        })
+
+        sub160.sort((a, b) => {
+            return b.ranking - a.ranking
         })
 
         sub190.sort((a, b) => {
@@ -139,7 +148,7 @@ class Arena extends Component {
             return b.ranking - a.ranking
         })
 
-        const categories = { "sub190": sub190.slice(0, 5), "sub300": sub300.slice(0, 5), "sub375": sub375.slice(0, 5) }
+        const categories = { "sub160": sub160.slice(0, 5), "sub190": sub190.slice(0, 5), "sub300": sub300.slice(0, 5), "sub375": sub375.slice(0, 5) }
 
         //console.log(categories);
 
@@ -204,48 +213,8 @@ class Arena extends Component {
             return b.level - a.level
         })
 
-        this.setState({ loadingYourSubs: false, loading: false, yourSubs, notSubbed, countSubbedWizards: subscribersId.length }, () => {
-            this.loadYourSubsFightsLeft()
-        })
+        this.setState({ loadingYourSubs: false, loading: false, yourSubs, notSubbed, countSubbedWizards: subscribersId.length })
 	}
-
-    loadYourSubsFightsLeft() {
-        const { yourSubs, allData } = this.state
-
-        yourSubs.map(i => {
-            const data = allData.find(z => z.idnft === i.id)
-            this.calcDailyFights(false, data)
-        })
-    }
-
-    calcDailyFights(updateState, wizard) {
-        //console.log(updateState, wizard);
-
-        if (!wizard || !wizard.lastFightTime) {
-            return undefined
-        }
-
-        const lastFightTime = moment(wizard.lastFightTime.seconds * 1000)
-
-        //console.log(lastFightTime);
-
-        const isSame = moment().isSame(lastFightTime, 'days')
-        //console.log(isSame);
-
-        if (!isSame) {
-            const docRef = doc(firebasedb, this.SEASON_ID, wizard.docId)
-            updateDoc(docRef, {"fightsDone": 0, lastFightTime: serverTimestamp() })
-
-            if (updateState) {
-                this.setState({ fightsDone: 0 })
-            }
-        }
-        else {
-            if (updateState) {
-                this.setState({ fightsDone: wizard.fightsDone })
-            }
-        }
-    }
 
     async loadYourChampion(infoNft) {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
@@ -257,9 +226,9 @@ class Arena extends Component {
 
         //console.log(data);
 
-        const ring = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, infoNft.id)
-        const pendant = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, `${infoNft.id}pendant`)
-        const aura = await this.props.getInfoAura(chainId, gasPrice, gasLimit, networkUrl, infoNft.id)
+        const ring = data.level > 160 ? await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, infoNft.id) : undefined
+        const pendant = data.level > 160 ? await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, `${infoNft.id}pendant`) : undefined
+        const aura = data.level > 160 ? await this.props.getInfoAura(chainId, gasPrice, gasLimit, networkUrl, infoNft.id) : undefined
 
         if (ring && ring.equipped) {
             infoNft['ring'] = ring
@@ -305,8 +274,7 @@ class Arena extends Component {
 
         //console.log(infoNft);
 
-        this.setState({ wizardSelected: infoNft, loadingYourChampion: false }, () => {
-            this.calcDailyFights(true, data)
+        this.setState({ wizardSelected: infoNft, loadingYourChampion: false, fightsDone: data.fightsDone }, () => {
             this.loadWizardSelectedLastFights(infoNft.id)
         })
     }
@@ -441,7 +409,10 @@ class Arena extends Component {
         let opponentsByLevel = []
 
         opponents.map(i => {
-            if (i.level <= 190 && wizardSelected.level <= 190) {
+            if (i.level <= 160 && wizardSelected.level <= 160) {
+                opponentsByLevel.push(i)
+            }
+            else if ((i.level > 160 &&  i.level <= 190) && (wizardSelected.level > 160 && wizardSelected.level <= 190)) {
                 opponentsByLevel.push(i)
             }
             else if ((i.level > 190 &&  i.level <= 300) && (wizardSelected.level > 190 && wizardSelected.level <= 300)) {
@@ -464,9 +435,9 @@ class Arena extends Component {
 
         this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, opponent.idnft, async (response) => {
 
-            const ring = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, opponent.idnft)
-            const pendant = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, `${opponent.idnft}pendant`)
-            const aura = await this.props.getInfoAura(chainId, gasPrice, gasLimit, networkUrl, opponent.idnft)
+            const ring = opponent.level > 160 ? await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, opponent.idnft) : undefined
+            const pendant = opponent.level > 160 ? await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, `${opponent.idnft}pendant`) : undefined
+            const aura = opponent.level > 160 ? await this.props.getInfoAura(chainId, gasPrice, gasLimit, networkUrl, opponent.idnft) : undefined
 
             if (ring && ring.equipped) {
                 response['ring'] = ring
@@ -515,19 +486,12 @@ class Arena extends Component {
                 this.sendFightToFirebase(history, wizardSelected, response, winner)
 
                 let points = 5
-                if (history.length < 10) {
-                    points += 2
-                }
-                else if (history.length >= 10 && history.length < 20) {
-                    points += 1
-                }
 
                 if (winner === wizardSelected.id) {
-                    this.updateDataFirebase(wizardSelected.id, true, points, true, wizardSelected.level)
+                    this.updateDataFirebase(wizardSelected.id, true, points, wizardSelected.level)
                 }
                 else {
-                    this.updateDataFirebase(wizardSelected.id, false, points, true, wizardSelected.level)
-                    this.updateDataFirebase(winner, true, points, false, wizardSelected.level)
+                    this.updateDataFirebase(winner, false, points, wizardSelected.level)
                 }
 
                 this.setState({ infoFight: { nft1: wizardSelected, nft2: response, winner: "" }, loadingStartFight: false })
@@ -577,7 +541,7 @@ class Arena extends Component {
         })
     }
 
-    async updateDataFirebase(idnft, doIncrement, points, attaccante, wizardLevel) {
+    async updateDataFirebase(idnft, doIncrement, points, wizardLevel) {
         const { allData } = this.state
 
         const data = allData.find(i => i.idnft === idnft)
@@ -585,16 +549,9 @@ class Arena extends Component {
         const docRef = doc(firebasedb, this.SEASON_ID, data.docId)
 
         //se hai vinto e sei l'attaccante
-        if (attaccante && doIncrement) {
+        if (doIncrement) {
             updateDoc(docRef, {
                 "ranking": increment(points),
-                "lastFightTime": serverTimestamp(),
-                "level": wizardLevel
-            })
-        }
-        //sei l'attaccante ma hai perso
-        else if (attaccante && !doIncrement) {
-            updateDoc(docRef, {
                 "lastFightTime": serverTimestamp(),
                 "level": wizardLevel
             })
@@ -713,8 +670,12 @@ class Arena extends Component {
             color = "#c0c0c0"
         }
 
-        if (item.level <= 190) {
+        if (item.level > 160 && item.level <= 190) {
             color = "#cd7f32"
+        }
+
+        if (item.level <= 160) {
+            color = "#ad9c8b"
         }
 
         const fightsLeft = item.fightsDone ? 5 - item.fightsDone : 5
@@ -820,7 +781,8 @@ class Arena extends Component {
                     }
 
                     {
-                        !seasonEnded && seasonStarted && fightsLeft > 0 &&
+                        //!seasonEnded && seasonStarted &&
+                        fightsLeft > 0 &&
                         <button
                             style={Object.assign({}, styles.btnSubscribe, { width: 120, height: 36 })}
                             onClick={() => this.startFight()}
@@ -940,7 +902,7 @@ class Arena extends Component {
                     />
                 </a>
 
-                <p style={{ fontSize: 18, color: mainTextColor, width: 100 }}>
+                <p style={{ fontSize: 18, color: mainTextColor, width: 80 }}>
                     #{item.idnft}
                 </p>
                 <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'right' }}>
@@ -965,6 +927,10 @@ class Arena extends Component {
 
         if (level === 190) {
             color = "#cd7f32"
+        }
+
+        if (level === 160) {
+            color = "#ad9c8b"
         }
 
         const key = `sub${level}`
@@ -1106,12 +1072,20 @@ class Arena extends Component {
                             className='btnH'
                             style={Object.assign({}, styles.btnSubscribe, { marginBottom: 10 })}
                             onClick={() => {
+                                if (loadingYourSubs) {
+                                    return
+                                }
                                 this.setState({ showSubscribe: true })
                             }}
                         >
-                            <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
-                                Subscribe your wizards
-                            </p>
+                            {
+                                loadingYourSubs ?
+                                <DotLoader size={16} color={mainTextColor} />
+                                :
+                                <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
+                                    Subscribe your wizards
+                                </p>
+                            }
                         </button>
 
                         <Popup
@@ -1244,6 +1218,8 @@ class Arena extends Component {
 
                     {this.renderRanking(190)}
 
+                    {this.renderRanking(160)}
+
                 </div>
 
                 {
@@ -1255,9 +1231,7 @@ class Arena extends Component {
                         isMobile={isMobile}
                         isFightDone={isFightDone}
                         closeModal={() => {
-                            this.setState({ showModalFight: false, infoFight: {}, isFightDone: false })
-                            const data = this.state.allData.find(i => i.idnft === wizardSelected.id)
-                            this.calcDailyFights(true, data)
+                            this.setState({ showModalFight: false, infoFight: {}, isFightDone: false, fightsDone: this.state.fightsDone+1 })
                         }}
                     />
                 }
