@@ -781,8 +781,7 @@ class Arena extends Component {
                     }
 
                     {
-                        //!seasonEnded && seasonStarted &&
-                        fightsLeft > 0 &&
+                        !seasonEnded && seasonStarted && fightsLeft > 0 &&
                         <button
                             style={Object.assign({}, styles.btnSubscribe, { width: 120, height: 36 })}
                             onClick={() => this.startFight()}
