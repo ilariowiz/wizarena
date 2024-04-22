@@ -313,36 +313,30 @@ class Conquest extends Component {
         let yourSubs = []
         let notSubbed = []
 
-        userMintedNfts && userMintedNfts.map(i => {
+        if (userMintedNfts) {
 
-            if (i.level >= seasonInfo.minLevel) {
-                if (onlySubsIds.includes(i.id)) {
-                    yourSubs.push(i)
-                }
-                else {
-                    notSubbed.push(i)
+            for (let i = 0; i < userMintedNfts.length; i++) {
+                const item = userMintedNfts[i]
+
+                if (item.level >= seasonInfo.minLevel) {
+
+                    if (onlySubsIds.includes(item.id)) {
+                        const data = await this.getElosDataSingleNft(item.id)
+                        item['fightsDone'] = data.fightsDone
+
+                        //console.log(data);
+
+                        yourSubs.push(item)
+                    }
+                    else {
+                        notSubbed.push(item)
+                    }
                 }
             }
-        })
+        }
 
-        this.setState({ loadingYourSubs: false, yourSubs, notSubbed, countSubbedWizards: subscribersId.length }, () => {
-            this.loadYourSubsFightsLeft()
-        })
+        this.setState({ loadingYourSubs: false, yourSubs, notSubbed, countSubbedWizards: subscribersId.length })
 	}
-
-    loadYourSubsFightsLeft() {
-        const { yourSubs } = this.state
-
-        let newSubs = Object.assign([], yourSubs)
-        //console.log(newSubs);
-        newSubs.map(async (i) => {
-            const data = await this.getElosDataSingleNft(i.id)
-            //console.log(data);
-            i['fightsDone'] = data.fightsDone
-        })
-
-        this.setState({ yourSubs: newSubs })
-    }
 
     async loadYourChampion(infoNft) {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
@@ -1067,7 +1061,7 @@ class Conquest extends Component {
         const { mainTextColor } = this.props
         const { loadingYourChampion } = this.state
 
-        //console.log(item);
+        //console.log(item, item.fightsDone, item.resistance);
 
         const fightsLeft = 5 - item.fightsDone
 
@@ -1084,7 +1078,7 @@ class Conquest extends Component {
                 </p>
 
                 <p style={{ color: mainTextColor, fontSize: 15, marginTop: 10, marginBottom: 10, textAlign: 'center', paddingLeft: 3, paddingRight: 3 }}>
-                    Fights left {fightsLeft || "..."}
+                    Fights left {fightsLeft}
                 </p>
 
                 {
