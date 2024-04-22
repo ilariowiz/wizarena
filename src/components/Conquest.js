@@ -660,7 +660,7 @@ class Conquest extends Component {
             hp2: player2.hp,
             timestamp: serverTimestamp(),
             wizards: [player1.id, player2.id],
-            region: regionName
+            region: regionName || ""
         }
 
         const fightRef = doc(collection(firebasedb, this.SEASON_ID_FIGHTS))
