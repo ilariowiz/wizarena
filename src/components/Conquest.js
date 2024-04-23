@@ -604,7 +604,7 @@ class Conquest extends Component {
                 */
 
                 // SEND FIGHT to firebase **************
-                this.sendFightToFirebase(history, wizardSelected, response, winner, regionName)
+                this.sendFightToFirebase(history, wizardSelected, response, winner, regionName, wizardSelectedElos.docId)
 
                 // **************
 
@@ -646,25 +646,33 @@ class Conquest extends Component {
         })
     }
 
-    sendFightToFirebase(history, player1, player2, winner, regionName) {
+    async sendFightToFirebase(history, player1, player2, winner, regionName, docId) {
+        try {
+            const fightObj = {
+                actions: history,
+                idnft1: player1.id,
+                idnft2: player2.id,
+                season: this.SEASON_ID,
+                winner,
+                info1: player1,
+                info2: player2,
+                hp1: player1.hp,
+                hp2: player2.hp,
+                timestamp: serverTimestamp(),
+                wizards: [player1.id, player2.id],
+                region: regionName || ""
+            }
 
-        const fightObj = {
-            actions: history,
-            idnft1: player1.id,
-            idnft2: player2.id,
-            season: this.SEASON_ID,
-            winner,
-            info1: player1,
-            info2: player2,
-            hp1: player1.hp,
-            hp2: player2.hp,
-            timestamp: serverTimestamp(),
-            wizards: [player1.id, player2.id],
-            region: regionName || ""
+            const fightRef = doc(collection(firebasedb, this.SEASON_ID_FIGHTS))
+            await setDoc(fightRef, fightObj)
+        }
+        catch(error) {
+            this.decrementFights(docId)
+            setTimeout(() => {
+                window.location.reload()
+            }, 1500)
         }
 
-        const fightRef = doc(collection(firebasedb, this.SEASON_ID_FIGHTS))
-        setDoc(fightRef, fightObj)
     }
 
     async incrementFights(docId) {
@@ -672,6 +680,14 @@ class Conquest extends Component {
 
         updateDoc(docRef, {
             "fightsDone": increment(1),
+        })
+    }
+
+    async decrementFights(docId) {
+        const docRef = doc(firebasedb, this.SEASON_ID, docId)
+
+        updateDoc(docRef, {
+            "fightsDone": increment(-1),
         })
     }
 
