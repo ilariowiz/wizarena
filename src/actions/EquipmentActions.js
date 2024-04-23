@@ -11,7 +11,7 @@ import {
 } from './types'
 
 //get all ids of nfts minted
-export const loadAllItemsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 1000000, networkUrl, callback) => {
+export const loadAllItemsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -155,7 +155,7 @@ export const getEquipmentVolume = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 	}
 }
 
-export const getInfoItemEquippedMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 500000, networkUrl, idnfts) => {
+export const getInfoItemEquippedMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, idnfts) => {
 	return async (dispatch) => {
 
 		let cmd = {
@@ -204,7 +204,7 @@ export const getInfoNftEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLi
 	}
 }
 
-export const getInfoAura = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 500000, networkUrl, idnft) => {
+export const getInfoAura = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, idnft) => {
 	return async (dispatch) => {
 
 		let cmd = {
@@ -219,7 +219,7 @@ export const getInfoAura = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 50
 	}
 }
 
-export const getInfoAuraMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 500000, networkUrl, idnfts) => {
+export const getInfoAuraMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, idnfts) => {
 	return async (dispatch) => {
 
 		let cmd = {
