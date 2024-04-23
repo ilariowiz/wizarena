@@ -604,7 +604,11 @@ class Conquest extends Component {
                 */
 
                 // SEND FIGHT to firebase **************
-                this.sendFightToFirebase(history, wizardSelected, response, winner, regionName, wizardSelectedElos.docId)
+                const sendOk = this.sendFightToFirebase(history, wizardSelected, response, winner, regionName, wizardSelectedElos.docId)
+
+                if (!sendOk) {
+                    return
+                }
 
                 // **************
 
@@ -635,7 +639,6 @@ class Conquest extends Component {
                     // reload all champions
                     await this.loadChampions()
 
-
                     this.setState({ fightsDone: dataElo.fightsDone, wizardSelectedElos: dataElo, isFightDone: true, infoFight: { nft1: wizardSelected, nft2: response, evento: eventoInfo, winner } }, () => {
                         this.loadWizardSelectedLastFights(wizardSelected.id)
                     })
@@ -665,12 +668,16 @@ class Conquest extends Component {
 
             const fightRef = doc(collection(firebasedb, this.SEASON_ID_FIGHTS))
             await setDoc(fightRef, fightObj)
+
+            return true
         }
         catch(error) {
             this.decrementFights(docId)
             setTimeout(() => {
                 window.location.reload()
             }, 1500)
+
+            return false
         }
 
     }
