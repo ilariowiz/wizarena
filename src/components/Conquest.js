@@ -1215,6 +1215,26 @@ class Conquest extends Component {
         return seasonEnded
     }
 
+    calcTimeToResetFights() {
+        const now = moment().utc()
+        //console.log(now);
+        let timeLeft = ""
+
+        const deadline = now.clone().hour(15).minute(0).second(0)
+        if (now.isAfter(deadline)) {
+            let tomorrow = moment(new Date()).add(1, 'days').hour(15).minute(0).second(0)
+
+            timeLeft = tomorrow.from(now)
+            //console.log(tomorrow.from(now));
+        }
+        else {
+            timeLeft = deadline.from(now)
+            //console.log(deadline.from(now));
+        }
+
+        return timeLeft
+    }
+
     renderBody(isMobile) {
         const { loadingYourSubs, loadingChampions, yourSubs, wizardSelected, infoFight, isFightDone, showSubscribe, seasonInfo, notSubbed, countSubbedWizards } = this.state
         const { mainTextColor, mainBackgroundColor } = this.props
@@ -1321,6 +1341,10 @@ class Conquest extends Component {
         //console.log(loadingYourSubs);
 
         ///// SECTION PLAY ******************************
+
+        const timeToFightsReset = this.calcTimeToResetFights()
+
+
         return (
             <div style={{ flexDirection: 'column', width: boxW, padding, paddingTop: padding/2, overflowY: 'auto', overflowX: 'hidden' }}>
 
@@ -1431,6 +1455,10 @@ class Conquest extends Component {
                     <div style={{ flexDirection: 'column' }}>
                         <p style={{ fontSize: 20, color: mainTextColor, marginBottom: 10 }} className="text-medium">
                             Your subscribed Wizards
+                        </p>
+
+                        <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 10 }}>
+                            Fights reset {timeToFightsReset}
                         </p>
 
                         {
