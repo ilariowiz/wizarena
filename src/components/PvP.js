@@ -227,7 +227,17 @@ class PvP extends Component {
         })
         //console.log(yourSubs);
         //console.log(activeSubs);
-        let infoSubs = await this.props.loadBlockNftsSplit(chainId, gasPrice, 1000000, networkUrl, onlySubIds)
+        const parts = _.chunk(onlySubIds, 200)
+
+        let infoSubs = []
+
+        for (var i = 0; i < parts.length; i++) {
+            let pa = parts[i]
+
+            const infos = await this.props.loadBlockNftsSplit(chainId, gasPrice, 180000, networkUrl, pa)
+            infoSubs.push(...infos)
+
+        }
         //console.log(infoSubs);
         infoSubs.map(i => {
             const w = subs.find(z => z.id === i.id)
