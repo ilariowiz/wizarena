@@ -247,7 +247,7 @@ class Nft extends Component {
 		//console.log(response.groupedMedals);
 
 		this.setState({ nft: response, loading: false }, () => {
-			this.loadFights(response)
+
 			this.loadHistory(response.id)
 
 			this.loadOffers(response.id)
@@ -262,20 +262,21 @@ class Nft extends Component {
 
 	loadFights(response) {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+		const { nft } = this.state
 
-		const ids = [response.id]
+		const ids = [nft.id]
 
 		this.props.getFightPerNfts(chainId, gasPrice, gasLimit, networkUrl, ids, (fights) => {
 			//console.log(fights);
 
-			response['tournaments'] = fights && fights.length > 0 ? fights : []
+			nft['tournaments'] = fights && fights.length > 0 ? fights : []
 
 			let tournaments = []
 
-			if (response.tournaments) {
+			if (nft.tournaments) {
 
-				for (var i = 0; i < response.tournaments.length; i++) {
-					const f = response.tournaments[i]
+				for (var i = 0; i < nft.tournaments.length; i++) {
+					const f = nft.tournaments[i]
 
 					const torneoName = f.tournament.split("_")[0]
 
@@ -288,31 +289,31 @@ class Nft extends Component {
 					return parseInt(a.replace("t", "")) - parseInt(b.replace("t", ""))
 				})
 
-				response['groupedFights'] = {}
+				nft['groupedFights'] = {}
 			}
 
 			let openFightsSection = []
 
-			if (response.tournaments) {
+			if (nft.tournaments) {
 				tournaments.map(i => {
-					const groupedFight = this.groupFights(response.tournaments, i)
+					const groupedFight = this.groupFights(nft.tournaments, i)
 					//console.log(groupedFight);
 					if (groupedFight.length > 0) {
 						openFightsSection = [i]
 					}
 
-					response['groupedFights'][i] = groupedFight
+					nft['groupedFights'][i] = groupedFight
 				})
 			}
 
 			//console.log(response['groupedFights']);
 
-			if (response.tournaments && Object.keys(response.groupedFights).length > 0) {
+			if (nft.tournaments && Object.keys(nft.groupedFights).length > 0) {
 
 				//dividiamo per apprentice, elite & weekly
 				let newGroupedFights = {"Farmers": {}, "Weekly": {}, "Apprentice": {}, "Elite": {}, "Chaos": {}}
 
-				for (const [key, value] of Object.entries(response.groupedFights)) {
+				for (const [key, value] of Object.entries(nft.groupedFights)) {
 
 					const tNumber = parseInt(key.replace("t", ""))
 
@@ -339,10 +340,10 @@ class Nft extends Component {
 
 				//console.log(newGroupedFights);
 
-				response['groupedFights'] = newGroupedFights
+				nft['groupedFights'] = newGroupedFights
 			}
 
-			this.setState({ nft: response, openFightsSection, loadingFights: false }, () => {
+			this.setState({ nft, openFightsSection, loadingFights: false }, () => {
 				this.loadMaxMedalsPerTournament()
 			})
 		})
@@ -1165,15 +1166,6 @@ class Nft extends Component {
 
 		const panelWidth = isMobile ? '90%' : "50%"
 
-		/*
-		let sortedKeyMedals = []
-		if (nft.medals) {
-			sortedKeyMedals = Object.keys(nft.medals).sort((a, b) => {
-				return parseInt(a.replace("t","")) - parseInt(b.replace("t", ""))
-			})
-		}
-		*/
-
 		return (
 			<div style={styles.panelShadow}>
 
@@ -1315,7 +1307,10 @@ class Nft extends Component {
 				<button
 					className="btnH"
 					style={Object.assign({}, styles.btnMedals, { width: btnW })}
-					onClick={() => this.setState({ showFights: true })}
+					onClick={() => {
+						this.loadFights()
+						this.setState({ showFights: true })
+					}}
 				>
 					<AiOutlineUnorderedList
 						color={mainTextColor}
