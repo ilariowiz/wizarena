@@ -67,7 +67,8 @@ import {
 	CLEAR_TRANSACTION_STATE_PACT_CODE,
 	SET_TIME_TO_HALVENING,
 	SET_VISUAL_COLORS,
-	SET_SUBSCRIBERS_PVP
+	SET_SUBSCRIBERS_PVP,
+	REVEAL_CAP
 } from './types'
 
 
@@ -797,6 +798,9 @@ export const loadUserMintedNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 
 				//block sono tutti gli oggetti dell'utente
 				let userMintedGasLimit = block.length * 1500
+				if (userMintedGasLimit > 180000) {
+					userMintedGasLimit = 180000
+				}
 				dispatch(loadBlockUserMintedNfts(chainId, gasPrice, userMintedGasLimit, networkUrl, block, callback))
 			}
 		})
@@ -1350,15 +1354,21 @@ export const getCountForTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 	}
 }
 
-export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 700000, networkUrl, tournament, tournamentType, callback) => {
+export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, tournament, tournamentType, callback) => {
 	return (dispatch) => {
 
-		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME}.get-all-subscription-for-tournament "${tournament}")`,
-			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		//console.log(tournament);
+
+		let ids = []
+		for (var i = 0; i < REVEAL_CAP; i++) {
+			ids.push(`${tournament}_${i}`)
 		}
 
-		//let url = `https://kda-api.glexia.com/chainweb/0.0/mainnet01/chain/1/pact`;
+		let cmd = {
+			//pactCode: `(free.${CONTRACT_NAME}.get-all-subscription-for-tournament "${tournament}")`,
+			pactCode: `(free.${CONTRACT_NAME}.get-subscriptions ${JSON.stringify(ids)})`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
 
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
@@ -1366,8 +1376,13 @@ export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 			if (response) {
 				let onlyId = []
 				response.map(i => {
-					onlyId.push(i.idnft)
+					//console.log(i);
+					if (i.idnft) {
+						onlyId.push(i.idnft)
+					}
 				})
+
+				//console.log(onlyId);
 
 				dispatch(loadBlockNftsSubscribed(chainId, gasLimit, gasLimit, networkUrl, onlyId, tournamentType, callback))
 			}
