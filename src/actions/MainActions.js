@@ -407,11 +407,11 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 				//console.log("response post reduce", blocks)
 				dispatch({ type: LOAD_ALL_NFTS_IDS, payload: { allNftsIds: response } })
 
-				let partsBlock = _.chunk(response, Math.ceil(response.length/4))
+				let partsBlock = _.chunk(response, Math.ceil(response.length/6))
 
 				let promises = []
                 partsBlock.map(pr => {
-                    let promise = Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 1000000, networkUrl, pr)))
+                    let promise = Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 180000, networkUrl, pr)))
                     promises.push(promise)
                 })
 
@@ -660,7 +660,7 @@ export const loadEquipMinted = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit,
 
 		let cmd = {
 			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.equipment-owned-by "${account.account}")`,
-			meta: defaultMeta(chainId, gasPrice, 1000000)
+			meta: defaultMeta(chainId, gasPrice, 180000)
 		}
 
 		const response = await dispatch(readFromContract(cmd, true, networkUrl))
@@ -901,13 +901,15 @@ export const loadSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 	}
 }
 
-export const getFightPerNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 6000000, networkUrl, ids, callback) => {
+export const getFightPerNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 1500000, networkUrl, ids, callback) => {
 	return (dispatch) => {
+
+		//console.log(ids);
 
 		let promises = []
 
 		ids.map(id => {
-			let promise = Promise.resolve(dispatch(loadFightsSingleNft(chainId, gasPrice, 6000000, networkUrl, id)))
+			let promise = Promise.resolve(dispatch(loadFightsSingleNft(chainId, gasPrice, gasLimit, networkUrl, id)))
 			promises.push(promise)
 		})
 
@@ -926,7 +928,7 @@ export const getFightPerNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit 
 	}
 }
 
-export const loadFightsSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 6000000, networkUrl, id) => {
+export const loadFightsSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, id) => {
 
 	return async (dispatch) => {
 		let cmd = {
@@ -935,7 +937,7 @@ export const loadFightsSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLi
 		}
 
 		const response = await dispatch(readFromContract(cmd, true, networkUrl))
-		//console.log(response);
+		console.log(response);
 
 		return response
 	}
@@ -1145,81 +1147,6 @@ export const getPotionEquipped = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimi
 	}
 }
 
-export const getAllSubscribersPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 1800000, networkUrl, pvpWeek, callback) => {
-	return (dispatch) => {
-
-		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME}.get-all-subscription-for-pvpweek-full "${pvpWeek}")`,
-			meta: defaultMeta(chainId, gasPrice, gasLimit)
-		}
-
-		dispatch(readFromContract(cmd, true, networkUrl)).then(async (response) => {
-			//console.log(response)
-
-			dispatch({ type: SET_SUBSCRIBERS_PVP, payload: response })
-
-			let onlyWeekId = response.map(i => `${pvpWeek}_#${i.id}`)
-
-			//console.log(onlyWeekId);
-
-			if (onlyWeekId && onlyWeekId.length === 0) {
-				if (callback) {
-					callback([])
-					return
-				}
-			}
-
-			const onlyWeekIdBy10 = onlyWeekId.reduce((rows, item, index) => {
-				//console.log(index);
-				//se array row è piena, aggiungiamo una nuova row = [] alla lista
-				if (index % 10 === 0 && index > 0) {
-					rows.push([]);
-				}
-
-				//prendiamo l'ultima array della lista e aggiungiamo item
-				rows[rows.length - 1].push(item);
-				return rows;
-			}, [[]]);
-
-			//console.log(onlyWeekIdBy10);
-
-			let resultFirebase = await Promise.all(
-				onlyWeekIdBy10.map(async (chunks) => {
-					const results = await getDocs(
-						query(
-							collection(firebasedb, "pvp_results"),
-							where(documentId(), 'in', chunks)
-						)
-					)
-
-					return results.docs.map(doc => {
-						//console.log(doc.id);
-						const data = doc.data()
-						let idnft = doc.id.replace(`${pvpWeek}_#`, "")
-						let idx = response.findIndex(z => z.idnft === idnft)
-
-						//console.log(data);
-
-						const l = calcLevelWizard(response[idx])
-						response[idx]["level"] = l
-						response[idx]["fightsLeft"] = response[idx].rounds.int - (data.win + data.lose)
-
-						//console.log(response[idx]);
-
-						return { ...data, ...response[idx]}
-					})
-				})
-			)
-
-			resultFirebase = resultFirebase.flat(1)
-
-			if (callback) {
-				callback(resultFirebase)
-			}
-		})
-	}
-}
-
 export const getPvPweek = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, callback) => {
 	return (dispatch) => {
 
@@ -1271,7 +1198,7 @@ export const getPvPsubscription = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 	}
 }
 
-export const getConquestSubscribersIdsPerSeason = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 200000, networkUrl, season) => {
+export const getConquestSubscribersIdsPerSeason = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, season) => {
 	return async (dispatch) => {
 
 		let cmd = {
@@ -1423,7 +1350,7 @@ export const getCountForTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 	}
 }
 
-export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 1800000, networkUrl, tournament, tournamentType, callback) => {
+export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 700000, networkUrl, tournament, tournamentType, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -3689,37 +3616,6 @@ export const setWizaNotClaimed = (amount) => {
 	}
 }
 
-/*
-export const getWizaNotClaimed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 200000, networkUrl, callback) => {
-	return (dispatch) => {
-
-		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME_WIZA}.get-unclaimed-mined-1)`,
-			meta: defaultMeta(chainId, gasPrice, gasLimit)
-		}
-
-		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
-			//console.log(response)
-			if (response) {
-
-				let total = 0
-				response.map(i => {
-					total += i
-				})
-
-				//console.log(total);
-
-				dispatch({ type: STORE_WIZA_NOT_CLAIMED, payload: _.floor(total, 2) })
-
-				if (callback) {
-					callback()
-				}
-			}
-
-		})
-	}
-}
-*/
 
 export const getWizardsStakeInfo = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, nfts, callback) => {
 	return (dispatch) => {
