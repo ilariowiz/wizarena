@@ -520,8 +520,12 @@ class Conquest extends Component {
             return
         }
 
-        if (champion) {
+        if (champion && wizardSelected.attack) {
             this.incrementFights(wizardSelectedElos.docId)
+        }
+        else {
+            window.location.reload()
+            return
         }
 
         this.setState({ loadingStartFight: true, showModalFight: true, infoFight: { nft1: wizardSelected, nft2: { id: "" }, evento: "", winner: "" } })
