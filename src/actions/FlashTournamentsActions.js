@@ -11,7 +11,7 @@ import {
     SORT_AUTO_TOURNAMENTS
 } from './types'
 
-export const getPendingTournaments = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 150000, networkUrl, callback) => {
+export const getPendingTournaments = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, callback) => {
 	return (dispatch) => {
 
         dispatch(setLoadingPending(true))
@@ -44,7 +44,7 @@ export const getPendingTournaments = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 	}
 }
 
-export const getCompletedTournaments = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 150000, networkUrl, callback) => {
+export const getCompletedTournaments = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, callback) => {
 	return (dispatch) => {
 
         dispatch(setLoadingCompleted(true))
