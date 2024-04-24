@@ -332,7 +332,7 @@ class FightsReplay extends Component {
 
         return (
             <img
-                style={{ position: 'absolute', top: headerHeight, left: 0, width: '100%' }}
+                style={{ position: 'absolute', top: headerHeight-1, left: 0, width: '100%' }}
                 src={bgimage}
             />
         )
