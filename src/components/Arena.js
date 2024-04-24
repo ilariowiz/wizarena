@@ -427,8 +427,12 @@ class Arena extends Component {
 
         const opponent = this.getOpponent(opponentsByLevel)//_.sample(opponentsByLevel)
 
-        if (opponent) {
+        if (opponent && wizardSelected.attack) {
             this.incrementFights(wizardSelected.id)
+        }
+        else {
+            window.location.reload()
+            return
         }
 
         this.setState({ loadingStartFight: true, showModalFight: true, infoFight: { nft1: wizardSelected, nft2: { id: "" }, winner: "" } })
