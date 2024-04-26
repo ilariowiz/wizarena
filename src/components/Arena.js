@@ -495,7 +495,7 @@ class Arena extends Component {
                     this.updateDataFirebase(wizardSelected.id, true, points, wizardSelected.level)
                 }
                 else {
-                    this.updateDataFirebase(winner, false, points, wizardSelected.level)
+                    this.updateDataFirebase(winner, false, points, opponent.level)
                 }
 
                 this.setState({ infoFight: { nft1: wizardSelected, nft2: response, winner: "" }, loadingStartFight: false })
@@ -564,7 +564,8 @@ class Arena extends Component {
         else {
             updateDoc(docRef, {
                 "ranking": increment(points),
-                "fightsGet": increment(1)
+                "fightsGet": increment(1),
+                "level": wizardLevel
             })
         }
     }
