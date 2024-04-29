@@ -1418,7 +1418,10 @@ class Nft extends Component {
 
 		let title = titles[nft.id]
 
-		let nftOwner = nft.owner ? `${nft.owner.substring(0, 6)}...${nft.owner.substring(nft.owner.length-4, nft.owner.length)}` : "..."
+		let nftOwner = nft.owner || "..."
+		if (nft.owner && nft.owner !== "wiz-bank") {
+			nftOwner = nft.owner ? `${nft.owner.substring(0, 7)}...${nft.owner.substring(nft.owner.length-5, nft.owner.length)}` : "..."
+		}
 
 		return (
 			<div style={{ flexDirection: 'column', marginBottom, alignItems: 'center' }}>
@@ -1439,7 +1442,7 @@ class Nft extends Component {
 
 				{
 					title ?
-					<div style={{ flexWrap: 'wrap' }}>
+					<div style={{ flexWrap: 'wrap', justifyContent: 'center' }}>
 						{title.map((item, index) => {
 							return (
 								<div style={{ alignItems: 'center', flexDirection: 'column', maxWidth: 100, padding: 3, margin: 5, borderWidth: 1, borderColor: mainTextColor, borderStyle: 'solid', borderRadius: 4 }} key={index}>
@@ -2160,7 +2163,7 @@ class Nft extends Component {
 
 						<div style={{ width: imageWidth, flexDirection: 'column', alignItems: 'center', marginBottom: 20 }}>
 							{
-								account && account.account !== nft.owner ?
+								account && account.account !== nft.owner && infoBurn && !infoBurn.burned ?
 								this.renderBtnChallenge(viewTopsW)
 								: null
 							}
@@ -2338,9 +2341,9 @@ class Nft extends Component {
 							<div style={{ width: boxWidthRight, flexDirection: 'column', alignItems: 'center' }}>
 								{this.renderName(20)}
 
-								<div style={{ width: boxWidthRight, alignItems: 'center', flexDirection: 'column' }}>
+								<div style={{ width: boxWidthRight, alignItems: 'center', flexDirection: 'column', marginBottom: 20 }}>
 									{
-										account && account.account !== nft.owner && !nft.listed ?
+										account && account.account !== nft.owner && !nft.listed && infoBurn && !infoBurn.burned ?
 										this.renderBtnChallenge(ctaWidth*2)
 										: null
 									}
