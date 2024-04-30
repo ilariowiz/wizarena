@@ -878,27 +878,25 @@ class Arena extends Component {
         )
     }
 
-    renderRowRank(item, index) {
+    renderRowRank(item, index, array) {
         const { mainTextColor } = this.props
 
-        let imageLeft;
-        if (index === 0) {
-            imageLeft = cup_gold
-        }
-        else if (index === 1) {
-            imageLeft = cup_silver
-        }
-        else if (index === 2) {
-            imageLeft = cup_bronze
-        }
-        else {
-            imageLeft = medal
+        let imageLeft = index < 5 ? medal : undefined
+
+        const currentRanking = item.ranking
+
+        if (index >= 5) {
+            const lastRanking = array[4].ranking
+            //console.log(currentRanking, previousRanking);
+            if (currentRanking === lastRanking) {
+                imageLeft = medal
+            }
         }
 
         return (
             <div style={{ alignItems: 'center', padding: 5 }} key={item.idnft}>
                 {
-                    index < 5 ?
+                    imageLeft ?
                     <img
                         src={imageLeft}
                         style={{ width: 34, height: 34, marginRight: 10 }}
@@ -975,7 +973,7 @@ class Arena extends Component {
                 {
                     categories && categories[key] &&
                     categories[key].map((i, index) => {
-                        return this.renderRowRank(i, index)
+                        return this.renderRowRank(i, index, categories[key])
                     })
                 }
 
