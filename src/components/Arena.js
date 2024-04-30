@@ -148,7 +148,16 @@ class Arena extends Component {
             return b.ranking - a.ranking
         })
 
-        const categories = { "sub160": sub160.slice(0, 5), "sub190": sub190.slice(0, 5), "sub300": sub300.slice(0, 5), "sub375": sub375.slice(0, 5) }
+        const categories = {
+            "sub160": sub160.slice(0, 10),
+            "sub160count": sub160.length,
+            "sub190": sub190.slice(0, 10),
+            "sub190count":sub190.length,
+            "sub300": sub300.slice(0, 10),
+            "sub300count": sub300.length,
+            "sub375": sub375.slice(0, 10),
+            "sub375count": sub375.length
+        }
 
         //console.log(categories);
 
@@ -888,11 +897,16 @@ class Arena extends Component {
 
         return (
             <div style={{ alignItems: 'center', padding: 5 }} key={item.idnft}>
-                <img
-                    src={imageLeft}
-                    style={{ width: 34, height: 34, marginRight: 10 }}
-                    alt="Cup"
-                />
+                {
+                    index < 5 ?
+                    <img
+                        src={imageLeft}
+                        style={{ width: 34, height: 34, marginRight: 10 }}
+                        alt="Cup"
+                    />
+                    :
+                    <div style={{ width: 34, height: 34, marginRight: 10 }} />
+                }
                 <a
                     href={`${window.location.protocol}//${window.location.host}/nft/${item.idnft}`}
                     target="_blank"
@@ -938,14 +952,24 @@ class Arena extends Component {
         }
 
         const key = `sub${level}`
+        const keyCount = `${key}count`
+
+        //console.log(categories);
 
         return (
             <div style={{ flexDirection: 'column', marginBottom: 30, flex: 1, borderWidth: 1, borderColor: color, borderStyle: 'solid', borderTopWidth: 0, borderRightWidth: 0 }}>
 
-                <div style={{ backgroundImage: `linear-gradient(to right, ${color}, transparent)` }}>
-                    <p style={{ fontSize: 20, color: mainBackgroundColor, padding: 10 }} className="text-bold">
+                <div style={{ backgroundImage: `linear-gradient(to right, ${color}, transparent)`, flexDirection: 'column' }}>
+                    <p style={{ fontSize: 20, color: mainBackgroundColor, padding: 10, paddingBottom: 2 }} className="text-bold">
                         Level {level} Ranking
                     </p>
+
+                    {
+                        categories && categories[key] &&
+                        <p style={{ fontSize: 12, color: mainBackgroundColor, marginLeft: 10, marginBottom: 3 }}>
+                            {categories[keyCount]} wizards
+                        </p>
+                    }
                 </div>
 
                 {
