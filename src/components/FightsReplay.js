@@ -24,6 +24,7 @@ const sitenor_bg = require('../assets/bg_fights/sitenor_bg_hd.jpg')
 const wastiaxus_bg = require('../assets/bg_fights/wastiaxus_bg_hd.jpg')
 const vedrenon_bg = require('../assets/bg_fights/vedrenon_bg_hd.jpg')
 const bremonon_bg = require('../assets/bg_fights/bremonon_bg_hd.jpg')
+const opherus_bg = require('../assets/bg_fights/opherus_bg_hd.jpg')
 
 
 
@@ -328,6 +329,9 @@ class FightsReplay extends Component {
         }
         else if (fightInfo.region.includes("Bremonon")) {
             bgimage = bremonon_bg
+        }
+        else if (fightInfo.region.includes("Opherus")) {
+            bgimage = opherus_bg
         }
 
         return (
