@@ -589,70 +589,57 @@ const calcRanges = (maxStats) => {
 	}
 }
 
-export const loadBlockNftsSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, block, tournamentType, callbackSubscribed) => {
+export const loadBlockNftsSubscribed = (response, tournamentType, callbackSubscribed) => {
 	return (dispatch) => {
 
-		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME}.get-wizard-fields-for-ids [${block}])`,
-			meta: defaultMeta(chainId, gasPrice, gasLimit)
-		}
+		let newResponse = []
 
-		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
-			//console.log(response)
+		response.map(i => {
+			const temp = {
+				level: i.level.int,
+				element: i.element,
+				id: i.id,
+				medals: i.medals,
+				name: i.name,
+				nickname: i.nickname,
+				owner: i.owner
+			}
 
-			if (response) {
-				//console.log(response);
+			newResponse.push(temp)
+		})
 
-				let newResponse = []
+		//console.log(newResponse);
 
-				response.map(i => {
-					const temp = {
-						level: i.level.int,
-						element: i.element,
-						id: i.id,
-						medals: i.medals,
-						name: i.name,
-						nickname: i.nickname,
-						owner: i.owner
-					}
+		newResponse.sort((a, b) => {
+			return parseInt(a.id) - parseInt(b.id)
+		})
 
-					newResponse.push(temp)
-				})
+		let subscribedSpellGraph = {}
 
-				//console.log(newResponse);
-
-				newResponse.sort((a, b) => {
-					return parseInt(a.id) - parseInt(b.id)
-				})
-
-				let subscribedSpellGraph = {}
-
-				newResponse.map((item) => {
-					if (!subscribedSpellGraph[item.element]) {
-						subscribedSpellGraph[item.element] = 1
-					}
-					else {
-						subscribedSpellGraph[item.element] += 1
-					}
-				})
-
-				//console.log(subscribedSpellGraph, tournamentType);
-
-				if (callbackSubscribed) {
-					callbackSubscribed(newResponse)
-				}
-
-				if (tournamentType === "kda") {
-					dispatch({ type: LOAD_SUBSCRIBED, payload: { nfts: newResponse, subscribedKdaSpellGraph: subscribedSpellGraph } })
-				}
-				else if (tournamentType === "wiza") {
-					dispatch({ type: LOAD_SUBSCRIBED_WIZA, payload: { nfts: newResponse, subscribedWizaSpellGraph: subscribedSpellGraph } })
-				}
-				else if (tournamentType === "elite") {
-					dispatch({ type: LOAD_SUBSCRIBED_ELITE, payload: { nfts: newResponse, subscribedEliteSpellGraph: subscribedSpellGraph } })
-				}
+		newResponse.map((item) => {
+			if (!subscribedSpellGraph[item.element]) {
+				subscribedSpellGraph[item.element] = 1
+			}
+			else {
+				subscribedSpellGraph[item.element] += 1
 			}
 		})
+
+		//console.log(subscribedSpellGraph, tournamentType);
+
+		if (callbackSubscribed) {
+			callbackSubscribed(newResponse)
+		}
+
+		if (tournamentType === "kda") {
+			dispatch({ type: LOAD_SUBSCRIBED, payload: { nfts: newResponse, subscribedKdaSpellGraph: subscribedSpellGraph } })
+		}
+		else if (tournamentType === "wiza") {
+			dispatch({ type: LOAD_SUBSCRIBED_WIZA, payload: { nfts: newResponse, subscribedWizaSpellGraph: subscribedSpellGraph } })
+		}
+		else if (tournamentType === "elite") {
+			dispatch({ type: LOAD_SUBSCRIBED_ELITE, payload: { nfts: newResponse, subscribedEliteSpellGraph: subscribedSpellGraph } })
+		}
 	}
 }
 
@@ -1384,7 +1371,23 @@ export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 
 				//console.log(onlyId);
 
-				dispatch(loadBlockNftsSubscribed(chainId, gasLimit, gasLimit, networkUrl, onlyId, tournamentType, callback))
+				let promises = []
+
+				const partsBlock = _.chunk(onlyId, 200)
+				partsBlock.map(pr => {
+                    let promise = Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 180000, networkUrl, pr)))
+                    promises.push(promise)
+                })
+
+				Promise.all(promises).then(values => {
+					//console.log(values);
+					let final = []
+					values.map(i => {
+						final.push(...i)
+					})
+
+					dispatch(loadBlockNftsSubscribed(final, tournamentType, callback))
+				})
 			}
 		})
 
