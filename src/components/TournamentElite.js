@@ -40,9 +40,8 @@ class TournamentElite extends Component {
             avgLevel: 0,
             matchPair: [],
             userMinted: [],
-            potionsEquipped: [],
-            ringsEquipped: [],
-            pendantsEquipped: [],
+            ringsEquipped: {},
+            pendantsEquipped: {},
             subscribed: [],
             rankings: [],
             showProfileFights: false,
@@ -211,20 +210,7 @@ class TournamentElite extends Component {
         this.setState({ subscribed: subs, yourStat, avgLevel, matchPair, loading })
     }
 
-    getAllPotionsEquipped(subscribers, tournamentName) {
-        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
-
-        let keys = []
-        subscribers.map(i => {
-            keys.push(`"${tournamentName}_${i.id}"`)
-        })
-
-        this.props.getPotionEquippedMass(chainId, gasPrice, gasLimit, networkUrl, keys, (response) => {
-            //console.log(response);
-            this.setState({ potionsEquipped: response })
-        })
-    }
-
+    /*
     async getEquipmentEquipped(subscribers) {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
@@ -243,6 +229,7 @@ class TournamentElite extends Component {
 
         this.setState({ ringsEquipped: rings, pendantsEquipped: pendants })
     }
+    */
 
     async loadPair(id) {
         const docRef = doc(firebasedb, "matching", id)
@@ -286,7 +273,7 @@ class TournamentElite extends Component {
     }
 
     renderRow(item, index, width) {
-        const { potionsEquipped, tournament, ringsEquipped, pendantsEquipped, rankings } = this.state
+        const { tournament, ringsEquipped, pendantsEquipped, rankings } = this.state
 
         //per ogni row creiamo un array di GameCard
 		return (
@@ -296,9 +283,6 @@ class TournamentElite extends Component {
                     key={index}
                     history={this.props.history}
                     width={width}
-                    potionsEquipped={potionsEquipped}
-                    ringsEquipped={ringsEquipped}
-                    pendantsEquipped={pendantsEquipped}
                     tournamentName={tournament.name.split("_")[0]}
                     tournamentSeason={tournament.season}
                     rankings={rankings}

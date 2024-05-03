@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import { IoMedalOutline } from 'react-icons/io5'
 import Popup from 'reactjs-popup';
-import getRingBonuses from './GetRingBonuses'
-import getPendantBonuses from './GetPendantBonus'
 import getImageUrl from './GetImageUrl'
 import calcMedals from './CalcMedals'
 import { getColorTextBasedOnLevel } from './CalcLevelWizard'
@@ -22,98 +20,8 @@ const vial_empty = require('../../assets/vial_empty.png')
 
 
 class NftCardTournament extends Component {
-	constructor(props) {
-		super(props)
-
-		this.loadPotion = false
-		this.loadRing = false
-		this.loadPendant = false
-
-		this.state = {
-			potion: undefined,
-			ring: undefined,
-			infoRing: undefined,
-			pendant: undefined,
-			infoPendant: undefined
-		}
-	}
-
-	componentDidUpdate(prevProps)  {
-		//console.log(prevProps.ringsEquipped, this.props.ringsEquipped);
-		if (this.props.ringsEquipped.length > 0 && !this.loadRing) {
-			this.loadRing = true
-			this.getRingEquipped()
-		}
-
-		if (this.props.pendantsEquipped.length > 0 && !this.loadPendant) {
-			this.loadPendant = true
-			this.getPendantEquipped()
-		}
-
-		if (this.props.potionsEquipped.length > 0 && !this.loadPotion) {
-			this.loadPotion = true
-			this.getPotionEquipped()
-		}
-	}
-
-	getPotionEquipped() {
-		const { tournamentName, potionsEquipped, item } = this.props
-
-		this.loadPotion = true
-		//console.log(potionsEquipped);
-
-		if (!potionsEquipped || potionsEquipped.length === 0) {
-			return ""
-		}
-
-		const key = `${tournamentName}_${item.id}`
-		const potion = potionsEquipped.find(i => i.key === key)
-		if (potion && potion.potionEquipped) {
-			this.setState({ potion: potion.potionEquipped })
-		}
-	}
-
-	getRingEquipped() {
-		const { ringsEquipped, item } = this.props
-
-		//console.log(ringsEquipped);
-
-		if (!ringsEquipped || ringsEquipped.length === 0) {
-			return ""
-		}
-
-		this.loadRing = true
-
-		const ring = ringsEquipped.find(i => i.equippedToId === item.id)
-		//console.log(ring);
-		if (ring && ring.equipped) {
-			const infoRing = getRingBonuses(ring)
-			this.setState({ ring, infoRing })
-		}
-	}
-
-	getPendantEquipped() {
-		const { pendantsEquipped, item } = this.props
-
-		//console.log(ringsEquipped);
-
-		if (!pendantsEquipped || pendantsEquipped.length === 0) {
-			return ""
-		}
-
-		this.loadPendant = true
-
-		const pendant = pendantsEquipped.find(i => i.equippedToId === `${item.id}pendant`)
-		//console.log(pendant);
-		if (pendant && pendant.equipped) {
-			const infoPendant = getPendantBonuses(pendant)
-			this.setState({ pendant, infoPendant })
-		}
-	}
-
 	render() {
-		const { item, history, width, account, tournamentSeason, mainTextColor, isDarkmode, rankings } = this.props
-		const { potion, ring, infoRing, pendant, infoPendant } = this.state
+		const { item, history, width, account, tournamentSeason, mainTextColor, isDarkmode, rankings, potion, ring, pendant } = this.props
 
 		//console.log(tournamentSeason);
 
@@ -248,7 +156,7 @@ class NftCardTournament extends Component {
 									on="hover"
 								>
 									<div style={{ padding: 5, fontSize: 16, color: "#1d1d1f" }}>
-										{ring.name} : {infoRing.bonusesText.join(", ")}
+										{ring.name}
 									</div>
 								</Popup>
 								: null
@@ -270,7 +178,7 @@ class NftCardTournament extends Component {
 									on="hover"
 								>
 									<div style={{ padding: 5, fontSize: 16, color: "#1d1d1f" }}>
-										{pendant.name} : {infoPendant.bonusesText.join(", ")}
+										{pendant.name}
 									</div>
 								</Popup>
 								: null

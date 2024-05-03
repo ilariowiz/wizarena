@@ -38,9 +38,9 @@ class Tournament extends Component {
             avgLevel: 0,
             matchPair: [],
             userMinted: [],
-            potionsEquipped: [],
-            ringsEquipped: [],
-            pendantsEquipped: [],
+            potionsEquipped: {},
+            ringsEquipped: {},
+            pendantsEquipped: {},
             rankings: [],
             showProfileFights: false,
             showWizardsIn: false,
@@ -213,7 +213,19 @@ class Tournament extends Component {
 
         this.props.getPotionEquippedMass(chainId, gasPrice, gasLimit, networkUrl, keys, (response) => {
             //console.log(response);
-            this.setState({ potionsEquipped: response })
+
+            let potionsEquipped = {}
+            for (let i = 0; i < response.length; i++) {
+                const r = response[i]
+
+                if (r.potionEquipped) {
+                    const idnft = r.key.split("_")[1]
+                    potionsEquipped[idnft] = r.potionEquipped
+                }
+            }
+            //console.log(potionsEquipped);
+
+            this.setState({ potionsEquipped })
         })
     }
 
@@ -230,10 +242,31 @@ class Tournament extends Component {
         //console.log(idnfts);
 
         const rings = await this.props.getInfoItemEquippedMass(chainId, gasPrice, gasLimit, networkUrl, idnfts)
-
         const pendants = await this.props.getInfoItemEquippedMass(chainId, gasPrice, gasLimit, networkUrl, idnftsPendants)
 
-        this.setState({ ringsEquipped: rings, pendantsEquipped: pendants })
+        //console.log(pendants);
+
+        let ringsEquipped = {}
+        for (let i = 0; i < rings.length; i++) {
+            const r = rings[i]
+
+            if (r.equipped) {
+                const idnft = r.equippedToId
+                ringsEquipped[idnft] = r
+            }
+        }
+
+        let pendantsEquipped = {}
+        for (let i = 0; i < pendants.length; i++) {
+            const p = pendants[i]
+
+            if (p.equipped) {
+                const idnft = p.equippedToId.replace("pendant", "")
+                pendantsEquipped[idnft] = p
+            }
+        }
+
+        this.setState({ ringsEquipped, pendantsEquipped })
     }
 
     async loadPair(id) {
@@ -280,6 +313,21 @@ class Tournament extends Component {
     renderRow(item, index, width) {
         const { potionsEquipped, tournament, ringsEquipped, pendantsEquipped, rankings } = this.state
 
+        let potion = undefined
+        if (potionsEquipped && potionsEquipped[item.id]) {
+            potion = potionsEquipped[item.id]
+        }
+
+        let ring = undefined
+        if (ringsEquipped && ringsEquipped[item.id]) {
+            ring = ringsEquipped[item.id]
+        }
+
+        let pendant = undefined
+        if (pendantsEquipped && pendantsEquipped[item.id]) {
+            pendant = pendantsEquipped[item.id]
+        }
+
         //per ogni row creiamo un array di GameCard
 		return (
             <div style={{ marginBottom: 15 }} key={index}>
@@ -288,9 +336,9 @@ class Tournament extends Component {
                     key={index}
                     history={this.props.history}
                     width={width}
-                    potionsEquipped={potionsEquipped}
-                    ringsEquipped={ringsEquipped}
-                    pendantsEquipped={pendantsEquipped}
+                    potion={potion}
+                    ring={ring}
+                    pendant={pendant}
                     tournamentName={tournament.name.split("_")[0]}
                     tournamentSeason={tournament.season}
                     rankings={rankings}
