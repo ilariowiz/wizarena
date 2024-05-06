@@ -47,6 +47,11 @@ const titles = {
             title: "Lord of Vedrenon Season 4",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "Lord of Vedrenon Season 6",
+            img: crown,
+            textColor: 'gold'
         }
     ],
     "1425": [{
@@ -210,6 +215,11 @@ const titles = {
             title: "Lord of Ulidalar Season 5",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "Lord of Ulidalar Season 6",
+            img: crown,
+            textColor: 'gold'
         }
     ],
     "2932": [{
@@ -252,10 +262,25 @@ const titles = {
             title: "Lord of Druggorial Season 5",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "Lord of Wastiaxus Season 6",
+            img: crown,
+            textColor: 'gold'
         }
     ],
     "488": [{
         title: "Lord of Opherus Season 2",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "254": [{
+        title: "Lord of Ulanara Season 6",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "1850": [{
+        title: "Lord of Oceorah Season 6",
         img: crown,
         textColor: 'gold'
     }],
@@ -296,11 +321,18 @@ const titles = {
         img: medal,
         textColor: "#cd7f32"
     }],
-    "137": [{
-        title: "The Twelve League III 7th place",
-        img: medal,
-        textColor: "#cd7f32"
-    }],
+    "137": [
+        {
+            title: "The Twelve League III 7th place",
+            img: medal,
+            textColor: "#cd7f32"
+        },
+        {
+            title: "Lord of Bremonon Season 6",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
     "1117": [
         {
             title: "The Twelve League I 8th place",
@@ -392,6 +424,11 @@ const titles = {
             title: "Lord of Oceorah Season 2",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "Lord of Opherus Season 6",
+            img: crown,
+            textColor: 'gold'
         }
     ],
     "890": [{
@@ -412,6 +449,16 @@ const titles = {
         },
         {
             title: "Lord of Opherus Season 5",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Sitenor Season 6",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Druggorial Season 5",
             img: crown,
             textColor: 'gold'
         }
