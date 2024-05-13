@@ -35,7 +35,7 @@ const getBgNft = (bgName) => {
     }
     if (bgName === "Dark Purple") {
         return "#392232"
-    },
+    }
     if (bgName === "Cave") {
         return "#7f6250"
     }
