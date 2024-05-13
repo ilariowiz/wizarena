@@ -9,7 +9,7 @@ const traits_qty_elders = {
     "hat":{"Dark":66, "White":254, "Brown":1},
     "diadem":{"Black":33},
     "mouth":{"Scream":425, "Beard": 3, "Basic": 838, "Angry":193},
-    "eyes":{"Angry":198,"Bloody":38, "Blind":74},
+    "eyes":{"Angry":197,"Bloody":38, "Blind":74, "Evil": 247},
     "gem":{"Sodalite":3, "Obsidian":42, "Citrine": 142, "Pure Amethyst": 1, "Pure Aquamarine":1, "Dark Ruby": 2, "Pearl":165, "Dark Topaz": 1, "Dark Amethyst": 1},
     "extra":{"Wings": 3, "Horn": 1, "Beard":3, "Dark Wings": 1}
 }
