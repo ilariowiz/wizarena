@@ -697,7 +697,7 @@ class Nft extends Component {
 				percentString = qty * 100 / 1024
 			}
 			//elder
-			else if (parseInt(nft.id) >= 3072 && parseInt(nft.id) < 3081) {
+			else if (parseInt(nft.id) >= 3072 && parseInt(nft.id) < 3084) {
 				const section = traits_qty_elders[item.trait_type.toLowerCase()]
 				const qty = section[item.value]
 

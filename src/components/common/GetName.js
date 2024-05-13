@@ -16,6 +16,15 @@ const getName = (id) => {
     else if (parseInt(id) >= 3078 && parseInt(id) < 3081) {
         type = 'Elder Wizard'
     }
+    else if (parseInt(id) === 3082) {
+        type = "Elder Wizard"
+    }
+    else if (parseInt(id) === 3083) {
+        type = "Elder Cleric"
+    }
+    else if (parseInt(id) === 3083) {
+        type = "Elder Druid"
+    }
 
     return type
 }

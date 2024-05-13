@@ -8,7 +8,7 @@ export const TEXT_NIGHT_COLOR = 'white'
 export const MIN_LEVEL = 122
 export const MAX_LEVEL = 375
 
-export const REVEAL_CAP = 3081
+export const REVEAL_CAP = 3084
 
 export const RING_MINT_PRICE = 4.0
 
