@@ -39,7 +39,7 @@ class NftCardTournament extends Component {
 
 		if (potion && potion === "hp") {
 			imagePotion = vial_hp
-			descPotion = "Vial of HP +8"
+			descPotion = "Vial of HP +10"
 		}
 		else if (potion && potion === "defense") {
 			imagePotion = vial_def
