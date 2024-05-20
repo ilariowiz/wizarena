@@ -498,13 +498,11 @@ class Arena extends Component {
 
                 this.sendFightToFirebase(history, wizardSelected, response, winner)
 
-                let points = 5
-
                 if (winner === wizardSelected.id) {
-                    this.updateDataFirebase(wizardSelected.id, true, points, wizardSelected.level)
+                    this.updateDataFirebase(wizardSelected.id, true, wizardSelected.level)
                 }
                 else {
-                    this.updateDataFirebase(winner, false, points, opponent.level)
+                    this.updateDataFirebase(winner, false, opponent.level)
                 }
 
                 this.setState({ infoFight: { nft1: wizardSelected, nft2: response, winner: "" }, loadingStartFight: false })
@@ -554,7 +552,7 @@ class Arena extends Component {
         })
     }
 
-    async updateDataFirebase(idnft, doIncrement, points, wizardLevel) {
+    async updateDataFirebase(idnft, doIncrement, wizardLevel) {
         const { allData } = this.state
 
         const data = allData.find(i => i.idnft === idnft)
@@ -564,15 +562,15 @@ class Arena extends Component {
         //se hai vinto e sei l'attaccante
         if (doIncrement) {
             updateDoc(docRef, {
-                "ranking": increment(points),
+                "ranking": increment(5),
                 "lastFightTime": serverTimestamp(),
                 "level": wizardLevel
             })
         }
-        //è il difensore che ha vinto
+        //è il difensore che ha vinto, lo sfidato che ha vinto guadagna 2 punti
         else {
             updateDoc(docRef, {
-                "ranking": increment(points),
+                "ranking": increment(2),
                 "fightsGet": increment(1),
                 "level": wizardLevel
             })
