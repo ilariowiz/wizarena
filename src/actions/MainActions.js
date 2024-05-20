@@ -71,6 +71,8 @@ import {
 	REVEAL_CAP
 } from './types'
 
+const URL_2 = `https://kda-api.glexia.com/chainweb/0.0/${MAIN_NET_ID}/chain/1/pact`;
+
 
 export const setNetworkSettings = (netId, chainId, gasPrice = DEFAULT_GAS_PRICE) => {
 	return {
@@ -927,8 +929,8 @@ export const loadFightsSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLi
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
-		const response = await dispatch(readFromContract(cmd, true, networkUrl))
-		console.log(response);
+		const response = await dispatch(readFromContract(cmd, true, URL_2))
+		//console.log(response);
 
 		return response
 	}
