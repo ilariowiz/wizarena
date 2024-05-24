@@ -12,7 +12,9 @@ export const REVEAL_CAP = 3084
 
 export const RING_MINT_PRICE = 4.0
 
-export const NODE_URL = 'api.chainweb.com' //'node1.kadenaiconnect.com'
+//export const NODE_URL = 'api.chainweb.com'
+export const NODE_URL = 'chainweb.ecko.finance'
+//export const NODE_URL = '01-vinthill-074-01.rpc.tatum.io'
 export const ADMIN_ADDRESS = 'k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb'
 export const CLERIC_MINT_ADDRESS = "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"
 export const CONTRACT_NAME = 'wiz-arena'//'wiz-arena-test3'
