@@ -32,6 +32,7 @@
     "react": "^16.8.4",
     "react-dom": "16.8.4",
     "react-google-charts": "^4.0.0",
+    "react-google-recaptcha": "^3.1.0",
     "react-hot-toast": "^2.2.0",
     "react-icons": "^4.10.1",
     "react-media": "^1.10.0",

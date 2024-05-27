@@ -5,6 +5,7 @@ import { getDocs, collection, query, doc, getDoc, serverTimestamp, updateDoc, se
 import { firebasedb } from './Firebase';
 import moment from 'moment'
 import _ from 'lodash'
+import ReCAPTCHA from 'react-google-recaptcha'
 import { MdOutlineDateRange } from 'react-icons/md'
 import DotLoader from 'react-spinners/DotLoader';
 import Popup from 'reactjs-popup';
@@ -57,7 +58,8 @@ class Arena extends Component {
             loadingYourChampion: false,
             wizardSelectedLastFights: [],
             showModalFight: false,
-            lastOpponentId: ""
+            lastOpponentId: "",
+            captchaToken: ""
         }
     }
 
@@ -283,7 +285,11 @@ class Arena extends Component {
 
         //console.log(infoNft);
 
-        this.setState({ wizardSelected: infoNft, loadingYourChampion: false, fightsDone: data.fightsDone }, () => {
+        if (this.recaptchaRef) {
+            this.recaptchaRef.current.reset()
+        }
+
+        this.setState({ wizardSelected: infoNft, loadingYourChampion: false, fightsDone: data.fightsDone, captchaToken: "" }, () => {
             this.loadWizardSelectedLastFights(infoNft.id)
         })
     }
@@ -729,6 +735,7 @@ class Arena extends Component {
         )
     }
 
+
     renderWizardSelected(isMobile, seasonStarted, seasonEnded) {
         const { mainTextColor } = this.props
         const { wizardSelected, fightsDone, wizardSelectedLastFights, allData } = this.state
@@ -739,6 +746,8 @@ class Arena extends Component {
         const fightsLeft = 5 - fightsDone
 
         const maxWidth = 180
+
+        const recaptchaRef = React.createRef()
 
         return (
             <div style={{ flexDirection: isMobile ? 'column' : 'row', width: "100%" }}>
@@ -796,7 +805,11 @@ class Arena extends Component {
                         !seasonEnded && seasonStarted && fightsLeft > 0 &&
                         <button
                             style={Object.assign({}, styles.btnSubscribe, { width: 120, height: 36 })}
-                            onClick={() => this.startFight()}
+                            onClick={() => {
+                                if (this.state.captchaToken) {
+                                    this.startFight()
+                                }
+                            }}
                         >
                             <p style={{ fontSize: 16, color: 'white', textAlign: 'center' }} className="text-medium">
                                 Fight
@@ -814,6 +827,14 @@ class Arena extends Component {
                             </p>
                         </div>
                     }
+
+                    <ReCAPTCHA
+                        style={{ display: this.state.captchaToken ? "none" : "block" }}
+                        ref={recaptchaRef}
+                        //size="invisible"
+                        sitekey="6LeMHekpAAAAALxSDiImZ24NxsXipt69omZH03S8"
+                        onChange={(e) => this.setState({ captchaToken: e })}
+                    />
                 </div>
 
                 <div style={{ flexDirection: 'column', marginLeft: 20 }}>
