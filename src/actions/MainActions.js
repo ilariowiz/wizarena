@@ -2946,6 +2946,12 @@ export const burnAP = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, id
           			`free.${CONTRACT_NAME_WIZA}.OWNER`,
           			[account.account, idnft, account.account]
         		),
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME}.OWNER`,
+          			[account.account, idnft]
+        		),
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
 			sender: account.account,
@@ -3291,6 +3297,12 @@ export const upgradeAura = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, accoun
           			"Verify your account",
           			`free.${CONTRACT_NAME_EQUIPMENT}.ACCOUNT_GUARD`,
           			[account.account]
+        		),
+				Pact.lang.mkCap(
+          			"Verify your account",
+          			"Verify your account",
+          			`free.${CONTRACT_NAME}.OWNER`,
+          			[account.account, idnft]
         		),
 				Pact.lang.mkCap(`Pay WIZA`, "Pay WIZA", `free.wiza.TRANSFER`, [
 					account.account,

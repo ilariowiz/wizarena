@@ -649,7 +649,7 @@
             )
             (enforce (<= amount balance) "You don't have enough WIZA")
         )
-        (with-capability (DEBIT account)
+        (with-capability (TRANSFER account WIZA_TOKEN_BANK amount)
             (with-default-read token-table account
               {"balance": 0.0}
               {"balance":= oldbalance}

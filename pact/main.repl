@@ -1084,21 +1084,22 @@
 
 (commit-tx)
 
-(begin-tx "CANCEL CHALLENGE")
-
-(free.wiza.get-balance "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd")
-
-(env-sigs [{
-  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-  "caps": [
-    (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
-    (free.wiza.TRANSFER "wiz-auto-tournaments-bank" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" 30.0),
-    (coin.GAS)
-  ]
-}])
-
-(free.wiz-arena.cancel-challenge "0" free.wiza)
-
+; (begin-tx "CANCEL CHALLENGE")
+;
+; (free.wiza.get-balance "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd")
+;
+; (env-sigs [{
+;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+;   "caps": [
+;     (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
+;     (free.wiza.TRANSFER "wiz-auto-tournaments-bank" "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" 30.0),
+;     (coin.GAS)
+;   ]
+; }])
+;
+; (free.wiz-arena.cancel-challenge "0" free.wiza)
+;
+; (commit-tx)
 
 (begin-tx "ACCEPT CHALLENGE")
 
@@ -1108,6 +1109,7 @@
   "key": "94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd",
   "caps": [
     (free.wiz-arena.OWNER "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" "2"),
+    (free.wiza.TRANSFER "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" "wiz-auto-tournaments-bank" 30.0),
     (coin.GAS)
   ]
 }])
@@ -1252,6 +1254,7 @@
   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
   "caps": [
     (free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    (free.wiza.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "wiz-auto-tournaments-bank" 50.0),
     (coin.GAS)
   ]
 }])
@@ -1266,6 +1269,7 @@
   "key": "94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd",
   "caps": [
     (free.wiz-arena.OWNER "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" "2"),
+    (free.wiza.TRANSFER "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" "wiz-auto-tournaments-bank" 50.0),
     (coin.GAS)
   ]
 }])
@@ -1749,6 +1753,7 @@
   "key": "94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd",
   "caps": [
     (free.wiz-equipment.ACCOUNT_GUARD "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd"),
+    (free.wiza.TRANSFER "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" "wiz-equipment-offers-bank" 100.0),
     (coin.GAS)
   ]
 }])
