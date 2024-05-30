@@ -471,9 +471,7 @@
                   (admin-guard (at "guard" (coin.details ADMIN_ADDRESS)))
               )
               (with-capability (ACCOUNT_GUARD newowner)
-                (install-capability (m::TRANSFER newowner (at "owner" data) (- (at "price" data) fee)))
                 (m::transfer-create newowner (at "owner" data) owner-guard (- (at "price" data) fee))
-                (install-capability (m::TRANSFER newowner ADMIN_ADDRESS fee))
                 (m::transfer-create newowner ADMIN_ADDRESS admin-guard fee)
                 (update equipment id {
                   "owner": newowner,
@@ -618,7 +616,6 @@
           (bank-guard (at "guard" (coin.details WIZ_EQUIPMENT_OFFERS_BANK)))
         )
         (with-capability (ACCOUNT_GUARD buyer)
-            (install-capability (m::TRANSFER buyer WIZ_EQUIPMENT_OFFERS_BANK amount))
             (m::transfer-create buyer WIZ_EQUIPMENT_OFFERS_BANK bank-guard amount)
 
           (insert offers new-offer-id {
@@ -670,10 +667,7 @@
                   (admin-guard (at "guard" (coin.details ADMIN_ADDRESS)))
                 )
                 (with-capability (PRIVATE)
-                    (install-capability (m::TRANSFER WIZ_EQUIPMENT_OFFERS_BANK (at "owner" data) (- amount fee)))
                     (m::transfer-create WIZ_EQUIPMENT_OFFERS_BANK (at "owner" data) owner-guard (- amount fee))
-
-                    (install-capability (m::TRANSFER WIZ_EQUIPMENT_OFFERS_BANK ADMIN_ADDRESS fee))
                     (m::transfer-create WIZ_EQUIPMENT_OFFERS_BANK ADMIN_ADDRESS admin-guard fee)
 
                     (update offers idoffer { "withdrawn": true, "status": "accepted" })
@@ -714,7 +708,6 @@
             (enforce (= iswithdrew false) "Cannot withdraw twice")
             (enforce (<= expiresat (at "block-time" (chain-data))) "Cannot cancel offer yet.")
             (with-capability (PRIVATE)
-              (install-capability (m::TRANSFER WIZ_EQUIPMENT_OFFERS_BANK buyer amount))
               (m::transfer-create WIZ_EQUIPMENT_OFFERS_BANK buyer buyer-guard amount)
 
               (update offers idoffer { "withdrawn": true, "status": "canceled" })

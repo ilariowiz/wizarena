@@ -124,7 +124,7 @@ class Sales extends Component {
 			saleValues
 		})
 
-		this.props.acceptOfferEquipment(chainId, gasPrice, 5000, netId, offer.id, idToSell, account)
+		this.props.acceptOfferEquipment(chainId, gasPrice, 5000, netId, offer.id, idToSell, account, offer.amount)
 	}
 
     getExpire(item) {

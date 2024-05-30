@@ -196,7 +196,7 @@ class ItemEquipment extends Component {
             saleValues
 		})
 
-		this.props.buyEquipment(chainId, gasPrice, 7000, netId, account, equipment.id)
+		this.props.buyEquipment(chainId, gasPrice, 7000, netId, account, equipment.id, equipment.owner, equipment.price)
 	}
 
     transfer(receiver) {

@@ -519,7 +519,7 @@ class Profile extends Component {
 			transactionOkText: 'Funds successfully withdrawn'
 		})
 
-		this.props.withdrawEquipmentOffer(chainId, gasPrice, 5000, netId, offer.id, account)
+		this.props.withdrawEquipmentOffer(chainId, gasPrice, 5000, netId, offer.id, account, offer.amount)
 	}
 
 	async searchByStat(stat) {

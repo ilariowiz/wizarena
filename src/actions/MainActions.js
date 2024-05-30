@@ -2195,10 +2195,13 @@ export const delistEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit,
 	}
 }
 
-export const buyEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, iditem) => {
+export const buyEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, iditem, owner, amount) => {
 	return (dispatch) => {
 
 		let pactCode = `(free.${CONTRACT_NAME_EQUIPMENT}.buy-equipment "${iditem}" "${account.account}" free.wiza)`;
+
+		let fee = _.round(((amount * 2) / 100), 2)
+		let gain = _.round(amount - fee, 2)
 
 		let caps = [
 			Pact.lang.mkCap(
@@ -2207,6 +2210,16 @@ export const buyEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, ne
 				`free.${CONTRACT_NAME_EQUIPMENT}.ACCOUNT_GUARD`,
 				[account.account]
 			),
+			Pact.lang.mkCap(`Buy equipment`, "Buy equipment", `free.wiza.TRANSFER`, [
+				account.account,
+				owner,
+				gain,
+			]),
+			Pact.lang.mkCap(`Marketplace fee`, "Marketplace fee", `free.wiza.TRANSFER`, [
+				account.account,
+				ADMIN_ADDRESS,
+				fee,
+			]),
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 		]
 
@@ -2244,6 +2257,11 @@ export const makeOfferEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 				`free.${CONTRACT_NAME_EQUIPMENT}.ACCOUNT_GUARD`,
 				[account.account]
 			),
+			Pact.lang.mkCap(`Make offer`, "Make offer", `free.wiza.TRANSFER`, [
+				account.account,
+				"wiz-equipment-offers-bank",
+				_.round(amount, 2),
+			]),
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 		]
 
@@ -2269,10 +2287,13 @@ export const makeOfferEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 	}
 }
 
-export const acceptOfferEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idOffer, idYourItem, account) => {
+export const acceptOfferEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idOffer, idYourItem, account, amount) => {
 	return (dispatch) => {
 
 		let pactCode = `(free.${CONTRACT_NAME_EQUIPMENT}.accept-offer "${idOffer}" "${idYourItem}" "${account.account}" free.wiza)`;
+
+		const fee = _.round(((amount * 2) / 100), 2)
+		const gain = _.round(amount - fee, 2)
 
 		let caps = [
 			Pact.lang.mkCap(
@@ -2281,6 +2302,16 @@ export const acceptOfferEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 				`free.${CONTRACT_NAME_EQUIPMENT}.OWNER`,
 				[account.account, idYourItem]
 			),
+			Pact.lang.mkCap(`Accept offer`, "Accept offer", `free.wiza.TRANSFER`, [
+				"wiz-equipment-offers-bank",
+				account.account,
+				_.round(gain, 2),
+			]),
+			Pact.lang.mkCap(`Accept offer`, "Accept offer", `free.wiza.TRANSFER`, [
+				"wiz-equipment-offers-bank",
+				ADMIN_ADDRESS,
+				_.round(fee, 2),
+			]),
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 		]
 
@@ -2306,12 +2337,17 @@ export const acceptOfferEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 	}
 }
 
-export const withdrawEquipmentOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idOffer, account) => {
+export const withdrawEquipmentOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idOffer, account, amount) => {
 	return (dispatch) => {
 
 		let pactCode = `(free.${CONTRACT_NAME_EQUIPMENT}.cancel-offer "${idOffer}" free.wiza)`;
 
 		let caps = [
+			Pact.lang.mkCap(`Withdraw offer`, "Withdraw offer", `free.wiza.TRANSFER`, [
+				"wiz-equipment-offers-bank",
+				account.account,
+				_.round(amount, 2),
+			]),
 			Pact.lang.mkCap(
 				"Verify owner",
 				"Verify your are the owner",
