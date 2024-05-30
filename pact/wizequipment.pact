@@ -544,7 +544,7 @@
         (let (
                 (item-data (get-equipment-fields-for-id iditem))
                 (nft-data (ma::get-wizard-fields-for-id (str-to-int idnft)))
-                (wiza-cost (* (get-wiza-value) 0.33))
+                (wiza-cost (round(* (get-wiza-value) 0.33) 2))
             )
             (enforce (= (at "owner" nft-data) owner) "you are not the owner of this wizard")
             (enforce (= (at "equipped" item-data) true) "this item is not equipped")
@@ -914,7 +914,7 @@
     (enforce (= (format "{}" [mw]) "free.wiza") "not allowed, security reason")
     (let (
             (nft-data (ma::get-wizard-fields-for-id (str-to-int idnft)))
-            (wiza-cost (* (get-wiza-value) 15.0))
+            (wiza-cost (round(* (get-wiza-value) 15.0) 2))
         )
         (enforce (= (at "owner" nft-data) owner) "you are not the owner of this wizard")
         (with-default-read aura-table idnft
@@ -958,7 +958,7 @@
     (let (
             (nft-data (ma::get-wizard-fields-for-id (str-to-int idnft)))
             (ap-cost 10)
-            (wiza-cost (get-wiza-cost-for-upgrade-aura idnft))
+            (wiza-cost (round(get-wiza-cost-for-upgrade-aura idnft) 2))
         )
         (enforce (= (at "owner" nft-data) owner) "you are not the owner of this wizard")
         (check-upgrades-aura-limit idnft)
