@@ -2058,13 +2058,6 @@
         )
     )
 
-    ; (defun get-wiza-cost-ap (stat:string array-levels-to:list)
-    ;     (let (
-    ;             (wiza-cost (round (/ (* (fold (+) 0 (map (calculate-wiza-cost-from stat) array-levels-to)) 9) 100) 2))
-    ;         )
-    ;         wiza-cost
-    ;     )
-    ; )
 
     (defun calculate-wiza-cost-from (stat:string from:integer)
         (let (
@@ -2134,7 +2127,7 @@
             (let (
                     (current-level (calculate-level idnft))
                     (tournament-open (get-value TOURNAMENT_OPEN))
-                    (wiza-cost (* (get-wiza-value) 1.4))
+                    (wiza-cost (round (* (get-wiza-value) 1.4) 2))
                 )
                 (enforce (= tournament-open "1") "You can't buy vial now")
                 (with-default-read potions-table key
@@ -2483,7 +2476,7 @@
                 (account-xp (get-wallet-xp account))
                 (oldspell-info (get-spell-info oldspell))
                 (newspell-info (get-spell-info newspell))
-                (wiza-cost (* (get-wiza-value) 14))
+                (wiza-cost (round(* (get-wiza-value) 14) 2))
             )
             (enforce (= (length (at "spellbook" data)) 4) "The wizard must have 4 spells to do the swap")
             (enforce (>= account-xp 250) "You must have at least 250 xp to do the swap")
@@ -2855,7 +2848,7 @@
                     (data (get-wizard-fields-for-id (str-to-int idnft)))
                     (spellName (at "name" (at "spellSelected" data)))
                     (key (format "{}_{}" [idnft spellName]))
-                    (wiza-cost (get-wiza-cost-for-improve-spell key))
+                    (wiza-cost (round (get-wiza-cost-for-improve-spell key) 2))
                 )
                 (check-upgrades-spell-limit key)
                 (with-default-read stats idnft
