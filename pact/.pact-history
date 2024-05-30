@@ -1,3 +1,5 @@
+(load "main.repl" true)
+(load main.repl true)
 ls
 (load main.repl true)
 (load "main.repl" true)
@@ -20,8 +22,6 @@ ls
 (load "main.repl" true)
 (load "main.repl" true)
 (load "main.repl" true
-(load "main.repl" true)
-(load "main.repl" true)
 (load "main.repl" true)
 (load "main.repl" true)
 (load "main.repl" true)

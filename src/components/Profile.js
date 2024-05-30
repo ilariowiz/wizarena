@@ -486,7 +486,7 @@ class Profile extends Component {
 			saleValues
 		})
 
-		this.props.acceptOffer(chainId, gasPrice, 5000, netId, offer.id, offer.refnft, account)
+		this.props.acceptOffer(chainId, gasPrice, 5000, netId, offer.id, offer.refnft, account, offer.amount)
 	}
 
 	declineOffer(offer) {

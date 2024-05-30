@@ -36,7 +36,7 @@ class OfferCollectionItem extends Component {
                 			transactionOkText: 'Funds successfully withdrawn'
                 		})
 
-                        this.props.withdrawCollectionOffer(chainId, gasPrice, 5000, netId, item.id, account)
+                        this.props.withdrawCollectionOffer(chainId, gasPrice, 5000, netId, item.id, account, item.amount)
                     }}
 				>
 					<p style={{ fontSize: 15, color: "white" }} className="text-medium">

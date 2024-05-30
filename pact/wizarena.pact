@@ -744,6 +744,23 @@
         )
     )
 
+    (defun update-spell (item:object)
+        (with-capability (ADMIN)
+            (let
+                (
+                    (name (at "name" item))
+                )
+                (update spells name
+                    {"name": name,
+                    "atkBase": (at "atkBase" item),
+                    "dmgBase": (at "dmgBase" item),
+                    "element": (at "element" item),
+                    "condition": (at "condition" item)}
+                )
+            )
+        )
+    )
+
     ; (defun update-stats (objects-list:list)
     ;     (with-capability (ADMIN)
     ;         (map
@@ -1165,9 +1182,7 @@
                     (fee (/ (* (get-value-tournament FEE_KEY) (at "price" market-data)) 100))
                 )
                 (with-capability (ACCOUNT_GUARD newowner)
-                  (install-capability (coin.TRANSFER newowner (at "owner" currentowner) (- (at "price" market-data) fee)))
                   (coin.transfer newowner (at "owner" currentowner) (- (at "price" market-data) fee))
-                  (install-capability (coin.TRANSFER newowner ADMIN_ADDRESS fee))
                   (coin.transfer newowner ADMIN_ADDRESS fee)
                   (update nfts id {
                     "owner": newowner
@@ -1196,7 +1211,6 @@
           )
           (enforce (!= currentowner buyer) "the buyer can't be the owner")
           (with-capability (ACCOUNT_GUARD buyer)
-            (install-capability (coin.TRANSFER buyer WIZARDS_OFFERS_BANK amount))
             (coin.transfer buyer WIZARDS_OFFERS_BANK amount)
             (insert offers-table new-offer-id {
               "id": new-offer-id,
@@ -1238,7 +1252,6 @@
           (enforce (= iswithdrew false) "Cannot withdraw twice")
           (enforce (<= expiresat (at "block-time" (chain-data))) "Cannot cancel offer yet.")
           (with-capability (PRIVATE)
-            (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK buyer amount))
             (coin.transfer WIZARDS_OFFERS_BANK buyer amount)
 
             (update offers-table idoffer { "withdrawn": true, "status": "canceled" })
@@ -1343,7 +1356,6 @@
             (new-offer-id (int-to-str 10 (get-count WIZARDS_OFFERS_COUNT_KEY)))
           )
           (with-capability (ACCOUNT_GUARD buyer)
-            (install-capability (coin.TRANSFER buyer WIZARDS_OFFERS_BANK amount))
             (coin.transfer buyer WIZARDS_OFFERS_BANK amount)
 
             (insert collection-offers-table new-offer-id {
@@ -1443,7 +1455,6 @@
           (enforce (= iswithdrew false) "Cannot withdraw twice")
           (enforce (<= expiresat (at "block-time" (chain-data))) "Cannot cancel offer yet.")
           (with-capability (PRIVATE)
-            (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK buyer amount))
             (coin.transfer WIZARDS_OFFERS_BANK buyer amount)
 
             (update collection-offers-table idoffer { "withdrawn": true, "status": "canceled" })
@@ -1522,9 +1533,7 @@
             )
             (enforce (= tournament-open "1") "Tournament registrations are closed")
             (with-capability (ACCOUNT_GUARD address)
-                (install-capability (coin.TRANSFER address ADMIN_ADDRESS feebuyin))
                 (coin.transfer address ADMIN_ADDRESS feebuyin)
-                (install-capability (coin.TRANSFER address WIZ_BANK (- buyin feebuyin)))
                 (coin.transfer address WIZ_BANK (- buyin feebuyin))
                 (with-default-read token-table WIZ_BANK
                   {"balance": 0.0}
@@ -1765,7 +1774,6 @@
             )
             (enforce (= is-open "1") "Conquest season registrations are closed")
             (with-capability (ACCOUNT_GUARD address)
-                (install-capability (coin.TRANSFER address ADMIN_ADDRESS buyin))
                 (coin.transfer address ADMIN_ADDRESS buyin)
             )
             (with-capability (PRIVATE)
@@ -1814,7 +1822,6 @@
             )
             (enforce (= pvp-open "1") "Pvp week registrations are closed")
             (with-capability (ACCOUNT_GUARD address)
-                (install-capability (coin.TRANSFER address ADMIN_ADDRESS buyin))
                 (coin.transfer address ADMIN_ADDRESS buyin)
             )
             (with-capability (PRIVATE)
@@ -2628,7 +2635,6 @@
                 (if
                     (= coin "kda")
                     [
-                        (install-capability (coin.TRANSFER (at "owner" wiz1data) WIZARDS_OFFERS_BANK amount))
                         (coin.transfer (at "owner" wiz1data) WIZARDS_OFFERS_BANK amount)
                         (with-default-read token-table WIZARDS_OFFERS_BANK
                           {"balance": 0.0}

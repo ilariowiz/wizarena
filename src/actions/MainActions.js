@@ -1731,13 +1731,21 @@ export const delistNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId
 export const buyNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, nft) => {
 	return (dispatch) => {
 
+		const fee = _.round(((nft.price * 7) / 100), 2)
+		const gain = _.round(nft.price - fee, 2)
+
 		let pactCode = `(free.${CONTRACT_NAME}.buy-wizard "${nft.id}" "${account.account}")`;
 
 		let caps = [
 			Pact.lang.mkCap(`Buy`, "Pay to buy", `coin.TRANSFER`, [
 				account.account,
 				nft.owner,
-				nft.price,
+				gain,
+			]),
+			Pact.lang.mkCap(`Buy`, "Marketplace fee", `coin.TRANSFER`, [
+				account.account,
+				ADMIN_ADDRESS,
+				fee,
 			]),
 			Pact.lang.mkCap(
 				"Verify your account",
@@ -1776,6 +1784,11 @@ export const makeOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId
 		let pactCode = `(free.${CONTRACT_NAME}.make-offer "${idNft}" "${account.account}" ${days} ${_.round(amount).toFixed(1)})`;
 
 		let caps = [
+			Pact.lang.mkCap(`Make offer`, "Make offer", `coin.TRANSFER`, [
+				account.account,
+				"wizards-offers-bank",
+				_.round(amount, 2),
+			]),
 			Pact.lang.mkCap(
 				"Verify owner",
 				"Verify your are the owner",
@@ -1807,12 +1820,22 @@ export const makeOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId
 	}
 }
 
-export const acceptOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idOffer, idNft, account) => {
+export const acceptOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idOffer, idNft, account, amount) => {
 	return (dispatch) => {
+
+		const fee = _.round(((amount * 7) / 100), 2)
+		const gain = _.round(amount - fee, 2)
 
 		let pactCode = `(free.${CONTRACT_NAME}.accept-offer "${idOffer}" free.wiza free.wiz-equipment)`;
 
 		let caps = [
+			/*
+			Pact.lang.mkCap(`Accept offer`, "Accept offer", `coin.TRANSFER`, [
+				account.account,
+				"wizards-offers-bank",
+				_.round(amount, 2),
+			]),
+			*/
 			Pact.lang.mkCap(
 				"Verify owner",
 				"Verify your are the owner",
@@ -1881,12 +1904,17 @@ export const declineOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, ne
 	}
 }
 
-export const withdrawOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idOffer, account) => {
+export const withdrawOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idOffer, account, amount) => {
 	return (dispatch) => {
 
 		let pactCode = `(free.${CONTRACT_NAME}.cancel-offer "${idOffer}")`;
 
 		let caps = [
+			Pact.lang.mkCap(`Withdraw offer`, "Withdraw offer", `coin.TRANSFER`, [
+				"wizards-offers-bank",
+				account.account,
+				_.round(amount, 2),
+			]),
 			Pact.lang.mkCap(
 				"Verify owner",
 				"Verify your are the owner",
@@ -1924,6 +1952,11 @@ export const makeCollectionOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLi
 		let pactCode = `(free.${CONTRACT_NAME}.make-collection-offer "${account.account}" ${days} ${_.round(amount).toFixed(1)})`;
 
 		let caps = [
+			Pact.lang.mkCap(`Collection offer`, "Collection offer", `coin.TRANSFER`, [
+				account.account,
+				"wizards-offers-bank",
+				_.round(amount, 2),
+			]),
 			Pact.lang.mkCap(
 				"Verify owner",
 				"Verify your are the owner",
@@ -1992,12 +2025,17 @@ export const acceptCollectionOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 	}
 }
 
-export const withdrawCollectionOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idOffer, account) => {
+export const withdrawCollectionOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idOffer, account, amount) => {
 	return (dispatch) => {
 
 		let pactCode = `(free.${CONTRACT_NAME}.cancel-collection-offer "${idOffer}")`;
 
 		let caps = [
+			Pact.lang.mkCap(`Withdraw Collection offer`, "Withdraw Collection offer", `coin.TRANSFER`, [
+				"wizards-offers-bank",
+				account.account,
+				_.round(amount, 2),
+			]),
 			Pact.lang.mkCap(
 				"Verify owner",
 				"Verify your are the owner",
@@ -2294,7 +2332,11 @@ export const subscribeToTournamentMass = (chainId, gasPrice = DEFAULT_GAS_PRICE,
 
 		let pactCode = `(free.${CONTRACT_NAME}.subscribe-tournament-mass ${JSON.stringify(list)} "${account.account}")`;
 
-		let coinTransferAmount = _.round(buyin*list.length, 1)
+		let coinTransferAmount = _.round(buyin*list.length, 2)
+		const singleFee = _.round(((buyin * 10) / 100), 2)
+
+		const totalFee = _.round(singleFee * list.length, 2)
+		let coinTransferNet = _.round(coinTransferAmount - totalFee, 2)
 
 		let caps = [
 			Pact.lang.mkCap(
@@ -2306,7 +2348,12 @@ export const subscribeToTournamentMass = (chainId, gasPrice = DEFAULT_GAS_PRICE,
 			Pact.lang.mkCap(`Subscribe`, "Pay the buyin", `coin.TRANSFER`, [
 				account.account,
 				WIZ_BANK,
-				coinTransferAmount,
+				coinTransferNet,
+			]),
+			Pact.lang.mkCap(`Subscribe`, "Pay the fee", `coin.TRANSFER`, [
+				account.account,
+				ADMIN_ADDRESS,
+				totalFee,
 			]),
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 		]
@@ -2428,7 +2475,7 @@ export const subscribeToTournamentMassELITE = (chainId, gasPrice = DEFAULT_GAS_P
 	}
 }
 
-export const subscribeToLords = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, seasonId, list) => {
+export const subscribeToLords = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, seasonId, list, amount) => {
 	return (dispatch) => {
 
 		let pactCode = `(free.${CONTRACT_NAME}.subscribe-to-lord-season-mass "${account.account}" "${seasonId}" ${JSON.stringify(list)})`;
@@ -2440,6 +2487,11 @@ export const subscribeToLords = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit
 				`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
 				[account.account]
 			),
+			Pact.lang.mkCap(`Subscribe`, "Pay the fee", `coin.TRANSFER`, [
+				account.account,
+				ADMIN_ADDRESS,
+				amount,
+			]),
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 		]
 
@@ -2477,6 +2529,8 @@ export const subscribeToPvPMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 
 		let pactCode = `(free.${CONTRACT_NAME}.subscribe-pvp-mass ${JSON.stringify(list)} "${account.account}" free.wiza)`;
 
+		const amount = _.round(list.length * 1.0, 2)
+
 		let caps = [
 			Pact.lang.mkCap(
 				"Verify owner",
@@ -2484,6 +2538,11 @@ export const subscribeToPvPMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 				`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
 				[account.account]
 			),
+			Pact.lang.mkCap(`Subscribe`, "Pay the fee", `coin.TRANSFER`, [
+				account.account,
+				"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+				amount,
+			]),
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 		]
 
@@ -3234,6 +3293,11 @@ export const sendChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, nft1
           			`free.${CONTRACT_NAME}.OWNER`,
           			[account.account, nft1id]
         		),
+				Pact.lang.mkCap(`Send challenge money`, "Send challenge money", `coin.TRANSFER`, [
+					account.account,
+					"wizards-offers-bank",
+					_.round(amount, 2),
+				]),
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
 			sender: account.account,

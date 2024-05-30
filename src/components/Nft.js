@@ -640,7 +640,7 @@ class Nft extends Component {
 			saleValues
 		})
 
-		this.props.acceptOffer(chainId, gasPrice, 5000, netId, offer.id, nft.id, account)
+		this.props.acceptOffer(chainId, gasPrice, 5000, netId, offer.id, nft.id, account, offer.amount)
 	}
 
 	changeSpell(spellSelected) {

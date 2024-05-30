@@ -436,7 +436,9 @@ class Conquest extends Component {
             lordsSeasonId: this.SEASON_ID
 		})
 
-        this.props.subscribeToLords(chainId, gasPrice, gasLimit, netId, account, this.SEASON_ID, toSubscribe)
+        const totKda = _.round(toSubscribe.length * seasonInfo.buyin, 2)
+
+        this.props.subscribeToLords(chainId, gasPrice, gasLimit, netId, account, this.SEASON_ID, toSubscribe, totKda)
     }
 
     async loadWizardSelectedLastFights(idnft) {
