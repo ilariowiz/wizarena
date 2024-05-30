@@ -2333,7 +2333,6 @@
                     "winners": winners,
                     "type":type}
                 )
-                (install-capability (m::TRANSFER account WIZ_AUTO_TOURNAMENTS_BANK buyin))
                 (m::transfer-create account WIZ_AUTO_TOURNAMENTS_BANK bank-guard buyin)
                 (with-capability (PRIVATE)
                   (increase-count AUTO_TOURNAMENTS_ID)
@@ -2372,7 +2371,6 @@
                             "wallets": (+ subscriberwallets (make-list 1 account))
                         }
                     )
-                    (install-capability (m::TRANSFER account WIZ_AUTO_TOURNAMENTS_BANK buyin))
                     (m::transfer-create account WIZ_AUTO_TOURNAMENTS_BANK bank-guard buyin)
                 )
             )
@@ -2637,7 +2635,6 @@
                         )
                     ]
                     [
-                        (install-capability (m::TRANSFER (at "owner" wiz1data) WIZ_AUTO_TOURNAMENTS_BANK amount))
                         (m::transfer-create (at "owner" wiz1data) WIZ_AUTO_TOURNAMENTS_BANK bank-guard amount)
                     ]
                 )
@@ -2702,7 +2699,6 @@
                             )
                         ]
                         [
-                            (install-capability (m::TRANSFER owner2 WIZ_AUTO_TOURNAMENTS_BANK amount))
                             (m::transfer-create owner2 WIZ_AUTO_TOURNAMENTS_BANK bank-guard amount)
                         ]
                     )
@@ -2810,7 +2806,6 @@
                         (let (
                                 (account-guard (at "guard" (coin.details wiz1owner)))
                             )
-                            (install-capability (m::TRANSFER WIZ_AUTO_TOURNAMENTS_BANK wiz1owner amount))
                             (m::transfer-create WIZ_AUTO_TOURNAMENTS_BANK wiz1owner account-guard amount)
                         )
                     ]

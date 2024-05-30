@@ -120,10 +120,7 @@ class FlashTournaments extends Component {
             return
         }
 
-        //console.log(joinTournamentid, idnft);
         const infoTorneo = pendingTournaments.find(i => i.id === joinTournamentid)
-        //console.log(infoTorneo);
-        //return
 
         this.props.updateInfoTransactionModal({
             transactionToConfirmText: `You are about to join the tournament ID: ${joinTournamentid} with #${idnft}`,
@@ -132,7 +129,7 @@ class FlashTournaments extends Component {
             makeOfferValues: infoTorneo
         })
 
-        this.props.joinTournament(chainId, gasPrice, netId, joinTournamentid, idnft, account)
+        this.props.joinTournament(chainId, gasPrice, netId, joinTournamentid, idnft, account, infoTorneo.buyin)
     }
 
     renderMenu() {

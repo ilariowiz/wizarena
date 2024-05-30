@@ -120,7 +120,7 @@ class Challenges extends Component {
         }
     }
 
-    onWithdraw(challengeid, amount) {
+    onWithdraw(challengeid, amount, coin) {
         const { account, chainId, gasPrice, netId } = this.props
 
         //console.log(challengeid);
@@ -131,10 +131,10 @@ class Challenges extends Component {
 			transactionOkText: `Challenge withdrawn!`
 		})
 
-        this.props.cancelChallenge(chainId, gasPrice, netId, challengeid, account, amount)
+        this.props.cancelChallenge(chainId, gasPrice, netId, challengeid, account, amount, coin)
     }
 
-    onAccept(challengeid, wiz2id, amount) {
+    onAccept(challengeid, wiz2id, amount, coin) {
         const { account, chainId, gasPrice, netId } = this.props
 
         //console.log(challengeid, wiz2id);
@@ -145,7 +145,7 @@ class Challenges extends Component {
 			transactionOkText: `Challenge accepted!`
 		})
 
-        this.props.acceptChallenge(chainId, gasPrice, netId, challengeid, wiz2id, account, amount)
+        this.props.acceptChallenge(chainId, gasPrice, netId, challengeid, wiz2id, account, amount, coin)
     }
 
     async onShowResult(item) {
@@ -184,8 +184,8 @@ class Challenges extends Component {
                                 isMobile={isMobile}
                                 isReceived={isReceived}
                                 key={item.id}
-                                onWithdraw={() => this.onWithdraw(item.id, item.amount)}
-                                onAccept={() => this.onAccept(item.id, item.wiz2id, item.amount)}
+                                onWithdraw={() => this.onWithdraw(item.id, item.amount, item.coin)}
+                                onAccept={() => this.onAccept(item.id, item.wiz2id, item.amount, item.coin)}
                                 onShowResult={() => this.onShowResult(item) }
                             />
                         )

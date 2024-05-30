@@ -3167,7 +3167,7 @@ export const resetSpellUpgrades = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId,
 	}
 }
 
-export const upgradeAura = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft) => {
+export const upgradeAura = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft, amount) => {
 	return (dispatch) => {
 
 		let pactCode = `(free.${CONTRACT_NAME_EQUIPMENT}.upgrade-aura "${idnft}" "${account.account}" free.wiz-arena free.wiza)`;
@@ -3181,6 +3181,11 @@ export const upgradeAura = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, accoun
           			`free.${CONTRACT_NAME_EQUIPMENT}.ACCOUNT_GUARD`,
           			[account.account]
         		),
+				Pact.lang.mkCap(`Pay WIZA`, "Pay WIZA", `free.wiza.TRANSFER`, [
+					account.account,
+					"wiza-token-bank",
+					amount,
+				]),
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
 			sender: account.account,
@@ -3312,9 +3317,18 @@ export const sendChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, nft1
 
 		if (coin === "kda") {
 			caps.push(
-				Pact.lang.mkCap(`Send challenge money`, "Send challenge money", `coin.TRANSFER`, [
+				Pact.lang.mkCap(`Send challenge KDA`, "Send challenge KDA", `coin.TRANSFER`, [
 					account.account,
 					"wizards-offers-bank",
+					_.round(amount, 2),
+				])
+			)
+		}
+		else {
+			caps.push(
+				Pact.lang.mkCap(`Send challenge WIZA`, "Send challenge WIZA", `free.wiza.TRANSFER`, [
+					account.account,
+					"wiz-auto-tournaments-bank",
 					_.round(amount, 2),
 				])
 			)
@@ -3342,27 +3356,43 @@ export const sendChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, nft1
 	}
 }
 
-export const acceptChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, challengeid, nft2id, account, amount) => {
+export const acceptChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, challengeid, nft2id, account, amount, coin) => {
 	return (dispatch) => {
 
 		let pactCode = `(free.${CONTRACT_NAME}.accept-challenge "${challengeid}" free.wiza)`;
 
-		let cmd = {
-			pactCode,
-			caps: [
-				Pact.lang.mkCap(
-          			"Verify your account",
-          			"Verify your account",
-          			`free.${CONTRACT_NAME}.OWNER`,
-          			[account.account, nft2id]
-        		),
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify your account",
+				"Verify your account",
+				`free.${CONTRACT_NAME}.OWNER`,
+				[account.account, nft2id]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		if (coin === "kda") {
+			caps.push(
 				Pact.lang.mkCap(`Accept challenge`, "Accept challenge", `coin.TRANSFER`, [
 					account.account,
 					"wizards-offers-bank",
 					_.round(amount, 2),
-				]),
-				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
-			],
+				])
+			)
+		}
+		else {
+			caps.push(
+				Pact.lang.mkCap(`Accept challenge`, "Accept challenge", `free.wiza.TRANSFER`, [
+					account.account,
+					"wiz-auto-tournaments-bank",
+					_.round(amount, 2),
+				])
+			)
+		}
+
+		let cmd = {
+			pactCode,
+			caps,
 			sender: account.account,
 			gasLimit: 3000,
 			gasPrice,
@@ -3382,27 +3412,43 @@ export const acceptChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, ch
 	}
 }
 
-export const cancelChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, challengeid, account, amount) => {
+export const cancelChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, challengeid, account, amount, coin) => {
 	return (dispatch) => {
 
 		let pactCode = `(free.${CONTRACT_NAME}.cancel-challenge "${challengeid}" free.wiza)`;
 
-		let cmd = {
-			pactCode,
-			caps: [
-				Pact.lang.mkCap(
-          			"Verify your account",
-          			"Verify your account",
-          			`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
-          			[account.account]
-        		),
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify your account",
+				"Verify your account",
+				`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
+				[account.account]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		if (coin === "kda") {
+			caps.push(
 				Pact.lang.mkCap(`Cancel challenge`, "Cancel challenge", `coin.TRANSFER`, [
 					"wizards-offers-bank",
 					account.account,
 					_.round(amount, 2),
 				]),
-				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
-			],
+			)
+		}
+		else {
+			caps.push(
+				Pact.lang.mkCap(`Cancel challenge`, "Cancel challenge", `free.wiza.TRANSFER`, [
+					"wiz-auto-tournaments-bank",
+					account.account,
+					_.round(amount, 2),
+				]),
+			)
+		}
+
+		let cmd = {
+			pactCode,
+			caps,
 			sender: account.account,
 			gasLimit: 5000,
 			gasPrice,
@@ -3614,6 +3660,11 @@ export const createTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, i
           			`free.${CONTRACT_NAME}.OWNER`,
           			[account.account, idnft]
         		),
+				Pact.lang.mkCap(`Create Tournament`, "Create flash tournament", `free.wiza.TRANSFER`, [
+					account.account,
+					"wiz-auto-tournaments-bank",
+					_.round(buyin, 2),
+				]),
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
 			sender: account.account,
@@ -3635,7 +3686,7 @@ export const createTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, i
 	}
 }
 
-export const joinTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, tournamentid, idnft, account) => {
+export const joinTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, tournamentid, idnft, account, buyin) => {
 	return (dispatch) => {
 
 		let pactCode = `(free.${CONTRACT_NAME}.join-tournament "${tournamentid}" "${idnft}" "${account.account}" free.wiza)`;
@@ -3649,6 +3700,11 @@ export const joinTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, tou
           			`free.${CONTRACT_NAME}.OWNER`,
           			[account.account, idnft]
         		),
+				Pact.lang.mkCap(`Join flash Tournament`, "Join flash tournament", `free.wiza.TRANSFER`, [
+					account.account,
+					"wiz-auto-tournaments-bank",
+					_.round(buyin, 2),
+				]),
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
 			sender: account.account,

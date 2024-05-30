@@ -613,7 +613,7 @@ class Shop extends Component {
         this.props.buyAura(chainId, gasPrice, netId, account, idnft, coin, amount)
     }
 
-    upgradeAura(wizard) {
+    upgradeAura(wizard, amount) {
         const { account, chainId, gasPrice, netId } = this.props
 
         const wizardName = wizard.nickname ? `${wizard.id} ${wizard.nickname}` : wizard.id
@@ -626,7 +626,7 @@ class Shop extends Component {
             nameNft: `${wizardName} has improved the Aura`
 		})
 
-        this.props.upgradeAura(chainId, gasPrice, netId, account, wizard.id)
+        this.props.upgradeAura(chainId, gasPrice, netId, account, wizard.id, amount)
     }
 
     sortById() {
@@ -1998,7 +1998,7 @@ class Shop extends Component {
                     <button
                         className="btnH"
                         style={styles.btnSwap}
-                        onClick={() => this.upgradeAura(wizard)}
+                        onClick={() => this.upgradeAura(wizard, round(auraUpgradeWizaCost, 2))}
                     >
                         <p style={{ fontSize: 14, color: 'white', marginBottom: 3 }} className="text-bold">
                             {round(auraUpgradeWizaCost, 2)} $WIZA
