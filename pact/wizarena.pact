@@ -1299,10 +1299,7 @@
                 (let (
                     (fee (/ (* (get-value-tournament FEE_KEY) amount) 100))
                   )
-                  (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK (at "owner" data) (- amount fee)))
                   (with-capability (PRIVATE)(coin.transfer WIZARDS_OFFERS_BANK (at "owner" data) (- amount fee)))
-
-                  (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK ADMIN_ADDRESS fee))
                   (with-capability (PRIVATE)(coin.transfer WIZARDS_OFFERS_BANK ADMIN_ADDRESS fee))
 
                   (update offers-table idoffer { "withdrawn": true, "status": "accepted" })
@@ -1410,10 +1407,7 @@
                       (fee (/ (* (get-value-tournament FEE_KEY) amount) 100))
                     )
                     (with-capability (PRIVATE)
-                    (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK (at "owner" data) (- amount fee)))
                     (with-capability (PRIVATE)(coin.transfer WIZARDS_OFFERS_BANK (at "owner" data) (- amount fee)))
-
-                    (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK ADMIN_ADDRESS fee))
                     (with-capability (PRIVATE)(coin.transfer WIZARDS_OFFERS_BANK ADMIN_ADDRESS fee))
 
                         (update collection-offers-table idoffer { "withdrawn": true, "status": "accepted" })
@@ -2700,7 +2694,6 @@
                     (if
                         (= coin "kda")
                         [
-                            (install-capability (coin.TRANSFER owner2 WIZARDS_OFFERS_BANK amount))
                             (coin.transfer owner2 WIZARDS_OFFERS_BANK amount)
                             (with-default-read token-table WIZARDS_OFFERS_BANK
                               {"balance": 0.0}
@@ -2806,7 +2799,6 @@
                 (if
                     (= coin "kda")
                     [
-                        (install-capability (coin.TRANSFER WIZARDS_OFFERS_BANK wiz1owner amount))
                         (coin.transfer WIZARDS_OFFERS_BANK wiz1owner amount)
                         (with-default-read token-table WIZARDS_OFFERS_BANK
                           {"balance": 0.0}

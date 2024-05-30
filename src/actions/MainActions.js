@@ -1829,13 +1829,16 @@ export const acceptOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, net
 		let pactCode = `(free.${CONTRACT_NAME}.accept-offer "${idOffer}" free.wiza free.wiz-equipment)`;
 
 		let caps = [
-			/*
 			Pact.lang.mkCap(`Accept offer`, "Accept offer", `coin.TRANSFER`, [
-				account.account,
 				"wizards-offers-bank",
-				_.round(amount, 2),
+				account.account,
+				_.round(gain, 2),
 			]),
-			*/
+			Pact.lang.mkCap(`Accept offer`, "Accept offer", `coin.TRANSFER`, [
+				"wizards-offers-bank",
+				ADMIN_ADDRESS
+				_.round(fee, 2),
+			]),
 			Pact.lang.mkCap(
 				"Verify owner",
 				"Verify your are the owner",
@@ -1988,8 +1991,11 @@ export const makeCollectionOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLi
 	}
 }
 
-export const acceptCollectionOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idOffer, idNft, account) => {
+export const acceptCollectionOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, idOffer, idNft, account, amount) => {
 	return (dispatch) => {
+
+		const fee = _.round(((amount * 7) / 100), 2)
+		const gain = _.round(amount - fee, 2)
 
 		let pactCode = `(free.${CONTRACT_NAME}.accept-collection-offer "${idOffer}" "${idNft}" free.wiza free.wiz-equipment)`;
 
@@ -2000,6 +2006,16 @@ export const acceptCollectionOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 				`free.${CONTRACT_NAME}.OWNER`,
 				[account.account, idNft]
 			),
+			Pact.lang.mkCap(`Accept offer`, "Accept offer", `coin.TRANSFER`, [
+				"wizards-offers-bank",
+				account.account,
+				_.round(gain, 2),
+			]),
+			Pact.lang.mkCap(`Accept offer`, "Accept offer", `coin.TRANSFER`, [
+				"wizards-offers-bank",
+				ADMIN_ADDRESS
+				_.round(fee, 2),
+			]),
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 		]
 
@@ -3319,7 +3335,7 @@ export const sendChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, nft1
 	}
 }
 
-export const acceptChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, challengeid, nft2id, account) => {
+export const acceptChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, challengeid, nft2id, account, amount) => {
 	return (dispatch) => {
 
 		let pactCode = `(free.${CONTRACT_NAME}.accept-challenge "${challengeid}" free.wiza)`;
@@ -3333,6 +3349,11 @@ export const acceptChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, ch
           			`free.${CONTRACT_NAME}.OWNER`,
           			[account.account, nft2id]
         		),
+				Pact.lang.mkCap(`Accept challenge`, "Accept challenge", `coin.TRANSFER`, [
+					account.account,
+					"wizards-offers-bank",
+					_.round(amount, 2),
+				]),
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
 			sender: account.account,
@@ -3354,7 +3375,7 @@ export const acceptChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, ch
 	}
 }
 
-export const cancelChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, challengeid, account) => {
+export const cancelChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, challengeid, account, amount) => {
 	return (dispatch) => {
 
 		let pactCode = `(free.${CONTRACT_NAME}.cancel-challenge "${challengeid}" free.wiza)`;
@@ -3368,6 +3389,11 @@ export const cancelChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, ch
           			`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
           			[account.account]
         		),
+				Pact.lang.mkCap(`Cancel challenge`, "Cancel challenge", `coin.TRANSFER`, [
+					"wizards-offers-bank",
+					account.account,
+					_.round(amount, 2),
+				]),
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
 			sender: account.account,

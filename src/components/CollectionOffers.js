@@ -117,7 +117,7 @@ class CollectionOffers extends Component {
 			saleValues
 		})
 
-		this.props.acceptCollectionOffer(chainId, gasPrice, 5000, netId, offerToAccept.id, idnft, account)
+		this.props.acceptCollectionOffer(chainId, gasPrice, 5000, netId, offerToAccept.id, idnft, account, offerToAccept.amount)
 	}
 
     getExpire(item) {
