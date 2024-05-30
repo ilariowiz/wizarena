@@ -1836,7 +1836,7 @@ export const acceptOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, net
 			]),
 			Pact.lang.mkCap(`Accept offer`, "Accept offer", `coin.TRANSFER`, [
 				"wizards-offers-bank",
-				ADMIN_ADDRESS
+				ADMIN_ADDRESS,
 				_.round(fee, 2),
 			]),
 			Pact.lang.mkCap(
@@ -2013,7 +2013,7 @@ export const acceptCollectionOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 			]),
 			Pact.lang.mkCap(`Accept offer`, "Accept offer", `coin.TRANSFER`, [
 				"wizards-offers-bank",
-				ADMIN_ADDRESS
+				ADMIN_ADDRESS,
 				_.round(fee, 2),
 			]),
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
