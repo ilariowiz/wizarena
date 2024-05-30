@@ -352,7 +352,7 @@ class Tournament extends Component {
 			transactionOkText: `Your Wizards are registered for the tournament!`,
 		})
 
-		this.props.subscribeToTournamentMassWIZA(chainId, gasPrice, 3000, netId, account, toSubscribe)
+		this.props.subscribeToTournamentMassWIZA(chainId, gasPrice, 3000, netId, account, toSubscribe, tot)
 	}
 
     subscribeMassElite() {
@@ -367,7 +367,7 @@ class Tournament extends Component {
 			transactionOkText: `Your Wizards are registered for the tournament!`,
 		})
 
-		this.props.subscribeToTournamentMassELITE(chainId, gasPrice, 3000, netId, account, toSubscribe)
+		this.props.subscribeToTournamentMassELITE(chainId, gasPrice, 3000, netId, account, toSubscribe, tot)
 	}
 
     async searchByStat(stat) {

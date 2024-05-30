@@ -411,7 +411,7 @@ class Shop extends Component {
             idNft: wizard.id
 		})
 
-        this.props.buyUpgrade(chainId, gasPrice, netId, account, wizard.id, stat, increase[stat])
+        this.props.buyUpgrade(chainId, gasPrice, netId, account, wizard.id, stat, increase[stat], costo)
     }
 
     buyStatWithAP(stat, costo) {
@@ -435,7 +435,7 @@ class Shop extends Component {
             idNft: wizard.id
 		})
 
-        this.props.buyUpgradeWithAp(chainId, gasPrice, netId, account, wizard.id, stat, increase[stat])
+        this.props.buyUpgradeWithAp(chainId, gasPrice, netId, account, wizard.id, stat, increase[stat], costo)
     }
 
     burnAP() {
@@ -474,7 +474,7 @@ class Shop extends Component {
             idNft: wizard.id
 		})
 
-        this.props.buyDowngrade(chainId, gasPrice, netId, account, wizard.id, stat, decrease[stat])
+        this.props.buyDowngrade(chainId, gasPrice, netId, account, wizard.id, stat, decrease[stat], costo)
     }
 
     buyVial(potion, costo) {
@@ -499,7 +499,7 @@ class Shop extends Component {
             idNft: wizard.id
 		})
 
-        this.props.buyVial(chainId, gasPrice, netId, account, wizard.id, key, potion)
+        this.props.buyVial(chainId, gasPrice, netId, account, wizard.id, key, potion, costo)
     }
 
     buyNickname(nickname) {
@@ -516,7 +516,9 @@ class Shop extends Component {
             nicknameToSet: nickname
 		})
 
-        this.props.buyNickname(chainId, gasPrice, netId, account, wizard.id, nickname)
+        const amount = round(this.state.wizaValue * 0.6, 2)
+
+        this.props.buyNickname(chainId, gasPrice, netId, account, wizard.id, nickname, amount)
     }
 
     equipEquipment(id, name) {
@@ -555,7 +557,7 @@ class Shop extends Component {
 
     swapSpell(oldspell) {
         const { account, chainId, gasPrice, netId } = this.props
-        const { newSpellToLearn } = this.state
+        const { newSpellToLearn, wizaValue } = this.state
 
         const wizard = this.getWizardSelected()
 
@@ -565,7 +567,9 @@ class Shop extends Component {
 			transactionOkText: `Spell swapped successfully!`
 		})
 
-        this.props.swapSpell(chainId, gasPrice, netId, account, wizard.id, oldspell.name, newSpellToLearn.name)
+        const amount = round((wizaValue * 14), 2)
+
+        this.props.swapSpell(chainId, gasPrice, netId, account, wizard.id, oldspell.name, newSpellToLearn.name, amount)
     }
 
     upgradeSpell(wizard, stat) {
@@ -581,7 +585,9 @@ class Shop extends Component {
             nameNft: `${wizardName} has improved the ${stat} of the spell ${wizard.spellSelected.name}`
 		})
 
-        this.props.improveSpell(chainId, gasPrice, netId, account, wizard.id, stat)
+        const amount = round(this.state.spellUpgradeWizaCost, 2)
+
+        this.props.improveSpell(chainId, gasPrice, netId, account, wizard.id, stat, amount)
     }
 
     resetUpgradeSpell(wizard) {
