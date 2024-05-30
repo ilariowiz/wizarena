@@ -148,7 +148,7 @@ class Forge extends Component {
         this.setState({ ring2: item, finalRecipe, showModalYourRings: false })
     }
 
-    forge() {
+    forge(costo) {
         const { ring1, ring2, finalRecipe } = this.state
         const { account, chainId, gasPrice, netId } = this.props
 
@@ -163,7 +163,7 @@ class Forge extends Component {
             transactionOkText: 'Item forged successfully'
         })
 
-        this.props.forgeItem(chainId, gasPrice, netId, finalRecipe.ingredients, [ring1.id, ring2.id], account)
+        this.props.forgeItem(chainId, gasPrice, netId, finalRecipe.ingredients, [ring1.id, ring2.id], account, costo)
     }
 
     renderProgressLevel() {
@@ -385,7 +385,7 @@ class Forge extends Component {
                             className='btnH'
                             style={styles.btnForge}
                             onClick={() => {
-                                this.forge()
+                                this.forge(wizaFee)
                             }}
                         >
                             <p style={{ fontSize: 15, color: 'white' }} className="text-medium">

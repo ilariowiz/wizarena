@@ -538,7 +538,7 @@ class Shop extends Component {
         this.props.equipItem(chainId, gasPrice, netId, id, account, wizard.id)
     }
 
-    unequipEquipment(id, name) {
+    unequipEquipment(id, name, costo) {
         const { account, chainId, gasPrice, netId } = this.props
 
         const wizard = this.getWizardSelected()
@@ -552,7 +552,7 @@ class Shop extends Component {
             ringToEquipName: name
 		})
 
-        this.props.unequipItem(chainId, gasPrice, netId, id, account, wizard.id)
+        this.props.unequipItem(chainId, gasPrice, netId, id, account, wizard.id, costo)
     }
 
     swapSpell(oldspell) {
@@ -757,7 +757,7 @@ class Shop extends Component {
                         className='btnH'
                         style={styles.btnChoose}
                         onClick={() => {
-                            this.unequipEquipment(item.id, item.name)
+                            this.unequipEquipment(item.id, item.name, costo)
                         }}
                     >
                         <p style={{ fontSize: 15, color: 'white' }} className="text-medium">

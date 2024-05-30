@@ -1570,7 +1570,7 @@ export const removeNftFromBurningQueue = (chainId, gasPrice = DEFAULT_GAS_PRICE,
 	}
 }
 
-export const forgeItem = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, recipe, ingredients, account) => {
+export const forgeItem = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, recipe, ingredients, account, amount) => {
 	return (dispatch) => {
 
 		let pactCode = `(free.${CONTRACT_NAME_EQUIPMENT}.forge "${recipe}" ${JSON.stringify(ingredients)} "${account.account}" free.wiza)`;
@@ -1586,6 +1586,14 @@ export const forgeItem = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, recipe, 
         		)
 			)
 		})
+
+		caps.push(
+			Pact.lang.mkCap(`Forge`, "Pay the fee", `free.wiza.TRANSFER`, [
+			    account.account,
+			    WIZA_TOKEN_BANK,
+			    _.round(amount, 4),
+			]),
+		)
 
 
 		let cmd = {
@@ -3154,7 +3162,7 @@ export const equipItem = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, iditem, 
 	}
 }
 
-export const unequipItem = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, iditem, account, idnft) => {
+export const unequipItem = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, iditem, account, idnft, amount) => {
 	return (dispatch) => {
 
 		let pactCode = `(free.${CONTRACT_NAME_EQUIPMENT}.unequip-item "${iditem}" "${account.account}" "${idnft}" free.wiz-arena free.wiza)`;
@@ -3168,6 +3176,11 @@ export const unequipItem = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, iditem
           			`free.${CONTRACT_NAME_EQUIPMENT}.OWNER`,
           			[account.account, iditem]
         		),
+				Pact.lang.mkCap(`Unequip`, "Pay the fee", `free.wiza.TRANSFER`, [
+				    account.account,
+				    WIZA_TOKEN_BANK,
+				    _.round(amount, 2),
+				]),
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
 			sender: account.account,
@@ -3282,7 +3295,7 @@ export const upgradeAura = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, accoun
 				Pact.lang.mkCap(`Pay WIZA`, "Pay WIZA", `free.wiza.TRANSFER`, [
 					account.account,
 					"wiza-token-bank",
-					amount,
+					_.round(amount, 2),
 				]),
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
@@ -3712,6 +3725,15 @@ export const buyAura = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, i
 					ADMIN_ADDRESS,
 					_.round(amount, 2),
 				]),
+			)
+		}
+		else {
+			caps.push(
+				Pact.lang.mkCap(`Buy Aura`, "Buy Aura", `free.wiza.TRANSFER`, [
+				    account.account,
+				    WIZA_TOKEN_BANK,
+				    _.round(amount, 2),
+				])
 			)
 		}
 
