@@ -932,7 +932,6 @@
         (if
             (= coin "kda")
             (with-capability (ACCOUNT_GUARD owner)
-                (install-capability (coin.TRANSFER owner ADMIN_ADDRESS 15.0))
                 (coin.transfer owner ADMIN_ADDRESS 15.0)
             )
             (with-capability (ACCOUNT_GUARD owner)

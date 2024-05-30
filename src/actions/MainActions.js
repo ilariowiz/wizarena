@@ -3300,22 +3300,29 @@ export const sendChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, nft1
 
 		let pactCode = `(free.${CONTRACT_NAME}.send-challenge "${nft1id}" "${nft2id}" ${_.round(amount).toFixed(1)} "${coin}" free.wiza)`;
 
-		let cmd = {
-			pactCode,
-			caps: [
-				Pact.lang.mkCap(
-          			"Verify your account",
-          			"Verify your account",
-          			`free.${CONTRACT_NAME}.OWNER`,
-          			[account.account, nft1id]
-        		),
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify your account",
+				"Verify your account",
+				`free.${CONTRACT_NAME}.OWNER`,
+				[account.account, nft1id]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		if (coin === "kda") {
+			caps.push(
 				Pact.lang.mkCap(`Send challenge money`, "Send challenge money", `coin.TRANSFER`, [
 					account.account,
 					"wizards-offers-bank",
 					_.round(amount, 2),
-				]),
-				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
-			],
+				])
+			)
+		}
+
+		let cmd = {
+			pactCode,
+			caps,
 			sender: account.account,
 			gasLimit: 3000,
 			gasPrice,
@@ -3539,22 +3546,34 @@ export const getChallengesReceived = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 
 /////////  BUY AURA
 
-export const buyAura = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft, coin) => {
+export const buyAura = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, idnft, coin, amount) => {
 	return (dispatch) => {
 
 		let pactCode = `(free.${CONTRACT_NAME_EQUIPMENT}.buy-aura "${idnft}" "${account.account}" "${coin}" free.wiz-arena free.wiza)`;
 
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify your account",
+				"Verify your account",
+				`free.${CONTRACT_NAME_EQUIPMENT}.ACCOUNT_GUARD`,
+				[account.account]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		if (coin === "kda") {
+			caps.push(
+				Pact.lang.mkCap(`Buy Aura`, "Buy Aura", `coin.TRANSFER`, [
+					account.account,
+					ADMIN_ADDRESS,
+					_.round(amount, 2),
+				]),
+			)
+		}
+
 		let cmd = {
 			pactCode,
-			caps: [
-				Pact.lang.mkCap(
-          			"Verify your account",
-          			"Verify your account",
-          			`free.${CONTRACT_NAME_EQUIPMENT}.ACCOUNT_GUARD`,
-          			[account.account]
-        		),
-				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
-			],
+			caps,
 			sender: account.account,
 			gasLimit: 5000,
 			gasPrice,

@@ -600,7 +600,7 @@ class Shop extends Component {
         this.props.resetSpellUpgrades(chainId, gasPrice, netId, account, wizard.id)
     }
 
-    buyAura(idnft, coin) {
+    buyAura(idnft, coin, amount) {
         const { account, chainId, gasPrice, netId } = this.props
 
         this.props.updateInfoTransactionModal({
@@ -608,10 +608,9 @@ class Shop extends Component {
 			typeModal: 'buyaura',
 			transactionOkText: `Aura bought successfully!`,
             idNft: idnft,
-            //nameNft: `${wizardName} has reset the stats of the spell ${wizard.spellSelected.name}`
 		})
 
-        this.props.buyAura(chainId, gasPrice, netId, account, idnft, coin)
+        this.props.buyAura(chainId, gasPrice, netId, account, idnft, coin, amount)
     }
 
     upgradeAura(wizard) {
@@ -2419,7 +2418,7 @@ class Shop extends Component {
                                             className='btnH'
                                             style={Object.assign({}, styles.btnChoose, { width: 140, marginRight: 15 })}
                                             onClick={() => {
-                                                this.buyAura(wizard.id, "kda")
+                                                this.buyAura(wizard.id, "kda", 15)
                                             }}
                                         >
                                             <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
@@ -2431,7 +2430,7 @@ class Shop extends Component {
                                             className='btnH'
                                             style={Object.assign({}, styles.btnChoose, { width: 140 })}
                                             onClick={() => {
-                                                this.buyAura(wizard.id, "wiza")
+                                                this.buyAura(wizard.id, "wiza", round(15 * wizaValue, 2))
                                             }}
                                         >
                                             <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
