@@ -288,7 +288,7 @@ class PvP extends Component {
             toSubscribePvP: toSubscribe
 		})
 
-		this.props.subscribeToPvPMass(chainId, gasPrice, gasLimit, netId, account, toSubscribe)
+		this.props.subscribeToPvPMass(chainId, gasPrice, gasLimit, netId, account, toSubscribe, tot)
 	}
 
     incrementPvP(wizaAmount) {

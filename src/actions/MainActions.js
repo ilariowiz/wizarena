@@ -2594,7 +2594,7 @@ export const subscribeToLords = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit
 	}
 }
 
-export const subscribeToPvPMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, list) => {
+export const subscribeToPvPMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, list, amountWiza) => {
 	return (dispatch) => {
 
 		let pactCode = `(free.${CONTRACT_NAME}.subscribe-pvp-mass ${JSON.stringify(list)} "${account.account}" free.wiza)`;
@@ -2613,20 +2613,13 @@ export const subscribeToPvPMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 				"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
 				amount,
 			]),
+			Pact.lang.mkCap(`Subscribe`, "Pay the fee", `free.wiza.TRANSFER`, [
+				account.account,
+				WIZA_TOKEN_BANK,
+				_.round(amountWiza, 2),
+			]),
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 		]
-
-		for (var i = 0; i < list.length; i++) {
-			const singleCap = list[i]
-
-			caps.push(
-				Pact.lang.mkCap(`Subscribe`, "Pay the fee", `free.wiza.TRANSFER`, [
-					account.account,
-					WIZA_TOKEN_BANK,
-					_.round(singleCap.wizaAmount, 2),
-				]),
-			)
-		}
 
 		//console.log(caps);
 
