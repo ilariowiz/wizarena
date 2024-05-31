@@ -1151,7 +1151,7 @@ class Shop extends Component {
                             return
                         }
 
-                        this.buyStatWithAP(key, costo)
+                        this.buyStatWithAP(key, costoWiza)
                     }}
                 >
                     <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
@@ -1484,7 +1484,7 @@ class Shop extends Component {
                             return
                         }
 
-                        this.downgrade(key, decreaseTo*5)
+                        this.downgrade(key, decreaseTo*15)
                     }}
                 >
                     <p style={{ fontSize: 15, color: 'white' }} className="text-medium">

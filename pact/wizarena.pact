@@ -2009,7 +2009,7 @@
                         )
                         (enforce (>= ap ap-cost) "You don't have enough AP")
                         (let (
-                                (wiza-cost (round (/ (* (fold (+) 0 (map (calculate-wiza-cost-from stat) array-levels-to)) 12) 100) 2))
+                                (wiza-cost (/ (* (fold (+) 0 (map (calculate-wiza-cost-from stat) array-levels-to)) 12) 100))
                             )
                             (spend-wiza wiza-cost account m)
                         )
@@ -2257,7 +2257,7 @@
                         )
                     )
                 "")
-                (spend-wiza (+ (* amount 15) 0.0) owner m)
+                (spend-wiza (round (+ (* amount 15) 0.0) 2) owner m)
             )
         )
     )

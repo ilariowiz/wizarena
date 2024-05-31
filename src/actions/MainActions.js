@@ -4411,18 +4411,6 @@ export const signTransaction = (cmdToSign, isXWallet, isQRWalletConnect, qrWalle
 				duration: 850
 			})
 
-			/*
-			let newCmdSigned = Object.assign({}, JSON.parse(signedCmd.cmd))
-			newCmdSigned['meta']['gasLimit'] = parsedLocalRes.gas + 3000
-
-			console.log(newCmdSigned);
-
-			let newSigned = Object.assign({}, signedCmd)
-			newSigned['cmd'] = JSON.stringify(newCmdSigned)
-
-			console.log(newSigned);
-			*/
-
 			try {
 				data = await Pact.wallet.sendSigned(signedCmd, networkUrl)
 
