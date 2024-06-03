@@ -8,6 +8,7 @@ import _ from 'lodash'
 import ReCAPTCHA from 'react-google-recaptcha'
 import { MdOutlineDateRange } from 'react-icons/md'
 import DotLoader from 'react-spinners/DotLoader';
+import toast, { Toaster } from 'react-hot-toast';
 import Popup from 'reactjs-popup';
 import Header from './Header'
 import NftCardChoice from './common/NftCardChoice'
@@ -111,7 +112,7 @@ class Arena extends Component {
         //console.log(allData);
 
         let sub160 = []
-        let sub190 = []
+        let sub200 = []
         let sub300 = []
         let sub375 = []
         let subscribersId = []
@@ -121,10 +122,10 @@ class Arena extends Component {
                 sub160.push(i)
             }
 
-            else if (i.level > 160 && i.level <= 190) {
-                sub190.push(i)
+            else if (i.level > 160 && i.level <= 200) {
+                sub200.push(i)
             }
-            else if (i.level > 190 && i.level <= 300) {
+            else if (i.level > 200 && i.level <= 300) {
                 sub300.push(i)
             }
             else {
@@ -138,7 +139,7 @@ class Arena extends Component {
             return b.ranking - a.ranking
         })
 
-        sub190.sort((a, b) => {
+        sub200.sort((a, b) => {
             return b.ranking - a.ranking
         })
 
@@ -153,8 +154,8 @@ class Arena extends Component {
         const categories = {
             "sub160": sub160.slice(0, 10),
             "sub160count": sub160.length,
-            "sub190": sub190.slice(0, 10),
-            "sub190count":sub190.length,
+            "sub200": sub200.slice(0, 10),
+            "sub200count":sub200.length,
             "sub300": sub300.slice(0, 10),
             "sub300count": sub300.length,
             "sub375": sub375.slice(0, 10),
@@ -427,10 +428,10 @@ class Arena extends Component {
             if (i.level <= 160 && wizardSelected.level <= 160) {
                 opponentsByLevel.push(i)
             }
-            else if ((i.level > 160 &&  i.level <= 190) && (wizardSelected.level > 160 && wizardSelected.level <= 190)) {
+            else if ((i.level > 160 &&  i.level <= 200) && (wizardSelected.level > 160 && wizardSelected.level <= 200)) {
                 opponentsByLevel.push(i)
             }
-            else if ((i.level > 190 &&  i.level <= 300) && (wizardSelected.level > 190 && wizardSelected.level <= 300)) {
+            else if ((i.level > 200 &&  i.level <= 300) && (wizardSelected.level > 200 && wizardSelected.level <= 300)) {
                 opponentsByLevel.push(i)
             }
             else if (i.level > 300 && wizardSelected.level > 300) {
@@ -611,7 +612,7 @@ class Arena extends Component {
 	}
 
     renderFooterSubscribe(isMobile) {
-		const { toSubscribe, subscribing } = this.state
+		const { toSubscribe, subscribing, yourSubs } = this.state
         const { mainTextColor } = this.props
 
 		let temp = []
@@ -642,7 +643,15 @@ class Arena extends Component {
                     <button
     					className="btnH"
     					style={{ width: 180, height: 44, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderRadius: 4, backgroundColor: CTA_COLOR, marginRight: 20 }}
-    					onClick={() => this.subscribeWizards()}
+    					onClick={() => {
+
+                            if (yourSubs.length + toSubscribe.length > 16) {
+                                toast.error('You can register a maximum of 16 wizards')
+                                return
+                            }
+
+                            this.subscribeWizards()
+                        }}
     				>
     					<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
     						Subscribe
@@ -684,11 +693,11 @@ class Arena extends Component {
             color = "gold"
         }
 
-        if (item.level > 190 && item.level <= 300) {
+        if (item.level > 200 && item.level <= 300) {
             color = "#c0c0c0"
         }
 
-        if (item.level > 160 && item.level <= 190) {
+        if (item.level > 160 && item.level <= 200) {
             color = "#cd7f32"
         }
 
@@ -960,7 +969,7 @@ class Arena extends Component {
             color = "#c0c0c0"
         }
 
-        if (level === 190) {
+        if (level === 200) {
             color = "#cd7f32"
         }
 
@@ -1113,25 +1122,37 @@ class Arena extends Component {
                      }
 
                     <div style={{ flexDirection: 'column' }}>
-                        <button
-                            className='btnH'
-                            style={Object.assign({}, styles.btnSubscribe, { marginBottom: 10 })}
-                            onClick={() => {
-                                if (loadingYourSubs) {
-                                    return
+
+                        {
+                            !seasonEnded ?
+                            <button
+                                className='btnH'
+                                style={Object.assign({}, styles.btnSubscribe, { marginBottom: 10 })}
+                                onClick={() => {
+                                    if (loadingYourSubs) {
+                                        return
+                                    }
+                                    this.setState({ showSubscribe: true })
+                                }}
+                            >
+                                {
+                                    loadingYourSubs ?
+                                    <DotLoader size={16} color={mainTextColor} />
+                                    :
+                                    null
                                 }
-                                this.setState({ showSubscribe: true })
-                            }}
-                        >
-                            {
-                                loadingYourSubs ?
-                                <DotLoader size={16} color={mainTextColor} />
-                                :
-                                <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
-                                    Subscribe your wizards
-                                </p>
-                            }
-                        </button>
+
+                                {
+                                    !loadingYourSubs && yourSubs.length < 16 ?
+                                    <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
+                                        Subscribe your wizards
+                                    </p>
+                                    : null
+                                }
+                            </button>
+                            :
+                            null
+                        }
 
                         <Popup
                             trigger={
@@ -1222,7 +1243,7 @@ class Arena extends Component {
                     :
                     <div style={{ flexDirection: 'column' }}>
                         <p style={{ fontSize: 20, color: mainTextColor, marginBottom: 10 }} className="text-medium">
-                            Your subscribed Wizards
+                            Your subscribed Wizards <span style={{ fontSize: 13 }}>({yourSubs.length})</span>
                         </p>
 
                         {
@@ -1261,7 +1282,7 @@ class Arena extends Component {
 
                     {this.renderRanking(300)}
 
-                    {this.renderRanking(190)}
+                    {this.renderRanking(200)}
 
                     {this.renderRanking(160)}
 
@@ -1305,6 +1326,12 @@ class Arena extends Component {
     render() {
 		return (
 			<div style={Object.assign({}, styles.container, { backgroundColor: this.props.mainBackgroundColor })}>
+
+                <Toaster
+                    position="top-center"
+                    reverseOrder={false}
+                />
+
 				<Media
 					query="(max-width: 999px)"
 					render={() => this.renderTopHeader(true)}
