@@ -214,7 +214,11 @@ class Arena extends Component {
                 }
                 //console.log(i);
 
-                yourSubs.push(i)
+                //se è maggiore di 16, significa che hai spostato di wallet i wzards, li hai iscritti, e poi li hai rispostati in questo wallet
+                //a questo punto ignoriamo oltre al 16
+                if (yourSubs.length < 16) {
+                    yourSubs.push(i)
+                }
             }
             else {
                 notSubbed.push(i)
@@ -1176,11 +1180,11 @@ class Arena extends Component {
                                     <div style={{ justifyContent: 'center', fontSize: 19, color: 'black', marginBottom: 10, marginTop: 5 }}>Rules</div>
                                     <div style={{ fontSize: 16, color: 'black', paddingLeft: 5, paddingRight: 5, marginBottom: 15 }}>
                                       {' '}
-                                      There are 3 leaderboards of 3 different levels. Your wizard will automatically participate in the one best suited to his level.
+                                      There are 4 leaderboards of 4 different levels. Your wizard will automatically participate in the one best suited to his level.
                                       <br />
                                       Each wizard has 5 daily fights and will fight with a random wizard among those registered (can also fight against a wizard of the same wallet).
                                       <br />
-                                      Each victory will earn the wizard 5 to 7 points. The loser will not lose points.
+                                      Each victory will earn the wizard 5. If you are challenged and win, you earn 2 points. The loser will not lose points. 
                                       <br />
                                     </div>
                                     <div style={{ justifyContent: 'center', marginBottom: 10 }}>
