@@ -71,7 +71,7 @@ import {
 	REVEAL_CAP
 } from './types'
 
-const URL_2 = `https://kda-api.glexia.com/chainweb/0.0/${MAIN_NET_ID}/chain/1/pact`;
+const URL_2 = `https://api.kda.kaddex.xyz/chainweb/0.0/${MAIN_NET_ID}/chain/1/pact`;
 
 
 export const setNetworkSettings = (netId, chainId, gasPrice = DEFAULT_GAS_PRICE) => {
@@ -95,7 +95,6 @@ export const setNetworkUrl = (netId, chainId) => {
 		else if (netId === MAIN_NET_ID) {
 			//url = `https://api.chainweb.com/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
 			url = `https://${NODE_URL}/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
-			//url = `https://kda-api.glexia.com/chainweb/0.0/${MAIN_NET_ID}/chain/${chainId}/pact`;
 		}
 
 		dispatch({ type: SET_NETWORK_URL, payload: url })
