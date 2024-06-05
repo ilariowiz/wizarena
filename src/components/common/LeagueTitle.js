@@ -27,11 +27,18 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
-    "2094": [{
-        title: "Lord of Sitenor Season 2",
-        img: crown,
-        textColor: 'gold'
-    }],
+    "2094": [
+        {
+            title: "Lord of Sitenor Season 2",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "The Twelve League IV 3rd place",
+            img: cup_bronze,
+            textColor: '#cd7f32'
+        }
+    ],
     "1865": [{
         title: "Lord of Druggorial Season 1",
         img: crown,
@@ -220,17 +227,46 @@ const titles = {
             title: "Lord of Ulidalar Season 6",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "The Twelve League IV 12th place",
+            img: medal,
+            textColor: '#cd7f32'
         }
     ],
-    "2932": [{
-        title: "Lord of Ulidalar Season 2",
-        img: crown,
-        textColor: 'gold'
+    "2932": [
+        {
+            title: "Lord of Ulidalar Season 2",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "The Twelve League IV 10th place",
+            img: medal,
+            textColor: '#cd7f32'
+        }
+    ],
+    "2570": [
+        {
+            title: "Lord of Wastiaxus Season 1",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "The Twelve League IV 5th place",
+            img: medal,
+            textColor: '#cd7f32'
+        }
+    ],
+    "2154": [{
+        title: "The Twelve League IV 4th place",
+        img: medal,
+        textColor: '#cd7f32'
     }],
-    "2570": [{
-        title: "Lord of Wastiaxus Season 1",
-        img: crown,
-        textColor: 'gold'
+    "2421": [{
+        title: "The Twelve League IV 6th place",
+        img: medal,
+        textColor: '#cd7f32'
     }],
     "3078": [
         {
@@ -267,6 +303,11 @@ const titles = {
             title: "Lord of Wastiaxus Season 6",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "The Twelve League IV 11th place",
+            img: medal,
+            textColor: '#cd7f32'
         }
     ],
     "488": [{
@@ -392,6 +433,11 @@ const titles = {
             title: "Lord of Oceorah Season 5",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "The Twelve League IV Champion",
+            img: cup_gold,
+            textColor: "gold"
         }
     ],
     "1391": [{
@@ -399,11 +445,18 @@ const titles = {
         img: medal,
         textColor: "#cd7f32"
     }],
-    "2840": [{
-        title: "The Twelve League II 10th place",
-        img: medal,
-        textColor: "#cd7f32"
-    }],
+    "2840": [
+        {
+            title: "The Twelve League II 10th place",
+            img: medal,
+            textColor: "#cd7f32"
+        },
+        {
+            title: "The Twelve League IV 7th place",
+            img: medal,
+            textColor: "#cd7f32"
+        }
+    ],
     "233": [{
         title: "The Twelve League II 9th place",
         img: medal,
@@ -461,6 +514,11 @@ const titles = {
             title: "Lord of Druggorial Season 5",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "The Twelve League IV 9th place",
+            img: medal,
+            textColor: '#cd7f32'
         }
     ],
     "540": [{
@@ -470,6 +528,11 @@ const titles = {
     }],
     "2377": [{
         title: "The Twelve League II 2nd place",
+        img: cup_silver,
+        textColor: '#c0c0c0'
+    }],
+    "3079": [{
+        title: "The Twelve League IV 2nd place",
         img: cup_silver,
         textColor: '#c0c0c0'
     }],
@@ -513,6 +576,11 @@ const titles = {
             title: "Lord of Bremonon Season 5",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "The Twelve League IV 8th place",
+            img: medal,
+            textColor: "#cd7f32"
         }
     ],
     "2765": [{
