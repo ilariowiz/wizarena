@@ -48,7 +48,7 @@ class ModalCreateTournament extends Component {
             return
         }
 
-        let finalLevel = parseInt(maxLevel) > 375 ? 375 : parseInt(maxLevel)
+        let finalLevel = parseInt(maxLevel) > 400 ? 400 : parseInt(maxLevel)
 
         this.props.createTournament(idnft, buyin, finalLevel, name, winners, nPlayers, type)
     }

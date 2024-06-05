@@ -114,7 +114,7 @@ class Arena extends Component {
         let sub160 = []
         let sub200 = []
         let sub300 = []
-        let sub375 = []
+        let sub400 = []
         let subscribersId = []
 
         allData.map(i => {
@@ -129,7 +129,7 @@ class Arena extends Component {
                 sub300.push(i)
             }
             else {
-                sub375.push(i)
+                sub400.push(i)
             }
 
             subscribersId.push(i.idnft)
@@ -147,7 +147,7 @@ class Arena extends Component {
             return b.ranking - a.ranking
         })
 
-        sub375.sort((a, b) => {
+        sub400.sort((a, b) => {
             return b.ranking - a.ranking
         })
 
@@ -158,8 +158,8 @@ class Arena extends Component {
             "sub200count":sub200.length,
             "sub300": sub300.slice(0, 10),
             "sub300count": sub300.length,
-            "sub375": sub375.slice(0, 10),
-            "sub375count": sub375.length
+            "sub400": sub400.slice(0, 10),
+            "sub400count": sub400.length
         }
 
         //console.log(categories);
@@ -965,7 +965,7 @@ class Arena extends Component {
         const { categories } = this.state
 
         let color;
-        if (level === 375) {
+        if (level === 400) {
             color = "gold"
         }
 
@@ -1184,7 +1184,7 @@ class Arena extends Component {
                                       <br />
                                       Each wizard has 5 daily fights and will fight with a random wizard among those registered (can also fight against a wizard of the same wallet).
                                       <br />
-                                      Each victory will earn the wizard 5. If you are challenged and win, you earn 2 points. The loser will not lose points. 
+                                      Each victory will earn the wizard 5. If you are challenged and win, you earn 2 points. The loser will not lose points.
                                       <br />
                                     </div>
                                     <div style={{ justifyContent: 'center', marginBottom: 10 }}>
@@ -1282,7 +1282,7 @@ class Arena extends Component {
 
                 <div style={{ flexWrap: 'wrap' }}>
 
-                    {this.renderRanking(375)}
+                    {this.renderRanking(400)}
 
                     {this.renderRanking(300)}
 

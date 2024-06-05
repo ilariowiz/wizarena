@@ -27,7 +27,7 @@
 
     (defconst TOURNAMENT_OPEN "tournament_open")
 
-    (defconst LEVEL_CAP 375)
+    (defconst LEVEL_CAP 400)
 
     (defconst MINT_PHASE "mint-phase")
 
