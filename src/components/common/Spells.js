@@ -211,8 +211,8 @@ const allSpells = [
 	},
 	{
 		"name": "Dawn",
-		"atkBase": 4,
-		"dmgBase": 3,
+		"atkBase": 5,
+		"dmgBase": 6,
 		"condition": { "name": "Blind", "effect": "skip", "pct": 50 },
 		"element": "Sun"
 	},
@@ -379,9 +379,9 @@ const allSpells = [
 	},
 	{
 		"name": "Shock",
-		"atkBase": 5,
+		"atkBase": 6,
 		"dmgBase": 8,
-		"condition": { "name": "Confuse", "effect": "skip", "pct": 20 },
+		"condition": { "name": "Confuse", "effect": "skip", "pct": 40 },
 		"element": "Thunder"
 	},
 	{
