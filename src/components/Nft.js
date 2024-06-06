@@ -1582,13 +1582,16 @@ class Nft extends Component {
 			let condDesc;
 			const spellInfo = allSpells.find(i => i.name.toUpperCase() === value.toUpperCase())
 
+			//console.log(spellInfo);
+
 			if (spellInfo) {
 				let condInfo = spellInfo.condition
 				if (condInfo && condInfo.name) {
-					//console.log(conditions, condInfo);
+					console.log(condInfo);
 					let conditionDesc = conditions.find(i => i.name === condInfo.name)
 					//console.log(conditionDesc);
 					if (condInfo) {
+						fixedValue = condInfo.name
 						condDesc = `${conditionDesc.effect} - Chance of success: ${spellInfo.condition.pct}%`
 					}
 				}
