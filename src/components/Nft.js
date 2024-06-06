@@ -1578,20 +1578,19 @@ class Nft extends Component {
 		let fixedValue = value
 
 		if (title === "Spell Perk") {
+
 			let condDesc;
-			if (fixedValue && fixedValue !== "-") {
+			const spellInfo = allSpells.find(i => i.name.toUpperCase() === value.toUpperCase())
 
-				//console.log(fixedValue);
+			if (spellInfo) {
+				let condInfo = spellInfo.condition
 
-				let spellInfo = allSpells.find(i => i.condition.name && i.condition.name.toUpperCase() === fixedValue.toUpperCase())
-				//console.log(spellInfo);
-				if (spellInfo) {
-					let condInfo = conditions.find(i => i.name.toUpperCase() === fixedValue.toUpperCase())
-					if (condInfo) {
-						condDesc = `${condInfo.effect} - Chance of success: ${spellInfo.condition.pct}%`
-					}
+				let conditionDesc = conditions.find(i => i.name === condInfo.name)
+				if (condInfo) {
+					condDesc = `${conditionDesc.effect} - Chance of success: ${spellInfo.condition.pct}%`
 				}
 			}
+
 
 			return (
 				<div style={{ alignItems: 'center', marginBottom: 10 }}>
@@ -1821,7 +1820,7 @@ class Nft extends Component {
 
 							{this.renderStat("Spell", spellSelected.name.toUpperCase())}
 
-							{this.renderStat("Spell Perk", spellSelected.condition.name ? spellSelected.condition.name.toUpperCase() : '-')}
+							{this.renderStat("Spell Perk", spellSelected.name.toUpperCase())}
 
 							{this.renderStat("Resistance", nft.resistance.toUpperCase())}
 							{this.renderStat("Weakness", nft.weakness.toUpperCase())}
