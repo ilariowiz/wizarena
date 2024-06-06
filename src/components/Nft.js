@@ -1584,13 +1584,18 @@ class Nft extends Component {
 
 			if (spellInfo) {
 				let condInfo = spellInfo.condition
-
-				let conditionDesc = conditions.find(i => i.name === condInfo.name)
-				if (condInfo) {
-					condDesc = `${conditionDesc.effect} - Chance of success: ${spellInfo.condition.pct}%`
+				if (condInfo && condInfo.name) {
+					//console.log(conditions, condInfo);
+					let conditionDesc = conditions.find(i => i.name === condInfo.name)
+					//console.log(conditionDesc);
+					if (condInfo) {
+						condDesc = `${conditionDesc.effect} - Chance of success: ${spellInfo.condition.pct}%`
+					}
+				}
+				else {
+					fixedValue = "-"
 				}
 			}
-
 
 			return (
 				<div style={{ alignItems: 'center', marginBottom: 10 }}>
