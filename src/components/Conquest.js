@@ -14,6 +14,7 @@ import { CgArrowTopRightR } from 'react-icons/cg'
 import { MdOutlineDateRange } from 'react-icons/md'
 import getBoxWidth from './common/GetBoxW'
 import allEvents from './common/Events'
+import regionPerElement from './common/LordsRegionsElement'
 import getImageUrl from './common/GetImageUrl'
 import allSpells from './common/Spells'
 import fight from './common/CalcFight'
@@ -425,15 +426,29 @@ class Conquest extends Component {
     }
 
     subscribeWizards() {
-        const { chainId, gasPrice, gasLimit, netId, account } = this.props
+        const { chainId, gasPrice, gasLimit, netId, account, userMintedNfts } = this.props
         const { toSubscribe, seasonInfo } = this.state
+
+        //console.log(toSubscribe);
+
+        let elements = []
+        for (let i = 0; i < toSubscribe.length; i++) {
+            const idnft = toSubscribe[i]
+
+            const info = userMintedNfts.find(i => i.id === idnft)
+            //console.log(info);
+            if (info && info.element) {
+                elements.push({ element: info.element, id: idnft })
+            }
+        }
 
         this.props.updateInfoTransactionModal({
 			transactionToConfirmText: `You will subscribe ${toSubscribe.length} wizards for ${toSubscribe.length * seasonInfo.buyin} $KDA`,
 			typeModal: 'subscribe_lords',
 			transactionOkText: `Your Wizards are registered for Lords of Wizards World - ${this.SEASON_NAME}!`,
             toSubscribeLords: toSubscribe,
-            lordsSeasonId: this.SEASON_ID
+            lordsSeasonId: this.SEASON_ID,
+            toSubscribeElements: elements
 		})
 
         const totKda = _.round(toSubscribe.length * seasonInfo.buyin, 2)
@@ -722,45 +737,18 @@ class Conquest extends Component {
     }
 
     eventsPerRegion(regionName) {
+
         let events = []
 
-        if (regionName === "Sitenor") {
-            events = ["Fire", "Dark", "Earth"]
+        for (const [key, value] of Object.entries(regionPerElement)) {
+            if (value.includes(regionName)) {
+                events.push(key)
+            }
         }
 
-        if (regionName === "Druggorial") {
-            events = ["Undead", "Dark", "Sun"]
-        }
+        //console.log(events);
 
-        if (regionName === "Vedrenon") {
-            events = ["Fire", "Sun", "Wind"]
-        }
-
-        if (regionName === "Oceorah") {
-            events = ["Earth", "Psycho", "Water"]
-        }
-
-        if (regionName === "Opherus") {
-            events = ["Acid", "Psycho", "Spirit"]
-        }
-
-        if (regionName === "Ulidalar") {
-            events = ["Earth", "Thunder", "Wind"]
-        }
-
-        if (regionName === "Wastiaxus") {
-            events = ["Acid", "Spirit", "Undead"]
-        }
-
-        if (regionName === "Ulanara") {
-            events = ["Ice", "Psycho", "Spirit"]
-        }
-
-        if (regionName === "Bremonon") {
-            events = ["Ice", "Thunder", "Water"]
-        }
-
-        return events
+        return events.sort()
     }
 
     renderFooterSubscribe(isMobile) {

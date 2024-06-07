@@ -1587,7 +1587,7 @@ class Nft extends Component {
 			if (spellInfo) {
 				let condInfo = spellInfo.condition
 				if (condInfo && condInfo.name) {
-					console.log(condInfo);
+					//console.log(condInfo);
 					let conditionDesc = conditions.find(i => i.name === condInfo.name)
 					//console.log(conditionDesc);
 					if (condInfo) {
