@@ -685,6 +685,9 @@ class Tournament extends Component {
                 finalDate = `Started ${dateStart.fromNow()}`
             }
         }
+        else if (tournament.tournamentEnd) {
+            finalDate = `Ended: ${dateStart.fromNow()}`
+        }
 
         const marginBottom = 14
 
@@ -832,6 +835,9 @@ class Tournament extends Component {
                 finalDate = `Started ${dateStart.fromNow()}`
             }
         }
+        else if (tournamentElite.tournamentEnd) {
+            finalDate = `Ended: ${dateStart.fromNow()}`
+        }
 
         const marginBottom = 14
 
@@ -974,6 +980,9 @@ class Tournament extends Component {
             else {
                 finalDate = `Started ${dateStart.fromNow()}`
             }
+        }
+        else if (tournamentWiza.tournamentEnd) {
+            finalDate = `Ended: ${dateStart.fromNow()}`
         }
 
         const marginBottom = 14
