@@ -575,7 +575,7 @@ class Arena extends Component {
             updateDoc(docRef, {
                 "ranking": increment(5),
                 "lastFightTime": serverTimestamp(),
-                "level": wizardLevel
+                //"level": wizardLevel
             })
         }
         //è il difensore che ha vinto, lo sfidato che ha vinto guadagna 2 punti
@@ -583,7 +583,7 @@ class Arena extends Component {
             updateDoc(docRef, {
                 "ranking": increment(2),
                 "fightsGet": increment(1),
-                "level": wizardLevel
+                //"level": wizardLevel
             })
         }
     }
