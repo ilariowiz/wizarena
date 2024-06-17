@@ -16,7 +16,7 @@ import ModalFightConquest from './common/ModalFightConquest'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import allSpells from './common/Spells'
-import fight from './common/CalcFight'
+import fight from './common/CalcFightArena'
 import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import {
     setNetworkSettings,
