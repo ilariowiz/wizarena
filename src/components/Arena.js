@@ -544,7 +544,8 @@ class Arena extends Component {
             hp1: player1.hp,
             hp2: player2.hp,
             timestamp: serverTimestamp(),
-            wizards: [player1.id, player2.id]
+            wizards: [player1.id, player2.id],
+            region: "arena"
         }
 
         const fightRef = doc(collection(firebasedb, this.SEASON_ID_FIGHTS))

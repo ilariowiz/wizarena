@@ -27,6 +27,8 @@ const bremonon_bg = require('../assets/bg_fights/bremonon_bg_hd.jpg')
 const opherus_bg = require('../assets/bg_fights/opherus_bg_hd.jpg')
 const ulanara_bg = require('../assets/bg_fights/ulanara_bg_hd.jpg')
 const ulidalar_bg = require('../assets/bg_fights/ulidalar_bg_hd.jpg')
+const pvp_bg = require('../assets/bg_fights/pvp_bg_hd.jpg')
+const arena_bg = require('../assets/bg_fights/arena_bg_hd.jpg')
 
 
 
@@ -340,6 +342,12 @@ class FightsReplay extends Component {
         }
         else if (fightInfo.region.includes("Ulidalar")) {
             bgimage = ulidalar_bg
+        }
+        else if (fightInfo.region.includes("pvp")) {
+            bgimage = pvp_bg
+        }
+        else if (fightInfo.region.includes("arena")) {
+            bgimage = arena_bg
         }
 
         return (

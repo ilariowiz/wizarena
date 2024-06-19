@@ -574,7 +574,8 @@ class PvP extends Component {
                 info2: finalInfo2,
                 winner,
                 wizards: [finalInfo1.id, finalInfo2.id],
-                timestamp: serverTimestamp()
+                timestamp: serverTimestamp(),
+                region: "pvp"
             }
 
             //console.log(fightObj);
