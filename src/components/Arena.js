@@ -34,6 +34,8 @@ const cup_silver = require('../assets/cup_silver.png')
 const cup_bronze = require('../assets/cup_bronze.png')
 const medal = require('../assets/medal.png')
 
+const MAX_WIZARDS_PER_WALLET = 16
+
 
 class Arena extends Component {
     constructor(props) {
@@ -95,6 +97,7 @@ class Arena extends Component {
 
     async loadSubscribers() {
         let allData = []
+        let owners = {}
 
         const q = query(collection(firebasedb, this.SEASON_ID))
         const querySnapshot = await getDocs(q)
@@ -106,10 +109,25 @@ class Arena extends Component {
             temp = d
             temp['docId'] = doc.id
 
-            allData.push(temp)
-        })
+            if (!temp.owner) {
+                //console.log(temp);
+            }
 
-        //console.log(allData);
+            if (!owners[temp.owner]) {
+                owners[temp.owner] = 1
+                allData.push(temp)
+            }
+            else {
+                if (owners[temp.owner] < MAX_WIZARDS_PER_WALLET) {
+                    owners[temp.owner] += 1
+                    allData.push(temp)
+                }
+                else {
+                    owners[temp.owner] += 1
+                }
+            }
+        })
+        //console.log(owners);
 
         let sub160 = []
         let sub200 = []
@@ -214,9 +232,9 @@ class Arena extends Component {
                 }
                 //console.log(i);
 
-                //se è maggiore di 16, significa che hai spostato di wallet i wzards, li hai iscritti, e poi li hai rispostati in questo wallet
-                //a questo punto ignoriamo oltre al 16
-                if (yourSubs.length < 16) {
+                //se è maggiore di max, significa che hai spostato di wallet i wzards, li hai iscritti, e poi li hai rispostati in questo wallet
+                //a questo punto ignoriamo oltre al max
+                if (yourSubs.length < MAX_WIZARDS_PER_WALLET) {
                     yourSubs.push(i)
                 }
             }
@@ -651,8 +669,8 @@ class Arena extends Component {
     					style={{ width: 180, height: 44, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', borderRadius: 4, backgroundColor: CTA_COLOR, marginRight: 20 }}
     					onClick={() => {
 
-                            if (yourSubs.length + toSubscribe.length > 16) {
-                                toast.error('You can register a maximum of 16 wizards')
+                            if (yourSubs.length + toSubscribe.length > MAX_WIZARDS_PER_WALLET) {
+                                toast.error(`You can register a maximum of ${MAX_WIZARDS_PER_WALLET} wizards`)
                                 return
                             }
 
