@@ -328,7 +328,7 @@ class Arena extends Component {
 
     subscribeWizards() {
         const { toSubscribe } = this.state
-        const { userMintedNfts } = this.props
+        const { userMintedNfts, account } = this.props
 
         this.setState({ subscribing: true })
 
@@ -343,7 +343,8 @@ class Arena extends Component {
                 fightsDone: 0,
                 lastFightTime: serverTimestamp(),
                 ranking: 0,
-                level: nftInfo.level
+                level: nftInfo.level,
+                owner: account.account
             }
 
             //console.log(nftInfo, initialDoc);
