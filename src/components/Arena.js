@@ -44,6 +44,8 @@ class Arena extends Component {
         this.SEASON_ID = ""
         this.SEASON_ID_FIGHTS = ""
 
+        this.clickedFight = false
+
         this.state = {
             loading: true,
             loadingYourSubs: true,
@@ -537,6 +539,8 @@ class Arena extends Component {
 
                 this.setState({ infoFight: { nft1: wizardSelected, nft2: response, winner: "" }, loadingStartFight: false })
 
+                this.clickedFight = false
+
                 setTimeout(async () => {
                     await this.loadSubscribers()
 
@@ -839,7 +843,8 @@ class Arena extends Component {
                         <button
                             style={Object.assign({}, styles.btnSubscribe, { width: 120, height: 36 })}
                             onClick={() => {
-                                if (this.state.captchaToken) {
+                                if (this.state.captchaToken && !this.clickedFight) {
+                                    this.clickedFight = true
                                     this.startFight()
                                 }
                             }}
