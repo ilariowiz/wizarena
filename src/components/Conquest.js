@@ -68,6 +68,8 @@ class Conquest extends Component {
         this.SEASON_ID = ""
         this.SEASON_ID_FIGHTS = ""
 
+        this.clickedFight = false
+
         this.state = {
             seasonInfo: {},
             loadingYourSubs: true,
@@ -654,6 +656,8 @@ class Conquest extends Component {
 
                 this.setState({ infoFight: { nft1: wizardSelected, nft2: response, evento: eventoInfo, winner: "" }, showModalFight: true, loadingStartFight: false })
 
+                this.clickedFight = false
+
                 setTimeout(async () => {
                     const dataElo = await this.getElosDataSingleNft(wizardSelected.id)
 
@@ -1030,7 +1034,12 @@ class Conquest extends Component {
                                 !loadingStartFight && fightsLeft > 0 && this.canFightInRegion(wizardSelected.element, possibleBoosts) &&
                                 <button
                                     style={Object.assign({}, styles.btnSubscribe, { width: maxWidth, height: 30, marginBottom: 8, boxShadow: "black 0px 0px 15px", })}
-                                    onClick={() => this.startFight(champions[regionName], keyElo, possibleBoosts, regionName)}
+                                    onClick={() => {
+                                        if (!this.clickedFight) {
+                                            this.clickedFight = true
+                                            this.startFight(champions[regionName], keyElo, possibleBoosts, regionName)
+                                        }
+                                    }}
                                 >
                                     <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
                                         Fight
