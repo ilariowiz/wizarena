@@ -2291,7 +2291,7 @@ class Shop extends Component {
                                 {this.renderBoxMenu("Vials")}
                                 {this.renderBoxMenu("Spellbook")}
                                 {this.renderBoxMenu("Spell")}
-                                {/*this.renderBoxMenu("Nickname")*/}
+                                {this.renderBoxMenu("Nickname")}
                             </div>
                         </div>
 
@@ -2594,7 +2594,7 @@ class Shop extends Component {
                             {this.renderSpellToUpgrade(wizard)}
                         </div>
 
-                        {/*<div style={{ flexDirection: 'column' }} id="shop-nickname">
+                        <div style={{ flexDirection: 'column' }} id="shop-nickname">
 
                             <p style={{ fontSize: 25, color: mainTextColor, marginBottom: 5 }} className="text-bold">
                                 Nickname
@@ -2607,7 +2607,7 @@ class Shop extends Component {
                             <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                                 {this.renderCardNickname(isMobile)}
                             </div>
-                        </div>*/}
+                        </div>
 
                     </div>
 
