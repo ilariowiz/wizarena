@@ -701,7 +701,7 @@ class Header extends Component {
 	}
 
 	renderBtnRight(isMobile) {
-		const { account, kadenaname, mainTextColor, circulatingSupply } = this.props
+		const { account, mainTextColor, circulatingSupply } = this.props
 
 		return (
 			<div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
@@ -709,7 +709,7 @@ class Header extends Component {
 				{
 					account && account.account && !isMobile ?
 					<p style={{ color: TEXT_SECONDARY_COLOR, fontSize: 14 }}>
-						{kadenaname ? kadenaname : `${account.account.slice(0, 10)}...`}
+						{`${account.account.slice(0, 10)}...`}
 					</p>
 					: null
 				}
@@ -1173,10 +1173,10 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { allNftsIds, timeToHalvening, totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, transactionsState, isDarkmode, mainTextColor, mainBackgroundColor } = state.mainReducer
+	const { allNftsIds, timeToHalvening, totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, showModalTx, hideNavBar, transactionsState, isDarkmode, mainTextColor, mainBackgroundColor } = state.mainReducer
 	const { txInfo } = state.modalTransactionReducer
 
-	return { allNftsIds, timeToHalvening, totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, kadenaname, showModalTx, hideNavBar, txInfo, transactionsState, isDarkmode, mainTextColor, mainBackgroundColor }
+	return { allNftsIds, timeToHalvening, totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, showModalTx, hideNavBar, txInfo, transactionsState, isDarkmode, mainTextColor, mainBackgroundColor }
 }
 
 export default connect(mapStateToProps, {

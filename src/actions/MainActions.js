@@ -56,7 +56,6 @@ import {
 	LOAD_FEE_TOURNAMENT_WIZA,
 	LOAD_SUBSCRIBED_WIZA,
 	LOAD_SUBSCRIBED_ELITE,
-	SET_KADENA_NAME,
 	SELECT_WIZARD,
 	UPDATE_TRANSACTION_TO_CONFIRM_TEXT,
 	STORE_WALLET_XP,
@@ -169,24 +168,6 @@ export const connectChainweaver = (account, chainId, gasPrice, gasLimit, network
 	return async (dispatch) => {
 		dispatch(setIsXwallet(false))
 		dispatch(setIsWalletConnectQR(false))
-
-		//è un kadenaname
-		if (account.includes(".")) {
-			const kadenaaddressResponse = await fetch(`https://www.kadenanames.com/api/v1/address/${account}`);
-			const { address } = await kadenaaddressResponse.json()
-
-			//console.log(address);
-			if (address) {
-				account = address
-			}
-			else {
-				console.log("Failed to sign the command in the wallet")
-				if (callback) {
-					callback("The account could not be verified")
-				}
-				return
-			}
-		}
 
 		let pactCode = `(free.${CONTRACT_NAME}.check-your-account "${account}")`;
 
@@ -368,16 +349,6 @@ export const fetchAccountDetails = (accountName, chainId, gasPrice = DEFAULT_GAS
 			if (response.account) {
 				dispatch(loadUser(response))
 				dispatch(setIsConnectWallet(true))
-
-				//console.log(response.account);
-
-				const kadenanameResponse = await fetch(`https://www.kadenanames.com/api/v1/name/${response.account}`);
-				const { name } = await kadenanameResponse.json()
-
-				//console.log(name);
-				if (name) {
-					dispatch({ type: SET_KADENA_NAME, payload: name })
-				}
 
 				if (callback) {
 					callback()

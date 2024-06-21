@@ -35,7 +35,6 @@ import {
 	LOAD_BUYIN_WIZA,
 	LOAD_BUYIN_ELITE,
 	LOAD_FEE_TOURNAMENT_WIZA,
-	SET_KADENA_NAME,
 	SELECT_WIZARD,
 	STORE_WALLET_XP,
 	HIDE_NAV_BAR,
@@ -92,7 +91,6 @@ const INITIAL_STATE = {
 	sfidaPvE: {},
 	avgLevelPvP: 0,
 	wizardSelectedIdShop: undefined,
-	kadenaname: "",
 	nftSelected: undefined,
 	walletXp: 0,
 	hideNavBar: false,
@@ -247,8 +245,6 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, avgLevelPvP: action.payload }
 		case SET_WIZARD_SELECTED_SHOP:
 			return { ...state, wizardSelectedIdShop: action.payload }
-		case SET_KADENA_NAME:
-			return { ...state, kadenaname: action.payload }
 		case SELECT_WIZARD:
 			return { ...state, nftSelected: action.payload }
 		case STORE_WALLET_XP:
@@ -270,7 +266,7 @@ export default (state = INITIAL_STATE, action) => {
 		case SET_SUBSCRIBERS_PVP:
 			return { ...state, subscribersPvP: action.payload }
 		case LOGOUT:
-			return { ...state, account: {}, transactionsState: [], showModalTx: false, isConnectWallet: false, isXWallet: false, isQRWalletConnect: false, userMintedNfts: [], wizaBalance: 0, wizardsStaked: 0, qrWalletConnectClient: undefined, kadenaname:""}
+			return { ...state, account: {}, transactionsState: [], showModalTx: false, isConnectWallet: false, isXWallet: false, isQRWalletConnect: false, userMintedNfts: [], wizaBalance: 0, wizardsStaked: 0, qrWalletConnectClient: undefined}
 		default:
 			return state
 	}
