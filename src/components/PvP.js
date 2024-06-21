@@ -962,7 +962,7 @@ class PvP extends Component {
                             </p>
                         </button>
 
-                        {
+                        {/*
                             canFight && hasFightsLeft &&
                             <button
                                 className="btnH"
@@ -978,7 +978,7 @@ class PvP extends Component {
                                     Fight
                                 </p>
                             </button>
-                        }
+                        */}
 
                         {
                             fightsStart && totalFights >= item.rounds &&
