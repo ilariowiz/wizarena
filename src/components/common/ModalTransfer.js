@@ -22,30 +22,14 @@ class ModalTransfer extends Component {
             return
         }
 
-        //is a kadenanames
-        if (addr.includes(".") && !this.state.loading) {
-            this.setState({ loading: true })
-            const response = await fetch(`https://www.kadenanames.com/api/v1/address/${addr}`);
-            const { address } = await response.json();
-            //console.log(address);
+        const isValid = addr.length === 66 && addr.startsWith("k:")
 
-            if (address) {
-                this.setState({ loading: false, error: '' })
-                this.props.callback(address)
-            }
-            else {
-                this.setState({ error: "Invalid Kadena Name.", loading: false })
-            }
-
+        if (isValid) {
+            this.setState({ error: "" })
+            this.props.callback(addr)
         }
         else {
-            if (!addr.includes("k:")) {
-                this.setState({ error: "Invalid wallet address. Only k: accounts are supported." })
-            }
-            else {
-                this.setState({ error: "" })
-                this.props.callback(addr)
-            }
+            this.setState({ error: "Invalid wallet address. Only k: accounts are supported." })
         }
     }
 
@@ -60,7 +44,7 @@ class ModalTransfer extends Component {
 				<div style={Object.assign({}, styles.subcontainer, { width, backgroundColor: mainBackgroundColor })}>
 
 					<p style={{ color: mainTextColor, fontSize: 16, textAlign: 'center' }}>
-						Paste the k: wallet or KadenaName of the receiver
+						Paste the k: wallet of the receiver
 					</p>
 
 					<div style={styles.boxWallet}>
