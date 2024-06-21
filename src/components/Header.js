@@ -298,7 +298,7 @@ class Header extends Component {
 							All you need to know about WIZA
 						</p>
 
-						<button
+						{/*<button
 							className="btnH"
 							style={Object.assign({}, styles.btnLogout, { borderColor: isDarkmode ? '#d7d7d7' : mainTextColor, marginBottom: 20, width: 180, height: 36 })}
 							onClick={() => this.setState({ showModalBuy: true })}
@@ -306,7 +306,7 @@ class Header extends Component {
 							<p style={{ fontSize: 14, color: mainTextColor }} className="text-medium">
 								BUY WIZA
 							</p>
-						</button>
+						</button>*/}
 
 						<a
 							href="https://wizardsarena.gitbook.io/wizards-arena/usdwiza/how-to-mine"
