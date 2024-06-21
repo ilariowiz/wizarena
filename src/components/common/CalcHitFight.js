@@ -4,9 +4,10 @@ const calcHitFight = (attacco, difesa, missTimes) => {
 
     const baseAtk = 45
 
-    const diff = Math.floor(baseAtk * (attacco / difesa))
+    const diff = attacco - difesa
 
-    let finalPct = diff + missTimes
+    //const bonusMiss = Math.ceil(missTimes / 2)
+    let finalPct = diff + baseAtk + missTimes
 
     if (finalPct < 2) {
         finalPct = 2
