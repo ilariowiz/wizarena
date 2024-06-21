@@ -57,6 +57,7 @@ class PvP extends Component {
             pvpWeekEnd: undefined,
             pvpFightsStart: undefined,
             pvpFightsStartDate: undefined,
+            pvpFightsEndDate: undefined,
             dailyFights: 40,
             yourSubscribers: [],
             yourSubscribersResults: [],
@@ -147,7 +148,7 @@ class PvP extends Component {
                 //console.log(dateEnd);
                 const dateEndTo = moment().to(dateEnd)
 
-                this.setState({ pvpWeek: res, pvpWeekEnd: dateEndTo, pvpFightsStart: dateFightsStartTo, pvpFightsStartDate: dateFightsStart, dailyFights: data.dailyFights })
+                this.setState({ pvpWeek: res, pvpWeekEnd: dateEndTo, pvpFightsStart: dateFightsStartTo, pvpFightsStartDate: dateFightsStart, pvpFightsEndDate: dateEnd, dailyFights: data.dailyFights })
             }
             else {
                 this.setState({ pvpWeek: res })
@@ -832,7 +833,7 @@ class PvP extends Component {
 
     renderRowSub(item, index, isMobile, maxWidth) {
         //console.log(item);
-        const { pvpFightsStartDate, replay, loadingReplay } = this.state
+        const { pvpFightsStartDate, pvpFightsEndDate, replay, loadingReplay } = this.state
         const { mainTextColor, isDarkmode } = this.props
 
         const winRate = this.calcWinRate(item)
@@ -842,6 +843,8 @@ class PvP extends Component {
 
         const fightsStart = moment().isAfter(pvpFightsStartDate)
         //console.log(fightsStart);
+
+        const fightsEnd = moment().isAfter(pvpFightsEndDate)
 
         //console.log(bonusEquipment['hp']);
         const canFight = !fightsStart ? true : this.checkIfCanDoManualFights(item)
@@ -981,7 +984,7 @@ class PvP extends Component {
                         */}
 
                         {
-                            fightsStart && totalFights >= item.rounds &&
+                            fightsStart && totalFights >= item.rounds && !fightsEnd &&
                             <button
                                 className="btnH"
                                 style={Object.assign({}, styles.btnPlay, { width: 190 })}
