@@ -90,10 +90,10 @@ ReactDOM.render(
             <Route path="/startchallenge" component={DoChallenges} />
             <Route path="/flashtournaments" component={FlashTournaments} />
             <Route path="/walletsxp" component={WalletsXpLeaderboard} />
-            <Route path="/lords" component={Conquest} />
+            {/*<Route path="/lords" component={Conquest} />*/}
             <Route path="/fightreplay" component={FightsReplay} />
             <Route path="/fightreplaybrawl" component={FightsReplayBrawl} />
-            <Route path="/arena" component={Arena} />
+            {/*<Route path="/arena" component={Arena} /> */}
           </Switch>
         </div>
       </BrowserRouter>
