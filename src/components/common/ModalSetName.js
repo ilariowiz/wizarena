@@ -48,7 +48,9 @@ class ModalWizaPvP extends Component {
                             type='text'
                             placeholder='Nickname'
                             value={this.state.nickname}
-                            onChange={(e) => this.setState({ nickname: e.target.value })}
+                            onChange={(e) => {
+                                this.setState({ nickname: e.target.value.replace(/<[^>]*>?/gm, '').trim() })
+                            }}
                         />
 
                         <button
