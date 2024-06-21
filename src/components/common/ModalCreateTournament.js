@@ -130,7 +130,7 @@ class ModalCreateTournament extends Component {
                                 type='text'
                                 placeholder='Enter a Name (optional)'
                                 value={this.state.name}
-                                onChange={(e) => this.setState({ name: e.target.value })}
+                                onChange={(e) => this.setState({ name: e.target.value.replace(/<[^>]*>?/gm, '').trim() })}
                             />
 
                         </div>

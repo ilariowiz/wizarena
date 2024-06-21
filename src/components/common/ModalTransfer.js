@@ -53,7 +53,7 @@ class ModalTransfer extends Component {
                             type='text'
                             placeholder='Kadena address'
                             value={this.state.addr}
-                            onChange={(e) => this.setState({ addr: e.target.value })}
+                            onChange={(e) => this.setState({ addr: e.target.value.replace(/<[^>]*>?/gm, '').trim() })}
                         />
 
                         <button
