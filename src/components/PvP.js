@@ -261,7 +261,7 @@ class PvP extends Component {
             }
         }
 
-        console.log(yourSubscribers);
+        //console.log(yourSubscribers);
 
         yourSubscribers && yourSubscribers.length > 0 && yourSubscribers.sort((a, b) => {
             return parseInt(a.id) - parseInt(b.id)
