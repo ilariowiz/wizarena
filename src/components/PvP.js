@@ -261,7 +261,7 @@ class PvP extends Component {
             }
         }
 
-        console.log(yourSubscribers);
+        //console.log(yourSubscribers);
 
         yourSubscribers && yourSubscribers.length > 0 && yourSubscribers.sort((a, b) => {
             return parseInt(a.id) - parseInt(b.id)
@@ -305,8 +305,7 @@ class PvP extends Component {
         this.props.updateInfoTransactionModal({
 			transactionToConfirmText: `You will subscribe ${toSubscribe.length} wizards for ${toSubscribe.length} KDA and ${tot} WIZA`,
 			typeModal: 'subscribe_pvp',
-			transactionOkText: `Your Wizards are registered for PvP arena!`,
-            toSubscribePvP: toSubscribe
+			transactionOkText: `Your Wizards are registered for PvP arena!`
 		})
 
 		this.props.subscribeToPvPMass(chainId, gasPrice, gasLimit, netId, account, toSubscribe, tot)

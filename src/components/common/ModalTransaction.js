@@ -67,7 +67,6 @@ class ModalTransaction extends Component {
 
 
 			const typeModal = info.typeModal || ""
-			const toSubscribePvP = info.toSubscribePvP || ""
 			const pvpWeek = info.pvpWeek || ""
 			const nameNft = info.nameNft || ""
 			const wizaAmount = info.wizaAmount || ""
@@ -84,18 +83,7 @@ class ModalTransaction extends Component {
 			const toSubscribeLords = info.toSubscribeLords || ""
 			const lordsSeasonId = info.lordsSeasonId || ""
 
-			if (typeModal === "subscribe_pvp") {
-				/*
-				toSubscribePvP.map(i => {
-					const docRef = doc(firebasedb, "pvp_results", `${i.week}_#${i.idnft}`)
-					setDoc(docRef, { "lose": 0, "win": 0, "maxFights": i.wizaAmount, week: i.week })
-
-					const docRefTraining = doc(firebasedb, "pvp_training", `${i.week}_#${i.idnft}`)
-					setDoc(docRefTraining, { "lose": 0, "win": 0, week: i.week })
-				})
-				*/
-			}
-			else if (typeModal === "increment_fight_pvp") {
+			if (typeModal === "increment_fight_pvp") {
 				const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_${nameNft}`)
 				updateDoc(docRef, {"maxFights": increment(wizaAmount) })
 			}
