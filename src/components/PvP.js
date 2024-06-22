@@ -236,9 +236,32 @@ class PvP extends Component {
 
                 yourSubscribers.push(data)
             })
+
+            //yoursubs > 0 ma il be non ha ancora inviato i nuovi dati a firebase
+            if (yourSubscribers.length === 0) {
+                yourSubs.map(i => {
+
+                    let data = {
+                        id: i.idnft,
+                        pvpweek: week,
+                        address: i.address,
+                        lose: 0,
+                        win: 0,
+                        maxFights: i.rounds,
+                        fightsLeft: i.rounds
+                    }
+
+                    const extraInfo = userMintedNfts.find(y => y.id === i.idnft)
+                    if (extraInfo) {
+                        data = {...data, ...extraInfo}
+                    }
+
+                    yourSubscribers.push(data)
+                })
+            }
         }
 
-        //console.log(yourSubscribers);
+        console.log(yourSubscribers);
 
         yourSubscribers && yourSubscribers.length > 0 && yourSubscribers.sort((a, b) => {
             return parseInt(a.id) - parseInt(b.id)
