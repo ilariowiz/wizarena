@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getDoc, doc, updateDoc, query, collection, where, limit, orderBy, getDocs, serverTimestamp, setDoc, increment } from "firebase/firestore";
+import { getDoc, doc, updateDoc, query, collection, where, limit, orderBy, getDocs, serverTimestamp, setDoc, increment, documentId } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
@@ -28,14 +28,14 @@ import {
     subscribeToPvPMass,
     incrementFightPvP,
     setSfida,
-    changeSpellPvP,
     getWizaBalance,
     loadSingleNft,
     loadEquipMinted,
     updateInfoTransactionModal,
     loadBlockNftsSplit,
     getInfoItemEquippedMass,
-    getInfoAuraMass
+    getInfoAuraMass,
+    getPvPsubscription
 } from '../actions'
 import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -60,8 +60,7 @@ class PvP extends Component {
             pvpFightsEndDate: undefined,
             dailyFights: 40,
             yourSubscribers: [],
-            yourSubscribersResults: [],
-            activeSubs: 0,
+            notSubbed: [],
             showModalWizaPvP: false,
             wizaAmount: 0,
             idNftIncrementFights: "",
@@ -168,6 +167,42 @@ class PvP extends Component {
 
     async loadInfoPvP(week, dateFightsStart) {
         //console.log(dateFightsStart);
+        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+        this.props.getPvPsubscription(chainId, gasPrice, gasLimit, networkUrl, week, (response) => {
+            //console.log(response);
+
+            this.setState({ allSubscribers: response })
+
+            this.loadYourSubs(response, dateFightsStart, week)
+        })
+    }
+
+    async loadYourSubs(allSubscribers, dateFightsStart, week) {
+        const { userMintedNfts } = this.props
+
+        let yourSubs = []
+        let notSubbed = []
+
+        for (var i = 0; i < userMintedNfts.length; i++) {
+            const nft = userMintedNfts[i]
+
+            const isSubbed = allSubscribers.find(y => y.idnft === nft.id)
+
+            if (isSubbed && isSubbed.idnft) {
+                yourSubs.push(isSubbed)
+            }
+            else if(!isSubbed) {
+                notSubbed.push(nft)
+            }
+        }
+
+        //console.log(yourSubs);
+
+        const querySubs = []
+        yourSubs.map(i => {
+            querySubs.push(`${i.pvpweek}_#${i.idnft}`)
+        })
 
         let isTraining = false
         let keydb = "pvp_results"
@@ -176,78 +211,39 @@ class PvP extends Component {
             keydb = "pvp_training"
         }
 
-        const q = query(collection(firebasedb, keydb), where("week", "==", week))
-        const querySnapshot = await getDocs(q)
+        //console.log(querySubs);
 
-        let subscribers = []
+        const q = query(collection(firebasedb, keydb), where(documentId(), "in", querySubs))
 
-        querySnapshot.forEach(doc => {
+        const docsSnap = await getDocs(q)
+
+        const yourSubscribers = []
+
+        docsSnap.forEach(doc => {
             //console.log(doc.data());
+
             let data = doc.data()
-            data['id'] = doc.id.replace(`${week}_#`, "")
-            const fightsLeft = isTraining ? 30 : data.maxFights - (data.win + data.lose)
 
-            data['fightsLeft'] = fightsLeft
+            //console.log(doc.id);
+            const idnft = doc.id.replace(`${week}_#`, "")
+            data["id"] = idnft
+            data['fightsLeft'] = data.maxFights - (data.lose + data.win)
 
-            subscribers.push(data)
-        })
-
-        //console.log(subscribers);
-        this.loadYourSubs(subscribers, dateFightsStart, isTraining)
-    }
-
-    async loadYourSubs(subs, dateFightsStart, isTraining) {
-
-        const { userMintedNfts, chainId, gasPrice, networkUrl } = this.props
-
-        let yourSubs = []
-        let activeSubs = 0
-
-        //console.log(response, subs);
-
-        let onlySubIds = []
-
-        subs.map(i => {
-            //console.log(i);
-            onlySubIds.push(i.id)
-
-            if (i.fightsLeft && i.fightsLeft > 0) {
-                activeSubs += 1
+            const extraInfo = userMintedNfts.find(i => i.id === idnft)
+            if (extraInfo) {
+                data = {...data, ...extraInfo}
             }
 
-            let yourSub = userMintedNfts.find(z => z.id === i.id)
-            //console.log(yourSub);
-            if (yourSub) {
-                //yourSub["spellSelected"] = y.spellSelected
-                yourSub["rounds"] = isTraining ? i.fightsLeft : i.maxFights
-                yourSub["fightsLeft"] = i.fightsLeft
-                //console.log(yourSub, i);
-                yourSubs.push(yourSub)
-                this.loadResultsYourSub(yourSub, dateFightsStart)
-            }
-        })
-        //console.log(yourSubs);
-        //console.log(activeSubs);
-        const parts = _.chunk(onlySubIds, 200)
-
-        let infoSubs = []
-
-        for (var i = 0; i < parts.length; i++) {
-            let pa = parts[i]
-
-            const infos = await this.props.loadBlockNftsSplit(chainId, gasPrice, 180000, networkUrl, pa)
-            infoSubs.push(...infos)
-
-        }
-        //console.log(infoSubs);
-        infoSubs.map(i => {
-            const w = subs.find(z => z.id === i.id)
-            if (w) {
-                i['fightsLeft'] = w.fightsLeft
-            }
+            yourSubscribers.push(data)
         })
 
-        this.setState({ loading: false, yourSubscribers: yourSubs, activeSubs, allSubscribers: subs, allSubscribersInfo: infoSubs })
+        //console.log(yourSubscribers);
+
+        yourSubscribers.sort((a, b) => {
+            return parseInt(a.id) - parseInt(b.id)
+        })
+
+        this.setState({ loading: false, yourSubscribers, notSubbed })
     }
 
     subscribe(idNft, spellSelected, wizaAmount) {
@@ -308,23 +304,6 @@ class PvP extends Component {
         this.props.incrementFightPvP(chainId, gasPrice, 6000, netId, account, pvpWeek, idNftIncrementFights, wizaAmount)
     }
 
-    changeSpell(spellSelected) {
-        const { account, chainId, gasPrice, netId } = this.props
-        const { pvpWeek, itemChangeSpell } = this.state
-
-        //console.log(itemChangeSpell);
-
-        this.props.updateInfoTransactionModal({
-			transactionToConfirmText: `You will change the spell of #${itemChangeSpell.id}`,
-			typeModal: 'changespell_pvp',
-			transactionOkText: `Spell changed!`,
-		})
-
-        let refactorSpellSelected = { name: spellSelected.name }
-
-        this.props.changeSpellPvP(chainId, gasPrice, 5000, netId, account, pvpWeek, itemChangeSpell.id, refactorSpellSelected)
-    }
-
     sortById(array, key) {
 
         //console.log(array);
@@ -360,43 +339,6 @@ class PvP extends Component {
         return sorted
     }
 
-    async loadResultsYourSub(item, dateFightsStart) {
-        const { pvpWeek } = this.state
-
-        //console.log(item);
-
-        let keyDb = "pvp_results"
-        if (dateFightsStart) {
-            const fightsStart = moment().isAfter(dateFightsStart)
-
-            if (!fightsStart) {
-                keyDb = "pvp_training"
-            }
-        }
-
-        const docRef = doc(firebasedb, keyDb, `${pvpWeek}_#${item.id}`)
-
-		const docSnap = await getDoc(docRef)
-		let data = docSnap.data()
-
-        if (!data) {
-            data = { win: 0, lose: 0, maxFights: 0 }
-        }
-
-        //console.log(data);
-
-        const finalData = {...data, ...item}
-
-        //console.log(finalData);
-
-        const temp = Object.assign([], this.state.yourSubscribersResults)
-
-        //console.log(temp);
-
-        temp.push(finalData)
-
-        this.setState({ yourSubscribersResults: temp })
-    }
 
     checkIfCanDoManualFights(item) {
         const { pvpFightsStartDate, dailyFights } = this.state
@@ -767,7 +709,7 @@ class PvP extends Component {
     }
 
     renderRowChoise(item, index, modalWidth) {
-        const { pvpWeek, pvpOpen, toSubscribe } = this.state
+        const { toSubscribe } = this.state
         const { wizaBalance } = this.props
 
 
@@ -780,8 +722,6 @@ class PvP extends Component {
 				key={index}
 				item={item}
 				width={230}
-				pvpWeek={pvpWeek}
-				canSubscribe={pvpOpen}
 				onSubscribe={(spellSelected, wizaAmount) => this.subscribe(item.id, spellSelected, wizaAmount)}
 				modalWidth={modalWidth}
                 index={index}
@@ -848,7 +788,7 @@ class PvP extends Component {
 
         //console.log(bonusEquipment['hp']);
         const canFight = !fightsStart ? true : this.checkIfCanDoManualFights(item)
-        const hasFightsLeft = !fightsStart ? true : totalFights < item.rounds
+        const hasFightsLeft = !fightsStart ? true : totalFights < item.maxFights
 
         return (
             <div
@@ -893,9 +833,9 @@ class PvP extends Component {
                             </p>
 
                             {
-                                item.rounds && fightsStart &&
+                                item.maxFights && fightsStart &&
                                 <p style={{ fontSize: 16, color: mainTextColor }}>
-                                    {totalFights}/{item.rounds} fights
+                                    {totalFights}/{item.maxFights} fights
                                 </p>
                             }
 
@@ -984,7 +924,7 @@ class PvP extends Component {
                         */}
 
                         {
-                            fightsStart && totalFights >= item.rounds && !fightsEnd &&
+                            fightsStart && totalFights >= item.maxFights && !fightsEnd &&
                             <button
                                 className="btnH"
                                 style={Object.assign({}, styles.btnPlay, { width: 190 })}
@@ -1093,7 +1033,7 @@ class PvP extends Component {
 	}
 
     renderBody(isMobile) {
-        const { isConnected, showModalConnection, pvpOpen, yourSubscribersResults, error, activeSubs, pvpWeekEnd, pvpFightsStart, pvpFightsStartDate, allSubscribers, loading } = this.state
+        const { isConnected, showModalConnection, pvpOpen, yourSubscribers, notSubbed, error, pvpWeekEnd, pvpFightsStart, pvpFightsStartDate, allSubscribers, loading } = this.state
         const { account, userMintedNfts, mainTextColor, mainBackgroundColor } = this.props
 
         const { boxW, modalW, padding } = getBoxWidth(isMobile)
@@ -1156,9 +1096,7 @@ class PvP extends Component {
 		}
 
 
-        const sorted = this.sortById(userMintedNfts, "id")
-
-        const yourSubscribersResultsSorted = this.sortByIdSubs(yourSubscribersResults, "idnft")
+        const sorted = this.sortById(notSubbed, "id")
 
         //console.log(pvpFightsStartDate);
         const now = moment()
@@ -1196,19 +1134,6 @@ class PvP extends Component {
                         <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10 }}>
                             Subscribers {allSubscribers.length}
                         </p>
-
-                        {
-                            activeSubs && allSubscribers && allSubscribers.length > 0 ?
-                            <div style={{ alignItems: 'center' }}>
-                                <p style={{ fontSize: 15, color: mainTextColor, marginRight: 10 }}>
-                                    Active subs
-                                </p>
-                                <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
-                                    {activeSubs}
-                                </p>
-                            </div>
-                            : null
-                        }
                     </div>
 
                     <div style={{ flexDirection: 'column', marginLeft: isMobile ? 10 : 50 }}>
@@ -1240,7 +1165,7 @@ class PvP extends Component {
                 <div style={{ width: '100%', height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginBottom: 30 }} />
 
                 <p style={{ fontSize: 18, color: mainTextColor, marginBottom: 5 }} className="text-bold">
-                    Your Wizards in the arena ({yourSubscribersResults.length})
+                    Your Wizards in the arena ({yourSubscribers.length})
                 </p>
 
                 <p style={{ fontSize: 14, color: mainTextColor, marginBottom: 30 }}>
@@ -1249,8 +1174,8 @@ class PvP extends Component {
 
                 <div style={{ flexDirection: 'row', width: boxW, marginBottom: 14, flexWrap: 'wrap', justifyContent: isMobile ? 'center' : 'flex-start' }}>
                     {
-                        yourSubscribersResults && yourSubscribersResults.length > 0 &&
-                        yourSubscribersResultsSorted.map((item, index) => {
+                        yourSubscribers && yourSubscribers.length > 0 &&
+                        yourSubscribers.map((item, index) => {
                             return this.renderRowSub(item, index, isMobile, boxW)
                         })
                     }
@@ -1446,12 +1371,12 @@ export default connect(mapStateToProps, {
     subscribeToPvPMass,
     incrementFightPvP,
     setSfida,
-    changeSpellPvP,
     getWizaBalance,
     loadSingleNft,
     loadEquipMinted,
     updateInfoTransactionModal,
     loadBlockNftsSplit,
     getInfoItemEquippedMass,
-    getInfoAuraMass
+    getInfoAuraMass,
+    getPvPsubscription
 })(PvP)

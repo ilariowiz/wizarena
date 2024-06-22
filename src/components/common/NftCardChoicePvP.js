@@ -4,9 +4,6 @@ import getImageUrl from './GetImageUrl'
 import ModalStats from './ModalStats'
 import '../../css/NftCardChoice.css'
 import { getColorTextBasedOnLevel } from './CalcLevelWizard'
-import {
-    getPvPsubscription
-} from '../../actions'
 import { CTA_COLOR } from '../../actions/types'
 
 
@@ -15,30 +12,10 @@ class NftCardChoicePvP extends Component {
         super(props)
 
         this.state = {
-            loading: true,
             isSubscribed: false,
-            subscriptionInfo: {},
             spellSelected: undefined,
             showModalStats: false
         }
-    }
-
-    componentDidMount() {
-        const { item, pvpWeek, chainId, gasPrice, gasLimit, networkUrl, index } = this.props
-
-        //console.log(item);
-
-        setTimeout(() => {
-            const idSubscription = `${pvpWeek}_${item.id}`
-            this.props.getPvPsubscription(chainId, gasPrice, gasLimit, networkUrl, idSubscription, (response) => {
-                //console.log(response)
-                if (response && response.idnft) {
-                    this.setState({ subscriptionInfo: response, isSubscribed: true, loading: false })
-                } else {
-                    this.setState({ loading: false })
-                }
-            })
-        }, index*30)
     }
 
     onSubscribe(spellSelected, wizaAmount) {
@@ -46,8 +23,8 @@ class NftCardChoicePvP extends Component {
     }
 
 	render() {
-		const { item, width, canSubscribe, toSubscribe, mainTextColor, isDarkmode } = this.props
-        const { isSubscribed, loading } = this.state
+		const { item, width, toSubscribe, mainTextColor, isDarkmode } = this.props
+        const { isSubscribed } = this.state
 
         //console.log(tournament)
 
@@ -95,20 +72,7 @@ class NftCardChoicePvP extends Component {
                     </button>
 
                     {
-                        loading ?
-                        <div
-                            style={styles.btnSubscribe}
-                        >
-                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                Loading
-                            </p>
-                        </div>
-                        : null
-                    }
-
-
-                    {
-                        !isSubscribed && canSubscribe && item.level && !loading && !inToSubscribe ?
+                        item.level && !inToSubscribe ?
                         <button
                             className='btnSubscribe'
                             style={styles.btnSubscribe}
@@ -124,33 +88,7 @@ class NftCardChoicePvP extends Component {
                     }
 
                     {
-                        !isSubscribed && !canSubscribe && !loading ?
-                        <div
-                            style={styles.btnSubscribe}
-                        >
-                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                Registrations closed
-                            </p>
-                        </div>
-                        :
-                        null
-
-                    }
-
-                    {
-                        isSubscribed && !loading ?
-                        <div
-                            style={styles.btnSubscribe}
-                        >
-                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                Already subscribed
-                            </p>
-                        </div>
-                        : null
-                    }
-
-                    {
-                        inToSubscribe && !isSubscribed && canSubscribe && !loading ?
+                        inToSubscribe ?
                         <button
                             className='btnSubscribe'
                             style={styles.btnSubscribe}
@@ -193,11 +131,11 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor, isDarkmode } = state.mainReducer
+	const { mainTextColor, isDarkmode } = state.mainReducer
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, mainTextColor, isDarkmode }
+	return { mainTextColor, isDarkmode }
 }
 
 export default connect(mapStateToProps, {
-    getPvPsubscription
+
 })(NftCardChoicePvP);

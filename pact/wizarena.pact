@@ -1894,38 +1894,26 @@
         )
     )
 
-    (defun change-spell-pvp (id:string idnft:string address:string spellSelected:object)
-        (with-capability (OWNER address idnft)
-            (update pvp-subscribers id {
-                "spellSelected": spellSelected
-            })
+    (defun get-pvp-subscriptions (ids:list)
+        @doc "Check if id is subscribed for tournament"
+        (map
+            (get-pvp-subscription)
+            ids
         )
     )
 
     (defun get-pvp-subscription (id:string)
-        @doc "Check if id is subscribed for pvp week"
-        (read pvp-subscribers id)
-    )
-
-    (defun get-all-subscription-for-pvpweek (idweek:string)
-        @doc "Get all subscribers for a pvp week"
-        (select pvp-subscribers (where "pvpweek" (= idweek)))
-    )
-
-    (defun get-all-subscription-for-pvpweek-full (idweek:string)
-        (let (
-                (subs (select pvp-subscribers (where "pvpweek" (= idweek))))
-            )
-            (map (get-info-nft-pvp) subs)
-        )
-    )
-
-    (defun get-info-nft-pvp (item:object)
-        (let
-            (
-                (stat (read stats (at "idnft" item)))
-            )
-            (+ item stat)
+        @doc "Check if id is subscribed for tournament"
+        (with-default-read pvp-subscribers id
+            {"pvpweek": "",
+            "idnft": "",
+            "address": "",
+            "rounds": -1}
+            {"pvpweek":=pvpweek,
+            "idnft":=idnft,
+            "address":=address,
+            "rounds":=rounds}
+            {"address": address, "idnft":idnft, "rounds": rounds, "pvpweek": pvpweek}
         )
     )
 

@@ -1144,16 +1144,24 @@ export const getPvPopen = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300
 	}
 }
 
-export const getPvPsubscription = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, id, callback) => {
+export const getPvPsubscription = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 150000, networkUrl, pvpweek, callback) => {
 	return (dispatch) => {
 
+		let ids = []
+		for (var i = 0; i < REVEAL_CAP; i++) {
+			ids.push(`${pvpweek}_${i}`)
+		}
+
 		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME}.get-pvp-subscription "${id}")`,
+			pactCode: `(free.${CONTRACT_NAME}.get-pvp-subscriptions ${JSON.stringify(ids)})`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
 
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
+
+			response = response.filter(i => i.pvpweek === pvpweek)
+
 			if (callback) {
 				callback(response)
 			}
@@ -1324,7 +1332,6 @@ export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 		}
 
 		let cmd = {
-			//pactCode: `(free.${CONTRACT_NAME}.get-all-subscription-for-tournament "${tournament}")`,
 			pactCode: `(free.${CONTRACT_NAME}.get-subscriptions ${JSON.stringify(ids)})`,
 			meta: defaultMeta(chainId, gasPrice, gasLimit)
 		}
@@ -2696,45 +2703,6 @@ export const changeSpellTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 		}
 
 		//console.log("changeSpellTournament", cmd)
-
-		dispatch(updateTransactionState("cmdToConfirm", cmd))
-	}
-}
-
-export const changeSpellPvP = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, pvpWeek, idNft, spellSelected) => {
-	return (dispatch) => {
-
-		const key = `${pvpWeek}_${idNft}`
-
-		let pactCode = `(free.${CONTRACT_NAME}.change-spell-pvp "${key}" "${idNft}" "${account.account}" ${JSON.stringify(spellSelected)})`;
-
-		let caps = [
-			Pact.lang.mkCap(
-				"Verify owner",
-				"Verify your are the owner",
-				`free.${CONTRACT_NAME}.OWNER`,
-				[account.account, idNft]
-			),
-			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
-		]
-
-		let cmd = {
-			pactCode,
-			caps,
-			sender: account.account,
-			gasLimit,
-			gasPrice,
-			chainId,
-			ttl: 600,
-			envData: {
-				"user-ks": account.guard,
-				account: account.account
-			},
-			signingPubKey: account.guard.keys[0],
-			networkId: netId
-		}
-
-		//console.log("changeSpellPvP", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
