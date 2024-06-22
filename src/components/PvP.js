@@ -387,6 +387,7 @@ class PvP extends Component {
         return canFight
     }
 
+    /*
     async chooseOpponent(item) {
         const { pvpWeek, pvpFightsStartDate, allSubscribersInfo } = this.state
         const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
@@ -599,6 +600,7 @@ class PvP extends Component {
             })
         })
     }
+    */
 
     clearInfo(infoNfts, rings, pendants, auras) {
     	let newInfo = []
