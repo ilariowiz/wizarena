@@ -247,8 +247,8 @@ class PvP extends Component {
                         address: i.address,
                         lose: 0,
                         win: 0,
-                        maxFights: i.rounds,
-                        fightsLeft: i.rounds
+                        maxFights: i.rounds.int,
+                        fightsLeft: i.rounds.int
                     }
 
                     const extraInfo = userMintedNfts.find(y => y.id === i.idnft)
@@ -261,7 +261,7 @@ class PvP extends Component {
             }
         }
 
-        //console.log(yourSubscribers);
+        console.log(yourSubscribers);
 
         yourSubscribers && yourSubscribers.length > 0 && yourSubscribers.sort((a, b) => {
             return parseInt(a.id) - parseInt(b.id)
