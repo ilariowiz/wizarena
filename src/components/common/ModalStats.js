@@ -76,6 +76,10 @@ class ModalStats extends Component {
     calcMedals() {
         const { item } = this.props
 
+        if (!item.medals) {
+            return 0
+        }
+
         const medals = item.medals
 
         let tot = 0
