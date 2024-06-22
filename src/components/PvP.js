@@ -199,47 +199,48 @@ class PvP extends Component {
 
         //console.log(yourSubs);
 
-        const querySubs = []
-        yourSubs.map(i => {
-            querySubs.push(`${i.pvpweek}_#${i.idnft}`)
-        })
-
-        let isTraining = false
-        let keydb = "pvp_results"
-        if (moment() < dateFightsStart) {
-            isTraining = true
-            keydb = "pvp_training"
-        }
-
-        //console.log(querySubs);
-
-        const q = query(collection(firebasedb, keydb), where(documentId(), "in", querySubs))
-
-        const docsSnap = await getDocs(q)
-
         const yourSubscribers = []
 
-        docsSnap.forEach(doc => {
-            //console.log(doc.data());
+        if (yourSubs.length > 0) {
+            const querySubs = []
+            yourSubs.map(i => {
+                querySubs.push(`${i.pvpweek}_#${i.idnft}`)
+            })
 
-            let data = doc.data()
-
-            //console.log(doc.id);
-            const idnft = doc.id.replace(`${week}_#`, "")
-            data["id"] = idnft
-            data['fightsLeft'] = data.maxFights - (data.lose + data.win)
-
-            const extraInfo = userMintedNfts.find(i => i.id === idnft)
-            if (extraInfo) {
-                data = {...data, ...extraInfo}
+            let isTraining = false
+            let keydb = "pvp_results"
+            if (moment() < dateFightsStart) {
+                isTraining = true
+                keydb = "pvp_training"
             }
 
-            yourSubscribers.push(data)
-        })
+            //console.log(querySubs);
+            const q = query(collection(firebasedb, keydb), where(documentId(), "in", querySubs))
+
+            const docsSnap = await getDocs(q)
+
+            docsSnap.forEach(doc => {
+                //console.log(doc.data());
+
+                let data = doc.data()
+
+                //console.log(doc.id);
+                const idnft = doc.id.replace(`${week}_#`, "")
+                data["id"] = idnft
+                data['fightsLeft'] = data.maxFights - (data.lose + data.win)
+
+                const extraInfo = userMintedNfts.find(i => i.id === idnft)
+                if (extraInfo) {
+                    data = {...data, ...extraInfo}
+                }
+
+                yourSubscribers.push(data)
+            })
+        }
 
         //console.log(yourSubscribers);
 
-        yourSubscribers.sort((a, b) => {
+        yourSubscribers && yourSubscribers.length > 0 && yourSubscribers.sort((a, b) => {
             return parseInt(a.id) - parseInt(b.id)
         })
 
