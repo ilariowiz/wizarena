@@ -551,8 +551,18 @@ const titles = {
         img: cup_gold,
         textColor: 'gold'
     }],
+    "2401": [{
+        title: "The Apprentice League II Champion",
+        img: cup_gold,
+        textColor: 'gold'
+    }],
     "2181": [{
         title: "The Apprentice League I 2nd place",
+        img: cup_silver,
+        textColor: '#c0c0c0'
+    }],
+    "2216": [{
+        title: "The Apprentice League II 2nd place",
         img: cup_silver,
         textColor: '#c0c0c0'
     }],
@@ -560,6 +570,17 @@ const titles = {
         title: "The Apprentice League I 3rd place",
         img: cup_bronze,
         textColor: '#cd7f32'
+    }],
+    "1947": [{
+        title: "The Apprentice League II 3rd place",
+        img: cup_bronze,
+        textColor: '#cd7f32'
+    }],
+    "706": [
+        {
+            title: "The Apprentice League II 4th place",
+            img: medal,
+            textColor: '#cd7f32'
     }],
     "2358": [
         {
@@ -585,6 +606,41 @@ const titles = {
     ],
     "2765": [{
         title: "The Apprentice League I 5th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "1629": [{
+        title: "The Apprentice League II 5th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "105": [{
+        title: "The Apprentice League II 6th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "2070": [{
+        title: "The Apprentice League II 7th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "1458": [{
+        title: "The Apprentice League II 9th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "2771": [{
+        title: "The Apprentice League II 10th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "936": [{
+        title: "The Apprentice League II 11th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "927": [{
+        title: "The Apprentice League II 12th place",
         img: medal,
         textColor: '#cd7f32'
     }],
@@ -637,11 +693,18 @@ const titles = {
             textColor: '#cd7f32'
         }
     ],
-    "846": [{
-        title: "The Farmers League I 6th place",
-        img: medal,
-        textColor: '#cd7f32'
-    }],
+    "846": [
+        {
+            title: "The Farmers League I 6th place",
+            img: medal,
+            textColor: '#cd7f32'
+        },
+        {
+            title: "The Apprentice League II 8th place",
+            img: medal,
+            textColor: '#cd7f32'
+        }
+    ],
     "1699": [{
         title: "The Farmers League II 6th place",
         img: medal,
