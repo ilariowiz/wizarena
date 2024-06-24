@@ -13,6 +13,7 @@ import Header from './Header'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
 import ModalWizaPvP from './common/ModalWizaPvP'
 import ModalStats from './common/ModalStats'
+import ModalLoadingFight from './common/ModalLoadingFight'
 import NftCardChoicePvP from './common/NftCardChoicePvP'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
@@ -49,6 +50,8 @@ class PvP extends Component {
 
         let isConnected = this.props.account && this.props.account.account
 
+        this.startedFight = false
+
         this.state = {
             error: "",
             loading: true,
@@ -72,7 +75,10 @@ class PvP extends Component {
             allSubscribers: [],
             showModalStats: false,
             itemShowStats: undefined,
-            signedCmd: undefined
+            signedCmd: undefined,
+            showModalLoadingFight: false,
+            textLoadingFight: "",
+            fightId: ""
         }
     }
 
@@ -368,13 +374,20 @@ class PvP extends Component {
     async startFight(item) {
         const { account, chainId, gasPrice, networkUrl, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient } = this.props
 
-        console.log(item);
-
+        //console.log(item);
         if (!this.state.signedCmd) {
+
+            this.setState({ showModalLoadingFight: true, textLoadingFight: "Sign the transaction to make the fight...", fightId: "" })
+
             this.props.signFightTransaction(gasPrice, chainId, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient, networkUrl, account, async (response) => {
                 //console.log(response);
                 if (response.error) {
-                    toast.error(`Can't sign the transaction. Retry`)
+                    this.setState({ showModalLoadingFight: false, textLoadingFight: "", fightId: "" }, () => {
+                        this.startedFight = false
+                        setTimeout(() => {
+                            toast.error(`Can't sign the transaction. Please retry`)
+                        }, 1000)
+                    })
                     return
                 }
 
@@ -391,6 +404,8 @@ class PvP extends Component {
     async askForFight(id) {
         const { signedCmd } = this.state
 
+        this.setState({ showModalLoadingFight: true, textLoadingFight: "Doing the fight...", fightId: "" })
+
         try {
             const responseFight = await axios.post('https://wizards-bot.herokuapp.com/fight', {
                 id,
@@ -398,11 +413,59 @@ class PvP extends Component {
                 signedCmd
             })
 
-            console.log(responseFight);
+            //console.log(responseFight);
+
+            if (responseFight.status === 200) {
+                this.handleResponseFight(responseFight.data)
+            }
+            else {
+                this.hideLoadingFightWithError(`Something goes wrong. Please retry`)
+            }
         }
         catch(error) {
-            console.log(error);
+            this.hideLoadingFightWithError(`Something goes wrong. Please retry`)
         }
+    }
+
+    handleResponseFight(response) {
+
+        this.startedFight = false
+
+        if (response.error) {
+
+            const error = response.error
+            if (error === "invalid") {
+                this.setState({ signedCmd: undefined }, () => {
+                    this.hideLoadingFightWithError(`Invalid request. Please sign the transaction.`)
+                })
+            }
+            else if (error === "no_fights_left") {
+                this.loadProfile()
+                this.hideLoadingFightWithError("This wizard cannot do other fights")
+            }
+            else if (error === "no_opponent") {
+                this.hideLoadingFightWithError("There are no opponents available")
+            }
+            else if (error === "no_owner") {
+                this.hideLoadingFightWithError("You are not the owner of this wizard")
+            }
+        }
+        //SUCCESS
+        else {
+            const { allSubscribers, pvpFightsStartDate, pvpWeek } = this.state
+
+            this.loadYourSubs(allSubscribers, pvpFightsStartDate, pvpWeek )
+            this.setState({ textLoadingFight: "Fight done!", fightId: response.success })
+        }
+    }
+
+    hideLoadingFightWithError(error) {
+        this.setState({ showModalLoadingFight: false }, () => {
+            this.startedFight = false
+            setTimeout(() => {
+                toast.error(error)
+            }, 1000)
+        })
     }
 
     async loadReplay(item) {
@@ -667,14 +730,17 @@ class PvP extends Component {
                         </button>
 
                         {
-                            hasFightsLeft && item.id === "866" &&
+                            hasFightsLeft &&
                             <button
                                 className="btnH"
                                 style={styles.btnPlay}
                                 onClick={() => {
-                                    if (this.state.loading) {
+                                    if (this.state.loading || this.startedFight) {
                                         return
                                     }
+
+                                    this.startedFight = true
+
                                     this.startFight(item)
                                 }}
                             >
@@ -991,6 +1057,18 @@ class PvP extends Component {
                         item={this.state.itemShowStats}
                         showModal={this.state.showModalStats}
                         onCloseModal={() => this.setState({ showModalStats: false })}
+                    />
+                    : undefined
+                }
+
+                {
+                    this.state.showModalLoadingFight ?
+                    <ModalLoadingFight
+                        showModal={this.state.showModalLoadingFight}
+                        onCloseModal={() => this.setState({ showModalLoadingFight: false })}
+                        width={modalW}
+                        text={this.state.textLoadingFight}
+                        fightId={this.state.fightId}
                     />
                     : undefined
                 }
