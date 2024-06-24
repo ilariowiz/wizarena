@@ -4204,13 +4204,6 @@ export const signTransaction = (cmdToSign, isXWallet, isQRWalletConnect, qrWalle
 					dispatch(updateTransactionState("error", `Wrong eckoWallet account selected in extension, please select ${account.account}`))
 					return
 				}
-				/*
-				else if (accountConnectedRes && accountConnectedRes.wallet && accountConnectedRes.wallet.chainId !== chainId) {
-					console.log(`Wrong chain selected in X Wallet, please select ${chainId}`)
-					dispatch(updateTransactionState("error", `Wrong chain selected in X Wallet, please select ${chainId}`))
-					return
-				}
-				*/
 
 				xwalletSignRes = await window.kadena.request({
 					method: "kda_requestSign",
@@ -4377,6 +4370,181 @@ export const signTransaction = (cmdToSign, isXWallet, isQRWalletConnect, qrWalle
 	}
 }
 
+export const signFightTransaction = (gasPrice, chainId, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient, networkUrl, account, callback) => {
+	return async (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.check-your-account "${account.account}")`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
+				[account.account]
+			),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		let cmdToSign = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit: 1000,
+			gasPrice,
+			chainId,
+			type: 'exec',
+			ttl: 600,
+			networkId: netId,
+			signingPubKey: account.account.replace("k:", "")
+		}
+
+		let signedCmd = null
+
+		if (isXWallet) {
+
+			let xwalletSignRes = null;
+
+			try {
+				const accountConnectedRes = await window.kadena.request({
+					method: "kda_requestAccount",
+					networkId: netId,
+					domain: window.location.hostname
+				})
+				//console.log(accountConnectedRes);
+
+				if (accountConnectedRes && accountConnectedRes.status !== "success") {
+					console.log("eckoWallet connection was lost, please re-connect")
+					dispatch(logout(isXWallet, netId))
+
+					return
+				}
+				else if (accountConnectedRes && accountConnectedRes.wallet && accountConnectedRes.wallet.account !== account.account) {
+					console.log(`Wrong X Wallet account selected in extension, please select ${account.account}`)
+					return
+				}
+
+				xwalletSignRes = await window.kadena.request({
+					method: "kda_requestSign",
+					networkId: netId,
+					data: { networkId: netId, signingCmd: cmdToSign }
+				})
+			} catch (e) {
+				console.log(e)
+			}
+
+			if (xwalletSignRes.status !== "success") {
+				console.log("Failed to sign the command in eckoWallet")
+				return
+			}
+
+			//console.log(xwalletSignRes);
+
+			signedCmd = xwalletSignRes.signedCmd;
+		}
+		else if(isQRWalletConnect) {
+
+			const signClient = await SignClient.init({
+			  projectId: process.env.REACT_APP_WALLET_CONNECT_ID,
+			  metadata: {
+			    name: "WizardsArena",
+			    description: "Wizards Arena NFTGame",
+			    url: "https://www.wizardsarena.net",
+			    icons: ["https://firebasestorage.googleapis.com/v0/b/raritysniperkda.appspot.com/o/android-chrome-384x384.png?alt=media&token=e5946e6e-ac87-446a-91f4-f6144906ef22"],
+			  },
+			});
+
+			//console.log(signClient);
+
+			signClient.on("session_delete", () => {
+				signClient.removeListener("session_delete")
+				dispatch(logout(false, netId))
+				dispatch(setQrWalletConnectClient(undefined))
+			})
+
+			signClient.on("pairing_delete", () => {
+				signClient.removeListener("pairing_delete")
+				dispatch(logout(false, netId))
+				dispatch(setQrWalletConnectClient(undefined))
+			})
+
+			signClient.on("session_expire", () => {
+				signClient.removeListener("session_expire")
+				dispatch(logout(false, netId))
+				dispatch(setQrWalletConnectClient(undefined))
+			})
+
+			signClient.on("pairing_expire", () => {
+				signClient.removeListener("pairing_expire")
+				dispatch(logout(false, netId))
+				dispatch(setQrWalletConnectClient(undefined))
+			})
+
+			try {
+				let topic = qrWalletConnectClient.pairingTopic
+
+				let signRes = await signClient.request({
+					topic,
+					chainId: "kadena:mainnet01",
+					request: {
+						method: "kadena_sign",
+						params: cmdToSign
+					}
+				})
+
+				//console.log(signRes);
+
+				signedCmd = signRes.signedCmd
+
+			}
+			catch(e) {
+				console.log(e);
+			}
+		}
+		else {
+			try {
+				signedCmd = await Pact.wallet.sign(cmdToSign)
+
+				if (!signedCmd) {
+					console.log("Failed to sign the command in the wallet")
+					return
+				}
+
+			} catch(e) {
+				console.log(e)
+				console.log("Failed to sign the command in the wallet")
+				return
+			}
+		}
+
+		console.log(signedCmd)
+
+		let localRes = null
+
+		try {
+			localRes = await fetch(`${networkUrl}/api/v1/local`, mkReq(signedCmd));
+		} catch(e) {
+			console.log(e)
+			console.log("Failed to confirm transaction with the network")
+			return
+		}
+
+		console.log(localRes);
+
+		const parsedLocalRes = await parseRes(localRes);
+
+		//console.log(parsedLocalRes);
+		if (parsedLocalRes && parsedLocalRes.result && parsedLocalRes.result.status === "success") {
+			if (callback) {
+				callback(signedCmd)
+			}
+		}
+		else {
+			if (callback) {
+				callback({"error": "fail to sign"})
+			}
+		}
+	}
+}
 
 export const readFromContract = (cmd, returnError, networkUrl) => {
 	return async (dispatch) => {

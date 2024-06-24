@@ -6,6 +6,7 @@ import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import toast, { Toaster } from 'react-hot-toast';
 import moment from 'moment'
+import axios from 'axios'
 import _ from 'lodash'
 import Popup from 'reactjs-popup';
 import Header from './Header'
@@ -35,7 +36,8 @@ import {
     loadBlockNftsSplit,
     getInfoItemEquippedMass,
     getInfoAuraMass,
-    getPvPsubscription
+    getPvPsubscription,
+    signFightTransaction
 } from '../actions'
 import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -69,7 +71,8 @@ class PvP extends Component {
             loadingReplay: false,
             allSubscribers: [],
             showModalStats: false,
-            itemShowStats: undefined
+            itemShowStats: undefined,
+            signedCmd: undefined
         }
     }
 
@@ -362,309 +365,44 @@ class PvP extends Component {
         return sorted
     }
 
+    async startFight(item) {
+        const { account, chainId, gasPrice, networkUrl, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient } = this.props
 
-    checkIfCanDoManualFights(item) {
-        const { pvpFightsStartDate, dailyFights } = this.state
+        console.log(item);
 
-        //console.log(pvpFightsStartDate);
-        const hours = moment().diff(pvpFightsStartDate, 'hours')
-        //console.log(hours);
-
-        const totalFights = item.manualFights || 0
-
-        let canFight = false
-
-        if (hours < 24 && totalFights < dailyFights) {
-            canFight = true
-        }
-        else if (hours >= 24 && hours < 48 && totalFights < (dailyFights * 2)) {
-            canFight = true
-        }
-        else if (hours >= 48 && totalFights < (dailyFights * 3)) {
-            canFight = true
-        }
-
-        return canFight
-    }
-
-    /*
-    async chooseOpponent(item) {
-        const { pvpWeek, pvpFightsStartDate, allSubscribersInfo } = this.state
-        const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
-
-        //console.log(item);
-        //console.log(allSubscribersInfo);
-
-        this.setState({ loading: true })
-
-        const docTest = doc(firebasedb, "aaa", `zGVGOTbYTTIcX3EIvMob`)
-		const docSnapTest = await getDoc(docTest)
-		let dataTest = docSnapTest.data()
-
-        if (!dataTest) {
-            toast.error('Something goes wrong... please try again')
-            return
-        }
-
-        const fightsStart = moment().isAfter(pvpFightsStartDate)
-
-
-        let maxL = item.level+25
-        let minL = item.level-25
-        let validSubs = []
-
-        if (fightsStart) {
-            const docRef = doc(firebasedb, "pvp_results", `${pvpWeek}_#${item.id}`)
-            const docSnap = await getDoc(docRef)
-            let data = docSnap.data()
-
-            //console.log(data);
-
-            //se per caso hai fatto un update rounds ma nel BE non si sono aggiornati, li aggiorniamo e facciamo un refresh della pagina
-            if (data && data.maxFights < item.rounds) {
-                //await updateDoc(docRef, {"maxFights": item.rounds })
-                window.location.reload()
-                return
-            }
-
-            //questo non ho ancora chiaro quando capita ma nel BE non dovresti avere più rounds di quelli che hai nel contratto
-            if (data && data.maxFights > item.rounds) {
-                //await updateDoc(docRef, {"maxFights": item.rounds })
-                window.location.reload()
-                return
-            }
-
-            if (data) {
-                //questo può capitare se ti stanno sfidando e hai lasciato la pagina aperta
-                //quando vai a sfidare tu non si è aggiornata la pagina e quindi ti sembra che puoi ancora fare fights
-                //quindi facciamo il check con i fights dal BE e se sono >= dei tuoi rounds allora facciamo un refresh
-                const fightsDone = data.win + data.lose
-                if (fightsDone >= item.rounds) {
-                    window.location.reload()
+        if (!this.state.signedCmd) {
+            this.props.signFightTransaction(gasPrice, chainId, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient, networkUrl, account, async (response) => {
+                //console.log(response);
+                if (response.error) {
+                    toast.error(`Can't sign the transaction. Retry`)
                     return
                 }
 
-                const canFight = this.checkIfCanDoManualFights(item)
-                if (!canFight) {
-                    window.location.reload()
-                    return
-                }
-            }
-
-            //rimuoviamo se stessi
-            //se vengono dallo stesso account
-            // se il livello è compreso tra max e min
-            //se ha ancora fights left
-            validSubs = allSubscribersInfo.filter(i => {
-                return i.id !== item.id
-                    && i.owner !== account.account
-                    && i.level.int >= minL && i.level.int <= maxL
-                    && i.fightsLeft > 0
+                this.setState({ signedCmd: response }, () => {
+                    this.askForFight(item.id)
+                })
             })
         }
         else {
-            //rimuoviamo se stessi
-            //se vengono dallo stesso account
-            // se il livello è compreso tra max e min
-            validSubs = allSubscribersInfo.filter(i => {
-                return i.id !== item.id
-                    && i.owner !== account.account
-                    && i.level.int >= minL && i.level.int <= maxL
-            })
+            this.askForFight(item.id)
         }
-
-        //console.log(validSubs);
-
-        if (validSubs.length === 0) {
-            this.setState({ loading: false })
-            toast.error('No opponent found, please try again')
-            return
-        }
-
-        const idxRandom = Math.floor(Math.random() * validSubs.length) //da 0 a validSubs.length -1
-
-        //console.log(idxRandom);
-
-        let opponent = validSubs[idxRandom]
-
-        //console.log(opponent);
-
-        if (fightsStart) {
-            const docRefOpponent = doc(firebasedb, "pvp_results", `${pvpWeek}_#${opponent.id}`)
-            const docSnapOppo = await getDoc(docRefOpponent)
-            let dataOppo = docSnapOppo.data()
-
-            //console.log(dataOppo);
-            const fightsLeftAggiornato = dataOppo.lose + dataOppo.win
-
-            if (dataOppo) {
-                //facciamo un refresh per aggiornare i dati sia su FE che su BE
-                if (dataOppo.maxFights <= fightsLeftAggiornato) {
-                    window.location.reload()
-                    return
-                }
-            }
-            else {
-                window.location.reload()
-                return
-            }
-        }
-
-        //console.log(item, opponent);
-
-        const rings = await this.props.getInfoItemEquippedMass(chainId, gasPrice, gasLimit, networkUrl, [item.id, opponent.id])
-        //console.log(ring);
-        const pendants = await this.props.getInfoItemEquippedMass(chainId, gasPrice, gasLimit, networkUrl, [`${item.id}pendant`, `${opponent.id}pendant`])
-
-        const auras = await this.props.getInfoAuraMass(chainId, gasPrice, gasLimit, networkUrl, [item.id, opponent.id])
-
-        //console.log(rings, pendants, auras);
-
-        const finalInfo = this.clearInfo([item, opponent], rings, pendants, auras)
-
-        //console.log(finalInfo);
-
-        const finalInfo1 = finalInfo[0]
-        const finalInfo2 = finalInfo[1]
-
-        fight(finalInfo1, finalInfo2, undefined, async (history, winner) => {
-            //console.log(history, winner)
-
-            //inviare a firebase il fight
-            //e poi aggiungere a obj il fightId
-
-            const fightObj = {
-                actions: history,
-                idnft1: finalInfo1.id,
-                idnft2: finalInfo2.id,
-                info1: finalInfo1,
-                info2: finalInfo2,
-                winner,
-                wizards: [finalInfo1.id, finalInfo2.id],
-                timestamp: serverTimestamp(),
-                region: "pvp"
-            }
-
-            //console.log(fightObj);
-
-            const fightRef = doc(collection(firebasedb, "fights_pvp2"))
-            const newDoc = setDoc(fightRef, fightObj)
-
-            //console.log(fightRef.id)
-
-            const playerIsWinner = finalInfo1.id === winner
-
-            let keyDb = fightsStart ? "pvp_results" : "pvp_training"
-
-            const docRef = doc(firebasedb, keyDb, `${pvpWeek}_#${winner}`)
-            try {
-                if (playerIsWinner) {
-                    updateDoc(docRef, {
-                        "win": increment(1),
-                        "manualFights": increment(1)
-                    })
-                }
-                else {
-                    updateDoc(docRef, {
-                        "win": increment(1)
-                    })
-                }
-            }
-            catch (error) {
-                console.log(error);
-            }
-
-            const loserId = finalInfo1.id === winner ? finalInfo2.id : finalInfo1.id
-
-            const docRef2 = doc(firebasedb, keyDb, `${pvpWeek}_#${loserId}`)
-            try {
-                if (!playerIsWinner) {
-                    updateDoc(docRef2, {
-                        "lose": increment(1),
-                        "manualFights": increment(1)
-                    })
-                }
-                else {
-                    updateDoc(docRef2, {
-                        "lose": increment(1)
-                    })
-                }
-            }
-            catch (error) {
-                console.log(error);
-            }
-
-
-            this.setState({ loading: false }, () => {
-                this.props.history.push(`/fightreplay/fights_pvp2/${fightRef.id}`)
-            })
-        })
-    }
-    */
-
-    clearInfo(infoNfts, rings, pendants, auras) {
-    	let newInfo = []
-
-    	for (var i = 0; i < infoNfts.length; i++) {
-            let info = infoNfts[i]
-
-            info['attack'] = info.attack.int
-            info['damage'] = info.damage.int
-            info['defense'] = info.defense.int
-            info['hp'] = info.hp.int
-            info['speed'] = info.speed.int
-
-            //console.log(info.spellSelected);
-
-            if (info.spellSelected) {
-                info['spellSelected'] = this.refactorSpell(info.spellSelected)
-            }
-
-
-            //RING
-            const ring = rings.find(i => i.equippedToId === info.id)
-            if (ring && ring.equipped) {
-                info['ring'] = ring
-
-                const stats = ring.bonus.split(",")
-                stats.map(i => {
-                    const infos = i.split("_")
-                    info[infos[1]] += parseInt(infos[0])
-                })
-            }
-            else {
-                info['ring'] = {}
-            }
-
-            // PENDANT
-            const pendant = pendants.find(i => i.equippedToId === `${info.id}pendant`)
-            if (pendant && pendant.equipped) {
-                info['pendant'] = pendant
-            }
-            else {
-                info['pendant'] = {}
-            }
-
-            // AURA
-            const aura = auras.find(i => i.idnft === info.id)
-            if (aura && aura.bonus.int > 0) {
-                info['aura'] = aura
-                info['defense'] += parseInt(aura.bonus.int)
-            }
-            else {
-                info['aura'] = {}
-            }
-
-            newInfo.push(info)
-        }
-
-        return newInfo
     }
 
-    refactorSpell(spell) {
-        const newSpell = allSpells.find(i => i.name === spell.name)
+    async askForFight(id) {
+        const { signedCmd } = this.state
 
-        return newSpell;
+        try {
+            const responseFight = await axios.post('https://wizards-bot.herokuapp.com/fight', {
+                id,
+                mode: "pvp",
+                signedCmd
+            })
+
+            console.log(responseFight);
+        }
+        catch(error) {
+            console.log(error);
+        }
     }
 
     async loadReplay(item) {
@@ -811,8 +549,6 @@ class PvP extends Component {
 
         const fightsEnd = moment().isAfter(pvpFightsEndDate)
 
-        //console.log(bonusEquipment['hp']);
-        const canFight = !fightsStart ? true : this.checkIfCanDoManualFights(item)
         const hasFightsLeft = !fightsStart ? true : totalFights < item.maxFights
 
         return (
@@ -930,8 +666,8 @@ class PvP extends Component {
                             </p>
                         </button>
 
-                        {/*
-                            canFight && hasFightsLeft &&
+                        {
+                            hasFightsLeft && item.id === "866" &&
                             <button
                                 className="btnH"
                                 style={styles.btnPlay}
@@ -939,14 +675,14 @@ class PvP extends Component {
                                     if (this.state.loading) {
                                         return
                                     }
-                                    this.chooseOpponent(item)
+                                    this.startFight(item)
                                 }}
                             >
                                 <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
                                     Fight
                                 </p>
                             </button>
-                        */}
+                        }
 
                         {
                             fightsStart && totalFights >= item.maxFights && !fightsEnd &&
@@ -1381,9 +1117,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance, userMintedNfts, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
+	const { account, chainId, netId, gasPrice, gasLimit, networkUrl, isXWallet, isQRWalletConnect, qrWalletConnectClient, wizaBalance, userMintedNfts, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, avgLevelPvP, wizaBalance, userMintedNfts, mainTextColor, mainBackgroundColor, isDarkmode };
+	return { account, chainId, netId, gasPrice, gasLimit, networkUrl, isXWallet, isQRWalletConnect, qrWalletConnectClient, wizaBalance, userMintedNfts, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {
@@ -1403,5 +1139,6 @@ export default connect(mapStateToProps, {
     loadBlockNftsSplit,
     getInfoItemEquippedMass,
     getInfoAuraMass,
-    getPvPsubscription
+    getPvPsubscription,
+    signFightTransaction
 })(PvP)
