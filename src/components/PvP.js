@@ -214,27 +214,37 @@ class PvP extends Component {
             }
 
             //console.log(querySubs);
-            const q = query(collection(firebasedb, keydb), where(documentId(), "in", querySubs))
 
-            const docsSnap = await getDocs(q)
+            const parts = _.chunk(querySubs, 10)
 
-            docsSnap.forEach(doc => {
-                //console.log(doc.data());
+            await Promise.all(
+				parts.map(async (chunks) => {
+					const results = await getDocs(
+						query(
+							collection(firebasedb, keydb),
+							where(documentId(), 'in', chunks)
+						)
+					)
 
-                let data = doc.data()
+					return results.docs.map(doc => {
+						//console.log(doc.id);
+                        let data = doc.data()
 
-                //console.log(doc.id);
-                const idnft = doc.id.replace(`${week}_#`, "")
-                data["id"] = idnft
-                data['fightsLeft'] = data.maxFights - (data.lose + data.win)
+                        //console.log(doc.id);
+                        const idnft = doc.id.replace(`${week}_#`, "")
+                        data["id"] = idnft
+                        data['fightsLeft'] = data.maxFights - (data.lose + data.win)
 
-                const extraInfo = userMintedNfts.find(i => i.id === idnft)
-                if (extraInfo) {
-                    data = {...data, ...extraInfo}
-                }
+                        const extraInfo = userMintedNfts.find(i => i.id === idnft)
+                        if (extraInfo) {
+                            data = {...data, ...extraInfo}
+                        }
 
-                yourSubscribers.push(data)
-            })
+                        yourSubscribers.push(data)
+
+					})
+				})
+			)
 
             //yoursubs > 0 ma il be non ha ancora inviato i nuovi dati a firebase
             if (yourSubscribers.length === 0) {
