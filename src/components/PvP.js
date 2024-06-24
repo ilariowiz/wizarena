@@ -316,11 +316,8 @@ class PvP extends Component {
 
         this.props.updateInfoTransactionModal({
 			transactionToConfirmText: `You will increase the number of fights Wizard #${idNftIncrementFights} can do by ${wizaAmount}`,
-			typeModal: 'increment_fight_pvp',
 			transactionOkText: `Maximum fights increased!`,
             nameNft: `#${idNftIncrementFights}`,
-            wizaAmount,
-            pvpWeek
 		})
 
         this.props.incrementFightPvP(chainId, gasPrice, 6000, netId, account, pvpWeek, idNftIncrementFights, wizaAmount)
