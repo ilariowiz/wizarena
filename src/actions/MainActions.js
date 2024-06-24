@@ -4510,7 +4510,7 @@ export const signFightTransaction = (gasPrice, chainId, netId, isXWallet, isQRWa
 			}
 		}
 
-		console.log(signedCmd)
+		//console.log(signedCmd)
 
 		if (!signedCmd) {
 			callback({"error": "fail to sign"})

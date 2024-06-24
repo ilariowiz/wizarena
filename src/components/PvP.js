@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getDoc, doc, updateDoc, query, collection, where, limit, orderBy, getDocs, serverTimestamp, setDoc, increment, documentId } from "firebase/firestore";
+import { getDoc, doc, query, collection, where, limit, orderBy, getDocs, documentId } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
@@ -17,8 +17,6 @@ import ModalLoadingFight from './common/ModalLoadingFight'
 import NftCardChoicePvP from './common/NftCardChoicePvP'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
-import allSpells from './common/Spells'
-import fight from './common/CalcFight'
 import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import {
     loadUserMintedNfts,
@@ -29,14 +27,8 @@ import {
     getPvPopen,
     subscribeToPvPMass,
     incrementFightPvP,
-    setSfida,
     getWizaBalance,
-    loadSingleNft,
-    loadEquipMinted,
     updateInfoTransactionModal,
-    loadBlockNftsSplit,
-    getInfoItemEquippedMass,
-    getInfoAuraMass,
     getPvPsubscription,
     signFightTransaction
 } from '../actions'
@@ -216,10 +208,8 @@ class PvP extends Component {
                 querySubs.push(`${i.pvpweek}_#${i.idnft}`)
             })
 
-            let isTraining = false
             let keydb = "pvp_results"
             if (moment() < dateFightsStart) {
-                isTraining = true
                 keydb = "pvp_training"
             }
 
@@ -861,7 +851,7 @@ class PvP extends Component {
 
     renderBody(isMobile) {
         const { isConnected, showModalConnection, pvpOpen, yourSubscribers, notSubbed, error, pvpWeekEnd, pvpFightsStart, pvpFightsStartDate, allSubscribers, loading } = this.state
-        const { account, userMintedNfts, mainTextColor, mainBackgroundColor } = this.props
+        const { account, mainTextColor, mainBackgroundColor } = this.props
 
         const { boxW, modalW, padding } = getBoxWidth(isMobile)
 
@@ -1209,14 +1199,8 @@ export default connect(mapStateToProps, {
     getPvPopen,
     subscribeToPvPMass,
     incrementFightPvP,
-    setSfida,
     getWizaBalance,
-    loadSingleNft,
-    loadEquipMinted,
     updateInfoTransactionModal,
-    loadBlockNftsSplit,
-    getInfoItemEquippedMass,
-    getInfoAuraMass,
     getPvPsubscription,
     signFightTransaction
 })(PvP)
