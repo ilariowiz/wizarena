@@ -4415,12 +4415,9 @@ export const signFightTransaction = (gasPrice, chainId, netId, isXWallet, isQRWa
 				if (accountConnectedRes && accountConnectedRes.status !== "success") {
 					console.log("eckoWallet connection was lost, please re-connect")
 					dispatch(logout(isXWallet, netId))
-
-					return
 				}
 				else if (accountConnectedRes && accountConnectedRes.wallet && accountConnectedRes.wallet.account !== account.account) {
 					console.log(`Wrong X Wallet account selected in extension, please select ${account.account}`)
-					return
 				}
 
 				xwalletSignRes = await window.kadena.request({
@@ -4434,7 +4431,6 @@ export const signFightTransaction = (gasPrice, chainId, netId, isXWallet, isQRWa
 
 			if (xwalletSignRes.status !== "success") {
 				console.log("Failed to sign the command in eckoWallet")
-				return
 			}
 
 			//console.log(xwalletSignRes);
@@ -4506,17 +4502,20 @@ export const signFightTransaction = (gasPrice, chainId, netId, isXWallet, isQRWa
 
 				if (!signedCmd) {
 					console.log("Failed to sign the command in the wallet")
-					return
 				}
 
 			} catch(e) {
 				console.log(e)
 				console.log("Failed to sign the command in the wallet")
-				return
 			}
 		}
 
 		console.log(signedCmd)
+
+		if (!signedCmd) {
+			callback({"error": "fail to sign"})
+			return
+		}
 
 		let localRes = null
 
@@ -4528,7 +4527,7 @@ export const signFightTransaction = (gasPrice, chainId, netId, isXWallet, isQRWa
 			return
 		}
 
-		console.log(localRes);
+		//console.log(localRes);
 
 		const parsedLocalRes = await parseRes(localRes);
 
