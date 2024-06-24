@@ -108,9 +108,6 @@ class Conquest extends Component {
 
         this.setState({ seasonInfo })
 
-        //console.log(getRatingDelta(630, 500, 0));
-        //console.log(getRatingDelta(500, 630, 1));
-
         setTimeout(() => {
             this.loadMinted()
             this.loadChampions()
