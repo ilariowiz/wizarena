@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
-import { doc, updateDoc, setDoc, increment, serverTimestamp, collection } from "firebase/firestore";
-import { firebasedb } from '../Firebase';
 //import anime from 'animejs/lib/anime.es.js';
 import { IoClose } from 'react-icons/io5'
 import DotLoader from 'react-spinners/DotLoader';
 import BounceLoader from 'react-spinners/BounceLoader';
 import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, sendMessageUpdateNickname, sendMessageUpgrade, sendMessageListedEquipment, sendMessageDelistedEquipment, sendMessageSalesEquipment, sendMessageOfferItem, sendMessageDeclineOffer, sendMessageChallenge, sendMessageFlashT, sendMessageFlashTSub, sendMessageCollectionOffer } from './WebhookDiscord'
-import regionPerElement from './LordsRegionsElement'
 import '../../css/Modal.css'
 import {
 	signTransaction,
@@ -65,7 +62,6 @@ class ModalTransaction extends Component {
 
 			const info = txInfo && txInfo.length > 0 ? txInfo[txInfo.length-1] : {}
 
-
 			const typeModal = info.typeModal || ""
 			const nameNft = info.nameNft || ""
 
@@ -78,47 +74,7 @@ class ModalTransaction extends Component {
             const ringToEquipName = info.ringToEquipName || ""
             const nicknameToSet = info.nicknameToSet || ""
 
-			const toSubscribeLords = info.toSubscribeLords || ""
-			const lordsSeasonId = info.lordsSeasonId || ""
-
-			if (typeModal === "subscribe_lords") {
-				toSubscribeLords.map(i => {
-
-					const element = info.toSubscribeElements.find(z => z.id === i)
-					//console.log(element);
-					const regions = regionPerElement[element.element]
-					let startingElo = 500
-
-			        const initialDoc = {
-			            idnft: i,
-			            fightsDone: 0,
-			            lastFightTime: serverTimestamp(),
-			            eloSitenor: regions.includes("Sitenor") ? startingElo : 1,
-			            oldeloSitenor: regions.includes("Sitenor") ? startingElo : 1,
-			            eloDruggorial: regions.includes("Druggorial") ? startingElo : 1,
-			            oldeloDruggorial: regions.includes("Druggorial") ? startingElo : 1,
-			            eloVedrenon: regions.includes("Vedrenon") ? startingElo : 1,
-			            oldeloVedrenon: regions.includes("Vedrenon") ? startingElo : 1,
-			            eloOceorah: regions.includes("Oceorah") ? startingElo : 1,
-			            oldeloOceorah: regions.includes("Oceorah") ? startingElo : 1,
-			            eloOpherus: regions.includes("Opherus") ? startingElo : 1,
-			            oldeloOpherus: regions.includes("Opherus") ? startingElo : 1,
-			            eloUlidalar: regions.includes("Ulidalar") ? startingElo : 1,
-			            oldeloUlidalar: regions.includes("Ulidalar") ? startingElo : 1,
-			            eloWastiaxus: regions.includes("Wastiaxus") ? startingElo : 1,
-			            oldeloWastiaxus: regions.includes("Wastiaxus") ? startingElo : 1,
-			            eloUlanara: regions.includes("Ulanara") ? startingElo : 1,
-			            oldeloUlanara: regions.includes("Ulanara") ? startingElo : 1,
-			            eloBremonon: regions.includes("Bremonon") ? startingElo : 1,
-			            oldeloBremonon: regions.includes("Bremonon") ? startingElo : 1,
-						owner: account.account
-			        }
-
-			        const docRef = doc(collection(firebasedb, lordsSeasonId))
-			        setDoc(docRef, initialDoc)
-				})
-			}
-			else if (typeModal === "upgrade" && nameNft && statToUpgrade && howMuchIncrement) {
+			if (typeModal === "upgrade" && nameNft && statToUpgrade && howMuchIncrement) {
                 const msg = `${nameNft} upgrade ${statToUpgrade.toUpperCase()} by ${howMuchIncrement}`
                 sendMessageUpgrade(idNft, msg)
             }
