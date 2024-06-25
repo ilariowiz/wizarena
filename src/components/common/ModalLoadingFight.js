@@ -9,7 +9,7 @@ import '../../css/Modal.css'
 
 class ModalLoadingFight extends Component {
 	render() {
-		const { showModal, width, text, mainTextColor, mainBackgroundColor, fightId, onCloseModal } = this.props;
+		const { showModal, width, text, mainTextColor, mainBackgroundColor, fightId, onCloseModal, refdb } = this.props;
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 
@@ -29,7 +29,7 @@ class ModalLoadingFight extends Component {
 					{
 						fightId &&
 						<a
-			                href={`${window.location.protocol}//${window.location.host}/fightreplay/fights_pvp2/${fightId}`}
+			                href={`${window.location.protocol}//${window.location.host}/fightreplay/${refdb}/${fightId}`}
 			                target="_blank"
 			                rel="noopener noreferrer"
 			                className='btnH'
