@@ -15,6 +15,7 @@ import ModalWizaPvP from './common/ModalWizaPvP'
 import ModalStats from './common/ModalStats'
 import ModalLoadingFight from './common/ModalLoadingFight'
 import NftCardChoicePvP from './common/NftCardChoicePvP'
+import getLoadingFightText from './common/LoadingFightText'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
@@ -401,7 +402,7 @@ class PvP extends Component {
     async askForFight(id) {
         const { signedCmd } = this.state
 
-        this.setState({ showModalLoadingFight: true, textLoadingFight: "Doing the fight...", fightId: "" })
+        this.setState({ showModalLoadingFight: true, textLoadingFight: getLoadingFightText(), fightId: "" })
 
         try {
             const responseFight = await axios.post('https://wizards-bot.herokuapp.com/fight', {
@@ -1066,6 +1067,7 @@ class PvP extends Component {
                         width={modalW}
                         text={this.state.textLoadingFight}
                         fightId={this.state.fightId}
+                        refdb="fights_pvp2"
                     />
                     : undefined
                 }
