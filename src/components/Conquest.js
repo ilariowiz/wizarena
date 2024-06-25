@@ -5,36 +5,31 @@ import { getDocs, collection, query, orderBy, limit, doc, setDoc, serverTimestam
 import { firebasedb } from './Firebase';
 import moment from 'moment'
 import _ from 'lodash'
+import axios from 'axios'
 import Header from './Header'
 import DotLoader from 'react-spinners/DotLoader';
 import Popup from 'reactjs-popup';
 import toast, { Toaster } from 'react-hot-toast';
-import { FaRankingStar, FaStar } from 'react-icons/fa6'
+import { FaStar } from 'react-icons/fa6'
 import { CgArrowTopRightR } from 'react-icons/cg'
 import { MdOutlineDateRange } from 'react-icons/md'
 import getBoxWidth from './common/GetBoxW'
-import allEvents from './common/Events'
 import regionPerElement from './common/LordsRegionsElement'
 import getImageUrl from './common/GetImageUrl'
-import allSpells from './common/Spells'
-import fight from './common/CalcFight'
-import getRatingDelta from './common/CalcElo'
 import NftCardChoice from './common/NftCardChoice'
-import ModalFightConquest from './common/ModalFightConquest'
-import { MAIN_NET_ID, CTA_COLOR, MAX_LEVEL } from '../actions/types'
+import ModalLoadingFight from './common/ModalLoadingFight'
+import getLoadingFightText from './common/LoadingFightText'
+import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import 'reactjs-popup/dist/index.css';
 import {
     setNetworkSettings,
     setNetworkUrl,
     getConquestSubscribersIdsPerSeason,
     loadUserMintedNfts,
-    getInfoItemEquipped,
-    loadSingleNft,
-    loadEquipMinted,
     updateInfoTransactionModal,
     subscribeToLords,
     loadBlockNftsSplit,
-    getInfoAura
+    signFightTransaction
 } from '../actions'
 import {ReactComponent as VedrenonIcon} from '../assets/regions/svg/vedrenon.svg'
 import {ReactComponent as WastiaxusIcon} from '../assets/regions/svg/wastiaxus.svg'
@@ -68,7 +63,7 @@ class Conquest extends Component {
         this.SEASON_ID = ""
         this.SEASON_ID_FIGHTS = ""
 
-        this.clickedFight = false
+        this.startedFight = false
 
         this.state = {
             seasonInfo: {},
@@ -82,16 +77,15 @@ class Conquest extends Component {
             champions: {},
             fightsDone: 0,
             loadingYourChampion: false,
-            loadingStartFight: false,
-            showModalFight: false,
-            infoFight: {},
-            isFightDone: false,
             showSubscribe: false,
             notSubbed: [],
             toSubscribe: [],
             countSubbedWizards: 0,
             infoLords: {},
-            lastOpponentId: ""
+            signedCmd: undefined,
+            showModalLoadingFight: false,
+            textLoadingFight: "",
+            fightId: ""
         }
     }
 
@@ -339,63 +333,12 @@ class Conquest extends Component {
 	}
 
     async loadYourChampion(infoNft) {
-        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
-
         this.setState({ loadingYourChampion: true })
 
         const data = await this.getElosDataSingleNft(infoNft.id)
 
         //console.log(data);
-
-        const ring = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, infoNft.id)
-        const pendant = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, `${infoNft.id}pendant`)
-        const aura = await this.props.getInfoAura(chainId, gasPrice, gasLimit, networkUrl, infoNft.id)
-
-        if (ring && ring.equipped) {
-            infoNft['ring'] = ring
-        }
-        else {
-            infoNft['ring'] = {}
-        }
-
-        if (pendant && pendant.equipped) {
-            infoNft['pendant'] = pendant
-        }
-        else {
-            infoNft['pendant'] = {}
-        }
-
-        if (aura && aura.bonus.int > 0) {
-            infoNft['aura'] = aura
-        }
-        else {
-            infoNft['aura'] = {}
-        }
-
-        infoNft['attack'] = infoNft.attack.int
-        infoNft['damage'] = infoNft.damage.int
-        infoNft['defense'] = infoNft.defense.int
-        infoNft['hp'] = infoNft.hp.int
-        infoNft['speed'] = infoNft.speed.int
-        infoNft['spellSelected'] = allSpells.find(i => i.name === infoNft.spellSelected.name)
-
-        if (infoNft.ring && infoNft.ring.equipped) {
-            const stats = infoNft.ring.bonus.split(",")
-            //console.log("stats ring 2", stats);
-            stats.map(i => {
-                const infos = i.split("_")
-                //console.log(infos[1], infos[0]);
-                infoNft[infos[1]] += parseInt(infos[0])
-            })
-        }
-
-        if (infoNft.aura && infoNft.aura.bonus) {
-            infoNft['defense'] += parseInt(infoNft.aura.bonus.int)
-        }
-
-        //console.log(infoNft);
-
-        this.setState({ wizardSelectedElos: data, wizardSelected: infoNft, fightsDone: data.fightsDone, loadingYourChampion: false }, () => {
+        this.setState({ wizardSelectedElos: data, wizardSelected: infoNft, fightsDone: data.fightsDone, loadingYourChampion: false, signedCmd: undefined }, () => {
             this.loadWizardSelectedLastFights(infoNft.id)
         })
     }
@@ -425,29 +368,14 @@ class Conquest extends Component {
     }
 
     subscribeWizards() {
-        const { chainId, gasPrice, gasLimit, netId, account, userMintedNfts } = this.props
+        const { chainId, gasPrice, gasLimit, netId, account } = this.props
         const { toSubscribe, seasonInfo } = this.state
 
         //console.log(toSubscribe);
-
-        let elements = []
-        for (let i = 0; i < toSubscribe.length; i++) {
-            const idnft = toSubscribe[i]
-
-            const info = userMintedNfts.find(i => i.id === idnft)
-            //console.log(info);
-            if (info && info.element) {
-                elements.push({ element: info.element, id: idnft })
-            }
-        }
-
         this.props.updateInfoTransactionModal({
 			transactionToConfirmText: `You will subscribe ${toSubscribe.length} wizards for ${toSubscribe.length * seasonInfo.buyin} $KDA`,
 			typeModal: 'subscribe_lords',
-			transactionOkText: `Your Wizards are registered for Lords of Wizards World - ${this.SEASON_NAME}!`,
-            toSubscribeLords: toSubscribe,
-            lordsSeasonId: this.SEASON_ID,
-            toSubscribeElements: elements
+			transactionOkText: `Your Wizards are registered for Lords of Wizards World - ${this.SEASON_NAME}!`
 		})
 
         const totKda = _.round(toSubscribe.length * seasonInfo.buyin, 2)
@@ -463,44 +391,18 @@ class Conquest extends Component {
 
         querySnapshot.forEach(doc => {
             //console.log(doc.data());
-
             let data = doc.data()
             data['docId'] = doc.id
 
             fights.push(data)
         })
 
-        const lastFight = fights.length > 0 ? fights[0] : undefined
-        let lastOpponentId;
-        if (lastFight) {
-            lastOpponentId = lastFight.idnft1 === idnft ? lastFight.idnft2 : lastFight.idnft1
-        }
-
-        this.setState({ wizardSelectedLastFights: fights, lastOpponentId })
+        this.setState({ wizardSelectedLastFights: fights })
     }
 
-    async checkIfFightsLeft(idnft) {
-
-        const q = query(collection(firebasedb, this.SEASON_ID), where("idnft", "==", idnft))
-        const querySnapshot = await getDocs(q)
-
-        let data = undefined
-
-        querySnapshot.forEach(doc => {
-            data = doc.data()
-            data['docId'] = doc.id
-        })
-
-        if (data.fightsDone < 5) {
-            return true
-        }
-
-        return false
-    }
-
-    async startFight(champions, keyElo, possibleBoosts, regionName) {
-        const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
-        const { wizardSelected, wizardSelectedElos, lastOpponentId } = this.state
+    async startFight(regionName) {
+        const { account, chainId, gasPrice, networkUrl, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient } = this.props
+        const { signedCmd } = this.state
 
         let seasonEnded = this.checkSeasonEnded()
         //console.log(seasonEnded);
@@ -510,231 +412,102 @@ class Conquest extends Component {
             return
         }
 
-        const hasFightsLeft = await this.checkIfFightsLeft(wizardSelected.id)
-        //console.log(hasFightsLeft);
-        if (!hasFightsLeft) {
-            window.location.reload()
-            return
-        }
+        if (!signedCmd) {
+            this.setState({ showModalLoadingFight: true, textLoadingFight: "Sign the transaction to make the fight...", fightId: "" })
 
-        //questo serve per rimuovere il wizard selezionato
-        let filterTop3 = champions.filter(i => i.idnft !== wizardSelected.id)
-        //non puoi sfidare l'ultimo che hai sfidato
-        if (lastOpponentId) {
-            filterTop3 = filterTop3.filter(i => i.idnft !== lastOpponentId)
-        }
-
-        let champion;
-
-        if (filterTop3.length > 0) {
-            champion = _.sample(filterTop3)
-        }
-        else if (filterTop3.length === 0) {
-            this.setState({ showModalFight: false, infoFight: {}, isFightDone: false, loadingStartFight: false }, () => {
-                toast.error(`No wizards available to fight`)
-            })
-            return
-        }
-
-        if (champion && wizardSelected.attack) {
-            this.incrementFights(wizardSelectedElos.docId)
-        }
-        else {
-            window.location.reload()
-            return
-        }
-
-        this.setState({ loadingStartFight: true, showModalFight: true, infoFight: { nft1: wizardSelected, nft2: { id: "" }, evento: "", winner: "" } })
-
-        this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, champion.idnft, async (response) => {
-
-            /*
-            if (wizardSelected.owner === response.owner) {
-                console.log('you can\'t fight your own wizard');
-                this.setState({ showModalFight: false, infoFight: {}, isFightDone: false, loadingStartFight: false }, () => {
-                    toast.error(`You can't fight your own wizard`)
-                })
-                return
-            }
-            */
-
-            const ring = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, champion.idnft)
-            const pendant = await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, `${champion.idnft}pendant`)
-            const aura = await this.props.getInfoAura(chainId, gasPrice, gasLimit, networkUrl, champion.idnft)
-
-            if (ring && ring.equipped) {
-                response['ring'] = ring
-            }
-            else {
-                response['ring'] = {}
-            }
-
-            if (pendant && pendant.equipped) {
-                response['pendant'] = pendant
-            }
-            else {
-                response['pendant'] = {}
-            }
-
-            if (aura && aura.bonus.int > 0) {
-                response['aura'] = aura
-            }
-            else {
-                response['aura'] = {}
-            }
-
-            response['attack'] = response.attack.int
-            response['damage'] = response.damage.int
-            response['defense'] = response.defense.int
-            response['hp'] = response.hp.int
-            response['speed'] = response.speed.int
-            response['spellSelected'] = allSpells.find(i => i.name === response.spellSelected.name)
-
-            if (response.ring && response.ring.equipped) {
-                const stats = response.ring.bonus.split(",")
-                //console.log("stats ring 2", stats);
-                stats.map(i => {
-                    const infos = i.split("_")
-                    //console.log(infos[1], infos[0]);
-                    response[infos[1]] += parseInt(infos[0])
-                })
-            }
-
-            if (response.aura && response.aura.bonus) {
-                response['defense'] += parseInt(response.aura.bonus.int)
-            }
-
-            //console.log(response);
-
-            const boostIdx = Math.floor(Math.random() * possibleBoosts.length)
-            const boostName = possibleBoosts[boostIdx]
-
-            const eventoInfo = allEvents.find(i => i.elements === boostName.toLowerCase())
-            //console.log(eventoInfo);
-
-            fight(wizardSelected, response, eventoInfo, async (history, winner) => {
-                //console.log(history, winner);
-
-                /*
-                    1- inviare fight a firebase, oltre a history e winner e info player, add seasonId e serverTimestamp (in modo da prenderli dal più recente)
-                    2- calc elo
-                    3- update elo on firebase (USARE increment)
-                    4- update daily fights left
-                    5- refresh lords
-                */
-
-                // SEND FIGHT to firebase **************
-                const sendOk = this.sendFightToFirebase(history, wizardSelected, response, winner, regionName, wizardSelectedElos.docId)
-
-                if (!sendOk) {
+            this.props.signFightTransaction(gasPrice, chainId, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient, networkUrl, account, async (response) => {
+                //console.log(response);
+                if (response.error) {
+                    this.setState({ showModalLoadingFight: false, textLoadingFight: "", fightId: "" }, () => {
+                        this.startedFight = false
+                        setTimeout(() => {
+                            toast.error(`Can't sign the transaction. Please retry`)
+                        }, 1000)
+                    })
                     return
                 }
 
-                // **************
-
-                //calc ELO ********************
-                const elo1 = wizardSelectedElos[keyElo]
-                const eloChampion = champion[keyElo]
-
-                let getDelta1 = getRatingDelta(elo1, eloChampion, winner === wizardSelected.id ? 1 : 0)
-                let getDeltaChampion = getRatingDelta(eloChampion, elo1, winner === champion.idnft ? 1 : 0)
-
-                if (getDelta1 < 0) {
-                    getDelta1 = Math.floor((getDelta1 * 80) / 100)
-                }
-
-                if (getDeltaChampion < 0) {
-                    getDeltaChampion = Math.floor((getDeltaChampion * 80) / 100)
-                }
-
-
-                this.updateDataFirebase(wizardSelectedElos.docId, getDelta1, keyElo, elo1, `old${keyElo}`, true)
-                this.updateDataFirebase(champion.docId, getDeltaChampion, keyElo, eloChampion, `old${keyElo}`, false)
-
-                this.setState({ infoFight: { nft1: wizardSelected, nft2: response, evento: eventoInfo, winner: "" }, showModalFight: true, loadingStartFight: false })
-
-                this.clickedFight = false
-
-                setTimeout(async () => {
-                    const dataElo = await this.getElosDataSingleNft(wizardSelected.id)
-
-                    // reload all champions
-                    await this.loadChampions()
-
-                    this.setState({ fightsDone: dataElo.fightsDone, wizardSelectedElos: dataElo, isFightDone: true, infoFight: { nft1: wizardSelected, nft2: response, evento: eventoInfo, winner } }, () => {
-                        this.loadWizardSelectedLastFights(wizardSelected.id)
-                    })
-                }, 3000)
-
+                this.setState({ signedCmd: response }, () => {
+                    this.askForFight(regionName)
+                })
             })
-
-        })
+        }
     }
 
-    async sendFightToFirebase(history, player1, player2, winner, regionName, docId) {
+    async askForFight(region) {
+        const { signedCmd, wizardSelected } = this.state
+
+        this.setState({ showModalLoadingFight: true, textLoadingFight: getLoadingFightText(), fightId: "" })
+
         try {
-            const fightObj = {
-                actions: history,
-                idnft1: player1.id,
-                idnft2: player2.id,
-                season: this.SEASON_ID,
-                winner,
-                info1: player1,
-                info2: player2,
-                hp1: player1.hp,
-                hp2: player2.hp,
-                timestamp: serverTimestamp(),
-                wizards: [player1.id, player2.id],
-                region: regionName || ""
+            const responseFight = await axios.post('https://wizards-bot.herokuapp.com/fight', {
+                id: wizardSelected.id,
+                mode: "lords",
+                region,
+                signedCmd
+            })
+
+            //console.log(responseFight);
+
+            if (responseFight.status === 200) {
+                this.handleResponseFight(responseFight.data)
             }
-
-            const fightRef = doc(collection(firebasedb, this.SEASON_ID_FIGHTS))
-            await setDoc(fightRef, fightObj)
-
-            return true
+            else {
+                this.hideLoadingFightWithError(`Something goes wrong. Please retry`)
+            }
         }
         catch(error) {
-            this.decrementFights(docId)
-            setTimeout(() => {
-                window.location.reload()
-            }, 1500)
-
-            return false
+            this.hideLoadingFightWithError(`Something goes wrong. Please retry`)
         }
-
     }
 
-    async incrementFights(docId) {
-        const docRef = doc(firebasedb, this.SEASON_ID, docId)
+    async handleResponseFight(response) {
 
-        updateDoc(docRef, {
-            "fightsDone": increment(1),
-        })
-    }
+        this.startedFight = false
 
-    async decrementFights(docId) {
-        const docRef = doc(firebasedb, this.SEASON_ID, docId)
+        if (response.error) {
 
-        updateDoc(docRef, {
-            "fightsDone": increment(-1),
-        })
-    }
-
-    async updateDataFirebase(docId, eloIncrement, keyElo, oldElo, oldkeyElo, doIncrement) {
-        const docRef = doc(firebasedb, this.SEASON_ID, docId)
-
-        if (doIncrement) {
-            updateDoc(docRef, {
-                [keyElo]: increment(eloIncrement),
-                [oldkeyElo]: oldElo,
-            })
+            const error = response.error
+            if (error === "invalid") {
+                this.setState({ signedCmd: undefined }, () => {
+                    this.hideLoadingFightWithError(`Invalid request. Please sign the transaction.`)
+                })
+            }
+            else if (error === "no_fights_left") {
+                this.hideLoadingFightWithError("This wizard cannot do other fights")
+            }
+            else if (error === "no_opponent") {
+                this.hideLoadingFightWithError("There are no opponents available")
+            }
+            else if (error === "no_owner") {
+                this.hideLoadingFightWithError("You are not the owner of this wizard")
+            }
+            else if (error === "season_ended") {
+                this.hideLoadingFightWithError("The season is ended")
+            }
+            else if (error === "invalid_region") {
+                this.hideLoadingFightWithError("This wizard cannot fight in this region")
+            }
         }
+        //SUCCESS
         else {
-            updateDoc(docRef, {
-                [keyElo]: increment(eloIncrement),
-                [oldkeyElo]: oldElo
-            })
+            const { wizardSelected } = this.state
+
+            this.loadChampions()
+            this.loadWizardSelectedLastFights(wizardSelected.id)
+            const dataElo = await this.getElosDataSingleNft(wizardSelected.id)
+
+            this.setState({ textLoadingFight: "Fight done!", fightId: response.success, fightsDone: dataElo.fightsDone, wizardSelectedElos: dataElo })
         }
+    }
+
+    hideLoadingFightWithError(error) {
+        this.setState({ showModalLoadingFight: false }, () => {
+            this.startedFight = false
+            setTimeout(() => {
+                toast.error(error)
+            }, 1000)
+        })
     }
 
     eventsPerRegion(regionName) {
@@ -746,9 +519,6 @@ class Conquest extends Component {
                 events.push(key)
             }
         }
-
-        //console.log(events);
-
         return events.sort()
     }
 
@@ -893,7 +663,7 @@ class Conquest extends Component {
 
     renderRegion(regionName, regionImage, RegionIcon, keyElo, seasonStarted, seasonEnded) {
 
-        const { wizardSelected, wizardSelectedElos, champions, loadingStartFight, fightsDone, infoLords } = this.state
+        const { wizardSelected, wizardSelectedElos, champions, fightsDone, infoLords } = this.state
         const { mainTextColor } = this.props
 
         const possibleBoosts = this.eventsPerRegion(regionName)
@@ -1019,22 +789,13 @@ class Conquest extends Component {
                         <div style={{ flexDirection: 'column', alignItems: 'center' }}>
 
                             {
-                                loadingStartFight &&
-                                <div
-                                    style={Object.assign({}, styles.btnSubscribe, { width: maxWidth, height: 30, marginBottom: 8 })}
-                                >
-                                    <DotLoader size={20} color={mainTextColor} />
-                                </div>
-                            }
-
-                            {
-                                !loadingStartFight && fightsLeft > 0 && this.canFightInRegion(wizardSelected.element, possibleBoosts) &&
+                                fightsLeft > 0 && this.canFightInRegion(wizardSelected.element, possibleBoosts) &&
                                 <button
                                     style={Object.assign({}, styles.btnSubscribe, { width: maxWidth, height: 30, marginBottom: 8, boxShadow: "black 0px 0px 15px", })}
                                     onClick={() => {
-                                        if (!this.clickedFight) {
-                                            this.clickedFight = true
-                                            this.startFight(champions[regionName], keyElo, possibleBoosts, regionName)
+                                        if (!this.startedFight) {
+                                            this.startedFight = true
+                                            this.startFight(regionName)
                                         }
                                     }}
                                 >
@@ -1045,7 +806,7 @@ class Conquest extends Component {
                             }
 
                             {
-                                !loadingStartFight && fightsLeft <= 0 &&
+                                fightsLeft <= 0 &&
                                 <div
                                     style={Object.assign({}, styles.btnSubscribe, { width: maxWidth, height: 30, marginBottom: 8, cursor: 'default' })}
                                 >
@@ -1083,8 +844,6 @@ class Conquest extends Component {
     renderYourSubs(item, index) {
         const { mainTextColor } = this.props
         const { loadingYourChampion } = this.state
-
-        //console.log(item, item.fightsDone, item.resistance);
 
         const fightsLeft = 5 - item.fightsDone
 
@@ -1259,7 +1018,7 @@ class Conquest extends Component {
     }
 
     renderBody(isMobile) {
-        const { loadingYourSubs, loadingChampions, yourSubs, wizardSelected, infoFight, isFightDone, showSubscribe, seasonInfo, notSubbed, countSubbedWizards } = this.state
+        const { loadingYourSubs, loadingChampions, yourSubs, wizardSelected, showSubscribe, seasonInfo, notSubbed, countSubbedWizards } = this.state
         const { mainTextColor, mainBackgroundColor } = this.props
 
         const { boxW, modalW, padding } = getBoxWidth(isMobile)
@@ -1534,19 +1293,17 @@ class Conquest extends Component {
                 </div>
 
                 {
-                    infoFight && infoFight.nft1 &&
-                    <ModalFightConquest
-                        showModal={this.state.showModalFight}
+                    this.state.showModalLoadingFight ?
+                    <ModalLoadingFight
+                        showModal={this.state.showModalLoadingFight}
+                        onCloseModal={() => this.setState({ showModalLoadingFight: false })}
                         width={modalW}
-                        infoFight={infoFight}
-                        isMobile={isMobile}
-                        isFightDone={isFightDone}
-                        closeModal={() => {
-                            this.setState({ showModalFight: false, infoFight: {}, isFightDone: false })
-                        }}
+                        text={this.state.textLoadingFight}
+                        fightId={this.state.fightId}
+                        refdb={this.SEASON_ID_FIGHTS}
                     />
+                    : undefined
                 }
-
 
             </div>
         )
@@ -1661,9 +1418,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, gasPrice, gasLimit, networkUrl, userMintedNfts, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
+	const { account, chainId, gasPrice, gasLimit, networkUrl, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient, userMintedNfts, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { account, chainId, gasPrice, gasLimit, networkUrl, userMintedNfts, mainTextColor, mainBackgroundColor, isDarkmode };
+	return { account, chainId, gasPrice, gasLimit, networkUrl, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient, userMintedNfts, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {
@@ -1671,11 +1428,8 @@ export default connect(mapStateToProps, {
     setNetworkUrl,
     getConquestSubscribersIdsPerSeason,
     loadUserMintedNfts,
-    getInfoItemEquipped,
-    loadSingleNft,
-    loadEquipMinted,
     updateInfoTransactionModal,
     subscribeToLords,
     loadBlockNftsSplit,
-    getInfoAura
+    signFightTransaction
 })(Conquest)
