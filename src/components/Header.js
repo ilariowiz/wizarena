@@ -571,7 +571,7 @@ class Header extends Component {
 		return (
 			<div style={{ flexDirection: "column", flexWrap: 'wrap', width: '100%' }}>
 
-				{/*<div style={Object.assign({}, styles.boxGradient, { backgroundImage: `linear-gradient(to right, #3a3aaf, transparent)` })}>
+				<div style={Object.assign({}, styles.boxGradient, { backgroundImage: `linear-gradient(to right, #3a3aaf, transparent)` })}>
 
 					{this.renderBtnMenuPlay(
 						'lords',
@@ -580,7 +580,7 @@ class Header extends Component {
 						99,
 						17)
 					}
-				</div>*/}
+				</div>
 
 				<div style={Object.assign({}, styles.boxGradient, { backgroundImage: `linear-gradient(to right, #6a36bf, transparent)` })}>
 
