@@ -432,6 +432,9 @@ class Conquest extends Component {
                 })
             })
         }
+        else {
+            this.askForFight(regionName)
+        }
     }
 
     async askForFight(region) {
