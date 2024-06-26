@@ -288,6 +288,8 @@ class Arena extends Component {
 
         this.setState({ subscribing: true })
 
+        toast.loading("Sign the transaction to sub...")
+
         this.props.signFightTransaction(gasPrice, chainId, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient, networkUrl, account, async (response) => {
             if (response.error) {
                 this.handleResponseSub({"error": 'invalid'})
