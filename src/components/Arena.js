@@ -1,40 +1,39 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Media from 'react-media';
-import { getDocs, collection, query, doc, getDoc, serverTimestamp, updateDoc, setDoc, where, limit, orderBy, increment } from "firebase/firestore";
+import { getDocs, collection, query, doc, getDoc, where, limit, orderBy } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import moment from 'moment'
-import _ from 'lodash'
-import ReCAPTCHA from 'react-google-recaptcha'
+import axios from 'axios'
+//import ReCAPTCHA from 'react-google-recaptcha'
 import { MdOutlineDateRange } from 'react-icons/md'
 import DotLoader from 'react-spinners/DotLoader';
 import toast, { Toaster } from 'react-hot-toast';
 import Popup from 'reactjs-popup';
 import Header from './Header'
 import NftCardChoice from './common/NftCardChoice'
-import ModalFightConquest from './common/ModalFightConquest'
+import ModalLoadingFight from './common/ModalLoadingFight'
+import getLoadingFightText from './common/LoadingFightText'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
-import allSpells from './common/Spells'
-import fight from './common/CalcFightArena'
 import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import {
     setNetworkSettings,
     setNetworkUrl,
     loadUserMintedNfts,
-    getInfoItemEquipped,
-    getInfoAura,
-    loadSingleNft
+    signFightTransaction
 } from '../actions'
 import '../css/Nft.css'
 import 'reactjs-popup/dist/index.css';
 
+/*
 const cup_gold = require('../assets/cup_gold.png')
 const cup_silver = require('../assets/cup_silver.png')
 const cup_bronze = require('../assets/cup_bronze.png')
+*/
 const medal = require('../assets/medal.png')
 
-const MAX_WIZARDS_PER_WALLET = 16
+const MAX_WIZARDS_PER_WALLET = 20
 
 
 class Arena extends Component {
@@ -44,10 +43,11 @@ class Arena extends Component {
         this.SEASON_ID = ""
         this.SEASON_ID_FIGHTS = ""
 
-        this.clickedFight = false
+        this.startedFight = false
+
+        this.startSub = false
 
         this.state = {
-            loading: true,
             loadingYourSubs: true,
             arenaInfo: {},
             subscribersId: [],
@@ -62,9 +62,10 @@ class Arena extends Component {
             subscribing: false,
             loadingYourChampion: false,
             wizardSelectedLastFights: [],
-            showModalFight: false,
-            lastOpponentId: "",
-            captchaToken: ""
+            signedCmd: undefined,
+            showModalLoadingFight: false,
+            textLoadingFight: "",
+            fightId: ""
         }
     }
 
@@ -249,72 +250,17 @@ class Arena extends Component {
             return b.level - a.level
         })
 
-        this.setState({ loadingYourSubs: false, loading: false, yourSubs, notSubbed, countSubbedWizards: subscribersId.length })
+        this.setState({ loadingYourSubs: false, yourSubs, notSubbed, countSubbedWizards: subscribersId.length })
 	}
 
     async loadYourChampion(infoNft) {
-        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
         const { allData } = this.state
 
         this.setState({ loadingYourChampion: true })
 
         const data = allData.find(i => i.idnft === infoNft.id)
 
-        //console.log(data);
-
-        const ring = data.level > 160 ? await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, infoNft.id) : undefined
-        const pendant = data.level > 160 ? await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, `${infoNft.id}pendant`) : undefined
-        const aura = data.level > 160 ? await this.props.getInfoAura(chainId, gasPrice, gasLimit, networkUrl, infoNft.id) : undefined
-
-        if (ring && ring.equipped) {
-            infoNft['ring'] = ring
-        }
-        else {
-            infoNft['ring'] = {}
-        }
-
-        if (pendant && pendant.equipped) {
-            infoNft['pendant'] = pendant
-        }
-        else {
-            infoNft['pendant'] = {}
-        }
-
-        if (aura && aura.bonus.int > 0) {
-            infoNft['aura'] = aura
-        }
-        else {
-            infoNft['aura'] = {}
-        }
-
-        infoNft['attack'] = infoNft.attack.int
-        infoNft['damage'] = infoNft.damage.int
-        infoNft['defense'] = infoNft.defense.int
-        infoNft['hp'] = infoNft.hp.int
-        infoNft['speed'] = infoNft.speed.int
-        infoNft['spellSelected'] = allSpells.find(i => i.name === infoNft.spellSelected.name)
-
-        if (infoNft.ring && infoNft.ring.equipped) {
-            const stats = infoNft.ring.bonus.split(",")
-            //console.log("stats ring 2", stats);
-            stats.map(i => {
-                const infos = i.split("_")
-                //console.log(infos[1], infos[0]);
-                infoNft[infos[1]] += parseInt(infos[0])
-            })
-        }
-
-        if (infoNft.aura && infoNft.aura.bonus) {
-            infoNft['defense'] += parseInt(infoNft.aura.bonus.int)
-        }
-
-        //console.log(infoNft);
-
-        if (this.recaptchaRef) {
-            this.recaptchaRef.current.reset()
-        }
-
-        this.setState({ wizardSelected: infoNft, loadingYourChampion: false, fightsDone: data.fightsDone, captchaToken: "" }, () => {
+        this.setState({ wizardSelected: infoNft, loadingYourChampion: false, fightsDone: data.fightsDone, signedCmd: undefined }, () => {
             this.loadWizardSelectedLastFights(infoNft.id)
         })
     }
@@ -334,48 +280,81 @@ class Arena extends Component {
             fights.push(data)
         })
 
-        //console.log(fights);
-        const lastFight = fights.length > 0 ? fights[0] : undefined
-        let lastOpponentId;
-        if (lastFight) {
-            lastOpponentId = lastFight.idnft1 === idnft ? lastFight.idnft2 : lastFight.idnft1
-        }
-
-        //console.log(lastOpponentId);
-
-        this.setState({ wizardSelectedLastFights: fights, lastOpponentId })
+        this.setState({ wizardSelectedLastFights: fights })
     }
 
     subscribeWizards() {
-        const { toSubscribe } = this.state
-        const { userMintedNfts, account } = this.props
+        const { account, gasPrice, chainId, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient, networkUrl } = this.props
 
         this.setState({ subscribing: true })
 
-        //console.log(toSubscribe);
-
-        toSubscribe.map(async i => {
-
-            const nftInfo = userMintedNfts.find(z => z.id === i)
-
-            const initialDoc = {
-                idnft: i,
-                fightsDone: 0,
-                lastFightTime: serverTimestamp(),
-                ranking: 0,
-                level: nftInfo.level,
-                owner: account.account
+        this.props.signFightTransaction(gasPrice, chainId, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient, networkUrl, account, async (response) => {
+            if (response.error) {
+                this.handleResponseSub({"error": 'invalid'})
+                return
             }
 
-            //console.log(nftInfo, initialDoc);
-
-            const docRef = doc(collection(firebasedb, this.SEASON_ID))
-            await setDoc(docRef, initialDoc)
+            this.askForSub(response)
         })
+    }
 
-        setTimeout(() => {
-            window.location.reload()
-        }, 1500)
+    async askForSub(signedCmdSub) {
+        const { toSubscribe } = this.state
+
+        try {
+            const responseFight = await axios.post('https://wizards-bot.herokuapp.com/subtoarena', {
+                ids: toSubscribe,
+                signedCmd: signedCmdSub
+            })
+
+            //console.log(responseFight);
+
+            if (responseFight.status === 200) {
+                this.handleResponseSub(responseFight.data)
+            }
+            else {
+                this.hideLoadingSubWithError(`Something goes wrong. Please retry`)
+            }
+        }
+        catch(error) {
+            this.hideLoadingSubWithError(`Something goes wrong. Please retry`)
+        }
+    }
+
+    handleResponseSub(response) {
+
+        this.startSub = false
+
+        if (response.error) {
+
+            const error = response.error
+            if (error === "invalid") {
+                this.setState({ signedCmd: undefined }, () => {
+                    this.hideLoadingSubWithError(`Invalid request. Please sign the transaction.`)
+                })
+            }
+            else if (error === "too_many_wizards") {
+                this.hideLoadingSubWithError("You can't register that many wizards")
+            }
+            else if (error === "no_owner") {
+                this.hideLoadingSubWithError("You are not the owner of this wizard")
+            }
+        }
+        //SUCCESS
+        else {
+            setTimeout(() => {
+                window.location.reload()
+            }, 1000)
+        }
+    }
+
+    hideLoadingSubWithError(error) {
+        this.setState({ subscribing: false }, () => {
+            this.startSub = false
+            setTimeout(() => {
+                toast.error(error)
+            }, 1000)
+        })
     }
 
     async addToSubscribers(id) {
@@ -406,24 +385,9 @@ class Arena extends Component {
         return false
     }
 
-    getOpponent(opponents) {
-        opponents = opponents.sort((a,b) => {
-
-            let fightsGetA = a.fightsGet || 0
-            let fightsGetB = b.fightsGet || 0
-
-            return fightsGetA - fightsGetB
-        })
-        //console.log(opponents);
-
-        const top10 = opponents.slice(0, opponents.length/2)
-
-        return _.sample(top10)
-    }
-
     async startFight() {
-        const { chainId, gasPrice, gasLimit, networkUrl } = this.props
-        const { wizardSelected, allData, lastOpponentId } = this.state
+        const { account, chainId, gasPrice, networkUrl, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient } = this.props
+        const { signedCmd, wizardSelected } = this.state
 
         let seasonEnded = this.checkSeasonEnded()
         //console.log(seasonEnded);
@@ -440,176 +404,101 @@ class Arena extends Component {
             return
         }
 
-        // rimuoviamo il wiz selezionato e l'ultimo wizard sfidato
-        let opponents = allData.filter(i => i.idnft !== wizardSelected.id)
-        if (lastOpponentId) {
-            opponents = opponents.filter(i => i.idnft !== lastOpponentId)
+        if (!signedCmd) {
+            this.setState({ showModalLoadingFight: true, textLoadingFight: "Sign the transaction to make the fight...", fightId: "" })
+
+            this.props.signFightTransaction(gasPrice, chainId, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient, networkUrl, account, async (response) => {
+                //console.log(response);
+                if (response.error) {
+                    this.setState({ showModalLoadingFight: false, textLoadingFight: "", fightId: "" }, () => {
+                        this.startedFight = false
+                        setTimeout(() => {
+                            toast.error(`Can't sign the transaction. Please retry`)
+                        }, 1000)
+                    })
+                    return
+                }
+
+                this.setState({ signedCmd: response }, () => {
+                    this.askForFight()
+                })
+            })
         }
+    }
 
-        //filtriamo per categoria
-        let opponentsByLevel = []
+    async askForFight() {
+        const { signedCmd, wizardSelected } = this.state
 
-        opponents.map(i => {
-            if (i.level <= 160 && wizardSelected.level <= 160) {
-                opponentsByLevel.push(i)
-            }
-            else if ((i.level > 160 &&  i.level <= 200) && (wizardSelected.level > 160 && wizardSelected.level <= 200)) {
-                opponentsByLevel.push(i)
-            }
-            else if ((i.level > 200 &&  i.level <= 300) && (wizardSelected.level > 200 && wizardSelected.level <= 300)) {
-                opponentsByLevel.push(i)
-            }
-            else if (i.level > 300 && wizardSelected.level > 300) {
-                opponentsByLevel.push(i)
-            }
-        })
+        this.setState({ showModalLoadingFight: true, textLoadingFight: getLoadingFightText(), fightId: "" })
 
-        //console.log(opponentsByLevel);
+        try {
+            const responseFight = await axios.post('https://wizards-bot.herokuapp.com/fight', {
+                id: wizardSelected.id,
+                mode: "arena",
+                signedCmd
+            })
 
-        const opponent = this.getOpponent(opponentsByLevel)//_.sample(opponentsByLevel)
+            //console.log(responseFight);
 
-        if (opponent && wizardSelected.attack) {
-            this.incrementFights(wizardSelected.id)
-        }
-        else {
-            window.location.reload()
-            return
-        }
-
-        this.setState({ loadingStartFight: true, showModalFight: true, infoFight: { nft1: wizardSelected, nft2: { id: "" }, winner: "" } })
-
-        this.props.loadSingleNft(chainId, gasPrice, gasLimit, networkUrl, opponent.idnft, async (response) => {
-
-            const ring = opponent.level > 160 ? await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, opponent.idnft) : undefined
-            const pendant = opponent.level > 160 ? await this.props.getInfoItemEquipped(chainId, gasPrice, gasLimit, networkUrl, `${opponent.idnft}pendant`) : undefined
-            const aura = opponent.level > 160 ? await this.props.getInfoAura(chainId, gasPrice, gasLimit, networkUrl, opponent.idnft) : undefined
-
-            if (ring && ring.equipped) {
-                response['ring'] = ring
+            if (responseFight.status === 200) {
+                this.handleResponseFight(responseFight.data)
             }
             else {
-                response['ring'] = {}
+                this.hideLoadingFightWithError(`Something goes wrong. Please retry`)
             }
+        }
+        catch(error) {
+            this.hideLoadingFightWithError(`Something goes wrong. Please retry`)
+        }
+    }
 
-            if (pendant && pendant.equipped) {
-                response['pendant'] = pendant
-            }
-            else {
-                response['pendant'] = {}
-            }
+    async handleResponseFight(response) {
 
-            if (aura && aura.bonus.int > 0) {
-                response['aura'] = aura
-            }
-            else {
-                response['aura'] = {}
-            }
+        this.startedFight = false
 
-            response['attack'] = response.attack.int
-            response['damage'] = response.damage.int
-            response['defense'] = response.defense.int
-            response['hp'] = response.hp.int
-            response['speed'] = response.speed.int
-            response['spellSelected'] = allSpells.find(i => i.name === response.spellSelected.name)
+        if (response.error) {
 
-            if (response.ring && response.ring.equipped) {
-                const stats = response.ring.bonus.split(",")
-                //console.log("stats ring 2", stats);
-                stats.map(i => {
-                    const infos = i.split("_")
-                    //console.log(infos[1], infos[0]);
-                    response[infos[1]] += parseInt(infos[0])
+            const error = response.error
+            if (error === "invalid") {
+                this.setState({ signedCmd: undefined }, () => {
+                    this.hideLoadingFightWithError(`Invalid request. Please sign the transaction.`)
                 })
             }
-
-            if (response.aura && response.aura.bonus) {
-                response['defense'] += parseInt(response.aura.bonus.int)
+            else if (error === "no_fights_left") {
+                this.hideLoadingFightWithError("This wizard cannot do other fights")
             }
-
-            fight(wizardSelected, response, undefined, async (history, winner) => {
-
-                this.sendFightToFirebase(history, wizardSelected, response, winner)
-
-                if (winner === wizardSelected.id) {
-                    this.updateDataFirebase(wizardSelected.id, true, wizardSelected.level)
-                }
-                else {
-                    this.updateDataFirebase(winner, false, opponent.level)
-                }
-
-                this.setState({ infoFight: { nft1: wizardSelected, nft2: response, winner: "" }, loadingStartFight: false })
-
-                this.clickedFight = false
-
-                setTimeout(async () => {
-                    await this.loadSubscribers()
-
-                    this.setState({ isFightDone: true, infoFight: { nft1: wizardSelected, nft2: response, winner } }, () => {
-                        this.loadWizardSelectedLastFights(wizardSelected.id)
-                    })
-
-                }, 3000)
-
-            })
-        })
-    }
-
-    sendFightToFirebase(history, player1, player2, winner) {
-
-        const fightObj = {
-            actions: history,
-            idnft1: player1.id,
-            idnft2: player2.id,
-            season: this.SEASON_ID,
-            winner,
-            info1: player1,
-            info2: player2,
-            hp1: player1.hp,
-            hp2: player2.hp,
-            timestamp: serverTimestamp(),
-            wizards: [player1.id, player2.id],
-            region: "arena"
+            else if (error === "no_opponent") {
+                this.hideLoadingFightWithError("There are no opponents available")
+            }
+            else if (error === "no_owner") {
+                this.hideLoadingFightWithError("You are not the owner of this wizard")
+            }
+            else if (error === "season_ended") {
+                this.hideLoadingFightWithError("The season is ended")
+            }
+            else if (error === "not_subbed") {
+                this.hideLoadingFightWithError("This wizard is not subbed in Arena")
+            }
         }
-
-        const fightRef = doc(collection(firebasedb, this.SEASON_ID_FIGHTS))
-        setDoc(fightRef, fightObj)
-    }
-
-    async incrementFights(idnft) {
-        const { allData } = this.state
-
-        const data = allData.find(i => i.idnft === idnft)
-
-        const docRef = doc(firebasedb, this.SEASON_ID, data.docId)
-
-        updateDoc(docRef, {
-            "fightsDone": increment(1),
-        })
-    }
-
-    async updateDataFirebase(idnft, doIncrement, wizardLevel) {
-        const { allData } = this.state
-
-        const data = allData.find(i => i.idnft === idnft)
-
-        const docRef = doc(firebasedb, this.SEASON_ID, data.docId)
-
-        //se hai vinto e sei l'attaccante
-        if (doIncrement) {
-            updateDoc(docRef, {
-                "ranking": increment(5),
-                "lastFightTime": serverTimestamp(),
-                //"level": wizardLevel
-            })
-        }
-        //è il difensore che ha vinto, lo sfidato che ha vinto guadagna 2 punti
+        //SUCCESS
         else {
-            updateDoc(docRef, {
-                "ranking": increment(2),
-                "fightsGet": increment(1),
-                //"level": wizardLevel
-            })
+            const { wizardSelected } = this.state
+
+            this.loadWizardSelectedLastFights(wizardSelected.id)
+            await this.loadSubscribers()
+            await this.loadYourChampion(wizardSelected)
+
+            this.setState({ textLoadingFight: "Fight done!", fightId: response.success })
         }
+    }
+
+    hideLoadingFightWithError(error) {
+        this.setState({ showModalLoadingFight: false }, () => {
+            this.startedFight = false
+            setTimeout(() => {
+                toast.error(error)
+            }, 1000)
+        })
     }
 
     renderRowChoise(item, index) {
@@ -678,7 +567,10 @@ class Arena extends Component {
                                 return
                             }
 
-                            this.subscribeWizards()
+                            if (!this.startSub) {
+                                this.startSub = true
+                                this.subscribeWizards()
+                            }
                         }}
     				>
     					<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
@@ -784,8 +676,6 @@ class Arena extends Component {
 
         const maxWidth = 180
 
-        const recaptchaRef = React.createRef()
-
         return (
             <div style={{ flexDirection: isMobile ? 'column' : 'row', width: "100%" }}>
 
@@ -843,8 +733,8 @@ class Arena extends Component {
                         <button
                             style={Object.assign({}, styles.btnSubscribe, { width: 120, height: 36 })}
                             onClick={() => {
-                                if (this.state.captchaToken && !this.clickedFight) {
-                                    this.clickedFight = true
+                                if (!this.startedFight) {
+                                    this.startedFight = true
                                     this.startFight()
                                 }
                             }}
@@ -866,13 +756,13 @@ class Arena extends Component {
                         </div>
                     }
 
-                    <ReCAPTCHA
+                    {/*<ReCAPTCHA
                         style={{ display: this.state.captchaToken ? "none" : "block" }}
                         ref={recaptchaRef}
                         //size="invisible"
                         sitekey="6LeMHekpAAAAALxSDiImZ24NxsXipt69omZH03S8"
                         onChange={(e) => this.setState({ captchaToken: e })}
-                    />
+                    />*/}
                 </div>
 
                 <div style={{ flexDirection: 'column', marginLeft: 20 }}>
@@ -1039,7 +929,7 @@ class Arena extends Component {
     }
 
     renderBody(isMobile) {
-        const { loadingYourSubs, yourSubs, wizardSelected, infoFight, isFightDone, showSubscribe, arenaInfo, notSubbed, countSubbedWizards } = this.state
+        const { loadingYourSubs, yourSubs, wizardSelected, showSubscribe, arenaInfo, notSubbed, countSubbedWizards } = this.state
         const { mainTextColor, mainBackgroundColor } = this.props
 
         const { boxW, modalW, padding } = getBoxWidth(isMobile)
@@ -1272,7 +1162,7 @@ class Arena extends Component {
                     :
                     <div style={{ flexDirection: 'column' }}>
                         <p style={{ fontSize: 20, color: mainTextColor, marginBottom: 10 }} className="text-medium">
-                            Your subscribed Wizards <span style={{ fontSize: 13 }}>({yourSubs.length})</span>
+                            Your subscribed Wizards <span style={{ fontSize: 13 }}>({yourSubs.length}/{MAX_WIZARDS_PER_WALLET})</span>
                         </p>
 
                         {
@@ -1318,20 +1208,17 @@ class Arena extends Component {
                 </div>
 
                 {
-                    infoFight && infoFight.nft1 &&
-                    <ModalFightConquest
-                        showModal={this.state.showModalFight}
+                    this.state.showModalLoadingFight ?
+                    <ModalLoadingFight
+                        showModal={this.state.showModalLoadingFight}
+                        onCloseModal={() => this.setState({ showModalLoadingFight: false })}
                         width={modalW}
-                        infoFight={infoFight}
-                        isMobile={isMobile}
-                        isFightDone={isFightDone}
-                        closeModal={() => {
-                            this.setState({ showModalFight: false, infoFight: {}, isFightDone: false, fightsDone: this.state.fightsDone+1 })
-                        }}
+                        text={this.state.textLoadingFight}
+                        fightId={this.state.fightId}
+                        refdb="arena_fights"
                     />
+                    : undefined
                 }
-
-
             </div>
         )
     }
@@ -1444,16 +1331,14 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, gasPrice, gasLimit, networkUrl, userMintedNfts, mainTextColor, mainBackgroundColor } = state.mainReducer;
+	const { account, chainId, gasPrice, gasLimit, networkUrl, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient, userMintedNfts, mainTextColor, mainBackgroundColor } = state.mainReducer;
 
-	return { account, chainId, gasPrice, gasLimit, networkUrl, userMintedNfts, mainTextColor, mainBackgroundColor };
+	return { account, chainId, gasPrice, gasLimit, networkUrl, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient, userMintedNfts, mainTextColor, mainBackgroundColor };
 }
 
 export default connect(mapStateToProps, {
     setNetworkSettings,
     setNetworkUrl,
     loadUserMintedNfts,
-    getInfoItemEquipped,
-    getInfoAura,
-    loadSingleNft
+    signFightTransaction
 })(Arena)

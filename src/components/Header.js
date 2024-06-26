@@ -605,7 +605,7 @@ class Header extends Component {
 
 				</div>
 
-				{/*<div style={Object.assign({}, styles.boxGradient, { backgroundImage: `linear-gradient(to right, #d6863e, transparent)` })}>
+				<div style={Object.assign({}, styles.boxGradient, { backgroundImage: `linear-gradient(to right, #d6863e, transparent)` })}>
 
 					{this.renderBtnMenuPlay(
 						'arena',
@@ -615,7 +615,7 @@ class Header extends Component {
 						17)
 					}
 
-				</div>*/}
+				</div>
 
 				<div style={Object.assign({}, styles.boxGradient, { backgroundImage: `linear-gradient(to right, #b99642, transparent)` })}>
 					{this.renderBtnMenuPlay(

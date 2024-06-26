@@ -93,7 +93,7 @@ ReactDOM.render(
             <Route path="/lords" component={Conquest} />
             <Route path="/fightreplay" component={FightsReplay} />
             <Route path="/fightreplaybrawl" component={FightsReplayBrawl} />
-            {/*<Route path="/arena" component={Arena} /> */}
+            <Route path="/arena" component={Arena} />
           </Switch>
         </div>
       </BrowserRouter>

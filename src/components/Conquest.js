@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Media from 'react-media';
-import { getDocs, collection, query, orderBy, limit, doc, setDoc, serverTimestamp, where, updateDoc, getDoc, increment } from "firebase/firestore";
+import { getDocs, collection, query, orderBy, limit, doc, where, getDoc } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import moment from 'moment'
 import _ from 'lodash'
@@ -1084,7 +1084,7 @@ class Conquest extends Component {
                         </button>
                     </div>
 
-                    <div style={{ flexWrap: 'wrap', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap' }}>
+                    <div style={{ flexWrap: 'wrap', alignItems: 'center', marginBottom: 20 }}>
                         <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center', marginRight: 20, marginBottom: 15 }}>
                             Buyin {seasonInfo.buyin} $KDA
                         </p>
