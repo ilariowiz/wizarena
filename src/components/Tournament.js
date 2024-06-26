@@ -184,7 +184,7 @@ class Tournament extends Component {
                 const wiz2info = subscribed.find(i => i.id === wiz2)
 
                 //console.log(wiz2info, account.account);
-                if ((wiz1info.owner === account.account) || (wiz2info && wiz2info.owner === account.account)) {
+                if ((wiz1info && wiz1info.owner === account.account) || (wiz2info && wiz2info.owner === account.account)) {
                     //console.log("your");
 
                     yourPairings.push(pairing)
