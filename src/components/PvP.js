@@ -377,12 +377,12 @@ class PvP extends Component {
         //console.log(item);
         if (!this.state.signedCmd) {
 
-            this.setState({ showModalLoadingFight: true, textLoadingFight: "Sign the transaction to make the fight...", fightId: "", opponentId: "", wizardSelectedId: "" })
+            this.setState({ showModalLoadingFight: true, textLoadingFight: "Sign the transaction to make the fight...", fightId: "", opponentId: "", wizardSelectedId: item.id })
 
             this.props.signFightTransaction(gasPrice, chainId, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient, networkUrl, account, async (response) => {
                 //console.log(response);
                 if (response.error) {
-                    this.setState({ showModalLoadingFight: false, textLoadingFight: "", fightId: "", opponentId: "", wizardSelectedId: item.id }, () => {
+                    this.setState({ showModalLoadingFight: false, textLoadingFight: "", fightId: "", opponentId: "", wizardSelectedId: "" }, () => {
                         this.startedFight = false
                         setTimeout(() => {
                             toast.error(`Can't sign the transaction. Please retry`)
