@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getDoc, doc, query, collection, where, limit, orderBy, getDocs, documentId } from "firebase/firestore";
+import { getDoc, doc, query, collection, where, limit, orderBy, getDocs, documentId, startAt } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
@@ -71,7 +71,9 @@ class PvP extends Component {
             signedCmd: undefined,
             showModalLoadingFight: false,
             textLoadingFight: "",
-            fightId: ""
+            fightId: "",
+            opponentId: "",
+            wizardSelectedId: ""
         }
     }
 
@@ -375,12 +377,12 @@ class PvP extends Component {
         //console.log(item);
         if (!this.state.signedCmd) {
 
-            this.setState({ showModalLoadingFight: true, textLoadingFight: "Sign the transaction to make the fight...", fightId: "" })
+            this.setState({ showModalLoadingFight: true, textLoadingFight: "Sign the transaction to make the fight...", fightId: "", opponentId: "", wizardSelectedId: "" })
 
             this.props.signFightTransaction(gasPrice, chainId, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient, networkUrl, account, async (response) => {
                 //console.log(response);
                 if (response.error) {
-                    this.setState({ showModalLoadingFight: false, textLoadingFight: "", fightId: "" }, () => {
+                    this.setState({ showModalLoadingFight: false, textLoadingFight: "", fightId: "", opponentId: "", wizardSelectedId: item.id }, () => {
                         this.startedFight = false
                         setTimeout(() => {
                             toast.error(`Can't sign the transaction. Please retry`)
@@ -402,7 +404,7 @@ class PvP extends Component {
     async askForFight(id) {
         const { signedCmd } = this.state
 
-        this.setState({ showModalLoadingFight: true, textLoadingFight: getLoadingFightText(), fightId: "" })
+        this.setState({ showModalLoadingFight: true, textLoadingFight: getLoadingFightText(), fightId: "", opponentId: "" })
 
         try {
             const responseFight = await axios.post('https://wizards-bot.herokuapp.com/fight', {
@@ -452,8 +454,13 @@ class PvP extends Component {
         else {
             const { allSubscribers, pvpFightsStartDate, pvpWeek } = this.state
 
-            this.loadYourSubs(allSubscribers, pvpFightsStartDate, pvpWeek )
-            this.setState({ textLoadingFight: "Fight done!", fightId: response.success })
+            this.loadYourSubs(allSubscribers, pvpFightsStartDate, pvpWeek)
+
+            this.setState({ opponentId: response.opponentId }, () => {
+                setTimeout(() => {
+                    this.setState({ textLoadingFight: "Fight done!", fightId: response.success })
+                }, 1500)
+            })
         }
     }
 
@@ -470,19 +477,23 @@ class PvP extends Component {
         //console.log(item);
         this.setState({ loadingReplay: true })
 
+        //let daysAgo = moment().subtract(5, 'days')
+        /*
+        console.log(daysAgo);
+        console.log(daysAgo.valueOf());
+        console.log(daysAgo.toDate());
+        */
+
         let q1 = query(collection(firebasedb, "fights_pvp2"), where("wizards", "array-contains", item.id), limit(40), orderBy("timestamp", "desc"))
+        //let q1 = query(collection(firebasedb, "fights_pvp2"), where("timestamp", ">", daysAgo.valueOf()))
         const querySnapshot = await getDocs(q1)
 
         let fights = []
 
         querySnapshot.forEach(doc => {
             //console.log(doc.data());
-
             let data = doc.data()
             data['docId'] = doc.id
-
-            //console.log(moment(data.timestamp.seconds * 1000).fromNow());
-
             fights.push(data)
         })
 
@@ -1068,6 +1079,9 @@ class PvP extends Component {
                         text={this.state.textLoadingFight}
                         fightId={this.state.fightId}
                         refdb="fights_pvp2"
+                        opponentId={this.state.opponentId}
+                        wizardSelectedId={this.state.wizardSelectedId}
+                        isMobile={isMobile}
                     />
                     : undefined
                 }
