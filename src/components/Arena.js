@@ -65,7 +65,8 @@ class Arena extends Component {
             signedCmd: undefined,
             showModalLoadingFight: false,
             textLoadingFight: "",
-            fightId: ""
+            fightId: "",
+            opponentId: ""
         }
     }
 
@@ -280,6 +281,13 @@ class Arena extends Component {
             fights.push(data)
         })
 
+        fights = fights.sort((a, b) => {
+            const timeA = moment(a.timestamp.seconds * 1000)
+            const timeB = moment(b.timestamp.seconds * 1000)
+
+            return timeB - timeA
+        })
+
         this.setState({ wizardSelectedLastFights: fights })
     }
 
@@ -407,12 +415,12 @@ class Arena extends Component {
         }
 
         if (!signedCmd) {
-            this.setState({ showModalLoadingFight: true, textLoadingFight: "Sign the transaction to make the fight...", fightId: "" })
+            this.setState({ showModalLoadingFight: true, textLoadingFight: "Sign the transaction to make the fight...", fightId: "", opponentId: "" })
 
             this.props.signFightTransaction(gasPrice, chainId, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient, networkUrl, account, async (response) => {
                 //console.log(response);
                 if (response.error) {
-                    this.setState({ showModalLoadingFight: false, textLoadingFight: "", fightId: "" }, () => {
+                    this.setState({ showModalLoadingFight: false, textLoadingFight: "", fightId: "", opponentId: "" }, () => {
                         this.startedFight = false
                         setTimeout(() => {
                             toast.error(`Can't sign the transaction. Please retry`)
@@ -431,7 +439,7 @@ class Arena extends Component {
     async askForFight() {
         const { signedCmd, wizardSelected } = this.state
 
-        this.setState({ showModalLoadingFight: true, textLoadingFight: getLoadingFightText(), fightId: "" })
+        this.setState({ showModalLoadingFight: true, textLoadingFight: getLoadingFightText(), fightId: "", opponentId: "" })
 
         try {
             const responseFight = await axios.post('https://wizards-bot.herokuapp.com/fight', {
@@ -490,7 +498,11 @@ class Arena extends Component {
             await this.loadSubscribers()
             await this.loadYourChampion(wizardSelected)
 
-            this.setState({ textLoadingFight: "Fight done!", fightId: response.success })
+            this.setState({ opponentId: response.opponentId }, () => {
+                setTimeout(() => {
+                    this.setState({ textLoadingFight: "Fight done!", fightId: response.success })
+                }, 1500)
+            })
         }
     }
 
@@ -1218,6 +1230,9 @@ class Arena extends Component {
                         text={this.state.textLoadingFight}
                         fightId={this.state.fightId}
                         refdb="arena_fights"
+                        opponentId={this.state.opponentId}
+                        wizardSelectedId={this.state.wizardSelected.id}
+                        isMobile={isMobile}
                     />
                     : undefined
                 }
