@@ -385,7 +385,7 @@ class Conquest extends Component {
     }
 
     async loadWizardSelectedLastFights(idnft) {
-        let q1 = query(collection(firebasedb, this.SEASON_ID_FIGHTS), where("wizards", "array-contains-any", [idnft]), limit(5), orderBy("timestamp", "desc"))
+        let q1 = query(collection(firebasedb, this.SEASON_ID_FIGHTS), where("wizards", "array-contains-any", [idnft]))
         const querySnapshot = await getDocs(q1)
 
         let fights = []
@@ -405,6 +405,8 @@ class Conquest extends Component {
 
             return timeB - timeA
         })
+
+        fights = fights.slice(0, 5)
 
         this.setState({ wizardSelectedLastFights: fights })
     }
