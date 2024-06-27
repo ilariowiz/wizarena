@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getDoc, doc, query, collection, where, limit, orderBy, getDocs, documentId, startAt } from "firebase/firestore";
+import { getDoc, doc, query, collection, where, limit, orderBy, getDocs, documentId } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
@@ -404,7 +404,7 @@ class PvP extends Component {
     async askForFight(id) {
         const { signedCmd } = this.state
 
-        this.setState({ showModalLoadingFight: true, textLoadingFight: getLoadingFightText(), fightId: "", opponentId: "" })
+        this.setState({ showModalLoadingFight: true, textLoadingFight: getLoadingFightText(), fightId: "", opponentId: "", wizardSelectedId: id, replay: {} })
 
         try {
             const responseFight = await axios.post('https://wizards-bot.herokuapp.com/fight', {
@@ -477,15 +477,8 @@ class PvP extends Component {
         //console.log(item);
         this.setState({ loadingReplay: true })
 
-        //let daysAgo = moment().subtract(5, 'days')
-        /*
-        console.log(daysAgo);
-        console.log(daysAgo.valueOf());
-        console.log(daysAgo.toDate());
-        */
-
-        let q1 = query(collection(firebasedb, "fights_pvp2"), where("wizards", "array-contains", item.id), limit(40), orderBy("timestamp", "desc"))
-        //let q1 = query(collection(firebasedb, "fights_pvp2"), where("timestamp", ">", daysAgo.valueOf()))
+        //let q1 = query(collection(firebasedb, "fights_pvp2"), where("wizards", "array-contains", item.id), limit(40), orderBy("timestamp", "desc"))
+        let q1 = query(collection(firebasedb, "fights_pvp2"), where("wizards", "array-contains", item.id), where("pvpWeek", "==", this.state.pvpWeek))
         const querySnapshot = await getDocs(q1)
 
         let fights = []
@@ -497,23 +490,14 @@ class PvP extends Component {
             fights.push(data)
         })
 
-        //console.log(fights);
-
         fights.sort((a,b) => {
             const dateA = moment(a.timestamp.seconds * 1000)
             const dateB = moment(b.timestamp.seconds * 1000)
 
-            //console.log(dateA, dateB);
-
             return dateB - dateA
         })
 
-        //console.log(fights);
-
-        fights = fights.slice(0, 4)
-
-        //console.log(fights);
-        //console.log(moment(fights[0]['timestamp']['seconds'] * 1000));
+        fights = fights.slice(0, 3)
 
         let oldReplay = Object.assign({}, this.state.replay)
         oldReplay[item.id] = fights
@@ -721,22 +705,31 @@ class PvP extends Component {
 
 
                 {
-                    !this.state.loading && !loadingReplay && !replay[item.id] ?
+                    !this.state.loading && !loadingReplay ?
                     <div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', width: '100%' }}>
-                        <button
-                            className="btnH"
-                            style={styles.btnPlay}
-                            onClick={() => {
-                                if (this.state.loading) {
-                                    return
-                                }
-                                this.loadReplay(item)
-                            }}
-                        >
-                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                Last fights
-                            </p>
-                        </button>
+                        {
+                            !replay[item.id] ?
+                            <button
+                                className="btnH"
+                                style={styles.btnPlay}
+                                onClick={() => {
+                                    if (this.state.loading) {
+                                        return
+                                    }
+                                    this.loadReplay(item)
+                                }}
+                            >
+                                <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
+                                    Last fights
+                                </p>
+                            </button>
+                            :
+                            <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
+                                {replay[item.id].map((items, index) => {
+                                    return this.renderReplay(item.id, items, index)
+                                })}
+                            </div>
+                        }
 
                         {
                             hasFightsLeft &&
@@ -791,14 +784,14 @@ class PvP extends Component {
                     </div>
                 }
 
-                {
+                {/*
                     replay[item.id] &&
                     <div style={{ alignItems: 'center', flexWrap: 'wrap' }}>
                         {replay[item.id].map((items, index) => {
                             return this.renderReplay(item.id, items, index)
                         })}
                     </div>
-                }
+                */}
             </div>
         )
     }
