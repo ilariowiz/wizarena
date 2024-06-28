@@ -66,7 +66,11 @@ class Sales extends Component {
                     dateObj[date] = { amount: 1 }
                 }
 
-    			nftH.push(doc.data())
+                const saleExists = nftH.some(i => i.requestKey === d.requestKey)
+
+                if (!saleExists) {
+                    nftH.push(d)
+                }
             }
 		})
 

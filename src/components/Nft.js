@@ -476,14 +476,17 @@ class Nft extends Component {
 		let nftH = []
 
 		querySnapshot.forEach(doc => {
-			nftH.push(doc.data())
+
+			const data = doc.data()
+			const docExists = nftH.some(i => i.requestKey === data.requestKey)
+			if (!docExists) {
+				nftH.push(data)
+			}
 		})
 
 		nftH.sort((a, b) => {
 			return new Date(b.blockTime) - new Date(a.blockTime)
 		})
-
-		//console.log(nftH);
 
 		this.setState({ nftH, loadingHistory: false })
 	}
