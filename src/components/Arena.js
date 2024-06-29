@@ -261,7 +261,7 @@ class Arena extends Component {
 
         const data = allData.find(i => i.idnft === infoNft.id)
 
-        this.setState({ wizardSelected: infoNft, loadingYourChampion: false, fightsDone: data.fightsDone, signedCmd: undefined }, () => {
+        this.setState({ wizardSelected: infoNft, loadingYourChampion: false, fightsDone: data.fightsDone }, () => {
             this.loadWizardSelectedLastFights(infoNft.id)
         })
     }
@@ -281,10 +281,16 @@ class Arena extends Component {
             fights.push(data)
         })
 
-        fights = fights.sort((a, b) => {
-            const timeA = moment(a.timestamp.seconds * 1000)
-            const timeB = moment(b.timestamp.seconds * 1000)
+        //console.log(fights);
 
+        fights = fights.sort((a, b) => {
+
+            let timeA, timeB
+
+            if (a.timestamp && a.timestamp.seconds && b.timestamp && b.timestamp.seconds) {
+                timeA = moment(a.timestamp.seconds * 1000)
+                timeB = moment(b.timestamp.seconds * 1000)
+            }
             return timeB - timeA
         })
 
@@ -415,6 +421,8 @@ class Arena extends Component {
             window.location.reload()
             return
         }
+
+        //console.log(signedCmd);
 
         if (!signedCmd) {
             this.setState({ showModalLoadingFight: true, textLoadingFight: "Sign the transaction to make the fight...", fightId: "", opponentId: "" })
