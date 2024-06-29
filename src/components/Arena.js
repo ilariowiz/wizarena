@@ -436,6 +436,9 @@ class Arena extends Component {
                 })
             })
         }
+        else {
+            this.askForFight()
+        }
     }
 
     async askForFight() {
