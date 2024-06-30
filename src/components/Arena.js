@@ -284,14 +284,16 @@ class Arena extends Component {
         //console.log(fights);
 
         fights = fights.sort((a, b) => {
-
             let timeA, timeB
 
             if (a.timestamp && a.timestamp.seconds && b.timestamp && b.timestamp.seconds) {
                 timeA = moment(a.timestamp.seconds * 1000)
                 timeB = moment(b.timestamp.seconds * 1000)
+
+                return timeB - timeA
             }
-            return timeB - timeA
+
+            return 0
         })
 
         fights = fights.slice(0, 5)
@@ -726,7 +728,7 @@ class Arena extends Component {
 
                     <button
                         style={Object.assign({}, styles.btnSubscribe, { width: 120, height: 30, marginBottom: 25 })}
-                        onClick={() => this.setState({ wizardSelected: {}, wizardSelectedElos: {}, fightsDone: 0 })}
+                        onClick={() => this.setState({ wizardSelected: {}, wizardSelectedElos: {}, fightsDone: 0, wizardSelectedLastFights: [] })}
                     >
                         <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
                             Change
