@@ -131,6 +131,7 @@ class Arena extends Component {
                 }
             }
         })
+
         //console.log(owners);
 
         let sub160 = []
@@ -251,7 +252,7 @@ class Arena extends Component {
             return b.level - a.level
         })
 
-        this.setState({ loadingYourSubs: false, yourSubs, notSubbed, countSubbedWizards: subscribersId.length })
+        this.setState({ loadingYourSubs: false, yourSubs, notSubbed, countSubbedWizards: yourSubs.length })
 	}
 
     async loadYourChampion(infoNft) {
@@ -309,6 +310,9 @@ class Arena extends Component {
         toast.loading("Sign the transaction to sub...")
 
         this.props.signFightTransaction(gasPrice, chainId, netId, isXWallet, isQRWalletConnect, qrWalletConnectClient, networkUrl, account, async (response) => {
+
+            toast.remove()
+
             if (response.error) {
                 this.handleResponseSub({"error": 'invalid'})
                 return
