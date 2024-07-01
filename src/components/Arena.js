@@ -252,7 +252,7 @@ class Arena extends Component {
             return b.level - a.level
         })
 
-        this.setState({ loadingYourSubs: false, yourSubs, notSubbed, countSubbedWizards: yourSubs.length })
+        this.setState({ loadingYourSubs: false, yourSubs, notSubbed, countSubbedWizards: subscribersId.length })
 	}
 
     async loadYourChampion(infoNft) {
