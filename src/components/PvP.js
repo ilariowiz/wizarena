@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { getDoc, doc, query, collection, where, limit, orderBy, getDocs, documentId } from "firebase/firestore";
+import { getDoc, doc, query, collection, where, getDocs, documentId } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';

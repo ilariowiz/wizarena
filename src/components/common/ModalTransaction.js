@@ -53,7 +53,7 @@ class ModalTransaction extends Component {
 	}
 
 	checkTransaction() {
-		const { transactionsState, txInfo, account } = this.props
+		const { transactionsState, txInfo } = this.props
 
 		const txState = transactionsState && transactionsState.length > 0 ? transactionsState[transactionsState.length-1] : {}
 

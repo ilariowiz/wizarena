@@ -12,8 +12,6 @@ class NftCardChoicePvP extends Component {
         super(props)
 
         this.state = {
-            isSubscribed: false,
-            spellSelected: undefined,
             showModalStats: false
         }
     }
@@ -24,8 +22,6 @@ class NftCardChoicePvP extends Component {
 
 	render() {
 		const { item, width, toSubscribe, mainTextColor, isDarkmode } = this.props
-        const { isSubscribed } = this.state
-
         //console.log(tournament)
 
         const inToSubscribe = toSubscribe.some(i => i.idnft === item.id)
