@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import App from './components/App';
 import Collection from './components/Collection'
-import Mint from './components/Mint'
+//import Mint from './components/Mint'
 import Profile from './components/Profile'
 import Nft from './components/Nft';
 import Fight from './components/Fight'
@@ -15,7 +15,7 @@ import BurningQueue from './components/BurningQueue'
 
 import PvP from './components/PvP'
 
-import DoFightPvE from './components/DoFightPvE'
+//import DoFightPvE from './components/DoFightPvE'
 import PvE from './components/PvE'
 
 import League from './components/League'
@@ -70,7 +70,7 @@ ReactDOM.render(
             <Route path="/salesequipment" component={SalesEquipment} />
             <Route path="/magicshop" component={Shop} />
             <Route path="/burningqueue" component={BurningQueue} />
-            <Route path="/fightpve" component={DoFightPvE} />
+            {/*<Route path="/fightpve" component={DoFightPvE} />*/}
             <Route path="/pvp" component={PvP} />
             <Route path="/pve" component={PvE} />
             <Route path="/league" component={League} />

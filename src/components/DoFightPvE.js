@@ -5,7 +5,7 @@ import DotLoader from 'react-spinners/DotLoader';
 import { doc, updateDoc, collection, setDoc, increment } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import Rainbow from 'rainbowvis.js'
-import fight from './common/CalcFight'
+//import fight from './common/CalcFight'
 import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
 import createMonster from './common/CreateMonster'
@@ -136,6 +136,7 @@ class DoFight extends Component {
                 this.player2 = monster
                 this.player2InitialHp = this.player2.hp
 
+                /*
                 fight(this.player1, this.player2, undefined, (history, winner) => {
                     //console.log(history, winner);
 
@@ -148,6 +149,7 @@ class DoFight extends Component {
                     })
 
                 })
+                */
 			}
 			else {
 				this.setState({ error: '404', loading: false })
