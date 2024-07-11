@@ -27,6 +27,11 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
+    "2521": [{
+        title: "Lord of Sitenor Season 7",
+        img: crown,
+        textColor: 'gold'
+    }],
     "2094": [
         {
             title: "Lord of Sitenor Season 2",
@@ -57,6 +62,11 @@ const titles = {
         },
         {
             title: "Lord of Vedrenon Season 6",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Vedrenon Season 7",
             img: crown,
             textColor: 'gold'
         }
@@ -232,6 +242,11 @@ const titles = {
             title: "The Twelve League IV 12th place",
             img: medal,
             textColor: '#cd7f32'
+        },
+        {
+            title: "Lord of Bremonon Season 7",
+            img: crown,
+            textColor: 'gold'
         }
     ],
     "2932": [
@@ -315,13 +330,30 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
-    "254": [{
-        title: "Lord of Ulanara Season 6",
+    "254": [
+        {
+            title: "Lord of Ulanara Season 6",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Oceorah Season 7",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
+    "1850": [{
+        title: "Lord of Oceorah Season 6",
         img: crown,
         textColor: 'gold'
     }],
-    "1850": [{
-        title: "Lord of Oceorah Season 6",
+    "2122": [{
+        title: "Lord of Opherus Season 7",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "257": [{
+        title: "Lord of Wastiaxus Season 7",
         img: crown,
         textColor: 'gold'
     }],
@@ -370,6 +402,11 @@ const titles = {
         },
         {
             title: "Lord of Bremonon Season 6",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Ulanara Season 7",
             img: crown,
             textColor: 'gold'
         }
@@ -506,12 +543,12 @@ const titles = {
             textColor: 'gold'
         },
         {
-            title: "Lord of Sitenor Season 6",
+            title: "Lord of Druggorial Season 5",
             img: crown,
             textColor: 'gold'
         },
         {
-            title: "Lord of Druggorial Season 5",
+            title: "Lord of Sitenor Season 6",
             img: crown,
             textColor: 'gold'
         },
@@ -519,6 +556,16 @@ const titles = {
             title: "The Twelve League IV 9th place",
             img: medal,
             textColor: '#cd7f32'
+        },
+        {
+            title: "Lord of Druggorial Season 7",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Ulidalar Season 7",
+            img: crown,
+            textColor: 'gold'
         }
     ],
     "540": [{
