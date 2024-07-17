@@ -49,7 +49,6 @@ import {
 	getInfoItemEquipped,
 	updateInfoTransactionModal,
 	setWizardSfidato,
-	getFightPerNfts,
 	changeSpellTournament,
 	getInfoAura
 } from '../actions'
@@ -260,93 +259,122 @@ class Nft extends Component {
 		})
 	}
 
-	loadFights(response) {
+	async loadFights() {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 		const { nft } = this.state
 
-		const ids = [nft.id]
 
-		this.props.getFightPerNfts(chainId, gasPrice, gasLimit, networkUrl, ids, (fights) => {
-			//console.log(fights);
+		let q2 = query(collection(firebasedb, "fights"), where("wizards", "array-contains", nft.id))
 
-			nft['tournaments'] = fights && fights.length > 0 ? fights : []
+		const querySnapshot = await getDocs(q2)
 
-			let tournaments = []
+		let nftFights = []
 
-			if (nft.tournaments) {
+		querySnapshot.forEach(doc => {
+			let data = doc.data()
+			//console.log(data);
+			data['docId'] = doc.id
 
-				for (var i = 0; i < nft.tournaments.length; i++) {
-					const f = nft.tournaments[i]
-
-					const torneoName = f.tournament.split("_")[0]
-
-					if (!tournaments.includes(torneoName)) {
-						tournaments.push(torneoName)
-					}
-				}
-
-				tournaments.sort((a, b) => {
-					return parseInt(a.replace("t", "")) - parseInt(b.replace("t", ""))
-				})
-
-				nft['groupedFights'] = {}
+			if (data.tournament) {
+				nftFights.push(data)
 			}
-
-			let openFightsSection = []
-
-			if (nft.tournaments) {
-				tournaments.map(i => {
-					const groupedFight = this.groupFights(nft.tournaments, i)
-					//console.log(groupedFight);
-					if (groupedFight.length > 0) {
-						openFightsSection = [i]
-					}
-
-					nft['groupedFights'][i] = groupedFight
-				})
-			}
-
-			//console.log(response['groupedFights']);
-
-			if (nft.tournaments && Object.keys(nft.groupedFights).length > 0) {
-
-				//dividiamo per apprentice, elite & weekly
-				let newGroupedFights = {"Farmers": {}, "Weekly": {}, "Apprentice": {}, "Elite": {}, "Chaos": {}}
-
-				for (const [key, value] of Object.entries(nft.groupedFights)) {
-
-					const tNumber = parseInt(key.replace("t", ""))
-
-					if (tNumber < 1000) {
-						newGroupedFights['Weekly'][key] = value
-					}
-
-					if (tNumber >= 1000 && tNumber < 3000) {
-						newGroupedFights['Apprentice'][key] = value
-					}
-
-					if (tNumber >= 3000 && tNumber < 3007) {
-						newGroupedFights['Elite'][key] = value
-					}
-
-					if (tNumber >= 3007 && tNumber < 3015) {
-						newGroupedFights['Chaos'][key] = value
-					}
-
-					if (tNumber >= 3015) {
-						newGroupedFights['Farmers'][key] = value
-					}
-				}
-
-				//console.log(newGroupedFights);
-
-				nft['groupedFights'] = newGroupedFights
-			}
-
-			this.setState({ nft, openFightsSection, loadingFights: false }, () => {
-				this.loadMaxMedalsPerTournament()
-			})
 		})
+
+		//console.log(nftFights);
+
+		nft['tournaments'] = nftFights
+
+		let tournaments = []
+
+		for (var i = 0; i < nftFights.length; i++) {
+			const f = nftFights[i]
+			const torneoName = f.tournament.split("_")[0]
+			if (!tournaments.includes(torneoName)) {
+				tournaments.push(torneoName)
+			}
+		}
+
+		tournaments.sort((a, b) => {
+			return parseInt(a.replace("t", "")) - parseInt(b.replace("t", ""))
+		})
+
+		nft['groupedFights'] = {}
+		let openFightsSection = []
+
+		//console.log(tournaments);
+
+		tournaments.map(i => {
+			//console.log(i);
+			const groupedFight = this.groupFights(nftFights, i)
+			//console.log(groupedFight);
+			if (groupedFight.length > 0) {
+				openFightsSection = [i]
+			}
+
+			nft['groupedFights'][i] = groupedFight
+		})
+
+		if (nft.tournaments && Object.keys(nft.groupedFights).length > 0) {
+
+			//dividiamo per apprentice, elite & weekly
+			let newGroupedFights = {"Farmers": {}, "Weekly": {}, "Apprentice": {}, "Elite": {}, "Chaos": {}}
+
+			for (const [key, value] of Object.entries(nft.groupedFights)) {
+
+				const tNumber = parseInt(key.replace("t", ""))
+
+				if (tNumber < 1000) {
+					newGroupedFights['Weekly'][key] = value
+					//sort by round asc
+					newGroupedFights['Weekly'][key] = this.sortByRoundNumber(newGroupedFights['Weekly'][key])
+				}
+
+				if (tNumber >= 1000 && tNumber < 3000) {
+					newGroupedFights['Apprentice'][key] = value
+					//sort by round asc
+					newGroupedFights['Apprentice'][key] = this.sortByRoundNumber(newGroupedFights['Apprentice'][key])
+				}
+
+				if (tNumber >= 3000 && tNumber < 3007) {
+					newGroupedFights['Elite'][key] = value
+					//sort by round asc
+					newGroupedFights['Elite'][key] = this.sortByRoundNumber(newGroupedFights['Elite'][key])
+				}
+
+				if (tNumber >= 3007 && tNumber < 3015) {
+					newGroupedFights['Chaos'][key] = value
+					//sort by round asc
+					newGroupedFights['Chaos'][key] = this.sortByRoundNumber(newGroupedFights['Chaos'][key])
+				}
+
+				if (tNumber >= 3015) {
+					newGroupedFights['Farmers'][key] = value
+					//sort by round asc
+					newGroupedFights['Farmers'][key] = this.sortByRoundNumber(newGroupedFights['Farmers'][key])
+				}
+			}
+
+			//console.log(newGroupedFights);
+
+			nft['groupedFights'] = newGroupedFights
+		}
+
+		//console.log(nft['groupedFights']);
+
+		this.setState({ nft, openFightsSection, loadingFights: false }, () => {
+			this.loadMaxMedalsPerTournament()
+		})
+	}
+
+	sortByRoundNumber(array) {
+		array.sort((a, b) => {
+			const roundA = parseInt(a.tournament.split("_")[1].replace("r", ""))
+			const roundB = parseInt(b.tournament.split("_")[1].replace("r", ""))
+
+			return roundA - roundB
+		})
+
+		return array
 	}
 
 	loadInfoBurn(idNft) {
@@ -369,8 +397,6 @@ class Nft extends Component {
 
 				response.map(i => {
 					const expiresat = moment(i.expiresat.timep)
-
-					//console.log(expiresat, moment());
 
 					if (expiresat >= moment()) {
 						offers.push(i)
@@ -973,9 +999,9 @@ class Nft extends Component {
 		}
 
 		const link = !isOldData ?
-					`${window.location.protocol}//${window.location.host}/fightreplay/fights/${item.fightId}`
+					`${window.location.protocol}//${window.location.host}/fightreplay/fights/${item.docId}`
 					:
-					`${window.location.protocol}//${window.location.host}/fight/${item.fightId}`
+					`${window.location.protocol}//${window.location.host}/fight/${item.docId}`
 
 		return (
 			<a
@@ -1262,7 +1288,7 @@ class Nft extends Component {
 
 					{
 						loadingFights &&
-						<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30 }}>
+						<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30, marginBottom: 20 }}>
 							<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
 						</div>
 					}
@@ -2776,7 +2802,6 @@ export default connect(mapStateToProps, {
 	getInfoItemEquipped,
 	updateInfoTransactionModal,
 	setWizardSfidato,
-	getFightPerNfts,
 	changeSpellTournament,
 	getInfoAura
 })(Nft);

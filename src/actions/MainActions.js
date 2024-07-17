@@ -70,7 +70,7 @@ import {
 	REVEAL_CAP
 } from './types'
 
-const URL_2 = `https://api.kda.kaddex.xyz/chainweb/0.0/${MAIN_NET_ID}/chain/1/pact`;
+//const URL_2 = `https://api.kda.kaddex.xyz/chainweb/0.0/${MAIN_NET_ID}/chain/1/pact`;
 
 
 export const setNetworkSettings = (netId, chainId, gasPrice = DEFAULT_GAS_PRICE) => {
@@ -861,48 +861,6 @@ export const loadSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 				dispatch({ type: 'fake' })
 			}
 		})
-	}
-}
-
-export const getFightPerNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 1500000, networkUrl, ids, callback) => {
-	return (dispatch) => {
-
-		//console.log(ids);
-
-		let promises = []
-
-		ids.map(id => {
-			let promise = Promise.resolve(dispatch(loadFightsSingleNft(chainId, gasPrice, gasLimit, networkUrl, id)))
-			promises.push(promise)
-		})
-
-		Promise.all(promises).then(values => {
-			//console.log(values);
-
-			let final = []
-			values.map(i => {
-				final.push(...i)
-			})
-
-			if (callback) {
-				callback(final)
-			}
-		})
-	}
-}
-
-export const loadFightsSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, id) => {
-
-	return async (dispatch) => {
-		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME}.get-fights-wizard "${id}")`,
-			meta: defaultMeta(chainId, gasPrice, gasLimit)
-		}
-
-		const response = await dispatch(readFromContract(cmd, true, URL_2))
-		//console.log(response);
-
-		return response
 	}
 }
 
