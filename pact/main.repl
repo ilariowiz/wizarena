@@ -1205,15 +1205,6 @@
     }
 ])
 
-; (free.wiz-arena.set-fights [
-;     {
-;         "id": "0",
-;         "tournament": "t11_r2",
-;         "fightId": "fwm4s7JZ0UiV2yHphKsH",
-;         "winner": "1924"
-;     }
-; ])
-
 (env-gas)
 
 (commit-tx)
@@ -1221,8 +1212,6 @@
 (begin-tx "GET DATA")
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
-
-(free.wiz-arena.get-fights-wizard "0")
 
 (free.wiz-arena.get-wizard-fields-for-id 0)
 

@@ -380,12 +380,12 @@
         type:string
     )
 
-    (defschema fights-db-schema
-        id:string
-        tournament:string
-        fightId:string
-        winner:string
-    )
+    ; (defschema fights-db-schema
+    ;     id:string
+    ;     tournament:string
+    ;     fightId:string
+    ;     winner:string
+    ; )
 
     (defschema upgrade-spells-schema
         attack:integer
@@ -440,7 +440,7 @@
     (deftable challenges:{challenges-schema})
     (deftable spells:{spells-schema})
     (deftable auto-tournaments:{auto-tournaments-schema})
-    (deftable fights-db:{fights-db-schema})
+    ;(deftable fights-db:{fights-db-schema})
     (deftable upgrade-spells:{upgrade-spells-schema})
     (deftable conquest-table:{conquest-schema})
 
@@ -841,43 +841,16 @@
                     {"medals": (+ (at "medals" item) medals)}
                 )
             )
-            (write fights-db key
-                {
-                    "id": id,
-                    "tournament": (at "tournament" item),
-                    "fightId": (at "fightId" item),
-                    "winner": (at "winner" item)
-                }
-            )
+            ; (write fights-db key
+            ;     {
+            ;         "id": id,
+            ;         "tournament": (at "tournament" item),
+            ;         "fightId": (at "fightId" item),
+            ;         "winner": (at "winner" item)
+            ;     }
+            ; )
         )
     )
-
-    ; (defun set-fights (objects:list)
-    ;     (with-capability (DEV)
-    ;         (map
-    ;             (set-fight)
-    ;             objects
-    ;         )
-    ;     )
-    ; )
-    ;
-    ; (defun set-fight (item:object)
-    ;     (require-capability (DEV))
-    ;     (let
-    ;          (
-    ;              (id (at "id" item))
-    ;              (key (format "{}_{}" [(at "id" item) (at "tournament" item)]))
-    ;         )
-    ;         (write fights-db key
-    ;             {
-    ;                 "id": id,
-    ;                 "tournament": (at "tournament" item),
-    ;                 "fightId": (at "fightId" item),
-    ;                 "winner": (at "winner" item)
-    ;             }
-    ;         )
-    ;     )
-    ; )
 
     (defun update-downgrades (objects-list:list)
         (with-capability (ADMIN)
@@ -3135,13 +3108,13 @@
         (keys nfts)
     )
 
-    (defun get-fights-wizards (ids:list)
-        (map (get-fights-wizard) ids)
-    )
-
-    (defun get-fights-wizard (id:string)
-        (select fights-db (where "id" (= id)))
-    )
+    ; (defun get-fights-wizards (ids:list)
+    ;     (map (get-fights-wizard) ids)
+    ; )
+    ;
+    ; (defun get-fights-wizard (id:string)
+    ;     (select fights-db (where "id" (= id)))
+    ; )
 
     (defun get-volume ()
         @doc "get volume of purchase"
@@ -3224,7 +3197,7 @@
     (create-table spells)
 
     (create-table auto-tournaments)
-    (create-table fights-db)
+    ;(create-table fights-db)
 
     (create-table upgrade-spells)
 
