@@ -17,7 +17,14 @@ class ModalLoadingFight extends Component {
 		const imgSize = isMobile ? (width - 70) / 2 : 190
 
 		return (
-			<div className={classContainer}>
+			<div
+				className={classContainer}
+				onClick={() => {
+					if (fightId) {
+						this.props.onCloseModal()
+					}
+				}}
+			>
 				<div style={Object.assign({}, styles.subcontainer, { width, backgroundColor: mainBackgroundColor })}>
 
 					<div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 15 }}>
