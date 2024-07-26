@@ -7,7 +7,7 @@ import BounceLoader from 'react-spinners/BounceLoader';
 import { IoMenu, IoClose } from 'react-icons/io5'
 import { SiDiscord, SiTwitter } from 'react-icons/si'
 import { MdDarkMode, MdOutlineDarkMode } from 'react-icons/md'
-import ModalBuyWIZA from './common/ModalBuyWIZA'
+//import ModalBuyWIZA from './common/ModalBuyWIZA'
 import ModalTransaction from './common/ModalTransaction'
 import getBoxWidth from './common/GetBoxW'
 import '../css/Header.css'
@@ -842,7 +842,7 @@ class Header extends Component {
 
 				{this.renderSlidePanel(boxW)}
 
-				<ModalBuyWIZA
+				{/*<ModalBuyWIZA
 					width={modalW}
 					showModal={this.state.showModalBuy || this.props.showModalBuyFromShop}
 					onCloseModal={() => {
@@ -854,7 +854,7 @@ class Header extends Component {
 					onSwap={(amount, estimatedWiza) => {
 						this.swap(amount, estimatedWiza)
 					}}
-				/>
+				/>*/}
 
 				{this.renderModalTx(modalW)}
 
@@ -1070,7 +1070,7 @@ class Header extends Component {
 					</div>
 				}
 
-				<ModalBuyWIZA
+				{/*<ModalBuyWIZA
 					width={modalW}
 					showModal={this.state.showModalBuy || this.props.showModalBuyFromShop}
 					onCloseModal={() => {
@@ -1082,7 +1082,7 @@ class Header extends Component {
 					onSwap={(amount, estimatedWiza) => {
 						this.swap(amount, estimatedWiza)
 					}}
-				/>
+				/>*/}
 
 				{this.renderModalTx(modalW)}
 
