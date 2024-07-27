@@ -36,7 +36,7 @@
 
 (load "wizarena-interface-v2.pact")
 
-(load "wiza1-interface-v3.pact")
+(load "wiza1-interface-v4.pact")
 
 (load "wizequipment-interface-v1.pact")
 
@@ -56,6 +56,9 @@
 
 (coin.create-account "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb" (read-keyset "wizarena-keyset"))
 (coin.create-account "k:aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1" (read-keyset "dev-keyset"))
+
+(free.wiza.create-account "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" (read-keyset "george-keyset"))
+(free.wiza.create-account "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" (read-keyset "tim-keyset"))
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
@@ -999,7 +1002,7 @@
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
-(free.wiza.reward-users [{"account":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "amount": 1929.0}, {"account":"k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd", "amount": 1890.0}])
+(free.wiza.get-wiza-from-bank-bulk [{"account":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "amount": 3000.0}])
 
 (commit-tx)
 
@@ -1027,8 +1030,6 @@
     (coin.GAS)
   ]
 }])
-
-;(free.wiz-arena.get-wiza-cost-ap "attack" [7, 8, 9, 10])
 
 (free.wiz-arena.buy-upgrades-ap "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0" "attack" 2 free.wiza)
 
