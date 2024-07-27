@@ -1107,18 +1107,15 @@
     ;;;; MARKTEPLACE FUN ;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun list-wizard (sender:string id:string price:decimal m:module{wiza1-interface-v3} mequip:module{wizequipment-interface-v1})
+    (defun list-wizard (sender:string id:string price:decimal mequip:module{wizequipment-interface-v1})
         @doc "list a wizard on marketplace"
         (enforce (>= price 1.0) "amount must be equal or greater then 1")
-        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (enforce (= (format "{}" [mequip]) "free.wiz-equipment") "not allowed, security reason")
         (let (
                 (data (get-wizard-fields-for-id (str-to-int id)))
-                (is-staked (check-is-staked id m))
                 (has-ring (at "equipped" (check-is-equipped id mequip)))
                 (has-pendant (at "equipped" (check-is-equipped (+ id "pendant") mequip)))
             )
-            (enforce (= is-staked false) "You can't list a staked wizard")
             (enforce (= has-ring false) "You can't list an equipped wizard")
             (enforce (= has-pendant false) "You can't list an equipped wizard")
             (enforce (= (at "confirmBurn" data) false) "You can't list a wizard in burning queue")
@@ -1239,9 +1236,8 @@
       )
     )
 
-    (defun accept-offer (idoffer:string m:module{wiza1-interface-v3} mequip:module{wizequipment-interface-v1})
+    (defun accept-offer (idoffer:string mequip:module{wizequipment-interface-v1})
       @doc "Accept an offer"
-      (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
       (enforce (= (format "{}" [mequip]) "free.wiz-equipment") "not allowed, security reason")
       (with-read offers-table idoffer
         {
@@ -1255,12 +1251,10 @@
         }
         (let (
                 (data (get-wizard-fields-for-id (str-to-int refnft)))
-                (is-staked (check-is-staked refnft m))
                 (has-ring (at "equipped" (check-is-equipped refnft mequip)))
                 (has-pendant (at "equipped" (check-is-equipped (+ refnft "pendant") mequip)))
                 (current-level (calculate-level refnft))
             )
-            (enforce (= is-staked false) "You can't accept offers if a wizard is staked")
             (enforce (= has-ring false) "You can't accept offers for an equipped wizard")
             (enforce (= has-pendant false) "You can't accept offers for an equipped wizard")
             (enforce (= (at "confirmBurn" data) false) "You can't accept offers if a wizard is in burning queue")
@@ -1350,9 +1344,8 @@
         )
     )
 
-    (defun accept-collection-offer (idoffer:string idnft:string m:module{wiza1-interface-v3} mequip:module{wizequipment-interface-v1})
+    (defun accept-collection-offer (idoffer:string idnft:string mequip:module{wizequipment-interface-v1})
         @doc "accept an offer for a generic nft"
-        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (enforce (= (format "{}" [mequip]) "free.wiz-equipment") "not allowed, security reason")
         (with-read collection-offers-table idoffer
           {
@@ -1364,11 +1357,9 @@
           }
           (let (
                 (data (get-wizard-fields-for-id (str-to-int idnft)))
-                (is-staked (check-is-staked idnft m))
                 (has-ring (at "equipped" (check-is-equipped idnft mequip)))
                 (has-pendant (at "equipped" (check-is-equipped (+ idnft "pendant") mequip)))
               )
-              (enforce (= is-staked false) "You can't accept offers if the wizard is staked")
               (enforce (= has-ring false) "You can't accept offers for an equipped wizard")
               (enforce (= has-pendant false) "You can't accept offers for an equipped wizard")
               (enforce (= (at "confirmBurn" data) false) "You can't accept offers if the wizard is in burning queue")
@@ -1657,7 +1648,7 @@
     ;;;;;; TOURNAMENT in WIZA ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun subscribe-tournament-wiza-mass (subscribers:list address:string m:module{wiza1-interface-v3})
+    (defun subscribe-tournament-wiza-mass (subscribers:list address:string m:module{wiza1-interface-v4})
         (let (
                 (buyin (* (get-value-tournament BUYIN_WIZA_KEY) (length subscribers)))
                 (tournament-open (get-value TOURNAMENT_WIZA_OPEN))
@@ -1675,7 +1666,7 @@
         )
     )
 
-    (defun subscribe-tournament-elite-mass (subscribers:list address:string m:module{wiza1-interface-v3})
+    (defun subscribe-tournament-elite-mass (subscribers:list address:string m:module{wiza1-interface-v4})
         (let (
                 (buyin (* (get-value-tournament BUYIN_ELITE_KEY) (length subscribers)))
                 (tournament-open (get-value TOURNAMENT_ELITE_OPEN))
@@ -1781,7 +1772,7 @@
     ;;;;;; PVP ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun subscribe-pvp-mass (subscribers:list address:string m:module{wiza1-interface-v3})
+    (defun subscribe-pvp-mass (subscribers:list address:string m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (let (
                 (pvp-open (get-value PVP_OPEN))
@@ -1800,7 +1791,7 @@
         )
     )
 
-    (defun nft-to-subscribe-pvp (m:module{wiza1-interface-v3} subscriber:object)
+    (defun nft-to-subscribe-pvp (m:module{wiza1-interface-v4} subscriber:object)
         (require-capability (PRIVATE))
         (let (
                 (id (at "id" subscriber))
@@ -1817,7 +1808,7 @@
     )
 
     ;id = idweek_idnft
-    (defun subscribe-pvp (id:string week:string idnft:string address:string spellSelected:object wiza:integer m:module{wiza1-interface-v3})
+    (defun subscribe-pvp (id:string week:string idnft:string address:string spellSelected:object wiza:integer m:module{wiza1-interface-v4})
         @doc "Subscribe a wizard to pvp arena"
         (require-capability (PRIVATE))
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
@@ -1846,7 +1837,7 @@
         (add-xp-to-wallet address 3)
     )
 
-    (defun add-rounds-pvp (id:string wiza:decimal m:module{wiza1-interface-v3})
+    (defun add-rounds-pvp (id:string wiza:decimal m:module{wiza1-interface-v4})
         (enforce (>= wiza 30.0) "You must send at least 30 wiza to increment max rounds")
         (with-default-read pvp-subscribers id
             {"idnft": "",
@@ -1894,7 +1885,7 @@
     ;;;;;; UPGRADE ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun buy-upgrades (account:string idnft:string stat:string increase:integer m:module{wiza1-interface-v3})
+    (defun buy-upgrades (account:string idnft:string stat:string increase:integer m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (with-capability (OWNER account idnft)
             (let (
@@ -1951,7 +1942,7 @@
         )
     )
 
-    (defun buy-upgrades-ap (account:string idnft:string stat:string increase:integer m:module{wiza1-interface-v3})
+    (defun buy-upgrades-ap (account:string idnft:string stat:string increase:integer m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (with-capability (OWNER account idnft)
             (let (
@@ -2081,7 +2072,7 @@
         )
     )
 
-    (defun buy-potions (account:string idnft:string key:string potion:string m:module{wiza1-interface-v3})
+    (defun buy-potions (account:string idnft:string key:string potion:string m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
 
         (with-capability (OWNER account idnft)
@@ -2156,7 +2147,7 @@
         )
     )
 
-    (defun spend-wiza (amount:decimal account:string m:module{wiza1-interface-v3})
+    (defun spend-wiza (amount:decimal account:string m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (m::spend-wiza amount account)
     )
@@ -2165,7 +2156,7 @@
     ;;;;;; RETRAIN ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun retrain (idnft:string owner:string stat:string amount:integer m:module{wiza1-interface-v3})
+    (defun retrain (idnft:string owner:string stat:string amount:integer m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (with-capability (OWNER owner idnft)
             (let (
@@ -2256,7 +2247,7 @@
     ;;;;;; AUTO TOURNAMENTS ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun create-tournament (idnft:string account:string buyin:decimal maxLevel:integer name:string winners:integer nPlayers:integer type:string m:module{wiza1-interface-v3})
+    (defun create-tournament (idnft:string account:string buyin:decimal maxLevel:integer name:string winners:integer nPlayers:integer type:string m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (enforce (> buyin 0.0) "Buyin must be greater than 0")
         (enforce (> maxLevel 0) "Max Level must be greater than 0")
@@ -2295,7 +2286,7 @@
         )
     )
 
-    (defun join-tournament (tournamentid:string idnft:string account:string m:module{wiza1-interface-v3})
+    (defun join-tournament (tournamentid:string idnft:string account:string m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (with-capability (OWNER account idnft)
             (let (
@@ -2331,7 +2322,7 @@
         )
     )
 
-    (defun cancel-tournament (tournamentid:string m:module{wiza1-interface-v3})
+    (defun cancel-tournament (tournamentid:string m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (with-capability (DEV)
             (with-read auto-tournaments tournamentid
@@ -2349,7 +2340,7 @@
         )
     )
 
-    (defun refund-single-wallet (buyin:decimal m:module{wiza1-interface-v3} account:string)
+    (defun refund-single-wallet (buyin:decimal m:module{wiza1-interface-v4} account:string)
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (require-capability (PRIVATE))
         (let (
@@ -2360,7 +2351,7 @@
         )
     )
 
-    (defun complete-tournament (tournamentid:string winner:string winner2:string fights:object m:module{wiza1-interface-v3})
+    (defun complete-tournament (tournamentid:string winner:string winner2:string fights:object m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (with-capability (DEV)
             (with-read auto-tournaments tournamentid
@@ -2430,7 +2421,7 @@
     ;;;;;; SWAP SPELL ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun swap-spell (idnft:string account:string oldspell:string newspell:string m:module{wiza1-interface-v3})
+    (defun swap-spell (idnft:string account:string oldspell:string newspell:string m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (let (
                 (data (get-wizard-fields-for-id (str-to-int idnft)))
@@ -2479,17 +2470,14 @@
     ;;;;;; BURN ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun add-to-burning-queue (idnft:string account:string m:module{wiza1-interface-v3} mequip:module{wizequipment-interface-v1})
-        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
+    (defun add-to-burning-queue (idnft:string account:string mequip:module{wizequipment-interface-v1})
         (enforce (= (format "{}" [mequip]) "free.wiz-equipment") "not allowed, security reason")
         (let (
                 (data (get-wizard-fields-for-id (str-to-int idnft)))
-                (is-staked (check-is-staked idnft m))
                 (has-ring (at "equipped" (check-is-equipped idnft mequip)))
                 (has-pendant (at "equipped" (check-is-equipped (+ idnft "pendant") mequip)))
             )
             (enforce (= (at "listed" data) false) "You can't burn a listed wizard")
-            (enforce (= is-staked false) "You can't burn a staked wizard")
             (enforce (= has-ring false) "You can't burn an equipped wizard")
             (enforce (= has-pendant false) "You can't burn an equipped wizard")
         )
@@ -2549,11 +2537,6 @@
         )
     )
 
-    (defun check-is-staked (idnft:string m:module{wiza1-interface-v3})
-        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
-        (m::check-nft-is-staked idnft)
-    )
-
     (defun check-is-equipped (idnft:string m:module{wizequipment-interface-v1})
         (enforce (= (format "{}" [m]) "free.wiz-equipment") "not allowed, security reason")
         (m::get-equipped-fields-for-id idnft)
@@ -2564,7 +2547,7 @@
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-    (defun send-challenge (wiz1id:string wiz2id:string amount:decimal coin:string m:module{wiza1-interface-v3})
+    (defun send-challenge (wiz1id:string wiz2id:string amount:decimal coin:string m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (enforce (> amount 0.0) "Amount must be greater then zero")
         (let (
@@ -2618,7 +2601,7 @@
         )
     )
 
-    (defun accept-challenge (challengeid:string m:module{wiza1-interface-v3})
+    (defun accept-challenge (challengeid:string m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (with-read challenges challengeid
             {
@@ -2666,7 +2649,7 @@
         )
     )
 
-    (defun complete-challenge (challengeid:string winner:string fight:string m:module{wiza1-interface-v3})
+    (defun complete-challenge (challengeid:string winner:string fight:string m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (with-read challenges challengeid
             {
@@ -2698,7 +2681,7 @@
         )
     )
 
-    (defun send-prize-challenge (account:string amount:decimal fee:decimal coin:string m:module{wiza1-interface-v3})
+    (defun send-prize-challenge (account:string amount:decimal fee:decimal coin:string m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (require-capability (DEV))
         (if
@@ -2731,7 +2714,7 @@
         )
     )
 
-    (defun cancel-challenge (challengeid:string m:module{wiza1-interface-v3})
+    (defun cancel-challenge (challengeid:string m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (with-read challenges challengeid
             {
@@ -2801,7 +2784,7 @@
     ;;;;;; UPGRADE SPELL ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun improve-spell (idnft:string address:string stat:string m:module{wiza1-interface-v3})
+    (defun improve-spell (idnft:string address:string stat:string m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (enforce (contains stat ["attack" "damage"]) "invalid stat")
         (with-capability (OWNER address idnft)
@@ -2909,7 +2892,7 @@
     ;;;;;; GENERIC FUN ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun update-nickname (id:string address:string nickname:string m:module{wiza1-interface-v3})
+    (defun update-nickname (id:string address:string nickname:string m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (let (
                 (wiza-cost (round (* (get-wiza-value) 0.6) 2))
@@ -2923,20 +2906,17 @@
         )
     )
 
-    (defun transfer-wizard (id:string sender:string receiver:string m:module{wiza1-interface-v3} mequip:module{wizequipment-interface-v1})
+    (defun transfer-wizard (id:string sender:string receiver:string mequip:module{wizequipment-interface-v1})
         @doc "Transfer nft to an account"
         (enforce-account-exists receiver)
-        (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (enforce (= (format "{}" [mequip]) "free.wiz-equipment") "not allowed, security reason")
         (with-capability (OWNER sender id)
             (let (
                     (data (get-wizard-fields-for-id (str-to-int id)))
-                    (is-staked (check-is-staked id m))
                     (has-ring (at "equipped" (check-is-equipped id mequip)))
                     (has-pendant (at "equipped" (check-is-equipped (+ id "pendant") mequip)))
                 )
                 (enforce (= (at "listed" data) false) "A listed wizard cannot be transferred")
-                (enforce (= is-staked false) "You can't transfer a staked wizard")
                 (enforce (= (at "confirmBurn" data) false) "You can't transfer a wizard in burning queue")
                 (enforce (= has-ring false) "You can't transfer an equipped wizard")
                 (enforce (= has-pendant false) "You can't transfer an equipped wizard")
