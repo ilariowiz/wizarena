@@ -35,7 +35,6 @@ import {
     buyVial,
     buyNickname,
     buyUpgradeWithAp,
-    burnAP,
     loadEquipMinted,
     equipItem,
     unequipItem,
@@ -436,21 +435,6 @@ class Shop extends Component {
 		})
 
         this.props.buyUpgradeWithAp(chainId, gasPrice, netId, account, wizard.id, stat, increase[stat], costo)
-    }
-
-    burnAP() {
-        const { account, chainId, gasPrice, netId } = this.props
-        const { apToBurn } = this.state
-
-        const wizard = this.getWizardSelected()
-
-        this.props.updateInfoTransactionModal({
-			transactionToConfirmText: `You will burn ${apToBurn} AP for ${apToBurn*15} $WIZA`,
-			typeModal: 'burnap',
-			transactionOkText: 'AP burned successfully',
-		})
-
-        this.props.burnAP(chainId, gasPrice, netId, account, wizard.id, apToBurn)
     }
 
     downgrade(stat, costo) {
@@ -1156,102 +1140,6 @@ class Shop extends Component {
                 >
                     <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
                         Upgrade
-                    </p>
-                </button>
-
-            </div>
-        )
-    }
-
-    renderAPBurnCard(isMobile) {
-        const { apToBurn } = this.state
-        const { mainTextColor, isDarkmode } = this.props
-
-        const wizard = this.getWizardSelected()
-
-        return (
-            <div
-                style={Object.assign({}, styles.cardShopStyle, { backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
-            >
-                <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
-
-                    <div style={{ width: 70, height: 70, alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
-                        <img
-                            src={potion_ap_burn}
-                            style={{ width: 80, height: 80 }}
-                            alt="logo"
-                        />
-                    </div>
-
-                    <div style={{ justifyContent: 'space-between', marginBottom: 15, width: '100%' }}>
-
-                        <button
-                            style={{ marginLeft: 15, cursor: 'pointer', justifyContent: 'center', alignItems: 'center' }}
-                            onClick={() => {
-                                if (!wizard || this.state.apToBurn <= 1) {
-                                    return
-                                }
-
-                                this.setState({ apToBurn: this.state.apToBurn - 1 })
-							}}
-                        >
-                            <AiOutlineMinus
-                                color={mainTextColor}
-                                size={20}
-                            />
-                        </button>
-
-
-                        <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                            <p style={{ fontSize: 16, color: mainTextColor }} className="text-bold">
-                                {apToBurn}
-                            </p>
-
-                            <p style={{ fontSize: 14, color: mainTextColor }}>
-                                AP
-                            </p>
-                        </div>
-
-                        <button
-							style={{ marginRight: 15, cursor: 'pointer', justifyContent: 'center', alignItems: 'center' }}
-                            onClick={() => {
-                                if (!wizard || this.state.apToBurn >= wizard.ap.int) {
-                                    return
-                                }
-
-                                this.setState({ apToBurn: this.state.apToBurn + 1 })
-							}}
-						>
-							<AiOutlinePlus
-								color={mainTextColor}
-								size={20}
-							/>
-						</button>
-                    </div>
-
-                    <p style={{ fontSize: 14, color: mainTextColor }}>
-                        $WIZA gained
-                    </p>
-                    <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15 }} className="text-bold">
-                        {apToBurn * 15}
-                    </p>
-
-                    <div style={{ height: 48 }}/>
-                </div>
-
-                <button
-                    className='btnH'
-                    style={Object.assign({}, styles.btnChoose, { opacity: wizard.ap && wizard.ap.int === 0 ? 0.5 : 1 })}
-                    onClick={() => {
-                        if (!wizard) {
-                            return
-                        }
-
-                        this.burnAP()
-                    }}
-                >
-                    <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                        Burn
                     </p>
                 </button>
 
@@ -2485,8 +2373,6 @@ class Shop extends Component {
 
                             {this.renderAPShopCard("speed", isMobile)}
 
-                            {this.renderAPBurnCard(isMobile)}
-
                         </div>
 
                         <p style={{ fontSize: 25, color: mainTextColor, marginBottom: 5 }} id="shop-retrain" className="text-bold">
@@ -2854,7 +2740,6 @@ export default connect(mapStateToProps, {
     buyVial,
     buyNickname,
     buyUpgradeWithAp,
-    burnAP,
     loadEquipMinted,
     equipItem,
     unequipItem,

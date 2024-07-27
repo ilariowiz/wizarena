@@ -90,36 +90,6 @@ class NftCardStake extends Component {
         )
     }
 
-	renderStakedTop() {
-		const { stakeInfo, mainTextColor } = this.props
-
-		const startStaked = moment(stakeInfo.timestamp.timep).fromNow()
-        const multiplier = stakeInfo.multiplier.int
-
-        const diffMinsFromStaked = moment().diff(moment(stakeInfo.timestamp.timep), 'minutes')
-        //console.log(diffMinsFromStaked);
-        const minAday = 1440
-        const daysPassed = (diffMinsFromStaked / minAday)
-        const unclaimedWiza = daysPassed * multiplier * 0.5 //0.5 è quanti wiza a spell si guadagnano
-
-		return (
-			<div style={{ flexDirection: 'column', width: '100%', marginRight: 10, alignItems: 'flex-end' }}>
-
-				<p style={{ color: mainTextColor, fontSize: 13, lineHeight: 1.2, textAlign: 'end' }}>
-					Unclaimed $WIZA
-				</p>
-
-				<p style={{ color: mainTextColor, fontSize: 16, marginBottom: 2, lineHeight: 1 }} className="text-medium">
-					{_.floor(unclaimedWiza, 4)}
-				</p>
-
-				<p style={{ color: '#707070', fontSize: 12, marginBottom: 2, lineHeight: 1 }}>
-					{startStaked}
-				</p>
-			</div>
-		)
-	}
-
     calcMedals() {
         const { item } = this.props
 
@@ -269,14 +239,8 @@ class NftCardStake extends Component {
 						: null
 					}
 
-					{
-						stakeInfo && stakeInfo.staked ?
-						this.renderStakedTop()
-						: null
-					}
-
                     {
-                        inBurnQueue && stakeInfo && !stakeInfo.staked ?
+                        inBurnQueue ?
                         this.renderBurningTop()
                         : null
                     }
@@ -317,25 +281,11 @@ class NftCardStake extends Component {
                 }
 
 				{
-					stakeInfo && !stakeInfo.staked && !inBurnQueue && !item.listed && item.medals && !loading &&
+					!inBurnQueue && !item.listed && item.medals && !loading &&
                     <div style={{ width, alignItems: 'center', justifyContent: 'space-between' }}>
-                        <button
-                            className="btnH"
-                            style={Object.assign({}, styles.btnStake, { width: (width/2 - 2) })}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
-                                this.props.onStake()
-                            }}
-                        >
-                            <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                Stake
-                            </p>
-                        </button>
-
     					<button
     						className="btnH"
-    						style={Object.assign({}, styles.btnStake, { width: (width/2 - 2), backgroundColor: "#840fb2" })}
+    						style={Object.assign({}, styles.btnStake, { width, backgroundColor: "#840fb2" })}
     						onClick={(e) => {
                                 e.preventDefault()
     							e.stopPropagation()
@@ -350,7 +300,7 @@ class NftCardStake extends Component {
 				}
 
                 {
-                    inBurnQueue && stakeInfo && !stakeInfo.staked && !item.listed && item.medals && !loading &&
+                    inBurnQueue && !item.listed && item.medals && !loading &&
 					<button
 						className="btnH"
 						style={Object.assign({}, styles.btnStake, { width, backgroundColor: "#840fb2" })}
@@ -365,39 +315,6 @@ class NftCardStake extends Component {
 						</p>
 					</button>
                 }
-
-				{
-					stakeInfo && stakeInfo.staked && !item.listed && item.medals && !loading &&
-                    <div style={{ width, alignItems: 'center', justifyContent: 'space-between' }}>
-                        <button
-                            className="btnH"
-                            style={Object.assign({}, styles.btnStake, { width: (width/2 - 2) })}
-                            onClick={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
-                                this.props.onClaim()
-                            }}
-                        >
-                            <p style={{ fontSize: 14, color: 'white' }} className="text-medium">
-                                Claim
-                            </p>
-                        </button>
-
-    					<button
-    						className="btnH"
-    						style={Object.assign({}, styles.btnStake, { width: (width/2 - 2) })}
-    						onClick={(e) => {
-                                e.preventDefault()
-    							e.stopPropagation()
-    							this.props.onUnstake()
-    						}}
-    					>
-    						<p style={{ fontSize: 14, color: 'white' }} className="text-medium">
-    							Claim & Unstake
-    						</p>
-    					</button>
-                    </div>
-				}
 
 			</a>
 		)

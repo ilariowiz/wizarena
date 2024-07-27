@@ -24,14 +24,12 @@ import {
 	LOAD_SUBSCRIBED_ELITE,
 	STORE_FILTERS_STATS,
 	SAVE_WIZA_BALANCE,
-	LOAD_WIZARDS_STAKED,
 	STORE_CIRCULATING_SUPPLY,
 	STORE_TOTAL_MINED,
 	SET_SFIDA,
 	SET_SFIDA_PVE,
 	SET_AVG_LEVEL_PVP,
 	SET_WIZARD_SELECTED_SHOP,
-	STORE_WIZA_NOT_CLAIMED,
 	LOAD_BUYIN_WIZA,
 	LOAD_BUYIN_ELITE,
 	LOAD_FEE_TOURNAMENT_WIZA,
@@ -42,7 +40,6 @@ import {
 	SET_CHALLENGES_RECEIVED,
 	HIDE_MODAL_TX,
 	CLEAR_TRANSACTION_STATE_PACT_CODE,
-	SET_TIME_TO_HALVENING,
 	SET_VISUAL_COLORS,
 	TEXT_DAY_COLOR,
 	TEXT_NIGHT_COLOR,
@@ -84,9 +81,7 @@ const INITIAL_STATE = {
 	subscribedWizaSpellGraph: {},
 	subscribedEliteSpellGraph: {},
 	wizaBalance: 0,
-	wizardsStaked: 0,
 	circulatingSupply: 0,
-	wizaNotClaimed: 0,
 	sfida: {},
 	sfidaPvE: {},
 	avgLevelPvP: 0,
@@ -96,7 +91,6 @@ const INITIAL_STATE = {
 	hideNavBar: false,
 	challengesReceived: [],
 	challengesSent: [],
-	timeToHalvening: "Loading how long for halvening...",
 	filtriRanges: {},
 	filtriProfileRanges: {},
 	isDarkmode: false,
@@ -229,12 +223,8 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, statSearched: action.payload }
 		case SAVE_WIZA_BALANCE:
 			return { ...state, wizaBalance: action.payload }
-		case LOAD_WIZARDS_STAKED:
-			return { ...state, wizardsStaked: action.payload }
 		case STORE_TOTAL_MINED:
 			return { ...state, totalMined: action.payload }
-		case STORE_WIZA_NOT_CLAIMED:
-			return { ...state, wizaNotClaimed: action.payload }
 		case STORE_CIRCULATING_SUPPLY:
 			return { ...state, circulatingSupply: action.payload }
 		case SET_SFIDA:
@@ -255,8 +245,6 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, challengesReceived: action.payload }
 		case SET_CHALLENGES_SENT:
 			return { ...state, challengesSent: action.payload }
-		case SET_TIME_TO_HALVENING:
-			return { ...state, timeToHalvening: action.payload }
 		case SET_VISUAL_COLORS: {
 			if (action.payload) {
 				return { ...state, mainTextColor: TEXT_NIGHT_COLOR, mainBackgroundColor: BACKGROUND_NIGHT_COLOR, isDarkmode: true }
@@ -266,7 +254,7 @@ export default (state = INITIAL_STATE, action) => {
 		case SET_SUBSCRIBERS_PVP:
 			return { ...state, subscribersPvP: action.payload }
 		case LOGOUT:
-			return { ...state, account: {}, transactionsState: [], showModalTx: false, isConnectWallet: false, isXWallet: false, isQRWalletConnect: false, userMintedNfts: [], wizaBalance: 0, wizardsStaked: 0, qrWalletConnectClient: undefined}
+			return { ...state, account: {}, transactionsState: [], showModalTx: false, isConnectWallet: false, isXWallet: false, isQRWalletConnect: false, userMintedNfts: [], wizaBalance: 0, qrWalletConnectClient: undefined}
 		default:
 			return state
 	}

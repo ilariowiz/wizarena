@@ -23,11 +23,8 @@ import {
 	setHideNavBar,
 	removeInfo,
 	clearTransactionByPactCode,
-	getWizardsStakeInfo,
 	loadAllNftsIds,
-	setTimeToHalvening,
-	setVisualColors,
-	setWizaNotClaimed
+	setVisualColors
 } from '../actions'
 import { TEXT_SECONDARY_COLOR, MAIN_NET_ID } from '../actions/types'
 import 'reactjs-popup/dist/index.css';
@@ -74,9 +71,7 @@ class Header extends Component {
 	getMined() {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-		this.props.getTotalMined(chainId, gasPrice, gasLimit, networkUrl, () => {
-			this.calcMinutesToHalvening()
-		})
+		this.props.getTotalMined(chainId, gasPrice, gasLimit, networkUrl)
 	}
 
 	getSupply() {
@@ -106,74 +101,6 @@ class Header extends Component {
 		return unclaimedWiza
 	}
 
-	calcMinutesToHalvening() {
-		const { totalMined, allNftsIds, chainId, gasPrice, gasLimit, networkUrl } = this.props
-
-		const halvening = 13240000
-
-		if (allNftsIds && allNftsIds.length > 0) {
-			this.props.getWizardsStakeInfo(chainId, gasPrice, gasLimit, networkUrl, allNftsIds, (response) => {
-
-				if (!response) {
-					return
-				}
-
-				//console.log(response);
-
-				let avgMultiplier = 0
-				let staked = 0
-				let minedNotClaimed = 0
-				response.map(i => {
-					if (i.staked) {
-						minedNotClaimed += this.getWizaMinedForWizard(i.multiplier.int, i.timestamp)
-						staked++
-						avgMultiplier += i.multiplier.int
-					}
-				})
-
-				//console.log(minedNotClaimed);
-				this.props.setWizaNotClaimed(minedNotClaimed)
-
-				avgMultiplier = _.round((avgMultiplier / staked), 2)
-				//console.log(avgMultiplier);
-
-				const wizaDaily = avgMultiplier * 0.5 * staked
-				const wizaMinute = _.round(((wizaDaily / 24) / 60), 2)
-				//console.log(wizaDaily, wizaMinute);
-
-				//console.log(minedNotClaimed);
-
-				const wizaLeft = halvening - totalMined - minedNotClaimed
-				//console.log(wizaLeft);
-				if (wizaLeft < 0) {
-					this.props.setTimeToHalvening(`The halvening is happening now!`)
-					return
-				}
-
-				//const dayremaining = (halvening - totalMined - minedNotClaimed) / wizaDaily
-				const minuteremaining = wizaLeft / wizaMinute
-				//console.log(_.round(dayremaining, 2), _.round(minuteremaining));
-
-				const dateHalvening = moment().add(minuteremaining, "minutes")
-				//console.log(dateHalvening);
-
-				//console.log(dateHalvening.countdown().toString());
-
-				//this.props.setTimeToHalvening(`${dateHalvening.countdown().toString()} to $WIZA staking rewards halvening`)
-				this.props.setTimeToHalvening(`${dateHalvening.countdown().toString()} to $WIZA staking ends`)
-				//1 month, 27 days, 10 hours, 13 minutes and 14 seconds
-			})
-		}
-		else {
-			this.props.loadAllNftsIds(chainId, gasPrice, gasLimit, networkUrl, () => {
-				setTimeout(() => {
-					this.getMined()
-				}, 3000)
-			})
-		}
-
-	}
-
 	swap(amount, estimatedWiza) {
         const { chainId, gasPrice, netId, account } = this.props
 
@@ -201,7 +128,7 @@ class Header extends Component {
 
 	renderSlidePanel(boxW) {
 		const { showPanel } = this.state
-		const { isMobile, circulatingSupply, wizaNotClaimed, totalMined, account, netId, isXWallet, isQRWalletConnect, timeToHalvening, mainTextColor, isDarkmode, mainBackgroundColor } = this.props
+		const { isMobile, circulatingSupply, totalMined, account, netId, isXWallet, isQRWalletConnect, mainTextColor, isDarkmode, mainBackgroundColor } = this.props
 
 		const panelWidth = isMobile ? "100%" : boxW * 60 / 100
 
@@ -366,7 +293,7 @@ class Header extends Component {
 							</p>
 						</div>
 
-						<div style={{ alignItems: 'center', marginBottom: 10 }}>
+						<div style={{ alignItems: 'center', marginBottom: 30 }}>
 							<p style={{ fontSize: 15, color: mainTextColor, marginRight: 15 }}>
 								$WIZA circulating
 							</p>
@@ -377,26 +304,6 @@ class Header extends Component {
 
 							<p style={{ fontSize: 13, color: '#707070' }}>
 								({this.getPct(circulatingSupply)})
-							</p>
-						</div>
-
-						<div style={{ alignItems: 'center', marginBottom: 25 }}>
-							<p style={{ fontSize: 15, color: mainTextColor, marginRight: 15 }}>
-								$WIZA not claimed
-							</p>
-
-							<p style={{ fontSize: 15, color: mainTextColor, marginRight: 10 }} className="text-medium">
-								{wizaNotClaimed ? wizaNotClaimed.toLocaleString() : '...'}
-							</p>
-
-							<p style={{ fontSize: 13, color: '#707070' }}>
-								({this.getPct(wizaNotClaimed)})
-							</p>
-						</div>
-
-						<div style={{ alignItems: 'center', marginBottom: 30 }}>
-							<p style={{ fontSize: 14, color: mainTextColor, marginRight: 15, lineHeight: 1.5 }} className="text-medium">
-								{timeToHalvening || "Loading how long for halvening..."}
 							</p>
 						</div>
 
@@ -1173,10 +1080,10 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { allNftsIds, timeToHalvening, totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, showModalTx, hideNavBar, transactionsState, isDarkmode, mainTextColor, mainBackgroundColor } = state.mainReducer
+	const { allNftsIds, totalMined, circulatingSupply, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, showModalTx, hideNavBar, transactionsState, isDarkmode, mainTextColor, mainBackgroundColor } = state.mainReducer
 	const { txInfo } = state.modalTransactionReducer
 
-	return { allNftsIds, timeToHalvening, totalMined, circulatingSupply, wizaNotClaimed, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, showModalTx, hideNavBar, txInfo, transactionsState, isDarkmode, mainTextColor, mainBackgroundColor }
+	return { allNftsIds, totalMined, circulatingSupply, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, showModalTx, hideNavBar, txInfo, transactionsState, isDarkmode, mainTextColor, mainBackgroundColor }
 }
 
 export default connect(mapStateToProps, {
@@ -1191,9 +1098,6 @@ export default connect(mapStateToProps, {
 	setHideNavBar,
 	removeInfo,
 	clearTransactionByPactCode,
-	getWizardsStakeInfo,
 	loadAllNftsIds,
-	setTimeToHalvening,
-	setVisualColors,
-	setWizaNotClaimed
+	setVisualColors
 })(Header);

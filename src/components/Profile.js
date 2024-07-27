@@ -21,12 +21,6 @@ import {
 	setNetworkSettings,
 	setNetworkUrl,
 	getWizaBalance,
-	stakeNft,
-	unstakeNft,
-	claimWithoutUnstake,
-	claimAllWithoutUnstake,
-	claimAllAndUnstakeAll,
-	stakeAll,
 	addNftToBurningQueue,
 	removeNftFromBurningQueue,
 	delistNft,
@@ -36,8 +30,6 @@ import {
 	loadEquipMinted,
 	getEquipmentOffersMade,
 	withdrawEquipmentOffer,
-	getWizardsStakeInfo,
-	calculateRewardMass,
 	updateInfoTransactionModal,
 	declineOffer,
 	getWalletXp,
@@ -60,10 +52,6 @@ class Profile extends Component {
 			showModalConnection: false,
 			isConnected,
 			error: '',
-			unclaimedWizaTotal: 0,
-			stakeInfo: [],
-			stakedIds: [],
-			notStakedIds: [],
 			offersMade: [],
 			offersReceived: [],
 			kadenaPrice: undefined,
@@ -71,7 +59,6 @@ class Profile extends Component {
 			offersEquipmentMade: [],
 			statSearched: [],
 			yourNfts: [],
-			loadingStake: true,
 			itemsToShow: [],
             searchText: "",
             searchedText: "",
@@ -131,62 +118,9 @@ class Profile extends Component {
 
 				//console.log(response);
 				this.setState({ loading: false, yourNfts: response })
-
-				this.loadStakeInfo(response)
 				this.loadOffersReceived()
 			})
 		}
-	}
-
-	loadStakeInfo(response) {
-		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
-
-		const onlyids = response.map(i => i.id)
-
-		this.props.getWizardsStakeInfo(chainId, gasPrice, gasLimit, networkUrl, onlyids, (info) => {
-			//console.log(info);
-			let stakedIds = []
-			let notStakedIds = []
-
-			//console.log(response);
-
-			info.map(i => {
-
-				const res = response.find(r => r.id === i.idnft)
-
-				if (i.staked) {
-					stakedIds.push(i.idnft)
-				}
-				else {
-					//aggiungiamo ai non staked solo quelli non listati e non in burning queue
-					//in modo da avere gia la lista corretta quando si fa stake-all
-					if (!res.listed && !res.confirmBurn) {
-						notStakedIds.push(i.idnft)
-					}
-				}
-			})
-
-			//console.log(notStakedIds);
-
-			this.setState({ stakeInfo: info, stakedIds, notStakedIds })
-			//console.log(onlyStaked);
-
-			this.props.calculateRewardMass(chainId, gasPrice, stakedIds.length * 200, networkUrl, stakedIds, (rewards) => {
-				//console.log(rewards);
-				let tot = 0
-				rewards.map(i => {
-					if (i.decimal) {
-						tot += _.floor(i.decimal, 4)
-					}
-					else {
-						tot += _.floor(i, 4)
-					}
-				})
-
-				//console.log(tot);
-				this.setState({ unclaimedWizaTotal: tot, loadingStake: false })
-			})
-		})
 	}
 
 	loadWizaBalance() {
@@ -299,139 +233,6 @@ class Profile extends Component {
 
     cancelEquipSearch() {
 		this.setState({ searchedText: '', searchText: '', itemsToShow: [] })
-	}
-
-	stakeNft(idnft) {
-		const { chainId, gasPrice, netId, account } = this.props
-
-		let text = `You will stake #${idnft}. You can unstake it any time. While it is staked you will not be able to sell this wizard but you will still be able to register it for tournaments.`
-
-		this.props.updateInfoTransactionModal({
-			transactionToConfirmText: text,
-			typeModal: 'stake',
-			transactionOkText: `Your Wizard #${idnft} is staked!`
-		})
-
-		this.props.stakeNft(chainId, gasPrice, 4000, netId, idnft, account)
-	}
-
-	unstakeNft(idnft) {
-		const { chainId, gasPrice, netId, account } = this.props
-
-		let text = `You will unstake #${idnft}`
-
-		this.props.updateInfoTransactionModal({
-			transactionToConfirmText: text,
-			typeModal: 'unstake',
-			transactionOkText: `Your Wizard #${idnft} is unstaked!`
-		})
-
-		this.props.unstakeNft(chainId, gasPrice, 4000, netId, idnft, account)
-	}
-
-	claimWizaWithoutUnstake(idnft) {
-		const { chainId, gasPrice, netId, account } = this.props
-
-		let text = `You will claim your $WIZA mined by #${idnft}`
-
-		this.props.updateInfoTransactionModal({
-			transactionToConfirmText: text,
-			typeModal: 'claim',
-			transactionOkText: `Your $WIZA have been claimed!`
-		})
-
-		this.props.claimWithoutUnstake(chainId, gasPrice, 4000, netId, idnft, account)
-	}
-
-
-	claimAll() {
-		const { chainId, gasPrice, netId, account } = this.props
-		const { stakedIds } = this.state
-
-		if (stakedIds.length === 0) {
-			return
-		}
-
-		this.props.updateInfoTransactionModal({
-			transactionToConfirmText: `You will claim your $WIZA mined by all your wizards`,
-			typeModal: 'claimall',
-			transactionOkText: `Your $WIZA have been claimed!`
-		})
-
-		let objects = []
-		stakedIds.map(i => {
-			let obj = {
-				idnft: i,
-				sender: account.account
-			}
-			objects.push(obj)
-		})
-
-		let gasLimit = objects.length * 2000
-		if (gasLimit > 200000) {
-			gasLimit = 200000
-		}
-		this.props.claimAllWithoutUnstake(chainId, gasPrice, gasLimit, netId, objects, account)
-	}
-
-	unstakeAndClaimAll() {
-		const { chainId, gasPrice, netId, account } = this.props
-		const { stakedIds } = this.state
-
-		if (stakedIds.length === 0) {
-			return
-		}
-
-		this.props.updateInfoTransactionModal({
-			transactionToConfirmText: `You will unstake and claim your $WIZA mined by all your wizards`,
-			typeModal: 'unstakeandclaimall',
-			transactionOkText: `Your $WIZA have been claimed!`
-		})
-
-		let objects = []
-		stakedIds.map(i => {
-			let obj = {
-				idnft: i,
-				sender: account.account
-			}
-			objects.push(obj)
-		})
-
-		let gasLimit = objects.length * 2000
-		if (gasLimit > 180000) {
-			gasLimit = 180000
-		}
-		this.props.claimAllAndUnstakeAll(chainId, gasPrice, gasLimit, netId, objects, account)
-	}
-
-	stakeAll() {
-		const { chainId, gasPrice, netId, account } = this.props
-		const { notStakedIds } = this.state
-
-		if (notStakedIds.length === 0) {
-			return
-		}
-
-		this.props.updateInfoTransactionModal({
-			transactionToConfirmText: `You will stake all your wizards that aren't listed or in burning queue`,
-			typeModal: 'stakeall',
-			transactionOkText: `Your Wizards are staked!`
-		})
-
-		let objects = []
-		notStakedIds.map(i => {
-			let obj = {
-				idnft: i,
-				sender: account.account
-			}
-			objects.push(obj)
-		})
-
-		let gasLimit = objects.length * 2000
-		if (gasLimit > 180000) {
-			gasLimit = 180000
-		}
-		this.props.stakeAll(chainId, gasPrice, gasLimit, netId, objects, account)
 	}
 
 	addToBurning(id) {
@@ -601,7 +402,7 @@ class Profile extends Component {
 	}
 
 	renderRow(item, index) {
-		const { stakeInfo, loadingStake, equipment } = this.state
+		const { equipment } = this.state
 
 		//console.log(item);
 
@@ -612,14 +413,9 @@ class Profile extends Component {
 				index={index}
 				history={this.props.history}
 				width={260}
-				onStake={() => this.stakeNft(item.id)}
-				onUnstake={() => this.unstakeNft(item.id)}
-				onClaim={() => this.claimWizaWithoutUnstake(item.id)}
 				onAddBurning={() => this.addToBurning(item.id)}
 				onRemoveBurning={() => this.removeFromBurning(item.id)}
 				onDelist={() => this.delist(item.id)}
-				stakeInfo={stakeInfo.find(i => i.idnft === item.id)}
-				loading={loadingStake}
 				equipment={equipment}
 			/>
 		)
@@ -1061,14 +857,9 @@ class Profile extends Component {
 
 	renderBody(isMobile) {
 		const { account, wizaBalance, walletXp, mainTextColor } = this.props
-		const { showModalConnection, isConnected, section, loading, unclaimedWizaTotal, offersMade, offersReceived, offersEquipmentMade, yourCollectionOffers } = this.state
+		const { showModalConnection, isConnected, section, loading, offersMade, offersReceived, offersEquipmentMade, yourCollectionOffers } = this.state
 
 		const { boxW, modalW, padding } = getBoxWidth(isMobile)
-
-		let unclW = 0;
-		if (unclaimedWizaTotal) {
-			unclW = _.floor(unclaimedWizaTotal, 4)
-		}
 
 		if (!account || !account.account || !isConnected) {
 
@@ -1143,55 +934,9 @@ class Profile extends Component {
 						</p>
 					</div>
 
-					<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-						<p style={{ fontSize: 16, color: "#707070" }}>
-							Unclaimed $WIZA
-						</p>
-						<p style={{ fontSize: 16, color: mainTextColor }} className="text-bold">
-							{unclW || 0.0}
-						</p>
-					</div>
-
 				</div>
 
 				{this.renderMenu(isMobile)}
-
-				{/*<div style={{ minHeight: 1, height: 1, backgroundColor: '#d7d7d7', width: boxW, marginBottom: 20 }} />*/}
-
-				{
-					section === 1 &&
-					<div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 20, justifyContent: 'center' }}>
-						<button
-							className="btnH"
-							style={styles.btnClaimAll}
-							onClick={() => this.claimAll()}
-						>
-							<p style={{ fontSize: 14, color: "white" }} className="text-bold">
-								Claim all
-							</p>
-						</button>
-
-						<button
-							className="btnH"
-							style={styles.btnClaimAll}
-							onClick={() => this.unstakeAndClaimAll()}
-						>
-							<p style={{ fontSize: 14, color: "white" }} className="text-bold">
-								Claim all & Unstake
-							</p>
-						</button>
-
-						<button
-							className="btnH"
-							style={styles.btnClaimAll}
-							onClick={() => this.stakeAll()}
-						>
-							<p style={{ fontSize: 14, color: "white" }} className="text-bold">
-								Stake all
-							</p>
-						</button>
-					</div>
-				}
 
 				{
 					this.state.loading ?
@@ -1368,12 +1113,6 @@ export default connect(mapStateToProps, {
 	setNetworkSettings,
 	setNetworkUrl,
 	getWizaBalance,
-	stakeNft,
-	unstakeNft,
-	claimWithoutUnstake,
-	claimAllWithoutUnstake,
-	claimAllAndUnstakeAll,
-	stakeAll,
 	addNftToBurningQueue,
 	removeNftFromBurningQueue,
 	delistNft,
@@ -1383,8 +1122,6 @@ export default connect(mapStateToProps, {
 	loadEquipMinted,
 	getEquipmentOffersMade,
 	withdrawEquipmentOffer,
-	getWizardsStakeInfo,
-	calculateRewardMass,
 	updateInfoTransactionModal,
 	declineOffer,
 	getWalletXp,

@@ -15,8 +15,7 @@ import {
 	getPageBlockNfts,
 	setNetworkSettings,
 	setNetworkUrl,
-	storeFiltersStats,
-	getWizardsStakedCount
+	storeFiltersStats
 } from '../actions'
 import { MAIN_NET_ID, ITEMS_PER_BLOCK, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
@@ -50,7 +49,6 @@ class Collection extends Component {
 		setTimeout(() => {
 			this.loadAll()
 			this.getMarketVolume()
-			this.getWizardsStakedCount()
 		}, 500)
 	}
 
@@ -102,12 +100,6 @@ class Collection extends Component {
 		this.props.getVolume(chainId, gasPrice, gasLimit, networkUrl, (res) => {
 			this.setState({ volume: res })
 		})
-	}
-
-	getWizardsStakedCount() {
-		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
-
-		this.props.getWizardsStakedCount(chainId, gasPrice, gasLimit, networkUrl)
 	}
 
 	getFloor(allNfts) {
@@ -376,7 +368,7 @@ class Collection extends Component {
 	}
 
 	renderHeader(isMobile, boxW) {
-		const { totalCountNfts, wizardsStaked, mainTextColor, isDarkmode } = this.props
+		const { totalCountNfts, mainTextColor, isDarkmode } = this.props
 		const { floor, uniqueOwners, volume, listed } = this.state
 
 		let items = totalCountNfts || 0
@@ -418,8 +410,6 @@ class Collection extends Component {
 					{this.renderBoxHeader(`${volume.toLocaleString()} kda`, 'Volume', isMobile)}
 
 					{this.renderBoxHeader(uniqueOwners.toLocaleString(), 'Owners', isMobile)}
-
-					{this.renderBoxHeader(`${wizardsStaked || 0}`, 'Staked', isMobile)}
 				</div>
 
 				<div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 20, justifyContent: 'center' }}>
@@ -1049,9 +1039,9 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, statSearched, wizardsStaked, filtriRanges, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
+	const { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, statSearched, filtriRanges, mainTextColor, mainBackgroundColor, isDarkmode } = state.mainReducer;
 
-	return { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, statSearched, wizardsStaked, filtriRanges, mainTextColor, mainBackgroundColor, isDarkmode };
+	return { allNfts, account, chainId, gasPrice, gasLimit, networkUrl, allNftsIds, nftsBlockId, totalCountNfts, statSearched, filtriRanges, mainTextColor, mainBackgroundColor, isDarkmode };
 }
 
 export default connect(mapStateToProps, {
@@ -1060,6 +1050,5 @@ export default connect(mapStateToProps, {
 	getPageBlockNfts,
 	setNetworkSettings,
 	setNetworkUrl,
-	storeFiltersStats,
-	getWizardsStakedCount
+	storeFiltersStats
 })(Collection)
