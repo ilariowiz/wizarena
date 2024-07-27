@@ -13,7 +13,7 @@
 
     (use coin)
   (implements fungible-v2)
-  (implements wiza1-interface-v3)
+  (implements wiza1-interface-v4)
 
   ; --------------------------------------------------------------------------
  ; Constants
@@ -54,27 +54,12 @@
         guard:guard
     )
 
-    (defschema staked-schema
-        idnft:string
-        account:string
-        timestamp:time
-        staked:bool
-        multiplier:integer
-    )
-
     (defschema mined-wiza-schema
         amount:decimal
     )
 
-    (defschema base-multiplier-schema
-        multiplier:decimal
-    )
-
     (deftable token-table:{token-schema})
-    (deftable staked-table:{staked-schema})
     (deftable mined-wiza-table:{mined-wiza-schema})
-
-    (deftable base-multiplier-table:{base-multiplier-schema})
 
     ; --------------------------------------------------------------------------
  ; Capatilibites
@@ -146,26 +131,6 @@
         (require-capability (PRIVATE))
     )
 
-    (defcap STAKE_NFT (id:string owner:string multiplier:integer)
-        @event true
-    )
-
-    (defcap UNSTAKE_NFT (id:string owner:string)
-        @event true
-    )
-
-    (defcap WIZA_REWARD_FROM_STAKE (account:string amount:decimal)
-        @event true
-    )
-
-    (defcap WIZA_REWARD_GENERAL (account:string amount:decimal)
-        @event true
-    )
-
-    (defcap WIZA_REWARD_AP_BURN (account:string amount:decimal)
-        @event true
-    )
-
     (defcap SPEND_WIZA (account:string amount:decimal)
         @event true
     )
@@ -179,8 +144,6 @@
     (create-account WIZA_TOKEN_BANK (create-BANK-guard))
 
     (write mined-wiza-table "" {"amount":0.0})
-
-    (write base-multiplier-table "" {"multiplier": 4.0})
   )
 
     ; --------------------------------------------------------------------------
@@ -391,257 +354,6 @@
     ; WIZA functions
     ; --------------------------------------------------------------------------
 
-    (defun stake-all (objects:list m:module{wizarena-interface-v2})
-        (map
-            (nft-to-stake m)
-            objects
-        )
-    )
-
-    (defun nft-to-stake (m:module{wizarena-interface-v2} obj:object)
-        (let (
-                (idnft (at "idnft" obj))
-                (sender (at "sender" obj))
-            )
-            (stake idnft sender m)
-        )
-    )
-
-
-    (defun stake (idnft:string sender:string m:module{wizarena-interface-v2})
-        (enforce (= (at "chain-id" (chain-data)) "1") "Stake is only for chain 1")
-        (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
-        (let (
-                (data (get-wizard-data idnft m))
-            )
-            (enforce (= (at "listed" data) false) "A listed wizard cannot be staked")
-            (enforce (= (at "confirmBurn" data) false) "You can't stake a wizard in burning queue")
-            (enforce (contains 'spellbook data) "no spellbook data")
-            (with-capability (OWNER sender idnft (at "owner" data))
-                (with-default-read staked-table idnft
-                    {"staked": false}
-                    {"staked":= staked}
-                    (enforce (= staked false) "this wizard is already staked")
-                )
-                (write staked-table idnft
-                    {"idnft": idnft,
-                    "account": sender,
-                    "timestamp": (at "block-time" (chain-data)),
-                    "multiplier": (length(at "spellbook" data)),
-                    "staked": true}
-                )
-                (emit-event (STAKE_NFT idnft sender (length(at "spellbook" data))))
-            )
-        )
-    )
-
-    (defun claim-all-unstake-all (objects:list m:module{wizarena-interface-v2})
-        (map
-            (claim-all-and-unstake m)
-            objects
-        )
-    )
-
-    (defun claim-all-and-unstake (m:module{wizarena-interface-v2} obj:object)
-        (let (
-                (idnft (at "idnft" obj))
-                (sender (at "sender" obj))
-            )
-            (unstake idnft sender m)
-        )
-    )
-
-    (defun unstake (idnft:string sender:string m:module{wizarena-interface-v2})
-        (enforce (= (at "chain-id" (chain-data)) "1") "Unstake is only for chain 1")
-        (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
-        (let (
-                (data (get-nft-staked idnft))
-                (data-wizard (get-wizard-data idnft m))
-            )
-            (enforce (= (at "staked" data) true) "Wizard already unstaked")
-            (with-capability (OWNER sender idnft (at "owner" data-wizard))
-                (with-read staked-table idnft
-                    {"multiplier":= multiplier,
-                    "timestamp":= stakedTime,
-                    "account":= account
-                    "idnft":=id
-                    "staked":=staked}
-                    (update staked-table idnft
-                        {"staked": false}
-                    )
-                    (with-capability (PRIVATE)
-                        (mine-from-stake account multiplier stakedTime)
-                    )
-                )
-                (emit-event (UNSTAKE_NFT idnft sender))
-            )
-        )
-    )
-
-    (defun claim-all (objects:list m:module{wizarena-interface-v2})
-        (map
-            (claim-all-without-unstake m)
-            objects
-        )
-    )
-
-    (defun claim-all-without-unstake (m:module{wizarena-interface-v2} obj:object)
-        (let (
-                (idnft (at "idnft" obj))
-                (sender (at "sender" obj))
-            )
-            (claim-without-unstake idnft sender m)
-        )
-    )
-
-    (defun claim-without-unstake (idnft:string sender:string m:module{wizarena-interface-v2})
-        (enforce (= (at "chain-id" (chain-data)) "1") "Claim is only for chain 1")
-        (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
-        (let (
-                (data (get-wizard-data idnft m))
-            )
-            (with-capability (OWNER sender idnft (at "owner" data))
-                (with-read staked-table idnft
-                    {"multiplier":= multiplier,
-                    "timestamp":= stakedTime,
-                    "account":= account
-                    "idnft":=id
-                    "staked":=staked}
-                    (with-capability (PRIVATE)
-                        (mine-from-stake account multiplier stakedTime)
-                    )
-                    (update staked-table idnft
-                        {"timestamp": (at "block-time" (chain-data))}
-                    )
-                )
-            )
-        )
-    )
-
-    ;;;; ADMIN REQUIRED
-    (defun force-claim-all (items:list)
-        (with-capability (ADMIN)
-            (map
-                (force-claim)
-                items
-            )
-        )
-    )
-
-    (defun force-claim (idnft:string)
-        (require-capability (ADMIN))
-        (with-read staked-table idnft
-            {"multiplier":= multiplier,
-            "timestamp":= stakedTime,
-            "account":= account
-            "staked":=staked}
-            (with-capability (PRIVATE)
-                (mine-from-stake account multiplier stakedTime)
-            )
-            (update staked-table idnft
-                {"timestamp": (at "block-time" (chain-data))}
-            )
-        )
-    )
-
-    ;TEST (days (/ (diff-time (add-time (at "block-time" (chain-data)) (days 3.78)) stakedTime) 86400))
-    ;PROD (days (/ (diff-time (at "block-time" (chain-data)) stakedTime) 86400))
-    (defun mine-from-stake (account:string multiplier:integer stakedTime:time)
-        (require-capability (PRIVATE))
-        (let (
-                (days (/ (diff-time (at "block-time" (chain-data)) stakedTime) 86400))
-                (guard (at "guard" (coin.details account)))
-            )
-            (with-default-read token-table account
-              {"balance": 0.0,
-              "guard": guard}
-              {"balance":= oldbalance,
-              "guard":= currentGuard}
-              (let
-                  (
-                    (reward (calculate-reward days multiplier))
-                    (total-mined (get-total-mined))
-                )
-                (enforce (<= (+ total-mined reward) MAXIMUM_SUPPLY) "Maximum Supply reached. Can't reward")
-                (write token-table account {
-                    "balance": (+ oldbalance reward),
-                    "guard": guard})
-                (write mined-wiza-table "" {"amount": (+ total-mined reward)})
-                (emit-event (WIZA_REWARD_FROM_STAKE account reward))
-              )
-            )
-        )
-    )
-
-    (defun mine-from-ap-burn (account:string idnft:string aptoburn:integer m:module{wizarena-interface-v2})
-        (enforce (= (at "chain-id" (chain-data)) "1") "Ap burn is only for chain 1")
-        (enforce (= (format "{}" [m]) "free.wiz-arena") "not allowed, security reason")
-        (let (
-                (data (get-wizard-data idnft m))
-                (ap (at "ap" (get-wizard-data idnft m)))
-                (guard (at "guard" (coin.details account)))
-            )
-            (enforce (>= ap aptoburn) "You don't have enough AP")
-            (with-capability (OWNER account idnft (at "owner" data))
-                (with-default-read token-table account
-                  {"balance": 0.0,
-                  "guard": guard}
-                  {"balance":= oldbalance,
-                  "guard":= currentGuard}
-                  (let
-                      (
-                        (reward (* aptoburn 15.0))
-                        (total-mined (get-total-mined))
-                    )
-                    (enforce (<= (+ total-mined reward) MAXIMUM_SUPPLY) "Maximum Supply reached. Can't reward")
-                    (write token-table account {
-                        "balance": (+ oldbalance reward),
-                        "guard": guard})
-                    (write mined-wiza-table "" {"amount": (+ total-mined reward)})
-                    (m::spend-ap aptoburn account idnft)
-                    (emit-event (WIZA_REWARD_AP_BURN account reward))
-                  )
-                )
-            )
-        )
-    )
-
-    (defun reward-users (accounts:list)
-        (with-capability (ADMIN)
-            (map
-                (mine-from-reward)
-                accounts
-            )
-        )
-    )
-
-    (defun mine-from-reward (reward-data:object)
-        (require-capability (ADMIN))
-        (let (
-                (guard (at "guard" (coin.details (at "account" reward-data))))
-                (account (at "account" reward-data))
-            )
-            (with-default-read token-table account
-              {"balance": 0.0,
-              "guard": guard}
-              {"balance":= oldbalance,
-              "guard":= currentGuard}
-              (let
-                  (
-                    (total-mined (get-total-mined))
-                    (amount (at "amount" reward-data))
-                )
-                (enforce (<= (+ total-mined amount) MAXIMUM_SUPPLY) "Maximum Supply reached. Can't reward")
-                (write token-table account {
-                    "balance": (+ oldbalance amount),
-                    "guard": guard})
-                (write mined-wiza-table "" {"amount": (+ total-mined amount)})
-                (emit-event (WIZA_REWARD_GENERAL account amount))
-              )
-            )
-        )
-    )
-
     (defun spend-wiza:bool (amount:decimal account:string)
         (enforce (= (at "chain-id" (chain-data)) "1") "Spend is only for chain 1")
         (let (
@@ -705,85 +417,6 @@
         (m::get-wizard-fields-for-id (str-to-int id))
     )
 
-    (defun get-nft-staked-mass (nfts:list)
-        (map
-            (get-nft-staked)
-            nfts
-        )
-    )
-
-    (defun get-nft-staked (idnft:string)
-        (with-default-read staked-table idnft
-            {"staked": false,
-            "multiplier": 1,
-            "timestamp":(at "block-time" (chain-data))}
-            {"staked":= staked,
-            "multiplier":=multiplier,
-            "timestamp":= timestamp}
-            {"staked":staked, "multiplier":multiplier, "timestamp":timestamp, "idnft": idnft}
-        )
-    )
-
-    (defun check-nft-is-staked:bool (idnft:string)
-        (with-default-read staked-table idnft
-            {"staked": false}
-            {"staked":= staked}
-            staked
-        )
-    )
-
-    (defun get-unclaimed-mined-1 ()
-        (let (
-                (staked-nfts (select staked-table (where "staked" (= true))))
-            )
-            (map
-                (get-unclaimed-mined-2)
-                staked-nfts
-            )
-        )
-    )
-
-    (defun get-unclaimed-mined-2 (stakednft)
-        (let (
-                (days (/ (diff-time (at "block-time" (chain-data)) (at "timestamp" stakednft)) 86400))
-                (multiplier (at "multiplier" stakednft))
-            )
-            (calculate-reward (ceiling days 4) multiplier)
-        )
-    )
-
-    (defun wizards-staked-count ()
-        (length (select staked-table (where "staked" (= true))))
-    )
-
-    (defun calculate-reward-mass (nfts:list)
-        (map
-            (calculate-reward-mass-2)
-            nfts
-        )
-    )
-
-    (defun calculate-reward-mass-2 (idnft:string)
-        (let (
-                (data (get-nft-staked idnft))
-            )
-            (let (
-                    (days (/ (diff-time (at "block-time" (chain-data)) (at "timestamp" data)) 86400))
-                    (multiplier (at "multiplier" data))
-                )
-                (calculate-reward days multiplier)
-            )
-        )
-    )
-
-    (defun calculate-reward (days:decimal multiplier:integer)
-        (let (
-                (base-multiplier (at "multiplier" (read base-multiplier-table "" ['multiplier])))
-            )
-            (floor (* days (* multiplier base-multiplier)) DECIMALS)
-        )
-    )
-
     (defun get-total-mined ()
         @doc "get total WIZA mined"
         (at "amount" (read mined-wiza-table "" ['amount]))
@@ -801,25 +434,14 @@
             balance
         )
     )
-
-    ;quanti wiza per spell si guadagnano
-    (defun set-multiplier (multiplier:decimal)
-        (with-capability (ADMIN)
-            (write base-multiplier-table ""
-                {"multiplier": multiplier}
-            )
-        )
-    )
 )
 
 
 (if (read-msg "upgrade")
   ["upgrade"]
   [
-    (create-table staked-table)
     (create-table token-table)
     (create-table mined-wiza-table)
-    (create-table base-multiplier-table)
 
     (initialize)
 
