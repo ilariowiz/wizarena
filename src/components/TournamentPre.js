@@ -594,11 +594,20 @@ class Tournament extends Component {
         )
     }
 
-    renderPrizeInfo(marginBottom, mainTextColor, montepremi, coin) {
+    renderPrizeInfo(marginBottom, mainTextColor, montepremi, coin, extraPrize) {
         return (
-            <p style={{ fontSize: 16, color: mainTextColor, marginBottom }}>
-                Prize <span className="text-bold">{montepremi ? montepremi.toFixed(2) : '...'}</span> {coin}
-            </p>
+            <div style={{ alignItems: 'center', marginBottom, justifyContent: 'space-between' }}>
+                <p style={{ fontSize: 15, color: mainTextColor }}>
+                    Prize <span className="text-bold">{montepremi ? montepremi.toFixed(2) : '...'}</span> {coin}
+                </p>
+
+                {
+                    extraPrize &&
+                    <p style={{ fontSize: 15, color: mainTextColor }}>
+                        Extra prize <span className="text-bold">{extraPrize ? extraPrize.toLocaleString() : '...'}</span>
+                    </p>
+                }
+            </div>
         )
     }
 
@@ -878,7 +887,7 @@ class Tournament extends Component {
                     Prize: <span className="text-bold">4 medals 1000 WIZA</span>
                 </p>*/}
 
-                {this.renderPrizeInfo(marginBottom, mainTextColor, montepremi, "WIZA")}
+                {this.renderPrizeInfo(marginBottom, mainTextColor, montepremi, "$WIZA", tournamentElite.extraPrize)}
 
                 {this.renderSubsInfo(marginBottom, mainTextColor, tournamentEliteSubs, avgLevelElite)}
 
@@ -1020,7 +1029,7 @@ class Tournament extends Component {
 
                  <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
-                {this.renderPrizeInfo(marginBottom, mainTextColor, montepremi, "$WIZA")}
+                {this.renderPrizeInfo(marginBottom, mainTextColor, montepremi, "$WIZA", tournamentWiza.extraPrize)}
 
                 {this.renderSubsInfo(marginBottom, mainTextColor, tournamentWizaSubs, avgLevelWiza)}
 
