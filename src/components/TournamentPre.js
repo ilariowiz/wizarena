@@ -742,7 +742,7 @@ class Tournament extends Component {
                 {this.renderSubsInfo(marginBottom, mainTextColor, tournamentKdaSubs, avgLevelKda)}
 
                 <p style={{ fontSize: 14, color: mainTextColor, marginBottom, height: 40 }}>
-                    Participation reward: (for each wizard) {tournament.reward}
+                    Wizard participation reward: {tournament.reward}
                 </p>
 
                 <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
@@ -885,7 +885,7 @@ class Tournament extends Component {
                 {/*<div style={{ height: 40, width: '100%', backgroundColor: 'transparent', marginBottom }}></div>*/}
 
                 <p style={{ fontSize: 14, color: mainTextColor, marginBottom, height: 24 }}>
-                    Participation reward: (for each wizard) {tournamentElite.reward}
+                    Wizard participation reward: {tournamentElite.reward}
                 </p>
 
                 <p style={{ fontSize: 14, color: mainTextColor }} className="text-bold">
@@ -1025,7 +1025,7 @@ class Tournament extends Component {
                 {this.renderSubsInfo(marginBottom, mainTextColor, tournamentWizaSubs, avgLevelWiza)}
 
                 <p style={{ fontSize: 14, color: mainTextColor, marginBottom, height: 40 }}>
-                    Participation reward: (for each wizard) {tournamentWiza.reward}
+                    Wizard participation reward: {tournamentWiza.reward}
                 </p>
 
                 <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
