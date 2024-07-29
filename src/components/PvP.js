@@ -967,7 +967,7 @@ class PvP extends Component {
 
                     <div style={{ flexDirection: 'column', marginLeft: isMobile ? 10 : 50 }}>
                         <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 10 }}>
-                            Reward: +3 AP
+                            Reward: +5 AP
                         </p>
 
                         {
