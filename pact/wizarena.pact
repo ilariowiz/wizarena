@@ -58,6 +58,8 @@
     (defconst CONQUEST_BUYIN "conquest_buyin")
     (defconst CONQUEST_OPEN "conquest_open")
 
+    (defconst WIZA_LIMIT_VALUE "wiza_limit_value")
+
 ; --------------------------------------------------------------------------
 ; Capabilities
 ; --------------------------------------------------------------------------
@@ -412,6 +414,10 @@
         wizards:integer
     )
 
+    (defschema wiza-limit-schema
+        limit:decimal
+    )
+
     (deftable nfts:{nft-main-schema})
     (deftable nfts-market:{nft-listed-schema})
     (deftable creation:{creation-schema})
@@ -447,6 +453,7 @@
     (deftable collection-offers-table:{collection-offers-schema})
     (deftable tournaments-sub-count:{tournaments-sub-count-schema})
 
+    (deftable wiza-limit-table:{wiza-limit-schema})
     ; --------------------------------------------------------------------------
   ; Can only happen once
   ; --------------------------------------------------------------------------
@@ -498,6 +505,8 @@
 
         (insert values-tournament CONQUEST_BUYIN {"value": 6.0})
         (insert values CONQUEST_OPEN {"value": "1"})
+
+        (insert wiza-limit-table WIZA_LIMIT_VALUE {"limit": 50.0001})
     )
 
     (defun insertValuesUpgrade ()
@@ -2079,7 +2088,7 @@
             (let (
                     (current-level (calculate-level idnft))
                     (tournament-open (get-value TOURNAMENT_OPEN))
-                    (wiza-cost (round (* (get-wiza-value) 1.4) 2))
+                    (wiza-cost (round (* (get-wiza-value) 0.9) 2))
                 )
                 (enforce (= tournament-open "1") "You can't buy vial now")
                 (with-default-read potions-table key
@@ -2895,7 +2904,7 @@
     (defun update-nickname (id:string address:string nickname:string m:module{wiza1-interface-v4})
         (enforce (= (format "{}" [m]) "free.wiza") "not allowed, security reason")
         (let (
-                (wiza-cost (round (* (get-wiza-value) 0.6) 2))
+                (wiza-cost (round (* (get-wiza-value) 0.3) 2))
             )
             (with-capability (OWNER address id)
                 (update nfts id {
@@ -2981,6 +2990,12 @@
         )
     )
 
+    (defun set-wiza-limit (limit:decimal)
+        (with-capability (ADMIN)
+            (update wiza-limit-table WIZA_LIMIT_VALUE {"limit": limit})
+        )
+    )
+
     (defun add-xp-to-wallet (account:string newxp:integer)
         (require-capability (PRIVATE))
         (with-default-read wallet-xp account
@@ -2995,16 +3010,21 @@
     ;;;;;; NON STATE MODIFYING HELPER FUNCTIONS ;;;;;;;;;
 
     (defun get-wiza-value ()
-        50.0001
-        ; (let (
-        ;         (wiza-value (free.wiz-dexinfo.get-wiza-value))
-        ;     )
-        ;     (if
-        ;         (> wiza-value 50.0)
-        ;         50.0001
-        ;         wiza-value
-        ;     )
-        ; )
+        ;50.0001 ;(wiza-value (free.wiz-dexinfo.get-wiza-value))
+        (let (
+                (wiza-value 50.233)
+                (wiza-limit (get-wiza-limit))
+            )
+            (if
+                (> wiza-value wiza-limit)
+                wiza-limit
+                wiza-value
+            )
+        )
+    )
+
+    (defun get-wiza-limit()
+        (at "limit" (read wiza-limit-table WIZA_LIMIT_VALUE ['limit]))
     )
 
     (defun get-value-tournament(key:string)
@@ -3186,6 +3206,8 @@
     (create-table collection-offers-table)
 
     (create-table tournaments-sub-count)
+
+    (create-table wiza-limit-table)
 
     (initialize)
     (insertValuesUpgrade)
