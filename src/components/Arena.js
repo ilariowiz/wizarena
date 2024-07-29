@@ -33,7 +33,7 @@ const cup_bronze = require('../assets/cup_bronze.png')
 */
 const medal = require('../assets/medal.png')
 
-const MAX_WIZARDS_PER_WALLET = 20
+const MAX_WIZARDS_PER_WALLET = 24
 
 
 class Arena extends Component {
