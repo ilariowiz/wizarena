@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import Media from 'react-media';
+import moment from 'moment'
 import DotLoader from 'react-spinners/DotLoader';
 import { doc, getDoc } from "firebase/firestore";
 import { firebasedb } from './Firebase';
@@ -82,6 +83,8 @@ class FightsReplay extends Component {
 
 		const docSnap = await getDoc(docRef)
 		const data = docSnap.data()
+
+        //console.log(data);
 
         this.preloadFight(data)
     }
@@ -202,6 +205,19 @@ class FightsReplay extends Component {
         return `${type} ${item.name}`
 	}
 
+    getFightDate() {
+        const { fightInfo } = this.state
+
+        let date;
+
+        if (fightInfo && fightInfo.timestamp) {
+            date = moment(fightInfo.timestamp.seconds * 1000)
+            date = date.format("dddd, MMMM Do YYYY, h:mm:ss a")
+            console.log(date);
+        }
+
+        return date
+    }
 
     renderBoxHp(width, item, initialHp, currentHp, level, index, isMobile, rgbBackgroundColor) {
         const { mainTextColor, isDarkmode, mainBackgroundColor } = this.props
@@ -526,6 +542,18 @@ class FightsReplay extends Component {
                     }
 
                 </div>
+
+                {
+                    fightInfo.timestamp ?
+                    <div style={{ justifyContent: 'flex-end' }}>
+                        <div style={Object.assign({}, styles.boxDate, { backgroundColor: `rgba(${rgbBackgroundColor[0]}, ${rgbBackgroundColor[1]}, ${rgbBackgroundColor[2]}, 0.85)`, borderColor: mainTextColor })}>
+                            <p style={{ fontSize: 14, color: mainTextColor }}>
+                                Fight date: {this.getFightDate()}
+                            </p>
+                        </div>
+                    </div>
+                    : undefined
+                }
             </div>
         )
     }
@@ -622,6 +650,18 @@ const styles = {
         height: 40,
         borderRadius: 4,
         backgroundColor: CTA_COLOR,
+    },
+    boxDate: {
+        position: 'relative',
+        minHeight: 15,
+        borderWidth: 1,
+        borderStyle: 'solid',
+        borderRadius: 4,
+        padding: 5,
+        overflowY: 'scroll',
+        overflowX: 'hidden',
+        width: "fit-content",
+        marginTop: 10
     }
 }
 
