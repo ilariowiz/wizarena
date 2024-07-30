@@ -500,7 +500,7 @@ class Shop extends Component {
             nicknameToSet: nickname
 		})
 
-        const amount = round(this.state.wizaValue * 0.6, 2)
+        const amount = round(this.state.wizaValue * 0.3, 2)
 
         this.props.buyNickname(chainId, gasPrice, netId, account, wizard.id, nickname, amount)
     }
@@ -1395,7 +1395,7 @@ class Shop extends Component {
         }
 
         let bonus;
-        let costo = round(wizaValue * 1.4, 2);
+        let costo = round(wizaValue * 0.9, 2);
 
         let img;
         if (key === "hp") {
@@ -1519,7 +1519,7 @@ class Shop extends Component {
                     $WIZA
                 </p>
                 <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 20 }} className="text-bold">
-                    {round(wizaValue * 0.6, 2)}
+                    {round(wizaValue * 0.3, 2)}
                 </p>
 
                 <button
@@ -2150,15 +2150,17 @@ class Shop extends Component {
                                 {wizaBalance || 0.0}
                             </p>
 
-                            <button
-    							className="btnH"
-    							style={styles.btnBuyWiza}
-    							onClick={() => this.setState({ showModalBuy: true })}
-    						>
+                            <a
+                                href={`https://www.kdswap.exchange/pools/kda/wiza`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className='btnH'
+                                style={styles.btnBuyWiza}
+                            >
     							<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
     								Buy $WIZA
     							</p>
-    						</button>
+    						</a>
 
                             <div style={{ alignItems: 'center', marginBottom: 20 }}>
                                 <p style={{ fontSize: 17, color: mainTextColor, marginRight: 10 }}>
@@ -2703,6 +2705,9 @@ const styles = {
         borderRadius: 4,
         backgroundColor: CTA_COLOR,
 		marginBottom: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        display: 'flex'
     },
     btnSwap: {
         paddingLeft: 10,
