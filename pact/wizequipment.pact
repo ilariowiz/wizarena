@@ -80,6 +80,16 @@
       @event true
   )
 
+  (defcap EQUIPMENT_LIST (id:string price:decimal)
+      @doc "Emitted event when an Equipment is listed"
+      @event true
+  )
+
+  (defcap EQUIPMENT_DELIST (id:string)
+      @doc "Emitted event when an Equipment is delisted"
+      @event true
+  )
+
   (defcap MAKE_ITEM_OFFER (itemtype:string from:string amount:decimal duration:integer)
       @event true
   )
@@ -441,6 +451,7 @@
       )
       (with-capability (OWNER sender id)
           (update equipment id {"listed": true, "price": price})
+          (emit-event (EQUIPMENT_LIST id price))
       )
   )
 
@@ -453,6 +464,7 @@
       )
       (with-capability (OWNER sender id)
           (update equipment id {"listed": false, "price": 0.0})
+          (emit-event (EQUIPMENT_DELIST id))
       )
   )
 
