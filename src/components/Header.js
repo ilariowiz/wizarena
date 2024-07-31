@@ -24,7 +24,8 @@ import {
 	removeInfo,
 	clearTransactionByPactCode,
 	loadAllNftsIds,
-	setVisualColors
+	setVisualColors,
+	getWizaKDAPool
 } from '../actions'
 import { TEXT_SECONDARY_COLOR, MAIN_NET_ID } from '../actions/types'
 import 'reactjs-popup/dist/index.css';
@@ -56,7 +57,8 @@ class Header extends Component {
 		this.state = {
 			showPanel: false,
 			showModalBuy: false,
-			showPopupMenu: false
+			showPopupMenu: false,
+			wizaReserve: undefined
 		}
 	}
 
@@ -78,6 +80,15 @@ class Header extends Component {
 		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
 		this.props.getCirculatingSupply(chainId, gasPrice, gasLimit, networkUrl)
+	}
+
+	getPairKdaWiza() {
+		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		this.props.getWizaKDAPool(chainId, gasPrice, gasLimit, networkUrl, (response) => {
+			//console.log(response);
+			this.setState({ wizaReserve: parseInt(response.leg1.reserve.decimal) })
+		})
 	}
 
 	getPct(numb) {
@@ -127,10 +138,15 @@ class Header extends Component {
     }
 
 	renderSlidePanel(boxW) {
-		const { showPanel } = this.state
+		const { showPanel, wizaReserve } = this.state
 		const { isMobile, circulatingSupply, totalMined, account, netId, isXWallet, isQRWalletConnect, mainTextColor, isDarkmode, mainBackgroundColor } = this.props
 
 		const panelWidth = isMobile ? "100%" : boxW * 60 / 100
+
+		let realCirculatingSupply;
+		if (circulatingSupply && wizaReserve) {
+			realCirculatingSupply = circulatingSupply - wizaReserve
+		}
 
 		return (
 			<div style={styles.panelShadow}>
@@ -293,17 +309,31 @@ class Header extends Component {
 							</p>
 						</div>
 
-						<div style={{ alignItems: 'center', marginBottom: 30 }}>
+						<div style={{ alignItems: 'center', marginBottom: 10 }}>
 							<p style={{ fontSize: 15, color: mainTextColor, marginRight: 15 }}>
 								$WIZA circulating
 							</p>
 
 							<p style={{ fontSize: 15, color: mainTextColor, marginRight: 10 }} className="text-medium">
-								{circulatingSupply ? circulatingSupply.toLocaleString() : '...'}
+								{realCirculatingSupply ? realCirculatingSupply.toLocaleString() : '...'}
 							</p>
 
 							<p style={{ fontSize: 13, color: '#707070' }}>
-								({this.getPct(circulatingSupply)})
+								({this.getPct(realCirculatingSupply)})
+							</p>
+						</div>
+
+						<div style={{ alignItems: 'center', marginBottom: 30 }}>
+							<p style={{ fontSize: 15, color: mainTextColor, marginRight: 15 }}>
+								$WIZA in Liquidity Pool
+							</p>
+
+							<p style={{ fontSize: 15, color: mainTextColor, marginRight: 10 }} className="text-medium">
+								{this.state.wizaReserve ? this.state.wizaReserve.toLocaleString() : '...'}
+							</p>
+
+							<p style={{ fontSize: 13, color: '#707070' }}>
+								({this.getPct(this.state.wizaReserve)})
 							</p>
 						</div>
 
@@ -632,6 +662,7 @@ class Header extends Component {
 							setTimeout(() => {
 								this.getMined()
 								this.getSupply()
+								this.getPairKdaWiza()
 							}, 1000)
 						}
 
@@ -1099,5 +1130,6 @@ export default connect(mapStateToProps, {
 	removeInfo,
 	clearTransactionByPactCode,
 	loadAllNftsIds,
-	setVisualColors
+	setVisualColors,
+	getWizaKDAPool
 })(Header);
