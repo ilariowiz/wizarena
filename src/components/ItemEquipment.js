@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import Media from 'react-media';
 import DotLoader from 'react-spinners/DotLoader';
 import toast, { Toaster } from 'react-hot-toast';
+import { getDocs, collection, doc, getDoc, query, where } from "firebase/firestore";
+import { firebasedb } from './Firebase';
 import Header from './Header'
 import HistoryItemEquipment from './common/HistoryItemEquipment'
 import ModalConnectionWidget from './common/ModalConnectionWidget'
@@ -106,33 +108,27 @@ class ItemEquipment extends Component {
 		})
     }
 
-    loadHistory(iditem) {
-		let url = `https://estats.chainweb.com/txs/events?search=wiz-equipment.EQUIPMENT_BUY&param=${iditem}&offset=0&limit=50`
-		//console.log(url);
-		fetch(url)
-  		.then(response => response.json())
-  		.then(data => {
-  			//console.log(data)
+    async loadHistory(iditem) {
+        const q = query(collection(firebasedb, "sales_equipment"), where("idnft", "==", iditem))
 
-			let filterData = []
-			if (data && data.length > 0) {
-				for (var i = 0; i < data.length; i++) {
-					let d = data[i]
+		const querySnapshot = await getDocs(q)
 
-					const id = d.params[0]
+		let nftH = []
 
-					if (id && id === iditem) {
-						filterData.push(d)
-					}
-				}
+		querySnapshot.forEach(doc => {
+
+			const data = doc.data()
+			const docExists = nftH.some(i => i.requestKey === data.requestKey)
+			if (!docExists) {
+				nftH.push(data)
 			}
-
-			this.setState({ itemHistory: filterData, loadingHistory: false })
-  		})
-		.catch(e => {
-			console.log(e)
-			this.setState({ loadHistory: false })
 		})
+
+		nftH.sort((a, b) => {
+			return new Date(b.blockTime) - new Date(a.blockTime)
+		})
+
+		this.setState({ itemHistory: nftH, loadingHistory: false })
 	}
 
     onlyNumbers(str) {
@@ -553,12 +549,13 @@ class ItemEquipment extends Component {
 
 		return (
 			<HistoryItemEquipment
-				item={item}
-				index={index}
-				nftH={itemHistory}
-				key={index}
-				isMobile={isMobile}
-			/>
+                item={item}
+                index={index}
+                nftH={itemHistory}
+                key={index}
+                isMobile={isMobile}
+                type={item.type || 'SALE'}
+            />
 		)
 	}
 

@@ -6,11 +6,9 @@ import { TEST_NET_ID, CTA_COLOR } from '../../actions/types'
 
 class HistoryItemEquipment extends Component {
 	render() {
-		const { item, index, nftH, netId, isMobile, isAll, mainTextColor } = this.props
+		const { item, index, nftH, netId, isMobile, type, mainTextColor } = this.props
 
 		let removeBorder = index + 1 === nftH.length
-
-		//console.log(item);
 
 		let url = ''
 		if (netId === TEST_NET_ID) {
@@ -23,49 +21,59 @@ class HistoryItemEquipment extends Component {
 
 		let styleData = item.requestKey ? styles.dataRequest : styles.dataNonRequest
 
-		const params = item.params
-
-		if (params.length < 4) {
-			return <div />
-		}
-
 		return (
 			<div style={Object.assign({}, styles.boxSingleHistory, { borderBottomWidth: removeBorder ? 0 : 1 })} key={item.blockHash}>
 
-				{
-					isAll ?
-					<a
-						href={`${window.location.protocol}//${window.location.host}/item/${params[0]}`}
-						style={{ marginLeft: 20, flex: 0.6, display: 'flex', alignItems: 'flex-start', cursor: 'pointer' }}
-						onClick={(e) => {
-							e.preventDefault()
-							this.props.history.push(`./item/${params[0]}`)
-						}}
-					>
-						<p style={{ fontSize: 17, color: CTA_COLOR }}>
-							#{params[0]}
-						</p>
-					</a>
-					: null
-				}
-
-				<p style={{ fontSize: 16, color: mainTextColor, flex: 0.6, marginLeft: isAll ? 0 : 20 }} className="text-medium">
-					WIZA {params[3]}
+				<p style={{ fontSize: 15, color: mainTextColor, width: '15%', marginLeft: 20 }}>
+					{type}
 				</p>
 
 				{
-					!isMobile &&
-					<p style={{ fontSize: 13, color: mainTextColor, flex: 1 }}>
-						From {params[2].slice(0, 15)}...
+					item.amount ?
+					<p style={{ fontSize: 16, color: mainTextColor, width: '15%' }}>
+						WIZA {item.amount}
+					</p>
+					:
+					<p style={{ fontSize: 16, color: mainTextColor, width: '15%' }}>
+
 					</p>
 				}
 
-				<p style={{ fontSize: 13, color: mainTextColor, flex: 1 }}>
-					To {params[1].slice(0, 15)}...
-				</p>
+				{
+					item.owner ?
+					<p style={{ fontSize: 14, color: mainTextColor, width: '24%' }}>
+						Owner {item.owner.slice(0, 10)}...
+					</p>
+					:
+					undefined
+				}
+
+
+				{
+					!isMobile && item.from &&
+					<p style={{ fontSize: 14, color: mainTextColor, width: '24%' }}>
+						From {item.from.slice(0, 10)}...
+					</p>
+				}
+
+				{
+					item.to ?
+					<p style={{ fontSize: 14, color: mainTextColor, width: '24%' }}>
+						To {item.to.slice(0, 10)}...
+					</p>
+					:
+					undefined
+				}
+
+				{
+					!item.to && !isMobile &&
+					<p style={{ fontSize: 14, color: mainTextColor, width: '24%' }}>
+
+					</p>
+				}
 
 				<p
-					style={Object.assign({}, styleData, { color: item.requestKey ? CTA_COLOR : mainTextColor })}
+					style={styleData}
 					onClick={() => {
 						if (item.requestKey) {
 							window.open(url, "_blank")
@@ -89,19 +97,22 @@ const styles = {
 		borderTopWidth: 0,
 		borderLeftWidth: 0,
 		borderRightWidth: 0,
-		borderColor: '#d7d7d7',
+		borderColor: '#ededed',
 		borderStyle: 'solid',
-		height: 50
+		height: 50,
+		width: '100%'
 	},
 	dataRequest: {
 		fontSize: 16,
-		flex: 0.6,
+		color: CTA_COLOR,
+		width: '22%',
 		cursor: 'pointer',
 		textAlign: 'right'
 	},
 	dataNonRequest: {
 		fontSize: 15,
-		flex: 0.6,
+		color: 'white',
+		width: '22%',
 		textAlign: 'right'
 	}
 }
