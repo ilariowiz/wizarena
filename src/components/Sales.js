@@ -10,9 +10,6 @@ import moment from 'moment'
 import getBoxWidth from './common/GetBoxW'
 import HistoryItem from './common/HistoryItem'
 import { TEXT_SECONDARY_COLOR } from '../actions/types'
-import {
-    setSales
-} from '../actions'
 
 
 class Sales extends Component {
@@ -283,11 +280,8 @@ const styles = {
 
 const mapStateToProps = (state) => {
     const { mainTextColor, mainBackgroundColor } = state.mainReducer
-    const { sales, lastTimeUpdateSales } = state.salesReducer
 
-    return { sales, lastTimeUpdateSales, mainTextColor, mainBackgroundColor }
+    return { mainTextColor, mainBackgroundColor }
 }
 
-export default connect(mapStateToProps, {
-    setSales
-})(Sales)
+export default connect(mapStateToProps)(Sales)

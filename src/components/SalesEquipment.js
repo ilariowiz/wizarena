@@ -1,90 +1,155 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { getDocs, collection, query, where, orderBy } from "firebase/firestore";
+import { firebasedb } from './Firebase';
+import { Chart } from "react-google-charts";
 import Media from 'react-media';
 import Header from './Header'
 import DotLoader from 'react-spinners/DotLoader';
 import moment from 'moment'
-import HistoryItemEquipment from './common/HistoryItemEquipment'
 import getBoxWidth from './common/GetBoxW'
-import {
-    setSalesEquipment
-} from '../actions'
+import HistoryItemEquipmentSale from './common/HistoryItemEquipmentSale'
+import { TEXT_SECONDARY_COLOR } from '../actions/types'
 
 
-class Sales extends Component {
+class SalesEquipment extends Component {
     constructor(props) {
         super(props)
 
         this.state = {
             loading: true,
-            error: ""
+            error: "",
+            allSales: [],
+            dataSales: [],
+            selectedSales: []
         }
     }
 
     componentDidMount() {
-        const { lastTimeUpdateSalesEquipment } = this.props
+		document.title = "Sales Equipment - Wizards Arena"
 
-		document.title = "Sales - Wizards Arena"
-
-        let diff = undefined
-        if (lastTimeUpdateSalesEquipment) {
-            diff = moment().diff(lastTimeUpdateSalesEquipment, 'minutes')
-        }
-
-        //console.log(lastTimeUpdateSales, diff);
-
-        if (!lastTimeUpdateSalesEquipment || (diff && diff > 10)) {
-            this.loadSales()
-        }
-        else {
-            this.setState({ loading: false })
-        }
-
+        this.loadSales()
 	}
 
-    loadSales() {
-		let url = 'https://estats.chainweb.com/txs/events?search=wiz-equipment.EQUIPMENT_BUY&limit=50'
+    async loadSales(next) {
 
-		//console.log(url);
-		fetch(url)
-  		.then(response => response.json())
-  		.then(data => {
-  			//console.log(data)
-            this.setState({ loading: false })
-            this.props.setSalesEquipment(data)
-  		})
-		.catch(e => {
-			console.log(e)
-			this.setState({ loading: false, error: "Ops... something goes wrong!" })
+        let days = 28
+        if (window.innerWidth < 700) {
+            days = 21
+        }
+
+        const newDate = moment().subtract(days, 'days').format()
+
+        //console.log(newDate);
+
+        const q = query(collection(firebasedb, "sales_equipment"), where('blockTime', '>', newDate), orderBy("blockTime", "desc"))
+
+		const querySnapshot = await getDocs(q)
+
+        let data = [["Date", "Sales", { role: 'style'}]]
+		let nftH = []
+        let dateObj = {}
+
+		querySnapshot.forEach(doc => {
+            const d = doc.data()
+
+            if (!d.type) {
+                const date = moment(d.blockTime).format("DD-MM")
+
+                if (dateObj[date]) {
+                    dateObj[date]['amount'] += 1
+                }
+                else {
+                    dateObj[date] = { amount: 1 }
+                }
+
+                const saleExists = nftH.some(i => i.requestKey === d.requestKey)
+
+                if (!saleExists) {
+                    nftH.push(d)
+                }
+            }
 		})
+
+        //console.log(dateObj);
+
+        let temp = []
+
+        Object.keys(dateObj).map(key => {
+            temp.push([key, dateObj[key]['amount'], TEXT_SECONDARY_COLOR])
+        })
+
+        temp = temp.reverse()
+
+        //console.log(temp);
+
+        let sales = {}
+
+        for (var i = 0; i < nftH.length; i++) {
+            let sale = nftH[i]
+            const date = moment(sale.blockTime).format("DD-MM")
+
+            if (sales[date]) {
+                sales[date].push(sale)
+            }
+            else {
+                sales[date] = [sale]
+            }
+        }
+
+        data.push(...temp)
+
+        this.chartEvents = [
+            {
+                eventName: 'select',
+                callback: ({ chartWrapper }) => {
+                    const chart = chartWrapper.getChart()
+                    const selection = chart.getSelection()
+                    if (selection.length === 1) {
+                        const [selectedItem] = selection
+
+                        const { row } = selectedItem
+
+                        const rowInfo = data[row+1]
+
+                        const sales = this.state.allSales[rowInfo[0]]
+
+                        this.setState({ selectedSales: sales })
+                    }
+                }
+            }
+        ]
+
+        this.setState({ loading: false, allSales: sales, dataSales: data })
 	}
 
     renderSale(item, index, isMobile) {
-        const { salesEquipment } = this.props
+        const { selectedSales } = this.state
 
+        //console.log(item, selectedSales);
         return (
-			<HistoryItemEquipment
+			<HistoryItemEquipmentSale
 				item={item}
 				index={index}
-				nftH={salesEquipment}
+				nftH={selectedSales}
 				key={index}
 				isMobile={isMobile}
-                isAll={true}
                 history={this.props.history}
 			/>
 		)
     }
 
     renderBody(isMobile) {
-        const { loading, error } = this.state
-        const { salesEquipment, mainTextColor } = this.props
+        const { loading, error, dataSales, selectedSales } = this.state
+        const { mainTextColor, mainBackgroundColor } = this.props
 
         const { boxW, padding } = getBoxWidth(isMobile)
 
         return (
-            <div style={{ flexDirection: 'column', textAlign: 'center', width: boxW, padding, overflowY: 'auto', overflowX: 'hidden' }}>
+            <div style={{ flexDirection: 'column', textAlign: 'center', width: boxW, padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
+
                 <p style={{ color: mainTextColor, fontSize: 24, marginBottom: 20 }} className="text-medium">
-                    Sales
+                    Sales Equipments
                 </p>
 
                 {
@@ -95,11 +160,41 @@ class Sales extends Component {
 					: null
 				}
 
-                <div style={{ width: '100%', flexDirection: 'column' }}>
-                    {salesEquipment && salesEquipment.map((item, index) => {
-                        return this.renderSale(item, index, isMobile)
-                    })}
-                </div>
+                {
+                    dataSales.length > 0 ?
+                    <Chart
+                        chartType='ColumnChart'
+                        width={boxW}
+                        height={400}
+                        data={dataSales}
+                        options={{
+                            backgroundColor: mainBackgroundColor,
+                            hAxis: {
+                                textStyle:{ color: mainTextColor, fontSize: 13, fontName: "FigtreeRegular"},
+                            },
+                            vAxis: {
+                                textStyle:{ color: mainTextColor, fontSize: 14, fontName: "FigtreeRegular"}
+                            },
+                            legend: { position: 'none' }
+                        }}
+                        chartEvents={this.chartEvents}
+                        chartArea={{
+                            width: boxW,
+                            height: 400,
+                            top: 16,
+                            bottom: 16,
+                            left: 16,
+                            right: 16
+                        }}
+                    />
+                    : null
+                }
+
+                <div style={{ width: '100%', flexDirection: 'column', marginBottom: 40 }}>
+                   {selectedSales.map((item, index) => {
+                       return this.renderSale(item, index, isMobile)
+                   })}
+               </div>
 
                 {
                     error &&
@@ -167,11 +262,8 @@ const styles = {
 
 const mapStateToProps = (state) => {
     const { mainTextColor, mainBackgroundColor } = state.mainReducer
-    const { salesEquipment, lastTimeUpdateSalesEquipment } = state.salesReducer
 
-    return { salesEquipment, lastTimeUpdateSalesEquipment, mainTextColor, mainBackgroundColor }
+    return { mainTextColor, mainBackgroundColor }
 }
 
-export default connect(mapStateToProps, {
-    setSalesEquipment
-})(Sales)
+export default connect(mapStateToProps)(SalesEquipment)
