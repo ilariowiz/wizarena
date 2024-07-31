@@ -883,23 +883,24 @@ class Tournament extends Component {
 
                 <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
-                {/*<p style={{ fontSize: 16, color: mainTextColor, marginBottom }}>
-                    Prize: <span className="text-bold">4 medals 1000 WIZA</span>
-                </p>*/}
-
                 {this.renderPrizeInfo(marginBottom, mainTextColor, montepremi, "$WIZA", tournamentElite.extraPrize)}
 
                 {this.renderSubsInfo(marginBottom, mainTextColor, tournamentEliteSubs, avgLevelElite)}
-
-                {/*<div style={{ height: 40, width: '100%', backgroundColor: 'transparent', marginBottom }}></div>*/}
 
                 <p style={{ fontSize: 14, color: mainTextColor, marginBottom, height: 24 }}>
                     Wizard participation reward: {tournamentElite.reward}
                 </p>
 
-                <p style={{ fontSize: 14, color: mainTextColor }} className="text-bold">
-                    Rings and Pendants are not allowed
-                </p>
+                {
+                    tournamentElite.levelCap === 160 ?
+                    <p style={{ fontSize: 14, color: mainTextColor }} className="text-bold">
+                        Rings, Pendants, Spell upgrades and Aura are not counted
+                    </p>
+                    :
+                    <p style={{ fontSize: 14, color: mainTextColor }} className="text-bold">
+                        Rings and Pendants are not counted
+                    </p>
+                }
 
                 <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
