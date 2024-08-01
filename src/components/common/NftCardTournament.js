@@ -21,7 +21,7 @@ const vial_empty = require('../../assets/vial_empty.png')
 
 class NftCardTournament extends Component {
 	render() {
-		const { item, history, width, account, tournamentSeason, mainTextColor, isDarkmode, rankings, potion, ring, pendant } = this.props
+		const { item, history, width, account, tournamentSeason, mainTextColor, isDarkmode, rankings, potion, ring, pendant, tournamentInfo } = this.props
 
 		//console.log(tournamentSeason);
 
@@ -210,6 +210,19 @@ class NftCardTournament extends Component {
 						</div>
 
 					</div>
+
+					{
+						item.level > tournamentInfo.levelCap &&
+						<div style={{ alignItems: 'center', justifyContent: 'space-between', width: width-20, marginBottom: 5 }}>
+							<p style={{ fontSize: 14, color: 'red' }}>
+								Disqualified
+							</p>
+
+							<p style={{ fontSize: 13, color: 'red' }}>
+								Level Cap {tournamentInfo.levelCap}
+							</p>
+						</div>
+					}
 
 				</div>
 			</a>

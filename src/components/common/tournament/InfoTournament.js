@@ -45,6 +45,10 @@ const renderInfoTournament = (tournament, montepremi, buyin, subscribed, mainTex
                 Registered Wizards <span className="text-bold">{subscribed ? subscribed.length : '...'}</span>
             </p>
 
+            <p style={{ fontSize: 17, color: mainTextColor, marginBottom: 10 }}>
+                Tournament Level Cap <span className="text-bold">{tournament.levelCap}</span>
+            </p>
+
             <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
             {

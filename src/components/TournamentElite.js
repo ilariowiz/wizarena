@@ -286,6 +286,7 @@ class TournamentElite extends Component {
                     tournamentName={tournament.name.split("_")[0]}
                     tournamentSeason={tournament.season}
                     rankings={rankings}
+                    tournamentInfo={tournament}
                 />
             </div>
         )
