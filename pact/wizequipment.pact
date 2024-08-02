@@ -28,6 +28,8 @@
   (defconst WIZ_EQUIPMENT_FUSED:string "wiz-equipment-fused" "account holding fused rings")
   (defconst FORGED_ID "forged-id")
 
+  (defconst WIZA_LIMIT_VALUE "wiza_limit_value")
+
   ; Capabilities
   ; --------------------------------------------------------------------------
 
@@ -194,6 +196,10 @@
       bonus:integer
   )
 
+  (defschema wiza-limit-schema
+      limit:decimal
+  )
+
   (deftable equipment:{equip-main-schema})
   (deftable creation:{creation-schema})
   (deftable equipped:{equipped-schema})
@@ -212,6 +218,8 @@
 
   (deftable price-table:{price-schema})
   (deftable aura-table:{aura-schema})
+
+  (deftable wiza-limit-table:{wiza-limit-schema})
 
   ; Can only happen once
   ; --------------------------------------------------------------------------
@@ -234,6 +242,8 @@
       (create-account WIZ_EQUIPMENT_FUSED (create-BANK-guard))
 
       (insert price-table PRICE_KEY {"price": 5.0})
+
+      (insert wiza-limit-table WIZA_LIMIT_VALUE {"limit": 50.0001})
   )
 
   ; --------------------------------------------------------------------------
@@ -1201,9 +1211,28 @@
       )
   )
 
-  (defun get-wiza-value ()
-      50.0001
-      ;(free.wiz-dexinfo.get-wiza-value)
+  (defun set-wiza-limit (limit:decimal)
+        (with-capability (ADMIN)
+            (update wiza-limit-table WIZA_LIMIT_VALUE {"limit": limit})
+        )
+    )
+
+(defun get-wiza-value ()
+    ;50.0001 ;(wiza-value (free.wiz-dexinfo.get-wiza-value))
+    (let (
+            (wiza-value 50.233)
+            (wiza-limit (get-wiza-limit))
+        )
+        (if
+            (> wiza-value wiza-limit)
+            wiza-limit
+            wiza-value
+        )
+    )
+)
+
+(defun get-wiza-limit()
+      (at "limit" (read wiza-limit-table WIZA_LIMIT_VALUE ['limit]))
   )
 
   (defun get-wiza-mint-price ()
@@ -1245,6 +1274,8 @@
 
     (create-table price-table)
     (create-table aura-table)
+
+    (create-table wiza-limit-table)
 
     (initialize)
 
