@@ -74,6 +74,7 @@ class ModalTransaction extends Component {
             const ringToEquipName = info.ringToEquipName || ""
             const nicknameToSet = info.nicknameToSet || ""
 
+			/*
 			if (typeModal === "upgrade" && nameNft && statToUpgrade && howMuchIncrement) {
                 const msg = `${nameNft} upgrade ${statToUpgrade.toUpperCase()} by ${howMuchIncrement}`
                 sendMessageUpgrade(idNft, msg)
@@ -137,6 +138,7 @@ class ModalTransaction extends Component {
 			else if (typeModal === "jointournament") {
 				sendMessageFlashTSub(makeOfferValues)
 			}
+			*/
 
 			this.props.addTxKeyToInfo(txState.requestKey)
 			this.props.pollForTransaction(this.props, txState.requestKey)
