@@ -1,5 +1,4 @@
 import Pact from "pact-lang-api";
-import { sendMessage, sendMessageSales, sendMessageListed, sendMessageDelisted, sendMessageUpdateNickname, sendMessageUpgrade, sendMessageListedEquipment, sendMessageDelistedEquipment, sendMessageSalesEquipment, sendMessageOfferItem, sendMessageDeclineOffer, sendMessageChallenge } from '../components/common/WebhookDiscord'
 import { updateTransactionState } from './index'
 import {
     UPDATE_INFO_TRANSACTION_MODAL,
@@ -56,17 +55,12 @@ export const pollForTransaction = (props, requestKey) => {
 
         const txState = transactionsState && transactionsState.length > 0 ? transactionsState.find(i => i.requestKey === requestKey) : undefined
 
-        //const requestKey = txState ? txState.requestKey : ""
-
-        //console.log(requestKey, txState);
-
         let pollRes = null
 
         try {
             pollRes = await Pact.fetch.listen(
                 { listen: requestKey },
                 "https://api.chainweb.com/chainweb/0.0/mainnet01/chain/1/pact"
-                //`https://${NODE_URL}/chainweb/0.0/mainnet01/chain/1/pact`
             )
         }
         catch (e) {
@@ -87,7 +81,5 @@ export const pollForTransaction = (props, requestKey) => {
         else {
             dispatch(updateTransactionState("error", `Cannot complete transaction\n${requestKey}`))
         }
-
-        //dispatch({ type: 'fake' })
     }
 }
