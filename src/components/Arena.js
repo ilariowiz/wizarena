@@ -208,7 +208,7 @@ class Arena extends Component {
 				//console.log(response);
 				setTimeout(() => {
                     this.getSubscribers()
-                }, 1500)
+                }, 1000)
 			})
 		}
         else {
@@ -520,7 +520,7 @@ class Arena extends Component {
             this.setState({ opponentId: response.opponentId }, () => {
                 setTimeout(() => {
                     this.setState({ textLoadingFight: "Fight done!", fightId: response.success })
-                }, 1500)
+                }, 1000)
             })
         }
     }
@@ -898,12 +898,22 @@ class Arena extends Component {
                     />
                 </a>
 
-                <p style={{ fontSize: 18, color: mainTextColor, width: 80 }}>
-                    #{item.idnft}
-                </p>
-                <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'right' }}>
-                    {item.ranking} pts.
-                </p>
+                <div style={{ flexDirection: 'column', flex: 1 }}>
+
+                    <div style={{ alignItems: 'center', justifyContent: 'space-between' }}>
+                        <p style={{ fontSize: 18, color: mainTextColor, width: 80 }}>
+                            #{item.idnft}
+                        </p>
+
+                        <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'right' }}>
+                            {item.ranking} pts.
+                        </p>
+                    </div>
+
+                    <p style={{ fontSize: 12, color: mainTextColor, textAlign: 'right' }}>
+                        fights received {item.fightsGet}
+                    </p>
+                </div>
             </div>
         )
     }
