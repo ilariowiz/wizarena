@@ -318,6 +318,7 @@ class Conquest extends Component {
                     if (onlySubsIds.includes(item.id)) {
                         const data = await this.getElosDataSingleNft(item.id)
                         item['fightsDone'] = data ? data.fightsDone : 0
+                        item['synced'] = data ? true : false
 
                         //console.log(data);
 
@@ -885,10 +886,14 @@ class Conquest extends Component {
                     !loadingYourChampion ?
                     <button
                         style={Object.assign({}, styles.btnSubscribe, { width: 120, borderTopLeftRadius: 0, borderTopRightRadius: 0 })}
-                        onClick={() => this.loadYourChampion(item)}
+                        onClick={() => {
+                            if (item.synced) {
+                                this.loadYourChampion(item)
+                            }
+                        }}
                     >
                         <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
-                            Select
+                            {item.synced ? 'Select' : 'Synchronizing...'}
                         </p>
                     </button>
                     :
