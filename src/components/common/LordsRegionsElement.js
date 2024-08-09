@@ -1,16 +1,16 @@
 const regionPerElement = {
-    "Fire": ["Sitenor", "Vedrenon"],
-    "Earth": ["Sitenor", "Druggorial"],
-    "Undead": ["Sitenor", "Druggorial"],
-    "Dark": ["Druggorial", "Ulidalar", "Wastiaxus"],
-    "Sun": ["Vedrenon", "Oceorah"],
-    "Wind": ["Ulidalar", "Bremonon"],
-    "Water": ["Oceorah", "Opherus", "Bremonon"],
-    "Spirit": ["Opherus", "Wastiaxus", "Ulanara"],
-    "Psycho": ["Vedrenon", "Ulanara"],
-    "Thunder": ["Ulidalar", "Ulanara"],
-    "Acid": ["Opherus", "Wastiaxus"],
-    "Ice": ["Oceorah", "Bremonon"]
+    "Fire": ["Sitenor", "Ulanara"],
+    "Earth": ["Druggorial", "Ulanara"],
+    "Undead": ["Ulidalar", "Wastiaxus"],
+    "Dark": ["Druggorial", "Opherus"],
+    "Sun": ["Sitenor", "Vedrenon"],
+    "Wind": ["Sitenor", "Vedrenon"],
+    "Water": ["Oceorah", "Bremonon"],
+    "Spirit": ["Oceorah", "Opherus"],
+    "Psycho": ["Vedrenon", "Opherus", "Wastiaxus"],
+    "Thunder": ["Oceorah", "Ulidalar", "Bremonon"],
+    "Acid": ["Druggorial", "Ulidalar", "Wastiaxus"],
+    "Ice": ["Ulanara", "Bremonon"]
 }
 
 
