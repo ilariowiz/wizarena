@@ -317,7 +317,7 @@ class Conquest extends Component {
 
                     if (onlySubsIds.includes(item.id)) {
                         const data = await this.getElosDataSingleNft(item.id)
-                        item['fightsDone'] = data.fightsDone
+                        item['fightsDone'] = data ? data.fightsDone : 0
 
                         //console.log(data);
 
