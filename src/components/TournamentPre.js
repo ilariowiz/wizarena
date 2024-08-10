@@ -235,12 +235,11 @@ class Tournament extends Component {
     loadSubs(tournament) {
         const { userMintedNfts } = this.props
 
-        const levelCap = tournament.levelCap
+        //const levelCap = tournament.levelCap
+        //let yourPossibleSubs = userMintedNfts.filter(i => i.level <= levelCap)
+        //let yourSubs = this.setYourSub(yourPossibleSubs)
 
-        let yourPossibleSubs = userMintedNfts.filter(i => i.level <= levelCap)
-
-        let yourSubs = this.setYourSub(yourPossibleSubs)
-
+        let yourSubs = this.setYourSub(userMintedNfts)
         //console.log(yourSubs);
 
         this.setState({ yourSubs, showSubs: true, showProfileFights: false, tournamentSubs: tournament, loading: false }, () => {
@@ -1234,7 +1233,7 @@ class Tournament extends Component {
 	}
 
     renderBody(isMobile) {
-        const { tournament, tournamentWiza, tournamentElite, profileFights, error, showProfileFights, showSubs, yourSubs } = this.state
+        const { tournament, tournamentWiza, tournamentElite, profileFights, error, showProfileFights, showSubs, yourSubs, tournamentSubs } = this.state
         const { filtriProfileRanges, mainTextColor, mainBackgroundColor } = this.props
 
         let { boxW, modalW, padding } = getBoxWidth(isMobile)
@@ -1314,18 +1313,25 @@ class Tournament extends Component {
 
                 {
                     showSubs && yourSubs.length > 0 && yourSubs[1].length > 0 &&
-                    <div style={{ flexDirection: 'column', width: insideWidth }}>
+                    <div style={{ flexDirection: 'column', width: insideWidth }} id="filters">
                         <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginBottom: 15 }} />
 
-                        <p style={{ fontSize: 22, color: mainTextColor, marginTop: 10, marginBottom: 15, textAlign: 'center' }} className="text-medium">
+                        <p style={{ fontSize: 22, color: mainTextColor, marginTop: 10, marginBottom: 10, textAlign: 'center' }} className="text-medium">
                             Wizards not subscribed
+                        </p>
+
+                        <p style={{ fontSize: 18, color: mainTextColor, marginBottom: 5, textAlign: 'center' }} className="text-medium">
+                            Level Cap {tournamentSubs.levelCap}
+                        </p>
+                        <p style={{ fontSize: 15, color: 'red', marginBottom: 20, textAlign: 'center' }}>
+                            You can sub any wizard but if he exceeds the level cap he will only get the participation prize and he will not do any fights
                         </p>
                     </div>
                 }
 
                 {
                     showSubs && filtriProfileRanges &&
-                    <div style={{ flexWrap: 'wrap', width: insideWidth, alignItems: 'center', justifyContent: 'center', marginBottom: 5 }} id="filters">
+                    <div style={{ flexWrap: 'wrap', width: insideWidth, alignItems: 'center', justifyContent: 'center', marginBottom: 5 }}>
                         {this.renderBoxSearchStat("hp", "HP", filtriProfileRanges["hp"])}
                         {this.renderBoxSearchStat("defense", "Defense", filtriProfileRanges["defense"])}
                         {this.renderBoxSearchStat("attack", "Attack", filtriProfileRanges["attack"])}
