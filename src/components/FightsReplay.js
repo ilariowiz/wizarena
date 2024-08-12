@@ -11,6 +11,7 @@ import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import getName from './common/GetName'
+import getAuraForElement from '../assets/gifs/AuraForElement'
 import {
     setNetworkSettings,
     setNetworkUrl,
@@ -213,7 +214,7 @@ class FightsReplay extends Component {
         if (fightInfo && fightInfo.timestamp) {
             date = moment(fightInfo.timestamp.seconds * 1000)
             date = date.format("dddd, MMMM Do YYYY, h:mm:ss a")
-            console.log(date);
+            //console.log(date);
         }
 
         return date
@@ -221,6 +222,9 @@ class FightsReplay extends Component {
 
     renderBoxHp(width, item, initialHp, currentHp, level, index, isMobile, rgbBackgroundColor) {
         const { mainTextColor, isDarkmode, mainBackgroundColor } = this.props
+        const { fightInfo } = this.state
+
+        //console.log(item);
 
         const innerWidth = width - 40
 
@@ -230,10 +234,26 @@ class FightsReplay extends Component {
 
         let colorLevel = getColorTextBasedOnLevel(level, isDarkmode)
 
+        let atk = item.attack + item.spellSelected.atkBase
+        let dmg = item.damage + item.spellSelected.dmgBase
+
+        //se è arena e il livello è maggiore di 160 allora calcoliamo anche spell upgrades
+        if (fightInfo.region === "arena") {
+            if (level > 160) {
+                atk += item['upgrades-spell'].attack.int
+                dmg += item['upgrades-spell'].damage.int
+            }
+        }
+        //in tutti gli altri casi calcoliamo sempre spell-upgrades
+        else {
+            atk += item['upgrades-spell'].attack.int
+            dmg += item['upgrades-spell'].damage.int
+        }
+
         return (
             <div style={Object.assign({}, styles.boxHp, { width, backgroundColor: `rgba(${rgbBackgroundColor[0]}, ${rgbBackgroundColor[1]}, ${rgbBackgroundColor[2]}, 0.85)`, borderColor: mainTextColor })}>
 
-                <div style={{ justifyContent: 'space-between', alignItems: 'center', width: innerWidth, flexDirection: isMobile ? 'column' : 'row' }}>
+                <div style={{ justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', width: innerWidth, flexDirection: isMobile ? 'column' : 'row' }}>
 
                     <p style={{ fontSize: 15, color: TEXT_SECONDARY_COLOR }} className="text-bold">
                         {this.getFullName(item)}
@@ -254,17 +274,40 @@ class FightsReplay extends Component {
                 <div style={{ alignItems: 'center', flexDirection: 'row', width: innerWidth, justifyContent: 'flex-start', marginTop: 4 }}>
 
                     {
-                        item.ring && item.ring.url &&
-                        <img
-                            style={{ width: 32, height: 32, marginRight: 10 }}
-                            src={item.ring.url}
-                            alt={item.ring.name}
-                        />
+                        !isMobile &&
+                        <div style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
+                            {
+                                item.ring && item.ring.url &&
+                                <img
+                                    style={{ width: 28, height: 28, marginRight: 3 }}
+                                    src={item.ring.url}
+                                    alt={item.ring.name}
+                                />
+                            }
+
+                            {
+                                item.pendant && item.pendant.url && item.pendant.equipped &&
+                                <img
+                                    style={{ width: 28, height: 28, marginRight: 3 }}
+                                    src={item.pendant.url}
+                                    alt={item.pendant.name}
+                                />
+                            }
+
+                            {
+                                item.aura && item.aura.bonus.int > 0 &&
+                                <img
+                                    style={{ width: 24, height: 24, marginRight: 10 }}
+                                    src={getAuraForElement(item.element)}
+                                    alt="Aura"
+                                />
+                            }
+                        </div>
                     }
 
                     <div style={{ flexDirection: 'column', alignItems: 'flex-start' }}>
                         <p style={{ color: mainTextColor, fontSize: 12, marginBottom: 3 }}>
-                            hp {item.hp} - def {item.defense} - atk {item.attack + item.spellSelected.atkBase + item['upgrades-spell'].attack.int} - dmg {item.damage + item.spellSelected.dmgBase + item['upgrades-spell'].damage.int} - speed {item.speed}
+                            hp {item.hp} - def {item.defense} - atk {atk} - dmg {dmg} - speed {item.speed}
                         </p>
                         {
                             !isMobile &&
