@@ -237,6 +237,7 @@ class PvP extends Component {
                         const idnft = doc.id.replace(`${week}_#`, "")
                         data["id"] = idnft
                         data['fightsLeft'] = data.maxFights - (data.lose + data.win)
+                        data['synced'] = "true"
 
                         const extraInfo = userMintedNfts.find(i => i.id === idnft)
                         if (extraInfo) {
@@ -248,27 +249,33 @@ class PvP extends Component {
 					})
 				})
 			)
+            //console.log(yourSubscribers, yourSubs);
 
-            //yoursubs > 0 ma il be non ha ancora inviato i nuovi dati a firebase
-            if (yourSubscribers.length === 0) {
+            //yoursubs > yourSubscribers ma il be non ha ancora inviato i nuovi dati a firebase
+            if (yourSubscribers.length < yourSubs.length) {
+
                 yourSubs.map(i => {
 
-                    let data = {
-                        id: i.idnft,
-                        pvpweek: week,
-                        address: i.address,
-                        lose: 0,
-                        win: 0,
-                        maxFights: i.rounds.int,
-                        fightsLeft: i.rounds.int
-                    }
+                    const alreadyInSub = yourSubscribers.find(z => z.id === i.idnft)
+                    if (!alreadyInSub) {
+                        let data = {
+                            id: i.idnft,
+                            pvpweek: week,
+                            address: i.address,
+                            lose: 0,
+                            win: 0,
+                            maxFights: i.rounds.int,
+                            fightsLeft: i.rounds.int,
+                            synced: "false"
+                        }
 
-                    const extraInfo = userMintedNfts.find(y => y.id === i.idnft)
-                    if (extraInfo) {
-                        data = {...data, ...extraInfo}
-                    }
+                        const extraInfo = userMintedNfts.find(y => y.id === i.idnft)
+                        if (extraInfo) {
+                            data = {...data, ...extraInfo}
+                        }
 
-                    yourSubscribers.push(data)
+                        yourSubscribers.push(data)
+                    }
                 })
             }
         }
@@ -737,7 +744,7 @@ class PvP extends Component {
                                 className="btnH"
                                 style={styles.btnPlay}
                                 onClick={() => {
-                                    if (this.state.loading || this.startedFight) {
+                                    if (this.state.loading || this.startedFight || item.synced == "false") {
                                         return
                                     }
 
@@ -747,7 +754,7 @@ class PvP extends Component {
                                 }}
                             >
                                 <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
-                                    Fight
+                                    {item.synced == "true" ? 'Fight' : 'Synchronizing..'}
                                 </p>
                             </button>
                         }
