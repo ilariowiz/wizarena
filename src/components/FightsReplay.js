@@ -295,7 +295,7 @@ class FightsReplay extends Component {
                             }
 
                             {
-                                item.aura && item.aura.bonus.int > 0 &&
+                                item.aura && item.aura.bonus && item.aura.bonus.int > 0 &&
                                 <img
                                     style={{ width: 24, height: 24, marginRight: 10 }}
                                     src={getAuraForElement(item.element)}
