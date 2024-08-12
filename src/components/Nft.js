@@ -276,7 +276,13 @@ class Nft extends Component {
 			data['docId'] = doc.id
 
 			if (data.tournament) {
-				nftFights.push(data)
+
+				const alreadyExist = nftFights.find(i => i.tournament === data.tournament)
+
+				if (!alreadyExist) {
+					//console.log(alreadyExist);
+					nftFights.push(data)
+				}
 			}
 		})
 
