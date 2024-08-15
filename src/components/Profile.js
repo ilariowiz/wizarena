@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { connect } from 'react-redux'
 import moment from 'moment'
 import _ from 'lodash'
+import { collection, query, where, documentId, getDocs } from "firebase/firestore";
+import { firebasedb } from './Firebase';
 import { IoClose } from 'react-icons/io5'
 import Popup from 'reactjs-popup';
 import Media from 'react-media';
@@ -117,8 +119,11 @@ class Profile extends Component {
 			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (response) => {
 
 				//console.log(response);
-				this.setState({ loading: false, yourNfts: response })
-				this.loadOffersReceived()
+				this.setState({ loading: false, yourNfts: response }, () => {
+					this.loadOffersReceived()
+					this.loadMedals()
+				})
+
 			})
 		}
 	}
@@ -200,6 +205,36 @@ class Profile extends Component {
 			})
 		}
     }
+
+	async loadMedals() {
+		const { yourNfts } = this.state
+
+		const newNfts = Object.assign([], yourNfts)
+
+		const ids = yourNfts.map(i => i.id)
+
+        const parts = _.chunk(ids, 10)
+
+		let medals = []
+
+		for (var i = 0; i < parts.length; i++) {
+			const p = parts[i]
+			const q = query(collection(firebasedb, 'medals'), where(documentId(), 'in', p))
+
+			const querySnapshot = await getDocs(q)
+
+			querySnapshot.forEach(doc => {
+				//console.log(doc);
+				let d = doc.data()
+				//console.log(d, subscribed);
+				//console.log(d, doc.id);
+				let nft = newNfts.find(i => i.id === doc.id)
+				nft['medals'] = d
+			})
+		}
+
+		this.setState({ yourNfts: newNfts })
+	}
 
 	searchByNameEquip() {
 		const { searchText, equipment } = this.state

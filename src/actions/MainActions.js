@@ -571,7 +571,6 @@ export const loadBlockNftsSubscribed = (response, tournamentType, callbackSubscr
 				level: i.level.int,
 				element: i.element,
 				id: i.id,
-				medals: i.medals,
 				name: i.name,
 				nickname: i.nickname,
 				owner: i.owner
@@ -1283,6 +1282,7 @@ export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 			//console.log(response)
 
 			if (response) {
+
 				let onlyId = []
 				response.map(i => {
 					//console.log(i);

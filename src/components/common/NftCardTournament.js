@@ -25,9 +25,7 @@ class NftCardTournament extends Component {
 
 		//console.log(tournamentSeason);
 
-		let totalMedals = calcMedals(item, tournamentSeason)
-
-		//console.log(totalMedals);
+		let totalMedals = calcMedals(item, tournamentSeason, tournamentInfo.showLeague)
 
 		let isMine = false
 		if (account.account && account.account === item.owner) {
@@ -111,17 +109,22 @@ class NftCardTournament extends Component {
 							</p>
 						}
 
-						<div style={{ alignItems: 'center', justifyContent: 'flex-end', minHeight: 30 }}>
-							<IoMedalOutline
-								color={mainTextColor}
-								size={20}
-								style={{ marginRight: 8 }}
-							/>
+						{
+							totalMedals ?
+							<div style={{ alignItems: 'center', justifyContent: 'flex-end', minHeight: 30 }}>
+								<IoMedalOutline
+									color={mainTextColor}
+									size={20}
+									style={{ marginRight: 8 }}
+								/>
 
-							<p style={{ color: mainTextColor, fontSize: 16 }}>
-								{totalMedals}
-							</p>
-						</div>
+								<p style={{ color: mainTextColor, fontSize: 16 }}>
+									{totalMedals}
+								</p>
+							</div>
+							:
+							<div style={{ alignItems: 'center', justifyContent: 'flex-end', minHeight: 30, width: 38 }} />
+						}
 
 					</div>
 

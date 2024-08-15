@@ -1,8 +1,12 @@
-const calcMedals = (item, tournamentSeason) => {
+const calcMedals = (item, tournamentSeason, showLeague) => {
+
+    if (!item.medals) {
+        return 0
+    }
 
     let totalMedals = 0
 
-    if (tournamentSeason) {
+    if (tournamentSeason && showLeague) {
         let tournaments = []
 
         if (tournamentSeason === "s2") {

@@ -74,7 +74,8 @@ class Nft extends Component {
 			showModalTransfer: false,
 			kadenaPrice: 0,
 			loading: true,
-			loadingFights: [],
+			loadingFights: false,
+			loadingMedals: false,
 			traitsRank: undefined,
 			loadingHistory: true,
 			numbersOfMaxMedalsPerTournament: [],
@@ -199,12 +200,41 @@ class Nft extends Component {
 	loadExtraInfo(response) {
 		document.title = `${response.name} - Wizards Arena`
 
-		//console.log(response)
-		//console.log(response.medals);
+		if (response['medals']) {
+			delete response['medals']
+		}
+
+		this.setState({ nft: response, loading: false }, () => {
+
+			this.loadHistory(response.id)
+
+			this.loadOffers(response.id)
+
+			this.loadEquipment(response.id)
+
+			if (response.confirmBurn) {
+				this.loadInfoBurn(response.id)
+			}
+		})
+	}
+
+	async loadMedals() {
+		const { nft } = this.state
+
+		const docRef = doc(firebasedb, "medals", nft.id)
+
+		const docSnap = await getDoc(docRef)
+		const data = docSnap.data()
+
+		//console.log(data);
+
+		let newNft = Object.assign({}, nft)
+
+		newNft['medals'] = data
 
 		let newGroupedMedals = {"Farmers": [], "Weekly": [], "Apprentice": [], "Elite": [], "Chaos": []}
 
-		for (const [key, value] of Object.entries(response.medals)) {
+		for (const [key, value] of Object.entries(data)) {
 
 			const tNumber = parseInt(key.replace("t", ""))
 
@@ -229,11 +259,11 @@ class Nft extends Component {
 			}
 		}
 
-		response['groupedMedals'] = newGroupedMedals
+		newNft['groupedMedals'] = newGroupedMedals
 
 		//ordiniamo le medals in ordine di torneo
-		Object.keys(response.groupedMedals).map(mainKey => {
-			const values = response.groupedMedals[mainKey]
+		Object.keys(newNft.groupedMedals).map(mainKey => {
+			const values = newNft.groupedMedals[mainKey]
 
 			if (values.length > 0) {
 				values.sort((a, b) => {
@@ -243,20 +273,9 @@ class Nft extends Component {
 			}
 		})
 
-		//console.log(response.groupedMedals);
+		//console.log(newNft);
 
-		this.setState({ nft: response, loading: false }, () => {
-
-			this.loadHistory(response.id)
-
-			this.loadOffers(response.id)
-
-			this.loadEquipment(response.id)
-
-			if (response.confirmBurn) {
-				this.loadInfoBurn(response.id)
-			}
-		})
+		this.setState({ nft: newNft, loadingMedals: false })
 	}
 
 	async loadFights() {
@@ -527,25 +546,6 @@ class Nft extends Component {
 		const { nft } = this.state
 
 		let numbersOfMaxMedalsPerTournament = []
-
-		/*
-		const docSnap = await getDocs(collection(firebasedb, "history_tournament"))
-
-		let numbersOfMaxMedalsPerTournament = []
-
-		docSnap.forEach(doc => {
-			//console.log(doc.id, doc.data());
-
-			const obj = {
-				tournamentName: doc.id,
-				maxMedals: doc.data().maxMedals
-			}
-
-			numbersOfMaxMedalsPerTournament.push(obj)
-		})
-
-		//console.log(numbersOfMaxMedalsPerTournament);
-		*/
 
 		let dictWin = { win: 0, maxMedals: 0 }
 
@@ -1196,7 +1196,7 @@ class Nft extends Component {
 	}
 
 	renderSlidePanelMedals(boxW, isMobile) {
-		const { showMedals, nft } = this.state
+		const { showMedals, nft, loadingMedals } = this.state
 		const { mainTextColor, mainBackgroundColor } = this.props
 
 		const panelWidth = isMobile ? '90%' : "50%"
@@ -1232,6 +1232,13 @@ class Nft extends Component {
 						</div>
 
 					</div>
+
+					{
+						loadingMedals &&
+						<div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', marginTop: 30, marginBottom: 20 }}>
+							<DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
+						</div>
+					}
 
 					<div style={{ width: "80%", flexDirection: 'row', marginLeft: 30, flexWrap: 'wrap' }}>
 					{
@@ -1327,7 +1334,10 @@ class Nft extends Component {
 				<button
 					className="btnH"
 					style={Object.assign({}, styles.btnMedals, { width: btnW })}
-					onClick={() => this.setState({ showMedals: true })}
+					onClick={() => {
+						this.loadMedals()
+						this.setState({ showMedals: true, loadingMedals: true })
+					}}
 				>
 					<IoMedalOutline
 						color={mainTextColor}

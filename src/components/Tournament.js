@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Media from 'react-media';
 import { connect } from 'react-redux'
 import moment from 'moment'
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc, query, where } from "firebase/firestore";
 import { firebasedb } from '../components/Firebase';
 import DotLoader from 'react-spinners/DotLoader';
 import { MdRemoveRedEye } from "react-icons/md";
@@ -35,7 +35,7 @@ class Tournament extends Component {
 			winners: [],
             loading: true,
             yourStat: "",
-            avgLevel: 0,
+            avgLevel: undefined,
             matchPair: [],
             userMinted: [],
             potionsEquipped: {},
@@ -82,14 +82,18 @@ class Tournament extends Component {
             const tournament = {
                 canSubscribe: false,
                 nRounds: 4,
-                name: "t72_r4",
-                roundEnded: "3",
+                name: "t92_r4",
+                roundEnded: "4",
                 showPair: false,
                 showLeague: false,
-                region: "ciao",
-                event: "sunburst",
+                region: "",
+                event: "",
                 start: {seconds: 1671715800, nanoseconds: 843000000},
-                tournamentEnd: false
+                tournamentEnd: true,
+                buyin: 4,
+                fee: 10,
+                coinBuyin: 'KDA',
+                levelCap: 400
             }
             */
 
@@ -106,101 +110,160 @@ class Tournament extends Component {
 
             this.setState({ tournament, rankings }, async () => {
 
-                const matchPair = await this.loadPair(tournament.name)
+                const tournamentName = tournament.name.split("_")[0]
+                const tournamentRound = parseInt(tournament.name.split("_")[1].replace("r", ""))
 
-                if (subscribed && !tournament.showPair) {
-                    this.calcSubscribers(subscribed, tournament, undefined, true)
+                if (tournament.showPair && tournament.showPair === true) {
+
+                    const matchPair = await this.loadPair(tournament.name)
+
+                    if (subscribed) {
+                        this.calcSubscribersPairings(subscribed, matchPair)
+                    }
+
+                    this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "kda", (subscribed) => {
+                        //console.log(subscribed);
+                        this.calcSubscribersPairings(subscribed, matchPair)
+                    })
+
+                    return
                 }
 
-                const tournamentName = tournament.name.split("_")[0]
+                //torneo non ancora iniziato
+                if (tournamentRound === 1) {
+                    if (subscribed) {
+                        this.calcSubscribersStart(subscribed, true)
+                    }
 
-                this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "kda", (subscribed) => {
-                    //console.log(subscribed);
-                    this.calcSubscribers(subscribed, tournament, matchPair, false)
-                })
-
+                    this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "kda", (subscribed) => {
+                        //console.log(subscribed);
+                        this.calcSubscribersStart(subscribed, false)
+                    })
+                }
+                //torneo iniziato
+                else {
+                    this.props.getSubscribed(chainId, gasPrice, gasLimit, networkUrl, tournamentName, "kda", (subscribed) => {
+                        //console.log(subscribed);
+                        this.calcSubscribersDuring(subscribed, false)
+                    })
+                }
             })
         })
     }
 
-    calcSubscribers(subscribed, tournament, matchPair, loading) {
+    calcSubscribersPairings(subscribed, matchPair) {
+        const { tournament } = this.state
         const { account } = this.props
 
-        const roundEnded = tournament.roundEnded
-        const tournamentName = tournament.name.split("_")[0]
+        let yourPairings = []
 
+        for (let i = 0; i < matchPair.length; i++) {
+            const pairing = matchPair[i]
+            const wiz1 = pairing.s1.id
+            const wiz2 = pairing.s2.id
+
+            const wiz1info = subscribed.find(i => i.id === wiz1)
+            const wiz2info = subscribed.find(i => i.id === wiz2)
+
+            //console.log(wiz2info, account.account);
+            if ((wiz1info && wiz1info.owner === account.account) || (wiz2info && wiz2info.owner === account.account)) {
+                //console.log("your");
+
+                yourPairings.push(pairing)
+                matchPair.splice(i, 1)
+            }
+        }
+
+        //console.log(yourPairings);
+
+        if (yourPairings.length > 0) {
+            //aggiungiamo i tuoi pairings all'inizio
+            matchPair.splice(0, 0, ...yourPairings)
+        }
+
+        this.setState({ winners: subscribed, matchPair, loading: false })
+    }
+
+    calcSubscribersStart(subscribed, loading) {
+        const { tournament } = this.state
+        const { account } = this.props
+
+        const tournamentName = tournament.name.split("_")[0]
         this.getAllPotionsEquipped(subscribed, tournamentName)
+
         this.getEquipmentEquipped(subscribed)
 
-        const winners = []
+        subscribed.sort((a, b) => {
+            const ai = parseInt(a.id)
+            const bi = parseInt(b.id)
+
+            return ai - bi;
+        })
+
+        const avgLevel = this.calcAvgLevel(subscribed)
+
+        this.setState({ winners: subscribed, avgLevel, loading })
+    }
+
+    async calcSubscribersDuring(subscribed, loading) {
+        const { tournament } = this.state
+        const { account } = this.props
+
+        const tournamentName = tournament.name.split("_")[0]
 
         let yourWizards = 0
         let winnerWizards = 0
+        let yourStat;
 
-        subscribed.map((item) => {
-            //console.log(item);
-            if (item.owner === account.account) {
-                yourWizards++
-            }
-
-            if (item.medals[tournamentName]) {
-
-                //se un tuo wiz ha vinto lo stesso numero di medaglie del round appena concluso è ancora in gara per vincere
-                if (item.medals[tournamentName] === roundEnded && item.owner === account.account) {
-                    winnerWizards++
-                }
-
-                if (item.medals[tournamentName] === roundEnded) {
-                    winners.push(item)
-                }
+        subscribed.map(i => {
+            if (i.owner === account.account) {
+                yourWizards += 1
             }
         })
 
-        //console.log(yourWizards , "/", winnerWizards);
+        let q = query(collection(firebasedb, "medals"), where(tournamentName, "==", tournament.roundEnded))
+        const querySnapshot = await getDocs(q)
 
-        //console.log(winners);
+        let subscribedLeft = []
 
-        let yourStat;
-        if (roundEnded === "4") {
+        querySnapshot.forEach(doc => {
+            //console.log(doc.data());
+
+            const idDoc = doc.id
+            let data = doc.data()
+            //data['docId'] = doc.id
+
+            let info = subscribed.find(i => i.id === idDoc)
+            //console.log(info);
+            info['medals'] = data
+
+            if (info.owner === account.account) {
+                winnerWizards += 1
+            }
+
+            subscribedLeft.push(info)
+        })
+
+        //console.log(subscribedLeft);
+
+        subscribedLeft.sort((a, b) => {
+            const ai = parseInt(a.id)
+            const bi = parseInt(b.id)
+
+            return ai - bi;
+        })
+
+        if (tournament.roundEnded === "4") {
             yourStat = `Your winning Wizards ${winnerWizards} / ${yourWizards}`
         }
         else {
             yourStat = `Your Wizards still in the game ${winnerWizards} / ${yourWizards}`
         }
 
-        const avgLevel = this.calcAvgLevel(subscribed)
-        //console.log(avgLevel);
+        this.getAllPotionsEquipped(subscribedLeft, tournamentName)
+        this.getEquipmentEquipped(subscribedLeft)
 
-        if (matchPair && matchPair.length > 0) {
-
-            let yourPairings = []
-
-            for (let i = 0; i < matchPair.length; i++) {
-                const pairing = matchPair[i]
-                const wiz1 = pairing.s1.id
-                const wiz2 = pairing.s2.id
-
-                const wiz1info = subscribed.find(i => i.id === wiz1)
-                const wiz2info = subscribed.find(i => i.id === wiz2)
-
-                //console.log(wiz2info, account.account);
-                if ((wiz1info && wiz1info.owner === account.account) || (wiz2info && wiz2info.owner === account.account)) {
-                    //console.log("your");
-
-                    yourPairings.push(pairing)
-                    matchPair.splice(i, 1)
-                }
-            }
-
-            //console.log(yourPairings);
-
-            if (yourPairings.length > 0) {
-                //aggiungiamo i tuoi pairings all'inizio
-                matchPair.splice(0, 0, ...yourPairings)
-            }
-        }
-
-        this.setState({ winners, yourStat, avgLevel, matchPair, loading })
+        this.setState({ winners: subscribedLeft, yourStat, loading })
     }
 
     getAllPotionsEquipped(subscribers, tournamentName) {
@@ -277,7 +340,6 @@ class Tournament extends Component {
         //console.log(data);
 
         if (data) {
-            //this.setState({ matchPair: data.couples })
             return data.couples
         }
 
@@ -503,7 +565,7 @@ class Tournament extends Component {
 
         //console.log(winners);
 
-        let subtitleText4 = winners.length > 1 ?  `The ${winners.length} winners of ${roundEnded} medals:` : `The winner of ${roundEnded} medals:`
+        let subtitleText4 = `The ${winners.length} winners of ${roundEnded} medals:`
 
         let titleText = tournament.tournamentEnd ?
                         "The tournament is over! Let's see who the winners are"
@@ -544,7 +606,7 @@ class Tournament extends Component {
                 {this.renderButtonShowResults()}
 
                 <div style={{ flexDirection: 'column', marginBottom: 60, alignItems: 'center' }}>
-                    <div style={Object.assign({}, styles.boxPodio, { borderColor: '#CD7F32' })}>
+                    <div style={Object.assign({}, styles.boxPodio, { borderColor: 'gold' })}>
                         <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
                             {subtitleText4}
                         </p>
