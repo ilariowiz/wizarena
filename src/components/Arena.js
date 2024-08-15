@@ -34,7 +34,7 @@ const cup_bronze = require('../assets/cup_bronze.png')
 const medal = require('../assets/medal.png')
 
 const MAX_WIZARDS_PER_WALLET = 24
-
+const DAILY_FIGHTS = 3
 
 class Arena extends Component {
     constructor(props) {
@@ -402,7 +402,7 @@ class Arena extends Component {
             data['docId'] = doc.id
         })
 
-        if (data.fightsDone < 5) {
+        if (data.fightsDone < DAILY_FIGHTS) {
             return true
         }
 
@@ -658,7 +658,7 @@ class Arena extends Component {
             color = "#ad9c8b"
         }
 
-        const fightsLeft = item.fightsDone ? 5 - item.fightsDone : 5
+        const fightsLeft = item.fightsDone ? DAILY_FIGHTS - item.fightsDone : DAILY_FIGHTS
 
         return (
             <div style={Object.assign({}, styles.yourSubCard, { maxWidth: 120, borderColor: color })} key={index}>
@@ -705,7 +705,7 @@ class Arena extends Component {
         const data = allData.find(i => i.idnft === wizardSelected.id)
         const wizardSelectedRanking = data.ranking
 
-        const fightsLeft = 5 - fightsDone
+        const fightsLeft = DAILY_FIGHTS - fightsDone
 
         const maxWidth = 180
 
@@ -1140,7 +1140,7 @@ class Arena extends Component {
                                       {' '}
                                       There are 4 leaderboards of 4 different levels. Your wizard will automatically participate in the one best suited to his level.
                                       <br />
-                                      Each wizard has 5 daily fights and will fight with a random wizard among those registered (can also fight against a wizard of the same wallet).
+                                      Each wizard has {DAILY_FIGHTS} daily fights and will fight with a random wizard among those registered (can also fight against a wizard of the same wallet).
                                       <br />
                                       Each victory will earn the wizard 5. If you are challenged and win, you earn 2 points. The loser will not lose points.
                                       <br />
