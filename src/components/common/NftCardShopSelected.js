@@ -11,25 +11,9 @@ import { CTA_COLOR } from '../../actions/types'
 
 
 class NftCardShopSelected extends Component {
-    calcMedals() {
-        const { item } = this.props
-
-        const medals = item.medals
-
-        let tot = 0
-
-        Object.keys(medals).forEach(i => {
-            tot += parseInt(medals[i])
-        })
-
-        return tot
-    }
-
 	render() {
 		const { item, width, mainTextColor, isDarkmode } = this.props
         //console.log(tournament)
-
-        const numberOfTotalMedals = this.calcMedals()
 
 		return (
 			<div
@@ -78,7 +62,7 @@ class NftCardShopSelected extends Component {
                             </div>
                         </div>
 
-                        {cardStatsShop(item, numberOfTotalMedals, undefined, mainTextColor)}
+                        {cardStatsShop(item, undefined, mainTextColor)}
 
                     </div>
                 </div>

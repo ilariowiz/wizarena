@@ -249,7 +249,7 @@
         defense:integer
         element:string
         hp:integer
-        medals:object
+        ;medals:object
         resistance:string
         spellSelected:object
         spellbook:list
@@ -646,7 +646,7 @@
                 "element": (at "element" item),
                 "tournaments": {},
                 "hp": (at "hp" item),
-                "medals": (at "medals" item),
+                ;"medals": (at "medals" item),
                 "resistance": (at "resistance" item),
                 "spellSelected": (at "spellSelected" item),
                 "spellbook": (at "spellbook" item),
@@ -818,48 +818,48 @@
         )
     )
 
-    (defun update-fights-medals (objects-list:list)
-        (with-capability (ADMIN)
-            (map
-                (update-fight-medal-dev)
-                objects-list
-            )
-        )
-    )
+    ; (defun update-fights-medals (objects-list:list)
+    ;     (with-capability (ADMIN)
+    ;         (map
+    ;             (update-fight-medal-dev)
+    ;             objects-list
+    ;         )
+    ;     )
+    ; )
+    ;
+    ; (defun update-fights-medals-dev (objects-list:list)
+    ;     (with-capability (DEV)
+    ;         (map
+    ;             (update-fight-medal-dev)
+    ;             objects-list
+    ;         )
+    ;     )
+    ; )
 
-    (defun update-fights-medals-dev (objects-list:list)
-        (with-capability (DEV)
-            (map
-                (update-fight-medal-dev)
-                objects-list
-            )
-        )
-    )
-
-    (defun update-fight-medal-dev (item:object)
-        (require-capability (PRIVATE))
-        (let
-            (
-                (id (at "id" item))
-                (key (format "{}_{}" [(at "id" item) (at "tournament" item)]))
-            )
-            (with-default-read stats id
-                {"medals": {}}
-                {"medals":=medals}
-                (update stats id
-                    {"medals": (+ (at "medals" item) medals)}
-                )
-            )
-            ; (write fights-db key
-            ;     {
-            ;         "id": id,
-            ;         "tournament": (at "tournament" item),
-            ;         "fightId": (at "fightId" item),
-            ;         "winner": (at "winner" item)
-            ;     }
-            ; )
-        )
-    )
+    ; (defun update-fight-medal-dev (item:object)
+    ;     (require-capability (PRIVATE))
+    ;     (let
+    ;         (
+    ;             (id (at "id" item))
+    ;             (key (format "{}_{}" [(at "id" item) (at "tournament" item)]))
+    ;         )
+    ;         (with-default-read stats id
+    ;             {"medals": {}}
+    ;             {"medals":=medals}
+    ;             (update stats id
+    ;                 {"medals": (+ (at "medals" item) medals)}
+    ;             )
+    ;         )
+    ;         (write fights-db key
+    ;             {
+    ;                 "id": id,
+    ;                 "tournament": (at "tournament" item),
+    ;                 "fightId": (at "fightId" item),
+    ;                 "winner": (at "winner" item)
+    ;             }
+    ;         )
+    ;     )
+    ; )
 
     (defun update-downgrades (objects-list:list)
         (with-capability (ADMIN)
@@ -3088,7 +3088,7 @@
                 (< id max-reveal)
                 (let* (
                         (info (read nfts (int-to-str 10 id)))
-                        (info-stat (read stats (int-to-str 10 id) ['attack 'damage 'weakness 'defense 'element 'hp 'medals 'resistance 'spellSelected 'spellbook 'ap 'speed 'downgrades] ))
+                        (info-stat (read stats (int-to-str 10 id) ['attack 'damage 'weakness 'defense 'element 'hp 'resistance 'spellSelected 'spellbook 'ap 'speed 'downgrades] ))
                         (spellSelectedName (at "name" (at "spellSelected" info-stat)))
                         (upgrades-spell (get-upgrades-spell (int-to-str 10 id) spellSelectedName))
                     )

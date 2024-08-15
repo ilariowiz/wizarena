@@ -69,7 +69,7 @@ class NftCardShop extends Component {
                             </p>
                         </div>
 
-                        {cardStatsShop(item, undefined, undefined, mainTextColor)}
+                        {cardStatsShop(item, undefined, mainTextColor)}
 
                         {
                             isSelect ?

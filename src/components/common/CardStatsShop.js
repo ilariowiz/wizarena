@@ -1,6 +1,6 @@
 import React from 'react'
 
-const cardStatsShop = (item, numberOfMedalsForTournament, width, mainTextColor) => {
+const cardStatsShop = (item, width, mainTextColor) => {
 
     //console.log(item);
 
@@ -78,18 +78,6 @@ const cardStatsShop = (item, numberOfMedalsForTournament, width, mainTextColor) 
                     </p>
                 </div>
             </div>
-
-            {
-                numberOfMedalsForTournament !== undefined &&
-                <div style={{ width: widthBody, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
-                    <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
-                        Medals
-                    </p>
-                    <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })}>
-                        {numberOfMedalsForTournament}
-                    </p>
-                </div>
-            }
         </div>
     )
 }
