@@ -69,7 +69,6 @@ class Conquest extends Component {
             seasonInfo: {},
             loadingYourSubs: true,
             loadingChampions: true,
-            subscribersId: [],
             wizardSelected: {},
             wizardSelectedElos: {},
             wizardSelectedLastFights: [],
@@ -714,6 +713,7 @@ class Conquest extends Component {
         const maxWidth = 210
 
         //console.log(champion);
+        //console.log(wizardSelectedElos);
 
         return (
             <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRadius: 4, borderWidth: 1, borderColor: '#d7d7d7', borderStyle: 'solid', paddingLeft: 15, paddingRight: 15, position: 'relative', marginRight: 20, marginBottom: 20 }}>
@@ -727,7 +727,7 @@ class Conquest extends Component {
                     </p>
 
                     {
-                        wizardSelected && wizardSelectedElos && wizardSelectedElos.idnft &&
+                        wizardSelected && wizardSelectedElos && wizardSelectedElos.idnft && wizardSelectedElos[`elo${regionName}`] > 1 ?
                         <div style={{ flexDirection: 'row', alignItems: 'center' }}>
 
                             <FaStar
@@ -747,6 +747,8 @@ class Conquest extends Component {
                                 ({oldElo > 0 ? "+" : ""}{oldElo})
                             </p>
                         </div>
+                        :
+                        <div style={{ width: 10, height: 18 }} />
                     }
                 </div>
 
