@@ -616,6 +616,9 @@ class Conquest extends Component {
         return (
             <div style={{ flexDirection: 'column' }}>
                 <p style={{ fontSize: 16, color: 'black', marginBottom: 7 }}>
+                    {info.name} {info.nickname || ''}
+                </p>
+                <p style={{ fontSize: 16, color: 'black', marginBottom: 7 }}>
                     Element {info.element.toUpperCase()}
                 </p>
                 <p style={{ fontSize: 16, color: 'black', marginBottom: 7 }}>
