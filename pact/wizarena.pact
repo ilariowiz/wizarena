@@ -57,6 +57,7 @@
 
     (defconst CONQUEST_BUYIN "conquest_buyin")
     (defconst CONQUEST_OPEN "conquest_open")
+    (defconst DUNGEON_OPEN "dungeon_open")
 
     (defconst WIZA_LIMIT_VALUE "wiza_limit_value")
 
@@ -454,6 +455,8 @@
     (deftable tournaments-sub-count:{tournaments-sub-count-schema})
 
     (deftable wiza-limit-table:{wiza-limit-schema})
+
+    (deftable dungeon-table:{conquest-schema})
     ; --------------------------------------------------------------------------
   ; Can only happen once
   ; --------------------------------------------------------------------------
@@ -505,6 +508,7 @@
 
         (insert values-tournament CONQUEST_BUYIN {"value": 6.0})
         (insert values CONQUEST_OPEN {"value": "1"})
+        (insert values DUNGEON_OPEN {"value": "1"})
 
         (insert wiza-limit-table WIZA_LIMIT_VALUE {"limit": 50.0001})
     )
@@ -1775,6 +1779,55 @@
 
     (defun get-all-subscription-for-season (season:string)
         (select conquest-table ['idnft] (where "season" (= season)))
+    )
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;; DUNGEON SEASON ;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    (defun subscribe-to-dungeon-season-mass (address:string season:string subscribers:list)
+        (let (
+                (is-open (get-value DUNGEON_OPEN))
+                (buyin (* 1.0 (length subscribers)))
+            )
+            (enforce (= is-open "1") "Dungeon season registrations are closed")
+            (with-capability (ACCOUNT_GUARD address)
+                (coin.transfer address ADMIN_ADDRESS buyin)
+            )
+            (with-capability (PRIVATE)
+                (map
+                    (subscribe-to-dungeon-season address season)
+                    subscribers
+                )
+            )
+        )
+    )
+
+    (defun subscribe-to-dungeon-season (address:string season:string idnft:string)
+        (require-capability (PRIVATE))
+        (let (
+                (data-wiz (get-wizard-fields-for-id (str-to-int idnft)))
+            )
+            (enforce (= (at "confirmBurn" data-wiz) false) "You can't subscribe a wizard in burning queue")
+            (enforce (>= (at "ap" data-wiz) 5) "This wizard does not have enough AP")
+        )
+        (spend-ap 5 address idnft)
+        (with-default-read dungeon-table (+ idnft season)
+            {"idnft": ""}
+            {"idnft":= idnft }
+            (enforce (= (length idnft) 0) "Already subscribed to this season")
+        )
+        (with-capability (OWNER address idnft)
+            (insert dungeon-table (+ idnft season) {
+                "season": season,
+                "idnft": idnft
+            })
+        )
+        (add-xp-to-wallet address 3)
+    )
+
+    (defun get-all-dungeon-subscription-for-season (season:string)
+        (select dungeon-table ['idnft] (where "season" (= season)))
     )
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3202,6 +3255,7 @@
     (create-table upgrade-spells)
 
     (create-table conquest-table)
+    (create-table dungeon-table)
 
     (create-table collection-offers-table)
 
