@@ -1125,8 +1125,8 @@ class Arena extends Component {
                                         this.setState({ showSubscribe: true })
                                     }}
                                 >
-                                    <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }} className="text-medium">
-                                        Rules
+                                    <p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center' }} className="text-medium">
+                                        Rules & Prizes
                                     </p>
                                 </button>
                             }
@@ -1135,7 +1135,7 @@ class Arena extends Component {
                         >
                             {close => (
                                 <div style={{ flexDirection: 'column' }}>
-                                    <div style={{ justifyContent: 'center', fontSize: 19, color: 'black', marginBottom: 10, marginTop: 5 }}>Rules</div>
+                                    <div style={{ justifyContent: 'center', fontSize: 19, color: 'black', marginBottom: 10, marginTop: 5 }} className="text-bold">Rules & Prizes</div>
                                     <div style={{ fontSize: 16, color: 'black', paddingLeft: 5, paddingRight: 5, marginBottom: 15 }}>
                                       {' '}
                                       There are 4 leaderboards of 4 different levels. Your wizard will automatically participate in the one best suited to his level.
@@ -1144,10 +1144,23 @@ class Arena extends Component {
                                       <br />
                                       Each victory will earn the wizard 5. If you are challenged and win, you earn 2 points. The loser will not lose points.
                                       <br />
+                                      <br />
+                                      Prizes
+                                      <br />
+                                      <br />
+                                      Top 5 ranking 400: 3000 $WIZA
+                                      <br />
+                                      Top 5 ranking 300: 2000 $WIZA & 10 AP
+                                      <br />
+                                      Top 5 ranking 200: 1500 $WIZA & 10 AP
+                                      <br />
+                                      Top 5 ranking 160: 1000 $WIZA & 10 AP
+                                      <br />
                                     </div>
                                     <div style={{ justifyContent: 'center', marginBottom: 10 }}>
                                         <button
-                                            style={{ color: 'black', fontSize: 16 }}
+                                            style={{ color: 'black', fontSize: 17 }}
+                                            className="text-bold"
                                             onClick={() => {
                                               close();
                                             }}

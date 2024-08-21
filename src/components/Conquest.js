@@ -1182,8 +1182,8 @@ class Conquest extends Component {
                                     className='btnH'
                                     style={styles.btnRules}
                                 >
-                                    <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }} className="text-medium">
-                                        Rules
+                                    <p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center' }} className="text-medium">
+                                        Rules & Prizes
                                     </p>
                                 </button>
                             }
@@ -1192,7 +1192,7 @@ class Conquest extends Component {
                         >
                             {close => (
                                 <div style={{ flexDirection: 'column' }}>
-                                    <div style={{ justifyContent: 'center', fontSize: 19, color: 'black', marginBottom: 10, marginTop: 5 }}>Rules</div>
+                                    <div style={{ justifyContent: 'center', fontSize: 19, color: 'black', marginBottom: 10, marginTop: 5 }} className="text-bold">Rules & Prizes</div>
                                     <div style={{ fontSize: 16, color: 'black', paddingLeft: 5, paddingRight: 5, marginBottom: 15 }}>
                                       {' '}
                                       Each region of Wizards World has its own leaderboard. Whoever has the most ELO points is the current Lord.
@@ -1202,11 +1202,22 @@ class Conquest extends Component {
                                       To calculate the ranking the website uses a modified version of the ELO rating. When you win, you gain points and your opponent loses 80% of the points you won.
                                       <br />
                                       <br />
-                                      Each region has 3 possible boosts. These boosts are associated with the elements closest to the region, for example Sitenor can have Fire, Earth or Dark boost. Each fight will have a random boost chosen from the 3 possible elements in the region.
+                                      Each region has 3 possible boosts. Each fight will have a random boost chosen from the 3 possible elements in the region. The boost has a 50% chance to appear each turn during the fight.
+                                      <br />
+                                      <br />
+                                      Prizes
+                                      <br />
+                                      <br />
+                                      1st place: 8000 $WIZA
+                                      <br />
+                                      2nd place: 4000 $WIZA
+                                       <br />
+                                      3rd place: 2000 $WIZA
                                     </div>
                                     <div style={{ justifyContent: 'center', marginBottom: 10 }}>
                                         <button
-                                            style={{ color: 'black', fontSize: 16 }}
+                                            style={{ color: 'black', fontSize: 17 }}
+                                            className="text-bold"
                                             onClick={() => {
                                               close();
                                             }}
