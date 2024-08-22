@@ -703,7 +703,6 @@ class Arena extends Component {
 
         const maxWidth = 180
 
-
         return (
             <div style={{ flexDirection: isMobile ? 'column' : 'row', width: "100%", marginBottom: 15 }}>
                 <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: isMobile ? 0 : 15 }}>
@@ -724,7 +723,7 @@ class Arena extends Component {
                         style={Object.assign({}, styles.btnSubscribe, { width: 120, height: 30, backgroundColor: 'transparent', marginBottom: 8, cursor: 'pointer', borderWidth: 1, borderColor: CTA_COLOR, borderStyle: 'solid' })}
                         onClick={() => this.setState({ wizardSelected: {}, wizardSelectedElos: {}, fightsDone: 0, wizardSelectedLastFights: [] })}
                     >
-                        <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
+                        <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }} className="text-medium">
                             Change
                         </p>
                     </button>

@@ -54,6 +54,7 @@ const bremononImg = require('../assets/regions/bremonon.png')
 
 const placeholderWiz = require('../assets/placeholder.png')
 
+const DAILY_FIGHTS = 5
 
 class Conquest extends Component {
     constructor(props) {
@@ -72,6 +73,7 @@ class Conquest extends Component {
             wizardSelected: {},
             wizardSelectedElos: {},
             wizardSelectedLastFights: [],
+            loadingReplays: false,
             yourSubs: [],
             champions: {},
             fightsDone: 0,
@@ -339,9 +341,7 @@ class Conquest extends Component {
         const data = await this.getElosDataSingleNft(infoNft.id)
 
         //console.log(data);
-        this.setState({ wizardSelectedElos: data, wizardSelected: infoNft, fightsDone: data.fightsDone, loadingYourChampion: false, signedCmd: undefined }, () => {
-            this.loadWizardSelectedLastFights(infoNft.id)
-        })
+        this.setState({ wizardSelectedElos: data, wizardSelected: infoNft, fightsDone: data.fightsDone, loadingYourChampion: false, signedCmd: undefined })
     }
 
     async getElosDataSingleNft(idnft) {
@@ -385,30 +385,41 @@ class Conquest extends Component {
     }
 
     async loadWizardSelectedLastFights(idnft) {
+
+        this.setState({ loadingReplays: true })
+
         let q1 = query(collection(firebasedb, this.SEASON_ID_FIGHTS), where("wizards", "array-contains-any", [idnft]))
-        const querySnapshot = await getDocs(q1)
+        Promise.resolve(getDocs(q1)).then(values => {
 
-        let fights = []
+            let fights = []
 
-        querySnapshot.forEach(doc => {
-            //console.log(doc.data());
-            let data = doc.data()
-            data['docId'] = doc.id
+            values.forEach(doc => {
 
-            fights.push(data)
+                let data = doc.data()
+                data['docId'] = doc.id
+
+                fights.push(data)
+            })
+
+            fights = fights.sort((a, b) => {
+                let timeA, timeB
+
+                if (a.timestamp && a.timestamp.seconds && b.timestamp && b.timestamp.seconds) {
+                    timeA = moment(a.timestamp.seconds * 1000)
+                    timeB = moment(b.timestamp.seconds * 1000)
+
+                    return timeB - timeA
+                }
+
+                return 0
+            })
+
+            fights = fights.slice(0, 5)
+
+            //console.log(fights);
+
+            this.setState({ wizardSelectedLastFights: fights, loadingReplays: false })
         })
-
-        //console.log(fights);
-        fights = fights.sort((a, b) => {
-            const timeA = moment(a.timestamp.seconds * 1000)
-            const timeB = moment(b.timestamp.seconds * 1000)
-
-            return timeB - timeA
-        })
-
-        fights = fights.slice(0, 5)
-
-        this.setState({ wizardSelectedLastFights: fights })
     }
 
     async startFight(regionName) {
@@ -508,13 +519,12 @@ class Conquest extends Component {
             const { wizardSelected } = this.state
 
             this.loadChampions()
-            this.loadWizardSelectedLastFights(wizardSelected.id)
             const dataElo = await this.getElosDataSingleNft(wizardSelected.id)
 
             this.setState({ opponentId: response.opponentId }, () => {
                 setTimeout(() => {
                     this.setState({ textLoadingFight: "Fight done!", fightId: response.success, fightsDone: dataElo.fightsDone, wizardSelectedElos: dataElo })
-                }, 1500)
+                }, 1000)
             })
         }
     }
@@ -957,12 +967,13 @@ class Conquest extends Component {
 
     renderWizardSelected(isMobile) {
         const { mainTextColor } = this.props
-        const { wizardSelected, fightsDone, wizardSelectedLastFights } = this.state
+        const { wizardSelected, fightsDone, wizardSelectedLastFights, loadingReplays } = this.state
+
+        const fightsLeft = DAILY_FIGHTS - fightsDone
 
         return (
-            <div style={{ flexDirection: isMobile ? 'column' : 'row', width: "100%" }}>
-
-                <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ flexDirection: isMobile ? 'column' : 'row', width: "100%", marginBottom: 15 }}>
+                <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: isMobile ? 0 : 15 }}>
                     <a
                         href={`${window.location.protocol}//${window.location.host}/nft/${wizardSelected.id}`}
                         target="_blank"
@@ -970,43 +981,71 @@ class Conquest extends Component {
                         style={{ cursor: 'pointer' }}
                     >
                         <img
-                            style={{ width: 220, height: 220, borderRadius: 4, borderColor: '#d7d7d7', borderWidth: 1, borderStyle: 'solid' }}
+                            style={{ width: 220, height: 220, borderRadius: 4, borderColor: '#d7d7d7', borderWidth: 1, borderStyle: 'solid', marginBottom: 10 }}
                             src={getImageUrl(wizardSelected.id)}
                             alt={`#${wizardSelected.id}`}
                         />
                     </a>
+                </div>
 
+                <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                     <p style={{ color: mainTextColor, fontSize: 18, marginTop: 10, marginBottom: 10, maxWidth: 220, textAlign: 'center' }} className="text-medium">
                         {wizardSelected.name} {wizardSelected.nickname}
                     </p>
 
-                    <p style={{ fontSize: 20, color: CTA_COLOR, marginBottom: 10 }} className="text-bold">
-                        Daily fights left {5 - fightsDone}
+                    <button
+                        style={Object.assign({}, styles.btnSubscribe, { width: 120, height: 30, backgroundColor: 'transparent', marginBottom: 20, cursor: 'pointer', borderWidth: 1, borderColor: CTA_COLOR, borderStyle: 'solid' })}
+                        onClick={() => {
+                            this.setState({ loadingReplays: true, wizardSelectedLastFights: [] })
+                            this.loadWizardSelectedLastFights(wizardSelected.id)
+                        }}
+                    >
+                        <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }} className="text-medium">
+                            Last fights
+                        </p>
+                    </button>
+
+                    <p style={{ fontSize: 20, color: CTA_COLOR, marginBottom: 15 }} className="text-bold">
+                        Daily fights left {fightsLeft}
                     </p>
 
                     <button
-                        style={Object.assign({}, styles.btnSubscribe, { width: 120, height: 30 })}
-                        onClick={() => this.setState({ wizardSelected: {}, wizardSelectedElos: {}, fightsDone: 0 })}
+                        style={Object.assign({}, styles.btnSubscribe, { width: 120, height: 30, backgroundColor: 'transparent', marginBottom: 10, cursor: 'pointer', borderWidth: 1, borderColor: CTA_COLOR, borderStyle: 'solid' })}
+                        onClick={() => this.setState({ wizardSelected: {}, wizardSelectedElos: {}, fightsDone: 0, wizardSelectedLastFights: [] })}
                     >
-                        <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
+                        <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }} className="text-medium">
                             Change
                         </p>
                     </button>
+
                 </div>
 
-                <div style={{ flexDirection: 'column', marginLeft: 20 }}>
-                    <p style={{ fontSize: 18, color: mainTextColor, marginBottom: 10 }} className="text-medium">
-                        Last fights
-                    </p>
-
-                    <div style={{ flexWrap: 'wrap' }}>
-                        {
-                            wizardSelectedLastFights.map((item, index) => {
-                                return this.renderSingleFight(item, index)
-                            })
-                        }
+                {
+                    loadingReplays &&
+                    <div style={{ flexDirection: 'column', marginLeft: 20 }}>
+                        <p style={{ fontSize: 18, color: mainTextColor, marginBottom: 10 }} className="text-medium">
+                            Last fights
+                        </p>
+                        <DotLoader size={20} color={mainTextColor} />
                     </div>
-                </div>
+                }
+
+                {
+                    !loadingReplays && wizardSelectedLastFights && wizardSelectedLastFights.length > 0 &&
+                    <div style={{ flexDirection: 'column', marginLeft: 20 }}>
+                        <p style={{ fontSize: 18, color: mainTextColor, marginBottom: 10 }} className="text-medium">
+                            Last fights
+                        </p>
+
+                        <div style={{ flexWrap: 'wrap' }}>
+                            {
+                                wizardSelectedLastFights.map((item, index) => {
+                                    return this.renderSingleFight(item, index)
+                                })
+                            }
+                        </div>
+                    </div>
+                }
             </div>
         )
     }
