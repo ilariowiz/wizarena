@@ -264,8 +264,6 @@ class Arena extends Component {
         this.setState({ loadingReplays: true })
 
         let q1 = query(collection(firebasedb, this.SEASON_ID_FIGHTS), where("wizards", "array-contains-any", [idnft]))
-        const querySnapshot = await getDocs(q1)
-
         Promise.resolve(getDocs(q1)).then(values => {
 
             let fights = []
@@ -753,7 +751,7 @@ class Arena extends Component {
                         Daily fights left {fightsLeft}
                     </p>
 
-                    <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 5, textAlign: 'center' }}>
+                    <p style={{ fontSize: 17, color: mainTextColor, marginBottom: 10, textAlign: 'center' }}>
                         Points: {wizardSelectedRanking}
                     </p>
 
@@ -791,7 +789,7 @@ class Arena extends Component {
                     {
                         fightsLeft <= 0 &&
                         <div
-                            style={Object.assign({}, styles.btnSubscribe, { width: maxWidth, height: 36, backgroundColor: 'transparent', marginBottom: 10 })}
+                            style={Object.assign({}, styles.btnSubscribe, { width: maxWidth, height: 36, backgroundColor: 'transparent', marginBottom: 10, cursor: 'default' })}
                         >
                             <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center' }} className="text-medium">
                                 No fights left
