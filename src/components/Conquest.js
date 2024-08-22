@@ -842,9 +842,9 @@ class Conquest extends Component {
                             {
                                 fightsLeft <= 0 &&
                                 <div
-                                    style={Object.assign({}, styles.btnSubscribe, { width: maxWidth, height: 30, marginBottom: 8, cursor: 'default' })}
+                                    style={Object.assign({}, styles.btnSubscribe, { width: maxWidth, height: 30, marginBottom: 8, cursor: 'default', backgroundColor: 'transparent' })}
                                 >
-                                    <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
+                                    <p style={{ fontSize: 15, color: mainTextColor, textAlign: 'center' }} className="text-medium">
                                         No fights left
                                     </p>
                                 </div>
