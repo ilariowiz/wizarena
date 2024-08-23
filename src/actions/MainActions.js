@@ -1141,6 +1141,21 @@ export const getConquestSubscribersIdsPerSeason = (chainId, gasPrice = DEFAULT_G
 	}
 }
 
+export const getDungeonSubscribersIdsPerSeason = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 180000, networkUrl, season) => {
+	return async (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME}.get-all-dungeon-subscription-for-season "${season}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+        const response = await dispatch(readFromContract(cmd, true, networkUrl))
+		//console.log(response);
+
+		return response
+	}
+}
+
 export const getVolume = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, callback) => {
 	return (dispatch) => {
 
@@ -2509,6 +2524,55 @@ export const subscribeToLords = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit
 		}
 
 		//console.log("subscribeToLords", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const subscribeToDungeons = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, seasonId, list, amount) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME}.subscribe-to-dungeon-season-mass "${account.account}" "${seasonId}" ${JSON.stringify(list)})`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
+				[account.account]
+			),
+			Pact.lang.mkCap(`Subscribe`, "Pay the fee", `coin.TRANSFER`, [
+				account.account,
+				ADMIN_ADDRESS,
+				amount,
+			]),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		//console.log(caps);
+
+		let gasL = 3000 * list.length
+		if (gasL > 180000) {
+			gasL = 180000
+		}
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit: gasL,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("subscribeToDungeons", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}

@@ -15,9 +15,6 @@ import BurningQueue from './components/BurningQueue'
 
 import PvP from './components/PvP'
 
-//import DoFightPvE from './components/DoFightPvE'
-import PvE from './components/PvE'
-
 import League from './components/League'
 import LeagueFarmers from './components/LeagueFarmers'
 import LeagueApprentice from './components/LeagueApprentice'
@@ -43,8 +40,10 @@ import WalletsXpLeaderboard from './components/WalletsXpLeaderboard'
 import Conquest from './components/Conquest'
 import FightsReplay from './components/FightsReplay'
 import FightsReplayBrawl from './components/FightsReplayBrawl'
+import FightsReplayDungeon from './components/FightsReplayDungeon'
 
 import Arena from './components/Arena'
+import Dungeon from './components/Dungeon'
 
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'
@@ -70,9 +69,7 @@ ReactDOM.render(
             <Route path="/salesequipment" component={SalesEquipment} />
             <Route path="/magicshop" component={Shop} />
             <Route path="/burningqueue" component={BurningQueue} />
-            {/*<Route path="/fightpve" component={DoFightPvE} />*/}
             <Route path="/pvp" component={PvP} />
-            <Route path="/pve" component={PvE} />
             <Route path="/league" component={League} />
             <Route path="/leaguefarmers" component={LeagueFarmers} />
             <Route path="/leagueapprentice" component={LeagueApprentice} />
@@ -93,7 +90,9 @@ ReactDOM.render(
             <Route path="/lords" component={Conquest} />
             <Route path="/fightreplay" component={FightsReplay} />
             <Route path="/fightreplaybrawl" component={FightsReplayBrawl} />
+            <Route path="/fightreplaydungeon" component={FightsReplayDungeon} />
             <Route path="/arena" component={Arena} />
+            <Route path="/dungeons" component={Dungeon} />
           </Switch>
         </div>
       </BrowserRouter>

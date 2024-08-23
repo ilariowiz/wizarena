@@ -35,12 +35,9 @@ require('moment-countdown');
 const logo_img = require('../assets/wzlogo_bg_transparent.png')
 
 const market_icon = require('../assets/menu/black/marketplace.png')
-//const flash_icon = require('../assets/menu/black/flash_tournament.png')
 const profile_icon = require('../assets/menu/black/profile.png')
 const shop_icon = require('../assets/menu/black/shop.png')
 const pvp_icon = require('../assets/menu/black/pvp.png')
-//const tournaments_icon = require('../assets/menu/black/tournaments.png')
-//const challenges_icon = require('../assets/menu/black/wand.png')
 
 const market_icon_night = require('../assets/menu/marketplace.png')
 const flash_icon_night = require('../assets/menu/flash_tournament.png')
@@ -49,6 +46,17 @@ const shop_icon_night = require('../assets/menu/shop.png')
 const pvp_icon_night = require('../assets/menu/pvp.png')
 const tournaments_icon_night = require('../assets/menu/tournaments.png')
 const challenges_icon_night = require('../assets/menu/wand.png')
+const dungeons_icon_night = require('../assets/menu/dungeons.png')
+
+const mapimg = require('../assets/ww_map.png')
+
+const signboard_arena = require('../assets/menu_desktop/signboard_arena.png')
+const signboard_challenges = require('../assets/menu_desktop/signboard_challenges.png')
+const signboard_dungeons = require('../assets/menu_desktop/signboard_dungeons.png')
+const signboard_lord = require('../assets/menu_desktop/signboard_lord.png')
+const signboard_pvp = require('../assets/menu_desktop/signboard_pvp.png')
+const signboard_weekly = require('../assets/menu_desktop/signboard_weekly.png')
+const signboard_flash = require('../assets/menu_desktop/signboard_flash.png')
 
 class Header extends Component {
 	constructor(props) {
@@ -460,7 +468,7 @@ class Header extends Component {
 		const { showPopupMenu } = this.state
 		const { mainTextColor, mainBackgroundColor } = this.props
 
-		const panelWidth = isMobile ? "90%" : "50%"
+		const panelWidth = isMobile ? "90%" : "90%"
 
 		return (
 			<div style={styles.panelShadow}>
@@ -470,9 +478,9 @@ class Header extends Component {
 					style={Object.assign({}, styles.panel, { width: showPopupMenu ? panelWidth : 0, zIndex: 997, backgroundColor: mainBackgroundColor })}
 				>
 
-					<div style={styles.headerPanel}>
+					<div style={Object.assign({}, styles.headerPanel, { height: 70 })}>
 
-						<p style={{ fontSize: 24, color: mainTextColor, marginLeft: 30 }} className="text-bold">
+						<p style={{ fontSize: 30, color: mainTextColor, marginLeft: 30 }} className="text-bold">
 							Play
 						</p>
 
@@ -487,16 +495,18 @@ class Header extends Component {
 							>
 								<IoClose
 									color={mainTextColor}
-									size={34}
+									size={38}
 								/>
 							</button>
 						</div>
 
 					</div>
 
-					<div style={{ width: "100%", flexDirection: 'row', flexWrap: 'wrap' }}>
+					<div style={{ width: "100%", flexDirection: 'row'}}>
 					{
-						this.renderPlayMenu()
+						showPopupMenu ?
+						this.renderPlayMenu(isMobile)
+						: undefined
 					}
 					</div>
 				</div>
@@ -504,12 +514,53 @@ class Header extends Component {
 		)
 	}
 
-	renderPlayMenu() {
+	renderPlayMenu(isMobile) {
+
+		if (!isMobile) {
+
+			const height = window.innerHeight - 110
+
+			return (
+				<div style={{ width: "100%", justifyContent: 'center' }}>
+					<div style={{ position: 'relative' }}>
+						<img
+							src={mapimg}
+							className="mapimg"
+							style={{ maxHeight: height }}
+						/>
+
+						{this.renderSignboard("17%", "26%", "arena", signboard_arena, 0.6)}
+
+						{this.renderSignboard("34%", "49%", "dungeons", signboard_dungeons, 0.75)}
+
+						{this.renderSignboard("11%", "66%", "challenges", signboard_challenges, 0.7)}
+
+						{this.renderSignboard("47%", "17%", "lords", signboard_lord, 0.8)}
+
+						{this.renderSignboard("61%", "41%", "pvp", signboard_pvp, 0.85)}
+
+						{this.renderSignboard("55%", "71%", "tournaments", signboard_weekly, 0.9)}
+
+						{this.renderSignboard("78%", "26%", "flashtournaments", signboard_flash, 1)}
+					</div>
+				</div>
+			)
+		}
+
 		return (
 			<div style={{ flexDirection: "column", flexWrap: 'wrap', width: '100%' }}>
 
-				<div style={Object.assign({}, styles.boxGradient, { backgroundImage: `linear-gradient(to right, #3a3aaf, transparent)` })}>
+				<div style={Object.assign({}, styles.boxGradient, { backgroundImage: `linear-gradient(to right, #378c9c, transparent)` })}>
+					{this.renderBtnMenuPlay(
+						'dungeons',
+						dungeons_icon_night,
+						"Dungeons of Wizards World",
+						99,
+						17)
+					}
+				</div>
 
+				<div style={Object.assign({}, styles.boxGradient, { backgroundImage: `linear-gradient(to right, #3a3aaf, transparent)` })}>
 					{this.renderBtnMenuPlay(
 						'lords',
 						profile_icon_night,
@@ -578,6 +629,25 @@ class Header extends Component {
 				</div>
 
 			</div>
+		)
+	}
+
+	renderSignboard(left, top, goto, image, delay) {
+		return (
+			<a
+				href={`${window.location.protocol}//${window.location.host}/${goto}`}
+				className="containersign"
+				onClick={(e) => {
+					e.preventDefault()
+					this.props.history.replace(`/${goto}`)
+				}}
+			>
+				<img
+					src={image}
+					className="signboard"
+					style={{ position: 'absolute', left, top, width: 104, animationDelay: delay+"s" }}
+				/>
+			</a>
 		)
 	}
 

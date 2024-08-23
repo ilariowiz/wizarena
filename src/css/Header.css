@@ -1,5 +1,5 @@
 .btn {
-	
+
 }
 
 .btn:hover {
@@ -41,4 +41,36 @@
 
 .btn-show-shadow {
 	box-shadow: rgb(7 8 8 / 40%) 0px 0px 8px 4px;
+}
+
+.mapimg {
+	opacity: 0;
+	animation-name: fadein;
+	animation-duration: 0.5s;
+	animation-fill-mode: forwards;
+	animation-delay: .3s;
+	width: 0%;
+}
+
+@keyframes fadein {
+    from { opacity: 0; width: 100%; }
+    to { opacity: 1; width: 100%; }
+}
+
+.signboard {
+	opacity: 0;
+	animation-name: fadeinsignboard;
+	animation-duration: 1s;
+	animation-fill-mode: forwards;
+	width: 90px;
+	-webkit-transition-timing-function: ease;
+}
+
+@keyframes fadeinsignboard {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.signboard:hover {
+	transform: scale(1.25);
 }
