@@ -241,7 +241,7 @@ class Shop extends Component {
 
         let historyUpgrades = []
 
-        let url = `https://estats.chainweb.com/txs/events?search=wiz-arena.BUY_UPGRADE&param=${account.account}&limit=30`
+        let url = `https://api.kda.kaddex.xyz/txs/events?search=wiz-arena.BUY_UPGRADE&param=${account.account}&limit=30`
 
 		//console.log(url);
 		fetch(url)
