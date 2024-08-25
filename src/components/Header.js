@@ -529,19 +529,19 @@ class Header extends Component {
 							style={{ maxHeight: height }}
 						/>
 
-						{this.renderSignboard("17%", "26%", "arena", signboard_arena, 0.6)}
+						{this.renderSignboard("17%", "26%", "arena", signboard_arena, 0.55)}
 
-						{this.renderSignboard("34%", "49%", "dungeons", signboard_dungeons, 0.75)}
+						{this.renderSignboard("34%", "49%", "dungeons", signboard_dungeons, 0.65)}
 
-						{this.renderSignboard("11%", "66%", "challenges", signboard_challenges, 0.7)}
+						{this.renderSignboard("11%", "66%", "challenges", signboard_challenges, 0.6)}
 
-						{this.renderSignboard("47%", "17%", "lords", signboard_lord, 0.8)}
+						{this.renderSignboard("47%", "17%", "lords", signboard_lord, 0.7)}
 
-						{this.renderSignboard("61%", "41%", "pvp", signboard_pvp, 0.85)}
+						{this.renderSignboard("61%", "41%", "pvp", signboard_pvp, 0.75)}
 
-						{this.renderSignboard("55%", "71%", "tournaments", signboard_weekly, 0.9)}
+						{this.renderSignboard("55%", "71%", "tournaments", signboard_weekly, 0.8)}
 
-						{this.renderSignboard("78%", "26%", "flashtournaments", signboard_flash, 1)}
+						{this.renderSignboard("78%", "26%", "flashtournaments", signboard_flash, 0.85)}
 					</div>
 				</div>
 			)
