@@ -27,8 +27,25 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
-    "2521": [{
-        title: "Lord of Sitenor Season 7",
+    "2521": [
+        {
+            title: "Lord of Sitenor Season 7",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Ulanara Season 8",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
+    "905": [{
+        title: "Lord of Sitenor Season 8",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "3083": [{
+        title: "Lord of Bremonon Season 8",
         img: crown,
         textColor: 'gold'
     }],
@@ -323,13 +340,25 @@ const titles = {
             title: "The Twelve League IV 11th place",
             img: medal,
             textColor: '#cd7f32'
+        },
+        {
+            title: "Lord of Wastiaxus Season 8",
+            img: crown,
+            textColor: 'gold'
         }
     ],
-    "488": [{
-        title: "Lord of Opherus Season 2",
-        img: crown,
-        textColor: 'gold'
-    }],
+    "488": [
+        {
+            title: "Lord of Opherus Season 2",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Ulidalar Season 8",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
     "254": [
         {
             title: "Lord of Ulanara Season 6",
@@ -352,11 +381,23 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
-    "257": [{
-        title: "Lord of Wastiaxus Season 7",
+    "1512": [{
+        title: "Lord of Vedrenon Season 8",
         img: crown,
         textColor: 'gold'
     }],
+    "257": [
+        {
+            title: "Lord of Wastiaxus Season 7",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Druggorial Season 8",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
     "1822": [
         {
             title: "The Twelve League I 2nd place",
@@ -407,6 +448,11 @@ const titles = {
         },
         {
             title: "Lord of Ulanara Season 7",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Oceorah Season 8",
             img: crown,
             textColor: 'gold'
         }
@@ -517,6 +563,11 @@ const titles = {
         },
         {
             title: "Lord of Opherus Season 6",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Opherus Season 8",
             img: crown,
             textColor: 'gold'
         }
