@@ -344,7 +344,7 @@ class FightsReplayDungeon extends Component {
                         {
                             !isMobile &&
                             <p style={{ color: mainTextColor, fontSize: 12 }}>
-                                resistance {item.resistance} - weakness {item.weakness} - spell {item.spellSelected.name}
+                                resistance {item.resistance} - weakness {item.weakness} - spell {item.spellSelected.name} ({item.element})
                             </p>
                         }
                     </div>
@@ -434,10 +434,13 @@ class FightsReplayDungeon extends Component {
         return (
             <div style={{ width: boxW, flexDirection: 'column' }}>
 
-                <img
-                    style={{ position: 'absolute', top: headerHeight-1, left: 0, width: '100%' }}
-                    src={dungeons_bg}
-                />
+                {
+                    !isMobile &&
+                    <img
+                        style={{ position: 'absolute', top: headerHeight-1, left: 0, width: '100%' }}
+                        src={dungeons_bg}
+                    />
+                }
 
                 <div style={{ justifyContent: 'space-between', width: boxW, position: 'relative' }}>
 
@@ -523,6 +526,7 @@ class FightsReplayDungeon extends Component {
                     showModalEnd &&
                     <ModalEndEndurance
                         showModal={true}
+                        onCloseModal={() => this.setState({ showModalEnd: false })}
                         width={modalW}
                         text={`You won ${fightInfo.actions.length - 1} orc ears before falling...`}
                         mainTextColor={mainTextColor}

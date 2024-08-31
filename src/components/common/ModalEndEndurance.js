@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux'
 import DotLoader from 'react-spinners/DotLoader';
+import { IoClose } from 'react-icons/io5'
 import '../../css/Modal.css'
 
 
 class ModalEndEndurance extends Component {
 	render() {
-		const { showModal, width, text, mainTextColor, mainBackgroundColor } = this.props;
+		const { showModal, width, text, mainTextColor, mainBackgroundColor, onCloseModal } = this.props;
 
 		const classContainer = showModal ? "containerPopup bgEndurance" : "hidePopup"
 
@@ -26,6 +27,16 @@ class ModalEndEndurance extends Component {
 		                    Done
 		                </p>
 		            </a>
+
+					<button
+						style={{ position: 'absolute', right: 15, top: 15 }}
+						onClick={onCloseModal}
+					>
+						<IoClose
+							color={mainTextColor}
+							size={25}
+						/>
+					</button>
 
 				</div>
 			</div>
