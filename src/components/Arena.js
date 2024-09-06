@@ -1162,7 +1162,7 @@ class Arena extends Component {
                                       <br />
                                       Top 5 ranking 400: 3000 $WIZA
                                       <br />
-                                      Top 5 ranking 300: 2000 $WIZA & 10 AP
+                                      Top 5 ranking 300: 2000 $WIZA
                                       <br />
                                       Top 5 ranking 200: 1500 $WIZA & 10 AP
                                       <br />
