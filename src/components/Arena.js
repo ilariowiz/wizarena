@@ -503,6 +503,9 @@ class Arena extends Component {
             else if (error === "not_subbed") {
                 this.hideLoadingFightWithError("This wizard is not subbed in Arena")
             }
+            else if (error === "too_quick") {
+                this.hideLoadingFightWithError("Too many fight requests in a short period of time")
+            }
         }
         //SUCCESS
         else {

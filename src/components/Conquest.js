@@ -513,6 +513,9 @@ class Conquest extends Component {
             else if (error === "invalid_region") {
                 this.hideLoadingFightWithError("This wizard cannot fight in this region")
             }
+            else if (error === "too_quick") {
+                this.hideLoadingFightWithError("Too many fight requests in a short period of time")
+            }
         }
         //SUCCESS
         else {

@@ -456,6 +456,9 @@ class PvP extends Component {
             else if (error === "no_owner") {
                 this.hideLoadingFightWithError("You are not the owner of this wizard")
             }
+            else if (error === "too_quick") {
+                this.hideLoadingFightWithError("Too many fight requests in a short period of time")
+            }
         }
         //SUCCESS
         else {
