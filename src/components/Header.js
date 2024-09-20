@@ -33,6 +33,7 @@ import 'reactjs-popup/dist/index.css';
 require('moment-countdown');
 
 const logo_img = require('../assets/wzlogo_bg_transparent.png')
+const logo_kadena = require('../assets/kdalogo2.png')
 
 const market_icon = require('../assets/menu/black/marketplace.png')
 const profile_icon = require('../assets/menu/black/profile.png')
@@ -166,9 +167,20 @@ class Header extends Component {
 
 					<div style={styles.headerPanel}>
 
-						<p style={{ fontSize: 24, color: mainTextColor, marginLeft: 30 }} className="text-bold">
-							Wizards Arena
-						</p>
+						<div style={{ flexDirection: 'column', marginLeft: 30 }}>
+							<p style={{ fontSize: 24, color: mainTextColor, marginBottom: 2 }} className="text-bold">
+								Wizards Arena
+							</p>
+							<div style={{ alignItems: 'center', marginLeft: 17 }}>
+								<p style={{ color: mainTextColor, fontSize: 16 }}>
+									Powered by Kadena
+								</p>
+								<img
+									src={logo_kadena}
+									style={{ width: 30 }}
+								/>
+							</div>
+						</div>
 
 						<div style={{ alignItems: 'center', justifyContent: 'flex-end' }}>
 							<button
