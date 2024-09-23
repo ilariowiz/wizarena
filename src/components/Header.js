@@ -171,7 +171,10 @@ class Header extends Component {
 							<p style={{ fontSize: 24, color: mainTextColor, marginBottom: 2 }} className="text-bold">
 								Wizards Arena
 							</p>
-							<div style={{ alignItems: 'center', marginLeft: 17 }}>
+							<div
+								style={{ alignItems: 'center', marginLeft: 17, cursor: 'pointer' }}
+								onClick={() => window.open("https://www.kadena.io/", "_blank")}
+							>
 								<p style={{ color: mainTextColor, fontSize: 16 }}>
 									Powered by Kadena
 								</p>
