@@ -54,7 +54,7 @@ const bremononImg = require('../assets/regions/bremonon.png')
 
 const placeholderWiz = require('../assets/placeholder.png')
 
-const DAILY_FIGHTS = 5
+const DAILY_FIGHTS = 3
 
 class Conquest extends Component {
     constructor(props) {
@@ -722,7 +722,7 @@ class Conquest extends Component {
             championName = infoLords[champion.idnft].nickname ? `#${infoLords[champion.idnft].id} ${infoLords[champion.idnft].nickname}` : `#${infoLords[champion.idnft].id}`
         }
 
-        const fightsLeft = 5 - fightsDone
+        const fightsLeft = DAILY_FIGHTS - fightsDone
 
         const oldElo = wizardSelectedElos[keyElo] - wizardSelectedElos[`old${keyElo}`]
 
@@ -882,7 +882,7 @@ class Conquest extends Component {
         const { mainTextColor } = this.props
         const { loadingYourChampion } = this.state
 
-        const fightsLeft = 5 - item.fightsDone
+        const fightsLeft = DAILY_FIGHTS - item.fightsDone
 
         return (
             <div style={Object.assign({}, styles.yourSubCard, { maxWidth: 120 })} key={index}>
@@ -1239,7 +1239,7 @@ class Conquest extends Component {
                                       {' '}
                                       Each region of Wizards World has its own leaderboard. Whoever has the most ELO points is the current Lord.
                                       <br />
-                                      Each wizard has 5 daily fights and will be able to challenge one of the top 3 wizards of the regions that include his Element.
+                                      Each wizard has 3 daily fights and will be able to challenge one of the top 3 wizards of the regions that include his Element.
                                       <br />
                                       To calculate the ranking the website uses a modified version of the ELO rating. When you win, you gain points and your opponent loses 80% of the points you won.
                                       <br />
