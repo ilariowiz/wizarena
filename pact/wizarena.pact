@@ -102,6 +102,16 @@
         (compose-capability (ACCOUNT_GUARD DEV_ADDRESS))
     )
 
+    (defcap DEVS_CAP ()
+        (enforce-one "Dev or Admin"
+            [
+                (enforce-keyset ADMIN_KEYSET)
+                (enforce-guard (at "guard" (coin.details DEV_ADDRESS)))
+            ]
+        )
+        (compose-capability (PRIVATE))
+    )
+
     (defun create-BANK-guard ()
         (create-user-guard (require-PRIVATE))
     )
@@ -382,13 +392,6 @@
         winners:integer
         type:string
     )
-
-    ; (defschema fights-db-schema
-    ;     id:string
-    ;     tournament:string
-    ;     fightId:string
-    ;     winner:string
-    ; )
 
     (defschema upgrade-spells-schema
         attack:integer
@@ -801,7 +804,7 @@
     ; )
 
     (defun update-spellbooks (objects-list:list)
-        (with-capability (ADMIN)
+        (with-capability (DEVS_CAP)
             (map
                 (update-spellbook)
                 objects-list
@@ -810,7 +813,7 @@
     )
 
     (defun update-spellbook (item:object)
-        (require-capability (ADMIN))
+        (require-capability (PRIVATE))
         (let
             (
                 (id (at "id" item))
@@ -822,60 +825,8 @@
         )
     )
 
-    ; (defun update-fights-medals (objects-list:list)
-    ;     (with-capability (ADMIN)
-    ;         (map
-    ;             (update-fight-medal-dev)
-    ;             objects-list
-    ;         )
-    ;     )
-    ; )
-    ;
-    ; (defun update-fights-medals-dev (objects-list:list)
-    ;     (with-capability (DEV)
-    ;         (map
-    ;             (update-fight-medal-dev)
-    ;             objects-list
-    ;         )
-    ;     )
-    ; )
-
-    ; (defun update-fight-medal-dev (item:object)
-    ;     (require-capability (PRIVATE))
-    ;     (let
-    ;         (
-    ;             (id (at "id" item))
-    ;             (key (format "{}_{}" [(at "id" item) (at "tournament" item)]))
-    ;         )
-    ;         (with-default-read stats id
-    ;             {"medals": {}}
-    ;             {"medals":=medals}
-    ;             (update stats id
-    ;                 {"medals": (+ (at "medals" item) medals)}
-    ;             )
-    ;         )
-    ;         (write fights-db key
-    ;             {
-    ;                 "id": id,
-    ;                 "tournament": (at "tournament" item),
-    ;                 "fightId": (at "fightId" item),
-    ;                 "winner": (at "winner" item)
-    ;             }
-    ;         )
-    ;     )
-    ; )
-
-    (defun update-downgrades (objects-list:list)
-        (with-capability (ADMIN)
-            (map
-                (update-downgrade)
-                objects-list
-            )
-        )
-    )
-
     (defun update-downgrades-dev (objects-list:list)
-        (with-capability (DEV)
+        (with-capability (DEVS_CAP)
             (map
                 (update-downgrade)
                 objects-list
@@ -904,17 +855,8 @@
         )
     )
 
-    (defun update-aps (objects-list:list)
-        (with-capability (ADMIN)
-            (map
-                (update-ap)
-                objects-list
-            )
-        )
-    )
-
     (defun update-aps-dev (objects-list:list)
-        (with-capability (DEV)
+        (with-capability (DEVS_CAP)
             (map
                 (update-ap)
                 objects-list
@@ -1488,14 +1430,6 @@
     ;;;;;; TOURNAMENT ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun change-spell-tournament (idnft:string address:string spellSelected:object)
-        (with-capability (OWNER address idnft)
-            (update stats idnft {
-              "spellSelected": spellSelected
-            })
-        )
-    )
-
     (defun subscribe-tournament-mass (subscribers:list address:string)
         (let (
                 (buyin (* (get-value-tournament BUYIN_KEY) (length subscribers)))
@@ -1518,28 +1452,6 @@
                     subscribers
                 )
             )
-        )
-    )
-
-    (defun subscribe-tournament-mass-dev (subscribers:list)
-        (with-capability (DEV)
-            (map
-                (nft-to-subscribe-dev "chaos")
-                subscribers
-            )
-        )
-    )
-
-    (defun nft-to-subscribe-dev (type:string subscriber:object)
-        (require-capability (DEV))
-        (let (
-                (id (at "id" subscriber))
-                (round (at "round" subscriber))
-                (idnft (at "idnft" subscriber))
-                (address (at "address" subscriber))
-                (spellSelected (at "spellSelected" subscriber))
-            )
-            (subscribe-tournament id round idnft address spellSelected type)
         )
     )
 
@@ -1604,7 +1516,7 @@
     )
 
     (defun send-prizes (winners:list)
-        (with-capability (ADMIN)
+        (with-capability (DEVS_CAP)
             (map
                 (send-prize)
                 winners
@@ -1613,7 +1525,7 @@
     )
 
     (defun send-prize (item:object)
-        (require-capability (ADMIN))
+        (require-capability (PRIVATE))
         (let (
               (address (at "address" item))
               (prize (at "prize" item))
@@ -1809,9 +1721,9 @@
                 (data-wiz (get-wizard-fields-for-id (str-to-int idnft)))
             )
             (enforce (= (at "confirmBurn" data-wiz) false) "You can't subscribe a wizard in burning queue")
-            (enforce (>= (at "ap" data-wiz) 5) "This wizard does not have enough AP")
+            (enforce (>= (at "ap" data-wiz) 8) "This wizard does not have enough AP")
         )
-        (spend-ap 5 address idnft)
+        (spend-ap 8 address idnft)
         (with-default-read dungeon-table (+ idnft season)
             {"idnft": ""}
             {"idnft":= idnft }
@@ -2528,6 +2440,20 @@
         (read spells spell)
     )
 
+    (defun change-spell-tournament (idnft:string address:string spellSelected:object)
+        (with-capability (OWNER address idnft)
+            (let* (
+                    (data (get-wizard-fields-for-id (str-to-int idnft)))
+                    (contain-spell (check-spellbook-contain-spell (at "spellbook" data) spellSelected))
+                )
+                (enforce (= contain-spell true) "This wizard does not have the spell")
+                (update stats idnft {
+                  "spellSelected": spellSelected
+                })
+            )
+        )
+    )
+
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;;;;;; BURN ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -3002,18 +2928,9 @@
         )
     )
 
-    (defun set-value(key:string value:string)
-        @doc "Sets the value for a key to store in a table"
-        (with-capability (ADMIN)
-            (update values key
-                {"value": value}
-            )
-        )
-    )
-
     (defun set-value-dev(key:string value:string)
         @doc "Sets the value for a key to store in a table"
-        (with-capability (DEV)
+        (with-capability (DEVS_CAP)
             (update values key
                 {"value": value}
             )

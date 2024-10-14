@@ -957,15 +957,15 @@
 
 (free.wiz-arena.add-users-wl-mint [{"address":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "amount": 9}])
 
-(free.wiz-arena.set-value "tournament_open" "1")
+(free.wiz-arena.set-value-dev "tournament_open" "1")
 
-(free.wiz-arena.set-value "mint-phase" "0")
+(free.wiz-arena.set-value-dev "mint-phase" "0")
 
-(free.wiz-arena.set-value "pvp-open" "1")
+(free.wiz-arena.set-value-dev "pvp-open" "1")
 
-(free.wiz-arena.update-aps [{"id":"0", "ap": 8}])
+(free.wiz-arena.update-aps-dev [{"id":"0", "ap": 8}])
 
-(free.wiz-arena.update-downgrades [{"id":"0", "downgrades": 0}])
+(free.wiz-arena.update-downgrades-dev [{"id":"0", "downgrades": 0}])
 
 (commit-tx)
 
@@ -1046,7 +1046,7 @@
   ]
 }])
 
-(free.wiz-arena.subscribe-to-dungeon-season-mass "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "season1" ["0"])
+;(free.wiz-arena.subscribe-to-dungeon-season-mass "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "season1" ["0"])
 
 (free.wiz-arena.get-all-dungeon-subscription-for-season "season1")
 
@@ -1181,9 +1181,11 @@
 
 (begin-tx "REWARD TOURNAMENT PARTICIPATION")
 
-(env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
+(env-sigs [{ "key": "aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1", "caps": []}])
 
-(free.wiza.reward-users [{"account":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "amount": 1929.0}, {"account":"k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd", "amount": 1890.0}])
+(free.wiz-arena.update-downgrades-dev [{"id":"2","downgrades":4}])
+
+;(free.wiza.reward-users [{"account":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "amount": 1929.0}, {"account":"k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd", "amount": 1890.0}])
 
 (commit-tx)
 
@@ -1209,51 +1211,12 @@
 ;
 ; (commit-tx)
 
-(begin-tx "ADD FIGHT 1")
-
-(env-gasmodel "table")(env-gaslimit 150000)(env-gas 0)
-
-(env-sigs [{ "key": "aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1", "caps": []}])
-
-(free.wiz-arena.update-fights-medals-dev [
-    {
-        "id": "0",
-        "tournament": "t11_r1",
-        "fightId": "fwm4s7JZ0UiV2yHphKsH",
-        "winner": "1924",
-        "medals": {"t11":"1"}
-    }
-])
-
-(env-gas)
-
-(commit-tx)
 
 (begin-tx "GET DATA")
 
 (env-sigs [{ "key": "90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb", "caps": []}])
 
 (free.wiz-arena.get-wizard-fields-for-id 0)
-
-(commit-tx)
-
-(begin-tx "SUB TO CHAOS TOURNAMENT")
-
-(env-gasmodel "table")(env-gaslimit 150000)(env-gas 0)
-
-(env-sigs [{ "key": "aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1", "caps": []}])
-
-(free.wiz-arena.subscribe-tournament-mass-dev [
-    {
-        "id": "t3007_0",
-        "round": "t3007",
-        "idnft": "0",
-        "spellSelected": {"name": "Storm"},
-        "address": "k:461ae9f3c9c255112ac3797f6b15699c656c9bc44ed089551a0f792085ef9504"
-    }
-])
-
-(env-gas)
 
 (commit-tx)
 
@@ -1282,6 +1245,8 @@
     (coin.GAS)
   ]
 }])
+
+(free.wiz-arena.change-spell-tournament "2" "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"})
 
 (free.wiz-arena.join-tournament "0" "2" "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" free.wiza)
 
