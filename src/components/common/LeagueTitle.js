@@ -239,6 +239,21 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
+    "2719": [{
+        title: "Lord of Ulidalar Season 9",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "1231": [{
+        title: "Lord of Wastiaxus Season 9",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "1211": [{
+        title: "Lord of Ulanara Season 9",
+        img: crown,
+        textColor: 'gold'
+    }],
     "976": [
         {
             title: "Lord of Ulidalar Season 4",
@@ -345,6 +360,16 @@ const titles = {
             title: "Lord of Wastiaxus Season 8",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "Lord of Opherus Season 9",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Bremonon Season 9",
+            img: crown,
+            textColor: 'gold'
         }
     ],
     "488": [
@@ -373,6 +398,21 @@ const titles = {
     ],
     "1850": [{
         title: "Lord of Oceorah Season 6",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "2296": [{
+        title: "Lord of Druggorial Season 9",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "1264": [{
+        title: "Lord of Vedrenon Season 9",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "2743": [{
+        title: "Lord of Oceorah Season 9",
         img: crown,
         textColor: 'gold'
     }],
@@ -615,6 +655,11 @@ const titles = {
         },
         {
             title: "Lord of Ulidalar Season 7",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Sitenor Season 9",
             img: crown,
             textColor: 'gold'
         }
