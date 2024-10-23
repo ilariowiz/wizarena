@@ -39,6 +39,7 @@ const market_icon = require('../assets/menu/black/marketplace.png')
 const profile_icon = require('../assets/menu/black/profile.png')
 const shop_icon = require('../assets/menu/black/shop.png')
 const pvp_icon = require('../assets/menu/black/pvp.png')
+const forge_icon = require('../assets/menu/black/forge.png')
 
 const market_icon_night = require('../assets/menu/marketplace.png')
 const flash_icon_night = require('../assets/menu/flash_tournament.png')
@@ -48,6 +49,7 @@ const pvp_icon_night = require('../assets/menu/pvp.png')
 const tournaments_icon_night = require('../assets/menu/tournaments.png')
 const challenges_icon_night = require('../assets/menu/wand.png')
 const dungeons_icon_night = require('../assets/menu/dungeons.png')
+const forge_icon_night = require('../assets/menu/forge.png')
 
 const mapimg = require('../assets/ww_map.png')
 
@@ -666,10 +668,8 @@ class Header extends Component {
 		)
 	}
 
-	renderBtnMenu(goto, icon, title, id, fontSize) {
+	renderBtnMenu(goto, icon, title, id, fontSize, iconSize = 28) {
 		const { section, mainTextColor } = this.props
-
-		let iconSize = 28
 
 		const className = section === id ? 'text-bold' : 'text-medium'
 
@@ -848,6 +848,15 @@ class Header extends Component {
 						14)
 					}
 
+					{this.renderBtnMenu(
+						'forge',
+						isDarkmode ? forge_icon_night : forge_icon,
+						"Forge",
+						6,
+						14,
+						31)
+					}
+
 					{this.renderBtnPlay(false, 7, "Play")}
 				</div>
 
@@ -965,10 +974,8 @@ class Header extends Component {
 		)
 	}
 
-	renderBtnMenuMobile(goto, icon, id) {
+	renderBtnMenuMobile(goto, icon, id, iconSize = 35) {
 		const { showPopupMenu } = this.state
-
-		let iconSize = 35
 
 		if (goto.toLowerCase() === "play") {
 			return (
@@ -1046,6 +1053,13 @@ class Header extends Component {
 						'magicshop',
 						isDarkmode ? shop_icon_night : shop_icon,
 						5)
+					}
+
+					{this.renderBtnMenuMobile(
+						'forge',
+						isDarkmode ? forge_icon_night : forge_icon,
+						6,
+						38)
 					}
 
 					{this.renderBtnMenuMobile(

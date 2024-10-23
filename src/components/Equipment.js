@@ -666,19 +666,6 @@ class Equipment extends Component {
                 <div style={{ alignItems: 'center', flexWrap: 'wrap', marginBottom: 20, justifyContent: 'center' }}>
 
                     <a
-                        href={`${window.location.protocol}//${window.location.host}/forge`}
-                        style={Object.assign({}, styles.btnSales, { borderColor: isDarkmode ? 'white' : 'black', marginRight: 10 })}
-                        onClick={(e) => {
-                            e.preventDefault()
-                            this.props.history.push('/forge')
-                        }}
-                    >
-                        <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
-                            Forge
-                        </p>
-                    </a>
-
-                    <a
                         href={`${window.location.protocol}//${window.location.host}/equipmentoffers`}
                         style={Object.assign({}, styles.btnSales, { borderColor: isDarkmode ? 'white' : 'black', marginRight: 10 })}
                         onClick={(e) => {

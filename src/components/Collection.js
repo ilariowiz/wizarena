@@ -427,19 +427,6 @@ class Collection extends Component {
 	                </a>
 
 					<a
-						href={`${window.location.protocol}//${window.location.host}/burningqueue`}
-	                    style={Object.assign({}, styles.btnSales, { borderColor: isDarkmode ? 'white' : 'black' })}
-						onClick={(e) => {
-							e.preventDefault()
-							this.props.history.push('/burningqueue')
-						}}
-	                >
-	                    <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
-	                        Burning Queue
-	                    </p>
-	                </a>
-
-					<a
 						href={`${window.location.protocol}//${window.location.host}/collectionoffers`}
 	                    style={Object.assign({}, styles.btnSales, { borderColor: isDarkmode ? 'white' : 'black' })}
 						onClick={(e) => {
@@ -449,6 +436,19 @@ class Collection extends Component {
 	                >
 	                    <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
 	                        Collection Offers
+	                    </p>
+	                </a>
+
+					<a
+						href={`${window.location.protocol}//${window.location.host}/burningqueue`}
+	                    style={Object.assign({}, styles.btnSales, { borderColor: isDarkmode ? 'white' : 'black' })}
+						onClick={(e) => {
+							e.preventDefault()
+							this.props.history.push('/burningqueue')
+						}}
+	                >
+	                    <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
+	                        Burning Queue
 	                    </p>
 	                </a>
 				</div>
