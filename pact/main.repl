@@ -1246,7 +1246,7 @@
   ]
 }])
 
-(free.wiz-arena.change-spell-tournament "2" "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" {"atkBase":7, "condition":{}, "dmgBase":4, "element":"Fire","name":"Fireball"})
+(free.wiz-arena.change-spell-tournament "2" "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" {"atkBase":17, "condition":{}, "dmgBase":9, "element":"Fire","name":"Fireball"})
 
 (free.wiz-arena.join-tournament "0" "2" "k:94ed0b540f135678925f539e71ebe2786161f87ed7e1b0ec6ee875199abeb5dd" free.wiza)
 

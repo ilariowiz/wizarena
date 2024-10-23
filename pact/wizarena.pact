@@ -2444,12 +2444,26 @@
         (with-capability (OWNER address idnft)
             (let* (
                     (data (get-wizard-fields-for-id (str-to-int idnft)))
-                    (contain-spell (check-spellbook-contain-spell (at "spellbook" data) spellSelected))
+                    (spellbook (at 'spellbook data))
+                    (spellname (at 'name spellSelected))
+                    (exists (map (check-spellname spellname) spellbook))
                 )
-                (enforce (= contain-spell true) "This wizard does not have the spell")
+                (enforce (contains "ok" exists) "This wizard does not have the spell")
                 (update stats idnft {
                   "spellSelected": spellSelected
                 })
+            )
+        )
+    )
+
+    (defun check-spellname (spellname:string spell:object)
+        (let (
+                (spellnameFromSpellbook (at 'name spell))
+            )
+            (if
+                (= spellnameFromSpellbook spellname)
+                "ok"
+                "no"
             )
         )
     )
