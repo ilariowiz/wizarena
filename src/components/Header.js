@@ -981,7 +981,7 @@ class Header extends Component {
 			return (
 				<div>
 					<div
-						style={styles.boxBtnMenu}
+						style={styles.boxBtnMenuMobile}
 						onClick={() => this.setState({ showPopupMenu: true })}
 					>
 						<img
@@ -1010,7 +1010,7 @@ class Header extends Component {
 		return (
 			<a
 				href={`${window.location.protocol}//${window.location.host}/${goto}`}
-				style={styles.boxBtnMenu}
+				style={styles.boxBtnMenuMobile}
 				onClick={(e) => {
 					e.preventDefault()
 					this.props.history.replace(`/${goto}`)
@@ -1034,9 +1034,7 @@ class Header extends Component {
 		return (
 			<div style={{ flexDirection: 'row', width: '100%', paddingLeft: padding, paddingRight: padding, paddingTop: 8, paddingBottom: 8, backgroundColor: mainBackgroundColor, position: 'relative', alignItems: 'center', justifyContent: 'space-between' }} id="headerbox">
 
-				{this.renderLogo(true, 40)}
-
-				<div style={{ alignItems: 'center', justifyContent: 'center' }}>
+				<div style={{ alignItems: 'center', justifyContent: 'space-evenly', width: '100%' }}>
 					{this.renderBtnMenuMobile(
 						'collection',
 						isDarkmode ? market_icon_night : market_icon,
@@ -1178,6 +1176,14 @@ const styles = {
 		flexDirection: 'row',
 		cursor: 'pointer',
 		padding: 16
+	},
+	boxBtnMenuMobile: {
+		display: 'flex',
+		alignItems: 'center',
+		flexDirection: 'row',
+		cursor: 'pointer',
+		paddingTop: 12,
+		paddingBottom: 12
 	},
 	boxBtnMenuPlay: {
 		display: 'flex',
