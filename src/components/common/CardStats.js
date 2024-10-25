@@ -48,6 +48,8 @@ const cardStats = (item, numberOfMedalsForTournament, width, bonusFromEquipment,
         speedBase = item.speed
     }
 
+    let ap = item.ap.int || item.ap
+
     /*
     let speedBase = item.speed.int || item.speed
     if (!speedBase || speedBase.int === 0) {
@@ -188,7 +190,7 @@ const cardStats = (item, numberOfMedalsForTournament, width, bonusFromEquipment,
 
             {
                 numberOfMedalsForTournament !== undefined &&
-                <div style={{ width: widthBody, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
+                <div style={{ width: widthBody, alignItems: 'center', marginBottom: 7, flexWrap: 'wrap' }}>
                     <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
                         Medals
                     </p>
@@ -197,6 +199,15 @@ const cardStats = (item, numberOfMedalsForTournament, width, bonusFromEquipment,
                     </p>
                 </div>
             }
+
+            <div style={{ width: widthBody, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
+                <p style={Object.assign({}, styles.statsTitleStyle, { color: mainTextColor })}>
+                    AP
+                </p>
+                <p style={Object.assign({}, styles.statsStyle, { color: mainTextColor })} className="text-medium">
+                    {ap}
+                </p>
+            </div>
         </div>
     )
 }
