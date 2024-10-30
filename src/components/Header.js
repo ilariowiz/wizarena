@@ -742,6 +742,7 @@ class Header extends Component {
 				}
 
 				<button
+					id={isMobile ? "logo" : "menuright"}
 					onClick={() => {
 						if (!circulatingSupply) {
 							setTimeout(() => {
@@ -803,12 +804,16 @@ class Header extends Component {
 						</Popup>
 					</div>
 					:
-					<img
-						src={logo_img}
-						style={{ width: isMobile ? 40 : 50 }}
-						alt='logo'
-						id="logo"
-					/>
+					<a
+						href={`${window.location.protocol}//${window.location.host}/collection`}
+					>
+						<img
+							src={logo_img}
+							style={{ width: isMobile ? 40 : 50 }}
+							alt='logo'
+							id="logo"
+						/>
+					</a>
 				}
 			</div>
 		)
@@ -1034,6 +1039,8 @@ class Header extends Component {
 		return (
 			<div style={{ flexDirection: 'row', width: '100%', paddingLeft: padding, paddingRight: padding, paddingTop: 8, paddingBottom: 8, backgroundColor: mainBackgroundColor, position: 'relative', alignItems: 'center', justifyContent: 'space-between' }} id="headerbox">
 
+				{/*this.renderLogo(false, 51)*/}
+
 				<div style={{ alignItems: 'center', justifyContent: 'space-evenly', width: '100%' }}>
 					{this.renderBtnMenuMobile(
 						'collection',
@@ -1067,8 +1074,6 @@ class Header extends Component {
 					}
 				</div>
 
-				{this.renderBtnRight(true)}
-
 				<div
 					className={this.state.showPanel ? "bg-slide-on" : "bg-slide-off"}
 					onClick={() => {
@@ -1082,7 +1087,7 @@ class Header extends Component {
 				{this.renderSlidePanel(boxW)}
 
 				{
-					transactionsState && transactionsState.length > 0 && !showModalTx &&
+					transactionsState && transactionsState.length > 0 && !showModalTx ?
 					<div style={{ justifyContent: 'center', alignItems: 'center', padding: 5, marginTop: 15 }}>
 						<Popup
 							trigger={open => (
@@ -1103,6 +1108,8 @@ class Header extends Component {
 							</div>
 						</Popup>
 					</div>
+					:
+					this.renderBtnRight(true)
 				}
 
 				{/*<ModalBuyWIZA
