@@ -1594,7 +1594,7 @@ export const forgeAp = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, idnft, acc
 			networkId: netId
 		}
 
-		console.log("forgeAp", cmd)
+		//console.log("forgeAp", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}
