@@ -104,6 +104,10 @@
       @event true
   )
 
+  (defcap FORGE_ITEM_FROM_AP (recipe:string idnft:string account:string)
+      @event true
+  )
+
   (defcap UPGRADE_AURA (idnft:string)
       @event true
   )
@@ -756,6 +760,51 @@
     (select offers (and?
                           (where "status" (!= "canceled")) ;se già ritirata non la prendiamo
                           (where "buyer" (= buyer))))
+  )
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;;;;;;; FORGE CREATE ;;;;;;;;;;;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  (defun forge-from-ap (idnft:string owner:string recipe:string ma:module{wizarena-interface-v2})
+    (enforce (= (format "{}" [ma]) "free.wiz-arena") "not allowed, security reason")
+    (let (
+            (nft-data (ma::get-wizard-fields-for-id (str-to-int idnft)))
+            (ap-cost 48)
+            (kda-cost 5.0)
+            (id (id-for-forged-equipment))
+        )
+        (enforce (= (at "owner" nft-data) owner) "you are not the owner of this wizard")
+        (enforce (>= (at "ap" nft-data) ap-cost) "this wizard don't have enough AP")
+        (enforce (= (contains "ap_to_" recipe) true) "can't forge this item")
+        (with-capability (ACCOUNT_GUARD owner)
+            (coin.transfer owner ADMIN_ADDRESS kda-cost)
+            ;(ma::spend-ap ap-cost owner idnft)
+            (with-read recipe-book recipe
+                {"url":=url,
+                "bonus":=bonus,
+                "name":=name,
+                "type":=type}
+                (with-capability (PRIVATE)
+                    (forge-final id {
+                            "id": id,
+                            "created": (at "block-time" (chain-data)),
+                            "url": url,
+                            "bonus": bonus,
+                            "name": name,
+                            "owner": owner,
+                            "listed": false,
+                            "price": 0.0,
+                            "equipped": false,
+                            "equippedToId": "",
+                            "type": type
+                        }
+                    )
+                    (emit-event (FORGE_ITEM_FROM_AP recipe idnft owner))
+                )
+            )
+        )
+    )
   )
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

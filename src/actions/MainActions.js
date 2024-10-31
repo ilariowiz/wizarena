@@ -249,14 +249,13 @@ export const connectWalletConnect = (netId, chainId, gasPrice, gasLimit, network
 		const signClient = await SignClient.init({
 		  projectId: process.env.REACT_APP_WALLET_CONNECT_ID,
 		  metadata: {
-		    name: "WizardsArena",
-		    description: "Wizards Arena NFTGame",
-		    url: "https://www.wizardsarena.net",
-		    icons: ["https://firebasestorage.googleapis.com/v0/b/raritysniperkda.appspot.com/o/android-chrome-384x384.png?alt=media&token=e5946e6e-ac87-446a-91f4-f6144906ef22"],
+			name: "WizardsArena",
+			description: "Wizards Arena NFTGame",
+			url: "https://www.wizardsarena.net",
+			icons: ["https://firebasestorage.googleapis.com/v0/b/raritysniperkda.appspot.com/o/android-chrome-384x384.png?alt=media&token=e5946e6e-ac87-446a-91f4-f6144906ef22"],
 		  },
 		});
 
-		//console.log(signClient);
 
 		const requiredNamespaces = {
 			kadena: {
@@ -1548,6 +1547,54 @@ export const forgeItem = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, recipe, 
 		}
 
 		//console.log("forgeItem", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const forgeAp = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, idnft, account, recipe) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.${CONTRACT_NAME_EQUIPMENT}.forge-from-ap "${idnft}" "${account.account}" "${recipe}" free.wiz-arena)`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify your account",
+				"Verify your account",
+				`free.${CONTRACT_NAME_EQUIPMENT}.ACCOUNT_GUARD`,
+				[account.account]
+			),
+			Pact.lang.mkCap(
+				"Verify your account",
+				"Verify your account",
+				`free.${CONTRACT_NAME}.OWNER`,
+				[account.account, idnft]
+			),
+			Pact.lang.mkCap(`Forge`, "Pay to forge", `coin.TRANSFER`, [
+				account.account,
+				ADMIN_ADDRESS,
+				5.0,
+			]),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit: 6000,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		console.log("forgeAp", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}

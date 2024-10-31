@@ -14,7 +14,7 @@ class EquipmentCardForge extends Component {
 
         let infoEquipment;
 
-        if (item.type === "ring") {
+        if (item.type === "ring" && item.bonus) {
             infoEquipment = getRingBonuses(item)
         }
         else if (item.type === "pendant" && item.bonus) {

@@ -20,7 +20,7 @@ class ModalForgeEquipment extends Component {
     }
 
 	render() {
-		const { showModal, rings, mainTextColor, mainBackgroundColor } = this.props;
+		const { showModal, rings, mainTextColor, mainBackgroundColor, title } = this.props;
 
 		const classContainer = showModal ? "containerPopup" : "hidePopup"
 
@@ -32,7 +32,7 @@ class ModalForgeEquipment extends Component {
 				<div style={Object.assign({}, styles.subcontainer, { width, maxHeight, backgroundColor: mainBackgroundColor })}>
 
 					<p style={{ color: mainTextColor, fontSize: 20, marginBottom: 20, marginTop: 20 }} className="text-medium">
-						Your Rings:
+						{title}
 					</p>
 
                     <div style={{ flexWrap: 'wrap', marginBottom: 20, maxHeight, overflow: 'auto', justifyContent: 'center' }}>

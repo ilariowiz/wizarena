@@ -27,7 +27,7 @@ class Recipes extends Component {
             capitoli[i.stat].push(i)
         })
 
-        console.log(capitoli);
+        //console.log(capitoli);
 
         this.state = {
             capitoli,
@@ -37,6 +37,43 @@ class Recipes extends Component {
 
     componentDidMount() {
 		document.title = "Recipes - Wizards Arena"
+
+        /*
+        const baseUrl = "https://storage.googleapis.com/wizarena/equipment/"
+        const elements = [
+            {name: "Pendant of Fire Resistance (medium)", type: "fire", url: `${baseUrl}pendant_fire_res_m.png`},
+            {name: "Pendant of Acid Resistance (medium)", type: "acid", url: `${baseUrl}pendant_acid_res_m.png`},
+            {name: "Pendant of Dark Resistance (medium)", type: "dark", url: `${baseUrl}pendant_acid_dark_m.png`},
+            {name: "Pendant of Earth Resistance (medium)", type: "earth", url: `${baseUrl}pendant_earth_res_m.png`},
+            {name: "Pendant of Ice Resistance (medium)", type: "ice", url: `${baseUrl}pendant_ice_res_m.png`},
+            {name: "Pendant of Psycho Resistance (medium)", type: "psycho", url: `${baseUrl}pendant_psycho_res_m.png`},
+            {name: "Pendant of Spirit Resistance (medium)", type: "spirit", url: `${baseUrl}pendant_spirit_res_m.png`},
+            {name: "Pendant of Sun Resistance (medium)", type: "sun", url: `${baseUrl}pendant_sun_res_m.png`},
+            {name: "Pendant of Thunder Resistance (medium)", type: "thunder", url: `${baseUrl}pendant_thunder_res_m.png`},
+            {name: "Pendant of Undead Resistance (medium)", type: "undead", url: `${baseUrl}pendant_undead_res_m.png`},
+            {name: "Pendant of Water Resistance (medium)", type: "water", url: `${baseUrl}pendant_water_res_m.png`},
+            {name: "Pendant of Wind Resistance (medium)", type: "wind", url: `${baseUrl}pendant_wind_res_m.png`},
+        ]
+        const stat = "Element Resistance (Medium)"
+
+        let temp = []
+        for (var i = 0; i < elements.length; i++) {
+            const e = elements[i]
+
+            temp.push({
+                "ingredients": `ap_to_${e.type}`,
+                "ingredientsInfo": [{"url": "https://storage.googleapis.com/wizarena/placeholder.png", "name": "45 AP"}],
+                "name": e.name,
+                "url": e.url,
+                "wiza": 0,
+                "kda": 5,
+                "stat": stat,
+                "level": 1
+            })
+        }
+
+        console.log( temp);
+        */
 	}
 
     renderCapitolo(item, index) {
@@ -84,9 +121,19 @@ class Recipes extends Component {
                     INGREDIENTS:
                 </p>
 
-                <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 5 }}>
-                    1) {item.wiza} $WIZA
-                </p>
+                {
+                    item.wiza > 0 &&
+                    <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 5 }}>
+                        1) {item.wiza} $WIZA
+                    </p>
+                }
+
+                {
+                    item.kda &&
+                    <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 5 }}>
+                        1) {item.kda} $KDA
+                    </p>
+                }
 
                 <div style={{ alignItems: 'center' }}>
                     <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
@@ -100,16 +147,19 @@ class Recipes extends Component {
                         </p>
                     </div>
 
-                    <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                        <img
-                            src={item.ingredientsInfo[1].url}
-                            style={{ width: 60 }}
-                            alt='ingredient'
-                        />
-                        <p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center' }}>
-                            3) {item.ingredientsInfo[1].name}
-                        </p>
-                    </div>
+                    {
+                        item.ingredientsInfo.length > 1 &&
+                        <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                            <img
+                                src={item.ingredientsInfo[1].url}
+                                style={{ width: 60 }}
+                                alt='ingredient'
+                            />
+                            <p style={{ fontSize: 14, color: mainTextColor, textAlign: 'center' }}>
+                                3) {item.ingredientsInfo[1].name}
+                            </p>
+                        </div>
+                    }
                 </div>
             </div>
         )
