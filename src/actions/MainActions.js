@@ -617,6 +617,54 @@ export const loadEquipMinted = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit,
 	return async (dispatch) => {
 
 		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.all-items)`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+            if (response && response.length > 0) {
+                let partsBlock = _.chunk(response, response.length/4)
+
+                //console.log(partsBlock);
+
+                let promises = []
+                partsBlock.map(pr => {
+                    let promise = Promise.resolve(dispatch(loadBlockItemsSplit(chainId, gasPrice, 175000, networkUrl, pr)))
+                    promises.push(promise)
+                })
+
+                Promise.all(promises).then(values => {
+					//console.log(values);
+                    let final = []
+
+                    values.map(i => final.push(...i))
+
+                    final = final.filter(i => i.owner === account.account)
+
+                    final.sort((a, b) => {
+    	                return parseInt(a.id) - parseInt(b.id)
+    	            })
+
+					final.sort((a, b) => {
+						if (parseInt(a.price) === 0) return 1;
+						if (parseInt(b.price) === 0) return -1
+						return a.price - b.price
+					})
+
+					if (callback) {
+						callback(final)
+					}
+				})
+            }
+            else {
+
+            }
+		})
+
+
+		/*
+		let cmd = {
 			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.equipment-owned-by "${account.account}")`,
 			meta: defaultMeta(chainId, gasPrice, 180000)
 		}
@@ -627,6 +675,22 @@ export const loadEquipMinted = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit,
 		if (callback) {
 			callback(response)
 		}
+		*/
+	}
+}
+
+export const loadBlockItemsSplit = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, block) => {
+	return async (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.${CONTRACT_NAME_EQUIPMENT}.get-equipment-fields-for-ids ${JSON.stringify(block)})`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		const response = await dispatch(readFromContract(cmd, true, networkUrl))
+		//console.log(response);
+
+		return response
 	}
 }
 
