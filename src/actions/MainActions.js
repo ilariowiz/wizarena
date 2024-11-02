@@ -811,84 +811,83 @@ export const loadUserMintedNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 
 			//torna un array di oggetti, ogni oggetto include solo id [{ id: "0" }]
 			if (response && response.status !== 'failure') {
-				let block = []
+				let onlyId = []
 
 				response.map(i => {
-					block.push(i.id)
+					onlyId.push(i.id)
 				})
 
-				//block sono tutti gli oggetti dell'utente
-				let userMintedGasLimit = block.length * 1500
-				if (userMintedGasLimit > 180000) {
-					userMintedGasLimit = 180000
-				}
-				dispatch(loadBlockUserMintedNfts(chainId, gasPrice, userMintedGasLimit, networkUrl, block, callback))
+				let promises = []
+
+				const partsBlock = _.chunk(onlyId, 150)
+				partsBlock.map(pr => {
+                    let promise = Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 180000, networkUrl, pr)))
+                    promises.push(promise)
+                })
+
+				Promise.all(promises).then(values => {
+					//console.log(values);
+					let final = []
+					values.map(i => {
+						final.push(...i)
+					})
+
+					//console.log(final);
+
+					let maxStats = { hp: 0, defense: 0, attack: 0, damage: 0, speed: 0, ap: 0 }
+
+					final.map(i => {
+						i.level = i.level.int
+
+						if (i.hp.int > maxStats.hp) {
+							maxStats['hp'] = i.hp.int
+						}
+						if (i.defense.int > maxStats.defense) {
+							maxStats['defense'] = i.defense.int
+						}
+						if (i.attack.int > maxStats.attack) {
+							maxStats['attack'] = i.attack.int
+						}
+						if (i.damage.int > maxStats.damage) {
+							maxStats['damage'] = i.damage.int
+						}
+						if (i.speed.int > maxStats.speed) {
+							maxStats['speed'] = i.speed.int
+						}
+						if (i.ap.int > maxStats.ap) {
+							maxStats['ap'] = i.ap.int
+						}
+					})
+
+					const ranges = dispatch(calcRanges(maxStats))
+					//console.log(ranges);
+
+					final.sort((a, b) => {
+		                return parseInt(a.id) - parseInt(b.id)
+		            })
+
+					final.sort((a, b) => {
+						if (parseInt(a.price) === 0) return 1;
+						if (parseInt(b.price) === 0) return -1
+						return a.price - b.price
+					})
+
+					dispatch({
+						type: LOAD_USER_MINTED_NFTS,
+						payload: {
+							userMintedNfts: final,
+							ranges
+						}
+					})
+
+					if (callback) {
+						callback(final)
+					}
+				})
 			}
-		})
-	}
-}
-
-export const loadBlockUserMintedNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, block, callback) => {
-	return (dispatch) => {
-
-		let cmd = {
-			pactCode: `(free.${CONTRACT_NAME}.get-wizard-fields-for-ids [${block}])`,
-			meta: defaultMeta(chainId, gasPrice, gasLimit)
-		}
-
-		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
-			//console.log(response)
-
-			if (response) {
-
-				let maxStats = { hp: 0, defense: 0, attack: 0, damage: 0, speed: 0, ap: 0 }
-
-				response.map(i => {
-					i.level = i.level.int
-
-					if (i.hp.int > maxStats.hp) {
-						maxStats['hp'] = i.hp.int
-					}
-					if (i.defense.int > maxStats.defense) {
-						maxStats['defense'] = i.defense.int
-					}
-					if (i.attack.int > maxStats.attack) {
-						maxStats['attack'] = i.attack.int
-					}
-					if (i.damage.int > maxStats.damage) {
-						maxStats['damage'] = i.damage.int
-					}
-					if (i.speed.int > maxStats.speed) {
-						maxStats['speed'] = i.speed.int
-					}
-					if (i.ap.int > maxStats.ap) {
-						maxStats['ap'] = i.ap.int
-					}
-				})
-
-				const ranges = dispatch(calcRanges(maxStats))
-				//console.log(ranges);
-
-				response.sort((a, b) => {
-	                return parseInt(a.id) - parseInt(b.id)
-	            })
-
-				response.sort((a, b) => {
-					if (parseInt(a.price) === 0) return 1;
-					if (parseInt(b.price) === 0) return -1
-					return a.price - b.price
-				})
-
-				dispatch({
-					type: LOAD_USER_MINTED_NFTS,
-					payload: {
-						userMintedNfts: response,
-						ranges
-					}
-				})
-
+			else {
 				if (callback) {
-					callback(response)
+					callback([])
 				}
 			}
 		})
