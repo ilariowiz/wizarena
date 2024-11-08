@@ -20,7 +20,7 @@ const headerLeague = (tournament, mainTextColor, history) => {
         <div style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
 
             {
-                tournament.type === "weekly" &&
+                tournament.type === "weekly" && tournament.region &&
                 <div style={{ alignItems: 'center', marginBottom: 15 }}>
                     <p style={{ fontSize: 16, color: mainTextColor, marginRight: 10 }}>
                         Region:

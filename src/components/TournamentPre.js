@@ -700,7 +700,7 @@ class Tournament extends Component {
         const marginBottom = 14
 
         let RegionIcon;
-        if (tournament.showLeague) {
+        if (tournament.showLeague && tournament.event) {
             const event = tournament.event
             const eventInfo = allEvents.find(i => i.name === event)
             const elementBoosted = eventInfo.elements
@@ -719,9 +719,12 @@ class Tournament extends Component {
                             The Twelve League <span style={{ fontSize: 15 }}>{tournament.leagueTournament}</span>
                         </p>
 
-                        <div style={{ position: 'absolute', right: 5, top: 10 }}>
-                            <RegionIcon width={27} height={27} color={mainTextColor} />
-                        </div>
+                        {
+                            tournament.event &&
+                            <div style={{ position: 'absolute', right: 5, top: 10 }}>
+                                <RegionIcon width={27} height={27} color={mainTextColor} />
+                            </div>
+                        }
                     </div>
                     :
                     <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom }}>
