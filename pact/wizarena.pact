@@ -2183,7 +2183,7 @@
                         )
                     )
                 "")
-                (spend-wiza (round (+ (* amount 15) 0.0) 2) owner m)
+                (spend-wiza (round (+ (* amount 5) 0.0) 2) owner m)
             )
         )
     )

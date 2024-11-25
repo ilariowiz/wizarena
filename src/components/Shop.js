@@ -1336,7 +1336,7 @@ class Shop extends Component {
                                 $WIZA
                             </p>
                             <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 15 }} className="text-bold">
-                                {decreaseTo * 15}
+                                {decreaseTo * 5}
                             </p>
                         </div>
 
@@ -1372,7 +1372,7 @@ class Shop extends Component {
                             return
                         }
 
-                        this.downgrade(key, decreaseTo*15)
+                        this.downgrade(key, decreaseTo * 5)
                     }}
                 >
                     <p style={{ fontSize: 15, color: 'white' }} className="text-medium">
