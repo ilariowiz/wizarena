@@ -12,6 +12,7 @@ import getBoxWidth from './common/GetBoxW'
 import getImageUrl from './common/GetImageUrl'
 import getName from './common/GetName'
 import getAuraForElement from '../assets/gifs/AuraForElement'
+import getAnimationForSpell from '../assets/gifs/AnimationForSpell'
 import {
     setNetworkSettings,
     setNetworkUrl,
@@ -32,7 +33,8 @@ const ulidalar_bg = require('../assets/bg_fights/ulidalar_bg_hd.jpg')
 const pvp_bg = require('../assets/bg_fights/pvp_bg_hd.jpg')
 const arena_bg = require('../assets/bg_fights/arena_bg_hd.jpg')
 
-
+const beam_rx_to_lx = require('../assets/gifs/spells/beam_rx_to_lx.gif')
+const beam_lx_to_rx = require('../assets/gifs/spells/beam_lx_to_rx.gif')
 
 class FightsReplay extends Component {
     constructor(props) {
@@ -93,7 +95,9 @@ class FightsReplay extends Component {
     preloadFight(data) {
 
         this.player1 = data.info1
-        this.history = data.actions
+        //this.history = data.actions
+        //console.log(this.history);
+        this.calcAnimationForActions(data.actions)
 
         if (data.info2 && data.info2.id) {
             this.player2 = data.info2
@@ -114,10 +118,28 @@ class FightsReplay extends Component {
         }
     }
 
+    calcAnimationForActions(actions) {
+
+        for (let i = 0; i < actions.length; i++) {
+            let action = actions[i]
+
+            if (action.desc.includes("hits") || action.desc.includes("misses")) {
+
+                const attaccante = action.desc.split(" ")[0]
+                action['attaccante'] = attaccante.replace("#", "")
+                action['showAnimation'] = true
+            }
+            else {
+                action['showAnimation'] = false
+            }
+
+            this.history.push(action)
+        }
+
+        console.log(this.history);
+    }
+
     showFight() {
-
-        //console.log(this.history);
-
         let historyToShow = this.history[this.indexShow]
         historyToShow["turn"] = this.indexShow+1
 
@@ -127,12 +149,13 @@ class FightsReplay extends Component {
 
         this.setState({ historyShow }, () => {
 
-            //console.log(this.history.length, this.indexShow);
             if (this.history.length > this.indexShow+1) {
                 this.indexShow += 1
+
                 this.turnTimeout = setTimeout(() => {
                     this.showFight()
-                }, 3500)
+                }, 3100)
+
             }
             else {
                 this.setState({ isEnd: true })
@@ -473,13 +496,13 @@ class FightsReplay extends Component {
         const player2CurrentHp = historyShow.length > 0 ? historyShow[0][`hp_${this.player2.id}`] : this.player2InitialHp
 
         //console.log(player1CurrentHp, player2CurrentHp);
+        const lastAction = historyShow[0]
+        //console.log(lastAction);
 
         const widthSide = (boxW / 2) - 20
 
         const pctImg = isMobile ? 90 : 60
         const widthImg = widthSide * pctImg / 100
-
-        //console.log(this.hexToRgb(mainBackgroundColor));
 
         const rgbBackgroundColor = this.hexToRgb(mainBackgroundColor)
 
@@ -505,8 +528,30 @@ class FightsReplay extends Component {
             					src={`https://storage.googleapis.com/wizarena/wizards_nobg_back/${this.player1.id}.png`}
             					alt={this.player1.id}
             				/>
+
+                            {
+    							lastAction && lastAction.showAnimation && lastAction.attaccante !== this.player1.id && getAnimationForSpell(this.player2.spellSelected.name) ?
+    							<img
+    								style={{ zIndex: 99, width: widthImg, height: widthImg, position: 'absolute', top: 0, right: 0 }}
+    								src={getAnimationForSpell(this.player2.spellSelected.name)}
+    								alt="spell"
+    							/>
+    							: null
+    						}
                         </div>
                     </div>
+
+                    {
+                        lastAction && lastAction.showAnimation ?
+                        <div style={{ zIndex: 90, justifyContent: 'center', alignItems: 'center', position: 'absolute', left: lastAction.attaccante === this.player1.id ? "-10%" : 0, top: lastAction.attaccante === this.player1.id ? "14%" : "5%", width: '100%', height: '100%' }}>
+                            <img
+                                style={{ width: "70%" }}
+                                src={lastAction.attaccante === this.player1.id ? beam_lx_to_rx : beam_rx_to_lx}
+                                alt="spell"
+                            />
+                        </div>
+                        : null
+                    }
 
 
                     <div style={{ width: widthSide, flexDirection: 'column', alignItems: 'center', height: 'fit-content' }}>
@@ -521,6 +566,16 @@ class FightsReplay extends Component {
                             <div
                                 style={{ height: 15, width: widthImg/2, position: 'absolute', top: widthImg+15, left: ((widthImg/2)-(widthImg/4)), backgroundColor: 'black', opacity: 0.5, borderRadius: '50%' }}
                             />
+
+                            {
+    							lastAction && lastAction.showAnimation && lastAction.attaccante !== this.player2.id && getAnimationForSpell(this.player1.spellSelected.name) ?
+    							<img
+    								style={{ zIndex: 80, width: widthImg, height: widthImg, position: 'absolute', top: 0, right: 0 }}
+    								src={getAnimationForSpell(this.player1.spellSelected.name)}
+    								alt="spell"
+    							/>
+    							: null
+    						}
                         </div>
 
                         {this.renderBoxHp(widthSide, this.player1, this.player1InitialHp, player1CurrentHp, this.player1.level, 2, isMobile, rgbBackgroundColor)}
@@ -531,7 +586,7 @@ class FightsReplay extends Component {
 
                 </div>
 
-                <div style={Object.assign({}, styles.boxDesc, { backgroundColor: `rgba(${rgbBackgroundColor[0]}, ${rgbBackgroundColor[1]}, ${rgbBackgroundColor[2]}, 0.85)`, borderColor: mainTextColor })}>
+                <div style={Object.assign({}, styles.boxDesc, { zIndex: 101, backgroundColor: `rgba(${rgbBackgroundColor[0]}, ${rgbBackgroundColor[1]}, ${rgbBackgroundColor[2]}, 0.85)`, borderColor: mainTextColor })}>
                     {
                         historyShow.length > 0 &&
                         historyShow.map((item, index) => {
