@@ -136,7 +136,7 @@ class FightsReplay extends Component {
             this.history.push(action)
         }
 
-        console.log(this.history);
+        //console.log(this.history);
     }
 
     showFight() {
