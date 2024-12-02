@@ -1721,9 +1721,7 @@
                 (data-wiz (get-wizard-fields-for-id (str-to-int idnft)))
             )
             (enforce (= (at "confirmBurn" data-wiz) false) "You can't subscribe a wizard in burning queue")
-            (enforce (>= (at "ap" data-wiz) 8) "This wizard does not have enough AP")
         )
-        (spend-ap 8 address idnft)
         (with-default-read dungeon-table (+ idnft season)
             {"idnft": ""}
             {"idnft":= idnft }

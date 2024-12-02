@@ -39,7 +39,7 @@ const ears_icon = require('../assets/menu/dungeons.png')
 
 const MAX_WIZARDS_PER_WALLET = 50
 const DAILY_FIGHTS = 1
-const AP_COST = 8
+
 
 class Dungeon extends Component {
     constructor(props) {
@@ -553,11 +553,6 @@ class Dungeon extends Component {
 				item={item}
 				width={230}
 				onSubscribe={(id) => {
-
-                    if (item.ap.int < AP_COST) {
-                        toast.error("This wizards does not have enough AP")
-                        return
-                    }
 
                     if (!toSubscribe.includes(id)) {
                         this.addToSubscribers(id)
@@ -1203,7 +1198,7 @@ class Dungeon extends Component {
 
                    <div style={{ flexWrap: 'wrap', alignItems: 'center', marginBottom: 20 }}>
                        <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center', marginRight: 20, marginBottom: 15 }}>
-                           Buyin: 1 $KDA & {AP_COST} AP
+                           Buyin: 1 $KDA
                        </p>
 
                        <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center', marginRight: 20, marginBottom: 15 }}>
