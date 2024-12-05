@@ -232,7 +232,7 @@ class Header extends Component {
 						</p>
 
 						<a
-							href="https://wizardsarena.gitbook.io/wizards-arena/"
+							href="https://prism-sand-bf4.notion.site/13c52883dc3180bcaab2e26ce6b75475?v=13c52883dc3180a1837d000c641d83f0"
 							target="_blank"
 							rel="noopener noreferrer"
 							style={{ marginBottom: 5, width: 'fit-content' }}
@@ -252,7 +252,7 @@ class Header extends Component {
 						</p>
 
 						<a
-							href="https://wizardsarena.gitbook.io/wizards-arena/usdwiza"
+							href="https://prism-sand-bf4.notion.site/13c52883dc3180bcaab2e26ce6b75475?v=13c52883dc3180a1837d000c641d83f0&p=13d52883dc318060a482fbdf1189e14a&pm=s&pvs=31"
 							target="_blank"
 							rel="noopener noreferrer"
 							style={{ marginBottom: 5, width: 'fit-content' }}
@@ -277,7 +277,7 @@ class Header extends Component {
 						</button>*/}
 
 						<a
-							href="https://wizardsarena.gitbook.io/wizards-arena/usdwiza/how-to-mine"
+							href="https://prism-sand-bf4.notion.site/13c52883dc3180bcaab2e26ce6b75475?v=13c52883dc3180a1837d000c641d83f0&p=13d52883dc3180eda0ddefe2f4e070b6&pm=s"
 							target="_blank"
 							rel="noopener noreferrer"
 							style={{ marginBottom: 5, width: 'fit-content' }}
@@ -307,7 +307,7 @@ class Header extends Component {
 						</p>
 
 						<a
-							href="https://wizardsarena.gitbook.io/wizards-arena/usdwiza/how-to-mine"
+							href="https://prism-sand-bf4.notion.site/13c52883dc3180bcaab2e26ce6b75475?v=13c52883dc3180a1837d000c641d83f0&p=13d52883dc318066a2b8f436c5ec9ea0&pm=s"
 							target="_blank"
 							rel="noopener noreferrer"
 							style={{ marginBottom: 5, width: 'fit-content' }}
