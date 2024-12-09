@@ -13,6 +13,7 @@ import getImageUrl from './common/GetImageUrl'
 import getName from './common/GetName'
 import getAuraForElement from '../assets/gifs/AuraForElement'
 import getAnimationForSpell from '../assets/gifs/AnimationForSpell'
+import getRayForElement from '../assets/gifs/RayForElement'
 import {
     setNetworkSettings,
     setNetworkUrl,
@@ -33,9 +34,6 @@ const ulidalar_bg = require('../assets/bg_fights/ulidalar_bg_hd.jpg')
 const pvp_bg = require('../assets/bg_fights/pvp_bg_hd.jpg')
 const arena_bg = require('../assets/bg_fights/arena_bg_hd.jpg')
 
-const beam_rx_to_lx = require('../assets/gifs/spells/beam_rx_to_lx.gif')
-const beam_lx_to_rx = require('../assets/gifs/spells/beam_lx_to_rx.gif')
-
 class FightsReplay extends Component {
     constructor(props) {
         super(props)
@@ -51,13 +49,18 @@ class FightsReplay extends Component {
 
         this.history = []
 
+        this.srcAnimationP1 = undefined
+        this.srcAnimationP2 = undefined
+
         this.state = {
             loading: true,
             historyShow: [],
             winner: undefined,
             isEnd: false,
             showOnlyOne: false,
-            fightInfo: {}
+            fightInfo: {},
+            animationSpellP1: this.srcAnimationP1,
+            animationSpellP2: this.srcAnimationP2
         }
 
         this.player1 = {}
@@ -105,6 +108,9 @@ class FightsReplay extends Component {
             this.player1InitialHp = this.player1.hp
             this.player2InitialHp = this.player2.hp
 
+            this.srcAnimationP1 = getAnimationForSpell(this.player1.spellSelected.name)
+            this.srcAnimationP2 = getAnimationForSpell(this.player2.spellSelected.name)
+
             this.setState({ loading: false, fightInfo: data })
             setTimeout(() => {
                 this.showFight()
@@ -127,9 +133,13 @@ class FightsReplay extends Component {
 
                 const attaccante = action.desc.split(" ")[0]
                 action['attaccante'] = attaccante.replace("#", "")
-                action['showAnimation'] = true
+                action['showRay'] = true
+                if (action.desc.includes("hits")) {
+                    action['showAnimation'] = true
+                }
             }
             else {
+                action['showRay'] = false
                 action['showAnimation'] = false
             }
 
@@ -147,7 +157,11 @@ class FightsReplay extends Component {
 
         historyShow.splice(0, 0, historyToShow)
 
-        this.setState({ historyShow }, () => {
+        this.setState({ historyShow, animationSpellP1: undefined, animationSpellP2: undefined }, () => {
+
+            setTimeout(() => {
+                this.setState({ animationSpellP1: this.srcAnimationP1, animationSpellP2: this.srcAnimationP2 })
+            }, 1)
 
             if (this.history.length > this.indexShow+1) {
                 this.indexShow += 1
@@ -499,6 +513,8 @@ class FightsReplay extends Component {
         const lastAction = historyShow[0]
         //console.log(lastAction);
 
+        console.log(this.state.animationSpellP1);
+
         const widthSide = (boxW / 2) - 20
 
         const pctImg = isMobile ? 90 : 60
@@ -533,7 +549,7 @@ class FightsReplay extends Component {
     							lastAction && lastAction.showAnimation && lastAction.attaccante !== this.player1.id && getAnimationForSpell(this.player2.spellSelected.name) ?
     							<img
     								style={{ zIndex: 99, width: widthImg, height: widthImg, position: 'absolute', top: 0, right: 0 }}
-    								src={getAnimationForSpell(this.player2.spellSelected.name)}
+    								src={this.state.animationSpellP2}
     								alt="spell"
     							/>
     							: null
@@ -542,11 +558,12 @@ class FightsReplay extends Component {
                     </div>
 
                     {
-                        lastAction && lastAction.showAnimation ?
+                        lastAction && lastAction.showRay ?
                         <div style={{ zIndex: 90, justifyContent: 'center', alignItems: 'center', position: 'absolute', left: lastAction.attaccante === this.player1.id ? "-10%" : 0, top: lastAction.attaccante === this.player1.id ? "14%" : "5%", width: '100%', height: '100%' }}>
                             <img
                                 style={{ width: "70%" }}
-                                src={lastAction.attaccante === this.player1.id ? beam_lx_to_rx : beam_rx_to_lx}
+                                //src={lastAction.attaccante === this.player1.id ? beam_lx_to_rx : beam_rx_to_lx}
+                                src={getRayForElement(lastAction.attaccante === this.player1.id ? this.player1.element.toLowerCase() : this.player2.element.toLowerCase(), lastAction.attaccante === this.player1.id)}
                                 alt="spell"
                             />
                         </div>
@@ -571,7 +588,7 @@ class FightsReplay extends Component {
     							lastAction && lastAction.showAnimation && lastAction.attaccante !== this.player2.id && getAnimationForSpell(this.player1.spellSelected.name) ?
     							<img
     								style={{ zIndex: 80, width: widthImg, height: widthImg, position: 'absolute', top: 0, right: 0 }}
-    								src={getAnimationForSpell(this.player1.spellSelected.name)}
+    								src={this.state.animationSpellP1}
     								alt="spell"
     							/>
     							: null

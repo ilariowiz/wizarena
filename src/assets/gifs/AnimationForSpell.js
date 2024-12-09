@@ -8,6 +8,14 @@ const mental_prison = require('./spells/mental_prison.gif')
 const necrosis = require('./spells/necrosis.gif')
 const shock = require('./spells/shock.gif')
 const vortex = require('./spells/vortex.gif')
+const abyss = require('./spells/abyss.gif')
+const acid_beam = require('./spells/acid_beam.gif')
+const finger_death = require('./spells/finger_of_death.gif')
+const hellish_flame = require('./spells/hellish_flame.gif')
+const possession = require('./spells/possession.gif')
+const tornado = require('./spells/tornado.gif')
+const wither = require('./spells/wither.gif')
+
 
 const getAnimationForSpell = (spell) => {
 
@@ -40,6 +48,27 @@ const getAnimationForSpell = (spell) => {
     }
     if (spell === "Vortex") {
         return vortex
+    }
+    if (spell === "Abyss") {
+        return abyss
+    }
+    if (spell === "Acid Beam") {
+        return acid_beam
+    }
+    if (spell === "Finger of Death") {
+        return finger_death
+    }
+    if (spell === "Hellish Flame") {
+        return hellish_flame
+    }
+    if (spell === "Possession") {
+        return possession
+    }
+    if (spell === "Tornado") {
+        return tornado
+    }
+    if (spell === "Wither") {
+        return wither
     }
 
     return undefined
