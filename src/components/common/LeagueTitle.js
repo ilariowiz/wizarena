@@ -44,11 +44,23 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
-    "3083": [{
-        title: "Lord of Bremonon Season 8",
+    "531": [{
+        title: "Lord of Opherus Season 10",
         img: crown,
         textColor: 'gold'
     }],
+    "3083": [
+        {
+            title: "Lord of Bremonon Season 8",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Oceorah Season 10",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
     "2094": [
         {
             title: "Lord of Sitenor Season 2",
@@ -370,6 +382,16 @@ const titles = {
             title: "Lord of Bremonon Season 9",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "Lord of Sitenor Season 10",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Wastiaxus Season 10",
+            img: crown,
+            textColor: 'gold'
         }
     ],
     "488": [
@@ -380,6 +402,18 @@ const titles = {
         },
         {
             title: "Lord of Ulidalar Season 8",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
+    "1522": [
+        {
+            title: "Lord of Druggorial Season 10",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Ulidalar Season 10",
             img: crown,
             textColor: 'gold'
         }
@@ -398,6 +432,21 @@ const titles = {
     ],
     "1850": [{
         title: "Lord of Oceorah Season 6",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "644": [{
+        title: "Lord of Ulanara Season 10",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "752": [{
+        title: "Lord of Bremonon Season 10",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "1589": [{
+        title: "Lord of Vedrenon Season 10",
         img: crown,
         textColor: 'gold'
     }],
