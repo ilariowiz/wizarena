@@ -132,7 +132,7 @@ class Arena extends Component {
         //console.log(owners);
 
         let sub160 = []
-        let sub200 = []
+        let sub225 = []
         let sub300 = []
         let sub400 = []
         let subscribersId = []
@@ -142,10 +142,10 @@ class Arena extends Component {
                 sub160.push(i)
             }
 
-            else if (i.level > 160 && i.level <= 200) {
-                sub200.push(i)
+            else if (i.level > 160 && i.level <= 225) {
+                sub225.push(i)
             }
-            else if (i.level > 200 && i.level <= 300) {
+            else if (i.level > 225 && i.level <= 300) {
                 sub300.push(i)
             }
             else {
@@ -159,7 +159,7 @@ class Arena extends Component {
             return b.ranking - a.ranking
         })
 
-        sub200.sort((a, b) => {
+        sub225.sort((a, b) => {
             return b.ranking - a.ranking
         })
 
@@ -174,8 +174,8 @@ class Arena extends Component {
         const categories = {
             "sub160": sub160.slice(0, 10),
             "sub160count": sub160.length,
-            "sub200": sub200.slice(0, 10),
-            "sub200count":sub200.length,
+            "sub225": sub225.slice(0, 10),
+            "sub225count":sub225.length,
             "sub300": sub300.slice(0, 10),
             "sub300count": sub300.length,
             "sub400": sub400.slice(0, 10),
@@ -643,11 +643,11 @@ class Arena extends Component {
             color = "gold"
         }
 
-        if (item.level > 200 && item.level <= 300) {
+        if (item.level > 225 && item.level <= 300) {
             color = "#c0c0c0"
         }
 
-        if (item.level > 160 && item.level <= 200) {
+        if (item.level > 160 && item.level <= 225) {
             color = "#cd7f32"
         }
 
@@ -946,7 +946,7 @@ class Arena extends Component {
             color = "#c0c0c0"
         }
 
-        if (level === 200) {
+        if (level === 225) {
             color = "#cd7f32"
         }
 
@@ -1167,7 +1167,7 @@ class Arena extends Component {
                                       <br />
                                       Top 5 ranking 300: 2000 $WIZA
                                       <br />
-                                      Top 5 ranking 200: 1500 $WIZA & 10 AP
+                                      Top 5 ranking 225: 1500 $WIZA & 10 AP
                                       <br />
                                       Top 5 ranking 160: 1000 $WIZA & 10 AP
                                       <br />
@@ -1272,7 +1272,7 @@ class Arena extends Component {
 
                     {this.renderRanking(300)}
 
-                    {this.renderRanking(200)}
+                    {this.renderRanking(225)}
 
                     {this.renderRanking(160)}
 
