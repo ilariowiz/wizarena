@@ -1,0 +1,4 @@
+.hpBar {
+    height: 15px;
+    transition: width 1.1s;
+}

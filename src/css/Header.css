@@ -1,0 +1,76 @@
+.btn {
+
+}
+
+.btn:hover {
+	color: #21c6e8;
+}
+
+
+.slide-panel-container-off {
+	visibility: hidden;
+	opacity: 0;
+	transition: visibility 0s, opacity 0.5s linear;
+}
+
+.slide-panel-container-on {
+	position: fixed;
+	width: 0;
+	height: 100%;
+	top: 0;
+	right: 0;
+	transition: 0.3s;
+	opacity: 1;
+}
+
+.bg-slide-off {
+    visibility: hidden;
+	opacity: 0;
+	transition: visibility 0.5s, opacity 0.5s, width 0s linear;
+	width: 0;
+}
+
+.bg-slide-on {
+    visibility: visible;
+	transition: visibility 0s linear 2s, opacity 0.15s linear;
+	transition-delay: 0s;
+    opacity: 1;
+	width: 100%;
+	z-index: 995;
+}
+
+.btn-show-shadow {
+	box-shadow: rgb(7 8 8 / 40%) 0px 0px 8px 4px;
+}
+
+.mapimg {
+	opacity: 0;
+	animation-name: fadein;
+	animation-duration: 0.5s;
+	animation-fill-mode: forwards;
+	animation-delay: .3s;
+	width: 0%;
+}
+
+@keyframes fadein {
+    from { opacity: 0; width: 100%; }
+    to { opacity: 1; width: 100%; }
+}
+
+.signboard {
+	opacity: 0;
+	animation-name: fadeinsignboard;
+	animation-duration: 1s;
+	animation-fill-mode: forwards;
+	width: 90px;
+	-webkit-transition-timing-function: ease;
+}
+
+@keyframes fadeinsignboard {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.signboard:hover {
+	transform: scale(1.25);
+}

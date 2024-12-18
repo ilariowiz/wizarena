@@ -1,0 +1,12 @@
+.btnInfo {
+	color: #4f4d4f;
+	font-size: 14px;
+	font-weight: 500;
+	margin-right: 20px;
+	margin-left: 20px;
+	margin-bottom: 14px;
+}
+
+.btnInfo:hover {
+	color: purple;
+}
