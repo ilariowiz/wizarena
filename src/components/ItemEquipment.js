@@ -64,24 +64,14 @@ class ItemEquipment extends Component {
 	}
 
     loadKadenaWizaPrice() {
-
-        let body = { operationName: 'pairs', variables: {pair: "coin_free.wiza"}, query: "query pairs($pair: String) {\n  pairs(pair: $pair) {\n    id\n    token0 {\n      id\n      code\n      tokenName\n      tokenSymbol\n      icon\n      __typename\n    }\n    token1 {\n      id\n      code\n      tokenName\n      tokenSymbol\n      icon\n      __typename\n    }\n    token0Liquidity\n    token1Liquidity\n    lastPrice\n    __typename\n  }\n}\n"}
-
-        fetch('https://kdswap-fd-prod-cpeabrdfgdg9hzen.z01.azurefd.net/graphql/graphql', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
-        })
+        fetch('https://api.kdswap.exchange/graphql?query={price(token:%22free.wiza%22,period:1){id,timestamp,token,price,priceInKda,intervalStamp}}')
 		.then(response => response.json())
 		.then(data => {
 			//console.log(data)
-            if (data.data && data.data.pairs && data.data.pairs.length > 0) {
+            if (data.data && data.data.price && data.data.price.length > 0) {
                 //console.log(data.data.pairs[0]);
 
-                this.setState({ wizaPrice: data.data.pairs[0].lastPrice })
+                this.setState({ wizaPrice: data.data.price[0].priceInKda.toFixed(4) })
             }
 		})
 		.catch(error => console.log(error))
