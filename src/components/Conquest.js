@@ -1250,7 +1250,7 @@ class Conquest extends Component {
                                       Prizes
                                       <br />
                                       <br />
-                                      1st place: 8000 $WIZA
+                                      1st place: 10000 $WIZA
                                       <br />
                                       2nd place: 4000 $WIZA
                                        <br />
