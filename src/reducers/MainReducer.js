@@ -45,7 +45,8 @@ import {
 	TEXT_NIGHT_COLOR,
 	BACKGROUND_DAY_COLOR,
 	BACKGROUND_NIGHT_COLOR,
-	SET_SUBSCRIBERS_PVP
+	SET_SUBSCRIBERS_PVP,
+	SET_IS_LINX_WALLET
 } from '../actions/types'
 
 
@@ -59,6 +60,7 @@ const INITIAL_STATE = {
 	showModalTx: false,
 	isConnectWallet: false,
 	isXWallet: '',
+	isLinxWallet: '',
 	isQRWalletConnect: '',
 	qrWalletConnectClient: undefined,
 	totalCountNfts: 0,
@@ -116,6 +118,8 @@ export default (state = INITIAL_STATE, action) => {
 			return { ...state, isConnectWallet: action.payload }
 		case SET_IS_X_WALLET:
 			return { ...state, isXWallet: action.payload }
+		case SET_IS_LINX_WALLET:
+			return { ...state, isLinxWallet: action.payload }
 		case SET_IS_WALLET_CONNECT_QR:
 			return { ...state, isQRWalletConnect: action.payload }
 		case SET_QR_WALLET_CONNECT_CLIENT:
@@ -254,7 +258,7 @@ export default (state = INITIAL_STATE, action) => {
 		case SET_SUBSCRIBERS_PVP:
 			return { ...state, subscribersPvP: action.payload }
 		case LOGOUT:
-			return { ...state, account: {}, transactionsState: [], showModalTx: false, isConnectWallet: false, isXWallet: false, isQRWalletConnect: false, userMintedNfts: [], wizaBalance: 0, qrWalletConnectClient: undefined}
+			return { ...state, account: {}, transactionsState: [], showModalTx: false, isConnectWallet: false, isXWallet: false, isLinxWallet: false, isQRWalletConnect: false, userMintedNfts: [], wizaBalance: 0, qrWalletConnectClient: undefined}
 		default:
 			return state
 	}

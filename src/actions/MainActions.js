@@ -67,7 +67,8 @@ import {
 	SET_TIME_TO_HALVENING,
 	SET_VISUAL_COLORS,
 	SET_SUBSCRIBERS_PVP,
-	REVEAL_CAP
+	REVEAL_CAP,
+	SET_IS_LINX_WALLET
 } from './types'
 
 //const URL_2 = `https://api.kda.kaddex.xyz/chainweb/0.0/${MAIN_NET_ID}/chain/1/pact`;
@@ -110,6 +111,13 @@ export const setIsConnectWallet = (payload) => {
 export const setIsXwallet = (payload) => {
 	return {
 		type: SET_IS_X_WALLET,
+		payload
+	}
+}
+
+export const setIsLinxWallet = (payload) => {
+	return {
+		type: SET_IS_LINX_WALLET,
 		payload
 	}
 }
@@ -167,6 +175,7 @@ export const connectXWallet = (netId, chainId, gasPrice, gasLimit, networkUrl, c
 export const connectChainweaver = (account, chainId, gasPrice, gasLimit, networkUrl, netId, callback) => {
 	return async (dispatch) => {
 		dispatch(setIsXwallet(false))
+		dispatch(setIsLinxWallet(false))
 		dispatch(setIsWalletConnectQR(false))
 
 		let pactCode = `(free.${CONTRACT_NAME}.check-your-account "${account}")`;
@@ -232,6 +241,7 @@ export const connectChainweaver = (account, chainId, gasPrice, gasLimit, network
 		const parsedLocalRes = await parseRes(localRes);
 
 		if (parsedLocalRes && parsedLocalRes.result && parsedLocalRes.result.status === "success") {
+			dispatch(setIsLinxWallet(true))
 			dispatch(fetchAccountDetails(account, chainId, gasPrice, gasLimit, networkUrl, callback))
 		}
 		else {
@@ -332,7 +342,71 @@ export const connectWalletConnect = (netId, chainId, gasPrice, gasLimit, network
 	}
 }
 
+export const connectLinx = (chainId, gasPrice, gasLimit, networkUrl, callback) => {
+	return async (dispatch) => {
+		dispatch(setIsXwallet(false))
+		dispatch(setIsWalletConnectQR(false))
 
+		try {
+			//console.log(await inLinx());
+
+			if (await inLinx()) {
+				const account = await linx(linxNewRequest("Account", "get address", {}, false))
+				console.log(account);
+				if (account) {
+					dispatch(fetchAccountDetails(account, chainId, gasPrice, gasLimit, networkUrl, callback))
+				}
+				else {
+					console.log("Linx account not found");
+					callback("Can't connect to Linx Wallet")
+					return
+				}
+			}
+			else {
+				console.log("Linx not found");
+				callback("Can't connect to Linx Wallet")
+				return
+			}
+		}
+		catch(error) {
+			callback("Can't connect to Linx Wallet: ", error)
+		}
+	}
+}
+
+export const inLinx = async () => {
+	const e = await window.flutter_inappwebview && window.flutter_inappwebview.callHandler("LinxWallet")
+	if (e) {
+		return true
+	}
+	return false
+}
+
+export const linx = (...args) =>
+  window.flutter_inappwebview.callHandler("LinxWallet", ...args);
+
+const linxNewRequest = function(request, description, requestData, needsApproval) {
+	return {
+		request: request,
+		description: description,
+		data: requestData,
+		needsApproval: needsApproval
+	}
+}
+
+const linxRequestData = function(signingRequest, itemDescription, imageUrl, chainId, tokenId, amount, dappFee, feeTokenId, chainless) {
+	return {
+		signingRequest: signingRequest,
+		itemDescription: itemDescription,
+		imageUrl: imageUrl,
+	    chainId: chainId,
+	    tokenId: tokenId,
+	    amount: amount,
+	    dappFee: dappFee,
+	    feeTokenId: feeTokenId,
+	    chainless: chainless,
+	}
+}
 
 export const fetchAccountDetails = (accountName, chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, callback) => {
 	return async (dispatch) => {
@@ -3949,7 +4023,30 @@ export const signTransaction = (cmdToSign, isXWallet, isQRWalletConnect, qrWalle
 
 		let signedCmd = null
 
-		if (isXWallet) {
+		if (await inLinx()) {
+			const req = linxRequestData(
+				cmdToSign,
+				"WizardsArena transaction",
+				"https://storage.googleapis.com/wizarena/wiz_logo_centrale.png",
+				parseInt(chainId.toString()),
+				"coin",
+				0.0,
+				0.0,
+				undefined,
+				false
+			)
+
+			const result = await linx(linxNewRequest("Send", "Approve request for WizardsArena transaction", req, true))
+			if (result !== undefined && result.error === undefined) {
+				signedCmd = result
+			}
+			else {
+				console.log("Failed to sign the command in Linx wallet")
+				dispatch(updateTransactionState("error", `Failed to sign the command in Linx wallet`))
+				return
+			}
+		}
+		else if (isXWallet) {
 
 			let xwalletSignRes = null;
 
@@ -4068,6 +4165,7 @@ export const signTransaction = (cmdToSign, isXWallet, isQRWalletConnect, qrWalle
 			}
 		}
 
+
 		//console.log(signedCmd)
 
 		dispatch(updateTransactionState("signedCmd", signedCmd))
@@ -4169,7 +4267,30 @@ export const signFightTransaction = (gasPrice, chainId, netId, isXWallet, isQRWa
 
 		let signedCmd = null
 
-		if (isXWallet) {
+		if (await inLinx()) {
+			const req = linxRequestData(
+				cmdToSign,
+				"Sign transaction to fight",
+				"https://storage.googleapis.com/wizarena/wiz_logo_centrale.png",
+				parseInt(chainId.toString()),
+				"coin",
+				0.0,
+				0.0,
+				undefined,
+				false
+			)
+
+			const result = await linx(linxNewRequest("Send", "Approve request for WizardsArena transaction", req, true))
+			if (result !== undefined && result.error === undefined) {
+				signedCmd = result
+			}
+			else {
+				console.log("Failed to sign the command in Linx wallet")
+				dispatch(updateTransactionState("error", `Failed to sign the command in Linx wallet`))
+				return
+			}
+		}
+		else if (isXWallet) {
 
 			let xwalletSignRes = null;
 

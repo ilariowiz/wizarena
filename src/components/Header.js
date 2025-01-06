@@ -150,7 +150,7 @@ class Header extends Component {
 
 	renderSlidePanel(boxW) {
 		const { showPanel, wizaReserve } = this.state
-		const { isMobile, circulatingSupply, totalMined, account, netId, isXWallet, isQRWalletConnect, mainTextColor, isDarkmode, mainBackgroundColor } = this.props
+		const { isMobile, circulatingSupply, totalMined, account, netId, isXWallet, isLinxWallet, isQRWalletConnect, mainTextColor, isDarkmode, mainBackgroundColor } = this.props
 
 		const panelWidth = isMobile ? "100%" : boxW * 60 / 100
 
@@ -448,6 +448,13 @@ class Header extends Component {
 									isXWallet &&
 									<p style={{ fontSize: 15, color: '#707070', marginBottom: 10 }}>
 										Connected to eckoWallet
+									</p>
+								}
+
+								{
+									isLinxWallet &&
+									<p style={{ fontSize: 15, color: '#707070', marginBottom: 10 }}>
+										Connected to Linx Wallet
 									</p>
 								}
 
@@ -1223,10 +1230,10 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { allNftsIds, totalMined, circulatingSupply, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, showModalTx, hideNavBar, transactionsState, isDarkmode, mainTextColor, mainBackgroundColor } = state.mainReducer
+	const { allNftsIds, totalMined, circulatingSupply, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isLinxWallet, isQRWalletConnect, netId, showModalTx, hideNavBar, transactionsState, isDarkmode, mainTextColor, mainBackgroundColor } = state.mainReducer
 	const { txInfo } = state.modalTransactionReducer
 
-	return { allNftsIds, totalMined, circulatingSupply, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isQRWalletConnect, netId, showModalTx, hideNavBar, txInfo, transactionsState, isDarkmode, mainTextColor, mainBackgroundColor }
+	return { allNftsIds, totalMined, circulatingSupply, chainId, gasPrice, gasLimit, networkUrl, account, isXWallet, isLinxWallet, isQRWalletConnect, netId, showModalTx, hideNavBar, txInfo, transactionsState, isDarkmode, mainTextColor, mainBackgroundColor }
 }
 
 export default connect(mapStateToProps, {
