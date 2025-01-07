@@ -87,9 +87,12 @@ class Header extends Component {
 	}
 
 	tryConnectLinx() {
-		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+		const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
 
-		this.props.connectLinx(chainId, gasPrice, gasLimit, networkUrl)
+		//console.log(account);
+		if (!account || !account.account) {
+			this.props.connectLinx(chainId, gasPrice, gasLimit, networkUrl)
+		}
 	}
 
 	getMined() {
