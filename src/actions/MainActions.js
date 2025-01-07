@@ -4045,7 +4045,7 @@ export const signTransaction = (cmdToSign, isXWallet, isQRWalletConnect, qrWalle
 				"https://storage.googleapis.com/wizarena/wiz_logo_centrale.png",
 				parseInt(chainId.toString()),
 				coin,
-				amount,
+				_.round(amount, 2),
 				0.0,
 				undefined,
 				false
