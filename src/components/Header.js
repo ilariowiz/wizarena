@@ -25,7 +25,8 @@ import {
 	clearTransactionByPactCode,
 	loadAllNftsIds,
 	setVisualColors,
-	getWizaKDAPool
+	getWizaKDAPool,
+	connectLinx
 } from '../actions'
 import { TEXT_SECONDARY_COLOR, MAIN_NET_ID } from '../actions/types'
 import 'reactjs-popup/dist/index.css';
@@ -79,6 +80,16 @@ class Header extends Component {
 		this.props.setNetworkSettings(MAIN_NET_ID, "1")
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 		this.props.setVisualColors(isDarkmode)
+
+		setTimeout(() => {
+			this.tryConnectLinx()
+		}, 500)
+	}
+
+	tryConnectLinx() {
+		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		this.props.connectLinx(chainId, gasPrice, gasLimit, networkUrl)
 	}
 
 	getMined() {
@@ -1250,5 +1261,6 @@ export default connect(mapStateToProps, {
 	clearTransactionByPactCode,
 	loadAllNftsIds,
 	setVisualColors,
-	getWizaKDAPool
+	getWizaKDAPool,
+	connectLinx
 })(Header);

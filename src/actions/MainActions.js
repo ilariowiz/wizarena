@@ -344,32 +344,38 @@ export const connectWalletConnect = (netId, chainId, gasPrice, gasLimit, network
 
 export const connectLinx = (chainId, gasPrice, gasLimit, networkUrl, callback) => {
 	return async (dispatch) => {
-		dispatch(setIsXwallet(false))
-		dispatch(setIsWalletConnectQR(false))
-
 		try {
 			//console.log(await inLinx());
-
 			if (await inLinx()) {
 				const account = await linx(linxNewRequest("Account", "get address", {}, false))
 				console.log(account);
 				if (account) {
+
+					dispatch(setIsXwallet(false))
+					dispatch(setIsWalletConnectQR(false))
+
 					dispatch(fetchAccountDetails(account, chainId, gasPrice, gasLimit, networkUrl, callback))
 				}
 				else {
 					console.log("Linx account not found");
-					callback("Can't connect to Linx Wallet")
+					if (callback) {
+						callback("Can't connect to Linx Wallet")
+					}
 					return
 				}
 			}
 			else {
 				console.log("Linx not found");
-				callback("Can't connect to Linx Wallet")
+				if (callback) {
+					callback("Can't connect to Linx Wallet")
+				}
 				return
 			}
 		}
 		catch(error) {
-			callback("Can't connect to Linx Wallet: ", error)
+			if (callback) {
+				callback("Can't connect to Linx Wallet: ", error)
+			}
 		}
 	}
 }
@@ -4017,20 +4023,40 @@ GENERAL FUNCTIONS
 export const signTransaction = (cmdToSign, isXWallet, isQRWalletConnect, qrWalletConnectClient, netId, networkUrl, account, chainId, nftId, callback) => {
 	return async (dispatch) => {
 
-		//console.log(cmdToSign, isQRWalletConnect, qrWalletConnectClient)
+		//console.log(cmdToSign)
 
 		dispatch(updateTransactionState("signingCmd", cmdToSign))
 
 		let signedCmd = null
 
 		if (await inLinx()) {
+
+			const caps = cmdToSign.caps
+			let coin;
+			let amount = 0.0;
+			caps.map(i => {
+				if (i.cap.name === "coin.TRANSFER") {
+					coin = "coin"
+					if (i.cap.args.length >= 2) {
+						amount += i.cap.args[2]
+					}
+				}
+
+				if (i.cap.name === "free.wiza.TRANSFER" && (!coin || coin !== "coin")) {
+					coin = "free.wiza"
+					if (i.cap.args.length >= 2) {
+						amount += i.cap.args[2]
+					}
+				}
+			})
+
 			const req = linxRequestData(
 				cmdToSign,
 				"WizardsArena transaction",
 				"https://storage.googleapis.com/wizarena/wiz_logo_centrale.png",
 				parseInt(chainId.toString()),
-				"coin",
-				0.0,
+				coin,
+				amount,
 				0.0,
 				undefined,
 				false
