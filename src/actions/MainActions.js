@@ -18,7 +18,6 @@ import {
 	TEST_NET_ID,
 	SET_NETWORK_SETTINGS,
 	SET_NETWORK_URL,
-	SET_CONNECT_WALLET,
 	LOAD_ALL_NFTS,
 	LOAD_USER_MINTED_NFTS,
 	UPDATE_TRANSACTION_STATE,
@@ -101,13 +100,6 @@ export const setNetworkUrl = (netId, chainId) => {
 	}
 }
 
-export const setIsConnectWallet = (payload) => {
-	return {
-		type: SET_CONNECT_WALLET,
-		payload
-	}
-}
-
 export const setIsXwallet = (payload) => {
 	return {
 		type: SET_IS_X_WALLET,
@@ -150,13 +142,11 @@ export const connectXWallet = (netId, chainId, gasPrice, gasLimit, networkUrl, c
 
 			if (res.status !== "success") {
 				error = `Could not connect to X Wallet`
-				dispatch(setIsConnectWallet(false))
 				break connectlabel
 			}
 		}
 		catch (e) {
 			//console.log(e)
-			dispatch(setIsConnectWallet(false))
 		}
 
 		if (error) {
@@ -427,7 +417,6 @@ export const fetchAccountDetails = (accountName, chainId, gasPrice = DEFAULT_GAS
 
 			if (response.account) {
 				dispatch(loadUser(response))
-				dispatch(setIsConnectWallet(true))
 
 				if (callback) {
 					callback()

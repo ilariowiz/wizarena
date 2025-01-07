@@ -4,7 +4,6 @@ import {
 	DEFAULT_GAS_PRICE,
 	SET_NETWORK_SETTINGS,
 	SET_NETWORK_URL,
-	SET_CONNECT_WALLET,
 	LOAD_ALL_NFTS,
 	LOAD_ALL_NFTS_IDS,
 	LOAD_USER_MINTED_NFTS,
@@ -58,7 +57,6 @@ const INITIAL_STATE = {
 	networkUrl: '',
 	transactionsState: [],
 	showModalTx: false,
-	isConnectWallet: false,
 	isXWallet: '',
 	isLinxWallet: '',
 	isQRWalletConnect: '',
@@ -106,7 +104,7 @@ export default (state = INITIAL_STATE, action) => {
 		case LOAD_USER:
 			return { ...state, account: action.payload }
 		case CLEAR_USER:
-			return { ...state, account: {}, isConnectWallet: false }
+			return { ...state, account: {} }
 		case SET_NETWORK_SETTINGS: {
 			const { netId, chainId, gasPrice } = action.payload
 			//console.log(action.payload)
@@ -114,8 +112,6 @@ export default (state = INITIAL_STATE, action) => {
 		}
 		case SET_NETWORK_URL:
 			return { ...state, networkUrl: action.payload }
-		case SET_CONNECT_WALLET:
-			return { ...state, isConnectWallet: action.payload }
 		case SET_IS_X_WALLET:
 			return { ...state, isXWallet: action.payload }
 		case SET_IS_LINX_WALLET:
@@ -258,7 +254,7 @@ export default (state = INITIAL_STATE, action) => {
 		case SET_SUBSCRIBERS_PVP:
 			return { ...state, subscribersPvP: action.payload }
 		case LOGOUT:
-			return { ...state, account: {}, transactionsState: [], showModalTx: false, isConnectWallet: false, isXWallet: false, isLinxWallet: false, isQRWalletConnect: false, userMintedNfts: [], wizaBalance: 0, qrWalletConnectClient: undefined}
+			return { ...state, account: {}, transactionsState: [], showModalTx: false, isXWallet: false, isLinxWallet: false, isQRWalletConnect: false, userMintedNfts: [], wizaBalance: 0, qrWalletConnectClient: undefined}
 		default:
 			return state
 	}
