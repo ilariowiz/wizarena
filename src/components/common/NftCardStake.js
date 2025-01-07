@@ -280,7 +280,7 @@ class NftCardStake extends Component {
                     <div style={{ height: 40 }} />
                 }
 
-				{
+				{/*
 					!inBurnQueue && !item.listed && item.medals && !loading &&
                     <div style={{ width, alignItems: 'center', justifyContent: 'space-between' }}>
     					<button
@@ -297,7 +297,7 @@ class NftCardStake extends Component {
     						</p>
     					</button>
                     </div>
-				}
+				*/}
 
                 {
                     inBurnQueue && !item.listed && item.medals && !loading &&
