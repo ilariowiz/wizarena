@@ -142,7 +142,7 @@ class ConnectionWidget extends Component {
 					</p>
 				</button>
 
-				<button
+				{/*<button
 					className="btnH"
 					style={Object.assign({}, styles.btnOption, { backgroundColor: "#714dff" })}
 					onClick={() => {
@@ -152,7 +152,7 @@ class ConnectionWidget extends Component {
 					<p style={{ fontSize: 14, color: 'black' }} className="text-medium">
 						LINX WALLET
 					</p>
-				</button>
+				</button>*/}
 
 				<button
 					className="btnH"
