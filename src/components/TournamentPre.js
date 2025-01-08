@@ -10,7 +10,6 @@ import { AiFillCheckCircle } from 'react-icons/ai'
 import { IoClose } from 'react-icons/io5'
 import Popup from 'reactjs-popup';
 import NftCardChoice from './common/NftCardChoice'
-import CardSingleFightProfile from './common/CardSingleFightProfile'
 import Header from './Header'
 import allEvents from './common/Events'
 import getBoxWidth from './common/GetBoxW'
@@ -63,8 +62,6 @@ class Tournament extends Component {
             avgLevelKda: 0,
             avgLevelWiza: 0,
             avgLevelElite: 0,
-            profileFights: {},
-            showProfileFights: false,
             showSubs: false,
             yourSubs: [],
             tournamentSubs: {},
@@ -107,7 +104,7 @@ class Tournament extends Component {
     loadMinted(tournament) {
 		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
 
-        this.setState({ loading: true, showSubs: false, showProfileFights: false }, () => {
+        this.setState({ loading: true, showSubs: false }, () => {
             document.getElementById("loading").scrollIntoView({ behavior: 'smooth' })
         })
 
@@ -242,7 +239,7 @@ class Tournament extends Component {
         let yourSubs = this.setYourSub(userMintedNfts)
         //console.log(yourSubs);
 
-        this.setState({ yourSubs, showSubs: true, showProfileFights: false, tournamentSubs: tournament, loading: false }, () => {
+        this.setState({ yourSubs, showSubs: true, tournamentSubs: tournament, loading: false }, () => {
             document.getElementById("filters").scrollIntoView({ behavior: 'smooth' })
 
             if (yourSubs[0] && yourSubs[0].length > 0) {
@@ -465,7 +462,7 @@ class Tournament extends Component {
                 }}
             >
                 <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
-                    Open Tournament
+                    Open
                 </p>
             </a>
         )
@@ -483,7 +480,7 @@ class Tournament extends Component {
                 }}
             >
                 <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
-                    Subscribe your wizards
+                    Subscribe
                 </p>
             </button>
         )
@@ -565,65 +562,6 @@ class Tournament extends Component {
 		)
 	}
 
-    renderRoundInfo(marginBottom, mainTextColor, tournamentValue, roundValue) {
-        return (
-            <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
-                <p style={{ fontSize: 16, color: mainTextColor }}>
-                    Tournament <span className="text-bold">{tournamentValue}</span>
-                </p>
-
-                <p style={{ fontSize: 15, color: mainTextColor }}>
-                    Round <span className="text-bold">{roundValue}</span>
-                </p>
-            </div>
-        )
-    }
-
-    renderBuyinInfo(marginBottom, mainTextColor, buyin, coin, feeTournament) {
-        return (
-            <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
-                <p style={{ fontSize: 17, color: mainTextColor }}>
-                    Buyin <span className="text-bold">{buyin}</span> {coin}
-                </p>
-
-                <p style={{ fontSize: 15, color: mainTextColor }}>
-                    Fee {feeTournament}%
-                </p>
-            </div>
-        )
-    }
-
-    renderPrizeInfo(marginBottom, mainTextColor, montepremi, coin, extraPrize) {
-        return (
-            <div style={{ alignItems: 'center', marginBottom, justifyContent: 'space-between' }}>
-                <p style={{ fontSize: 15, color: mainTextColor }}>
-                    Prize <span className="text-bold">{montepremi ? montepremi.toFixed(2) : '...'}</span> {coin}
-                </p>
-
-                {
-                    extraPrize &&
-                    <p style={{ fontSize: 15, color: mainTextColor }}>
-                        Extra prize <span className="text-bold">{extraPrize ? extraPrize.toLocaleString() : '...'}</span>
-                    </p>
-                }
-            </div>
-        )
-    }
-
-    renderSubsInfo(marginBottom, mainTextColor, subs, avgLevel) {
-        return (
-            <div style={{ alignItems: 'center', justifyContent: 'space-between', marginBottom }}>
-                <p style={{ fontSize: 16, color: mainTextColor }}>
-                    Subscribed <span className="text-bold">{subs}</span>
-                </p>
-
-                {/*<p style={{ fontSize: 16, color: mainTextColor }}>
-                    Avg level <span className="text-bold">{avgLevel || '...'}</span>
-                </p>*/}
-            </div>
-        )
-    }
-
     getImageBoost(element) {
         if (element === "fire") {
             return SitenorIcon
@@ -665,258 +603,115 @@ class Tournament extends Component {
         return OceorahIcon
     }
 
-    renderTournamentHigh(boxTournamentWidth) {
-        const { tournament, tournamentKdaSubs, avgLevelKda, loadingWeekly } = this.state
+    renderTournamentMobile(tournamentType, boxTournamentWidth) {
+        const { tournamentElite, tournament, tournamentWiza, tournamentEliteSubs, tournamentKdaSubs, tournamentWizaSubs } = this.state
         const { mainTextColor, isDarkmode } = this.props
 
-        const fee = tournament.buyin * tournament.fee / 100
-        const totalFee = fee * tournamentKdaSubs
-        let montepremi = (tournamentKdaSubs * tournament.buyin) - totalFee
+        const fee = this.calcFeeMontepremi(tournamentType).fee
+        const montepremi = this.calcFeeMontepremi(tournamentType).montepremi
 
-        const tournamentName = tournament.name.split("_")[0]
-        const tournamentValue = tournamentName.replace("t", "")
-        const roundName = tournament.name.split("_")[1]
-        const roundValue = roundName.replace("r", "")
+        let finalDate = this.calcFinalDate(tournamentType)
 
-        const dateStart = moment(tournament.start.seconds * 1000)
-        //console.log(dateStart);
+        let tournamentName, tournamentInfo, subCount;
 
-        let finalDate;
-        if (tournament.canSubscribe) {
-            finalDate = `Start: ${moment().to(dateStart)}`
+        if (tournamentType === "elite") {
+            tournamentName = tournamentElite.name.split("_")[0].replace("t", "")
+            tournamentInfo = tournamentElite
+            subCount = tournamentEliteSubs
         }
-        else if (!tournament.canSubscribe && !tournament.tournamentEnd && tournament.roundEnded === "0") {
-            if (moment().isBefore(dateStart)) {
-                finalDate = `The round ${roundValue} will start ${dateStart.fromNow()}`
-            }
-            else {
-                finalDate = `Started ${dateStart.fromNow()}`
-            }
+
+        if (tournamentType === "weekly") {
+            tournamentName = tournament.name.split("_")[0].replace("t", "")
+            tournamentInfo = tournament
+            subCount = tournamentKdaSubs
         }
-        else if (tournament.tournamentEnd) {
-            finalDate = `Ended: ${dateStart.fromNow()}`
+
+        if (tournamentType === "apprentice") {
+            tournamentName = tournamentWiza.name.split("_")[0].replace("t", "")
+            tournamentInfo = tournamentWiza
+            subCount = tournamentWizaSubs
         }
 
         const marginBottom = 14
-
-        let RegionIcon;
-        if (tournament.showLeague && tournament.event) {
-            const event = tournament.event
-            const eventInfo = allEvents.find(i => i.name === event)
-            const elementBoosted = eventInfo.elements
-
-            RegionIcon = this.getImageBoost(elementBoosted)
-        }
 
         return (
             <div
                 style={Object.assign({}, styles.boxTournament, { width: boxTournamentWidth, backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
             >
-                {
-                    tournament.showLeague ?
-                    <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom, position: 'relative' }}>
-                        <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
-                            The Twelve League <span style={{ fontSize: 15 }}>{tournament.leagueTournament}</span>
-                        </p>
+                {this.renderTitleTournament(tournamentType)}
 
-                        {
-                            tournament.event &&
-                            <div style={{ position: 'absolute', right: 5, top: 10 }}>
-                                <RegionIcon width={27} height={27} color={mainTextColor} />
-                            </div>
-                        }
-                    </div>
-                    :
-                    <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom }}>
-                        <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
-                            The Weekly Tournament
-                        </p>
-                    </div>
-                }
-
-                {this.renderRoundInfo(marginBottom, mainTextColor, tournamentValue, roundValue)}
+                <p style={{ fontSize: 16, color: mainTextColor, marginTop: 14, marginBottom }}>
+                    Tournament {tournamentName}
+                </p>
 
                 <p style={{ fontSize: 16, color: mainTextColor, marginBottom }}>
-                    Level Cap: <span className="text-bold">{tournament.levelCap}</span>
+                    Level Cap: {tournamentInfo.levelCap}
                 </p>
 
-                <p style={{ fontSize: 16, color: mainTextColor, marginBottom, height: 20 }}>
-                    Structure: {tournament.structure}
-                </p>
+                <div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <p style={{ fontSize: 16, color: mainTextColor }}>
+                        Buyin {tournamentInfo.buyin} ${tournamentInfo.coinBuyin}
+                    </p>
 
-                {this.renderBuyinInfo(marginBottom, mainTextColor, tournament.buyin, "$KDA", tournament.fee)}
+                    <p style={{ fontSize: 13, color: mainTextColor }}>
+                        Fee {fee}%
+                    </p>
+                </div>
 
                 <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
-                {this.renderPrizeInfo(marginBottom, mainTextColor, montepremi, "$KDA")}
-
-                {this.renderSubsInfo(marginBottom, mainTextColor, tournamentKdaSubs, avgLevelKda)}
-
-                <p style={{ fontSize: 14, color: mainTextColor, marginBottom, height: 40 }}>
-                    Wizard participation reward: {tournament.reward}
-                </p>
-
-                <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
-
-                <div style={{ alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
-
-                    <div style={{ alignItems: 'center' }}>
-                        <p style={{ fontSize: 15, color: mainTextColor, marginRight: 7 }}>
-                            Registrations {tournament.canSubscribe ? "open" : "closed"}
-                        </p>
-
-                        {
-                            tournament.canSubscribe ?
-                            <AiFillCheckCircle
-                                color='green'
-                                size={26}
-                            />
-                            :
-                            <AiFillCheckCircle
-                                color='#504f4f'
-                                size={26}
-                            />
-                        }
-                    </div>
+                <div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                    <p style={{ fontSize: 16, color: mainTextColor }}>
+                        Prize {montepremi ? montepremi.toFixed(2) : '...'} ${tournamentInfo.coinBuyin}
+                    </p>
 
                     {
-                        finalDate &&
-                        <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
-                            {finalDate}
+                        tournamentInfo.extraPrize &&
+                        <p style={{ fontSize: 14, color: mainTextColor }}>
+                            Extra prize {tournamentInfo.extraPrize ? tournamentInfo.extraPrize.toLocaleString() : '...'} ${tournamentInfo.coinBuyin}
                         </p>
                     }
                 </div>
 
-                {
-                    tournament.canSubscribe && !loadingWeekly ?
-                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: marginBottom }}>
-                        {this.renderBtnSubscribe(tournament)}
-
-                        {this.renderBtnOpenTournament('tournamentK')}
-
-                    </div>
-                    :
-                    null
-                }
-
-                {
-                    !tournament.canSubscribe && !loadingWeekly &&
-                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center', marginTop: marginBottom }}>
-                        {this.renderBtnOpenTournament('tournamentK')}
-
-                    </div>
-                }
-
-                {
-                    loadingWeekly &&
-                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center', marginTop: marginBottom, minHeight: 40 }}>
-                        <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
-                    </div>
-                }
-
-            </div>
-        )
-    }
-
-    renderTournamentElite(boxTournamentWidth) {
-        const { tournamentElite, tournamentEliteSubs, avgLevelElite, loadingElite } = this.state
-        const { mainTextColor, isDarkmode } = this.props
-
-        const fee = tournamentElite.buyin * tournamentElite.fee / 100
-        const totalFee = fee * tournamentEliteSubs
-        let montepremi = (tournamentEliteSubs * tournamentElite.buyin) - totalFee
-
-        const tournamentName = tournamentElite.name.split("_")[0]
-        const tournamentValue = tournamentName.replace("t", "")
-        const roundName = tournamentElite.name.split("_")[1]
-        const roundValue = roundName.replace("r", "")
-
-        const dateStart = moment(tournamentElite.start.seconds * 1000)
-        //console.log(dateStart);
-
-        let finalDate;
-        if (tournamentElite.canSubscribe) {
-            finalDate = `Start: ${moment().to(dateStart)}`
-        }
-        else if (!tournamentElite.canSubscribe && !tournamentElite.tournamentEnd && tournamentElite.roundEnded === "0") {
-            if (moment().isBefore(dateStart)) {
-                finalDate = `The round ${roundValue} will start ${dateStart.fromNow()}`
-            }
-            else {
-                finalDate = `Started ${dateStart.fromNow()}`
-            }
-        }
-        else if (tournamentElite.tournamentEnd) {
-            finalDate = `Ended: ${dateStart.fromNow()}`
-        }
-
-        const marginBottom = 14
-
-        return (
-            <div
-                style={Object.assign({}, styles.boxTournament, { width: boxTournamentWidth, backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
-            >
-                {
-                    tournamentElite.showLeague ?
-                    <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom }}>
-                        <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
-                            The Farmers League <span style={{ fontSize: 15 }}>{tournamentElite.leagueTournament}</span>
-                        </p>
-                    </div>
-                    :
-                    <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom }}>
-                        <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
-                            The Farmers Tournament
-                        </p>
-                    </div>
-                }
-
-                {this.renderRoundInfo(marginBottom, mainTextColor, tournamentValue, roundValue)}
-
-                <p style={{ fontSize: 16, color: mainTextColor, marginBottom }}>
-                    Level Cap: <span className="text-bold">{tournamentElite.levelCap}</span>
+                <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 16 }}>
+                    Subscribed {subCount}
                 </p>
 
-                <p style={{ fontSize: 16, color: mainTextColor, marginBottom, height: 20 }}>
-                    Structure: {tournamentElite.structure}
-                </p>
-
-                {this.renderBuyinInfo(marginBottom, mainTextColor, tournamentElite.buyin, "$WIZA", tournamentElite.fee)}
-
-                <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
-
-                {this.renderPrizeInfo(marginBottom, mainTextColor, montepremi, "$WIZA", tournamentElite.extraPrize)}
-
-                {this.renderSubsInfo(marginBottom, mainTextColor, tournamentEliteSubs, avgLevelElite)}
-
-                <p style={{ fontSize: 14, color: mainTextColor, marginBottom, height: 24 }}>
-                    Wizard participation reward: {tournamentElite.reward}
+                <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 16 }}>
+                    Wizard participation reward: {tournamentInfo.reward}
                 </p>
 
                 {
-                    tournamentElite.levelCap === 160 ?
-                    <p style={{ fontSize: 14, color: mainTextColor }} className="text-bold">
+                    tournamentInfo.levelCap === 160 ?
+                    <p style={{ fontSize: 14, color: mainTextColor }} className="text-light">
                         Rings, Pendants, Spell upgrades and Aura are not counted
                     </p>
                     :
-                    <p style={{ fontSize: 14, color: mainTextColor }} className="text-bold">
+                    undefined
+                }
+
+                {
+                    tournamentInfo.levelCap === 225 ?
+                    <p style={{ fontSize: 14, color: mainTextColor }} className="text-light">
                         Rings and Pendants are not counted
                     </p>
+                    :
+                    undefined
                 }
 
                 <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
 
-                <div style={{ alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
+                <div style={{ alignItems: 'center', justifyContent: 'space-between' }}>
 
                     <div style={{ alignItems: 'center' }}>
                         <p style={{ fontSize: 15, color: mainTextColor, marginRight: 7 }}>
-                            Registrations {tournamentElite.canSubscribe ? "open" : "closed"}
+                            Registrations {tournamentInfo.canSubscribe ? "open" : "closed"}
                         </p>
 
                         {
-                            tournamentElite.canSubscribe ?
+                            tournamentInfo.canSubscribe ?
                             <AiFillCheckCircle
-                                color='green'
+                                color='#4bb54b'
                                 size={26}
                             />
                             :
@@ -929,204 +724,338 @@ class Tournament extends Component {
 
                     {
                         finalDate &&
-                        <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
+                        <p style={{ fontSize: 13, color: mainTextColor }} className="text-medium">
                             {finalDate}
                         </p>
                     }
                 </div>
 
-                {
-                    tournamentElite.canSubscribe && !loadingElite ?
-                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: marginBottom }}>
-                        {this.renderBtnSubscribe(tournamentElite)}
-
-                        {this.renderBtnOpenTournament('tournamentE')}
-
-                    </div>
-                    :
-                    null
-                }
-
-                {
-                    !tournamentElite.canSubscribe && !loadingElite &&
-                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center', marginTop: marginBottom }}>
-                        {this.renderBtnOpenTournament('tournamentE')}
-                    </div>
-                }
-
-                {
-                    loadingElite &&
-                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center', marginTop: marginBottom, minHeight: 40 }}>
-                        <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
-                    </div>
-                }
-
+                <div style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    {this.renderBtns(tournamentType, true)}
+                </div>
             </div>
         )
     }
 
-    renderTournamentLow(boxTournamentWidth) {
-        const { tournamentWiza, tournamentWizaSubs, avgLevelWiza, loadingApprentice } = this.state
-        const { mainTextColor, isDarkmode } = this.props
+    calcFeeMontepremi(tournamentType) {
+        const { tournamentElite, tournamentEliteSubs, tournament, tournamentKdaSubs, tournamentWiza, tournamentWizaSubs } = this.state
 
-        const fee = tournamentWiza.buyin * tournamentWiza.fee / 100
-        const totalFee = fee * tournamentWizaSubs
-        let montepremi = (tournamentWizaSubs * tournamentWiza.buyin) - totalFee
+        let fee, montepremi
 
-        const tournamentName = tournamentWiza.name.split("_")[0]
-        const tournamentValue = tournamentName.replace("t", "")
-        const roundName = tournamentWiza.name.split("_")[1]
-        const roundValue = roundName.replace("r", "")
+        if (tournamentType === "elite") {
+            fee = tournamentElite.fee
+            const feeInCost = tournamentElite.buyin * tournamentElite.fee / 100
+            const totalFee = feeInCost * tournamentEliteSubs
+            montepremi = (tournamentEliteSubs * tournamentElite.buyin) - totalFee
+        }
 
-        const dateStart = moment(tournamentWiza.start.seconds * 1000)
+        if (tournamentType === "weekly") {
+            fee = tournament.fee
+            const feeInCost = tournament.buyin * tournament.fee / 100
+            const totalFee = feeInCost * tournamentKdaSubs
+            montepremi = (tournamentKdaSubs * tournament.buyin) - totalFee
+        }
+
+        if (tournamentType === "apprentice") {
+            fee = tournamentWiza.fee
+            const feeInCost = tournamentWiza.buyin * tournamentWiza.fee / 100
+            const totalFee = feeInCost * tournamentWizaSubs
+            montepremi = (tournamentWizaSubs * tournamentWiza.buyin) - totalFee
+        }
+
+        return { fee, montepremi }
+    }
+
+    calcFinalDate(tournamentType) {
+        const { tournamentElite, tournament, tournamentWiza } = this.state
+
+        let finalDate
+        let tournamentInfo;
+
+        if (tournamentType === "elite") {
+            tournamentInfo = tournamentElite
+        }
+
+        if (tournamentType === "weekly") {
+            tournamentInfo = tournament
+        }
+
+        if (tournamentType === "apprentice") {
+            tournamentInfo = tournamentWiza
+        }
+
+        const dateStart = moment(tournamentInfo.start.seconds * 1000)
         //console.log(dateStart);
 
-        let finalDate;
-        if (tournamentWiza.canSubscribe) {
-            finalDate = `Start: ${moment().to(dateStart)}`
+        if (tournamentInfo.canSubscribe) {
+            finalDate = `Start ${moment().to(dateStart)}`
         }
-        else if (!tournamentWiza.canSubscribe && !tournamentWiza.tournamentEnd && tournamentWiza.roundEnded === "0") {
-            if (moment().isBefore(dateStart)) {
-                finalDate = `The round ${roundValue} will start ${dateStart.fromNow()}`
-            }
-            else {
-                finalDate = `Started ${dateStart.fromNow()}`
-            }
+        //in corso
+        else if (!tournamentInfo.canSubscribe && !tournamentInfo.tournamentEnd) {
+            finalDate = `Started ${dateStart.fromNow()}`
         }
-        else if (tournamentWiza.tournamentEnd) {
-            finalDate = `Ended: ${dateStart.fromNow()}`
+        //finito
+        else if (tournamentInfo.tournamentEnd) {
+            finalDate = `Ended ${dateStart.fromNow()}`
         }
 
-        const marginBottom = 14
+        return finalDate
+    }
+
+    renderTitleTournament(tournamentType) {
+        const { tournamentElite, tournament, tournamentWiza } = this.state
+        const { mainTextColor } = this.props
+
+        if (tournamentType === "elite") {
+            return (
+                <div style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <p style={{ fontSize: 21, color: mainTextColor }} className="text-bold">
+                        {
+                            tournamentElite.showLeague ?
+                            `The Farmers League ${tournamentElite.leagueTournament}`
+                            :
+                            'The Farmers Tournament'
+                        }
+                    </p>
+                </div>
+            )
+        }
+
+        if (tournamentType === "weekly") {
+            return (
+                <div style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <p style={{ fontSize: 21, color: mainTextColor }} className="text-bold">
+                        {
+                            tournament.showLeague ?
+                            `The Twelve League ${tournament.leagueTournament}`
+                            :
+                            'The Weekly Tournament'
+                        }
+                    </p>
+                </div>
+            )
+        }
+
+        if (tournamentType === "apprentice") {
+            return (
+                <div style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <p style={{ fontSize: 21, color: mainTextColor }} className="text-bold">
+                        {
+                            tournamentWiza.showLeague ?
+                            `The Apprentice League ${tournamentWiza.leagueTournament}`
+                            :
+                            'The Apprentice Tournament'
+                        }
+                    </p>
+                </div>
+            )
+        }
+    }
+
+    renderBtns(tournamentType, isMobile) {
+        const { tournamentElite, tournament, tournamentWiza, loadingElite, loadingWeekly, loadingApprentice } = this.state
+
+        let tournamentInfo;
+        let tournamentKey;
+        let loading;
+
+        if (tournamentType === "elite") {
+            tournamentInfo = tournamentElite
+            tournamentKey = "tournamentE"
+            loading = loadingElite
+        }
+
+        if (tournamentType === "weekly") {
+            tournamentInfo = tournament
+            tournamentKey = "tournamentK"
+            loading = loadingWeekly
+        }
+
+        if (tournamentType === "apprentice") {
+            tournamentInfo = tournamentWiza
+            tournamentKey = "tournamentW"
+            loading = loadingApprentice
+        }
+
+        if (tournamentInfo.canSubscribe && !loading) {
+            return (
+                <div style={{ width: isMobile ? "100%" : 200, alignItems: 'center', justifyContent: isMobile ? 'space-between' : 'flex-end', marginTop: isMobile ? 14 : 0 }}>
+                    {this.renderBtnSubscribe(tournamentInfo)}
+
+                    <div style={{ width: 16 }} />
+
+                    {this.renderBtnOpenTournament(tournamentKey)}
+                </div>
+            )
+        }
+
+        if (!tournamentInfo.canSubscribe && !loading) {
+            return (
+                <div style={{ width: isMobile ? "100%" : 200, alignItems: 'center', justifyContent: isMobile ? 'center' : 'flex-end', marginTop: isMobile ? 14 : 0 }}>
+                    {this.renderBtnOpenTournament(tournamentKey)}
+                </div>
+            )
+        }
 
         return (
-            <div
-                style={Object.assign({}, styles.boxTournament, { width: boxTournamentWidth, backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
-            >
-                {
-                    tournamentWiza.showLeague ?
-                    <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom }}>
-                        <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
-                            The Apprentice League <span style={{ fontSize: 15 }}>{tournamentWiza.leagueTournament}</span>
-                        </p>
-                    </div>
-                    :
-                    <div style={{ alignItems: 'center', justifyContent: 'center', height: 50, marginBottom }}>
-                        <p style={{ fontSize: 18, color: mainTextColor }} className="text-bold">
-                            The Apprentice Tournament
-                        </p>
-                    </div>
-                }
-
-                {this.renderRoundInfo(marginBottom, mainTextColor, tournamentValue, roundValue)}
-
-                <p style={{ fontSize: 16, color: mainTextColor, marginBottom }}>
-                    Level Cap: <span className="text-bold">{tournamentWiza.levelCap}</span>
-                </p>
-
-                <p style={{ fontSize: 16, color: mainTextColor, marginBottom, height: 20 }}>
-                    Structure: {tournamentWiza.structure}
-                </p>
-
-                 {this.renderBuyinInfo(marginBottom, mainTextColor, tournamentWiza.buyin, "$WIZA", tournamentWiza.fee)}
-
-                 <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
-
-                {this.renderPrizeInfo(marginBottom, mainTextColor, montepremi, "$WIZA", tournamentWiza.extraPrize)}
-
-                {this.renderSubsInfo(marginBottom, mainTextColor, tournamentWizaSubs, avgLevelWiza)}
-
-                <p style={{ fontSize: 14, color: mainTextColor, marginBottom, height: 40 }}>
-                    Wizard participation reward: {tournamentWiza.reward}
-                </p>
-
-                <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
-
-                <div style={{ alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
-
-                    <div style={{ alignItems: 'center' }}>
-                        <p style={{ fontSize: 15, color: mainTextColor, marginRight: 7 }}>
-                            Registrations {tournamentWiza.canSubscribe ? "open" : "closed"}
-                        </p>
-
-                        {
-                            tournamentWiza.canSubscribe ?
-                            <AiFillCheckCircle
-                                color='green'
-                                size={26}
-                            />
-                            :
-                            <AiFillCheckCircle
-                                color='#504f4f'
-                                size={26}
-                            />
-                        }
-                    </div>
-
-                    {
-                        finalDate &&
-                        <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
-                            {finalDate}
-                        </p>
-                    }
+            <div>
+            {
+                loading &&
+                <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center', minHeight: 40 }}>
+                    <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
                 </div>
-
-                {
-                    tournamentWiza.canSubscribe && !loadingApprentice &&
-                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'space-between', marginTop: marginBottom }}>
-                        {this.renderBtnSubscribe(tournamentWiza)}
-
-                        {this.renderBtnOpenTournament('tournamentW')}
-                    </div>
-                }
-
-                {
-                    !tournamentWiza.canSubscribe && !loadingApprentice &&
-                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center', marginTop: marginBottom }}>
-                        {this.renderBtnOpenTournament('tournamentW')}
-                    </div>
-                }
-
-                {
-                    loadingApprentice &&
-                    <div style={{ width: '100%', alignItems: 'center', justifyContent: 'center', marginTop: marginBottom, minHeight: 40 }}>
-                        <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
-                    </div>
-                }
-
+            }
             </div>
         )
     }
 
-    renderRoundFights(key) {
-		const { profileFights } = this.state
+    //creare un unico render comune ad ogni torneo
+    renderTournamentDesktop(tournamentType, insideWidth) {
+        const { tournamentElite, tournament, tournamentWiza, tournamentEliteSubs, tournamentKdaSubs, tournamentWizaSubs } = this.state
+        const { mainTextColor, isDarkmode } = this.props
 
-		const roundName = key.split("_")[1].replace("r", "")
-		const fights = profileFights[key]
+        const fee = this.calcFeeMontepremi(tournamentType).fee
+        const montepremi = this.calcFeeMontepremi(tournamentType).montepremi
 
-		return (
-			<div style={{ flexDirection: 'column' }} key={key}>
-				<p style={{ fontSize: 20, color: this.props.mainTextColor, marginBottom: 15 }} className="text-medium">
-					Round {roundName}
-				</p>
+        let finalDate = this.calcFinalDate(tournamentType)
 
-				<div style={{ flexWrap: 'wrap' }}>
-					{fights && fights.map((item, index) => this.renderSingleFight(item, index))}
-				</div>
-			</div>
-		)
-	}
+        let tournamentName, tournamentInfo, subCount;
 
-    renderSingleFight(item, index) {
-		return (
-			<CardSingleFightProfile
-				history={this.props.history}
-				userMintedNfts={this.props.userMintedNfts}
-				item={item}
-				key={index}
-			/>
-		)
-	}
+        if (tournamentType === "elite") {
+            tournamentName = tournamentElite.name.split("_")[0].replace("t", "")
+            tournamentInfo = tournamentElite
+            subCount = tournamentEliteSubs
+        }
+
+        if (tournamentType === "weekly") {
+            tournamentName = tournament.name.split("_")[0].replace("t", "")
+            tournamentInfo = tournament
+            subCount = tournamentKdaSubs
+        }
+
+        if (tournamentType === "apprentice") {
+            tournamentName = tournamentWiza.name.split("_")[0].replace("t", "")
+            tournamentInfo = tournamentWiza
+            subCount = tournamentWizaSubs
+        }
+
+        const marginBottom = 10
+
+        return (
+            <div style={{ marginBottom: 20, flexDirection: 'column', width: insideWidth }}>
+
+                <div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+
+                    {this.renderTitleTournament(tournamentType)}
+
+                    <div style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        {this.renderBtns(tournamentType, false)}
+                    </div>
+                </div>
+
+                <div
+                    style={Object.assign({}, styles.boxTournament, { flexDirection: 'row', padding: 0, backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
+                >
+
+                    <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around', width: '50%', padding: 12, textAlign: 'center' }}>
+
+                        <p style={{ fontSize: 17, color: mainTextColor, textAlign: 'center', marginBottom }}>
+                            Tournament {tournamentName}
+                        </p>
+
+                        <p style={{ fontSize: 17, color: mainTextColor, marginBottom }}>
+                            Level Cap: {tournamentInfo.levelCap}
+                        </p>
+
+                        <p style={{ fontSize: 17, color: mainTextColor, marginBottom }}>
+                            Structure: {tournamentInfo.structure}
+                        </p>
+
+                        <p style={{ fontSize: 17, color: mainTextColor }}>
+                            Buyin {tournamentInfo.buyin} ${tournamentInfo.coinBuyin}
+                        </p>
+
+                        <p style={{ fontSize: 14, color: mainTextColor }}>
+                            Fee {fee}%
+                        </p>
+                    </div>
+
+
+                    <div style={{ width: 1, height: "100%", minHeight: "100%", backgroundColor: "#d7d7d750", marginTop: 1, marginBottom: 1 }} />
+
+                    <div style={{ flexDirection: 'column', alignItems: 'center', width: '50%' }}>
+
+                        <div style={{ position: 'relative', width: '100%', flexDirection: 'row', height: 30, borderTopRightRadius: 8, marginBottom, backgroundColor: tournamentInfo.canSubscribe ? "#4bb54b" : "grey", alignItems: 'center', justifyContent: 'center' }}>
+                            <p style={{ fontSize: 16, color: mainTextColor, marginRight: 7 }}>
+                                Registrations {tournamentInfo.canSubscribe ? "open" : "closed"}
+                            </p>
+
+                            {
+                                tournamentInfo.canSubscribe ?
+                                <AiFillCheckCircle
+                                    color='white'
+                                    size={22}
+                                />
+                                :
+                                <AiFillCheckCircle
+                                    color='#504f4f'
+                                    size={22}
+                                />
+                            }
+
+                            {
+                                finalDate &&
+                                <p style={{ position: insideWidth < 950 ? 'relative' : 'absolute', marginLeft: 10, right: 5, fontSize: 13, color: mainTextColor }} className="text-medium">
+                                    {finalDate}
+                                </p>
+                            }
+                        </div>
+
+                        <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 12, textAlign: 'center' }}>
+                            <p style={{ fontSize: 16, color: mainTextColor, marginBottom: tournamentInfo.extraPrize ? 4 : 16 }}>
+                                Prize {montepremi ? montepremi.toFixed(2) : '...'} ${tournamentInfo.coinBuyin}
+                            </p>
+
+                            {
+                                tournamentInfo.extraPrize &&
+                                <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 16 }}>
+                                    Extra prize {tournamentInfo.extraPrize ? tournamentInfo.extraPrize.toLocaleString() : '...'} ${tournamentInfo.coinBuyin}
+                                </p>
+                            }
+
+                            <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 10 }}>
+                                Subscribed {subCount}
+                            </p>
+
+                            <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 16 }}>
+                                Wizard participation reward: {tournamentInfo.reward}
+                            </p>
+
+                            {
+                                tournamentInfo.levelCap === 160 ?
+                                <p style={{ fontSize: 14, color: mainTextColor }} className="text-light">
+                                    Rings, Pendants, Spell upgrades and Aura are not counted
+                                </p>
+                                :
+                                undefined
+                            }
+
+                            {
+                                tournamentInfo.levelCap === 225 ?
+                                <p style={{ fontSize: 14, color: mainTextColor }} className="text-light">
+                                    Rings and Pendants are not counted
+                                </p>
+                                :
+                                undefined
+                            }
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        )
+    }
 
     renderRowChoise(item, index, modalWidth) {
 		const { tournamentSubs, toSubscribe } = this.state
@@ -1236,11 +1165,11 @@ class Tournament extends Component {
 	}
 
     renderBody(isMobile) {
-        const { tournament, tournamentWiza, tournamentElite, profileFights, error, showProfileFights, showSubs, yourSubs, tournamentSubs } = this.state
+        const { tournament, tournamentWiza, tournamentElite, error, showSubs, yourSubs, tournamentSubs } = this.state
         const { filtriProfileRanges, mainTextColor, mainBackgroundColor } = this.props
 
         let { boxW, modalW, padding } = getBoxWidth(isMobile)
-        const insideWidth = boxW > 1250 ? 1250 : boxW
+        const insideWidth = boxW > 1000 ? 1000 : boxW
 
         if (!tournament.name || !tournamentWiza.name || !tournamentElite.name) {
             return (
@@ -1251,7 +1180,7 @@ class Tournament extends Component {
         }
 
         //console.log(tournament);
-        let boxTournamentWidth = isMobile ? (insideWidth * 90 / 100) : (insideWidth - 140) / 3
+        let boxTournamentWidth = isMobile ? (insideWidth * 95 / 100) : (insideWidth - 140) / 3
         if (boxTournamentWidth > 358) {
             boxTournamentWidth = 358
         }
@@ -1259,7 +1188,7 @@ class Tournament extends Component {
         return (
             <div style={{ flexDirection: 'column', width: boxW, alignItems: 'center', padding, paddingTop: 30, overflowY: 'auto', overflowX: 'hidden' }}>
 
-                <p style={{ color: mainTextColor, fontSize: 24, marginBottom: 60 }} className="text-medium">
+                <p style={{ color: mainTextColor, fontSize: 24, marginBottom: 40 }} className="text-bold">
                     Weekly Tournaments
                 </p>
 
@@ -1271,13 +1200,25 @@ class Tournament extends Component {
 					: null
 				}
 
-                <div style={{ width: insideWidth, flexDirection: 'row', justifyContent: isMobile ? 'center' : 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 30 }}>
-                    {this.renderTournamentElite(boxTournamentWidth)}
+                {
+                    isMobile ?
+                    <div style={{ width: insideWidth, flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 30 }}>
+                        {this.renderTournamentMobile("elite", boxTournamentWidth)}
 
-                    {this.renderTournamentHigh(boxTournamentWidth)}
+                        {this.renderTournamentMobile("weekly", boxTournamentWidth)}
 
-                    {this.renderTournamentLow(boxTournamentWidth)}
-                </div>
+                        {this.renderTournamentMobile("apprentice", boxTournamentWidth)}
+                    </div>
+                    :
+                    //DESKTOP
+                    <div style={{ width: insideWidth, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginBottom: 30 }}>
+                        {this.renderTournamentDesktop("elite", insideWidth)}
+
+                        {this.renderTournamentDesktop("weekly", insideWidth)}
+
+                        {this.renderTournamentDesktop("apprentice", insideWidth)}
+                    </div>
+                }
 
                 {
 					this.state.loading ?
@@ -1286,20 +1227,6 @@ class Tournament extends Component {
 					</div>
 					: null
 				}
-
-                {
-                    showProfileFights &&
-                    <div style={{ flexDirection: 'column', width: insideWidth }}>
-
-                        <div style={{ marginBottom: 30, flexWrap: 'wrap' }}>
-                            {profileFights && Object.keys(profileFights).length > 0 && Object.keys(profileFights).reverse().map(key => this.renderRoundFights(key))}
-                        </div>
-
-                        <p style={{ fontSize: 15, color: 'red', marginTop: 10 }}>
-                            {error}
-                        </p>
-                    </div>
-                }
 
                 {
                     showSubs && yourSubs.length > 0 && yourSubs[0].length > 0 &&
@@ -1426,7 +1353,7 @@ const styles = {
 	},
     btnSubscribe: {
         width: "45%",
-		height: 40,
+		height: 34,
 		backgroundColor: CTA_COLOR,
 		justifyContent: 'center',
 		alignItems: 'center',
@@ -1451,7 +1378,7 @@ const styles = {
         flexDirection: 'column',
         padding: 12,
         borderWidth: 1,
-        borderColor: "#d7d7d7",
+        borderColor: "#d7d7d750",
         borderStyle: 'solid',
         marginBottom: 20,
     },
