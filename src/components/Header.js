@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import _ from 'lodash'
 import moment from 'moment'
 import Popup from 'reactjs-popup';
+import toast, { Toaster } from 'react-hot-toast';
 import BounceLoader from 'react-spinners/BounceLoader';
 import { IoMenu, IoClose } from 'react-icons/io5'
 import { SiDiscord, SiTwitter } from 'react-icons/si'
@@ -89,10 +90,14 @@ class Header extends Component {
 	tryConnectLinx() {
 		const { chainId, gasPrice, gasLimit, networkUrl, account } = this.props
 
-		//console.log(account);
-		if (!account || !account.account) {
-			this.props.connectLinx(chainId, gasPrice, gasLimit, networkUrl)
-		}
+		this.props.connectLinx(chainId, gasPrice, gasLimit, networkUrl, account, (error) => {
+			//console.log("connected");
+			if (!error) {
+				setTimeout(() => {
+					toast.success(`Linx Wallet detected. Auto connected to ${this.props.account.account}`)
+				}, 500)
+			}
+		})
 	}
 
 	getMined() {
@@ -847,6 +852,11 @@ class Header extends Component {
 		return (
 			<div style={{ flexDirection: 'row', width: '100%', paddingLeft: padding, paddingRight: padding, paddingTop: 8, paddingBottom: 8, backgroundColor: mainBackgroundColor, position: 'relative', alignItems: 'center', justifyContent: 'space-between' }} id="headerbox">
 
+				<Toaster
+					position="top-center"
+					reverseOrder={false}
+				/>
+
 				{this.renderLogo(false, 131)}
 
 				<div style={{ alignItems: 'center', justifyContent: 'center' }}>
@@ -1061,6 +1071,11 @@ class Header extends Component {
 			<div style={{ flexDirection: 'row', width: '100%', paddingLeft: padding, paddingRight: padding, paddingTop: 8, paddingBottom: 8, backgroundColor: mainBackgroundColor, position: 'relative', alignItems: 'center', justifyContent: 'space-between' }} id="headerbox">
 
 				{/*this.renderLogo(false, 51)*/}
+
+				<Toaster
+					position="top-center"
+					reverseOrder={false}
+				/>
 
 				<div style={{ alignItems: 'center', justifyContent: 'space-evenly', width: '100%' }}>
 					{this.renderBtnMenuMobile(
