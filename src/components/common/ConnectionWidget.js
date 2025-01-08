@@ -4,8 +4,7 @@ import DotLoader from 'react-spinners/DotLoader';
 import {
 	connectXWallet,
 	connectChainweaver,
-	connectWalletConnect,
-	connectLinx
+	connectWalletConnect
 } from '../../actions'
 import '../../css/ConnectionWidget.css'
 import { TEXT_SECONDARY_COLOR, CTA_COLOR } from '../../actions/types'
@@ -32,22 +31,6 @@ class ConnectionWidget extends Component {
 			this.hasXWallet = window && window.kadena && window.kadena.isKadena === true
 		}, 500)
 
-	}
-
-	connectToLinx() {
-		const { chainId, gasPrice, gasLimit, networkUrl } = this.props
-
-		this.setState({ loading: true })
-
-		this.props.connectLinx(chainId, gasPrice, gasLimit, networkUrl, (error) => {
-			console.log(error);
-			if (!error) {
-				this.props.callback()
-			}
-			else {
-				this.setState({ error, loading: false })
-			}
-		})
 	}
 
 	connectXWallet() {
@@ -141,18 +124,6 @@ class ConnectionWidget extends Component {
 						eckoWALLET
 					</p>
 				</button>
-
-				{/*<button
-					className="btnH"
-					style={Object.assign({}, styles.btnOption, { backgroundColor: "#714dff" })}
-					onClick={() => {
-						this.connectToLinx()
-					}}
-				>
-					<p style={{ fontSize: 14, color: 'black' }} className="text-medium">
-						LINX WALLET
-					</p>
-				</button>*/}
 
 				<button
 					className="btnH"
@@ -266,6 +237,5 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {
 	connectXWallet,
 	connectChainweaver,
-	connectWalletConnect,
-	connectLinx
+	connectWalletConnect
 })(ConnectionWidget)
