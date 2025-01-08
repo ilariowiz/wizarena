@@ -332,15 +332,14 @@ export const connectWalletConnect = (netId, chainId, gasPrice, gasLimit, network
 	}
 }
 
-export const connectLinx = (chainId, gasPrice, gasLimit, networkUrl, callback) => {
+export const connectLinx = (chainId, gasPrice, gasLimit, networkUrl, currentAccount, callback) => {
 	return async (dispatch) => {
 		try {
 			//console.log(await inLinx());
 			if (await inLinx()) {
 				const account = await linx(linxNewRequest("Account", "get address", {}, false))
-				console.log(account);
-				if (account) {
-
+				//console.log(account);
+				if (account && (!currentAccount || currentAccount.account !== account)) {
 					dispatch(setIsXwallet(false))
 					dispatch(setIsWalletConnectQR(false))
 
