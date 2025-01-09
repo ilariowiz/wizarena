@@ -882,7 +882,7 @@ class Tournament extends Component {
         return (
             <div style={{ marginBottom: 20, flexDirection: 'column', width: insideWidth }}>
 
-                <div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                <div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5 }}>
 
                     {this.renderTitleTournament(tournamentInfo.type)}
 
@@ -895,7 +895,7 @@ class Tournament extends Component {
                     style={Object.assign({}, styles.boxTournament, { flexDirection: 'row', padding: 0, backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
                 >
 
-                    <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around', width: '50%', padding: 12, textAlign: 'center' }}>
+                    <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around', width: '50%', padding: 8, textAlign: 'center' }}>
 
                         <p style={{ fontSize: 17, color: mainTextColor, textAlign: 'center', marginBottom }}>
                             Tournament {tournamentName}
@@ -949,7 +949,7 @@ class Tournament extends Component {
                             }
                         </div>
 
-                        <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 12, textAlign: 'center' }}>
+                        <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 8, textAlign: 'center' }}>
                             <p style={{ fontSize: 16, color: mainTextColor, marginBottom: tournamentInfo.extraPrize ? 4 : 16 }}>
                                 Prize {montepremi ? montepremi.toFixed(2) : '...'} ${tournamentInfo.coinBuyin}
                             </p>
