@@ -49,6 +49,7 @@ class Tournament extends Component {
 		super(props)
 
 		this.state = {
+            tournaments: {},
             tournament: {},
             tournamentWiza: {},
             tournamentElite: {},
@@ -59,9 +60,6 @@ class Tournament extends Component {
             loadingElite: true,
             loadingWeekly: true,
             loadingApprentice: true,
-            avgLevelKda: 0,
-            avgLevelWiza: 0,
-            avgLevelElite: 0,
             showSubs: false,
             yourSubs: [],
             tournamentSubs: {},
@@ -156,7 +154,11 @@ class Tournament extends Component {
 
                 this.props.getCountForTournament(chainId, gasPrice, gasLimit, networkUrl, tournamentName, (subscribed) => {
                     //console.log(subscribed);
-                    this.setState({ tournamentKdaSubs: subscribed, avgLevelKda: 0, loadingWeekly: false })
+                    let tournaments = Object.assign({}, this.state.tournaments)
+                    tournaments['weekly'] = tournament
+                    tournaments['weekly']['subs'] = subscribed
+
+                    this.setState({ tournamentKdaSubs: subscribed, loadingWeekly: false, tournaments })
                 })
 
             })
@@ -189,7 +191,12 @@ class Tournament extends Component {
                 const tournamentName = tournament.name.split("_")[0]
 
                 this.props.getCountForTournament(chainId,gasPrice,gasLimit, networkUrl, tournamentName, (subscribed) => {
-                    this.setState({ tournamentWizaSubs: subscribed, avgLevelWiza: 0, loadingApprentice: false })
+
+                    let tournaments = Object.assign({}, this.state.tournaments)
+                    tournaments['apprentice'] = tournament
+                    tournaments['apprentice']['subs'] = subscribed
+
+                    this.setState({ tournamentWizaSubs: subscribed, loadingApprentice: false, tournaments })
                 })
 
             })
@@ -222,7 +229,12 @@ class Tournament extends Component {
                 const tournamentName = tournament.name.split("_")[0]
 
                 this.props.getCountForTournament(chainId,gasPrice,gasLimit, networkUrl, tournamentName, (subscribed) => {
-                    this.setState({ tournamentEliteSubs: subscribed, avgLevelElite: 0, loadingElite: false })
+
+                    let tournaments = Object.assign({}, this.state.tournaments)
+                    tournaments['elite'] = tournament
+                    tournaments['elite']['subs'] = subscribed
+
+                    this.setState({ tournamentEliteSubs: subscribed, loadingElite: false, tournaments })
                 })
 
             })
@@ -603,34 +615,15 @@ class Tournament extends Component {
         return OceorahIcon
     }
 
-    renderTournamentMobile(tournamentType, boxTournamentWidth) {
-        const { tournamentElite, tournament, tournamentWiza, tournamentEliteSubs, tournamentKdaSubs, tournamentWizaSubs } = this.state
+    renderTournamentMobile(tournamentInfo, boxTournamentWidth) {
         const { mainTextColor, isDarkmode } = this.props
 
-        const fee = this.calcFeeMontepremi(tournamentType).fee
-        const montepremi = this.calcFeeMontepremi(tournamentType).montepremi
+        const fee = tournamentInfo.fee
+        const montepremi = this.calcMontepremi(tournamentInfo)
 
-        let finalDate = this.calcFinalDate(tournamentType)
+        let finalDate = this.calcFinalDate(tournamentInfo)
 
-        let tournamentName, tournamentInfo, subCount;
-
-        if (tournamentType === "elite") {
-            tournamentName = tournamentElite.name.split("_")[0].replace("t", "")
-            tournamentInfo = tournamentElite
-            subCount = tournamentEliteSubs
-        }
-
-        if (tournamentType === "weekly") {
-            tournamentName = tournament.name.split("_")[0].replace("t", "")
-            tournamentInfo = tournament
-            subCount = tournamentKdaSubs
-        }
-
-        if (tournamentType === "apprentice") {
-            tournamentName = tournamentWiza.name.split("_")[0].replace("t", "")
-            tournamentInfo = tournamentWiza
-            subCount = tournamentWizaSubs
-        }
+        const tournamentName = tournamentInfo.name.split("_")[0].replace("t", "")
 
         const marginBottom = 14
 
@@ -638,7 +631,7 @@ class Tournament extends Component {
             <div
                 style={Object.assign({}, styles.boxTournament, { width: boxTournamentWidth, backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
             >
-                {this.renderTitleTournament(tournamentType)}
+                {this.renderTitleTournament(tournamentInfo.type)}
 
                 <p style={{ fontSize: 16, color: mainTextColor, marginTop: 14, marginBottom }}>
                     Tournament {tournamentName}
@@ -674,7 +667,7 @@ class Tournament extends Component {
                 </div>
 
                 <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 16 }}>
-                    Subscribed {subCount}
+                    Subscribed {tournamentInfo.subs}
                 </p>
 
                 <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 16 }}>
@@ -731,58 +724,25 @@ class Tournament extends Component {
                 </div>
 
                 <div style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    {this.renderBtns(tournamentType, true)}
+                    {this.renderBtns(tournamentInfo.type, true)}
                 </div>
             </div>
         )
     }
 
-    calcFeeMontepremi(tournamentType) {
-        const { tournamentElite, tournamentEliteSubs, tournament, tournamentKdaSubs, tournamentWiza, tournamentWizaSubs } = this.state
+    calcMontepremi(tournamentInfo) {
 
-        let fee, montepremi
+        const fee = tournamentInfo.fee
+        const feeInCost = tournamentInfo.buyin * tournamentInfo.fee / 100
+        const totalFee = feeInCost * tournamentInfo.subs
+        const montepremi = (tournamentInfo.subs * tournamentInfo.buyin) - totalFee
 
-        if (tournamentType === "elite") {
-            fee = tournamentElite.fee
-            const feeInCost = tournamentElite.buyin * tournamentElite.fee / 100
-            const totalFee = feeInCost * tournamentEliteSubs
-            montepremi = (tournamentEliteSubs * tournamentElite.buyin) - totalFee
-        }
-
-        if (tournamentType === "weekly") {
-            fee = tournament.fee
-            const feeInCost = tournament.buyin * tournament.fee / 100
-            const totalFee = feeInCost * tournamentKdaSubs
-            montepremi = (tournamentKdaSubs * tournament.buyin) - totalFee
-        }
-
-        if (tournamentType === "apprentice") {
-            fee = tournamentWiza.fee
-            const feeInCost = tournamentWiza.buyin * tournamentWiza.fee / 100
-            const totalFee = feeInCost * tournamentWizaSubs
-            montepremi = (tournamentWizaSubs * tournamentWiza.buyin) - totalFee
-        }
-
-        return { fee, montepremi }
+        return montepremi
     }
 
-    calcFinalDate(tournamentType) {
-        const { tournamentElite, tournament, tournamentWiza } = this.state
+    calcFinalDate(tournamentInfo) {
 
         let finalDate
-        let tournamentInfo;
-
-        if (tournamentType === "elite") {
-            tournamentInfo = tournamentElite
-        }
-
-        if (tournamentType === "weekly") {
-            tournamentInfo = tournament
-        }
-
-        if (tournamentType === "apprentice") {
-            tournamentInfo = tournamentWiza
-        }
 
         const dateStart = moment(tournamentInfo.start.seconds * 1000)
         //console.log(dateStart);
@@ -853,26 +813,23 @@ class Tournament extends Component {
     }
 
     renderBtns(tournamentType, isMobile) {
-        const { tournamentElite, tournament, tournamentWiza, loadingElite, loadingWeekly, loadingApprentice } = this.state
+        const { tournaments, loadingElite, loadingWeekly, loadingApprentice } = this.state
 
-        let tournamentInfo;
+        const tournamentInfo = tournaments[tournamentType]
         let tournamentKey;
         let loading;
 
         if (tournamentType === "elite") {
-            tournamentInfo = tournamentElite
             tournamentKey = "tournamentE"
             loading = loadingElite
         }
 
         if (tournamentType === "weekly") {
-            tournamentInfo = tournament
             tournamentKey = "tournamentK"
             loading = loadingWeekly
         }
 
         if (tournamentType === "apprentice") {
-            tournamentInfo = tournamentWiza
             tournamentKey = "tournamentW"
             loading = loadingApprentice
         }
@@ -910,34 +867,15 @@ class Tournament extends Component {
     }
 
     //creare un unico render comune ad ogni torneo
-    renderTournamentDesktop(tournamentType, insideWidth) {
-        const { tournamentElite, tournament, tournamentWiza, tournamentEliteSubs, tournamentKdaSubs, tournamentWizaSubs } = this.state
+    renderTournamentDesktop(tournamentInfo, insideWidth) {
         const { mainTextColor, isDarkmode } = this.props
 
-        const fee = this.calcFeeMontepremi(tournamentType).fee
-        const montepremi = this.calcFeeMontepremi(tournamentType).montepremi
+        const fee = tournamentInfo.fee
+        const montepremi = this.calcMontepremi(tournamentInfo)
 
-        let finalDate = this.calcFinalDate(tournamentType)
+        let finalDate = this.calcFinalDate(tournamentInfo)
 
-        let tournamentName, tournamentInfo, subCount;
-
-        if (tournamentType === "elite") {
-            tournamentName = tournamentElite.name.split("_")[0].replace("t", "")
-            tournamentInfo = tournamentElite
-            subCount = tournamentEliteSubs
-        }
-
-        if (tournamentType === "weekly") {
-            tournamentName = tournament.name.split("_")[0].replace("t", "")
-            tournamentInfo = tournament
-            subCount = tournamentKdaSubs
-        }
-
-        if (tournamentType === "apprentice") {
-            tournamentName = tournamentWiza.name.split("_")[0].replace("t", "")
-            tournamentInfo = tournamentWiza
-            subCount = tournamentWizaSubs
-        }
+        const tournamentName = tournamentInfo.name.split("_")[0].replace("t", "")
 
         const marginBottom = 10
 
@@ -946,10 +884,10 @@ class Tournament extends Component {
 
                 <div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
 
-                    {this.renderTitleTournament(tournamentType)}
+                    {this.renderTitleTournament(tournamentInfo.type)}
 
                     <div style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        {this.renderBtns(tournamentType, false)}
+                        {this.renderBtns(tournamentInfo.type, false)}
                     </div>
                 </div>
 
@@ -1024,7 +962,7 @@ class Tournament extends Component {
                             }
 
                             <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 10 }}>
-                                Subscribed {subCount}
+                                Subscribed {tournamentInfo.subs}
                             </p>
 
                             <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 16 }}>
@@ -1165,13 +1103,13 @@ class Tournament extends Component {
 	}
 
     renderBody(isMobile) {
-        const { tournament, tournamentWiza, tournamentElite, error, showSubs, yourSubs, tournamentSubs } = this.state
+        const { loadingWeekly, loadingApprentice, loadingElite, tournaments, error, showSubs, yourSubs, tournamentSubs } = this.state
         const { filtriProfileRanges, mainTextColor, mainBackgroundColor } = this.props
 
         let { boxW, modalW, padding } = getBoxWidth(isMobile)
         const insideWidth = boxW > 1000 ? 1000 : boxW
 
-        if (!tournament.name || !tournamentWiza.name || !tournamentElite.name) {
+        if (loadingWeekly || loadingApprentice || loadingElite) {
             return (
                 <div style={{ width: boxW, height: 50, justifyContent: 'center', alignItems: 'center', padding }}>
                     <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
@@ -1179,7 +1117,6 @@ class Tournament extends Component {
             )
         }
 
-        //console.log(tournament);
         let boxTournamentWidth = isMobile ? (insideWidth * 95 / 100) : (insideWidth - 140) / 3
         if (boxTournamentWidth > 358) {
             boxTournamentWidth = 358
@@ -1203,20 +1140,20 @@ class Tournament extends Component {
                 {
                     isMobile ?
                     <div style={{ width: insideWidth, flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 30 }}>
-                        {this.renderTournamentMobile("elite", boxTournamentWidth)}
+                        {this.renderTournamentMobile(tournaments["elite"], boxTournamentWidth)}
 
-                        {this.renderTournamentMobile("weekly", boxTournamentWidth)}
+                        {this.renderTournamentMobile(tournaments["weekly"], boxTournamentWidth)}
 
-                        {this.renderTournamentMobile("apprentice", boxTournamentWidth)}
+                        {this.renderTournamentMobile(tournaments["apprentice"], boxTournamentWidth)}
                     </div>
                     :
                     //DESKTOP
                     <div style={{ width: insideWidth, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginBottom: 30 }}>
-                        {this.renderTournamentDesktop("elite", insideWidth)}
+                        {this.renderTournamentDesktop(tournaments["elite"], insideWidth)}
 
-                        {this.renderTournamentDesktop("weekly", insideWidth)}
+                        {this.renderTournamentDesktop(tournaments["weekly"], insideWidth)}
 
-                        {this.renderTournamentDesktop("apprentice", insideWidth)}
+                        {this.renderTournamentDesktop(tournaments["apprentice"], insideWidth)}
                     </div>
                 }
 
