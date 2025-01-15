@@ -167,7 +167,12 @@ class Tournament extends Component {
             let tournaments = Object.assign({}, this.state.tournaments)
             tournaments['farmers'] = response
             tournaments['farmers']['name'] = "farmers"
-            tournaments['farmers']['canSubscribe'] = !response.completed
+            if (response.completed || response.wizards.length >= response.nPlayers.int) {
+                tournaments['farmers']['canSubscribe'] = false
+            }
+            else {
+                tournaments['farmers']['canSubscribe'] = true
+            }
             tournaments['farmers']['levelCap'] = response.maxLevel.int
             tournaments['farmers']['coinBuyin'] = "WIZA"
             this.setState({ tournaments })
@@ -1032,9 +1037,27 @@ class Tournament extends Component {
                         }
                     </div>
 
-                    <p style={{ fontSize: 14, color: mainTextColor, marginLeft: 5 }} className="text-medium">
-                        The tournament will start when there are {tournamentInfo.nPlayers.int} wizards registered.
-                    </p>
+                    {
+                        !tournamentInfo.completed && tournamentInfo.wizards.length < tournamentInfo.nPlayers.int &&
+                        <p style={{ fontSize: 14, color: mainTextColor, marginLeft: 5 }} className="text-medium">
+                            The tournament will start when there are {tournamentInfo.nPlayers.int} wizards registered.
+                        </p>
+                    }
+
+                    {
+                        !tournamentInfo.completed && tournamentInfo.wizards.length >= tournamentInfo.nPlayers.int &&
+                        <p style={{ fontSize: 14, color: mainTextColor, marginLeft: 5 }} className="text-medium">
+                            The tournament will start within 5 minutes.
+                        </p>
+                    }
+
+                    {
+                        tournamentInfo.completed &&
+                        <p style={{ fontSize: 14, color: mainTextColor, marginLeft: 5 }} className="text-medium">
+                            A new tournament will open in a few minutes
+                        </p>
+                    }
+
                 </div>
 
                 <div style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -1100,13 +1123,13 @@ class Tournament extends Component {
 
                     <div style={{ flexDirection: 'column', alignItems: 'center', width: '50%' }}>
 
-                        <div style={{ position: 'relative', width: '100%', flexDirection: 'row', height: 30, borderTopRightRadius: 8, marginBottom, backgroundColor: !tournamentInfo.completed ? "#4bb54b" : "grey", alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ position: 'relative', width: '100%', flexDirection: 'row', height: 30, borderTopRightRadius: 8, marginBottom, backgroundColor: tournamentInfo.canSubscribe ? "#4bb54b" : "grey", alignItems: 'center', justifyContent: 'center' }}>
                             <p style={{ fontSize: 16, color: mainTextColor, marginRight: 7 }}>
-                                Registrations {!tournamentInfo.completed ? "open" : "closed"}
+                                Registrations {tournamentInfo.canSubscribe ? "open" : "closed"}
                             </p>
 
                             {
-                                !tournamentInfo.completed ?
+                                tournamentInfo.canSubscribe ?
                                 <AiFillCheckCircle
                                     color='white'
                                     size={22}
@@ -1121,9 +1144,26 @@ class Tournament extends Component {
                         </div>
 
                         <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 8, textAlign: 'center' }}>
-                            <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 16 }}>
-                                The tournament will start when there are {tournamentInfo.nPlayers.int} wizards registered.
-                            </p>
+                            {
+                                !tournamentInfo.completed && tournamentInfo.wizards.length < tournamentInfo.nPlayers.int &&
+                                <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 16 }}>
+                                    The tournament will start when there are {tournamentInfo.nPlayers.int} wizards registered.
+                                </p>
+                            }
+
+                            {
+                                !tournamentInfo.completed && tournamentInfo.wizards.length >= tournamentInfo.nPlayers.int &&
+                                <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 16 }}>
+                                    The tournament will start within 5 minutes.
+                                </p>
+                            }
+
+                            {
+                                tournamentInfo.completed &&
+                                <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 16 }}>
+                                    A new tournament will open in a few minutes
+                                </p>
+                            }
 
                             <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 16 }}>
                                 Prize {montepremi ? montepremi.toFixed(2) : '...'} $WIZA
