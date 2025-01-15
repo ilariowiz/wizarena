@@ -46,6 +46,8 @@ class AutoTournaments extends Component {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
         this.props.getAutoTournament(chainId, gasPrice, gasLimit, networkUrl, "farmers", (response) => {
+            let tId = parseInt(response['id']) - 1
+            response['id'] = tId.toString()
             this.setState({ tournament: response })
             this.loadMatches(response)
         })
