@@ -135,8 +135,11 @@ class Tournament extends Component {
                     //console.log(alreadySub, notSub);
 
                     this.setState({ yourSubs: [alreadySub, notSub], showSubs: true, tournamentSubs: tournament, loading: false }, () => {
-                        if (alreadySub.length > 0 || notSub.length > 0) {
+                        if (notSub.length > 0) {
                             document.getElementById("filters").scrollIntoView({ behavior: 'smooth' })
+                        }
+                        else if (alreadySub.length > 0) {
+                            document.getElementById("alreadySubDiv").scrollIntoView({ behavior: 'smooth' })
                         }
                     })
                 }
@@ -300,7 +303,9 @@ class Tournament extends Component {
         //console.log(yourSubs);
 
         this.setState({ yourSubs, showSubs: true, tournamentSubs: tournament, loading: false }, () => {
-            document.getElementById("filters").scrollIntoView({ behavior: 'smooth' })
+            if (yourSubs[1] && yourSubs[1].length > 0) {
+                document.getElementById("filters").scrollIntoView({ behavior: 'smooth' })
+            }
 
             if (yourSubs[0] && yourSubs[0].length > 0) {
                 const tournamentName = tournament.name.split("_")[0]
@@ -1505,7 +1510,7 @@ class Tournament extends Component {
 
                 {
                     showSubs && yourSubs.length > 0 && yourSubs[0].length > 0 &&
-                    <div style={{ flexDirection: 'column', width: insideWidth }}>
+                    <div style={{ flexDirection: 'column', width: insideWidth }} id="alreadySubDiv">
                         <p style={{ fontSize: 22, color: mainTextColor, marginTop: 10, marginBottom: 15, textAlign: 'center' }} className="text-medium">
                             Wizards subscribed
                         </p>
@@ -1540,7 +1545,7 @@ class Tournament extends Component {
                 }
 
                 {
-                    showSubs && filtriProfileRanges &&
+                    showSubs && filtriProfileRanges && yourSubs[1].length > 0 &&
                     <div style={{ flexWrap: 'wrap', width: insideWidth, alignItems: 'center', justifyContent: 'center', marginBottom: 5 }}>
                         {this.renderBoxSearchStat("hp", "HP", filtriProfileRanges["hp"])}
                         {this.renderBoxSearchStat("defense", "Defense", filtriProfileRanges["defense"])}
