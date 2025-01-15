@@ -1565,6 +1565,23 @@ export const getWalletsXp = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 5
 	}
 }
 
+export const getAutoTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, networkUrl, tournamentName, callback) => {
+	return (dispatch) => {
+
+		let cmd = {
+			pactCode: `(free.wiztournaments.get-tournament-info "${tournamentName}")`,
+			meta: defaultMeta(chainId, gasPrice, gasLimit)
+		}
+
+		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
+			//console.log(response)
+			if (callback) {
+				callback(response)
+			}
+		})
+	}
+}
+
 export const addNftToBurningQueue = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, idnft, account) => {
 	return (dispatch) => {
 
@@ -2653,6 +2670,55 @@ export const subscribeToTournamentMassELITE = (chainId, gasPrice = DEFAULT_GAS_P
 		}
 
 		//console.log("subscribeToTournamentMassWIZA", cmd)
+
+		dispatch(updateTransactionState("cmdToConfirm", cmd))
+	}
+}
+
+export const subscribeToTournamentMassAuto = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, tournamentName, list, amount) => {
+	return (dispatch) => {
+
+		let pactCode = `(free.wiztournaments.join-tournament "${tournamentName}" ${JSON.stringify(list)} "${account.account}" free.wiz-arena free.wiza)`;
+
+		let caps = [
+			Pact.lang.mkCap(
+				"Verify owner",
+				"Verify your are the owner",
+				`free.wiztournaments.ACCOUNT_GUARD`,
+				[account.account]
+			),
+			Pact.lang.mkCap(`Subscribe`, "Pay the buyin", `free.wiza.TRANSFER`, [
+				account.account,
+				"wiz-tournament-bank",
+				_.round(amount, 2),
+			]),
+			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
+		]
+
+		//console.log(caps);
+
+		let gasL = 3000 * list.length
+		if (gasL > 180000) {
+			gasL = 180000
+		}
+
+		let cmd = {
+			pactCode,
+			caps,
+			sender: account.account,
+			gasLimit: gasL,
+			gasPrice,
+			chainId,
+			ttl: 600,
+			envData: {
+				"user-ks": account.guard,
+				account: account.account
+			},
+			signingPubKey: account.guard.keys[0],
+			networkId: netId
+		}
+
+		//console.log("subscribeToTournamentMassAuto", cmd)
 
 		dispatch(updateTransactionState("cmdToConfirm", cmd))
 	}

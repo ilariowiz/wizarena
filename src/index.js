@@ -45,6 +45,8 @@ import FightsReplayDungeon from './components/FightsReplayDungeon'
 import Arena from './components/Arena'
 import Dungeon from './components/Dungeon'
 
+import AutoTournaments from './components/AutoTournaments'
+
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
@@ -93,6 +95,7 @@ ReactDOM.render(
             <Route path="/fightreplaydungeon" component={FightsReplayDungeon} />
             <Route path="/arena" component={Arena} />
             <Route path="/dungeons" component={Dungeon} />
+            <Route path="/autotournaments" component={AutoTournaments} />
           </Switch>
         </div>
       </BrowserRouter>

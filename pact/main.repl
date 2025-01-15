@@ -7,6 +7,7 @@
   "wiza-token-keyset" : {"keys": ["90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb"], "pred": "keys-all"},
   "wiza-token2-keyset" : {"keys": ["90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb"], "pred": "keys-all"},
   "wizequipment-keyset" : {"keys": ["90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb"], "pred": "keys-all"},
+  "wiztournaments-keyset" : {"keys": ["90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb"], "pred": "keys-all"},
    "dev-keyset" : {"keys": ["aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1"], "pred": "keys-all"},
   'upgrade: false
 })
@@ -47,6 +48,8 @@
 ;(load "wiza2.pact")
 
 (load "wizequipment.pact")
+
+(load "wiztournaments.pact")
 
 ;; commit the transaction
 (commit-tx)
@@ -1461,6 +1464,52 @@
 ; (free.wiz-arena.accept-offer "0" free.wiza free.wiz-equipment)
 ;
 ; (commit-tx)
+
+; AUTO TOURNAMENT
+(begin-tx "OPEN TOURNAMENT 160")
+
+(env-sigs [{ "key": "aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1", "caps": []}])
+
+(free.wiztournaments.create-tournament "farmers" "3073" 40.0 160 64)
+
+(commit-tx)
+
+; SUB TO 160
+(begin-tx "SUBSCRIBE Tournament 160")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (free.wiztournaments.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
+    (free.wiza.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "wiz-tournament-bank" 80.0),
+    (coin.GAS)
+  ]
+}])
+
+(free.wiztournaments.join-tournament
+    "farmers"
+    ["1", "0"]
+    "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"
+    free.wiz-arena
+    free.wiza
+)
+
+(free.wiztournaments.get-tournament-info "farmers")
+
+(commit-tx)
+
+(begin-tx "COMPLETE TOURNAMENT 160")
+
+(env-sigs [{ "key": "aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1", "caps": []}])
+
+(free.wiztournaments.complete-tournament
+    "farmers"
+    [{"address": "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "prize": 76.0}]
+    4.0
+    free.wiza
+)
+
+(commit-tx)
 
 
 (begin-tx "OPEN TOURNAMENT REG WIZA")

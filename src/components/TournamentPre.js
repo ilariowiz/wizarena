@@ -28,6 +28,8 @@ import {
     getWizaBalance,
     getCountForTournament,
     getPotionEquippedMass,
+    getAutoTournament,
+    subscribeToTournamentMassAuto
 } from '../actions'
 import '../css/Nft.css'
 import 'reactjs-popup/dist/index.css';
@@ -80,6 +82,7 @@ class Tournament extends Component {
             this.loadTournamentKda()
             this.loadTournamentWiza()
             this.loadTournamentElite()
+            this.getAutoT()
         }, 500)
 	}
 
@@ -110,21 +113,65 @@ class Tournament extends Component {
 			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (minted) => {
                 //console.log(minted);
 
-                let idsSubscription = []
-                const tName = tournament.name.split("_")[0]
+                if (tournament.name && tournament.name === "farmers") {
+                    const wizardsSubbedId = tournament.wizards
 
-                minted.map(i => {
-                    idsSubscription.push(`${tName}_${i.id}`)
-                })
+                    let alreadySub = []
+                    let notSub = []
 
-                this.props.getSubscriptions(chainId, gasPrice, gasLimit, networkUrl, idsSubscription, async (subscriptions) => {
-
-                    this.setState({ subscriptionsInfo: subscriptions }, () => {
-                        this.loadSubs(tournament)
+                    minted.map(i => {
+                        //console.log(i);
+                        if (wizardsSubbedId.includes(i.id)) {
+                            alreadySub.push(i)
+                        }
+                        //non iscritto
+                        else {
+                            if (i.level <= tournament.levelCap) {
+                                notSub.push(i)
+                            }
+                        }
                     })
-                })
+
+                    //console.log(alreadySub, notSub);
+
+                    this.setState({ yourSubs: [alreadySub, notSub], showSubs: true, tournamentSubs: tournament, loading: false }, () => {
+                        if (alreadySub.length > 0 || notSub.length > 0) {
+                            document.getElementById("filters").scrollIntoView({ behavior: 'smooth' })
+                        }
+                    })
+                }
+                else {
+                    let idsSubscription = []
+                    const tName = tournament.name.split("_")[0]
+
+                    minted.map(i => {
+                        idsSubscription.push(`${tName}_${i.id}`)
+                    })
+
+                    this.props.getSubscriptions(chainId, gasPrice, gasLimit, networkUrl, idsSubscription, async (subscriptions) => {
+
+                        this.setState({ subscriptionsInfo: subscriptions }, () => {
+                            this.loadSubs(tournament)
+                        })
+                    })
+                }
             })
 		}
+	}
+
+    getAutoT() {
+		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
+
+		this.props.getAutoTournament(chainId, gasPrice, gasLimit, networkUrl, "farmers", (response) => {
+            //console.log(response);
+            let tournaments = Object.assign({}, this.state.tournaments)
+            tournaments['farmers'] = response
+            tournaments['farmers']['name'] = "farmers"
+            tournaments['farmers']['canSubscribe'] = !response.completed
+            tournaments['farmers']['levelCap'] = response.maxLevel.int
+            tournaments['farmers']['coinBuyin'] = "WIZA"
+            this.setState({ tournaments })
+        })
 	}
 
     async loadTournamentKda() {
@@ -243,10 +290,6 @@ class Tournament extends Component {
 
     loadSubs(tournament) {
         const { userMintedNfts } = this.props
-
-        //const levelCap = tournament.levelCap
-        //let yourPossibleSubs = userMintedNfts.filter(i => i.level <= levelCap)
-        //let yourSubs = this.setYourSub(yourPossibleSubs)
 
         let yourSubs = this.setYourSub(userMintedNfts)
         //console.log(yourSubs);
@@ -378,6 +421,25 @@ class Tournament extends Component {
 		this.props.subscribeToTournamentMassELITE(chainId, gasPrice, 3000, netId, account, toSubscribe, tot)
 	}
 
+    subscribeMassAuto() {
+		const { chainId, gasPrice, netId, account } = this.props
+		const { toSubscribe, tournamentSubs } = this.state
+
+        //console.log(toSubscribe, tournamentSubs);
+        //return
+
+		const tot = toSubscribe.length * tournamentSubs.buyin
+        const onlyId = toSubscribe.map(i => i.idnft)
+
+        this.props.updateInfoTransactionModal({
+			transactionToConfirmText: `You will subscribe ${toSubscribe.length} wizards for ${tot} WIZA`,
+			typeModal: 'subscriptionmass',
+			transactionOkText: `Your Wizards are registered for the tournament!`,
+		})
+
+		this.props.subscribeToTournamentMassAuto(chainId, gasPrice, 3000, netId, account, tournamentSubs.name, onlyId, tot)
+	}
+
     async searchByStat(stat) {
 		const { statSearched, tournamentSubs } = this.state
         const { userMintedNfts } = this.props
@@ -474,7 +536,7 @@ class Tournament extends Component {
                 }}
             >
                 <p style={{ fontSize: 15, color: 'white', textAlign: 'center' }} className="text-medium">
-                    Open
+                    {goto === "autotournaments" ? "History" : "Open"}
                 </p>
             </a>
         )
@@ -548,7 +610,9 @@ class Tournament extends Component {
                         else if (tournamentSubs.type === "apprentice") {
                             this.subscribeMassWiza()
                         }
-
+                        else if (tournamentSubs.name && tournamentSubs.name === "farmers") {
+                            this.subscribeMassAuto()
+                        }
                     }}
 				>
 					<p style={{ fontSize: 15, color: 'white' }} className="text-medium">
@@ -763,8 +827,18 @@ class Tournament extends Component {
     }
 
     renderTitleTournament(tournamentType) {
-        const { tournamentElite, tournament, tournamentWiza } = this.state
+        const { tournamentElite, tournament, tournamentWiza, tournaments } = this.state
         const { mainTextColor } = this.props
+
+        if (tournamentType === "farmers") {
+            return (
+                <div style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <p style={{ fontSize: 21, color: mainTextColor }} className="text-bold">
+                        The Farmers {tournaments[tournamentType].levelCap} Flash
+                    </p>
+                </div>
+            )
+        }
 
         if (tournamentType === "elite") {
             return (
@@ -819,6 +893,11 @@ class Tournament extends Component {
         let tournamentKey;
         let loading;
 
+        if (tournamentType === "farmers") {
+            tournamentKey = "autotournaments"
+            loading = loadingElite
+        }
+
         if (tournamentType === "elite") {
             tournamentKey = "tournamentE"
             loading = loadingElite
@@ -862,6 +941,220 @@ class Tournament extends Component {
                     <DotLoader size={25} color={TEXT_SECONDARY_COLOR} />
                 </div>
             }
+            </div>
+        )
+    }
+
+    renderAutoTournamentMobile(tournamentInfo, boxTournamentWidth) {
+        const { mainTextColor, isDarkmode } = this.props
+
+        const fee = 5
+        const totalWiza = tournamentInfo.nPlayers.int * tournamentInfo.buyin
+        const feeInWiza = _.round((totalWiza * fee) / 100, 2)
+        const montepremi = _.round(totalWiza - feeInWiza, 2)
+
+        const marginBottom = 14
+
+        return (
+            <div
+                style={Object.assign({}, styles.boxTournament, { width: boxTournamentWidth, backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
+            >
+                {this.renderTitleTournament(tournamentInfo.name)}
+
+                <p style={{ fontSize: 16, color: mainTextColor, marginTop: 14, marginBottom }}>
+                    Tournament {tournamentInfo.id}
+                </p>
+
+                <p style={{ fontSize: 16, color: mainTextColor, marginBottom }}>
+                    Level Cap: {tournamentInfo.levelCap}
+                </p>
+
+                <div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                    <p style={{ fontSize: 16, color: mainTextColor }}>
+                        Buyin {tournamentInfo.buyin} ${tournamentInfo.coinBuyin}
+                    </p>
+
+                    <p style={{ fontSize: 13, color: mainTextColor }}>
+                        Fee {fee}%
+                    </p>
+                </div>
+
+                <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
+
+                <div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                    <p style={{ fontSize: 16, color: mainTextColor }}>
+                        Prize {montepremi ? montepremi.toFixed(2) : '...'} ${tournamentInfo.coinBuyin}
+                    </p>
+                </div>
+
+                <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 16 }}>
+                    Subscribed {tournamentInfo.wizards.length}/{tournamentInfo.nPlayers.int}
+                </p>
+
+                {
+                    tournamentInfo.levelCap === 160 ?
+                    <p style={{ fontSize: 14, color: mainTextColor }} className="text-light">
+                        Rings, Pendants, Spell upgrades and Aura are not counted
+                    </p>
+                    :
+                    undefined
+                }
+
+                {
+                    tournamentInfo.levelCap === 225 ?
+                    <p style={{ fontSize: 14, color: mainTextColor }} className="text-light">
+                        Rings and Pendants are not counted
+                    </p>
+                    :
+                    undefined
+                }
+
+                <div style={{ width: "100%", height: 1, minHeight: 1, backgroundColor: "#d7d7d7", marginTop: 10, marginBottom: 15 }} />
+
+                <div style={{ alignItems: 'center', justifyContent: 'space-between' }}>
+
+                    <div style={{ alignItems: 'center' }}>
+                        <p style={{ fontSize: 15, color: mainTextColor, marginRight: 6 }}>
+                            Registrations {tournamentInfo.canSubscribe ? "open" : "closed"}
+                        </p>
+
+                        {
+                            tournamentInfo.canSubscribe ?
+                            <AiFillCheckCircle
+                                color='#4bb54b'
+                                size={26}
+                            />
+                            :
+                            <AiFillCheckCircle
+                                color='#504f4f'
+                                size={26}
+                            />
+                        }
+                    </div>
+
+                    <p style={{ fontSize: 14, color: mainTextColor, marginLeft: 5 }} className="text-medium">
+                        The tournament will start when there are {tournamentInfo.nPlayers.int} wizards registered.
+                    </p>
+                </div>
+
+                <div style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    {this.renderBtns(tournamentInfo.name, true)}
+                </div>
+            </div>
+        )
+    }
+
+    renderAutoTournamentDesktop(tournamentInfo, insideWidth) {
+        const { mainTextColor, isDarkmode } = this.props
+
+        //console.log(tournamentInfo);
+
+        const fee = 5
+        const totalWiza = tournamentInfo.nPlayers.int * tournamentInfo.buyin
+        const feeInWiza = _.round((totalWiza * fee) / 100, 2)
+        const montepremi = _.round(totalWiza - feeInWiza, 2)
+
+        const marginBottom = 10
+
+        return (
+            <div style={{ marginBottom: 20, flexDirection: 'column', width: insideWidth }}>
+
+                <div style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5 }}>
+
+                    {this.renderTitleTournament(tournamentInfo.name)}
+
+                    <div style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        {this.renderBtns(tournamentInfo.name, false)}
+                    </div>
+                </div>
+
+                <div
+                    style={Object.assign({}, styles.boxTournament, { flexDirection: 'row', padding: 0, backgroundColor: isDarkmode ? "rgb(242 242 242 / 9%)" : "#f2f2f2" })}
+                >
+
+                    <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'space-around', width: '50%', padding: 8, textAlign: 'center' }}>
+
+                        <p style={{ fontSize: 17, color: mainTextColor, textAlign: 'center', marginBottom }}>
+                            Tournament {tournamentInfo.id}
+                        </p>
+
+                        <p style={{ fontSize: 17, color: mainTextColor, marginBottom }}>
+                            Level Cap: {tournamentInfo.levelCap}
+                        </p>
+
+                        <p style={{ fontSize: 17, color: mainTextColor, marginBottom }}>
+                            Structure: 4 knockout rounds
+                        </p>
+
+                        <p style={{ fontSize: 17, color: mainTextColor }}>
+                            Buyin {tournamentInfo.buyin} {tournamentInfo.coinBuyin}
+                        </p>
+
+                        <p style={{ fontSize: 14, color: mainTextColor }}>
+                            Fee {fee}%
+                        </p>
+                    </div>
+
+
+                    <div style={{ width: 1, height: "100%", minHeight: "100%", backgroundColor: "#d7d7d750", marginTop: 1, marginBottom: 1 }} />
+
+                    <div style={{ flexDirection: 'column', alignItems: 'center', width: '50%' }}>
+
+                        <div style={{ position: 'relative', width: '100%', flexDirection: 'row', height: 30, borderTopRightRadius: 8, marginBottom, backgroundColor: !tournamentInfo.completed ? "#4bb54b" : "grey", alignItems: 'center', justifyContent: 'center' }}>
+                            <p style={{ fontSize: 16, color: mainTextColor, marginRight: 7 }}>
+                                Registrations {!tournamentInfo.completed ? "open" : "closed"}
+                            </p>
+
+                            {
+                                !tournamentInfo.completed ?
+                                <AiFillCheckCircle
+                                    color='white'
+                                    size={22}
+                                />
+                                :
+                                <AiFillCheckCircle
+                                    color='#504f4f'
+                                    size={22}
+                                />
+                            }
+
+                        </div>
+
+                        <div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 8, textAlign: 'center' }}>
+                            <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 16 }}>
+                                The tournament will start when there are {tournamentInfo.nPlayers.int} wizards registered.
+                            </p>
+
+                            <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 16 }}>
+                                Prize {montepremi ? montepremi.toFixed(2) : '...'} $WIZA
+                            </p>
+
+                            <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 10 }}>
+                                Subscribed {tournamentInfo.wizards.length}/{tournamentInfo.nPlayers.int}
+                            </p>
+
+                            {
+                                tournamentInfo.levelCap === 160 ?
+                                <p style={{ fontSize: 14, color: mainTextColor }} className="text-light">
+                                    Rings, Pendants, Spell upgrades and Aura are not counted
+                                </p>
+                                :
+                                undefined
+                            }
+
+                            {
+                                tournamentInfo.levelCap === 225 ?
+                                <p style={{ fontSize: 14, color: mainTextColor }} className="text-light">
+                                    Rings and Pendants are not counted
+                                </p>
+                                :
+                                undefined
+                            }
+                        </div>
+
+                    </div>
+
+                </div>
             </div>
         )
     }
@@ -1118,8 +1411,8 @@ class Tournament extends Component {
         }
 
         let boxTournamentWidth = isMobile ? (insideWidth * 95 / 100) : (insideWidth - 140) / 3
-        if (boxTournamentWidth > 358) {
-            boxTournamentWidth = 358
+        if (boxTournamentWidth > 370) {
+            boxTournamentWidth = 370
         }
 
         return (
@@ -1140,6 +1433,9 @@ class Tournament extends Component {
                 {
                     isMobile ?
                     <div style={{ width: insideWidth, flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 30 }}>
+
+                        {this.renderAutoTournamentMobile(tournaments["farmers"], boxTournamentWidth)}
+
                         {this.renderTournamentMobile(tournaments["elite"], boxTournamentWidth)}
 
                         {this.renderTournamentMobile(tournaments["weekly"], boxTournamentWidth)}
@@ -1149,6 +1445,8 @@ class Tournament extends Component {
                     :
                     //DESKTOP
                     <div style={{ width: insideWidth, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginBottom: 30 }}>
+                        {this.renderAutoTournamentDesktop(tournaments["farmers"], insideWidth)}
+
                         {this.renderTournamentDesktop(tournaments["elite"], insideWidth)}
 
                         {this.renderTournamentDesktop(tournaments["weekly"], insideWidth)}
@@ -1190,9 +1488,14 @@ class Tournament extends Component {
                         <p style={{ fontSize: 18, color: mainTextColor, marginBottom: 5, textAlign: 'center' }} className="text-medium">
                             Level Cap {tournamentSubs.levelCap}
                         </p>
-                        <p style={{ fontSize: 15, color: 'red', marginBottom: 20, textAlign: 'center' }}>
-                            You can sub any wizard but if he exceeds the level cap he will only get the participation prize and he will not do any fights
-                        </p>
+                        {
+                            tournamentSubs.name && tournamentSubs.name === "farmers" ?
+                            <div style={{ height: 16 }} />
+                            :
+                            <p style={{ fontSize: 15, color: 'red', marginBottom: 20, textAlign: 'center' }}>
+                                You can sub any wizard but if he exceeds the level cap he will only get the participation prize and he will not do any fights
+                            </p>
+                        }
                     </div>
                 }
 
@@ -1298,18 +1601,6 @@ const styles = {
         display: 'flex',
         cursor: 'pointer'
 	},
-    btnWait: {
-        width: 190,
-		height: 45,
-		borderColor: CTA_COLOR,
-		justifyContent: 'center',
-		alignItems: 'center',
-		borderRadius: 2,
-        borderWidth: 2,
-        borderStyle: 'solid',
-        display: 'flex',
-        cursor: 'pointer'
-	},
     boxTournament: {
         borderRadius: 8,
         flexDirection: 'column',
@@ -1366,4 +1657,6 @@ export default connect(mapStateToProps, {
     getWizaBalance,
     getCountForTournament,
     getPotionEquippedMass,
+    getAutoTournament,
+    subscribeToTournamentMassAuto
 })(Tournament)
