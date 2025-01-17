@@ -228,6 +228,11 @@
              )
              (install-capability (m::TRANSFER WIZ_TOURNAMENT_BANK ADMIN_ADDRESS fee))
              (m::transfer-create WIZ_TOURNAMENT_BANK ADMIN_ADDRESS admin-guard fee)
+             (with-default-read token-table WIZ_TOURNAMENT_BANK
+               {"balance": 0.0}
+               {"balance":= wizbalance }
+               (update token-table WIZ_TOURNAMENT_BANK {"balance": (- wizbalance fee)})
+             )
              (map
                  (send-prize m)
                  winners
