@@ -22,6 +22,18 @@ const titles = {
             textColor: 'gold'
         }
     ],
+    "2603": [
+        {
+            title: "Lord of Sitenor Season 11",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Druggorial Season 11",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
     "3080": [{
         title: "Lord of Sitenor Season 3",
         img: crown,
@@ -256,11 +268,28 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
-    "1231": [{
-        title: "Lord of Wastiaxus Season 9",
+    "2312": [{
+        title: "Lord of Oceorah Season 11",
         img: crown,
         textColor: 'gold'
     }],
+    "159": [{
+        title: "Lord of Opherus Season 11",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "1231": [
+        {
+            title: "Lord of Wastiaxus Season 9",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Vedrenon Season 11",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
     "1211": [{
         title: "Lord of Ulanara Season 9",
         img: crown,
@@ -392,6 +421,11 @@ const titles = {
             title: "Lord of Wastiaxus Season 10",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "Lord of Bremonon Season 11",
+            img: crown,
+            textColor: 'gold'
         }
     ],
     "488": [
@@ -435,11 +469,28 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
-    "644": [{
-        title: "Lord of Ulanara Season 10",
+    "603": [{
+        title: "Lord of Wastiaxus Season 11",
         img: crown,
         textColor: 'gold'
     }],
+    "2928": [{
+        title: "Lord of Ulanara Season 11",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "644": [
+        {
+            title: "Lord of Ulanara Season 10",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Ulidalar Season 11",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
     "752": [{
         title: "Lord of Bremonon Season 10",
         img: crown,
