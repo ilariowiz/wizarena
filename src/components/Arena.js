@@ -1163,13 +1163,13 @@ class Arena extends Component {
                                       Prizes
                                       <br />
                                       <br />
-                                      Top 5 ranking 400: 3000 $WIZA
+                                      Top 5 ranking 400: 3500 $WIZA
                                       <br />
                                       Top 5 ranking 300: 2000 $WIZA
                                       <br />
-                                      Top 5 ranking 225: 1500 $WIZA & 10 AP
+                                      Top 5 ranking 225: 1500 $WIZA
                                       <br />
-                                      Top 5 ranking 160: 1000 $WIZA & 10 AP
+                                      Top 5 ranking 160: 1000 $WIZA
                                       <br />
                                     </div>
                                     <div style={{ justifyContent: 'center', marginBottom: 10 }}>
