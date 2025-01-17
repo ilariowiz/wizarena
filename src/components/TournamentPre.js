@@ -113,7 +113,7 @@ class Tournament extends Component {
 			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (minted) => {
                 //console.log(minted);
 
-                if (tournament.name && tournament.name === "farmers") {
+                if (tournament.name && tournament.name === "auto") {
                     const wizardsSubbedId = tournament.wizards
 
                     let alreadySub = []
@@ -168,16 +168,16 @@ class Tournament extends Component {
 		this.props.getAutoTournament(chainId, gasPrice, gasLimit, networkUrl, "farmers", (response) => {
             //console.log(response);
             let tournaments = Object.assign({}, this.state.tournaments)
-            tournaments['farmers'] = response
-            tournaments['farmers']['name'] = "farmers"
+            tournaments['auto'] = response
+            tournaments['auto']['name'] = "auto"
             if (response.completed || response.wizards.length >= response.nPlayers.int) {
-                tournaments['farmers']['canSubscribe'] = false
+                tournaments['auto']['canSubscribe'] = false
             }
             else {
-                tournaments['farmers']['canSubscribe'] = true
+                tournaments['auto']['canSubscribe'] = true
             }
-            tournaments['farmers']['levelCap'] = response.maxLevel.int
-            tournaments['farmers']['coinBuyin'] = "WIZA"
+            tournaments['auto']['levelCap'] = response.maxLevel.int
+            tournaments['auto']['coinBuyin'] = "WIZA"
             this.setState({ tournaments })
         })
 	}
@@ -620,7 +620,7 @@ class Tournament extends Component {
                         else if (tournamentSubs.type === "apprentice") {
                             this.subscribeMassWiza()
                         }
-                        else if (tournamentSubs.name && tournamentSubs.name === "farmers") {
+                        else if (tournamentSubs.name && tournamentSubs.name === "auto") {
                             this.subscribeMassAuto()
                         }
                     }}
@@ -840,11 +840,11 @@ class Tournament extends Component {
         const { tournamentElite, tournament, tournamentWiza, tournaments } = this.state
         const { mainTextColor } = this.props
 
-        if (tournamentType === "farmers") {
+        if (tournamentType === "auto") {
             return (
                 <div style={{ alignItems: 'center', justifyContent: 'center' }}>
                     <p style={{ fontSize: 21, color: mainTextColor }} className="text-bold">
-                        The Farmers {tournaments[tournamentType].levelCap} Flash
+                        The {tournaments[tournamentType].levelCap} Flash
                     </p>
                 </div>
             )
@@ -903,7 +903,7 @@ class Tournament extends Component {
         let tournamentKey;
         let loading;
 
-        if (tournamentType === "farmers") {
+        if (tournamentType === "auto") {
             tournamentKey = "autotournaments"
             loading = loadingElite
         }
@@ -1479,7 +1479,7 @@ class Tournament extends Component {
                     isMobile ?
                     <div style={{ width: insideWidth, flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-start', flexWrap: 'wrap', marginBottom: 30 }}>
 
-                        {this.renderAutoTournamentMobile(tournaments["farmers"], boxTournamentWidth)}
+                        {this.renderAutoTournamentMobile(tournaments["auto"], boxTournamentWidth)}
 
                         {this.renderTournamentMobile(tournaments["elite"], boxTournamentWidth)}
 
@@ -1490,7 +1490,7 @@ class Tournament extends Component {
                     :
                     //DESKTOP
                     <div style={{ width: insideWidth, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginBottom: 30 }}>
-                        {this.renderAutoTournamentDesktop(tournaments["farmers"], insideWidth)}
+                        {this.renderAutoTournamentDesktop(tournaments["auto"], insideWidth)}
 
                         {this.renderTournamentDesktop(tournaments["elite"], insideWidth)}
 
@@ -1534,7 +1534,7 @@ class Tournament extends Component {
                             Level Cap {tournamentSubs.levelCap}
                         </p>
                         {
-                            tournamentSubs.name && tournamentSubs.name === "farmers" ?
+                            tournamentSubs.name && tournamentSubs.name === "auto" ?
                             <div style={{ height: 16 }} />
                             :
                             <p style={{ fontSize: 15, color: 'red', marginBottom: 20, textAlign: 'center' }}>
