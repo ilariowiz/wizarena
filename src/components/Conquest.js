@@ -1255,6 +1255,8 @@ class Conquest extends Component {
                                       2nd place: 4000 $WIZA
                                        <br />
                                       3rd place: 2000 $WIZA
+                                      <br />
+                                      20 ap guaranteed for each registered wizard
                                     </div>
                                     <div style={{ justifyContent: 'center', marginBottom: 10 }}>
                                         <button
