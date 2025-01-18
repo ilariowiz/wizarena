@@ -447,7 +447,7 @@ class Tournament extends Component {
 			transactionOkText: `Your Wizards are registered for the tournament!`,
 		})
 
-		this.props.subscribeToTournamentMassAuto(chainId, gasPrice, 3000, netId, account, tournamentSubs.name, onlyId, tot)
+		this.props.subscribeToTournamentMassAuto(chainId, gasPrice, 3000, netId, account, "farmers", onlyId, tot)
 	}
 
     async searchByStat(stat) {
