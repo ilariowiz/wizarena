@@ -14,7 +14,8 @@ import { MAIN_NET_ID } from '../actions/types'
 import {
     setNetworkSettings,
     setNetworkUrl,
-    getAutoTournament
+    getAutoTournament,
+    loadUserMintedNfts
 } from '../actions'
 
 
@@ -38,16 +39,29 @@ class AutoTournaments extends Component {
 		this.props.setNetworkUrl(MAIN_NET_ID, "1")
 
         setTimeout(() => {
-            this.getTournament()
+            this.getPath()
+            this.loadMinted()
         }, 500)
 	}
 
-    async getTournament() {
+    getPath() {
+        const { pathname } = this.props.location;
+		const idT = pathname.replace('/autotournaments/', '')
+
+        if (!idT || idT.includes("auto")) {
+            this.getTournament()
+        }
+        else {
+            this.getTournament(idT)
+        }
+    }
+
+    async getTournament(tId) {
         const { chainId, gasPrice, gasLimit, networkUrl } = this.props
 
         this.props.getAutoTournament(chainId, gasPrice, gasLimit, networkUrl, "farmers", (response) => {
-            let tId = parseInt(response['id']) - 1
-            response['id'] = tId.toString()
+            let tournamentId = tId || parseInt(response['id']) - 1
+            response['id'] = tournamentId.toString()
             this.setState({ tournament: response })
             this.loadMatches(response)
         })
@@ -66,6 +80,16 @@ class AutoTournaments extends Component {
         }
         else {
             this.setState({ loading: false, error: true })
+        }
+    }
+
+    loadMinted() {
+        const { account, chainId, gasPrice, gasLimit, networkUrl, userMintedNfts } = this.props
+
+        if (account && account.account && !userMintedNfts) {
+			this.props.loadUserMintedNfts(chainId, gasPrice, gasLimit, networkUrl, account.account, (minted) => {
+                //console.log(minted);
+            })
         }
     }
 
@@ -103,7 +127,7 @@ class AutoTournaments extends Component {
     }
 
     renderRoundData(round) {
-        const { mainTextColor, isDarkmode } = this.props
+        const { mainTextColor, isDarkmode, userMintedNfts } = this.props
         const { loading, matches, tournament, showRound } = this.state
 
         if (!showRound[`r${round}`]) {
@@ -117,7 +141,44 @@ class AutoTournaments extends Component {
                 {
                     !loading && matches[`${tournament.id}_r${round}`] && matches[`${tournament.id}_r${round}`].map((item, index) => {
                         //console.log(item);
-                        return boxPairAutoTournament(item, index, [], mainTextColor, this.props.history, isDarkmode)
+                        return boxPairAutoTournament(item, index, userMintedNfts, mainTextColor, this.props.history, isDarkmode)
+                    })
+                }
+            </div>
+        )
+    }
+
+    renderWinners() {
+        const { loading, showRound, matches } = this.state
+        const { mainTextColor, userMintedNfts } = this.props
+
+        return (
+            <div style={{ width: '100%', flexWrap: 'wrap', alignItems: 'center' }}>
+                {
+                    !loading && showRound['winners'] && matches[`winners`].map((item, index) => {
+
+                        const isMine = userMintedNfts && userMintedNfts.find(i => i.id === item)
+
+                        return (
+                            <a
+                                href={`${window.location.protocol}//${window.location.host}/nft/${item}`}
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    this.props.history.push(`/nft/${item}`)
+                                }}
+                                style={{ position: 'relative', marginRight: 10, flexDirection: 'row' }}
+                                key={item}
+                            >
+                                <img
+                                    style={{ width: 110, height: 110, borderRadius: 4, borderWidth: 1, borderColor: isMine ? 'gold' : 'white', borderStyle: 'solid', marginBottom: 4 }}
+                                    src={getImageUrl(item)}
+                                    alt={`#${item}`}
+                                />
+                                <p style={{ fontSize: 16, color: mainTextColor, textAlign: 'center', marginBottom: 4 }}>
+                                    #{item}
+                                </p>
+                            </a>
+                        )
                     })
                 }
             </div>
@@ -194,29 +255,8 @@ class AutoTournaments extends Component {
                             </button>
                         }
                     </div>
-                    <div style={{ width: '100%', flexWrap: 'wrap', alignItems: 'center' }}>
-                        {
-                            !loading && showRound['winners'] && matches[`winners`].map((item, index) => {
-                                return (
-                                    <a
-                                        href={`${window.location.protocol}//${window.location.host}/nft/${item}`}
-                                        onClick={(e) => {
-                                            e.preventDefault()
-                                            this.props.history.push(`/nft/${item}`)
-                                        }}
-                                        style={{ position: 'relative', marginRight: 10 }}
-                                        key={item}
-                                    >
-                                        <img
-                                            style={{ width: 110, height: 110, borderRadius: 4, borderWidth: 1, borderColor: 'white', borderStyle: 'solid', marginBottom: 4 }}
-                                            src={getImageUrl(item)}
-                                            alt={`#${item}`}
-                                        />
-                                    </a>
-                                )
-                            })
-                        }
-                    </div>
+                    {this.renderWinners()}
+
                 </div>
             </div>
         )
@@ -277,13 +317,14 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-	const { account, chainId, gasPrice, gasLimit, networkUrl, mainTextColor, mainBackgroundColor } = state.mainReducer;
+	const { account, chainId, gasPrice, gasLimit, networkUrl, mainTextColor, mainBackgroundColor, isDarkmode, userMintedNfts } = state.mainReducer;
 
-	return { account, chainId, gasPrice, gasLimit, networkUrl, mainTextColor, mainBackgroundColor };
+	return { account, chainId, gasPrice, gasLimit, networkUrl, mainTextColor, mainBackgroundColor, isDarkmode, userMintedNfts };
 }
 
 export default connect(mapStateToProps, {
     setNetworkSettings,
     setNetworkUrl,
-    getAutoTournament
+    getAutoTournament,
+    loadUserMintedNfts
 })(AutoTournaments)

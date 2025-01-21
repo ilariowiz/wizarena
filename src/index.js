@@ -95,7 +95,7 @@ ReactDOM.render(
             <Route path="/fightreplaydungeon" component={FightsReplayDungeon} />
             <Route path="/arena" component={Arena} />
             <Route path="/dungeons" component={Dungeon} />
-            <Route path="/autotournaments" component={AutoTournaments} />
+            <Route path="/autotournaments/" component={AutoTournaments} />
           </Switch>
         </div>
       </BrowserRouter>

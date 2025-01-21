@@ -7,6 +7,7 @@ const boxPairAutoTournament = (item, index, userMinted, mainTextColor, history, 
     let is1mine = false
     let is2mine = false
     let borderColor = '#d7d7d7'
+    let borderWidth = 1
 
     for (let i = 0; i < userMinted.length; i++) {
         const s = userMinted[i]
@@ -14,11 +15,13 @@ const boxPairAutoTournament = (item, index, userMinted, mainTextColor, history, 
         if (s.id === item.s1) {
             is1mine = true
             borderColor = isDarkmode ? 'gold' : '#840fb2'
+            borderWidth = 2
         }
 
         if (item.s2 && s.id === item.s2) {
             is2mine = true
             borderColor = isDarkmode ? 'gold' : '#840fb2'
+            borderWidth = 2
         }
     }
 
@@ -26,7 +29,7 @@ const boxPairAutoTournament = (item, index, userMinted, mainTextColor, history, 
 
     return (
         <div
-            style={Object.assign({}, styles.boxPair, { borderColor } )}
+            style={Object.assign({}, styles.boxPair, { borderColor, borderWidth: borderWidth } )}
             key={index}
         >
             <div style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -38,7 +41,7 @@ const boxPairAutoTournament = (item, index, userMinted, mainTextColor, history, 
                         style={{ position: 'relative' }}
                     >
                         <img
-                            style={{ width: widthImage, height: widthImage, borderRadius: 4, borderWidth: 1, borderColor: is1mine ? '#840fb2' : 'white', borderStyle: 'solid', marginBottom: 4 }}
+                            style={{ width: widthImage, height: widthImage, borderRadius: 4, borderWidth: 1, borderColor: is1mine ? borderColor : 'white', borderStyle: 'solid', marginBottom: 4 }}
                             src={getImageUrl(item.s1)}
                             alt={`#${item.s1}`}
                         />
@@ -67,7 +70,7 @@ const boxPairAutoTournament = (item, index, userMinted, mainTextColor, history, 
                             style={{ position: 'relative' }}
                         >
                             <img
-                                style={{ width: widthImage, height: widthImage, borderRadius: 4, borderWidth: 1, borderColor: is2mine ? '#840fb2' : 'white', borderStyle: 'solid', marginBottom: 4 }}
+                                style={{ width: widthImage, height: widthImage, borderRadius: 4, borderWidth: 1, borderColor: is2mine ? borderColor : 'white', borderStyle: 'solid', marginBottom: 4 }}
                                 src={getImageUrl(item.s2)}
                                 alt={`#${item.s2}`}
                             />

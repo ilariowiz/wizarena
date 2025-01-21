@@ -904,7 +904,13 @@ class Tournament extends Component {
         let loading;
 
         if (tournamentType === "auto") {
-            tournamentKey = "autotournaments"
+            //console.log(tournamentInfo);
+            let tId = tournamentInfo.id
+            if (tournamentInfo.canSubscribe) {
+                tId = parseInt(tournamentInfo['id']) - 1
+            }
+
+            tournamentKey = `autotournaments/${tId}`
             loading = loadingElite
         }
 
