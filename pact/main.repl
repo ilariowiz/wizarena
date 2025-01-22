@@ -1468,7 +1468,7 @@
 ; AUTO TOURNAMENT
 (begin-tx "OPEN TOURNAMENT 160")
 
-(env-sigs [{ "key": "aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1", "caps": []}])
+(env-sigs [{ "key": "aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1", "caps": [(free.wiztournaments.DEVS_CAP)]}])
 
 (free.wiztournaments.create-tournament "farmers" "3073" 40.0 160 64)
 
@@ -1500,7 +1500,7 @@
 
 (begin-tx "COMPLETE TOURNAMENT 160")
 
-(env-sigs [{ "key": "aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1", "caps": []}])
+(env-sigs [{ "key": "aa7903581556284374b67a395ca5d825765f2cb9c709230100669327cc67b3f1", "caps": [(free.wiztournaments.DEVS_CAP)]}])
 
 (free.wiztournaments.complete-tournament
     "farmers"
