@@ -12,6 +12,8 @@ import { getColorTextBasedOnLevel } from './common/CalcLevelWizard'
 import getBoxWidth from './common/GetBoxW'
 import getName from './common/GetName'
 import getAuraForElement from '../assets/gifs/AuraForElement'
+import getAnimationForSpell from '../assets/gifs/AnimationForSpell'
+import getRayForElement from '../assets/gifs/RayForElement'
 import {
     setNetworkSettings,
     setNetworkUrl
@@ -30,6 +32,8 @@ const dungeons_bg = require('../assets/bg_fights/dungeons_bg_hd.jpg')
 class FightsReplayDungeon extends Component {
     constructor(props) {
         super(props)
+
+        this.srcAnimationP1 = undefined
 
         this.blinkInterval = undefined
 
@@ -53,7 +57,8 @@ class FightsReplayDungeon extends Component {
             fightInfo: {},
             orcOpacity: 1,
             hideNext: false,
-            showModalEnd: false
+            showModalEnd: false,
+            animationSpellP1: this.srcAnimationP1,
         }
 
         this.player1 = {}
@@ -91,10 +96,13 @@ class FightsReplayDungeon extends Component {
     preloadFight(data) {
 
         this.player1 = data.info1
+        this.srcAnimationP1 = getAnimationForSpell(this.player1.spellSelected.name)
 
         const firstFight = data.actions[0]
 
-        this.history = firstFight.actions
+        this.calcAnimationForActions(firstFight.actions)
+
+        //this.history = firstFight.actions
 
         this.player2 = firstFight.info2
         this.player2['image'] = this.getOrcImage(this.player2)
@@ -106,6 +114,34 @@ class FightsReplayDungeon extends Component {
         setTimeout(() => {
             this.showFight()
         }, 500)
+    }
+
+    calcAnimationForActions(actions) {
+
+        let temp = []
+
+        for (let i = 0; i < actions.length; i++) {
+            let action = actions[i]
+
+            if (action.desc.includes("hits") || action.desc.includes("misses")) {
+
+                const attaccante = action.desc.split(" ")[0]
+                action['attaccante'] = attaccante.replace("#", "")
+                action['showRay'] = true
+                if (action.desc.includes("hits")) {
+                    action['showAnimation'] = true
+                }
+            }
+            else {
+                action['showRay'] = false
+                action['showAnimation'] = false
+            }
+
+            temp.push(action)
+        }
+
+        this.history = temp
+        //console.log(this.history);
     }
 
     showFight() {
@@ -121,7 +157,12 @@ class FightsReplayDungeon extends Component {
 
         historyShow.splice(0, 0, historyToShow)
 
-        this.setState({ historyShow }, () => {
+        this.setState({ historyShow, animationSpellP1: undefined }, () => {
+
+            setTimeout(() => {
+                this.setState({ animationSpellP1: this.srcAnimationP1 })
+            }, 1)
+
             //console.log(this.history.length, this.indexShow);
             if (this.history.length > this.indexShow+1) {
                 this.indexShow += 1
@@ -159,7 +200,7 @@ class FightsReplayDungeon extends Component {
         this.indexFight += 1
         if (fightInfo.actions[this.indexFight]) {
             const newFight = fightInfo.actions[this.indexFight]
-            this.history = newFight.actions
+            this.calcAnimationForActions(newFight.actions)
             this.player2 = newFight.info2
             this.player2['image'] = this.getOrcImage(this.player2)
 
@@ -423,6 +464,9 @@ class FightsReplayDungeon extends Component {
         const player1CurrentHp = historyShow.length > 0 ? historyShow[0][`hp_${this.player1.id}`] : this.player1InitialHp
         const player2CurrentHp = historyShow.length > 0 ? historyShow[0][`hp_${this.player2.id}`] : this.player2InitialHp
 
+        const lastAction = historyShow[0]
+        //console.log(lastAction.attaccante, this.player2.id);
+
         const widthSide = (boxW / 2) - 20
 
         const pctImg = isMobile ? 90 : 60
@@ -459,6 +503,17 @@ class FightsReplayDungeon extends Component {
                         </div>
                     </div>
 
+                    {
+                        lastAction && lastAction.showRay ?
+                        <div style={{ zIndex: 90, justifyContent: 'center', alignItems: 'center', position: 'absolute', left: lastAction.attaccante === this.player1.id ? "-10%" : 0, top: lastAction.attaccante === this.player1.id ? "14%" : "5%", width: '100%', height: '100%' }}>
+                            <img
+                                style={{ width: "70%" }}
+                                src={getRayForElement(lastAction.attaccante === this.player1.id ? this.player1.element.toLowerCase() : this.player2.element.toLowerCase(), lastAction.attaccante === this.player1.id)}
+                                alt="spell"
+                            />
+                        </div>
+                        : null
+                    }
 
                     <div style={{ width: widthSide, flexDirection: 'column', alignItems: 'center', height: 'fit-content' }}>
 
@@ -475,6 +530,16 @@ class FightsReplayDungeon extends Component {
                                     style={{ height: 15, width: widthImg/2, position: 'absolute', top: widthImg+15, left: ((widthImg/2)-(widthImg/4)), backgroundColor: 'black', opacity: 0.5, borderRadius: '50%' }}
                                 />
                             }
+
+                            {
+    							lastAction && lastAction.showAnimation && lastAction.attaccante !== this.player2.name && getAnimationForSpell(this.player1.spellSelected.name) ?
+    							<img
+    								style={{ zIndex: 80, width: widthImg, height: widthImg, position: 'absolute', top: 0, right: 0 }}
+    								src={this.state.animationSpellP1}
+    								alt="spell"
+    							/>
+    							: null
+    						}
                         </div>
 
                         {this.renderBoxHp(widthSide, this.player1, this.player1InitialHp, player1CurrentHp, this.player1.level, 2, isMobile, rgbBackgroundColor)}
