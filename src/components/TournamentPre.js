@@ -59,7 +59,7 @@ class Tournament extends Component {
             tournamentWizaSubs: 0,
             tournamentEliteSubs: 0,
             loading: false,
-            loadingElite: true,
+            loadingElite: false,
             loadingWeekly: true,
             loadingApprentice: true,
             showSubs: false,
@@ -81,7 +81,7 @@ class Tournament extends Component {
         setTimeout(() => {
             this.loadTournamentKda()
             this.loadTournamentWiza()
-            this.loadTournamentElite()
+            //this.loadTournamentElite()
             this.getAutoT()
         }, 500)
 	}
@@ -911,7 +911,7 @@ class Tournament extends Component {
             }
 
             tournamentKey = `autotournaments/${tId}`
-            loading = loadingElite
+            loading = loadingWeekly
         }
 
         if (tournamentType === "elite") {
@@ -1487,7 +1487,7 @@ class Tournament extends Component {
 
                         {this.renderAutoTournamentMobile(tournaments["auto"], boxTournamentWidth)}
 
-                        {this.renderTournamentMobile(tournaments["elite"], boxTournamentWidth)}
+                        {/*this.renderTournamentMobile(tournaments["elite"], boxTournamentWidth)*/}
 
                         {this.renderTournamentMobile(tournaments["weekly"], boxTournamentWidth)}
 
@@ -1498,7 +1498,7 @@ class Tournament extends Component {
                     <div style={{ width: insideWidth, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginBottom: 30 }}>
                         {this.renderAutoTournamentDesktop(tournaments["auto"], insideWidth)}
 
-                        {this.renderTournamentDesktop(tournaments["elite"], insideWidth)}
+                        {/*this.renderTournamentDesktop(tournaments["elite"], insideWidth)*/}
 
                         {this.renderTournamentDesktop(tournaments["weekly"], insideWidth)}
 
