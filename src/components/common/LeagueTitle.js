@@ -51,11 +51,18 @@ const titles = {
             textColor: 'gold'
         }
     ],
-    "905": [{
-        title: "Lord of Sitenor Season 8",
-        img: crown,
-        textColor: 'gold'
-    }],
+    "905": [
+        {
+            title: "Lord of Sitenor Season 8",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "The Twelve League V 10th place",
+            img: medal,
+            textColor: '#cd7f32'
+        }
+    ],
     "531": [{
         title: "Lord of Opherus Season 10",
         img: crown,
@@ -85,6 +92,11 @@ const titles = {
             textColor: '#cd7f32'
         }
     ],
+    "3081": [{
+        title: "The Twelve League V 3rd place",
+        img: cup_bronze,
+        textColor: '#cd7f32'
+    }],
     "1865": [{
         title: "Lord of Druggorial Season 1",
         img: crown,
@@ -241,6 +253,21 @@ const titles = {
         img: medal,
         textColor: '#cd7f32'
     }],
+    "2028": [{
+        title: "The Twelve League V 7th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "2269": [{
+        title: "The Twelve League V 8th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "2557": [{
+        title: "The Twelve League V 9th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
     "143": [
         {
             title: "Lord of Vedrenon Season 3",
@@ -249,6 +276,11 @@ const titles = {
         },
         {
             title: "The Twelve League III 10th place",
+            img: medal,
+            textColor: '#cd7f32'
+        },
+        {
+            title: "The Twelve League V 6th place",
             img: medal,
             textColor: '#cd7f32'
         }
@@ -351,6 +383,11 @@ const titles = {
         img: medal,
         textColor: '#cd7f32'
     }],
+    "2960": [{
+        title: "The Twelve League IV 4th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
     "2421": [{
         title: "The Twelve League IV 6th place",
         img: medal,
@@ -426,6 +463,11 @@ const titles = {
             title: "Lord of Bremonon Season 11",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "The Twelve League V Champion",
+            img: cup_gold,
+            textColor: 'gold'
         }
     ],
     "488": [
@@ -496,11 +538,18 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
-    "1589": [{
-        title: "Lord of Vedrenon Season 10",
-        img: crown,
-        textColor: 'gold'
-    }],
+    "1589": [
+        {
+            title: "Lord of Vedrenon Season 10",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "The Twelve League V 5th place",
+            img: medal,
+            textColor: '#cd7f32'
+        }
+    ],
     "2296": [{
         title: "Lord of Druggorial Season 9",
         img: crown,
@@ -624,6 +673,11 @@ const titles = {
             title: "The Twelve League III Champion",
             img: cup_gold,
             textColor: 'gold'
+        },
+        {
+            title: "The Twelve League V 12th place",
+            img: medal,
+            textColor: "#cd7f32"
         }
     ],
     "1379": [{
@@ -774,11 +828,18 @@ const titles = {
         img: cup_silver,
         textColor: '#c0c0c0'
     }],
-    "3079": [{
-        title: "The Twelve League IV 2nd place",
-        img: cup_silver,
-        textColor: '#c0c0c0'
-    }],
+    "3079": [
+        {
+            title: "The Twelve League IV 2nd place",
+            img: cup_silver,
+            textColor: '#c0c0c0'
+        },
+        {
+            title: "The Twelve League V 2nd place",
+            img: cup_silver,
+            textColor: '#c0c0c0'
+        }
+    ],
     "1726": [{
         title: "The Twelve League III 2nd place",
         img: cup_silver,
@@ -794,11 +855,18 @@ const titles = {
         img: cup_gold,
         textColor: 'gold'
     }],
-    "2401": [{
-        title: "The Apprentice League II Champion",
-        img: cup_gold,
-        textColor: 'gold'
-    }],
+    "2401": [
+        {
+            title: "The Apprentice League II Champion",
+            img: cup_gold,
+            textColor: 'gold'
+        },
+        {
+            title: "The Twelve League V 11th place",
+            img: medal,
+            textColor: "#cd7f32"
+        }
+    ],
     "526": [{
         title: "The Apprentice League III Champion",
         img: cup_gold,
