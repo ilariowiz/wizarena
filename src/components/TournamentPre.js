@@ -741,7 +741,7 @@ class Tournament extends Component {
                 </div>
 
                 <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 16 }}>
-                    Subscribed {tournamentInfo.subs}
+                    Subscribed {tournamentInfo.subs.int}
                 </p>
 
                 <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 16 }}>
@@ -1306,7 +1306,7 @@ class Tournament extends Component {
                             }
 
                             <p style={{ fontSize: 16, color: mainTextColor, marginBottom: 10 }}>
-                                Subscribed {tournamentInfo.subs}
+                                Subscribed {tournamentInfo.subs.int}
                             </p>
 
                             <p style={{ fontSize: 15, color: mainTextColor, marginBottom: 16 }}>

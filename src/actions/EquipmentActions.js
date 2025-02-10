@@ -25,7 +25,7 @@ export const loadAllItemsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit 
             if (response && response.length > 0) {
                 dispatch({ type: LOAD_ALL_ITEMS_IDS, payload: { allItemsIds: response } })
 
-                let partsBlock = _.chunk(response, response.length/4)
+                let partsBlock = _.chunk(response, response.length/14)
 
                 //console.log(partsBlock);
 

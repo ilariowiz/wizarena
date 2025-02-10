@@ -447,7 +447,7 @@ export const loadAllNftsIds = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, 
 				//console.log("response post reduce", blocks)
 				dispatch({ type: LOAD_ALL_NFTS_IDS, payload: { allNftsIds: response } })
 
-				let partsBlock = _.chunk(response, Math.ceil(response.length/6))
+				let partsBlock = _.chunk(response, Math.ceil(response.length/30))
 
 				let promises = []
                 partsBlock.map(pr => {
@@ -692,7 +692,7 @@ export const loadEquipMinted = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit,
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
             if (response && response.length > 0) {
-                let partsBlock = _.chunk(response, response.length/4)
+                let partsBlock = _.chunk(response, response.length/8)
 
                 //console.log(partsBlock);
 
@@ -887,7 +887,7 @@ export const loadUserMintedNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 
 				let promises = []
 
-				const partsBlock = _.chunk(onlyId, 150)
+				const partsBlock = _.chunk(onlyId, 100)
 				partsBlock.map(pr => {
                     let promise = Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 180000, networkUrl, pr)))
                     promises.push(promise)
@@ -1440,7 +1440,7 @@ export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 
 				let promises = []
 
-				const partsBlock = _.chunk(onlyId, 200)
+				const partsBlock = _.chunk(onlyId, 100)
 				partsBlock.map(pr => {
                     let promise = Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 180000, networkUrl, pr)))
                     promises.push(promise)
@@ -1542,7 +1542,7 @@ export const getWalletXp = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 50
 		dispatch(readFromContract(cmd, true, networkUrl)).then(response => {
 			//console.log(response)
 			if (!response.status) {
-				dispatch({ type: STORE_WALLET_XP, payload: response })
+				dispatch({ type: STORE_WALLET_XP, payload: response.int })
 			}
 		})
 	}
