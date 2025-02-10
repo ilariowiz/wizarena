@@ -170,7 +170,7 @@ export const getInfoItemEquippedMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, g
 	}
 }
 
-export const getInfoItemEquipped = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3000, networkUrl, idnft) => {
+export const getInfoItemEquipped = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 6000, networkUrl, idnft) => {
 	return async (dispatch) => {
 
 		let cmd = {
@@ -186,7 +186,7 @@ export const getInfoItemEquipped = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLi
 }
 
 
-export const getInfoNftEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3000, networkUrl, iditem, callback) => {
+export const getInfoNftEquipment = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 6000, networkUrl, iditem, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -234,7 +234,7 @@ export const getInfoAuraMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit 
 	}
 }
 
-export const getDiscountLevel = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3000, networkUrl, account, callback) => {
+export const getDiscountLevel = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 6000, networkUrl, account, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -252,7 +252,7 @@ export const getDiscountLevel = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit
 	}
 }
 
-export const getForgeLevel = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3000, networkUrl, account, callback) => {
+export const getForgeLevel = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 6000, networkUrl, account, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -270,7 +270,7 @@ export const getForgeLevel = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 	}
 }
 
-export const getEquipmentMintPhase = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3000, networkUrl, callback) => {
+export const getEquipmentMintPhase = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 6000, networkUrl, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -287,7 +287,7 @@ export const getEquipmentMintPhase = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 	}
 }
 
-export const getEquipmentMintPrice = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3000, networkUrl, callback) => {
+export const getEquipmentMintPrice = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 6000, networkUrl, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -304,7 +304,7 @@ export const getEquipmentMintPrice = (chainId, gasPrice = DEFAULT_GAS_PRICE, gas
 	}
 }
 
-export const getMaxMintable = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3000, networkUrl, account, callback) => {
+export const getMaxMintable = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 6000, networkUrl, account, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -321,7 +321,7 @@ export const getMaxMintable = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit =
 	}
 }
 
-export const getAmountMinted = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3000, networkUrl, account, callback) => {
+export const getAmountMinted = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 6000, networkUrl, account, callback) => {
 	return (dispatch) => {
 
 		let cmd = {

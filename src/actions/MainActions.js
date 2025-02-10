@@ -1461,7 +1461,7 @@ export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 	}
 }
 
-export const getWizaValue = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3000, networkUrl, callback) => {
+export const getWizaValue = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 6000, networkUrl, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -1478,7 +1478,7 @@ export const getWizaValue = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3
 	}
 }
 
-export const getWizaKDAPool = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 3000, networkUrl, callback) => {
+export const getWizaKDAPool = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 6000, networkUrl, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -1495,7 +1495,7 @@ export const getWizaKDAPool = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit =
 	}
 }
 
-export const getInfoNftBurning = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, idnft, callback) => {
+export const getInfoNftBurning = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 1000, networkUrl, idnft, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -1514,7 +1514,7 @@ export const getInfoNftBurning = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimi
 }
 
 
-export const checkAddressForPrice = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 300, networkUrl, account, callback) => {
+export const checkAddressForPrice = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 1000, networkUrl, account, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -1531,7 +1531,7 @@ export const checkAddressForPrice = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasL
 	}
 }
 
-export const getWalletXp = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 500, networkUrl, account) => {
+export const getWalletXp = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 1500, networkUrl, account) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -1548,7 +1548,7 @@ export const getWalletXp = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 50
 	}
 }
 
-export const getWalletsXp = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 50000, networkUrl, callback) => {
+export const getWalletsXp = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 75000, networkUrl, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
@@ -1634,7 +1634,7 @@ export const removeNftFromBurningQueue = (chainId, gasPrice = DEFAULT_GAS_PRICE,
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
 			sender: account.account,
-			gasLimit: 3000,
+			gasLimit: 6000,
 			gasPrice,
 			chainId,
 			ttl: 600,
@@ -1777,7 +1777,7 @@ export const mintNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, amount, ac
 			pactCode,
 			caps,
 			sender: account.account,
-			gasLimit: 3000 * amount,
+			gasLimit: 6000 * amount,
 			gasPrice,
 			chainId,
 			ttl: 600,
@@ -2550,7 +2550,7 @@ export const subscribeToTournamentMass = (chainId, gasPrice = DEFAULT_GAS_PRICE,
 
 		//console.log(caps);
 
-		let gasL = 3000 * list.length
+		let gasL = 6000 * list.length
 		if (gasL > 180000) {
 			gasL = 180000
 		}
@@ -2599,7 +2599,7 @@ export const subscribeToTournamentMassWIZA = (chainId, gasPrice = DEFAULT_GAS_PR
 
 		//console.log(caps);
 
-		let gasL = 3000 * list.length
+		let gasL = 6000 * list.length
 		if (gasL > 180000) {
 			gasL = 180000
 		}
@@ -2648,7 +2648,7 @@ export const subscribeToTournamentMassELITE = (chainId, gasPrice = DEFAULT_GAS_P
 
 		//console.log(caps);
 
-		let gasL = 3000 * list.length
+		let gasL = 6000 * list.length
 		if (gasL > 180000) {
 			gasL = 180000
 		}
@@ -2697,7 +2697,7 @@ export const subscribeToTournamentMassAuto = (chainId, gasPrice = DEFAULT_GAS_PR
 
 		//console.log(caps);
 
-		let gasL = 3000 * list.length
+		let gasL = 6000 * list.length
 		if (gasL > 180000) {
 			gasL = 180000
 		}
@@ -2746,7 +2746,7 @@ export const subscribeToLords = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit
 
 		//console.log(caps);
 
-		let gasL = 3000 * list.length
+		let gasL = 6000 * list.length
 		if (gasL > 180000) {
 			gasL = 180000
 		}
@@ -2795,7 +2795,7 @@ export const subscribeToDungeons = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLi
 
 		//console.log(caps);
 
-		let gasL = 3000 * list.length
+		let gasL = 6000 * list.length
 		if (gasL > 180000) {
 			gasL = 180000
 		}
@@ -2851,7 +2851,7 @@ export const subscribeToPvPMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 
 		//console.log(caps);
 
-		let gasL = 3000 * list.length
+		let gasL = 6000 * list.length
 		if (gasL > 180000) {
 			gasL = 180000
 		}
@@ -3136,7 +3136,7 @@ export const buyDowngrade = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, accou
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
 			sender: account.account,
-			gasLimit: 3000,
+			gasLimit: 6000,
 			gasPrice,
 			chainId,
 			ttl: 600,
@@ -3176,7 +3176,7 @@ export const buyVial = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, account, i
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
 			sender: account.account,
-			gasLimit: 3000,
+			gasLimit: 6000,
 			gasPrice,
 			chainId,
 			ttl: 600,
@@ -3216,7 +3216,7 @@ export const buyNickname = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, accoun
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
 			sender: account.account,
-			gasLimit: 3000,
+			gasLimit: 6000,
 			gasPrice,
 			chainId,
 			ttl: 600,
@@ -3291,7 +3291,7 @@ export const equipItem = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, iditem, 
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
 			sender: account.account,
-			gasLimit: 3000,
+			gasLimit: 6000,
 			gasPrice,
 			chainId,
 			ttl: 600,
@@ -3331,7 +3331,7 @@ export const unequipItem = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, iditem
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
 			sender: account.account,
-			gasLimit: 3000,
+			gasLimit: 6000,
 			gasPrice,
 			chainId,
 			ttl: 600,
@@ -3602,7 +3602,7 @@ export const sendChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, nft1
 			pactCode,
 			caps,
 			sender: account.account,
-			gasLimit: 3000,
+			gasLimit: 6000,
 			gasPrice,
 			chainId,
 			ttl: 600,
@@ -3658,7 +3658,7 @@ export const acceptChallenge = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, ch
 			pactCode,
 			caps,
 			sender: account.account,
-			gasLimit: 3000,
+			gasLimit: 6000,
 			gasPrice,
 			chainId,
 			ttl: 600,
@@ -3941,7 +3941,7 @@ export const createTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, i
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
 			sender: account.account,
-			gasLimit: 3000,
+			gasLimit: 6000,
 			gasPrice,
 			chainId,
 			ttl: 600,
@@ -3981,7 +3981,7 @@ export const joinTournament = (chainId, gasPrice = DEFAULT_GAS_PRICE, netId, tou
 				Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 			],
 			sender: account.account,
-			gasLimit: 3000,
+			gasLimit: 6000,
 			gasPrice,
 			chainId,
 			ttl: 600,

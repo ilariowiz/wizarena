@@ -343,7 +343,7 @@ class Profile extends Component {
 			saleValues
 		})
 
-		this.props.declineOffer(chainId, gasPrice, 3000, netId, offer.id, offer.refnft, account)
+		this.props.declineOffer(chainId, gasPrice, 6000, netId, offer.id, offer.refnft, account)
 	}
 
 	withdrawEquipmentOffer(offer) {

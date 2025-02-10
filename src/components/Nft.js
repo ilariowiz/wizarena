@@ -690,7 +690,7 @@ class Nft extends Component {
 			transactionOkText: `Spell changed!`,
 		})
 
-		this.props.changeSpellTournament(chainId, gasPrice, 3000, netId, account, nft.id, spellSelected)
+		this.props.changeSpellTournament(chainId, gasPrice, 6000, netId, account, nft.id, spellSelected)
     }
 
 	copyLink() {
