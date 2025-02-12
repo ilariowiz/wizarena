@@ -962,7 +962,7 @@ export const loadUserMintedNfts = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLim
 	}
 }
 
-export const loadSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 2000, networkUrl, idNft, callback) => {
+export const loadSingleNft = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 8000, networkUrl, idNft, callback) => {
 	return (dispatch) => {
 
 		let cmd = {
