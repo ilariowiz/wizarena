@@ -439,7 +439,7 @@ class Collection extends Component {
 	                    </p>
 	                </a>
 
-					<a
+					{/*<a
 						href={`${window.location.protocol}//${window.location.host}/burningqueue`}
 	                    style={Object.assign({}, styles.btnSales, { borderColor: isDarkmode ? 'white' : 'black' })}
 						onClick={(e) => {
@@ -449,6 +449,18 @@ class Collection extends Component {
 	                >
 	                    <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
 	                        Burning Queue
+	                    </p>
+	                </a>*/}
+					<a
+						href={`${window.location.protocol}//${window.location.host}/halloffame`}
+	                    style={Object.assign({}, styles.btnSales, { borderColor: isDarkmode ? 'white' : 'black' })}
+						onClick={(e) => {
+							e.preventDefault()
+							this.props.history.push('/halloffame')
+						}}
+	                >
+	                    <p style={{ fontSize: 15, color: mainTextColor }} className="text-medium">
+	                        Hall of Fame
 	                    </p>
 	                </a>
 				</div>
