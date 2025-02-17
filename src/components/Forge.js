@@ -98,9 +98,9 @@ class Forge extends Component {
                 //console.log(response);
 
                 if (response) {
-                    const level = forgeLevel(response)
+                    const level = forgeLevel(response.int)
                     //console.log(level);
-                    this.setState({ forgeXP: response, level: level.level, xpNextLevel: level.xpNextLevel })
+                    this.setState({ forgeXP: response.int, level: level.level, xpNextLevel: level.xpNextLevel })
                 }
 			})
 		}
