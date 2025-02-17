@@ -587,7 +587,7 @@ class Nft extends Component {
 			inputPrice
 		})
 
-		this.props.listNft(chainId, gasPrice, 1700, netId, nft.id, parseFloat(inputPrice).toFixed(2), account)
+		this.props.listNft(chainId, gasPrice, 8000, netId, nft.id, parseFloat(inputPrice).toFixed(2), account)
 
 	}
 
