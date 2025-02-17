@@ -149,7 +149,7 @@ class ItemEquipment extends Component {
             saleValues
 		})
 
-		this.props.listEquipment(chainId, gasPrice, 700, netId, equipment.id, parseFloat(inputPrice).toFixed(2), account)
+		this.props.listEquipment(chainId, gasPrice, 5000, netId, equipment.id, parseFloat(inputPrice).toFixed(2), account)
 
 	}
 
@@ -166,7 +166,7 @@ class ItemEquipment extends Component {
             saleValues
 		})
 
-		this.props.delistEquipment(chainId, gasPrice, 700, netId, account, equipment.id)
+		this.props.delistEquipment(chainId, gasPrice, 5000, netId, account, equipment.id)
 	}
 
     buy() {
@@ -195,7 +195,7 @@ class ItemEquipment extends Component {
 			transactionOkText: `Transfer completed successfully`,
 		})
 
-		this.props.transferEquipment(chainId, gasPrice, 1500, netId, equipment.id, account, receiver)
+		this.props.transferEquipment(chainId, gasPrice, 5000, netId, equipment.id, account, receiver)
 	}
 
     renderName(marginBottom) {

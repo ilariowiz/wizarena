@@ -114,8 +114,8 @@ class Forge extends Component {
 			this.props.getDiscountLevel(chainId, gasPrice, gasLimit, networkUrl, account, (response) => {
                 //console.log(response);
 
-                if (response) {
-                    this.setState({ discount: response })
+                if (response && response.int) {
+                    this.setState({ discount: response.int })
                 }
 			})
 		}
@@ -272,6 +272,8 @@ class Forge extends Component {
         const { ring1, ring2, finalRecipe, discount, level } = this.state
         const { mainTextColor } = this.props
 
+        //console.log(finalRecipe, discount, level);
+
         let imageW = 100
 
         let wizaFee = 0
@@ -282,6 +284,8 @@ class Forge extends Component {
                 finalRecipeLevel = finalRecipe.level
             }
         }
+
+        //console.log(wizaFee);
 
         return (
             <div style={{ width: '100%', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>

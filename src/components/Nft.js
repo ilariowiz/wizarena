@@ -631,7 +631,7 @@ class Nft extends Component {
 			transactionOkText: `Transfer completed successfully`,
 		})
 
-		this.props.transferNft(chainId, gasPrice, 1500, netId, nft.id, account, receiver)
+		this.props.transferNft(chainId, gasPrice, 5000, netId, nft.id, account, receiver)
 	}
 
 	submitOffer(amount, duration) {
