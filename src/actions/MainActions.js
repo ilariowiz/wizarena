@@ -2550,7 +2550,7 @@ export const subscribeToTournamentMass = (chainId, gasPrice = DEFAULT_GAS_PRICE,
 
 		//console.log(caps);
 
-		let gasL = 6000 * list.length
+		let gasL = 8000 * list.length
 		if (gasL > 180000) {
 			gasL = 180000
 		}
@@ -2599,7 +2599,7 @@ export const subscribeToTournamentMassWIZA = (chainId, gasPrice = DEFAULT_GAS_PR
 
 		//console.log(caps);
 
-		let gasL = 6000 * list.length
+		let gasL = 8000 * list.length
 		if (gasL > 180000) {
 			gasL = 180000
 		}
