@@ -1440,7 +1440,7 @@ export const getSubscribed = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit = 
 
 				let promises = []
 
-				const partsBlock = _.chunk(onlyId, 80)
+				const partsBlock = _.chunk(onlyId, 50)
 				partsBlock.map(pr => {
                     let promise = Promise.resolve(dispatch(loadBlockNftsSplit(chainId, gasPrice, 180000, networkUrl, pr)))
                     promises.push(promise)
