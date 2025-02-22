@@ -602,7 +602,7 @@ class Nft extends Component {
 			nameNft: `#${nft.id}`,
 		})
 
-		this.props.delistNft(chainId, gasPrice, 2000, netId, account, nft.id)
+		this.props.delistNft(chainId, gasPrice, 8000, netId, account, nft.id)
 	}
 
 	buy() {
