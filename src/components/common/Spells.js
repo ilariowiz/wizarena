@@ -302,9 +302,9 @@ const allSpells = [
 	},
 	{
 		"name": "Watery Sphere",
-		"atkBase": 4,
-		"dmgBase": 3,
-		"condition": { "name": "Paralyze 2", "effect": "skip", "pct": 40 },
+		"atkBase": 6,
+		"dmgBase": 7,
+		"condition": { "name": "Freeze", "effect": "skip", "pct": 30 },
 		"element": "Water"
 	},
 	{
@@ -458,7 +458,7 @@ const allSpells = [
 		"name": "Possession",
 		"atkBase": 6,
 		"dmgBase": 8,
-		"condition": { "name": "Confuse", "effect": "skip", "pct": 20 },
+		"condition": { "name": "Confuse", "effect": "skip", "pct": 40 },
 		"element": "Spirit"
 	},
 	{
