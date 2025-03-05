@@ -808,8 +808,8 @@ class Tournament extends Component {
 
         const fee = tournamentInfo.fee
         const feeInCost = tournamentInfo.buyin * tournamentInfo.fee / 100
-        const totalFee = feeInCost * tournamentInfo.subs
-        const montepremi = (tournamentInfo.subs * tournamentInfo.buyin) - totalFee
+        const totalFee = feeInCost * tournamentInfo.subs.int
+        const montepremi = (tournamentInfo.subs.int * tournamentInfo.buyin) - totalFee
 
         return montepremi
     }

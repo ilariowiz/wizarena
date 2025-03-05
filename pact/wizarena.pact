@@ -2989,6 +2989,26 @@
         )
     )
 
+    (defun remove-xp-from-wallets (accounts:list)
+        (with-capability (DEVS_CAP)
+            (map
+                (remove-xp-from-wallet)
+                accounts
+            )
+        )
+    )
+
+    (defun remove-xp-from-wallet (account:string amount:integer)
+        (require-capability (PRIVATE))
+        (with-default-read wallet-xp account
+            {"xp": 0}
+            {"xp":=xp}
+            (write wallet-xp account {
+                "xp": (- xp amount)
+            })
+        )
+    )
+
     ;;;;;; NON STATE MODIFYING HELPER FUNCTIONS ;;;;;;;;;
 
     (defun get-wiza-value ()
@@ -3090,14 +3110,6 @@
         (keys nfts)
     )
 
-    ; (defun get-fights-wizards (ids:list)
-    ;     (map (get-fights-wizard) ids)
-    ; )
-    ;
-    ; (defun get-fights-wizard (id:string)
-    ;     (select fights-db (where "id" (= id)))
-    ; )
-
     (defun get-volume ()
         @doc "get volume of purchase"
         (at "count" (read volume VOLUME_PURCHASE_COUNT ['count]))
@@ -3179,7 +3191,6 @@
     (create-table spells)
 
     (create-table auto-tournaments)
-    ;(create-table fights-db)
 
     (create-table upgrade-spells)
 
