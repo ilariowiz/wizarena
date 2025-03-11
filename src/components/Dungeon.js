@@ -141,7 +141,7 @@ class Dungeon extends Component {
 
         let sub160 = []
         let sub225 = []
-        let sub300 = []
+        let sub310 = []
         let sub400 = []
 
         allData.map(i => {
@@ -152,8 +152,8 @@ class Dungeon extends Component {
             else if (i.level > 160 && i.level <= 225) {
                 sub225.push(i)
             }
-            else if (i.level > 225 && i.level <= 300) {
-                sub300.push(i)
+            else if (i.level > 225 && i.level <= 310) {
+                sub310.push(i)
             }
             else {
                 sub400.push(i)
@@ -168,7 +168,7 @@ class Dungeon extends Component {
             return b.ranking - a.ranking
         })
 
-        sub300.sort((a, b) => {
+        sub310.sort((a, b) => {
             return b.ranking - a.ranking
         })
 
@@ -181,8 +181,8 @@ class Dungeon extends Component {
             "sub160count": sub160.length,
             "sub225": sub225.slice(0, 10),
             "sub225count":sub225.length,
-            "sub300": sub300.slice(0, 10),
-            "sub300count": sub300.length,
+            "sub310": sub310.slice(0, 10),
+            "sub310count": sub310.length,
             "sub400": sub400.slice(0, 10),
             "sub400count": sub400.length
         }
@@ -656,11 +656,11 @@ class Dungeon extends Component {
         //console.log(item);
 
         let color;
-        if (item.level > 300) {
+        if (item.level > 310) {
             color = "gold"
         }
 
-        if (item.level > 225 && item.level <= 300) {
+        if (item.level > 225 && item.level <= 310) {
             color = "#c0c0c0"
         }
 
@@ -1089,7 +1089,7 @@ class Dungeon extends Component {
             color = "gold"
         }
 
-        if (level === 300) {
+        if (level === 310) {
             color = "#c0c0c0"
         }
 
@@ -1411,7 +1411,7 @@ class Dungeon extends Component {
 
                     {this.renderRanking(400)}
 
-                    {this.renderRanking(300)}
+                    {this.renderRanking(310)}
 
                     {this.renderRanking(225)}
 
