@@ -78,6 +78,11 @@ const titles = {
             title: "Lord of Oceorah Season 10",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "Lord of Ulidalar Season 12",
+            img: crown,
+            textColor: 'gold'
         }
     ],
     "2094": [
@@ -200,6 +205,11 @@ const titles = {
     "1818": [
         {
             title: "Lord of Vedrenon Season 5",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Sitenor Season 12",
             img: crown,
             textColor: 'gold'
         }
@@ -468,6 +478,11 @@ const titles = {
             title: "The Twelve League V Champion",
             img: cup_gold,
             textColor: 'gold'
+        },
+        {
+            title: "Lord of Oceorah Season 12",
+            img: crown,
+            textColor: 'gold'
         }
     ],
     "488": [
@@ -492,6 +507,11 @@ const titles = {
             title: "Lord of Ulidalar Season 10",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "Lord of Wastiaxus Season 12",
+            img: crown,
+            textColor: 'gold'
         }
     ],
     "254": [
@@ -508,6 +528,16 @@ const titles = {
     ],
     "1850": [{
         title: "Lord of Oceorah Season 6",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "2528": [{
+        title: "Lord of Ulanara Season 12",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "1227": [{
+        title: "Lord of Bremonon Season 12",
         img: crown,
         textColor: 'gold'
     }],
@@ -538,6 +568,11 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
+    "15": [{
+        title: "Lord of Opherus Season 12",
+        img: crown,
+        textColor: 'gold'
+    }],
     "1589": [
         {
             title: "Lord of Vedrenon Season 10",
@@ -555,11 +590,23 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
-    "1264": [{
-        title: "Lord of Vedrenon Season 9",
+    "2712": [{
+        title: "Lord of Vedrenon Season 12",
         img: crown,
         textColor: 'gold'
     }],
+    "1264": [
+        {
+            title: "Lord of Vedrenon Season 9",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Druggorial Season 12",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
     "2743": [{
         title: "Lord of Oceorah Season 9",
         img: crown,
