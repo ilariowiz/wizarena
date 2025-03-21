@@ -1300,6 +1300,15 @@
     )
   )
 
+  (defun force-unequip-on-item (iditem:string)
+    (with-capability (ADMIN)
+        (update equipment iditem
+            {"equipped": false,
+            "equippedToId": ""}
+        )
+    )
+  )
+
 )
 
 (if (read-msg "upgrade")
