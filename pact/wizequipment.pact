@@ -1053,11 +1053,11 @@
       (with-default-read aura-table idnft
           {"bonus":-1}
           {"bonus":=bonus}
-          (enforce (>= bonus 0) "This wizard does not have an aura")
+          ;(enforce (>= bonus 0) "This wizard does not have an aura")
           (let* (
                   (base-cost (round (* (get-wiza-value) 2.2) 2))
-                  (mod (* (+ bonus 1) 60))
-                  (mod2 (round (/ (* base-cost mod) 100) 2))
+                  (mod1 (dec (* (+ bonus 1) 60)))
+                  (mod2 (round (/ (* base-cost mod1) 100) 2))
                   (wiza-cost (+ base-cost mod2))
               )
               wiza-cost
