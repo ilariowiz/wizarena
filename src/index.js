@@ -48,6 +48,7 @@ import Dungeon from './components/Dungeon'
 import AutoTournaments from './components/AutoTournaments'
 
 import HallOfFame from './components/HallOfFame'
+import SpellsDisplay from './components/SpellsDisplay'
 
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react'
@@ -99,6 +100,7 @@ ReactDOM.render(
             <Route path="/dungeons" component={Dungeon} />
             <Route path="/autotournaments/" component={AutoTournaments} />
             <Route path="/halloffame/" component={HallOfFame} />
+            <Route path="/spells/" component={SpellsDisplay} />
           </Switch>
         </div>
       </BrowserRouter>
