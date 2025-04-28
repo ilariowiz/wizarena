@@ -136,14 +136,14 @@ class SpellsDisplay extends Component {
 				}
 
 				<p style={{ color: '#707070', fontSize: 15, marginRight: 5, marginBottom: 1 }}>
-					Base Atk
+					Attack
 				</p>
 				<p style={{ color: mainTextColor, fontSize: 17, marginRight }}>
 					{spellAtk}
 				</p>
 
 				<p style={{ color: '#707070', fontSize: 15, marginRight: 5, marginBottom: 1 }}>
-					Base Dmg
+					Damage
 				</p>
 				<p style={{ color: mainTextColor, fontSize: 17 }}>
 					{spellDmg}
