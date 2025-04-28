@@ -143,7 +143,7 @@ class Shop extends Component {
 
 		this.loadWizaBalance()
 
-        this.getHistoryUpgrades()
+        //this.getHistoryUpgrades()
 
         this.loadWizaValue()
 	}
