@@ -2837,8 +2837,8 @@
             {"attack":=attack, "damage":=damage}
             (let* (
                     (base-cost (round (* (get-wiza-value) 2.2) 2))
-                    (mod (* (+ attack damage) 60))
-                    (mod2 (round (/ (* base-cost mod) 100) 2))
+                    (mod1 (* (+ attack damage) 60))
+                    (mod2 (round (/ (* base-cost mod1) 100) 2))
                     (wiza-cost (+ base-cost mod2))
                 )
                 wiza-cost
@@ -2869,7 +2869,7 @@
                     {"attack":0, "damage":0}
                     {"attack":=attack, "damage":=damage}
                     (let (
-                            (ap-to-reimburse (* (+ attack damage) 5))
+                            (ap-to-reimburse (* (+ attack damage) 8))
                         )
                         (update upgrade-spells key
                             {"attack":0, "damage":0}
