@@ -1860,7 +1860,7 @@ class Shop extends Component {
                             Gain
                         </p>
                         <p style={{ fontSize: 15, color: 'white', marginBottom: 8 }} className="text-bold">
-                            {(wizard['upgrades-spell'].attack.int + wizard['upgrades-spell'].damage.int) * 5} AP
+                            {(wizard['upgrades-spell'].attack.int + wizard['upgrades-spell'].damage.int) * 8} AP
                         </p>
 
                         <p style={{ fontSize: 16, color: 'white' }} className="text-medium">
