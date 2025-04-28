@@ -63,6 +63,30 @@ class SpellsDisplay extends Component {
         )
     }
 
+    refactorCondition(condition) {
+        if (condition.effect === "skip") {
+            return `- Skip turn - Chance ${condition.pct}%`
+        }
+        else {
+            const effects = condition.effect.split("_")
+            const stat = effects[2]
+            let statText;
+            if (stat === "def") {
+                statText = "Defense"
+            }
+            else if (stat === "dmg") {
+                statText = "Damage"
+            }
+            else if (stat === "atk") {
+                statText = "Attack"
+            }
+
+            return `- Malus ${effects[1]} ${statText} - Chance ${condition.pct}%`
+        }
+
+        return ""
+    }
+
     renderSpell(item, index) {
 		const { mainTextColor } = this.props
 		const marginRight = 16
@@ -95,7 +119,7 @@ class SpellsDisplay extends Component {
 					<Popup
 						trigger={open => (
 							<button style={{ color: mainTextColor, fontSize: 17, marginRight }}>
-								{item.condition.name}
+								{item.condition.name} {this.refactorCondition(item.condition)}
 							</button>
 						)}
 						position="top center"
