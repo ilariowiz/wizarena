@@ -1,11 +1,11 @@
 const conditions = [
     {
         name: "Poison 1",
-        effect: "Inflicts a penalty of 1 on the opponent's defense",
+        effect: "Inflicts a penalty of 3 on the opponent's defense",
     },
     {
         name: "Poison 2",
-        effect: "Inflicts a penalty of 2 on the opponent's defense",
+        effect: "Inflicts a penalty of 6 on the opponent's defense",
     },
     {
         name: "Poison 3",
@@ -13,7 +13,15 @@ const conditions = [
     },
     {
         name: "Burn",
-        effect: "Inflicts a penalty of 1 on the opponent's damage",
+        effect: "Inflicts a penalty of 3 on the opponent's defense",
+    },
+    {
+        name: "Burn 2",
+        effect: "Inflicts a penalty of 6 on the opponent's defense",
+    },
+    {
+        name: "Burn 3",
+        effect: "Inflicts a penalty of 4 on the opponent's damage",
     },
     {
         name: "Confuse",
@@ -25,15 +33,15 @@ const conditions = [
     },
     {
         name: "Slow",
-        effect: "Inflicts a penalty of 1 on the opponent's attack",
+        effect: "Inflicts a penalty of 4 on the opponent's attack",
     },
     {
         name: "Slow 2",
-        effect: "Inflicts a penalty of 3 on the opponent's attack",
+        effect: "Inflicts a penalty of 3 on the opponent's defense",
     },
     {
-        name: "Paralyze",
-        effect: "The opponent cannot move and loses the turn",
+        name: "Slow 3",
+        effect: "Inflicts a penalty of 6 on the opponent's defense",
     },
     {
         name: "Paralyze 2",
@@ -49,18 +57,18 @@ const conditions = [
     },
     {
         name: "Exhaust",
-        effect: "Inflicts a penalty of 4 on the opponent's attack",
+        effect: "Inflicts a penalty of 3 on the opponent's attack",
     },
     {
-        name: "Fear",
-        effect: "Inflicts a penalty of 4 on the opponent's attack",
+        name: "Exhaust 2",
+        effect: "Inflicts a penalty of 6 on the opponent's attack",
     },
     {
-        name: "Disease",
+        name: "Exhaust 3",
         effect: "Inflicts a penalty of 4 on the opponent's defense",
     },
     {
-        name: "Burn 2",
+        name: "Fear",
         effect: "Inflicts a penalty of 4 on the opponent's defense",
     },
     {
@@ -68,12 +76,20 @@ const conditions = [
         effect: "The opponent is too scared to move and loses the turn",
     },
     {
-        name: "Fear 3",
-        effect: "Inflicts a penalty of 4 on the opponent's defense",
+        name: "Disease",
+        effect: "Inflicts a penalty of 4 on the opponent's damage",
     },
     {
         name: "Harden",
-        effect: "Inflicts a penalty of 4 on the opponent's damage",
+        effect: "Inflicts a penalty of 3 on the opponent's damage",
+    },
+    {
+        name: "Harden 2",
+        effect: "Inflicts a penalty of 6 on the opponent's damage",
+    },
+    {
+        name: "Harden 3",
+        effect: "Inflicts a penalty of 4 on the opponent's defense",
     },
     {
         name: "Curse",
@@ -84,13 +100,13 @@ const conditions = [
         effect: "Inflicts a penalty of 3 on the opponent's damage",
     },
     {
-        name: "Slow 3",
-        effect: "Inflicts a penalty of 7 on the opponent's attack",
+        name: "Protection 2",
+        effect: "Inflicts a penalty of 6 on the opponent's damage",
     },
     {
-        name: "Poison 4",
-        effect: "Inflicts a penalty of 8 on the opponent's defense",
-    },
+        name: "Protection 3",
+        effect: "Inflicts a penalty of 4 on the opponent's defense",
+    }
 ]
 
 export default conditions
