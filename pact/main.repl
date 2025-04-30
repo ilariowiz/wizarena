@@ -1545,14 +1545,15 @@
 
 
 
-;;;; SUBSCRIBE TO TOURNAMENT
+;;; SUBSCRIBE TO TOURNAMENT
 ; (begin-tx "SUBSCRIBE Tournament KDA")
 ;
 ; (env-sigs [{
 ;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
 ;   "caps": [
 ;     (coin.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" free.wiz-arena.WIZ_BANK 8.0)
-;     (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
+;     (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+;     (coin.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb" 1.6)
 ;     ;(free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
 ;     ;(free.wiz-arena.OWNER "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb" "1")
 ;     (coin.GAS)
@@ -1560,26 +1561,26 @@
 ; }])
 ;
 ; (free.wiz-arena.subscribe-tournament-mass
-;     [{ "id":"t2_0","round":"t14","idnft":"0","address":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "spellSelected": {"name": "Unholy Nova"}},
-;     { "id":"t2_1","round":"t14","idnft":"1","address":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "spellSelected": {"name": "Unholy Nova"}}]
+;     [{ "id":"t1_0","round":"t14","idnft":"0","address":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "spellSelected": {"name": "Unholy Nova"}},
+;     { "id":"t1_1","round":"t14","idnft":"1","address":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "spellSelected": {"name": "Unholy Nova"}}]
 ;     "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"
 ; )
 ;
 ; (commit-tx)
 
 
-;; READ SUBSCRIPTION
-; (begin-tx "READ SUBSCRIPTION")
-;
-; (env-sigs [{
-;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-;   "caps": []
-; }])
-;
-; (free.wiz-arena.get-subscriptions ["t1_0"])
-;
-; (commit-tx)
-;
+; READ SUBSCRIPTION
+(begin-tx "READ SUBSCRIPTION")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": []
+}])
+
+(free.wiz-arena.get-subscriptions ["t1_0", "t1_1"])
+
+(commit-tx)
+
 (begin-tx "SUBSCRIBE PVP")
 
 (env-sigs [{

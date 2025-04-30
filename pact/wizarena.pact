@@ -1459,7 +1459,7 @@
         (require-capability (PRIVATE))
         (let (
                 (id (at "id" subscriber))
-                (round (at "round" subscriber))
+                (rnd (at "round" subscriber))
                 (idnft (at "idnft" subscriber))
                 (address (at "address" subscriber))
                 (spellSelected (at "spellSelected" subscriber))
@@ -1470,25 +1470,25 @@
             (cond
                 (
                     (= type "kda")
-                    (enforce (= tournament-name round) "can't subscribe to the tournament")
+                    (enforce (= tournament-name rnd) "can't subscribe to the tournament")
                 )
                 (
                     (= type "wiza")
-                    (enforce (= tournament-wiza-name round) "can't subscribe to the tournament")
+                    (enforce (= tournament-wiza-name rnd) "can't subscribe to the tournament")
                 )
                 (
                     (= type "elite")
-                    (enforce (= tournament-elite-name round) "can't subscribe to the tournament")
+                    (enforce (= tournament-elite-name rnd) "can't subscribe to the tournament")
                 )
             "")
             (with-capability (OWNER address idnft)
-                (subscribe-tournament id round idnft address spellSelected type)
+                (subscribe-tournament id rnd idnft address spellSelected type)
             )
         )
     )
 
     ;round = tournament number
-    (defun subscribe-tournament (id:string round:string idnft:string address:string spellSelected:object type:string)
+    (defun subscribe-tournament (id:string rnd:string idnft:string address:string spellSelected:object type:string)
         @doc "Subscribe a wizard to tournament"
         (require-capability (PRIVATE))
         (let (
@@ -1497,19 +1497,19 @@
             )
             (enforce (= (at "confirmBurn" data-wiz) false) "You can't subscribe a wizard in burning queue")
         )
-        (subscribe-last id round idnft address)
+        (subscribe-last id rnd idnft address)
         (cond
             (
                 (= type "kda")
-                (emit-event (TOURNAMENT_SUBSCRIPTION idnft round))
+                (emit-event (TOURNAMENT_SUBSCRIPTION idnft rnd))
             )
             (
                 (= type "wiza")
-                (emit-event (TOURNAMENT_WIZA_SUBSCRIPTION idnft round))
+                (emit-event (TOURNAMENT_WIZA_SUBSCRIPTION idnft rnd))
             )
             (
                 (= type "elite")
-                (emit-event (TOURNAMENT_ELITE_SUBSCRIPTION idnft round))
+                (emit-event (TOURNAMENT_ELITE_SUBSCRIPTION idnft rnd))
             )
         "")
         (add-xp-to-wallet address 3)
@@ -1559,8 +1559,8 @@
             "round": ""}
             {"address":=address,
             "idnft":=idnft,
-            "round":=round}
-            {"address": address, "idnft":idnft, "round": round}
+            "round":=rnd}
+            {"address": address, "idnft":idnft, "round": rnd}
         )
     )
 
@@ -1609,7 +1609,7 @@
         )
     )
 
-    (defun subscribe-last (id:string round:string idnft:string address:string)
+    (defun subscribe-last (id:string rnd:string idnft:string address:string)
         (require-capability (PRIVATE))
         (with-default-read tournaments id
             {"idnft": ""}
@@ -1617,14 +1617,14 @@
             (enforce (= (length idnft) 0) "Already subscribed to this tournament")
         )
         (insert tournaments id {
-            "round": round,
+            "round": rnd,
             "idnft": idnft,
             "address": address
         })
-        (with-default-read tournaments-sub-count round
+        (with-default-read tournaments-sub-count rnd
             {"wizards":0}
             {"wizards":=wizards}
-            (write tournaments-sub-count round
+            (write tournaments-sub-count rnd
                 {"wizards": (+ wizards 1)}
             )
         )
@@ -2073,19 +2073,19 @@
         )
     )
 
-    (defun get-potion-for-tournament-mass (keys:list)
+    (defun get-potion-for-tournament-mass (ks:list)
         (map
             (get-potion-for-tournament)
-            keys
+            ks
         )
     )
 
     ;key = tournamentname_idnft e.g t8_342
-    (defun get-potion-for-tournament (key:string)
-        (with-default-read potions-table key
+    (defun get-potion-for-tournament (k:string)
+        (with-default-read potions-table k
             {"potionEquipped": ""}
             {"potionEquipped":= potionEquipped}
-            {"key":key, "potionEquipped": potionEquipped}
+            {"key":k, "potionEquipped": potionEquipped}
         )
     )
 
