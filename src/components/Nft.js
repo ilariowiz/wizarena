@@ -24,6 +24,9 @@ import traits_qty from './common/Traits_qty'
 import traits_qty_clerics from './common/Traits_qty_clerics'
 import traits_qty_druids from './common/Traits_qty_druids'
 import traits_qty_elders from './common/Traits_qty_elders'
+import rankClerics from './common/RankClerics'
+import rankDruids from './common/RankDruids'
+import rankWizards from './common/RankWizards'
 import getName from './common/GetName'
 import getAuraForElement from '../assets/gifs/AuraForElement'
 import getBgNft from './common/GetBgNft'
@@ -1455,6 +1458,41 @@ class Nft extends Component {
 		)
 	}
 
+	getRank(idNft) {
+		if (!idNft) {
+			return "..."
+		}
+
+		let rank = "...";
+
+		if (idNft <= 1024) {
+			//wiz
+			const r = rankWizards.find(i => i.id === idNft)
+			if (r) {
+				rank = `${r.rank}/1024`
+			}
+		}
+		else if (idNft > 1024 && idNft <= 2048) {
+			//cleric
+			const r = rankClerics.find(i => i.id === idNft)
+			if (r) {
+				rank = `${r.rank}/1024`
+			}
+		}
+		else if (idNft > 2048 && idNft <= 3072) {
+			//druid
+			const r = rankDruids.find(i => i.id === idNft)
+			if (r) {
+				rank = `${r.rank}/1024`
+			}
+		}
+		else {
+			rank = "Unique"
+		}
+
+		return rank
+	}
+
 	renderName(marginBottom) {
 		const { nft } = this.state
 		const { mainTextColor } = this.props
@@ -1478,6 +1516,12 @@ class Nft extends Component {
 					:
 					<p style={{ color: mainTextColor, fontSize: 24 }} className="text-bold">
 						{prename} {nft.name}
+					</p>
+				}
+
+				{
+					<p style={{ color: mainTextColor, fontSize: 16, marginTop: 6, marginBottom: 6, padding: 4, borderRadius: 4, borderColor: 'gold', borderStyle: 'solid', borderWidth: 1 }}>
+						Rank {this.getRank(parseInt(nft.id))}
 					</p>
 				}
 
