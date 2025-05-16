@@ -381,7 +381,7 @@ class Header extends Component {
 							</p>
 						</div>
 
-						<p style={{ fontSize: 22, color: mainTextColor, marginBottom: 20 }}>
+						{/*<p style={{ fontSize: 22, color: mainTextColor, marginBottom: 20 }}>
 							Tools
 						</p>
 
@@ -428,7 +428,7 @@ class Header extends Component {
 
 						<p style={{ fontSize: 14, color: "#707070", marginBottom: 20 }}>
 							Check your Druid rarity
-						</p>
+						</p>*/}
 
 						<p style={{ fontSize: 22, color: mainTextColor, marginBottom: 20 }}>
 							Dark Mode
