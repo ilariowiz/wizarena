@@ -576,7 +576,7 @@ class Header extends Component {
 
 						{this.renderSignboard("34%", "49%", "dungeons", signboard_dungeons, 0.61)}
 
-						{this.renderSignboard("11%", "66%", "challenges", signboard_challenges, 0.58)}
+						{/*this.renderSignboard("11%", "66%", "challenges", signboard_challenges, 0.58)*/}
 
 						{this.renderSignboard("47%", "17%", "lords", signboard_lord, 0.64)}
 
@@ -584,7 +584,7 @@ class Header extends Component {
 
 						{this.renderSignboard("55%", "71%", "tournaments", signboard_weekly, 0.72)}
 
-						{this.renderSignboard("78%", "26%", "flashtournaments", signboard_flash, 0.76)}
+						{/*this.renderSignboard("78%", "26%", "flashtournaments", signboard_flash, 0.76)*/}
 					</div>
 				</div>
 			)
