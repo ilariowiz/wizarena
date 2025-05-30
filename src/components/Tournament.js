@@ -361,12 +361,8 @@ class Tournament extends Component {
         const { tournament } = this.state
         const { subscribed } = this.props
 
-        if (tournament.fee && subscribed) {
-            const fee = tournament.buyin * tournament.fee / 100
-            const totalFee = fee * subscribed.length
-            let montepremi = (subscribed.length * tournament.buyin) - totalFee
-
-            return montepremi
+        if (tournament.buyin && subscribed) {
+            return subscribed.length * tournament.buyin
         }
 
         return ""

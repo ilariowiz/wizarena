@@ -2520,13 +2520,12 @@ export const withdrawEquipmentOffer = (chainId, gasPrice = DEFAULT_GAS_PRICE, ga
 export const subscribeToTournamentMass = (chainId, gasPrice = DEFAULT_GAS_PRICE, gasLimit, netId, account, buyin, list) => {
 	return (dispatch) => {
 
-		let pactCode = `(free.${CONTRACT_NAME}.subscribe-tournament-mass ${JSON.stringify(list)} "${account.account}")`;
+		let pactCode = `(free.${CONTRACT_NAME}.subscribe-tournament-mass ${JSON.stringify(list)} "${account.account}" free.wiza)`;
 
-		let coinTransferAmount = _.round(buyin*list.length, 2)
-		const singleFee = _.round(((buyin * 10) / 100), 2)
+		const coinTransferAmount = _.round(buyin*list.length, 2)
 
+		const singleFee = 0.3
 		const totalFee = _.round(singleFee * list.length, 2)
-		let coinTransferNet = _.round(coinTransferAmount - totalFee, 2)
 
 		let caps = [
 			Pact.lang.mkCap(
@@ -2535,15 +2534,15 @@ export const subscribeToTournamentMass = (chainId, gasPrice = DEFAULT_GAS_PRICE,
 				`free.${CONTRACT_NAME}.ACCOUNT_GUARD`,
 				[account.account]
 			),
-			Pact.lang.mkCap(`Subscribe`, "Pay the buyin", `coin.TRANSFER`, [
-				account.account,
-				WIZ_BANK,
-				coinTransferNet,
-			]),
 			Pact.lang.mkCap(`Subscribe`, "Pay the fee", `coin.TRANSFER`, [
 				account.account,
 				ADMIN_ADDRESS,
 				totalFee,
+			]),
+			Pact.lang.mkCap(`Subscribe`, "Pay the buyin", `free.wiza.TRANSFER`, [
+				account.account,
+				WIZA_TOKEN_BANK,
+				_.round(coinTransferAmount, 2),
 			]),
 			Pact.lang.mkCap("Gas capability", "Pay gas", "coin.GAS", []),
 		]

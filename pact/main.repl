@@ -1521,52 +1521,53 @@
 (commit-tx)
 
 
-;;;; SUBSCRIBE TO TOURNAMENT
-(begin-tx "SUBSCRIBE Tournament WIZA")
-
-(env-sigs [{
-  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
-  "caps": [
-    (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
-    (free.wiza.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "wiza-token-bank" 100.0),
-    (coin.GAS)
-  ]
-}])
-
-(free.wiz-arena.subscribe-tournament-wiza-mass
-    [{ "id":"t1_1","round":"t1001","idnft":"1","address":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "spellSelected": {"name": "Unholy Nova"}}]
-    "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"
-    free.wiza
-)
-
-(free.wiz-arena.get-count-for-tournament "t1001")
-
-(commit-tx)
-
-
-
-;;; SUBSCRIBE TO TOURNAMENT
-; (begin-tx "SUBSCRIBE Tournament KDA")
+; ;;;; SUBSCRIBE TO TOURNAMENT
+; (begin-tx "SUBSCRIBE Tournament WIZA")
 ;
 ; (env-sigs [{
 ;   "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
 ;   "caps": [
-;     (coin.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" free.wiz-arena.WIZ_BANK 8.0)
-;     (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
-;     (coin.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb" 1.6)
-;     ;(free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
-;     ;(free.wiz-arena.OWNER "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb" "1")
+;     (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"),
+;     (free.wiza.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "wiza-token-bank" 100.0),
 ;     (coin.GAS)
 ;   ]
 ; }])
 ;
-; (free.wiz-arena.subscribe-tournament-mass
-;     [{ "id":"t1_0","round":"t14","idnft":"0","address":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "spellSelected": {"name": "Unholy Nova"}},
-;     { "id":"t1_1","round":"t14","idnft":"1","address":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "spellSelected": {"name": "Unholy Nova"}}]
+; (free.wiz-arena.subscribe-tournament-wiza-mass
+;     [{ "id":"t1_1","round":"t1001","idnft":"1","address":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "spellSelected": {"name": "Unholy Nova"}}]
 ;     "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"
+;     free.wiza
 ; )
 ;
+; (free.wiz-arena.get-count-for-tournament "t1001")
+;
 ; (commit-tx)
+
+
+
+;;; SUBSCRIBE TO TOURNAMENT
+(begin-tx "SUBSCRIBE Tournament KDA")
+
+(env-sigs [{
+  "key": "9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250",
+  "caps": [
+    (coin.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb" 0.6)
+    (free.wiza.TRANSFER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "wiza-token-bank" 8.0)
+    (free.wiz-arena.ACCOUNT_GUARD "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250")
+    ;(free.wiz-arena.OWNER "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250" "0"),
+    ;(free.wiz-arena.OWNER "k:90f45921e0605560ace17ca8fbbe72df95ba7034abeec7a8a7154e9eda7114eb" "1")
+    (coin.GAS)
+  ]
+}])
+
+(free.wiz-arena.subscribe-tournament-mass
+    [{ "id":"t1_0","round":"t14","idnft":"0","address":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "spellSelected": {"name": "Unholy Nova"}},
+    { "id":"t1_1","round":"t14","idnft":"1","address":"k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250", "spellSelected": {"name": "Unholy Nova"}}]
+    "k:9ca8b0b628eb386edafcb66cb90cfd79f349433502e1c1dece1fa097f6801250"
+    free.wiza
+)
+
+(commit-tx)
 
 
 ; READ SUBSCRIPTION

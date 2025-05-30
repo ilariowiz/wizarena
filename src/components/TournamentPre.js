@@ -391,9 +391,10 @@ class Tournament extends Component {
 		const { toSubscribe, tournament } = this.state
 
 		const tot = toSubscribe.length * tournament.buyin
+        const fee = toSubscribe.length * tournament.fee
 
         this.props.updateInfoTransactionModal({
-			transactionToConfirmText: `You will subscribe ${toSubscribe.length} wizards for ${tot} KDA`,
+			transactionToConfirmText: `You will subscribe ${toSubscribe.length} wizards for ${tot} WIZA (KDA fee ${fee.toFixed(2)})`,
 			typeModal: 'subscriptionmass',
 			transactionOkText: `Your Wizards are registered for the tournament!`,
 		})
@@ -629,12 +630,12 @@ class Tournament extends Component {
 						Subscribe
 					</p>
 
-                    {
+                    {/*
                         account.account && tournamentSubs.coinBuyin === "KDA" &&
                         <p style={{ fontSize: 13, color: 'white', marginTop: 3 }}>
                             Balance: {_.floor(account.balance, 1)} $KDA
                         </p>
-                    }
+                    */}
 
                     {
                         account.account && tournamentSubs.coinBuyin === "WIZA" &&
@@ -805,6 +806,10 @@ class Tournament extends Component {
     }
 
     calcMontepremi(tournamentInfo) {
+
+        if (tournamentInfo.type === "weekly") {
+            return tournamentInfo.subs.int * tournamentInfo.buyin
+        }
 
         const fee = tournamentInfo.fee
         const feeInCost = tournamentInfo.buyin * tournamentInfo.fee / 100
@@ -1257,9 +1262,16 @@ class Tournament extends Component {
                             Buyin {tournamentInfo.buyin} ${tournamentInfo.coinBuyin}
                         </p>
 
-                        <p style={{ fontSize: 14, color: mainTextColor }}>
-                            Fee {fee}%
-                        </p>
+                        {
+                            tournamentInfo.type === "weekly" ?
+                            <p style={{ fontSize: 14, color: mainTextColor }}>
+                                Fee {fee} $KDA
+                            </p>
+                            :
+                            <p style={{ fontSize: 14, color: mainTextColor }}>
+                                Fee {fee}%
+                            </p>
+                        }
                     </div>
 
 

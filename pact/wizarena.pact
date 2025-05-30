@@ -1430,21 +1430,16 @@
     ;;;;;; TOURNAMENT ;;;;;;;;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    (defun subscribe-tournament-mass (subscribers:list address:string)
+    (defun subscribe-tournament-mass (subscribers:list address:string m:module{wiza1-interface-v4})
         (let (
                 (buyin (* (get-value-tournament BUYIN_KEY) (length subscribers)))
-                (feebuyin (/ (* (* (get-value-tournament BUYIN_KEY) (length subscribers)) (get-value-tournament FEE_TOURNAMENT_KEY)) 100))
+                (feebuyin (* 0.3 (length subscribers)))
                 (tournament-open (get-value TOURNAMENT_OPEN))
             )
             (enforce (= tournament-open "1") "Tournament registrations are closed")
             (with-capability (ACCOUNT_GUARD address)
                 (coin.transfer address ADMIN_ADDRESS feebuyin)
-                (coin.transfer address WIZ_BANK (- buyin feebuyin))
-                (with-default-read token-table WIZ_BANK
-                  {"balance": 0.0}
-                  {"balance":= oldbalance }
-                  (update token-table WIZ_BANK {"balance": (+ oldbalance (- buyin feebuyin))})
-                )
+                (spend-wiza buyin address m)
             )
             (with-capability (PRIVATE)
                 (map
@@ -1515,33 +1510,33 @@
         (add-xp-to-wallet address 3)
     )
 
-    (defun send-prizes (winners:list)
-        (with-capability (DEVS_CAP)
-            (map
-                (send-prize)
-                winners
-            )
-        )
-    )
-
-    (defun send-prize (item:object)
-        (require-capability (PRIVATE))
-        (let (
-              (address (at "address" item))
-              (prize (at "prize" item))
-            )
-            (enforce (> prize 0.0) "prize must be greater than 0")
-            (install-capability (coin.TRANSFER WIZ_BANK address prize))
-            (coin.transfer WIZ_BANK address prize)
-
-            (with-default-read token-table WIZ_BANK
-              {"balance": 0.0}
-              {"balance":= wizbalance }
-              (update token-table WIZ_BANK {"balance": (- wizbalance prize)})
-            )
-            (emit-event (WITHDRAW_PRIZE address prize))
-        )
-    )
+    ; (defun send-prizes (winners:list)
+    ;     (with-capability (DEVS_CAP)
+    ;         (map
+    ;             (send-prize)
+    ;             winners
+    ;         )
+    ;     )
+    ; )
+    ;
+    ; (defun send-prize (item:object)
+    ;     (require-capability (PRIVATE))
+    ;     (let (
+    ;           (address (at "address" item))
+    ;           (prize (at "prize" item))
+    ;         )
+    ;         (enforce (> prize 0.0) "prize must be greater than 0")
+    ;         (install-capability (coin.TRANSFER WIZ_BANK address prize))
+    ;         (coin.transfer WIZ_BANK address prize)
+    ;
+    ;         (with-default-read token-table WIZ_BANK
+    ;           {"balance": 0.0}
+    ;           {"balance":= wizbalance }
+    ;           (update token-table WIZ_BANK {"balance": (- wizbalance prize)})
+    ;         )
+    ;         (emit-event (WITHDRAW_PRIZE address prize))
+    ;     )
+    ; )
 
     (defun get-subscriptions (ids:list)
         @doc "Check if id is subscribed for tournament"
