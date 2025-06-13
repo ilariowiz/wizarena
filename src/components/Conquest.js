@@ -1072,7 +1072,7 @@ class Conquest extends Component {
         //console.log(now);
         let timeLeft = ""
 
-        const deadline = now.clone().hour(16).minute(0).second(0)
+        const deadline = now.clone().hour(15).minute(0).second(0)
         if (now.isAfter(deadline)) {
             let tomorrow = moment(new Date()).add(1, 'days').hour(16).minute(0).second(0)
 
