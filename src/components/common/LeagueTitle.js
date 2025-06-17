@@ -39,6 +39,33 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
+    "635": [{
+        title: "Lord of Sitenor Season 13",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "558": [{
+        title: "Lord of Druggorial Season 13",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "490": [
+        {
+            title: "Lord of Vedrenon Season 13",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Ulanara Season 13",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
+    "2985": [{
+        title: "Lord of Oceorah Season 13",
+        img: crown,
+        textColor: 'gold'
+    }],
     "2521": [
         {
             title: "Lord of Sitenor Season 7",
@@ -263,11 +290,18 @@ const titles = {
         img: medal,
         textColor: '#cd7f32'
     }],
-    "2028": [{
-        title: "The Twelve League V 7th place",
-        img: medal,
-        textColor: '#cd7f32'
-    }],
+    "2028": [
+        {
+            title: "The Twelve League V 7th place",
+            img: medal,
+            textColor: '#cd7f32'
+        },
+        {
+            title: "Lord of Opherus Season 13",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
     "2269": [{
         title: "The Twelve League V 8th place",
         img: medal,
@@ -512,6 +546,11 @@ const titles = {
             title: "Lord of Wastiaxus Season 12",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "Lord of Bremonon Season 13",
+            img: crown,
+            textColor: 'gold'
         }
     ],
     "254": [
@@ -619,6 +658,11 @@ const titles = {
     }],
     "1512": [{
         title: "Lord of Vedrenon Season 8",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "986": [{
+        title: "Lord of Wastiaxus Season 13",
         img: crown,
         textColor: 'gold'
     }],
@@ -865,11 +909,18 @@ const titles = {
             textColor: 'gold'
         }
     ],
-    "540": [{
-        title: "The Twelve League II 3rd place",
-        img: cup_bronze,
-        textColor: '#cd7f32'
-    }],
+    "540": [
+        {
+            title: "The Twelve League II 3rd place",
+            img: cup_bronze,
+            textColor: '#cd7f32'
+        },
+        {
+            title: "Lord of Ulidalar Season 13",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
     "2377": [{
         title: "The Twelve League II 2nd place",
         img: cup_silver,
