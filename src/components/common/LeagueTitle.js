@@ -958,6 +958,11 @@ const titles = {
         img: cup_gold,
         textColor: 'gold'
     }],
+    "45": [{
+        title: "The Apprentice League V Champion",
+        img: cup_gold,
+        textColor: 'gold'
+    }],
     "2401": [
         {
             title: "The Apprentice League II Champion",
@@ -984,6 +989,11 @@ const titles = {
     ],
     "2181": [{
         title: "The Apprentice League I 2nd place",
+        img: cup_silver,
+        textColor: '#c0c0c0'
+    }],
+    "1960": [{
+        title: "The Apprentice League V 2nd place",
         img: cup_silver,
         textColor: '#c0c0c0'
     }],
@@ -1017,6 +1027,11 @@ const titles = {
         img: cup_bronze,
         textColor: '#cd7f32'
     }],
+    "13": [{
+        title: "The Apprentice League V 3rd place",
+        img: cup_bronze,
+        textColor: '#cd7f32'
+    }],
     "706": [
         {
             title: "The Apprentice League II 4th place",
@@ -1047,6 +1062,41 @@ const titles = {
     ],
     "2765": [{
         title: "The Apprentice League I 5th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "718": [{
+        title: "The Apprentice League V 4th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "379": [{
+        title: "The Apprentice League V 5th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "2727": [{
+        title: "The Apprentice League V 6th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "738": [{
+        title: "The Apprentice League V 7th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "386": [{
+        title: "The Apprentice League V 8th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "812": [{
+        title: "The Apprentice League V 9th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "2482": [{
+        title: "The Apprentice League V 10th place",
         img: medal,
         textColor: '#cd7f32'
     }],
