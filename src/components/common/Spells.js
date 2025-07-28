@@ -38,14 +38,14 @@ const allSpells = [
 	{
 		"name": "Acid Beam",
 		"atkBase": 9,
-		"dmgBase": 12,
+		"dmgBase": 9,
 		"condition": {},
 		"element": "Acid"
 	},
 	{
 	    "name": "Necrosis",
 	    "atkBase": 8,
-	    "dmgBase": 13,
+	    "dmgBase": 10,
 	    "condition": {},
 	    "element": "Acid"
 	},
@@ -123,14 +123,14 @@ const allSpells = [
 	},
 	{
 		"name": "Avalanche",
-		"atkBase": 8,
+		"atkBase": 6,
 		"dmgBase": 3,
 		"condition": { "name": "Freeze", "effect": "skip", "pct": 50 },
 		"element": "Ice"
 	},
 	{
 		"name": "Frost Missiles",
-		"atkBase": 13,
+		"atkBase": 10,
 		"dmgBase": 8,
 		"condition": {},
 		"element": "Ice"
@@ -159,14 +159,14 @@ const allSpells = [
 	},
 	{
 		"name": "Shock",
-		"atkBase": 3,
+		"atkBase": 5,
 		"dmgBase": 8,
 		"condition": { "name": "Shock", "effect": "skip", "pct": 50 },
 		"element": "Thunder"
 	},
 	{
 		"name": "Shatter",
-		"atkBase": 5,
+		"atkBase": 7,
 		"dmgBase": 6,
 		"condition": { "name": "Shock", "effect": "skip", "pct": 50 },
 		"element": "Thunder"
@@ -302,7 +302,7 @@ const allSpells = [
 	},
 	{
 		"name": "Bones of the Earth",
-		"atkBase": 5,
+		"atkBase": 7,
 		"dmgBase": 6,
 		"condition": { "name": "Confuse", "effect": "skip", "pct": 50 },
 		"element": "Earth"
@@ -310,7 +310,7 @@ const allSpells = [
 	{
 		"name": "Flesh to Stone",
 		"atkBase": 4,
-		"dmgBase": 7,
+		"dmgBase": 9,
 		"condition": { "name": "Paralyze 2", "effect": "skip", "pct": 50 },
 		"element": "Earth"
 	},
@@ -439,13 +439,13 @@ const allSpells = [
 	{
 		"name": "Finger of Death",
 		"atkBase": 4,
-		"dmgBase": 7,
+		"dmgBase": 10,
 		"condition": { "name": "Fear 2", "effect": "skip", "pct": 50 },
 		"element": "Undead"
 	},
 	{
 		"name": "Danse Macabre",
-		"atkBase": 7,
+		"atkBase": 10,
 		"dmgBase": 4,
 		"condition": { "name": "Fear 2", "effect": "skip", "pct": 50 },
 		"element": "Undead"
@@ -481,7 +481,7 @@ const allSpells = [
 	},
 	{
 		"name": "Maelstrom",
-		"atkBase": 6,
+		"atkBase": 9,
 		"dmgBase": 5,
 		"condition": { "name": "Freeze", "effect": "skip", "pct": 50 },
 		"element": "Water"
@@ -489,7 +489,7 @@ const allSpells = [
 	{
 		"name": "Flood",
 		"atkBase": 5,
-		"dmgBase": 6,
+		"dmgBase": 9,
 		"condition": { "name": "Paralyze 2", "effect": "skip", "pct": 50 },
 		"element": "Water"
 	},
