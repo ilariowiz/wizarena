@@ -71,6 +71,7 @@ class Dungeon extends Component {
             signedCmd: undefined,
             showModalLoadingFight: false,
             textLoadingFight: "",
+            showSeasonEnded: false
         }
     }
 
@@ -88,9 +89,16 @@ class Dungeon extends Component {
 
         this.setState({ dungeonInfo })
 
-        setTimeout(() => {
-            this.loadSubscribers()
-        }, 500)
+        const daysFromEnd = this.checkSeasonEndedDays()
+        console.log(daysFromEnd);
+        if (daysFromEnd > 3) {
+            this.setState({ showSeasonEnded: true, loadingYourSubs: false })
+        }
+        else {
+            setTimeout(() => {
+                this.loadSubscribers()
+            }, 500)
+        }
 	}
 
     async loaddungeonInfo() {
@@ -649,6 +657,34 @@ class Dungeon extends Component {
         return seasonEnded
     }
 
+    checkSeasonEndedDays() {
+        const { dungeonInfo } = this.state
+
+        //console.log(arenaInfo);
+        if (dungeonInfo && dungeonInfo.start) {
+            const startSeason = moment(dungeonInfo.start.seconds * 1000)
+            const now = moment()
+
+            if (startSeason > now) {
+                return 0
+            }
+        }
+
+        let daysFromEnd = 0
+        if (dungeonInfo && dungeonInfo.end) {
+            const endSeason = moment(dungeonInfo.end.seconds * 1000)
+            //console.log(endSeason);
+            const now = moment()
+            const diffInDays = now.diff(endSeason, 'days')
+            //console.log(diffInDays);
+            if (diffInDays > 3) {
+                daysFromEnd = diffInDays
+            }
+        }
+
+        return daysFromEnd
+    }
+
     renderYourSubs(item, index) {
         const { mainTextColor } = this.props
         const { loadingYourChampion } = this.state
@@ -1134,7 +1170,7 @@ class Dungeon extends Component {
     }
 
     renderBody(isMobile) {
-        const { loadingYourSubs, yourSubs, wizardSelected, showSubscribe, dungeonInfo, notSubbed, countSubbedWizards } = this.state
+        const { loadingYourSubs, yourSubs, wizardSelected, showSubscribe, dungeonInfo, notSubbed, countSubbedWizards, showSeasonEnded } = this.state
         const { mainTextColor, mainBackgroundColor } = this.props
 
         const { boxW, modalW, padding } = getBoxWidth(isMobile)
@@ -1330,9 +1366,12 @@ class Dungeon extends Component {
                     </div>
                 </div>
 
-                <p style={{ fontSize: 20, color: mainTextColor, marginBottom: 25 }}>
-                    {countSubbedWizards} participating Wizards
-                </p>
+                {
+                    !showSeasonEnded &&
+                    <p style={{ fontSize: 20, color: mainTextColor, marginBottom: 25 }}>
+                        {countSubbedWizards} participating Wizards
+                    </p>
+                }
 
                 <div style={{ alignItems: 'center', marginBottom: 25, flexWrap: 'wrap' }}>
                     {
@@ -1369,9 +1408,12 @@ class Dungeon extends Component {
                 </div>
 
                 {
-                    wizardSelected && wizardSelected.id ?
+                    wizardSelected && wizardSelected.id &&
                     this.renderWizardSelected(isMobile, seasonStarted, seasonEnded)
-                    :
+                }
+
+                {
+                    !showSeasonEnded && wizardSelected && !wizardSelected.id &&
                     <div style={{ flexDirection: 'column' }}>
                         <p style={{ fontSize: 20, color: mainTextColor, marginBottom: 10 }} className="text-medium">
                             Your subscribed Wizards <span style={{ fontSize: 13 }}>({yourSubs.length}/{MAX_WIZARDS_PER_WALLET})</span>
@@ -1403,21 +1445,36 @@ class Dungeon extends Component {
                     </div>
                 }
 
-                <p style={{ marginTop: 20, marginBottom: 20, fontSize: 24, color: mainTextColor }}>
-                    Rankings
-                </p>
+                {
+                    !showSeasonEnded &&
+                    <p style={{ marginTop: 20, marginBottom: 20, fontSize: 24, color: mainTextColor }}>
+                        Rankings
+                    </p>
+                }
 
-                <div style={{ flexWrap: 'wrap' }}>
+                {
+                    !showSeasonEnded &&
+                    <div style={{ flexWrap: 'wrap' }}>
 
-                    {this.renderRanking(400)}
+                        {this.renderRanking(400)}
 
-                    {this.renderRanking(310)}
+                        {this.renderRanking(310)}
 
-                    {this.renderRanking(225)}
+                        {this.renderRanking(225)}
 
-                    {this.renderRanking(160)}
+                        {this.renderRanking(160)}
 
-                </div>
+                    </div>
+                }
+
+                {
+                    showSeasonEnded &&
+                    <div style={{ alignItems: 'center', justifyContent: 'center' }}>
+                        <p style={{ fontSize: 24, color: mainTextColor }}>
+                            The season is over! A new season will open soon.
+                        </p>
+                    </div>
+                }
 
                 {
                     this.state.showModalLoadingFight ?

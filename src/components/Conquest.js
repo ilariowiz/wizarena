@@ -87,7 +87,8 @@ class Conquest extends Component {
             showModalLoadingFight: false,
             textLoadingFight: "",
             fightId: "",
-            opponentId: ""
+            opponentId: "",
+            showLordEnded: false
         }
     }
 
@@ -104,10 +105,17 @@ class Conquest extends Component {
 
         this.setState({ seasonInfo })
 
-        setTimeout(() => {
-            this.loadMinted()
-            this.loadChampions()
-        }, 500)
+        const daysFromEnd = this.checkSeasonEndedDays()
+        console.log(daysFromEnd);
+        if (daysFromEnd > 3) {
+            this.setState({ showLordEnded: true, loadingYourSubs: false, loadingChampions: false })
+        }
+        else {
+            setTimeout(() => {
+                this.loadMinted()
+                this.loadChampions()
+            }, 500)
+        }
 	}
 
     async loadInfoSeason() {
@@ -1067,6 +1075,34 @@ class Conquest extends Component {
         return seasonEnded
     }
 
+    checkSeasonEndedDays() {
+        const { seasonInfo } = this.state
+
+        //console.log(arenaInfo);
+        if (seasonInfo && seasonInfo.start) {
+            const startSeason = moment(seasonInfo.start.seconds * 1000)
+            const now = moment()
+
+            if (startSeason > now) {
+                return 0
+            }
+        }
+
+        let daysFromEnd = 0
+        if (seasonInfo && seasonInfo.end) {
+            const endSeason = moment(seasonInfo.end.seconds * 1000)
+            //console.log(endSeason);
+            const now = moment()
+            const diffInDays = now.diff(endSeason, 'days')
+            //console.log(diffInDays);
+            if (diffInDays > 3) {
+                daysFromEnd = diffInDays
+            }
+        }
+
+        return daysFromEnd
+    }
+
     calcTimeToResetFights() {
         const now = moment().utc()
         //console.log(now);
@@ -1088,7 +1124,7 @@ class Conquest extends Component {
     }
 
     renderBody(isMobile) {
-        const { loadingYourSubs, loadingChampions, yourSubs, wizardSelected, showSubscribe, seasonInfo, notSubbed, countSubbedWizards } = this.state
+        const { loadingYourSubs, loadingChampions, yourSubs, wizardSelected, showSubscribe, seasonInfo, notSubbed, countSubbedWizards, showLordEnded } = this.state
         const { mainTextColor, mainBackgroundColor } = this.props
 
         const { boxW, modalW, padding } = getBoxWidth(isMobile)
@@ -1275,9 +1311,11 @@ class Conquest extends Component {
                     </div>
                 </div>
 
-                <p style={{ fontSize: 20, color: mainTextColor, marginBottom: 25 }}>
-                    {countSubbedWizards} participating Wizards
-                </p>
+                { !showLordEnded &&
+                    <p style={{ fontSize: 20, color: mainTextColor, marginBottom: 25 }}>
+                        {countSubbedWizards} participating Wizards
+                    </p>
+                }
 
                 <div style={{ alignItems: 'center', marginBottom: 25, flexWrap: 'wrap' }}>
                     {
@@ -1314,9 +1352,12 @@ class Conquest extends Component {
                 </div>
 
                 {
-                    wizardSelected && wizardSelected.id ?
+                    wizardSelected && wizardSelected.id &&
                     this.renderWizardSelected(isMobile)
-                    :
+                }
+
+                {
+                    !showLordEnded && wizardSelected && !wizardSelected.id &&
                     <div style={{ flexDirection: 'column' }}>
                         <p style={{ fontSize: 20, color: mainTextColor, marginBottom: 10 }} className="text-medium">
                             Your subscribed Wizards
@@ -1352,9 +1393,12 @@ class Conquest extends Component {
                     </div>
                 }
 
-                <p style={{ marginTop: 20, marginBottom: 20, fontSize: 20, color: mainTextColor }}>
-                    Regions of the Wizards World
-                </p>
+                {
+                    !showLordEnded &&
+                    <p style={{ marginTop: 20, marginBottom: 20, fontSize: 20, color: mainTextColor }}>
+                        Regions of the Wizards World
+                    </p>
+                }
 
                 {
                     loadingChampions &&
@@ -1363,17 +1407,29 @@ class Conquest extends Component {
 					</div>
                 }
 
-                <div style={{ flexDirection: isMobile ? 'column' : 'row', flexWrap: 'wrap' }}>
-                    {this.renderRegion("Sitenor", sitenorImg, SitenorIcon, "eloSitenor", seasonStarted, seasonEnded)}
-                    {this.renderRegion("Druggorial", druggorialImg, DruggorialIcon, "eloDruggorial", seasonStarted, seasonEnded)}
-                    {this.renderRegion("Vedrenon", vedrenonImg, VedrenonIcon, "eloVedrenon", seasonStarted, seasonEnded)}
-                    {this.renderRegion("Oceorah", oceorahImg, OceorahIcon, "eloOceorah", seasonStarted, seasonEnded)}
-                    {this.renderRegion("Opherus", opherusImg, OpherusIcon, "eloOpherus", seasonStarted, seasonEnded)}
-                    {this.renderRegion("Ulidalar", ulidalarImg, UlidalarIcon, "eloUlidalar", seasonStarted, seasonEnded)}
-                    {this.renderRegion("Wastiaxus", wastiaxusImg, WastiaxusIcon, "eloWastiaxus", seasonStarted, seasonEnded)}
-                    {this.renderRegion("Ulanara", ulanaraImg, UlanaraIcon, "eloUlanara", seasonStarted, seasonEnded)}
-                    {this.renderRegion("Bremonon", bremononImg, BremononIcon, "eloBremonon", seasonStarted, seasonEnded)}
-                </div>
+                {
+                    !showLordEnded &&
+                    <div style={{ flexDirection: isMobile ? 'column' : 'row', flexWrap: 'wrap' }}>
+                        {this.renderRegion("Sitenor", sitenorImg, SitenorIcon, "eloSitenor", seasonStarted, seasonEnded)}
+                        {this.renderRegion("Druggorial", druggorialImg, DruggorialIcon, "eloDruggorial", seasonStarted, seasonEnded)}
+                        {this.renderRegion("Vedrenon", vedrenonImg, VedrenonIcon, "eloVedrenon", seasonStarted, seasonEnded)}
+                        {this.renderRegion("Oceorah", oceorahImg, OceorahIcon, "eloOceorah", seasonStarted, seasonEnded)}
+                        {this.renderRegion("Opherus", opherusImg, OpherusIcon, "eloOpherus", seasonStarted, seasonEnded)}
+                        {this.renderRegion("Ulidalar", ulidalarImg, UlidalarIcon, "eloUlidalar", seasonStarted, seasonEnded)}
+                        {this.renderRegion("Wastiaxus", wastiaxusImg, WastiaxusIcon, "eloWastiaxus", seasonStarted, seasonEnded)}
+                        {this.renderRegion("Ulanara", ulanaraImg, UlanaraIcon, "eloUlanara", seasonStarted, seasonEnded)}
+                        {this.renderRegion("Bremonon", bremononImg, BremononIcon, "eloBremonon", seasonStarted, seasonEnded)}
+                    </div>
+                }
+
+                {
+                    showLordEnded &&
+                    <div style={{ alignItems: 'center', justifyContent: 'center' }}>
+                        <p style={{ fontSize: 24, color: mainTextColor }}>
+                            The season is over! A new season will open soon.
+                        </p>
+                    </div>
+                }
 
                 {
                     this.state.showModalLoadingFight ?
