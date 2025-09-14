@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from 'react-redux'
 import moment from 'moment'
 import _ from 'lodash'
-import { collection, query, where, documentId, getDocs } from "firebase/firestore";
+import { collection, query, where, documentId, getDocs, doc, getDoc } from "firebase/firestore";
 import { firebasedb } from './Firebase';
 import { IoClose } from 'react-icons/io5'
 import Popup from 'reactjs-popup';
@@ -41,6 +41,11 @@ import { MAIN_NET_ID, CTA_COLOR } from '../actions/types'
 import '../css/Nft.css'
 import 'reactjs-popup/dist/index.css';
 
+const crystal_img = require('../assets/ingredients/crystal.png')
+const iron_img = require('../assets/ingredients/iron.png')
+const mana_img = require('../assets/ingredients/mana.png')
+const stone_img = require('../assets/ingredients/stone.png')
+const wood_img = require('../assets/ingredients/wood.png')
 
 class Profile extends Component {
 	constructor(props) {
@@ -65,7 +70,8 @@ class Profile extends Component {
             searchText: "",
             searchedText: "",
 			showFilters: window.innerWidth > 767,
-			yourCollectionOffers: []
+			yourCollectionOffers: [],
+			ingredients: {}
 		}
 	}
 
@@ -100,7 +106,19 @@ class Profile extends Component {
 		this.loadOffersMade()
 		this.loadOffersEquipmentMade()
 		this.loadCollectionOffersMade()
+		this.getIngredients()
 	}
+
+	async getIngredients() {
+        const docRef = doc(firebasedb, "ingredients", this.props.account.account)
+
+		const docSnap = await getDoc(docRef)
+		const data = docSnap.data()
+
+        //console.log(data);
+
+		this.setState({ ingredients: data })
+    }
 
 	getWalletXp() {
 		const { account, chainId, gasPrice, gasLimit, networkUrl } = this.props
@@ -803,6 +821,46 @@ class Profile extends Component {
 		)
 	}
 
+	renderIngredient(k, index) {
+		//console.log(k);
+		const { mainTextColor, isDarkmode } = this.props
+		const { ingredients } = this.state
+
+		let img_ing;
+		if (k === "crystal") {
+			img_ing = crystal_img
+		}
+		else if (k === "stone") {
+			img_ing = stone_img
+		}
+		else if (k === "iron") {
+			img_ing = iron_img
+		}
+		else if (k === "mana") {
+			img_ing = mana_img
+		}
+		else if (k === "wood") {
+			img_ing = wood_img
+		}
+
+		return (
+			<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginRight: 18 }} key={index}>
+				<div style={{ alignItems: 'center', justifyContent: 'center' }}>
+					<img
+						src={img_ing}
+						style={{ width: 26, height: 26, marginRight: 5 }}
+					/>
+					<p style={{ fontSize: 21, color: mainTextColor }}>
+						{ingredients[k]}
+					</p>
+				</div>
+				<p style={{ fontSize: 13, color: mainTextColor }}>
+					{k}
+				</p>
+			</div>
+		)
+	}
+
 	renderMenu(isMobile) {
 		const { section, loading, equipment, offersMade, offersReceived, offersEquipmentMade, yourCollectionOffers } = this.state;
 		const { userMintedNfts, mainTextColor, isDarkmode } = this.props
@@ -892,7 +950,7 @@ class Profile extends Component {
 
 	renderBody(isMobile) {
 		const { account, wizaBalance, walletXp, mainTextColor } = this.props
-		const { showModalConnection, isConnected, section, loading, offersMade, offersReceived, offersEquipmentMade, yourCollectionOffers } = this.state
+		const { showModalConnection, isConnected, section, loading, offersMade, offersReceived, offersEquipmentMade, yourCollectionOffers, ingredients } = this.state
 
 		const { boxW, modalW, padding } = getBoxWidth(isMobile)
 
@@ -942,7 +1000,6 @@ class Profile extends Component {
 			<div style={{ flexDirection: 'column', alignItems: 'center', width: boxW, marginTop: 5, paddingLeft: padding, paddingRight: padding, paddingBottom: padding, paddingTop: 20, overflowY: 'auto', overflowX: 'hidden' }}>
 
 				<div style={{ flexWrap: 'wrap', alignItems: 'center', justifyContent: isMobile ? 'space-between' : 'space-around', marginBottom: 10, width: boxStatsW }}>
-
 					<a
 						className="btnH"
 						style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
@@ -968,7 +1025,28 @@ class Profile extends Component {
 							{wizaBalance || 0.0}
 						</p>
 					</div>
+				</div>
 
+				<div style={{ flexDirection: 'column', alignItems: 'center', justifyContent: 'center', marginBottom: 10, width: boxStatsW }}>
+
+					<p style={{ fontSize: 16, color: "#707070", marginBottom: 5 }}>
+						Ingredients
+					</p>
+
+					<div style={{ flexWrap: 'wrap', alignItems: 'center', justifyContent: isMobile ? 'space-between' : 'space-around' }}>
+						{
+							Object.keys(ingredients).map((item, index) => {
+								return this.renderIngredient(item, index)
+							})
+						}
+
+						{
+							Object.keys(ingredients).length === 0 &&
+							<p style={{ fontSize: 14, color: "#707070" }}>
+								The pantry is empty...
+							</p>
+						}
+					</div>
 				</div>
 
 				{this.renderMenu(isMobile)}
