@@ -1045,8 +1045,7 @@ class Profile extends Component {
 						}
 
 						{
-							ingredients &&
-							Object.keys(ingredients).length === 0 &&
+							!ingredients &&
 							<p style={{ fontSize: 14, color: "#707070" }}>
 								The pantry is empty...
 							</p>
