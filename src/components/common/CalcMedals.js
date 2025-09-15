@@ -56,7 +56,7 @@ const calcMedals = (item, tournamentSeason, showLeague) => {
         }
     }
     else {
-        if (Object.keys(item.medals).length > 0) {
+        if (item.medals && Object.keys(item.medals).length > 0) {
             const arrayValueMedals = Object.values(item.medals)
             arrayValueMedals.map(i => totalMedals = totalMedals + parseInt(i))
         }

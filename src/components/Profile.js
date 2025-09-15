@@ -1038,12 +1038,14 @@ class Profile extends Component {
 
 					<div style={{ flexWrap: 'wrap', alignItems: 'center', justifyContent: isMobile ? 'space-between' : 'space-around' }}>
 						{
+							ingredients &&
 							Object.keys(ingredients).map((item, index) => {
 								return this.renderIngredient(item, index)
 							})
 						}
 
 						{
+							ingredients &&
 							Object.keys(ingredients).length === 0 &&
 							<p style={{ fontSize: 14, color: "#707070" }}>
 								The pantry is empty...
