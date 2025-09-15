@@ -110,14 +110,17 @@ class Profile extends Component {
 	}
 
 	async getIngredients() {
-        const docRef = doc(firebasedb, "ingredients", this.props.account.account)
+		const { account } = this.props
+		if (account && account.account) {
+			const docRef = doc(firebasedb, "ingredients", account.account)
 
-		const docSnap = await getDoc(docRef)
-		const data = docSnap.data()
+			const docSnap = await getDoc(docRef)
+			const data = docSnap.data()
 
-        //console.log(data);
+	        //console.log(data);
 
-		this.setState({ ingredients: data })
+			this.setState({ ingredients: data })
+		}
     }
 
 	getWalletXp() {
