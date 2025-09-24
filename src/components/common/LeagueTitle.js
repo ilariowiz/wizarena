@@ -10,6 +10,11 @@ const titles = {
         img: cup_gold,
         textColor: 'gold'
     }],
+    "1107": [{
+        title: "The Twelve League VI Champion",
+        img: cup_gold,
+        textColor: 'gold'
+    }],
     "235": [
         {
             title: "Lord of Sitenor Season 1",
@@ -163,6 +168,11 @@ const titles = {
     ],
     "3081": [{
         title: "The Twelve League V 3rd place",
+        img: cup_bronze,
+        textColor: '#cd7f32'
+    }],
+    "1700": [{
+        title: "The Twelve League VI 3rd place",
         img: cup_bronze,
         textColor: '#cd7f32'
     }],
@@ -464,6 +474,11 @@ const titles = {
         img: medal,
         textColor: '#cd7f32'
     }],
+    "224": [{
+        title: "The Twelve League VI 4th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
     "2960": [{
         title: "The Twelve League IV 4th place",
         img: medal,
@@ -708,11 +723,18 @@ const titles = {
         img: crown,
         textColor: 'gold'
     }],
-    "986": [{
-        title: "Lord of Wastiaxus Season 13",
-        img: crown,
-        textColor: 'gold'
-    }],
+    "986": [
+        {
+            title: "Lord of Wastiaxus Season 13",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "The Twelve League VI 2nd place",
+            img: cup_silver,
+            textColor: '#c0c0c0'
+        }
+    ],
     "257": [
         {
             title: "Lord of Wastiaxus Season 7",
@@ -752,13 +774,28 @@ const titles = {
         img: medal,
         textColor: '#cd7f32'
     }],
+    "1520": [{
+        title: "The Twelve League VI 5th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
     "1871": [{
         title: "The Twelve League I 6th place",
         img: medal,
         textColor: '#cd7f32'
     }],
+    "1544": [{
+        title: "The Twelve League VI 6th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
     "854": [{
         title: "The Twelve League I 7th place",
+        img: medal,
+        textColor: "#cd7f32"
+    }],
+    "11": [{
+        title: "The Twelve League VI 7th place",
         img: medal,
         textColor: "#cd7f32"
     }],
@@ -1134,6 +1171,31 @@ const titles = {
     }],
     "386": [{
         title: "The Apprentice League V 8th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "2695": [{
+        title: "The Twelve League VI 8th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "1114": [{
+        title: "The Twelve League VI 9th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "2670": [{
+        title: "The Twelve League VI 11th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "724": [{
+        title: "The Twelve League VI 12th place",
+        img: medal,
+        textColor: '#cd7f32'
+    }],
+    "268": [{
+        title: "The Twelve League VI 10th place",
         img: medal,
         textColor: '#cd7f32'
     }],
