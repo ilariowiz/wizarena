@@ -159,15 +159,15 @@ const allSpells = [
 	},
 	{
 		"name": "Shock",
-		"atkBase": 5,
+		"atkBase": 7,
 		"dmgBase": 8,
 		"condition": { "name": "Shock", "effect": "skip", "pct": 50 },
 		"element": "Thunder"
 	},
 	{
 		"name": "Shatter",
-		"atkBase": 7,
-		"dmgBase": 6,
+		"atkBase": 8,
+		"dmgBase": 7,
 		"condition": { "name": "Shock", "effect": "skip", "pct": 50 },
 		"element": "Thunder"
 	},
@@ -223,8 +223,8 @@ const allSpells = [
 	},
 	{
 		"name": "Unholy Nova",
-		"atkBase": 10,
-		"dmgBase": 11,
+		"atkBase": 9,
+		"dmgBase": 10,
 		"condition": {},
 		"element": "Dark"
 	},
@@ -252,7 +252,7 @@ const allSpells = [
 	},
 	{
 		"name": "Wind Rupture",
-		"atkBase": 4,
+		"atkBase": 6,
 		"dmgBase": 7,
 		"condition": { "name": "Paralyze 2", "effect": "skip", "pct": 50 },
 		"element": "Wind"
@@ -260,7 +260,7 @@ const allSpells = [
 	{
 		"name": "Wind Barrier",
 		"atkBase": 7,
-		"dmgBase": 4,
+		"dmgBase": 6,
 		"condition": { "name": "Blind", "effect": "skip", "pct": 50 },
 		"element": "Wind"
 	},
@@ -352,15 +352,15 @@ const allSpells = [
 	},
 	{
 		"name": "Solar Faith",
-		"atkBase": 3,
+		"atkBase": 5,
 		"dmgBase": 8,
 		"condition": { "name": "Blind", "effect": "skip", "pct": 50 },
 		"element": "Sun"
 	},
 	{
 		"name": "Dawn",
-		"atkBase": 5,
-		"dmgBase": 6,
+		"atkBase": 6,
+		"dmgBase": 7,
 		"condition": { "name": "Blind", "effect": "skip", "pct": 50 },
 		"element": "Sun"
 	},
@@ -525,14 +525,14 @@ const allSpells = [
 	{
 		"name": "Command",
 		"atkBase": 7,
-		"dmgBase": 4,
+		"dmgBase": 6,
 		"condition": { "name": "Paralyze 2", "effect": "skip", "pct": 50 },
 		"element": "Psycho"
 	},
 	{
 		"name": "Deadly Illusion",
-		"atkBase": 5,
-		"dmgBase": 6,
+		"atkBase": 6,
+		"dmgBase": 7,
 		"condition": { "name": "Confuse", "effect": "skip", "pct": 50 },
 		"element": "Psycho"
 	},
