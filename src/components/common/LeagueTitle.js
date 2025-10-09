@@ -37,10 +37,30 @@ const titles = {
             title: "Lord of Druggorial Season 11",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "Lord of Vedrenon Season 15",
+            img: crown,
+            textColor: 'gold'
         }
     ],
     "3080": [{
         title: "Lord of Sitenor Season 3",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "864": [{
+        title: "Lord of Opherus Season 15",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "1565": [{
+        title: "Lord of Oceorah Season 15",
+        img: crown,
+        textColor: 'gold'
+    }],
+    "2957": [{
+        title: "Lord of Sitenor Season 15",
         img: crown,
         textColor: 'gold'
     }],
@@ -150,6 +170,11 @@ const titles = {
         },
         {
             title: "Lord of Vedrenon Season 14",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Druggorial Season 15",
             img: crown,
             textColor: 'gold'
         }
@@ -652,15 +677,32 @@ const titles = {
             title: "Lord of Ulidalar Season 11",
             img: crown,
             textColor: 'gold'
+        },
+        {
+            title: "Lord of Bremonon Season 15",
+            img: crown,
+            textColor: 'gold'
         }
     ],
-    "752": [{
-        title: "Lord of Bremonon Season 10",
+    "752": [
+        {
+            title: "Lord of Bremonon Season 10",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Ulidalar Season 15",
+            img: crown,
+            textColor: 'gold'
+        }
+    ],
+    "15": [{
+        title: "Lord of Opherus Season 12",
         img: crown,
         textColor: 'gold'
     }],
-    "15": [{
-        title: "Lord of Opherus Season 12",
+    "529": [{
+        title: "Lord of Wastiaxus Season 15",
         img: crown,
         textColor: 'gold'
     }],
@@ -704,6 +746,11 @@ const titles = {
         },
         {
             title: "Lord of Ulanara Season 14",
+            img: crown,
+            textColor: 'gold'
+        },
+        {
+            title: "Lord of Ulanara Season 15",
             img: crown,
             textColor: 'gold'
         }
