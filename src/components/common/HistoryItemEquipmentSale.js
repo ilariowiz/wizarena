@@ -13,10 +13,10 @@ class HistoryItemEquipmentSale extends Component {
 
 		let url = ''
 		if (netId === TEST_NET_ID) {
-			url = `https://explorer.chainweb.com/testnet/tx/${item.requestKey}`
+			url = `https://explorer.chainweb-community.org/testnet/tx/${item.requestKey}`
 		}
 		else {
-			url = `https://explorer.chainweb.com/mainnet/tx/${item.requestKey}`
+			url = `https://explorer.chainweb-community.org/mainnet/tx/${item.requestKey}`
 		}
 
 
