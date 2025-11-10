@@ -60,7 +60,7 @@ export const pollForTransaction = (props, requestKey) => {
         try {
             pollRes = await Pact.fetch.listen(
                 { listen: requestKey },
-                "https://api.chainweb.com/chainweb/0.0/mainnet01/chain/1/pact"
+                "https://api.chainweb-community.org/chainweb/0.0/mainnet01/chain/1/pact"
             )
         }
         catch (e) {
