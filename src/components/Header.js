@@ -819,7 +819,7 @@ class Header extends Component {
 						>
 							<div style={{ width: 200, overflowWrap: "anywhere", padding: 8 }}>
 								<a
-									href={`https://explorer.chainweb.com/mainnet/tx/${transactionsState[transactionsState.length-1].requestKey}`}
+									href={`https://explorer.chainweb-community.org/mainnet/tx/${transactionsState[transactionsState.length-1].requestKey}`}
 									target="_blank"
 									rel="noopener noreferrer"
 								>
