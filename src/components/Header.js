@@ -734,7 +734,8 @@ class Header extends Component {
 				style={styles.boxBtnMenuPlay}
 				onClick={(e) => {
 					e.preventDefault()
-					this.props.history.replace(`/${goto}`)
+					return
+					//this.props.history.replace(`/${goto}`)
 				}}
 			>
 				<img
